@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "cross-env TS_NODE_PROJECT=\"tsconfig-for-webpack.json\" webpack && jest-coverage-badges input \"./docs/coverage/coverage-summary.json\" output \"./dist/badges\"",
-    "test": "jest && jest-coverage-badges input \"./docs/coverage/coverage-summary.json\" output \"./dist/badges\""
+    "test": "jest && jest-coverage-badges input \"./docs/coverage/coverage-summary.json\" output \"./badges\""
   },
   "devDependencies": {
     "@types/copy-webpack-plugin": "^6.4.0",
