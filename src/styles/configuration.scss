@@ -1,0 +1,21 @@
+#simpleCalendarConfiguration{
+  max-width: 500px;
+
+  .center{
+    text-align: center;
+  }
+
+  .month-actions{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+
+    .spacer{
+      flex: 1 1;
+    }
+    .remove-month, .month-add{
+      width: 200px;
+    }
+  }
+
+}

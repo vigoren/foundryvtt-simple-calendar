@@ -1,0 +1,47 @@
+{
+  "name": "foundryvtt-simple-calendar",
+  "description": "A simple calendar and time module for the FoundryVTT system",
+  "version": "1.0.0",
+  "author": "Dean Vigoren <dvigoren@gmail.com>",
+  "keywords": [
+    "foundryvtt",
+    "module",
+    "calendar"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vigoren/foundryvtt-simple-calendar"
+  },
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "scripts": {
+    "build": "cross-env TS_NODE_PROJECT=\"tsconfig-for-webpack.json\" webpack && jest-coverage-badges input \"./docs/coverage/coverage-summary.json\" output \"./dist/badges\"",
+    "test": "jest && jest-coverage-badges input \"./docs/coverage/coverage-summary.json\" output \"./dist/badges\""
+  },
+  "devDependencies": {
+    "@types/copy-webpack-plugin": "^6.4.0",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.22",
+    "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^7.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^5.0.2",
+    "foundry-vtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types",
+    "jest": "^26.6.3",
+    "jest-coverage-badges": "^1.1.2",
+    "jest-ts-webcompat-resolver": "^1.0.0",
+    "mini-css-extract-plugin": "^1.3.6",
+    "sass": "^1.32.7",
+    "sass-loader": "^11.0.1",
+    "ts-jest": "^26.5.0",
+    "ts-loader": "^8.0.17",
+    "ts-node": "^9.1.1",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.1.3",
+    "webpack": "^5.21.2",
+    "webpack-cli": "^4.5.0"
+  }
+}

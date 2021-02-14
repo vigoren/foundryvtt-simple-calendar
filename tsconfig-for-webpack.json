@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "esModuleInterop": true
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "jest.config.ts"
+  ]
+}
