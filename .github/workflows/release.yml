@@ -50,7 +50,7 @@ jobs:
         with:
           name: module
       # Create a zip file with all files required by the module to add to the release
-      - run: zip -r ./module.zip module-download/module.json module-download/LICENSE module-download/README.md module-download/index.js module-download/styles/ module-download/templates/ module-download/lang/
+      - run: cd module-download && zip -r ../module.zip .
       - name: Update Release with Files
         id: create_version_release
         uses: ncipollo/release-action@v1
