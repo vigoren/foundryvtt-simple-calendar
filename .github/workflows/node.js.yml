@@ -11,23 +11,30 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x, 14.x, 15.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v2
+    - name: Manifest and Download Links
+      id: manifest_link_version
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: './src/module.json'
+      env:
+        version: ${{github.event.release.tag_name}}
+        manifest: https://github.com/${{github.repository}}/releases/latest/download/module.json
+        download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zi
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
+    - name: Archive dist folder
+      uses: actions/upload-artifact@v2
+      with:
+        name: module
+        path: |
+          dist/
+          dist/module.json
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
@@ -37,3 +44,19 @@ jobs:
         name: codecov-foundryvtt-simple-calendar # optional
         fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)
+
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Release with Files
+        id: create_version_release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true # Set this to false if you want to prevent updating existing releases
+          name: ${{ github.event.release.name }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: './module.json, ./module.zip'
+          tag: ${{ github.event.release.tag_name }}
+          body: ${{ github.event.release.body }}
