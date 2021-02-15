@@ -2,7 +2,7 @@
   "name": "foundryvtt-simple-calendar",
   "title": "Simple Calendar",
   "description": "A simple calendar module",
-  "version": "1.0.0",
+  "version": "1.0.0-Beta1",
   "author": "Dean Vigoren (Vigorator)",
   "minimumCoreVersion": "0.7.9",
   "compatibleCoreVersion": "0.7.9",

@@ -10,6 +10,6 @@ const config: Config.InitialOptions = {
     transform: {"^.+\\.(ts|tsx)$": "ts-jest"},
     collectCoverage: true,
     coverageDirectory: './docs/coverage',
-    coverageReporters: ["html","json-summary"]
+    coverageReporters: ["html","clover"]
 };
 export default config;
