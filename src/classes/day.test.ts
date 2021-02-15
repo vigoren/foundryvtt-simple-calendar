@@ -18,6 +18,10 @@ describe('Day Class Tests', () => {
         expect(dayS.current).toBe(false);
         expect(dayS.name).toBe("NaMe");
         expect(dayS.numericRepresentation).toBe(10);
+
+        const d = new Day(0);
+        expect(d.name).toBe("");
+        expect(d.numericRepresentation).toBe(0);
     });
 
     test('To Template', () => {
