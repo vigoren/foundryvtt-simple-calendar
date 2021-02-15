@@ -1,0 +1,63 @@
+<div id="simpleCalendarConfiguration">
+    <form autocomplete="off" onsubmit="event.preventDefault();">
+        <h1>{{localize 'FSC.Configuration.Title'}}</h1>
+        <p>{{localize 'FSC.Configuration.Description'}}</p>
+        <div class="year-settings">
+            <h2>{{localize 'FSC.Configuration.Year.Title'}}</h2>
+            <div class="form-group">
+                <label for="scCurrentYear">{{localize 'FSC.Configuration.Year.Current'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.numericRepresentation}}" type="number" id="scCurrentYear" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Year.CurrentHelp'}}</p>
+            </div>
+            <div class="form-group">
+                <label for="scYearPreFix">{{localize 'FSC.Configuration.Year.Prefix'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.prefix}}" type="text" id="scYearPreFix" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Year.PrefixHelp'}}</p>
+            </div>
+            <div class="form-group">
+                <label for="scYearPostFix">{{localize 'FSC.Configuration.Year.Postfix'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.postfix}}" type="text" id="scYearPostFix" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Year.PostfixHelp'}}</p>
+            </div>
+        </div>
+        <div class="month-settings">
+            <h2>{{localize 'FSC.Configuration.Month.Title'}}</h2>
+            <table>
+                <tr>
+                    <th title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</th>
+                    <th title="{{localize 'FSC.Configuration.Month.DaysHelp'}}">{{localize 'FSC.Configuration.Month.Days'}}</th>
+                    <th title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</th>
+                    <th></th>
+                </tr>
+                {{#each months}}
+                <tr>
+                    <td>
+                        <input class="month-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.NameHelp'}}" />
+                    </td>
+                    <td>
+                        <input class="month-days" value="{{days.length}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}" />
+                    </td>
+                    <td class="center">{{numericRepresentation}}</td>
+                    <td>
+                        <button class="remove-month" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                    </td>
+                </tr>
+                {{/each}}
+            </table>
+            <div class="month-actions">
+                <button class="month-add"><span class="fa fa-plus"></span>{{localize 'FSC.Configuration.Month.Add'}}</button>
+                <span class="spacer"></span>
+                <button class="remove-month" data-index="all"><span class="fa fa-trash"></span>{{localize 'FSC.Configuration.Month.RemoveAll'}}</button>
+            </div>
+        </div>
+        <button id="scSubmit" type="submit" name="submit" title="{{localize 'FSC.Configuration.Save'}}">
+            <i class="far fa-save"></i> {{localize 'FSC.Configuration.Save'}}
+        </button>
+    </form>
+</div>
