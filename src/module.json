@@ -8,8 +8,10 @@
   "compatibleCoreVersion": "0.7.9",
   "url": "https://github.com/vigoren/foundryvtt-simple-calendar",
   "bugs": "https://github.com/vigoren/foundryvtt-simple-calendar/issues",
-  "readme": "./README.md",
-  "license": "./LICENSE",
+  "readme": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/README.md",
+  "license": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE",
+  "manifest": "",
+  "download": "",
   "esmodules":[
     "./index.js"
   ],
