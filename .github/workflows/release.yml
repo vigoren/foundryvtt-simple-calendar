@@ -1,0 +1,62 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Manifest and Download Links
+      id: manifest_link_version
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: './src/module.json'
+      env:
+        version: ${{github.event.release.tag_name}}
+        manifest: https://github.com/${{github.repository}}/releases/latest/download/module.json
+        download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+    - name: Archive dist folder
+      uses: actions/upload-artifact@v2
+      with:
+        name: module-download
+        path: dist/
+    - name: Archive module json
+      uses: actions/upload-artifact@v2
+      with:
+        name: module
+        path: dist/module.json
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download module download file
+        uses: actions/download-artifact@v2
+        with:
+          name: module-download
+      - name: Download module.json
+        uses: actions/download-artifact@v2
+        with:
+          name: module
+      - name: Update Release with Files
+        id: create_version_release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true # Set this to false if you want to prevent updating existing releases
+          name: ${{ github.event.release.name }}
+          draft: true
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: './module.json, ./module-download.zip'
+          tag: ${{ github.event.release.tag_name }}
+          body: ${{ github.event.release.body }}
