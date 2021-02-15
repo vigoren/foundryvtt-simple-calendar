@@ -44,6 +44,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: module-download
+          path: module-download
       - name: Download module.json
         uses: actions/download-artifact@v2
         with:
