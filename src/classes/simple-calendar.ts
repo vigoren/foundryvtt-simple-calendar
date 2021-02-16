@@ -308,7 +308,6 @@ export default class SimpleCalendar extends Application{
             let monthData = <any[]>game.settings.get(ModuleName, SettingNames.MonthConfiguration);
             const date = new Date();
             const dYear = date.getFullYear();
-            console.log(monthData);
             if(this.currentYear){
                 if(monthData && monthData.length){
                     if(Array.isArray(monthData[0])){

@@ -12,6 +12,11 @@ export default class Month {
      */
     days: Day[] = [];
     /**
+     * The number of days for this month
+     * @type {number}
+     */
+    numberOfDays: number = 0;
+    /**
      * The month name
      * @type {string}
      */
@@ -62,6 +67,7 @@ export default class Month {
             }
             this.days.push(d);
         }
+        this.numberOfDays = this.days.length;
     }
 
     /**
@@ -88,7 +94,8 @@ export default class Month {
             current: this.current,
             visible: this.visible,
             selected: this.selected,
-            days: this.getDaysForTemplate()
+            days: this.getDaysForTemplate(),
+            numberOfDays: this.numberOfDays
         };
     }
 
@@ -102,6 +109,7 @@ export default class Month {
         m.selected = this.selected;
         m.visible = this.visible;
         m.days = this.days.map(d => d.clone());
+        m.numberOfDays = this.numberOfDays;
         return m;
     }
 

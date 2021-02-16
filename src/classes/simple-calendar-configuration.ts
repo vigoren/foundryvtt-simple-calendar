@@ -65,6 +65,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
             //Add Month
             (<JQuery>html).find(".month-add").on('click', SimpleCalendarConfiguration.instance.addMonth.bind(this));
+
+            //Input Change
+            (<JQuery>html).find(".month-settings table td input").on('change', SimpleCalendarConfiguration.instance.monthInputChange.bind(this));
         }
     }
 
@@ -101,6 +104,31 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<Year>this.object).months = [];
             this.updateApp();
         }
+    }
+
+    public monthInputChange(e: Event){
+        e.preventDefault();
+        const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
+        const cssClass = (<HTMLElement>e.currentTarget).getAttribute('class');
+        const value = (<HTMLInputElement>e.currentTarget).value;
+        if(dataIndex && cssClass && value){
+            const monthIndex = parseInt(dataIndex);
+            const months = (<Year>this.object).months;
+            if(!isNaN(monthIndex) && monthIndex < months.length){
+                if(cssClass === 'month-name'){
+                    months[monthIndex].name = value;
+                } else if(cssClass === 'month-days'){
+                    const days = parseInt(value);
+                    if(!isNaN(days) && days !== months[monthIndex].days.length){
+                        months[monthIndex].numberOfDays = days;
+                    }
+                } else {
+                    Logger.debug(`Invalid CSS Class for input "${cssClass}"`);
+                }
+                return;
+            }
+        }
+        Logger.debug('Unable to set the months data on change.');
     }
 
     public async saveClick(e: Event) {

@@ -10,8 +10,9 @@ describe('Month Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(month).length).toBe(6); //Make sure no new properties have been added
+        expect(Object.keys(month).length).toBe(7); //Make sure no new properties have been added
         expect(month.days).toStrictEqual([]);
+        expect(month.numberOfDays).toBe(0);
         expect(month.name).toBe('Test');
         expect(month.numericRepresentation).toBe(0);
         expect(month.current).toBe(false);
@@ -20,10 +21,12 @@ describe('Month Class Tests', () => {
 
         expect(month2.name).toBe('0');
         expect(month2.days.length).toBe(30);
+        expect(month2.numberOfDays).toBe(30);
 
         const m = new Month("No Days", 0);
         expect(m.days).toStrictEqual([]);
         expect(m.days.length).toBe(0);
+        expect(m.numberOfDays).toBe(0);
     });
 
     test('Populate Days', () => {
@@ -43,8 +46,9 @@ describe('Month Class Tests', () => {
 
     test('To Template', () => {
         const t = month.toTemplate();
-        expect(Object.keys(t).length).toBe(7); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(8); //Make sure no new properties have been added
         expect(t.days).toStrictEqual([]);
+        expect(t.numberOfDays).toBe(0);
         expect(t.display).toBe('Test (0)');
         expect(t.name).toBe('Test');
         expect(t.numericRepresentation).toBe(0);

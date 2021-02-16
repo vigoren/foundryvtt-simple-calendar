@@ -11,7 +11,7 @@ import {
 describe('Interface Tests', () => {
 
     const dt: DayTemplate = {selected: false, current: false, name: '', numericRepresentation: 0};
-    const mt: MonthTemplate = {selected: false, current: false, visible: false, days: [], display: '', name: '', numericRepresentation: 0};
+    const mt: MonthTemplate = {selected: false, current: false, visible: false, days: [], display: '', name: '', numericRepresentation: 0, numberOfDays: 0};
     const yt: YearTemplate = {display: '', months: [], numericRepresentation: 0};
     const ct: CalendarTemplate = {isGM: false, playersAddNotes: false, currentYear: yt, visibleMonth: mt, currentMonth: mt, selectedMonth: mt, selectedDay: dt, currentDay: dt, showCurrentDay: false, visibleYear:0, selectedYear:0, showSelectedDay:false};
 
@@ -25,7 +25,7 @@ describe('Interface Tests', () => {
     });
 
     test('Month Template', () => {
-        expect(Object.keys(mt).length).toBe(7); //Make sure no new properties have been added
+        expect(Object.keys(mt).length).toBe(8); //Make sure no new properties have been added
         expect(mt.selected).toBe(false);
         expect(mt.current).toBe(false);
         expect(mt.visible).toBe(false);
@@ -33,6 +33,7 @@ describe('Interface Tests', () => {
         expect(mt.display).toBe("");
         expect(mt.name).toBe("");
         expect(mt.numericRepresentation).toBe(0);
+        expect(mt.numberOfDays).toBe(0);
     });
 
     test('Year Template', () => {

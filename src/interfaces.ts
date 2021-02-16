@@ -48,6 +48,7 @@ export interface  MonthTemplate {
     visible: boolean;
     selected: boolean;
     days: any[];
+    numberOfDays: number;
 }
 
 /**
