@@ -2,21 +2,34 @@ import {Logger} from "./logging";
 import Year from "./year";
 import {GameSettings} from "./game-settings";
 import Month from "./month";
+import {Weekday} from "./weekday";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
     /**
      * Used to store a globally accessible copy of the Simple calendar configuration class for access from event functions.
+     * @type {SimpleCalendarConfiguration}
      */
     static instance: SimpleCalendarConfiguration;
-
+    /**
+     * The year object where the changes are applied and loaded from
+     * @type {Year}
+     * @private
+     */
     private year: Year;
 
+    /**
+     * The Calendar configuration constructor
+     * @param {Year} data The year data used to populate the configuration dialog
+     */
     constructor(data: Year) {
         super(data);
         this.year = data;
     }
 
+    /**
+     * Returns the default options for this application
+     */
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/calendar-config.html";
@@ -48,13 +61,22 @@ export class SimpleCalendarConfiguration extends FormApplication {
         this.render(false, {width: 500, height: 500});
     }
 
+    /**
+     * Gets the data object to be used by Handlebars when rending the HTML template
+     */
     public getData(){
         return {
             currentYear: (<Year>this.object),
-            months: (<Year>this.object).months.map(m => m.toTemplate())
+            months: (<Year>this.object).months.map(m => m.toTemplate()),
+            weekdays: (<Year>this.object).weekdays.map(w => w.toTemplate())
         };
     }
 
+    /**
+     * Adds any event listeners to the application DOM
+     * @param {JQuery | HTMLElement} html The root HTML of the application window
+     * @protected
+     */
     protected activateListeners(html: JQuery | HTMLElement) {
         if(html.hasOwnProperty("length")) {
             //Save button clicks
@@ -63,11 +85,18 @@ export class SimpleCalendarConfiguration extends FormApplication {
             //Month Deletes
             (<JQuery>html).find(".remove-month").on('click', SimpleCalendarConfiguration.instance.removeMonth.bind(this));
 
+            //Weekday Deletes
+            (<JQuery>html).find(".remove-weekday").on('click', SimpleCalendarConfiguration.instance.removeWeekday.bind(this));
+
             //Add Month
             (<JQuery>html).find(".month-add").on('click', SimpleCalendarConfiguration.instance.addMonth.bind(this));
 
+            //Add Weekday
+            (<JQuery>html).find(".weekday-add").on('click', SimpleCalendarConfiguration.instance.addWeekday.bind(this));
+
             //Input Change
             (<JQuery>html).find(".month-settings table td input").on('change', SimpleCalendarConfiguration.instance.monthInputChange.bind(this));
+            (<JQuery>html).find(".weekday-settings table td input").on('change', SimpleCalendarConfiguration.instance.weekdayInputChange.bind(this));
         }
     }
 
@@ -106,6 +135,45 @@ export class SimpleCalendarConfiguration extends FormApplication {
         }
     }
 
+    /**
+     * Adds a new weekday to the list of weekdays in the year
+     * @param {Event} e The passed in event
+     */
+    public addWeekday(e: Event) {
+        e.preventDefault();
+        const newWeekdayNumber = (<Year>this.object).weekdays.length + 1;
+        (<Year>this.object).weekdays.push(new Weekday(newWeekdayNumber, 'New Weekday'));
+        this.updateApp();
+    }
+
+    /**
+     * Removes a weekday from the list of weekdays in the year
+     * @param {Event} e The passed in event
+     */
+    public removeWeekday(e: Event) {
+        e.preventDefault();
+        const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
+        if(dataIndex && dataIndex !== 'all'){
+            const weekdayIndex = parseInt(dataIndex);
+            const weekdays = (<Year>this.object).weekdays;
+            if(!isNaN(weekdayIndex) && weekdayIndex < weekdays.length){
+                weekdays.splice(weekdayIndex, 1);
+                //Reindex the remaining months
+                for(let i = 0; i < weekdays.length; i++){
+                    weekdays[i].numericRepresentation = i + 1;
+                }
+                this.updateApp();
+            }
+        } else if(dataIndex && dataIndex === 'all'){
+            (<Year>this.object).weekdays = [];
+            this.updateApp();
+        }
+    }
+
+    /**
+     * Event when a text box for month name or day is changed to temporarily store those changes so that if the application is updated the correct values are displayed
+     * @param {Event} e The change event
+     */
     public monthInputChange(e: Event){
         e.preventDefault();
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
@@ -131,6 +199,29 @@ export class SimpleCalendarConfiguration extends FormApplication {
         Logger.debug('Unable to set the months data on change.');
     }
 
+    /**
+     * Event when a text box for weekday name is changed to temporarily store those changes so that if the application is updated the correct values are displayed
+     * @param {Event} e The change event
+     */
+    public weekdayInputChange(e: Event){
+        e.preventDefault();
+        const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
+        const value = (<HTMLInputElement>e.currentTarget).value;
+        if(dataIndex && value){
+            const weekdayIndex = parseInt(dataIndex);
+            const weekdays = (<Year>this.object).weekdays;
+            if(!isNaN(weekdayIndex) && weekdayIndex < weekdays.length){
+                weekdays[weekdayIndex].name = value;
+                return;
+            }
+        }
+        Logger.debug('Unable to set the weekday data on change.');
+    }
+
+    /**
+     * When the save button is clicked, apply those changes to the game settings and re-load the calendars across all players
+     * @param {Event} e The click event
+     */
     public async saveClick(e: Event) {
         e.preventDefault();
         try{
@@ -177,6 +268,17 @@ export class SimpleCalendarConfiguration extends FormApplication {
             }
             await GameSettings.SaveMonthConfiguration((<Year>this.object).months);
 
+            //Update Weekday Configuration
+            const weekdayNames = (<JQuery>this.element).find('.weekday-name');
+            for(let i = 0; i < weekdayNames.length; i++){
+                const weekdayIndex = weekdayNames[i].getAttribute('data-index');
+                if(weekdayIndex) {
+                    const index = parseInt(weekdayIndex);
+                    const weekday = (<Year>this.object).weekdays[index];
+                    weekday.name = (<HTMLInputElement>weekdayNames[i]).value;
+                }
+            }
+            await GameSettings.SaveWeekdayConfiguration((<Year>this.object).weekdays);
 
             if(updateCurrentDate){
                 await GameSettings.SaveCurrentDate(<Year>this.object);

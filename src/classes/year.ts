@@ -57,7 +57,8 @@ export default class Year {
         return {
             display: this.getDisplayName(),
             numericRepresentation: this.numericRepresentation,
-            months: this.getMonthsForTemplate()
+            months: this.getMonthsForTemplate(),
+            weekdays: this.weekdays.map(w => w.toTemplate())
         }
     }
 
@@ -72,6 +73,7 @@ export default class Year {
         y.selectedYear = this.selectedYear;
         y.visibleYear = this.visibleYear;
         y.months = this.months.map(m => m.clone());
+        y.weekdays = this.weekdays.map(w => w.clone());
         return y;
     }
 
@@ -234,22 +236,26 @@ export default class Year {
      * @return {number}
      */
     visibleMonthStartingDayOfWeek(){
-        const daysPerYear = this.totalNumberOfDays();
-        Logger.debug(`Days Per Year: ${daysPerYear}`);
-        //Assuming a start year of 0
-        const totalDaysForYears = daysPerYear * this.visibleYear;
-        Logger.debug(`Total Days For Years: ${totalDaysForYears}`);
-        let daysSoFarThisYear = 0;
-        for(let i = 0; i < this.months.length; i++){
-            if(!this.months[i].visible){
-               daysSoFarThisYear = daysSoFarThisYear + this.months[i].days.length;
-            } else {
-                break;
+        if(this.weekdays.length){
+            const daysPerYear = this.totalNumberOfDays();
+            Logger.debug(`Days Per Year: ${daysPerYear}`);
+            //Assuming a start year of 0
+            const totalDaysForYears = daysPerYear * this.visibleYear;
+            Logger.debug(`Total Days For Years: ${totalDaysForYears}`);
+            let daysSoFarThisYear = 0;
+            for(let i = 0; i < this.months.length; i++){
+                if(!this.months[i].visible){
+                    daysSoFarThisYear = daysSoFarThisYear + this.months[i].days.length;
+                } else {
+                    break;
+                }
             }
+            Logger.debug(`Days So Far This Year: ${daysSoFarThisYear}`);
+            Logger.debug(`Number of days per week: ${this.weekdays.length}`);
+            return ((totalDaysForYears + daysSoFarThisYear)% this.weekdays.length + this.weekdays.length) % this.weekdays.length;
+        } else {
+            return 0;
         }
-        Logger.debug(`Days So Far This Year: ${daysSoFarThisYear}`);
-        Logger.debug(`Number of days per week: ${this.weekdays.length}`);
-        return ((totalDaysForYears + daysSoFarThisYear)% this.weekdays.length + this.weekdays.length) % this.weekdays.length;
     }
 
 }

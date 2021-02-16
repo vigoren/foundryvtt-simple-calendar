@@ -60,5 +60,10 @@
   "FSC.Configuration.Month.NumberHelp": "The numeric representation of this month.",
   "FSC.Configuration.Month.Remove": "Remove",
   "FSC.Configuration.Month.RemoveAll": "Remove All Months",
-  "FSC.Configuration.Month.Add": "Add New Month"
+  "FSC.Configuration.Month.Add": "Add New Month",
+  "FSC.Configuration.Weekday.Title": "Weekday Settings",
+  "FSC.Configuration.Weekday.Name": "Weekday Name",
+  "FSC.Configuration.Weekday.NameHelp": "The text name of this day of the week.",
+  "FSC.Configuration.Weekday.Add": "Add New Weekday",
+  "FSC.Configuration.Weekday.RemoveAll": "Remove All Weekdays"
 }
