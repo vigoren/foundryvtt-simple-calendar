@@ -5,6 +5,7 @@ import {CalendarTemplate, YearConfig, MonthConfig, CurrentDateConfig} from "../i
 import { ModuleName, SettingNames} from "../constants";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {GameSettings} from "./game-settings";
+import {Weekday} from "./weekday";
 
 
 /**
@@ -45,9 +46,11 @@ export default class SimpleCalendar extends Application{
      * Initializes the dialogs once foundry is ready to go
      */
     public init(){
+        this.registerHandlebarHelpers();
         GameSettings.RegisterSettings();
         this.loadYearConfiguration();
         this.loadMonthConfiguration();
+        this.loadWeekdayConfiguration();
         this.loadCurrentDate();
         this.loadNotes();
     }
@@ -62,6 +65,7 @@ export default class SimpleCalendar extends Application{
             return {
                 isGM: game.user.isGM,
                 playersAddNotes: game.settings.get(ModuleName, SettingNames.AllowPlayersToAddNotes),
+                weekdays: this.currentYear.weekdays.map(w => w.toTemplate()),
                 currentYear: this.currentYear.toTemplate(),
                 currentMonth: currentMonth?.toTemplate(),
                 currentDay: currentMonth?.getCurrentDay()?.toTemplate(),
@@ -70,6 +74,7 @@ export default class SimpleCalendar extends Application{
                 selectedDay : selectedMonth?.getSelectedDay(),
                 visibleYear: this.currentYear.visibleYear,
                 visibleMonth: this.currentYear.getVisibleMonth()?.toTemplate(),
+                visibleMonthStartWeekday: Array(this.currentYear.visibleMonthStartingDayOfWeek()).fill(0),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation
             };
@@ -93,6 +98,22 @@ export default class SimpleCalendar extends Application{
                 onClick: () => {SimpleCalendar.instance.showApp();}
             });
         }
+    }
+
+    private registerHandlebarHelpers() {
+        Handlebars.registerHelper("calendar-width", (options) => {
+            if(SimpleCalendar.instance.currentYear){
+                return `width:${(SimpleCalendar.instance.currentYear.weekdays.length * 40) + 12}px;`;
+            }
+            return '';
+        });
+        Handlebars.registerHelper("calendar-row-width", (options) => {
+            if(game.user.isGM && SimpleCalendar.instance.currentYear){
+                let width = (SimpleCalendar.instance.currentYear.weekdays.length * 40) + 312;
+                return `width:${width}px;`;
+            }
+            return '';
+        });
     }
 
     /**
@@ -374,6 +395,40 @@ export default class SimpleCalendar extends Application{
             }
         } catch (e){
             Logger.error(e);
+        }
+    }
+
+    public loadWeekdayConfiguration(update: boolean = false){
+        try{
+            Logger.debug('Loading weekday configuration from settings.');
+            if(this.currentYear){
+                const weekdayData = GameSettings.LoadWeekdayData();
+                if(weekdayData.length){
+                    Logger.debug('Setting the weekdays from data.');
+                    this.currentYear.weekdays = [];
+                    for(let i = 0; i < weekdayData.length; i++){
+                        this.currentYear.weekdays.push(new Weekday(weekdayData[i].numericRepresentation, weekdayData[i].name));
+                    }
+                } else {
+                    Logger.debug('No weekday configuration found, loading default data.');
+                    this.currentYear.weekdays = [
+                        new Weekday(1, game.i18n.localize('FSC.Date.Sunday')),
+                        new Weekday(2, game.i18n.localize('FSC.Date.Monday')),
+                        new Weekday(3, game.i18n.localize('FSC.Date.Tuesday')),
+                        new Weekday(4, game.i18n.localize('FSC.Date.Wednesday')),
+                        new Weekday(5, game.i18n.localize('FSC.Date.Thursday')),
+                        new Weekday(6, game.i18n.localize('FSC.Date.Friday')),
+                        new Weekday(7, game.i18n.localize('FSC.Date.Saturday'))
+                    ];
+                }
+            } else {
+                Logger.error('No Current year configured, can not load weekday data.');
+            }
+            if(update){
+                this.updateApp();
+            }
+        } catch (error){
+            Logger.error(error);
         }
     }
 

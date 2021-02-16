@@ -1,6 +1,6 @@
 import Year from "./year";
 import {Logger} from "./logging";
-import {CurrentDateConfig, MonthConfig, YearConfig} from "../interfaces";
+import {CurrentDateConfig, MonthConfig, WeekdayConfig, YearConfig} from "../interfaces";
 import {ModuleName, SettingNames} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
@@ -17,6 +17,14 @@ export class GameSettings {
             config: false,
             type: Object,
             onChange: SimpleCalendar.instance.loadYearConfiguration.bind(SimpleCalendar.instance, true)
+        });
+        game.settings.register(ModuleName, SettingNames.WeekdayConfiguration, {
+            name: "Weekday Configuration",
+            scope: "world",
+            config: false,
+            type: Array,
+            default: [],
+            onChange: SimpleCalendar.instance.loadWeekdayConfiguration.bind(SimpleCalendar.instance, true)
         });
         game.settings.register(ModuleName, SettingNames.MonthConfiguration, {
             name: "Month Configuration",
@@ -52,6 +60,17 @@ export class GameSettings {
             type: Boolean,
             default: true
         });
+    }
+
+    static LoadWeekdayData(): WeekdayConfig[] {
+        let returnData: WeekdayConfig[] = [];
+        let weekdayData = <any[]>game.settings.get(ModuleName, SettingNames.WeekdayConfiguration);
+        if(weekdayData && weekdayData.length) {
+            if (Array.isArray(weekdayData[0])) {
+                returnData = <WeekdayConfig[]>weekdayData[0];
+            }
+        }
+        return returnData;
     }
 
     /**

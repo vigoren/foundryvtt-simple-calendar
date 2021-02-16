@@ -4,11 +4,13 @@
 export interface CalendarTemplate {
     isGM: boolean;
     playersAddNotes: boolean;
+    weekdays: WeekdayTemplate[];
     selectedYear: number;
     selectedMonth: MonthTemplate | undefined;
     selectedDay: DayTemplate | undefined;
     visibleYear: number;
     visibleMonth: MonthTemplate | undefined;
+    visibleMonthStartWeekday: any[];
     currentYear: YearTemplate;
     currentMonth: MonthTemplate | undefined;
     currentDay: DayTemplate | undefined;
@@ -84,4 +86,15 @@ export interface CurrentDateConfig {
     month: number;
     /** The current day */
     day: number
+}
+
+export interface WeekdayTemplate {
+    name: string;
+    firstCharacter: string;
+    numericRepresentation: number;
+}
+
+export interface WeekdayConfig {
+    name: string;
+    numericRepresentation: number;
 }

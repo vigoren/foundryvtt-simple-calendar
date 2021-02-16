@@ -1,6 +1,7 @@
 import Month from "./month";
 import {MonthTemplate, YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
+import {Weekday} from "./weekday";
 
 /**
  * Class for representing a year
@@ -22,10 +23,21 @@ export default class Year {
      * A list of all the months in this year
      */
     months: Month[] = [];
-
+    /**
+     * The year for the selected day
+     * @type {number}
+     */
     selectedYear: number;
-
+    /**
+     * The year that is currently visible
+     * @type {number}
+     */
     visibleYear: number;
+    /**
+     * The days that make up a week
+     * @type {Array.<Weekday>}
+     */
+    weekdays: Weekday[] = []
 
     /**
      * The Year constructor
@@ -205,6 +217,39 @@ export default class Year {
                 }
             }
         }
+    }
+
+    /**
+     * Generates the total number of days in a year
+     * @return {number}
+     */
+    totalNumberOfDays(): number {
+        let total = 0;
+        this.months.forEach((m) => {total += m.days.length;});
+        return total;
+    }
+
+    /**
+     * Calculates the day of the week the first day of the currently visible month lands on
+     * @return {number}
+     */
+    visibleMonthStartingDayOfWeek(){
+        const daysPerYear = this.totalNumberOfDays();
+        Logger.debug(`Days Per Year: ${daysPerYear}`);
+        //Assuming a start year of 0
+        const totalDaysForYears = daysPerYear * this.visibleYear;
+        Logger.debug(`Total Days For Years: ${totalDaysForYears}`);
+        let daysSoFarThisYear = 0;
+        for(let i = 0; i < this.months.length; i++){
+            if(!this.months[i].visible){
+               daysSoFarThisYear = daysSoFarThisYear + this.months[i].days.length;
+            } else {
+                break;
+            }
+        }
+        Logger.debug(`Days So Far This Year: ${daysSoFarThisYear}`);
+        Logger.debug(`Number of days per week: ${this.weekdays.length}`);
+        return ((totalDaysForYears + daysSoFarThisYear)% this.weekdays.length + this.weekdays.length) % this.weekdays.length;
     }
 
 }
