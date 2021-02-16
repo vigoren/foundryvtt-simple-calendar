@@ -41,6 +41,7 @@ export class GameSettings {
             scope: "world",
             config: false,
             type: Array,
+            default: [],
             onChange: SimpleCalendar.instance.loadNotes.bind(SimpleCalendar.instance, true)
         });
         game.settings.register(ModuleName, SettingNames.AllowPlayersToAddNotes, {

@@ -1,10 +1,16 @@
+
+.calendar-row{
+  display: flex;
+  justify-content: center;
+}
+
 .calendar {
   background-color: white;
   border: 1px solid #c3c3c3;
   box-shadow: 2px 2px 2px #c3c3c3;
   padding: 5px;
   max-width: 300px;
-  margin: 0 auto 1rem;
+  margin: 0 0 1rem;
 
   .current-date{
     display: flex;
