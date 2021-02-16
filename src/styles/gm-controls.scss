@@ -1,11 +1,3 @@
-.configure-button{
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  margin: -0.5rem auto 0.5rem;
-  max-width: 300px;
-}
-
 .control{
   border: 1px solid #384582;
   padding: 0.15rem 0.5rem;
@@ -44,8 +36,8 @@
   border: 1px solid #c3c3c3;
   box-shadow: 2px 2px 2px #c3c3c3;
   padding: 5px;
-  max-width: 275px;
-  margin: 0 auto 1rem;
+  width: 275px;
+  margin: 0 0 1rem 1rem;
   .control-group{
     display: flex;
     flex-direction: row;

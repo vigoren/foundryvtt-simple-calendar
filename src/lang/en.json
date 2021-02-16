@@ -9,6 +9,7 @@
   "FSC.DateControls": "Current Date Controls",
   "FSC.DateControlsHelp": "Use these controls to change the current date in your game.",
   "FSC.Apply": "Apply",
+  "FSC.Today": "Today",
   "FSC.Configure": "Configure",
   "FSC.ChangeNextMonth": "Change to Next Month",
   "FSC.ChangePreviousMonth": "Change to Previous Month",
@@ -21,6 +22,13 @@
   "FSC.Notes.Empty": "No notes for this date",
   "FSC.Notes.For": "Notes for",
   "FSC.Notes.AddNew": "Add New Note",
+  "FSC.Date.Sunday": "Sunday",
+  "FSC.Date.Monday": "Monday",
+  "FSC.Date.Tuesday": "Tuesday",
+  "FSC.Date.Wednesday": "Wednesday",
+  "FSC.Date.Thursday": "Thursday",
+  "FSC.Date.Friday": "Friday",
+  "FSC.Date.Saturday": "Saturday",
   "FSC.Date.January": "January",
   "FSC.Date.February": "February",
   "FSC.Date.March": "March",
@@ -52,5 +60,10 @@
   "FSC.Configuration.Month.NumberHelp": "The numeric representation of this month.",
   "FSC.Configuration.Month.Remove": "Remove",
   "FSC.Configuration.Month.RemoveAll": "Remove All Months",
-  "FSC.Configuration.Month.Add": "Add New Month"
+  "FSC.Configuration.Month.Add": "Add New Month",
+  "FSC.Configuration.Weekday.Title": "Weekday Settings",
+  "FSC.Configuration.Weekday.Name": "Weekday Name",
+  "FSC.Configuration.Weekday.NameHelp": "The text name of this day of the week.",
+  "FSC.Configuration.Weekday.Add": "Add New Weekday",
+  "FSC.Configuration.Weekday.RemoveAll": "Remove All Weekdays"
 }

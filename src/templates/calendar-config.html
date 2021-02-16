@@ -41,7 +41,7 @@
                         <input class="month-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.NameHelp'}}" />
                     </td>
                     <td>
-                        <input class="month-days" value="{{days.length}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}" />
+                        <input class="month-days" value="{{numberOfDays}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}" />
                     </td>
                     <td class="center">{{numericRepresentation}}</td>
                     <td>
@@ -50,10 +50,34 @@
                 </tr>
                 {{/each}}
             </table>
-            <div class="month-actions">
+            <div class="table-actions">
                 <button class="month-add"><span class="fa fa-plus"></span>{{localize 'FSC.Configuration.Month.Add'}}</button>
                 <span class="spacer"></span>
                 <button class="remove-month" data-index="all"><span class="fa fa-trash"></span>{{localize 'FSC.Configuration.Month.RemoveAll'}}</button>
+            </div>
+        </div>
+        <div class="weekday-settings">
+            <h2>{{localize 'FSC.Configuration.Weekday.Title'}}</h2>
+            <table>
+                <tr>
+                    <th title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}">{{localize 'FSC.Configuration.Weekday.Name'}}</th>
+                    <th></th>
+                </tr>
+                {{#each weekdays}}
+                <tr>
+                    <td>
+                        <input class="weekday-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}" />
+                    </td>
+                    <td>
+                        <button class="remove-weekday" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                    </td>
+                </tr>
+                {{/each}}
+            </table>
+            <div class="table-actions">
+                <button class="weekday-add"><span class="fa fa-plus"></span>{{localize 'FSC.Configuration.Weekday.Add'}}</button>
+                <span class="spacer"></span>
+                <button class="remove-weekday" data-index="all"><span class="fa fa-trash"></span>{{localize 'FSC.Configuration.Weekday.RemoveAll'}}</button>
             </div>
         </div>
         <button id="scSubmit" type="submit" name="submit" title="{{localize 'FSC.Configuration.Save'}}">

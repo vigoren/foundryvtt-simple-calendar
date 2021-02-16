@@ -9,6 +9,7 @@ export interface CalendarTemplate {
     selectedDay: DayTemplate | undefined;
     visibleYear: number;
     visibleMonth: MonthTemplate | undefined;
+    visibleMonthStartWeekday: any[];
     currentYear: YearTemplate;
     currentMonth: MonthTemplate | undefined;
     currentDay: DayTemplate | undefined;
@@ -25,7 +26,9 @@ export interface YearTemplate {
     /** The numeric representation of the year */
     numericRepresentation: number;
     /** The months that make up the year */
-    months: MonthTemplate[]
+    months: MonthTemplate[];
+    /** The days of the week */
+    weekdays: WeekdayTemplate[];
 }
 
 /**
@@ -48,6 +51,7 @@ export interface  MonthTemplate {
     visible: boolean;
     selected: boolean;
     days: any[];
+    numberOfDays: number;
 }
 
 /**
@@ -83,4 +87,21 @@ export interface CurrentDateConfig {
     month: number;
     /** The current day */
     day: number
+}
+
+/**
+ * Interface for the weekday tempalte that is passed to the HTML for rendering
+ */
+export interface WeekdayTemplate {
+    name: string;
+    firstCharacter: string;
+    numericRepresentation: number;
+}
+
+/**
+ * Interface for the data saved to the game settings for each weekday class
+ */
+export interface WeekdayConfig {
+    name: string;
+    numericRepresentation: number;
 }

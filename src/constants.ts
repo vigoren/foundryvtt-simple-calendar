@@ -8,6 +8,7 @@ export const ModuleName = 'foundryvtt-simple-calendar';
  */
 export enum SettingNames {
     YearConfiguration = 'year-config',
+    WeekdayConfiguration = 'weekday-config',
     MonthConfiguration = 'month-config',
     CurrentDate = 'current-date',
     Notes = 'notes',

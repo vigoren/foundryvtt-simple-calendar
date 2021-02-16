@@ -9,7 +9,6 @@ const config: Config.InitialOptions = {
     testMatch: [ "**/?(*.)+(spec|test).+(ts|tsx|js)" ],
     transform: {"^.+\\.(ts|tsx)$": "ts-jest"},
     collectCoverage: true,
-    coverageDirectory: './docs/coverage',
-    //coverageReporters: ["html","clover"]
+    coverageDirectory: './docs/coverage'
 };
 export default config;

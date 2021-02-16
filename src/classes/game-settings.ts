@@ -1,11 +1,27 @@
 import Year from "./year";
 import {Logger} from "./logging";
-import {CurrentDateConfig, MonthConfig, YearConfig} from "../interfaces";
+import {CurrentDateConfig, MonthConfig, WeekdayConfig, YearConfig} from "../interfaces";
 import {ModuleName, SettingNames} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
+import {Weekday} from "./weekday";
 
 export class GameSettings {
+    /**
+     * Returns if the current user is the GM
+     * @return {boolean}
+     */
+    static IsGm(): boolean {
+        return game.user.isGM;
+    }
+
+    /**
+     * Returns the localized string based on the key
+     * @param {string} key The localization string key
+     */
+    static Localize(key: string): string {
+        return game.i18n.localize(key);
+    }
 
     /**
      * Register the settings this module needs to use with the game
@@ -16,7 +32,15 @@ export class GameSettings {
             scope: "world",
             config: false,
             type: Object,
-            onChange: SimpleCalendar.instance.loadYearConfiguration.bind(SimpleCalendar.instance, true)
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
+        });
+        game.settings.register(ModuleName, SettingNames.WeekdayConfiguration, {
+            name: "Weekday Configuration",
+            scope: "world",
+            config: false,
+            type: Array,
+            default: [],
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
         });
         game.settings.register(ModuleName, SettingNames.MonthConfiguration, {
             name: "Month Configuration",
@@ -24,24 +48,22 @@ export class GameSettings {
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.loadMonthConfiguration.bind(SimpleCalendar.instance, true)
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
         });
         game.settings.register(ModuleName, SettingNames.CurrentDate, {
             name: "Current Date",
             scope: "world",
             config: false,
             type: Object,
-            onChange: () => {
-                SimpleCalendar.instance.loadMonthConfiguration();
-                SimpleCalendar.instance.loadCurrentDate(true);
-            }
+            onChange:  SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
         });
         game.settings.register(ModuleName, SettingNames.Notes, {
             name: "Notes",
             scope: "world",
             config: false,
             type: Array,
-            onChange: SimpleCalendar.instance.loadNotes.bind(SimpleCalendar.instance, true)
+            default: [],
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
         });
         game.settings.register(ModuleName, SettingNames.AllowPlayersToAddNotes, {
             name: "Allow Players to Add Notes",
@@ -54,8 +76,62 @@ export class GameSettings {
     }
 
     /**
-     *
-     * @param year
+     * Loads the allow players to add notes setting from the game world settings
+     * @return {boolean}
+     */
+    static LoadAllowPlayersToAddNotes(): boolean {
+        return game.settings.get(ModuleName, SettingNames.AllowPlayersToAddNotes);
+    }
+
+    /**
+     * Loads the year configuration from the game world settings
+     * @return {YearConfig}
+     */
+    static LoadYearData(): YearConfig {
+        return game.settings.get(ModuleName, SettingNames.YearConfiguration);
+    }
+
+    /**
+     * Loads the current date from the game world settings
+     * @return {Array.<CurrentDateConfig>}
+     */
+    static LoadCurrentDate(): CurrentDateConfig {
+        return game.settings.get(ModuleName,  SettingNames.CurrentDate);
+    }
+
+    /**
+     * Loads the month configuration from the game world settings
+     * @return {Array.<MonthConfig>}
+     */
+    static LoadMonthData(): MonthConfig[] {
+        let returnData: MonthConfig[] = [];
+        let monthData = <any[]>game.settings.get(ModuleName, SettingNames.MonthConfiguration);
+        if(monthData && monthData.length) {
+            if (Array.isArray(monthData[0])) {
+                returnData = <MonthConfig[]>monthData[0];
+            }
+        }
+        return returnData;
+    }
+
+    /**
+     * Loads the weekday configuration from the game world settings
+     * @return {Array.<WeekdayConfig>}
+     */
+    static LoadWeekdayData(): WeekdayConfig[] {
+        let returnData: WeekdayConfig[] = [];
+        let weekdayData = <any[]>game.settings.get(ModuleName, SettingNames.WeekdayConfiguration);
+        if(weekdayData && weekdayData.length) {
+            if (Array.isArray(weekdayData[0])) {
+                returnData = <WeekdayConfig[]>weekdayData[0];
+            }
+        }
+        return returnData;
+    }
+
+    /**
+     * Saves the current date to the world settings
+     * @param {Year} year The year that has the current date
      */
     static async SaveCurrentDate(year: Year){
         if(game.user.isGM){
@@ -88,8 +164,8 @@ export class GameSettings {
     }
 
     /**
-     *
-     * @param year
+     * Saves the passed in year configuration into the world settings
+     * @param {Year} year The year that makes up the configuration
      */
     static async SaveYearConfiguration(year: Year): Promise<boolean> {
         if(game.user.isGM) {
@@ -109,18 +185,29 @@ export class GameSettings {
         return false;
     }
 
+    /**
+     * Saves the passed in month configuration into the world settings
+     * @param {Array.<Month>} months
+     */
     static async SaveMonthConfiguration(months: Month[]): Promise<any> {
         if(game.user.isGM) {
             Logger.debug(`Saving month configuration.`);
-            const currentConfig = <MonthConfig[]> game.settings.get(ModuleName, SettingNames.MonthConfiguration);
             const newConfig: MonthConfig[] = months.map(m => { return {  name: m.name, numericRepresentation: m.numericRepresentation, numberOfDays: m.days.length }; });
-            if(currentConfig.length !== newConfig.length){
-                return game.settings.set(ModuleName, SettingNames.MonthConfiguration, newConfig).then(() => {return true;});
-            } else {
-                Logger.debug('Month configuration has not changed, not updating settings');
-            }
+            return game.settings.set(ModuleName, SettingNames.MonthConfiguration, newConfig).then(() => {return true;});
         }
         return false;
     }
 
+    /**
+     * Saves the passed in weekday configuration into the world settings
+     * @param {Array.<Weekday>} weekdays The weekdays that make up the configuration
+     */
+    static async SaveWeekdayConfiguration(weekdays: Weekday[]): Promise<any> {
+        if(game.user.isGM) {
+            Logger.debug(`Saving weekday configuration.`);
+            const newConfig: WeekdayConfig[] = weekdays.map(w => {return {name: w.name, numericRepresentation: w.numericRepresentation}; });
+            return game.settings.set(ModuleName, SettingNames.WeekdayConfiguration, newConfig).then(() => {return true;});
+        }
+        return false;
+    }
 }
