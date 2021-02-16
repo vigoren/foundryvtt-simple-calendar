@@ -1,13 +1,21 @@
 <div id="simpleCalendar">
-    <div class="calendar-row">
+    <div class="calendar-row" style="{{#calendar-row-width}}{{/calendar-row-width}}">
         <div class="calendar-display">
-            <div class="calendar">
+            <div class="calendar" style="{{#calendar-width}}{{/calendar-width}}">
                 <div class="current-date">
                     <a class="fa fa-chevron-left" title="{{localize 'FSC.ChangePreviousMonth'}}"></a>
                     <span>{{visibleMonth.name}} {{currentYear.display}}</span>
                     <a class="fa fa-chevron-right" title="{{localize 'FSC.ChangeNextMonth'}}"></a>
                 </div>
+                <div class="weekdays">
+                    {{#each currentYear.weekdays}}
+                    <div class="weekday" title="{{name}}">{{firstCharacter}}</div>
+                    {{/each}}
+                </div>
                 <div class="days">
+                    {{#each visibleMonthStartWeekday}}
+                    <div class="empty-day"></div>
+                    {{/each}}
                     {{#each visibleMonth.days}}
                     <div class="day {{#if ../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
                         {{this.name}}
