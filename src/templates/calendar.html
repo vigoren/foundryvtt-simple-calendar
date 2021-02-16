@@ -2,7 +2,7 @@
     <div class="calendar">
         <div class="current-date">
             <a class="fa fa-chevron-left" title="{{localize 'FSC.ChangePreviousMonth'}}"></a>
-            <span>{{visibleMonth.name}} {{currentDay.name}}, {{currentYear.display}}</span>
+            <span>{{visibleMonth.name}} {{currentYear.display}}</span>
             <a class="fa fa-chevron-right" title="{{localize 'FSC.ChangeNextMonth'}}"></a>
         </div>
         <div class="days">
@@ -13,10 +13,14 @@
             {{/each}}
         </div>
     </div>
-    {{#if isGM}}
-    <div class="configure-button">
-        <a class="fa fa-cog control" title="{{localize 'FSC.Configure'}}"> {{localize 'FSC.Configure'}}</a>
+    <div class="calendar-controls">
+        <a class="control today" title="{{localize 'FSC.Today'}}">{{localize 'FSC.Today'}}</a>
+        {{#if isGM}}
+        <span class="spacer"></span>
+        <a class="fa fa-cog control configure-button" title="{{localize 'FSC.Configure'}}"> {{localize 'FSC.Configure'}}</a>
+        {{/if}}
     </div>
+    {{#if isGM}}
     <div class="controls">
         <h2>{{localize 'FSC.DateControls'}}</h2>
         <p>{{localize 'FSC.DateControlsHelp'}}</p>

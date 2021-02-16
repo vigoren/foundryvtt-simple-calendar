@@ -9,6 +9,7 @@
   "FSC.DateControls": "Current Date Controls",
   "FSC.DateControlsHelp": "Use these controls to change the current date in your game.",
   "FSC.Apply": "Apply",
+  "FSC.Today": "Today",
   "FSC.Configure": "Configure",
   "FSC.ChangeNextMonth": "Change to Next Month",
   "FSC.ChangePreviousMonth": "Change to Previous Month",

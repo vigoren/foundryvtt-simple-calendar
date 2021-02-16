@@ -129,6 +129,10 @@ export default class SimpleCalendar extends Application{
             const days = (<JQuery>html).find(".calendar .days .day");
             days.on('click', SimpleCalendar.instance.dayClick.bind(this));
 
+            // Today button click
+            const todayButton = (<JQuery>html).find(".calendar-controls .today");
+            todayButton.on('click', SimpleCalendar.instance.todayClick.bind(this));
+
             // When the GM Date controls are clicked
             const controls = (<JQuery>html).find(".controls .control");
             controls.on('click', SimpleCalendar.instance.gmControlClick.bind(this));
@@ -136,7 +140,7 @@ export default class SimpleCalendar extends Application{
             applyButton.on('click', SimpleCalendar.instance.dateControlApply.bind(this));
 
             //Configuration Button Click
-            const configurationButton = (<JQuery>html).find(".configure-button .control");
+            const configurationButton = (<JQuery>html).find(".calendar-controls .configure-button");
             configurationButton.on('click', SimpleCalendar.instance.configurationClick.bind(this));
         }
     }
@@ -199,6 +203,26 @@ export default class SimpleCalendar extends Application{
             }
         } else {
             Logger.error('Day is missing data attribute!');
+        }
+    }
+
+    /**
+     * Click event when a user clicks on the Today button
+     * @param {Event} e The click event
+     */
+    public todayClick(e: Event) {
+        e.preventDefault();
+        if(this.currentYear){
+            const currentMonth = this.currentYear.getCurrentMonth();
+            if(currentMonth){
+                const currentDay = currentMonth.getCurrentDay();
+                if(currentDay){
+                    currentMonth.visible = true;
+                    currentMonth.selected = true;
+                    currentDay.selected = true;
+                    this.updateApp();
+                }
+            }
         }
     }
 

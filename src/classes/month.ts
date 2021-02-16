@@ -143,6 +143,9 @@ export default class Month {
      */
     changeDay(next: boolean, setting: string = 'current'){
         const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
+        if(verifiedSetting === 'current'){
+            this.visible = true;
+        }
         let changeAmount = next? 1 : -1;
         for(let i = 0; i < this.days.length; i++){
             const day = this.days[i];

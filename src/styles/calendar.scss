@@ -58,3 +58,14 @@
     }
   }
 }
+
+.calendar-controls{
+  display: flex;
+  flex-direction: row;
+  margin: -0.5rem auto 0.5rem;
+  max-width: 300px;
+
+  .spacer{
+    flex: 1;
+  }
+}
