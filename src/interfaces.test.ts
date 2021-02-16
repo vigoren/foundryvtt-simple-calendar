@@ -5,15 +5,16 @@ import {
     DayTemplate,
     YearConfig,
     MonthConfig,
-    CurrentDateConfig
+    CurrentDateConfig, WeekdayTemplate, WeekdayConfig
 } from "./interfaces";
 
 describe('Interface Tests', () => {
 
     const dt: DayTemplate = {selected: false, current: false, name: '', numericRepresentation: 0};
+    const wt: WeekdayTemplate = {firstCharacter:'', name:'', numericRepresentation:0};
     const mt: MonthTemplate = {selected: false, current: false, visible: false, days: [], display: '', name: '', numericRepresentation: 0, numberOfDays: 0};
-    const yt: YearTemplate = {display: '', months: [], numericRepresentation: 0};
-    const ct: CalendarTemplate = {isGM: false, playersAddNotes: false, currentYear: yt, visibleMonth: mt, currentMonth: mt, selectedMonth: mt, selectedDay: dt, currentDay: dt, showCurrentDay: false, visibleYear:0, selectedYear:0, showSelectedDay:false};
+    const yt: YearTemplate = {display: '', months: [], numericRepresentation: 0, weekdays: []};
+    const ct: CalendarTemplate = {isGM: false, playersAddNotes: false, currentYear: yt, visibleMonth: mt, currentMonth: mt, selectedMonth: mt, selectedDay: dt, currentDay: dt, showCurrentDay: false, visibleYear:0, selectedYear:0, showSelectedDay:false, visibleMonthStartWeekday: []};
 
 
     test('Day Template', () => {
@@ -36,15 +37,22 @@ describe('Interface Tests', () => {
         expect(mt.numberOfDays).toBe(0);
     });
 
+    test('Weekday Template', () => {
+        expect(wt.firstCharacter).toBe("");
+        expect(wt.name).toBe("");
+        expect(wt.numericRepresentation).toBe(0);
+    });
+
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(3); //Make sure no new properties have been added
+        expect(Object.keys(yt).length).toBe(4); //Make sure no new properties have been added
         expect(yt.display).toBe('');
         expect(yt.months).toStrictEqual([]);
+        expect(yt.weekdays).toStrictEqual([]);
         expect(yt.numericRepresentation).toBe(0);
     });
 
     test('Calendar Template', () => {
-        expect(Object.keys(ct).length).toBe(12); //Make sure no new properties have been added
+        expect(Object.keys(ct).length).toBe(13); //Make sure no new properties have been added
         expect(ct.isGM).toBe(false);
         expect(ct.playersAddNotes).toBe(false);
         expect(ct.selectedYear).toBe(0);
@@ -52,12 +60,12 @@ describe('Interface Tests', () => {
         expect(ct.selectedDay).toStrictEqual(dt);
         expect(ct.visibleYear).toBe(0);
         expect(ct.visibleMonth).toStrictEqual(mt);
+        expect(ct.visibleMonthStartWeekday).toStrictEqual([]);
         expect(ct.currentYear).toStrictEqual(yt);
         expect(ct.currentMonth).toStrictEqual(mt);
         expect(ct.currentDay).toStrictEqual(dt);
         expect(ct.showSelectedDay).toBe(false);
         expect(ct.showCurrentDay).toBe(false);
-
     });
 
     test('Year Config', () => {
@@ -74,6 +82,13 @@ describe('Interface Tests', () => {
         expect(yc.name).toBe('');
         expect(yc.numberOfDays).toBe(0);
         expect(yc.numericRepresentation).toBe(0);
+    });
+
+    test('Weekday Config', () => {
+        const wc: WeekdayConfig = {name: '', numericRepresentation: 0};
+        expect(Object.keys(wc).length).toBe(2); //Make sure no new properties have been added
+        expect(wc.name).toBe('');
+        expect(wc.numericRepresentation).toBe(0);
     });
 
     test('Current Date Config', () => {

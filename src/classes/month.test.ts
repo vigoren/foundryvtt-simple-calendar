@@ -101,5 +101,24 @@ describe('Month Class Tests', () => {
         changeAmount = month2.changeDay(true);
         expect(month2.days[29].current).toBe(false);
         expect(changeAmount).toBe(1);
+
+        month2.days[0].selected = true;
+        //Move Forward one day within month
+        changeAmount = month2.changeDay(true, 'selected');
+        expect(month2.days[1].selected).toBe(true);
+        expect(changeAmount).toBe(0);
+        //Move back one day within month
+        changeAmount = month2.changeDay(false, 'selected');
+        expect(month2.days[0].selected).toBe(true);
+        expect(changeAmount).toBe(0);
+        //When at first day of month, move back 1 day into previous month
+        changeAmount = month2.changeDay(false, 'selected');
+        expect(month2.days[0].selected).toBe(false);
+        expect(changeAmount).toBe(-1);
+        //When at the last day of month move forward 1 day and into next month
+        month2.days[29].selected = true;
+        changeAmount = month2.changeDay(true, 'selected');
+        expect(month2.days[29].selected).toBe(false);
+        expect(changeAmount).toBe(1);
     });
 });

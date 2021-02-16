@@ -68,6 +68,7 @@
     "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
   },
   "exclude": [
+    "__mocks__",
     "node_modules",
     "**/*.test.ts",
     "jest.config.ts"

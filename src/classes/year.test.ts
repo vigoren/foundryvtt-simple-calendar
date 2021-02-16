@@ -1,5 +1,6 @@
 import Year from "./year";
 import Month from "./month";
+import {Weekday} from "./weekday";
 
 describe('Year Class Tests', () => {
     let year: Year;
@@ -13,8 +14,9 @@ describe('Year Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(year).length).toBe(6); //Make sure no new properties have been added
+        expect(Object.keys(year).length).toBe(7); //Make sure no new properties have been added
         expect(year.months).toStrictEqual([]);
+        expect(year.weekdays).toStrictEqual([]);
         expect(year.prefix).toBe("");
         expect(year.postfix).toBe("");
         expect(year.numericRepresentation).toBe(0);
@@ -23,16 +25,20 @@ describe('Year Class Tests', () => {
     });
 
     test('To Template', () => {
+        year.weekdays.push(new Weekday(1, 'S'));
         const t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(3); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(4); //Make sure no new properties have been added
         expect(t.months).toStrictEqual([]);
+        expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
         expect(t.display).toBe("0");
-        expect(year.numericRepresentation).toBe(0);
+        expect(t.numericRepresentation).toBe(0);
+
     });
 
     test('Clone', () => {
         expect(year.clone()).toStrictEqual(year);
         year2.months.push(month);
+        year2.weekdays.push(new Weekday(1, 'S'));
         expect(year2.clone()).toStrictEqual(year2);
     });
 
@@ -247,6 +253,31 @@ describe('Year Class Tests', () => {
         expect(year.months[0].selected).toBe(false);
         expect(year.months[1].selected).toBe(true);
         expect(year.months[1].days[21].selected).toBe(false);
+    });
+
+    test('Total Number of Days', () => {
+        year.months.push(month);
+        expect(year.totalNumberOfDays()).toBe(30);
+        year.months.push(new Month("Test 2", 2, 22));
+        expect(year.totalNumberOfDays()).toBe(52);
+    });
+
+    test('Visible Month Starting Day Of Week', () => {
+        year.months.push(month);
+        month.visible = true;
+        expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
+        year.weekdays.push(new Weekday(1, 'S'));
+        year.weekdays.push(new Weekday(2, 'M'));
+        year.weekdays.push(new Weekday(3, 'T'));
+        year.weekdays.push(new Weekday(4, 'W'));
+        year.weekdays.push(new Weekday(5, 'T'));
+        year.weekdays.push(new Weekday(6, 'F'));
+        year.weekdays.push(new Weekday(7, 'S'));
+        expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
+        month.visible = false;
+        year.months.push(new Month("Test 2", 2, 22));
+        year.months[1].visible = true;
+        expect(year.visibleMonthStartingDayOfWeek()).toBe(2);
     });
 
 });
