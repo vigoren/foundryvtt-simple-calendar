@@ -15,6 +15,7 @@ export interface CalendarTemplate {
     currentDay: DayTemplate | undefined;
     showSelectedDay: boolean;
     showCurrentDay: boolean;
+    notes: NoteTemplate[];
 }
 
 /**
@@ -87,6 +88,15 @@ export interface CurrentDateConfig {
     month: number;
     /** The current day */
     day: number
+}
+
+export interface NoteTemplate {
+    year: number;
+    month: number;
+    day: number;
+    title: string;
+    content: string;
+    author: string;
 }
 
 /**

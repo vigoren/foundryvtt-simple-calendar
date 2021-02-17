@@ -71,7 +71,8 @@ export default class SimpleCalendar extends Application{
                 visibleMonth: this.currentYear.getVisibleMonth()?.toTemplate(),
                 visibleMonthStartWeekday: Array(this.currentYear.visibleMonthStartingDayOfWeek()).fill(0),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
-                showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation
+                showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
+                notes: []
             };
         } else {
             return;
@@ -146,22 +147,20 @@ export default class SimpleCalendar extends Application{
                 }
             }
             // Listener for when a day is clicked
-            const days = (<JQuery>html).find(".calendar .days .day");
-            days.on('click', SimpleCalendar.instance.dayClick.bind(this));
+            (<JQuery>html).find(".calendar .days .day").on('click', SimpleCalendar.instance.dayClick.bind(this));
 
             // Today button click
-            const todayButton = (<JQuery>html).find(".calendar-controls .today");
-            todayButton.on('click', SimpleCalendar.instance.todayClick.bind(this));
+            (<JQuery>html).find(".calendar-controls .today").on('click', SimpleCalendar.instance.todayClick.bind(this));
 
             // When the GM Date controls are clicked
-            const controls = (<JQuery>html).find(".controls .control");
-            controls.on('click', SimpleCalendar.instance.gmControlClick.bind(this));
-            const applyButton = (<JQuery>html).find(".controls .btn-apply");
-            applyButton.on('click', SimpleCalendar.instance.dateControlApply.bind(this));
+            (<JQuery>html).find(".controls .control").on('click', SimpleCalendar.instance.gmControlClick.bind(this));
+            (<JQuery>html).find(".controls .btn-apply").on('click', SimpleCalendar.instance.dateControlApply.bind(this));
 
             //Configuration Button Click
-            const configurationButton = (<JQuery>html).find(".calendar-controls .configure-button");
-            configurationButton.on('click', SimpleCalendar.instance.configurationClick.bind(this));
+            (<JQuery>html).find(".calendar-controls .configure-button").on('click', SimpleCalendar.instance.configurationClick.bind(this));
+
+            // Add new note click
+            (<JQuery>html).find(".date-notes .add-note").on('click', SimpleCalendar.instance.addNote.bind(this));
         }
     }
 
@@ -300,6 +299,11 @@ export default class SimpleCalendar extends Application{
         } else {
             Logger.error('The Current year is not configured.');
         }
+    }
+
+    public addNote(e: Event) {
+        e.stopPropagation();
+        Logger.debug('Adding a new note');
     }
 
     /**
