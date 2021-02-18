@@ -21,9 +21,8 @@ export default class SimpleCalendar extends Application{
     /**
      * The current year the user is viewing
      * @type {Year | null}
-     * @private
      */
-    private currentYear: Year | null = null;
+    public currentYear: Year | null = null;
 
     /**
      * Simple Calendar constructor
@@ -91,7 +90,7 @@ export default class SimpleCalendar extends Application{
                 title: "FSC.ButtonTitle",
                 icon: "fas fa-calendar",
                 button: true,
-                onClick: () => {SimpleCalendar.instance.showApp();}
+                onClick: SimpleCalendar.instance.showApp.bind(SimpleCalendar.instance)
             });
         }
     }
@@ -335,25 +334,21 @@ export default class SimpleCalendar extends Application{
      * Loads the year configuration data from the settings and applies them to the current year
      */
     private loadYearConfiguration(){
-        try{
-            Logger.debug('Loading year configuration from settings.');
+        Logger.debug('Loading year configuration from settings.');
 
-            const yearData = GameSettings.LoadYearData();
-            if(yearData && Object.keys(yearData).length){
-                Logger.debug('Setting the year from data.');
-                if(!this.currentYear){
-                    this.currentYear = new Year(yearData.numericRepresentation);
-                } else {
-                    this.currentYear.numericRepresentation = yearData.numericRepresentation;
-                }
-                this.currentYear.prefix = yearData.prefix;
-                this.currentYear.postfix = yearData.postfix;
+        const yearData = GameSettings.LoadYearData();
+        if(yearData && Object.keys(yearData).length){
+            Logger.debug('Setting the year from data.');
+            if(!this.currentYear){
+                this.currentYear = new Year(yearData.numericRepresentation);
             } else {
-                Logger.debug('No year configuration found, setting default year data.');
-                this.currentYear = new Year(new Date().getFullYear());
+                this.currentYear.numericRepresentation = yearData.numericRepresentation;
             }
-        } catch (e){
-            Logger.error(e);
+            this.currentYear.prefix = yearData.prefix;
+            this.currentYear.postfix = yearData.postfix;
+        } else {
+            Logger.debug('No year configuration found, setting default year data.');
+            this.currentYear = new Year(new Date().getFullYear());
         }
     }
 
@@ -361,44 +356,40 @@ export default class SimpleCalendar extends Application{
      * Loads the month configuration data from the settings and applies them to the current year
      */
     private loadMonthConfiguration(){
-        try{
-            Logger.debug('Loading month configuration from settings.');
+        Logger.debug('Loading month configuration from settings.');
 
-            const date = new Date();
-            const dYear = date.getFullYear();
-            if(this.currentYear){
-                const monthData = GameSettings.LoadMonthData();
-                if(monthData.length){
-                    this.currentYear.months = [];
-                    Logger.debug('Setting the months from data.');
-                    for(let i = 0; i < monthData.length; i++){
-                        if(Object.keys(monthData[i]).length){
-                            this.currentYear.months.push(new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numberOfDays));
-                        }
+        const date = new Date();
+        const dYear = date.getFullYear();
+        if(this.currentYear){
+            const monthData = GameSettings.LoadMonthData();
+            if(monthData.length){
+                this.currentYear.months = [];
+                Logger.debug('Setting the months from data.');
+                for(let i = 0; i < monthData.length; i++){
+                    if(Object.keys(monthData[i]).length){
+                        this.currentYear.months.push(new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numberOfDays));
                     }
                 }
-                if(this.currentYear.months.length === 0) {
-                    Logger.debug('No month configuration found, setting default month data.');
-                    this.currentYear.months = [
-                        new Month(GameSettings.Localize("FSC.Date.January"), 1, 31),
-                        new Month(GameSettings.Localize("FSC.Date.February"), 2, (((dYear % 4 == 0) && (dYear % 100 != 0)) || (dYear % 400 == 0))? 29 : 28),
-                        new Month(GameSettings.Localize("FSC.Date.March"),3, 31),
-                        new Month(GameSettings.Localize("FSC.Date.April"),4, 30),
-                        new Month(GameSettings.Localize("FSC.Date.May"),5, 31),
-                        new Month(GameSettings.Localize("FSC.Date.June"),6, 30),
-                        new Month(GameSettings.Localize("FSC.Date.July"),7, 31),
-                        new Month(GameSettings.Localize("FSC.Date.August"),8, 31),
-                        new Month(GameSettings.Localize("FSC.Date.September"),9, 30),
-                        new Month(GameSettings.Localize("FSC.Date.October"), 10, 31),
-                        new Month(GameSettings.Localize("FSC.Date.November"), 11, 30),
-                        new Month(GameSettings.Localize("FSC.Date.December"), 12, 31),
-                    ];
-                }
-            } else {
-                Logger.error('No Current year configured, can not load month data.');
             }
-        } catch (e){
-            Logger.error(e);
+            if(this.currentYear.months.length === 0) {
+                Logger.debug('No month configuration found, setting default month data.');
+                this.currentYear.months = [
+                    new Month(GameSettings.Localize("FSC.Date.January"), 1, 31),
+                    new Month(GameSettings.Localize("FSC.Date.February"), 2, (((dYear % 4 == 0) && (dYear % 100 != 0)) || (dYear % 400 == 0))? 29 : 28),
+                    new Month(GameSettings.Localize("FSC.Date.March"),3, 31),
+                    new Month(GameSettings.Localize("FSC.Date.April"),4, 30),
+                    new Month(GameSettings.Localize("FSC.Date.May"),5, 31),
+                    new Month(GameSettings.Localize("FSC.Date.June"),6, 30),
+                    new Month(GameSettings.Localize("FSC.Date.July"),7, 31),
+                    new Month(GameSettings.Localize("FSC.Date.August"),8, 31),
+                    new Month(GameSettings.Localize("FSC.Date.September"),9, 30),
+                    new Month(GameSettings.Localize("FSC.Date.October"), 10, 31),
+                    new Month(GameSettings.Localize("FSC.Date.November"), 11, 30),
+                    new Month(GameSettings.Localize("FSC.Date.December"), 12, 31),
+                ];
+            }
+        } else {
+            Logger.error('No Current year configured, can not load month data.');
         }
     }
 
@@ -406,33 +397,29 @@ export default class SimpleCalendar extends Application{
      * Loads the weekday configuration data from the settings and applies them to the current year
      */
     private loadWeekdayConfiguration(){
-        try{
-            Logger.debug('Loading weekday configuration from settings.');
-            if(this.currentYear){
-                const weekdayData = GameSettings.LoadWeekdayData();
-                if(weekdayData.length){
-                    Logger.debug('Setting the weekdays from data.');
-                    this.currentYear.weekdays = [];
-                    for(let i = 0; i < weekdayData.length; i++){
-                        this.currentYear.weekdays.push(new Weekday(weekdayData[i].numericRepresentation, weekdayData[i].name));
-                    }
-                } else {
-                    Logger.debug('No weekday configuration found, loading default data.');
-                    this.currentYear.weekdays = [
-                        new Weekday(1, GameSettings.Localize('FSC.Date.Sunday')),
-                        new Weekday(2, GameSettings.Localize('FSC.Date.Monday')),
-                        new Weekday(3, GameSettings.Localize('FSC.Date.Tuesday')),
-                        new Weekday(4, GameSettings.Localize('FSC.Date.Wednesday')),
-                        new Weekday(5, GameSettings.Localize('FSC.Date.Thursday')),
-                        new Weekday(6, GameSettings.Localize('FSC.Date.Friday')),
-                        new Weekday(7, GameSettings.Localize('FSC.Date.Saturday'))
-                    ];
+        Logger.debug('Loading weekday configuration from settings.');
+        if(this.currentYear){
+            const weekdayData = GameSettings.LoadWeekdayData();
+            if(weekdayData.length){
+                Logger.debug('Setting the weekdays from data.');
+                this.currentYear.weekdays = [];
+                for(let i = 0; i < weekdayData.length; i++){
+                    this.currentYear.weekdays.push(new Weekday(weekdayData[i].numericRepresentation, weekdayData[i].name));
                 }
             } else {
-                Logger.error('No Current year configured, can not load weekday data.');
+                Logger.debug('No weekday configuration found, loading default data.');
+                this.currentYear.weekdays = [
+                    new Weekday(1, GameSettings.Localize('FSC.Date.Sunday')),
+                    new Weekday(2, GameSettings.Localize('FSC.Date.Monday')),
+                    new Weekday(3, GameSettings.Localize('FSC.Date.Tuesday')),
+                    new Weekday(4, GameSettings.Localize('FSC.Date.Wednesday')),
+                    new Weekday(5, GameSettings.Localize('FSC.Date.Thursday')),
+                    new Weekday(6, GameSettings.Localize('FSC.Date.Friday')),
+                    new Weekday(7, GameSettings.Localize('FSC.Date.Saturday'))
+                ];
             }
-        } catch (error){
-            Logger.error(error);
+        } else {
+            Logger.error('No Current year configured, can not load weekday data.');
         }
     }
 
@@ -440,51 +427,43 @@ export default class SimpleCalendar extends Application{
      * Loads the current date data from the settings and applies them to the current year
      */
     private loadCurrentDate(){
-        try{
-            Logger.debug('Loading current date from settings.');
-            const currentDate = GameSettings.LoadCurrentDate();
-            if(this.currentYear && currentDate && Object.keys(currentDate).length){
-                Logger.debug('Loading current date data from settings.');
-                this.currentYear.numericRepresentation = currentDate.year;
-                this.currentYear.visibleYear = currentDate.year;
-                this.currentYear.selectedYear = currentDate.year;
-                const month = this.currentYear.months.find(m => m.numericRepresentation === currentDate.month);
-                if(month){
-                    month.current = true;
-                    month.visible = true;
-                    const day = month.days.find(d => d.numericRepresentation === currentDate.day);
-                    if(day){
-                        day.current = true;
-                    } else {
-                        Logger.error('Save day could not be found in this month, perhaps number of days has changed. Setting current day to first day of month');
-                        month.days[0].current = true;
-                    }
+        Logger.debug('Loading current date from settings.');
+        const currentDate = GameSettings.LoadCurrentDate();
+        if(this.currentYear && currentDate && Object.keys(currentDate).length){
+            Logger.debug('Loading current date data from settings.');
+            this.currentYear.numericRepresentation = currentDate.year;
+            this.currentYear.visibleYear = currentDate.year;
+            this.currentYear.selectedYear = currentDate.year;
+            const month = this.currentYear.months.find(m => m.numericRepresentation === currentDate.month);
+            if(month){
+                month.current = true;
+                month.visible = true;
+                const day = month.days.find(d => d.numericRepresentation === currentDate.day);
+                if(day){
+                    day.current = true;
                 } else {
-                    Logger.error('Saved month could not be found, perhaps months have changed. Setting current month to the first month');
-                    this.currentYear.months[0].current = true;
-                    this.currentYear.months[0].visible = true;
-                    this.currentYear.months[0].days[0].current = true;
+                    Logger.error('Save day could not be found in this month, perhaps number of days has changed. Setting current day to first day of month');
+                    month.days[0].current = true;
                 }
-            } else if(this.currentYear && this.currentYear.months.length) {
-                Logger.debug('No current date setting found, setting default current date.');
+            } else {
+                Logger.error('Saved month could not be found, perhaps months have changed. Setting current month to the first month');
                 this.currentYear.months[0].current = true;
                 this.currentYear.months[0].visible = true;
                 this.currentYear.months[0].days[0].current = true;
-            } else {
-                Logger.error('Error setting the current date.');
             }
-        } catch (e){
-            Logger.error(e);
+        } else if(this.currentYear && this.currentYear.months.length) {
+            Logger.debug('No current date setting found, setting default current date.');
+            this.currentYear.months[0].current = true;
+            this.currentYear.months[0].visible = true;
+            this.currentYear.months[0].days[0].current = true;
+        } else {
+            Logger.error('Error setting the current date.');
         }
     }
 
     private loadNotes(){
-        try{
-            Logger.debug('Loading notes from settings.');
-            const notes = game.settings.get(ModuleName, SettingNames.Notes);
-        } catch (e){
-            Logger.error(e);
-        }
+        Logger.debug('Loading notes from settings.');
+        const notes = game.settings.get(ModuleName, SettingNames.Notes);
     }
 
 }

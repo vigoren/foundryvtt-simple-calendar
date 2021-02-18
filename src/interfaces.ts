@@ -99,6 +99,15 @@ export interface NoteTemplate {
     author: string;
 }
 
+export interface NoteConfig {
+    year: number;
+    month: number;
+    day: number;
+    title: string;
+    content: string;
+    author: string;
+}
+
 /**
  * Interface for the weekday tempalte that is passed to the HTML for rendering
  */

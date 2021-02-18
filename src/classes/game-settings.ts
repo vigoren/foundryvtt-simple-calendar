@@ -1,10 +1,11 @@
 import Year from "./year";
 import {Logger} from "./logging";
-import {CurrentDateConfig, MonthConfig, WeekdayConfig, YearConfig} from "../interfaces";
+import {CurrentDateConfig, MonthConfig, WeekdayConfig, YearConfig, NoteConfig} from "../interfaces";
 import {ModuleName, SettingNames} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import {Weekday} from "./weekday";
+import {Note} from "./note";
 
 export class GameSettings {
     /**
@@ -130,6 +131,21 @@ export class GameSettings {
     }
 
     /**
+     * Loads the notes from the game world settings
+     * @return {Array.<NoteConfig>}
+     */
+    static LoadNotes(): NoteConfig[] {
+        let returnData: NoteConfig[] = [];
+        let notes = <any[]>game.settings.get(ModuleName, SettingNames.Notes);
+        if(notes && notes.length) {
+            if (Array.isArray(notes[0])) {
+                returnData = <NoteConfig[]>notes[0];
+            }
+        }
+        return returnData;
+    }
+
+    /**
      * Saves the current date to the world settings
      * @param {Year} year The year that has the current date
      */
@@ -207,6 +223,19 @@ export class GameSettings {
             Logger.debug(`Saving weekday configuration.`);
             const newConfig: WeekdayConfig[] = weekdays.map(w => {return {name: w.name, numericRepresentation: w.numericRepresentation}; });
             return game.settings.set(ModuleName, SettingNames.WeekdayConfiguration, newConfig).then(() => {return true;});
+        }
+        return false;
+    }
+
+    /**
+     * Saves the passed in notes into the world settings
+     * @param {Array.<Note>} notes The notes to save
+     */
+    static async SaveNotes(notes: Note[]): Promise<any> {
+        if(game.user.isGM) {
+            Logger.debug(`Saving notes.`);
+            const newConfig: NoteConfig[] = notes.map(w => {return {title: w.title, content: w.content, author: w.author, year: w.year, month: w.month, day: w.day}; });
+            return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});
         }
         return false;
     }

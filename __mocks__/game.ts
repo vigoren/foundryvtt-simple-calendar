@@ -51,13 +51,13 @@ const game = {
                 case SettingNames.YearConfiguration:
                     return {numericRepresentation: 0, prefix: '', postfix: ''};
                 case SettingNames.MonthConfiguration:
-                    return [[{numericRepresentation: 0, numberOfDays: 1, name: ''}]];
+                    return [[{numericRepresentation: 1, numberOfDays: 2, name: ''}]];
                 case SettingNames.WeekdayConfiguration:
                     return [[{numericRepresentation: 0, name: ''}]];
                 case SettingNames.CurrentDate:
                     return {year: 0, month: 1, day: 2};
                 case SettingNames.Notes:
-                    return {};
+                    return [[{year: 0, month: 1, day: 2, title:'', content:'', author:''}]];
             }
         }),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),

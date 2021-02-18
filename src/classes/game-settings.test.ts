@@ -8,6 +8,8 @@ import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
+import {Note} from "./note";
+import Mock = jest.Mock;
 
 describe('Game Settings Class Tests', () => {
 
@@ -43,29 +45,36 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Month Data', () => {
-        expect(GameSettings.LoadMonthData()).toStrictEqual([{numericRepresentation: 0, numberOfDays: 1, name: ''}]);
+        expect(GameSettings.LoadMonthData()).toStrictEqual([{numericRepresentation: 1, numberOfDays: 2, name: ''}]);
         expect(game.settings.get).toHaveBeenCalled();
-        const orig = game.settings.get;
-        game.settings.get = (moduleName: string, settingName: string) => {return false;};
+        (<Mock>game.settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadMonthData()).toStrictEqual([]);
-        game.settings.get = (moduleName: string, settingName: string) => {return [];};
+        (<Mock>game.settings.get).mockReturnValueOnce([]);
         expect(GameSettings.LoadMonthData()).toStrictEqual([]);
-        game.settings.get = (moduleName: string, settingName: string) => {return [false];};
+        (<Mock>game.settings.get).mockReturnValueOnce([false]);
         expect(GameSettings.LoadMonthData()).toStrictEqual([]);
-        game.settings.get = orig;
     });
 
     test('Load Weekday Data', () => {
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([{numericRepresentation: 0, name: ''}]);
         expect(game.settings.get).toHaveBeenCalled();
-        const orig = game.settings.get;
-        game.settings.get = (moduleName: string, settingName: string) => {return false;};
+        (<Mock>game.settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
-        game.settings.get = (moduleName: string, settingName: string) => {return [];};
+        (<Mock>game.settings.get).mockReturnValueOnce([]);
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
-        game.settings.get = (moduleName: string, settingName: string) => {return [false];};
+        (<Mock>game.settings.get).mockReturnValueOnce([false]);
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
-        game.settings.get = orig;
+    });
+
+    test('Load Notes', () => {
+        expect(GameSettings.LoadNotes()).toStrictEqual([{year: 0, month: 1, day: 2, title:'', content:'', author:''}]);
+        expect(game.settings.get).toHaveBeenCalled();
+        (<Mock>game.settings.get).mockReturnValueOnce(false);
+        expect(GameSettings.LoadNotes()).toStrictEqual([]);
+        (<Mock>game.settings.get).mockReturnValueOnce([]);
+        expect(GameSettings.LoadNotes()).toStrictEqual([]);
+        (<Mock>game.settings.get).mockReturnValueOnce([false]);
+        expect(GameSettings.LoadNotes()).toStrictEqual([]);
     });
 
     test('Save Current Date', () => {
@@ -86,8 +95,7 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
         expect(game.settings.get).toHaveBeenCalled();
         expect(game.settings.set).not.toHaveBeenCalled();
-        // @ts-ignore
-        game.settings.get.mockClear();
+        (<Mock>game.settings.get).mockClear();
         year.months[0].days[1].current = false;
         year.months[0].days[2].current = true;
         expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
@@ -104,8 +112,7 @@ describe('Game Settings Class Tests', () => {
         game.user.isGM = true;
         expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(false);
         expect(game.settings.get).toHaveBeenCalled();
-        // @ts-ignore
-        game.settings.get.mockClear();
+        (<Mock>game.settings.get).mockClear();
         year.numericRepresentation = 1;
         expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(true);
         expect(game.settings.get).toHaveBeenCalled();
@@ -131,6 +138,17 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         game.user.isGM = true;
         expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(true);
+        expect(game.settings.set).toHaveBeenCalled();
+    });
+
+    test('Save Notes', () => {
+        // @ts-ignore
+        game.user.isGM = false;
+        const note = new Note(0, 1, 2, '', '', '');
+        expect(GameSettings.SaveNotes([note])).resolves.toBe(false);
+        // @ts-ignore
+        game.user.isGM = true;
+        expect(GameSettings.SaveNotes([note])).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalled();
     });
 });

@@ -5,7 +5,7 @@ import {
     DayTemplate,
     YearConfig,
     MonthConfig,
-    CurrentDateConfig, WeekdayTemplate, WeekdayConfig
+    CurrentDateConfig, WeekdayTemplate, WeekdayConfig, NoteConfig, NoteTemplate
 } from "./interfaces";
 
 describe('Interface Tests', () => {
@@ -14,7 +14,7 @@ describe('Interface Tests', () => {
     const wt: WeekdayTemplate = {firstCharacter:'', name:'', numericRepresentation:0};
     const mt: MonthTemplate = {selected: false, current: false, visible: false, days: [], display: '', name: '', numericRepresentation: 0, numberOfDays: 0};
     const yt: YearTemplate = {display: '', months: [], numericRepresentation: 0, weekdays: []};
-    const ct: CalendarTemplate = {isGM: false, playersAddNotes: false, currentYear: yt, visibleMonth: mt, currentMonth: mt, selectedMonth: mt, selectedDay: dt, currentDay: dt, showCurrentDay: false, visibleYear:0, selectedYear:0, showSelectedDay:false, visibleMonthStartWeekday: []};
+    const ct: CalendarTemplate = {isGM: false, playersAddNotes: false, currentYear: yt, visibleMonth: mt, currentMonth: mt, selectedMonth: mt, selectedDay: dt, currentDay: dt, showCurrentDay: false, visibleYear:0, selectedYear:0, showSelectedDay:false, visibleMonthStartWeekday: [], notes: []};
 
 
     test('Day Template', () => {
@@ -52,7 +52,7 @@ describe('Interface Tests', () => {
     });
 
     test('Calendar Template', () => {
-        expect(Object.keys(ct).length).toBe(13); //Make sure no new properties have been added
+        expect(Object.keys(ct).length).toBe(14); //Make sure no new properties have been added
         expect(ct.isGM).toBe(false);
         expect(ct.playersAddNotes).toBe(false);
         expect(ct.selectedYear).toBe(0);
@@ -66,6 +66,7 @@ describe('Interface Tests', () => {
         expect(ct.currentDay).toStrictEqual(dt);
         expect(ct.showSelectedDay).toBe(false);
         expect(ct.showCurrentDay).toBe(false);
+        expect(ct.notes).toStrictEqual([]);
     });
 
     test('Year Config', () => {
@@ -97,5 +98,27 @@ describe('Interface Tests', () => {
         expect(yc.year).toBe(0);
         expect(yc.month).toBe(0);
         expect(yc.day).toBe(0);
+    });
+
+    test('Notes Template', () => {
+        const nt: NoteTemplate = {year: 0, month:0, day:0, title: '', content: '', author: ''};
+        expect(Object.keys(nt).length).toBe(6); //Make sure no new properties have been added
+        expect(nt.year).toBe(0);
+        expect(nt.month).toBe(0);
+        expect(nt.day).toBe(0);
+        expect(nt.title).toBe('');
+        expect(nt.content).toBe('');
+        expect(nt.author).toBe('');
+    });
+
+    test('Notes Config', () => {
+        const nc: NoteConfig = {year: 0, month:0, day:0, title: '', content: '', author: ''};
+        expect(Object.keys(nc).length).toBe(6); //Make sure no new properties have been added
+        expect(nc.title).toBe('');
+        expect(nc.content).toBe('');
+        expect(nc.author).toBe('');
+        expect(nc.year).toBe(0);
+        expect(nc.month).toBe(0);
+        expect(nc.day).toBe(0);
     });
 });
