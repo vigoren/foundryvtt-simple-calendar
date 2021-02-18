@@ -3,12 +3,19 @@
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE)
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/vigorator/foundryvtt-simple-calendar/Update%20Release's/main)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/vigoren/foundryvtt-simple-calendar)
+
+![Logo](docs/images/logo.png)
+
 # Simple Calendar
-A simple calendar module for the FoundryVTT system.
+A simple calendar module for [FoundryVTT](https://foundryvtt.com/) that is system independent. 
 
 This module allows you to create a calendar with any number of months per year and any number of days per month for your game world.
+It is intended as a way for a GM to show a calendar like interface that maps to their in game world.
+The simple calendar module does not keep track of time or tie into any system to advance the day, date changing is a manual process by the GM.
 
-##GM Features:
+If you are looking for a module that tracks in game time and has weather related effects I recommend you check out the [Calendar/Weather module](https://www.foundryvtt-hub.com/package/calendar-weather/).
+
+## GM Features:
 * Configure the calendar to meet your worlds needs
     * Set the year as well as add any prefix or postfix to the years name
     * Define how many months in a year
@@ -19,8 +26,74 @@ This module allows you to create a calendar with any number of months per year a
     * These notes can either be visible to players as well as the GM or just the GM
     * Allow the players to add their own notes to the calendar
     
-##Player Features:
+## Player Features:
 * Browse a calendar interface to see the years, months and day of the game world
 * Select days to see any notes/events specific to that day.
 * If the GM allows it, add your own notes to the Calendar
 
+## Accessing and using the Calendar
+The module adds a calendar button to the basic controls section of the layer controls. Clicking on this will open the module window
+
+![Calendar Button Location](docs/images/layers-button.png?raw=true)
+
+The above image helps shows the controls, they are detailed out below.
+
+Control | Description
+------- | -----------
+Previous/Next | Allow the user to change which month/year they are currently viewing.
+Today Button | Changes the calendar so that the current day (in the game world) is visible and selected.
+Blue Circle Day | This indicates the current day in the game world, can be changed by the GM
+Green Circle Day | This indicates the day the user currently has selected. This will show any notes on this day.
+Add New Note Button | This is only visible for players if the GM allows players to add their own notes. This will open the add notes dialog to add a new note for the selected day.
+
+## Updating the Current Date
+The GM version of the module looks a little different, with the addition of controls to change the current date and a button to enter the configuration. 
+
+![GM View](docs/images/gm-view.png)
+
+The above image helps shows the controls, they are detailed out below.
+
+Control | Description
+------- | -----------
+Day Back/Forward | This moves the current day forward or back one day.
+Month Back/Forward | This moves the current month forward or back one month. The current day will be mapped to the same day as the old month, or the last day of the month if the old month has more days.
+Year Back/Forward | This moves the current year forward or back one year. The current month and day will stay the same in the new year.
+Apply | This will apply the changes, saving the new current day in the settings and updating all of the players calendars to reflect the new current day.
+Configuration | This opens up the configuration dialog to allow the GM to fully customize the calendar.
+
+## Configuring Your calendar
+Configuration of the calendar is straight forward. As the GM open the configuration dialog and start customizing your calendar!
+
+### Year Settings
+This section allows you to change some settings about the years in your game world
+
+Setting | Description
+-------- | ----------
+Current Year | The Current year your game world is in. This can be any positive number.
+Year Prefix | Text that will appear before the year number.
+Year Postfix | Text that will appear after the year number.
+
+### Month Settings
+This section displays all the months that exist in the calendar. Here you can change month names, the number of days in a month, remove a month, add a new month or remove all months.
+
+Setting | Description
+-------- | ----------
+Month Name | These text boxes for each month allow you to change the name of an existing month.
+Number of Days | These text boxes for each month allow you to change the number of days in each month.
+Remove Button | These buttons for each month allow you to remove the month from the list.
+Add New Month Button | This button will add a new month to the bottom of the list with a default name and number of days that you can then configure to your liking.
+Remove All Months Button | This button will remove all of the months from the list. 
+
+
+### Weekday Settings
+This section displays all the weekdays that exist in the calendar. Weekdays are used to determine how wide the calendar display should be and how to make month days to each day of the week.
+
+Setting | Description
+-------- | ----------
+Weekday Name | These text boxes for each weekday allow you to change the name of an existing weekday.
+Remove Button | These buttons for each weekday allow you to remove the weekday from the list.
+Add New Weekday Button | This button will add a new weekday to the bottom of the list with a default name that you can then configure to your liking.
+Remove All Weekdays Button | This button will remove all of the weekdays from the list.
+
+
+After you have changed the settings to your liking don't forget to save the configuration by hitting the Save Configuration button!
