@@ -1,0 +1,34 @@
+.control {
+  border: 1px solid #384582;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  background-color: #384582;
+  color: #ffffff;
+  line-height: 1rem;
+  box-shadow: 2px 2px 5px #828282;
+  cursor: pointer;
+
+  &:hover {
+    color: #000;
+    text-shadow: 0 0 black;
+    background-color: #cad1f3;
+  }
+
+  &.delete {
+    background-color: #922121;
+    border-color: #922121;
+
+    &:hover {
+      background-color: #fbaeae;
+    }
+  }
+
+  &.save {
+    background-color: #2f581d;
+    border-color: #2f581d;
+
+    &:hover {
+      background-color: #9bce85;
+    }
+  }
+}

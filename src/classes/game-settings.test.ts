@@ -1,7 +1,10 @@
-
+/**
+ * @jest-environment jsdom
+ */
 import "../../__mocks__/game";
 import "../../__mocks__/form-application";
 import "../../__mocks__/application";
+import "../../__mocks__/crypto";
 
 import {GameSettings} from "./game-settings";
 import SimpleCalendar from "./simple-calendar";
@@ -22,16 +25,19 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.IsGm()).toBe(false);
     });
 
+    test('User Name', () => {
+        expect(GameSettings.UserName()).toBe('');
+    });
+
+    test('User ID', () => {
+        expect(GameSettings.UserID()).toBe('');
+    });
+
     test('Register Settings', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect(game.settings.register).toHaveBeenCalled();
-        expect(game.settings.register).toHaveBeenCalledTimes(6);
-    });
-
-    test('Load Allow Players To Add Notes', () => {
-        expect(GameSettings.LoadAllowPlayersToAddNotes()).toBe(false);
-        expect(game.settings.get).toHaveBeenCalled();
+        expect(game.settings.register).toHaveBeenCalledTimes(5);
     });
 
     test('Load Year Data', () => {
@@ -67,7 +73,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Notes', () => {
-        expect(GameSettings.LoadNotes()).toStrictEqual([{year: 0, month: 1, day: 2, title:'', content:'', author:''}]);
+        expect(GameSettings.LoadNotes()).toStrictEqual([{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible: false, id: "abc123"}]);
         expect(game.settings.get).toHaveBeenCalled();
         (<Mock>game.settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadNotes()).toStrictEqual([]);
@@ -142,13 +148,24 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Save Notes', () => {
-        // @ts-ignore
-        game.user.isGM = false;
-        const note = new Note(0, 1, 2, '', '', '');
-        expect(GameSettings.SaveNotes([note])).resolves.toBe(false);
-        // @ts-ignore
-        game.user.isGM = true;
+        const note = new Note();
+        note.year = 0;
+        note.month = 1;
+        note.day = 2;
         expect(GameSettings.SaveNotes([note])).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalled();
+    });
+
+    test('UI Notification', () => {
+        GameSettings.UiNotification('');
+        expect(ui.notifications.info).toHaveBeenCalledTimes(1);
+        GameSettings.UiNotification('', 'warn');
+        expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
+        GameSettings.UiNotification('', 'error');
+        expect(ui.notifications.error).toHaveBeenCalledTimes(1);
+        GameSettings.UiNotification('', 'asdasd');
+        expect(ui.notifications.info).toHaveBeenCalledTimes(1);
+        expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
+        expect(ui.notifications.error).toHaveBeenCalledTimes(1);
     });
 });

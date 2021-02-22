@@ -1,11 +1,13 @@
 import {Logger} from "./logging";
 import Year from "./year";
 import Month from "./month";
-import {CalendarTemplate} from "../interfaces";
-import { ModuleName, SettingNames} from "../constants";
+import {Note} from "./note";
+import {CalendarTemplate, NoteTemplate} from "../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {GameSettings} from "./game-settings";
 import {Weekday} from "./weekday";
+import {SimpleCalendarNotes} from "./simple-calendar-notes";
+import HandlebarsHelpers from "./handlebars-helpers";
 
 
 /**
@@ -23,6 +25,8 @@ export default class SimpleCalendar extends Application{
      * @type {Year | null}
      */
     public currentYear: Year | null = null;
+
+    public notes: Note[] = []
 
     /**
      * Simple Calendar constructor
@@ -45,7 +49,7 @@ export default class SimpleCalendar extends Application{
      * Initializes the dialogs once foundry is ready to go
      */
     public init(){
-        this.registerHandlebarHelpers();
+        HandlebarsHelpers.Register();
         GameSettings.RegisterSettings();
         this.settingUpdate();
     }
@@ -59,7 +63,6 @@ export default class SimpleCalendar extends Application{
             const selectedMonth = this.currentYear.getSelectedMonth();
             return {
                 isGM: GameSettings.IsGm(),
-                playersAddNotes: GameSettings.LoadAllowPlayersToAddNotes(),
                 currentYear: this.currentYear.toTemplate(),
                 currentMonth: currentMonth?.toTemplate(),
                 currentDay: currentMonth?.getCurrentDay()?.toTemplate(),
@@ -71,7 +74,7 @@ export default class SimpleCalendar extends Application{
                 visibleMonthStartWeekday: Array(this.currentYear.visibleMonthStartingDayOfWeek()).fill(0),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
-                notes: []
+                notes: this.getNotesForDay()
             };
         } else {
             return;
@@ -93,26 +96,6 @@ export default class SimpleCalendar extends Application{
                 onClick: SimpleCalendar.instance.showApp.bind(SimpleCalendar.instance)
             });
         }
-    }
-
-    /**
-     * Registers helper calls that can be used in Handlebars
-     * @private
-     */
-    private registerHandlebarHelpers() {
-        Handlebars.registerHelper("calendar-width", (options) => {
-            if(SimpleCalendar.instance.currentYear){
-                return `width:${(SimpleCalendar.instance.currentYear.weekdays.length * 40) + 12}px;`;
-            }
-            return '';
-        });
-        Handlebars.registerHelper("calendar-row-width", (options) => {
-            if(GameSettings.IsGm() && SimpleCalendar.instance.currentYear){
-                let width = (SimpleCalendar.instance.currentYear.weekdays.length * 40) + 312;
-                return `width:${width}px;`;
-            }
-            return '';
-        });
     }
 
     /**
@@ -160,6 +143,9 @@ export default class SimpleCalendar extends Application{
 
             // Add new note click
             (<JQuery>html).find(".date-notes .add-note").on('click', SimpleCalendar.instance.addNote.bind(this));
+
+            // Note Click
+            (<JQuery>html).find(".date-notes .note").on('click', SimpleCalendar.instance.viewNote.bind(this));
         }
     }
 
@@ -234,6 +220,10 @@ export default class SimpleCalendar extends Application{
             const currentMonth = this.currentYear.getCurrentMonth();
             if(currentMonth){
                 const currentDay = currentMonth.getCurrentDay();
+                const selectedDay = currentMonth.getSelectedDay();
+                if(selectedDay){
+                    selectedDay.selected = false;
+                }
                 if(currentDay){
                     currentMonth.visible = true;
                     currentMonth.selected = true;
@@ -277,32 +267,87 @@ export default class SimpleCalendar extends Application{
     /**
      * Click event for when a gm user clicks on the apply button for the current date controls
      * Will attempt to save the new current date to the world settings.
-     * @param {Event} e
+     * @param {Event} e The click event
      */
     public dateControlApply(e: Event){
         e.stopPropagation();
-        if(this.currentYear) {
-            GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
+        if(GameSettings.IsGm()){
+            if(this.currentYear) {
+                GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
+            }
+        } else {
+            GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Calendar.GMCurrent"), 'warn');
         }
     }
 
     /**
      * Click event for when a gm user clicks on the configuration button to configure the game calendar
-     * @param {Event} e
+     * @param {Event} e The click event
      */
     public configurationClick(e: Event) {
         e.stopPropagation();
+        if(GameSettings.IsGm()){
+            if(this.currentYear){
+                SimpleCalendarConfiguration.instance = new SimpleCalendarConfiguration(this.currentYear.clone());
+                SimpleCalendarConfiguration.instance.showApp();
+            } else {
+                Logger.error('The Current year is not configured.');
+            }
+        } else {
+            GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Calendar.GMConfigure"), 'warn');
+        }
+    }
+
+    /**
+     * Opens up the note adding dialog
+     * @param {Event} e The click event
+     */
+    public addNote(e: Event) {
+        e.stopPropagation();
         if(this.currentYear){
-            SimpleCalendarConfiguration.instance = new SimpleCalendarConfiguration(this.currentYear.clone());
-            SimpleCalendarConfiguration.instance.showApp();
+            const currentMonth = this.currentYear.getSelectedMonth() || this.currentYear.getCurrentMonth();
+            if(currentMonth){
+                const currentDay = currentMonth.getSelectedDay() || currentMonth.getCurrentDay();
+                if(currentDay){
+                    const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
+                    const month = currentMonth.numericRepresentation;
+                    const day = currentDay.numericRepresentation;
+                    const newNote = new Note();
+                    newNote.year = year;
+                    newNote.month = month;
+                    newNote.day = day;
+                    newNote.monthDisplay = currentMonth.name;
+                    newNote.title = 'New Note';
+                    newNote.author = GameSettings.UserName();
+                    SimpleCalendarNotes.instance = new SimpleCalendarNotes(newNote);
+                    SimpleCalendarNotes.instance.showApp();
+                } else {
+                    GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedDay"), 'warn');
+                }
+            } else {
+                GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedMonth"), 'warn');
+            }
         } else {
             Logger.error('The Current year is not configured.');
         }
     }
 
-    public addNote(e: Event) {
+    /**
+     * Opens up a note to view the contents
+     * @param {Event} e The click event
+     */
+    public viewNote(e: Event){
         e.stopPropagation();
-        Logger.debug('Adding a new note');
+        const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
+        if(dataIndex){
+            const note = this.notes.find(n=> n.id === dataIndex);
+            if(note){
+                SimpleCalendarNotes.instance = new SimpleCalendarNotes(note, true);
+                SimpleCalendarNotes.instance.showApp();
+            }
+        } else {
+            Logger.error('No Data index on note element found.');
+        }
     }
 
     /**
@@ -461,9 +506,45 @@ export default class SimpleCalendar extends Application{
         }
     }
 
-    private loadNotes(){
+    /**
+     * Loads the notes from the game setting
+     * @private
+     */
+    public loadNotes(update = false){
         Logger.debug('Loading notes from settings.');
-        const notes = game.settings.get(ModuleName, SettingNames.Notes);
+        const notes = GameSettings.LoadNotes();
+        this.notes = notes.map(n => {
+            const note = new Note();
+            note.loadFromConfig(n);
+            return note;
+        });
+        if(update){
+            this.updateApp();
+        }
+    }
+
+    /**
+     * Gets all of the notes associated with the selected or current day
+     * @private
+     * @return NoteTemplate[]
+     */
+    private getNotesForDay(): NoteTemplate[] {
+        const dayNotes: NoteTemplate[] = [];
+        if(this.currentYear){
+            const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
+            const month = this.currentYear.getSelectedMonth() || this.currentYear.getCurrentMonth();
+            if(month){
+                const day = month.getSelectedDay() || month.getCurrentDay();
+                if(day){
+                    this.notes.forEach((note) => {
+                        if(note.isVisible(year, month.numericRepresentation, day.numericRepresentation)){
+                            dayNotes.push(note.toTemplate());
+                        }
+                    });
+                }
+            }
+        }
+        return dayNotes;
     }
 
 }

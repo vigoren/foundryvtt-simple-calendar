@@ -17,7 +17,7 @@
                     <div class="empty-day"></div>
                     {{/each}}
                     {{#each visibleMonth.days}}
-                    <div class="day {{#if ../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
+                    <div class="day {{#if ../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}} {{#day-has-note day=this}}{{/day-has-note}}" data-day="{{this.numericRepresentation}}">
                         {{this.name}}
                     </div>
                     {{/each}}
@@ -50,7 +50,7 @@
                 <span class="control-name">{{localize 'FSC.Year'}}</span>
                 <a class="control next" title="{{localize 'FSC.MoveYearForward'}}" data-type="year">{{localize 'FSC.Forward'}}<span class="fa fa-angle-double-right"></span><span class="fa fa-angle-right shift-back"></span></a>
             </div>
-            <button class="btn-apply">{{localize 'FSC.Apply'}}</button>
+            <button class="control save btn-apply">{{localize 'FSC.Apply'}}</button>
         </div>
         {{/if}}
     </div>
@@ -61,15 +61,14 @@
             {{else if currentDay}}
                 {{currentMonth.name}} {{currentDay.name}}
             {{/if}}, {{selectedYear}}
-            {{#if (or isGM playersAddNotes)}}
-            <button class="fa fa-plus control add-note"> {{localize 'FSC.Notes.AddNew'}}</button>
+            {{#if isGM}}
+            <button class="fa fa-plus control save add-note"> {{localize 'FSC.Notes.AddNew'}}</button>
             {{/if}}
         </h2>
         {{#if notes.length}}
             {{#each notes}}
-            <div class="note">
-                <h3>{{title}}</h3>
-                <p>{{author}}</p>
+            <div class="note" data-index="{{id}}">
+                <h3 class="note-title">{{title}}</h3>
             </div>
             {{/each}}
         {{else}}

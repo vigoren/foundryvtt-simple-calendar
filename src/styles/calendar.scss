@@ -54,6 +54,7 @@
     }
 
     .day{
+      position: relative;
       width: 40px;
       height: 40px;
       text-align: center;
@@ -78,6 +79,20 @@
         background-color: #eafff2;
         &:hover{
           background-color: #40a94d;
+        }
+      }
+
+      &.has-notes{
+        &:after{
+          display: block;
+          content:'\f27a';
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          font-family: "Font Awesome 5 Free";
+          font-weight: bold;
+          font-size: 0.75rem;
+          color: #ff4810;
         }
       }
     }
