@@ -12,10 +12,10 @@ import "../../__mocks__/crypto";
 import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";
+import {Note} from "./note";
 import Mock = jest.Mock;
 import SpyInstance = jest.SpyInstance;
 import {SettingNames} from "../constants";
-import {SimpleCalendarNotes} from "./simple-calendar-notes";
 
 describe('Simple Calendar Class Tests', () => {
     let y: Year;
@@ -244,6 +244,7 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.todayClick(event);
         expect(renderSpy).not.toHaveBeenCalled();
         SimpleCalendar.instance.currentYear.months[0].days[0].current = true;
+        SimpleCalendar.instance.currentYear.months[0].days[1].selected = true;
         SimpleCalendar.instance.todayClick(event);
         expect(renderSpy).toHaveBeenCalled();
         expect(SimpleCalendar.instance.currentYear.months[0].visible).toBe(true);
@@ -347,6 +348,32 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.currentYear.months[0].days[0].current = true;
         SimpleCalendar.instance.addNote(event);
         expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
+    });
+
+    test('View Note', () => {
+        const event = new Event('click');
+        const note = new Note();
+        note.id = "123";
+        SimpleCalendar.instance.notes.push(note);
+
+        //No Data attribute
+        SimpleCalendar.instance.viewNote(event);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        //Invalid data attribute
+        const target = document.createElement('a');
+        (<HTMLElement>target).setAttribute('data-index', '0');
+        //@ts-ignore
+        event.currentTarget = target;
+        SimpleCalendar.instance.viewNote(event);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        //Vaoid data attribute
+        (<HTMLElement>target).setAttribute('data-index', '123');
+        //@ts-ignore
+        event.currentTarget = target;
+        SimpleCalendar.instance.viewNote(event);
+
     });
 
     test('Update App/ Setting Update', () => {
@@ -524,8 +551,11 @@ describe('Simple Calendar Class Tests', () => {
     });
 
     test('Load Notes', () => {
-        SimpleCalendar.instance.settingUpdate();
+        SimpleCalendar.instance.loadNotes();
         expect(SimpleCalendar.instance.notes.length).toBe(1);
+
+        SimpleCalendar.instance.loadNotes(true);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
     });
 
     test('Get Notes For Day', () => {

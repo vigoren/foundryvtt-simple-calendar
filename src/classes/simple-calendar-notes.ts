@@ -8,9 +8,15 @@ export class SimpleCalendarNotes extends FormApplication {
      * @type{boolean}
      */
     updateNote: boolean;
-
+    /**
+     * If we are just viewing the content or editing
+     * @type {boolean}
+     */
     viewMode: boolean;
-
+    /**
+     * If the rich text editor has been saved or not.
+     * @type {boolean}
+     */
     richEditorSaved: boolean = false;
 
     /**
@@ -39,7 +45,7 @@ export class SimpleCalendarNotes extends FormApplication {
                 target: null,
                 height: 200,
                 //@ts-ignore
-                save_onsavecallback: mce => this.saveEditor('content')
+                save_onsavecallback: this.saveEditor.bind(this, 'content')
             },
         };
     }
@@ -77,25 +83,29 @@ export class SimpleCalendarNotes extends FormApplication {
         if(this.editors['content'].mce === null){
             this.editors['content'].options.target = (<JQuery>html).find('.editor .editor-content')[0];
         }
-        if(!this.viewMode && this.editors['content'].options.target !== null || this.editors['content'].button === null){
+        if(!this.viewMode && this.editors['content'].options.target && this.editors['content'].button === null){
             this.editors['content'].button = this.editors['content'].options.target.nextElementSibling;
             this.editors['content'].hasButton = this.editors['content'].button && this.editors['content'].button.classList.contains("editor-edit");
             this.editors['content'].active = !this.viewMode;
             if(this.editors['content'].hasButton){
-                this.editors['content'].button .onclick = (event: Event) => {
-                    this.editors['content'].button .style.display = "none";
-                    this.richEditorSaved = false;
-                    //@ts-ignore
-                    this.activateEditor('content');
-                }
+                this.editors['content'].button.onclick = SimpleCalendarNotes.instance.textEditorButtonClick.bind(this)
             }
         }
-        console.log(this.editors['content'].active, this.editors['content'].mce);
         if(this.editors['content'].mce === null && this.editors['content'].active){
             //@ts-ignore
             this.activateEditor('content');
         }
-        console.log(this.editors['content']);
+    }
+
+    /**
+     * The button click for re-initializing the text editor
+     * @param {Event} e The click event
+     */
+    public textEditorButtonClick(e: Event){
+        this.editors['content'].button.style.display = "none";
+        this.richEditorSaved = false;
+        //@ts-ignore
+        this.activateEditor('content');
     }
 
     /**
@@ -140,10 +150,17 @@ export class SimpleCalendarNotes extends FormApplication {
         this.close().catch(error => Logger.error(error));
     }
 
+    /**
+     * Updates the windows rendering
+     */
     public updateApp(){
         this.render(true);
     }
 
+    /**
+     * When the edit button is clicked
+     * @param {Event} e The click event
+     */
     public editButtonClick(e: Event){
         e.preventDefault();
         this.viewMode = false;
@@ -151,9 +168,35 @@ export class SimpleCalendarNotes extends FormApplication {
         this.updateApp();
     }
 
+    /**
+     * When the delete button is clicked
+     * @param {Event} e The click event
+     */
     public async deleteButtonClick(e: Event){
-        //TODO: Add confirmation dialog to help prevent accidental deletions of notes
         e.preventDefault();
+        const dialog = new Dialog({
+            title: GameSettings.Localize('FSC.DeleteConfirm'),
+            content: GameSettings.Localize("FSC.DeleteConfirmText"),
+            buttons:{
+                yes: {
+                    icon: '<i class="fas fa-trash"></i>',
+                    label: GameSettings.Localize('FSC.Delete'),
+                    callback: SimpleCalendarNotes.instance.deleteConfirm.bind(this)
+                },
+                no: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: GameSettings.Localize('FSC.Cancel')
+                }
+            },
+            default: "no"
+        });
+        dialog.render(true);
+    }
+
+    /**
+     * Called when the user confirms the deletion of a note.
+     */
+    public async deleteConfirm(){
         const currentNotes = GameSettings.LoadNotes().map(n => {
             const note = new Note();
             note.loadFromConfig(n);
@@ -167,6 +210,11 @@ export class SimpleCalendarNotes extends FormApplication {
         }
     }
 
+
+    /**
+     * The save button click
+     * @param {Event} e The click event
+     */
     public async saveButtonClick(e: Event){
         Logger.debug('Saving New Note');
         e.preventDefault();

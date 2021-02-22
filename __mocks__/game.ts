@@ -59,7 +59,7 @@ const game = {
                 case SettingNames.CurrentDate:
                     return {year: 0, month: 1, day: 2};
                 case SettingNames.Notes:
-                    return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false}]];
+                    return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false, id: 'abc123'}]];
             }
         }),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),

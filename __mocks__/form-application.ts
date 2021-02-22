@@ -3,7 +3,7 @@
 class FormApplication {
     object;
     element: any;
-    editors = [];
+    editors: any = [];
     constructor(o: any) {
         this.object = o;
 
@@ -45,6 +45,11 @@ class FormApplication {
     render(force: boolean, options: any){}
 
     close(){return Promise.resolve();}
+
+    getData(){return {};}
+
+    activateEditor(a: string){}
+    saveEditor(a: string){}
 }
 
 // @ts-ignore

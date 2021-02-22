@@ -220,6 +220,10 @@ export default class SimpleCalendar extends Application{
             const currentMonth = this.currentYear.getCurrentMonth();
             if(currentMonth){
                 const currentDay = currentMonth.getCurrentDay();
+                const selectedDay = currentMonth.getSelectedDay();
+                if(selectedDay){
+                    selectedDay.selected = false;
+                }
                 if(currentDay){
                     currentMonth.visible = true;
                     currentMonth.selected = true;
@@ -328,6 +332,10 @@ export default class SimpleCalendar extends Application{
         }
     }
 
+    /**
+     * Opens up a note to view the contents
+     * @param {Event} e The click event
+     */
     public viewNote(e: Event){
         e.stopPropagation();
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
@@ -337,6 +345,8 @@ export default class SimpleCalendar extends Application{
                 SimpleCalendarNotes.instance = new SimpleCalendarNotes(note, true);
                 SimpleCalendarNotes.instance.showApp();
             }
+        } else {
+            Logger.error('No Data index on note element found.');
         }
     }
 

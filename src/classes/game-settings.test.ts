@@ -73,7 +73,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Notes', () => {
-        expect(GameSettings.LoadNotes()).toStrictEqual([{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible: false}]);
+        expect(GameSettings.LoadNotes()).toStrictEqual([{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible: false, id: "abc123"}]);
         expect(game.settings.get).toHaveBeenCalled();
         (<Mock>game.settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadNotes()).toStrictEqual([]);

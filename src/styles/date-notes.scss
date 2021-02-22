@@ -2,16 +2,9 @@
   margin-top: 1rem;
 
   .control{
-    &.add-note{
+    &.control{
       width: unset;
       float: right;
-      background: #2f581d;
-      color: #fff;
-      cursor: pointer;
-      &:hover{
-        color: #000;
-        background-color: #9bce85;
-      }
     }
   }
 }

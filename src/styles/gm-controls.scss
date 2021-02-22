@@ -1,18 +1,4 @@
 .control{
-  border: 1px solid #384582;
-  padding: 0.15rem 0.5rem;
-  border-radius: 3px;
-  background-color: #384582;
-  color: #ffffff;
-  line-height: 1rem;
-  box-shadow: 2px 2px 5px #828282;
-
-  &:hover{
-    color: #000;
-    text-shadow: 0 0 black;
-    background-color: #cad1f3;
-  }
-
   &.previous{
     span:last-child{
       padding-right: 5px;
@@ -50,23 +36,6 @@
       font-weight: 600;
       line-height: 1.25rem;
       font-size: 1.25rem;
-    }
-  }
-
-  .btn-apply{
-    border: 1px solid #2f581d;
-    padding: .15rem .5rem;
-    border-radius: 3px;
-    background: #2f581d;
-    color: #fff;
-    line-height: 1rem;
-    box-shadow: 2px 2px 5px #828282;
-    margin-top: 10px;
-    cursor: pointer;
-
-    &:hover{
-      color: #000;
-      background-color: #9bce85;
     }
   }
 }

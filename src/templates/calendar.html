@@ -50,7 +50,7 @@
                 <span class="control-name">{{localize 'FSC.Year'}}</span>
                 <a class="control next" title="{{localize 'FSC.MoveYearForward'}}" data-type="year">{{localize 'FSC.Forward'}}<span class="fa fa-angle-double-right"></span><span class="fa fa-angle-right shift-back"></span></a>
             </div>
-            <button class="btn-apply">{{localize 'FSC.Apply'}}</button>
+            <button class="control save btn-apply">{{localize 'FSC.Apply'}}</button>
         </div>
         {{/if}}
     </div>
@@ -62,14 +62,13 @@
                 {{currentMonth.name}} {{currentDay.name}}
             {{/if}}, {{selectedYear}}
             {{#if isGM}}
-            <button class="fa fa-plus control add-note"> {{localize 'FSC.Notes.AddNew'}}</button>
+            <button class="fa fa-plus control save add-note"> {{localize 'FSC.Notes.AddNew'}}</button>
             {{/if}}
         </h2>
         {{#if notes.length}}
             {{#each notes}}
             <div class="note" data-index="{{id}}">
                 <h3 class="note-title">{{title}}</h3>
-                <p class="note-author">{{localize 'FSC.By'}}: {{author}}</p>
             </div>
             {{/each}}
         {{else}}
