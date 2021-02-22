@@ -18,6 +18,8 @@ const local: Localization = {
 
 // @ts-ignore
 const user: User = {
+    name: '',
+    id: '',
     active: true,
     targets: new Set(),
     viewedScene: '',
@@ -57,7 +59,7 @@ const game = {
                 case SettingNames.CurrentDate:
                     return {year: 0, month: 1, day: 2};
                 case SettingNames.Notes:
-                    return [[{year: 0, month: 1, day: 2, title:'', content:'', author:''}]];
+                    return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false}]];
             }
         }),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),
@@ -68,3 +70,12 @@ const game = {
 };
 // @ts-ignore
 global.game = game;
+
+// @ts-ignore
+global.ui = {
+    notifications: {
+        info: jest.fn((message: string) => {}),
+        warn: jest.fn((message: string) => {}),
+        error: jest.fn((message: string) => {})
+    }
+};

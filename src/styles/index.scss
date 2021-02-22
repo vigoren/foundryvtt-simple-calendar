@@ -1,6 +1,9 @@
-#simpleCalendar {
-  @import "gm-controls";
-  @import "calendar";
-  @import "date-notes";
+.simple-calendar{
+  #simpleCalendar {
+    @import "gm-controls";
+    @import "calendar";
+    @import "date-notes";
+  }
+  @import "configuration";
+  @import "notes";
 }
-@import "configuration";

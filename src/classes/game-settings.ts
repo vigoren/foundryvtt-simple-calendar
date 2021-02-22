@@ -17,6 +17,22 @@ export class GameSettings {
     }
 
     /**
+     * Returns the current users name
+     * @return {string}
+     */
+    static UserName(): string {
+        return game.user.name;
+    }
+
+    /**
+     * Returns the current users ID
+     * @return {string}
+     */
+    static UserID(): string {
+        return game.user.id;
+    }
+
+    /**
      * Returns the localized string based on the key
      * @param {string} key The localization string key
      */
@@ -64,24 +80,8 @@ export class GameSettings {
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
+            onChange: SimpleCalendar.instance.loadNotes.bind(SimpleCalendar.instance, true)
         });
-        game.settings.register(ModuleName, SettingNames.AllowPlayersToAddNotes, {
-            name: "Allow Players to Add Notes",
-            hint: "Allows any player to add a note to the calendar.",
-            scope: "world",
-            config: "true",
-            type: Boolean,
-            default: true
-        });
-    }
-
-    /**
-     * Loads the allow players to add notes setting from the game world settings
-     * @return {boolean}
-     */
-    static LoadAllowPlayersToAddNotes(): boolean {
-        return game.settings.get(ModuleName, SettingNames.AllowPlayersToAddNotes);
     }
 
     /**
@@ -232,11 +232,33 @@ export class GameSettings {
      * @param {Array.<Note>} notes The notes to save
      */
     static async SaveNotes(notes: Note[]): Promise<any> {
-        if(game.user.isGM) {
-            Logger.debug(`Saving notes.`);
-            const newConfig: NoteConfig[] = notes.map(w => {return {title: w.title, content: w.content, author: w.author, year: w.year, month: w.month, day: w.day}; });
-            return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});
+        Logger.debug(`Saving notes.`);
+        const newConfig: NoteConfig[] = notes.map(w => {return {
+            title: w.title,
+            content: w.content,
+            author: w.author,
+            year: w.year,
+            month: w.month,
+            day: w.day,
+            monthDisplay: w.monthDisplay,
+            playerVisible: w.playerVisible,
+            id: w.id
+        };});
+        return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});
+    }
+
+    /**
+     * Display a notification using the game UI
+     * @param {string} message The message to display
+     * @param {string} type The type of notification to show
+     */
+    static UiNotification(message: string, type: string = 'info'){
+        if(type === 'info'){
+            ui.notifications.info(message);
+        } else if(type === 'warn'){
+            ui.notifications.warn(message);
+        } else if(type === 'error'){
+            ui.notifications.error(message);
         }
-        return false;
     }
 }

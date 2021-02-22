@@ -1,0 +1,64 @@
+#simpleCalendarNotes{
+  .editor{
+    min-width: 500px;
+    .editor-content{
+      min-height: 200px;
+    }
+  }
+
+  .edit-controls{
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .control{
+    border: 1px solid #384582;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    background-color: #384582;
+    color: #ffffff;
+    line-height: 1rem;
+    box-shadow: 2px 2px 5px #828282;
+    &:hover{
+      color: #000;
+      text-shadow: 0 0 black;
+      background-color: #cad1f3;
+    }
+    &.fa-trash{
+      background-color: #922121;
+      border-color: #922121;
+      &:hover{
+        background-color: #fbaeae;
+      }
+    }
+  }
+}
+
+.note{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0.25rem 0.5rem;
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;
+  border-bottom: 1px solid grey;
+
+  .note-title{
+    flex: 1;
+    margin: 0;
+  }
+
+  .note-author{
+    color: #464646;
+    margin: 0;
+  }
+
+  &:first-of-type{
+    border-top: 1px solid gray;
+  }
+
+  &:hover {
+    background-color: #cad1f3;
+    cursor: pointer;
+  }
+}

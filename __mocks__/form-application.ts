@@ -3,6 +3,7 @@
 class FormApplication {
     object;
     element: any;
+    editors = [];
     constructor(o: any) {
         this.object = o;
 

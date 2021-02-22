@@ -3,7 +3,6 @@
  */
 export interface CalendarTemplate {
     isGM: boolean;
-    playersAddNotes: boolean;
     selectedYear: number;
     selectedMonth: MonthTemplate | undefined;
     selectedDay: DayTemplate | undefined;
@@ -90,15 +89,20 @@ export interface CurrentDateConfig {
     day: number
 }
 
+/**
+ * Interface for the note template that is passed to the HTML for rendering
+ */
 export interface NoteTemplate {
-    year: number;
-    month: number;
-    day: number;
     title: string;
     content: string;
     author: string;
+    monthDisplay: string;
+    id: string;
 }
 
+/**
+ * Interface for the data saved to the game settings for a note
+ */
 export interface NoteConfig {
     year: number;
     month: number;
@@ -106,6 +110,9 @@ export interface NoteConfig {
     title: string;
     content: string;
     author: string;
+    monthDisplay: string;
+    playerVisible: boolean;
+    id: string;
 }
 
 /**
