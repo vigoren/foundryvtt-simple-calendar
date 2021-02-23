@@ -23,6 +23,8 @@ jobs:
         download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
