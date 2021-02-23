@@ -4,7 +4,7 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/vigoren/foundryvtt-simple-calendar/branch/main/graph/badge.svg?token=43TJ117WP1)](https://codecov.io/gh/vigoren/foundryvtt-simple-calendar)
 
-![Logo](docs/images/logo.png)
+![Logo](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.png)
 
 # Simple Calendar
 
@@ -35,7 +35,7 @@ If you are looking for a module that tracks in game time and has weather related
 ## Accessing and using the Calendar
 The module adds a calendar button to the basic controls section of the layer controls. Clicking on this will open the module window
 
-![Calendar Button Location](docs/images/layers-button.png?raw=true)
+![Calendar Button Location](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/layers-button.png)
 
 The above image helps shows the controls, they are detailed out below.
 
@@ -52,12 +52,12 @@ Notes List | Any notes that appear in this list can be clicked on to open the no
 
 The note details shows all the information about a specific note: the date the note is for, the title of the note and the content of the note.
 
-![Calendar Button Location](docs/images/note-view.png?raw=true)
+![Calendar Button Location](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/note-view.png)
 
 ## Updating the Current Date
 The GM version of the module looks a little different, with the addition of controls to change the current date and a button to enter the configuration. 
 
-![GM View](docs/images/gm-view.png)
+![GM View](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-view.png)
 
 The above image helps shows the controls, they are detailed out below.
 
@@ -74,7 +74,7 @@ Add New Note Button | This will open the add notes dialog to add a new note for 
 
 The GM has the ability to add new notes by clicking on the add new note button for a selected date. This will open a dialog where the details of the note can be filled out.
 
-![Calendar Button Location](docs/images/note-new.png?raw=true)
+![Calendar Button Location](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/note-new.png)
 
 Field | Description
 ------- | -----------
@@ -88,9 +88,10 @@ After all of the details are filled out you can save the note.
 
 The GM can also edit or delete existing notes. To do this click on an existing note, at the bottom of the note view 2 additional buttons will be visible, Edit and Delete. 
 
-The Edit button will load the contents of the note in the same editor as creating a new note.
-
-The Delete button will open up a confirmation dialog, where selecting delete again will permanently remove the note.
+Button | Description
+------- | -----------
+The Edit button | This will load the contents of the note in the same editor as creating a new note.
+The Delete button | This will open up a confirmation dialog, where selecting delete again will permanently remove the note.
 
 ## Configuring Your calendar
 
