@@ -32,6 +32,19 @@ If you are looking for a module that tracks in game time and has weather related
 * Browse a calendar interface to see the years, months and day of the game world
 * Select days to see any notes/events specific to that day
 
+## Installing The Module
+
+There are 2 ways to install the module, using the module.json file or by manually downloading the zip file.
+
+### module.json
+
+To install using the module json file, use this link [https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json](https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json)
+
+### Zip File
+
+To install the most recent version of the module, view the releases section to the right of the main GitHub page. 
+Selecting the latest release will bring you to a page where you can download the module.zip asset. This will contain everything you need to manually install the module.
+
 ## Accessing and using the Calendar
 The module adds a calendar button to the basic controls section of the layer controls. Clicking on this will open the module window
 
