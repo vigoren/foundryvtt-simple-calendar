@@ -1,5 +1,13 @@
 # Change Log
 
+## v1.0.3
+
+Fixed issues around viewing notes in years that were not the current year.
+
+- Fixed an issue where clicking on a day in a year that was not in the current year, and the day would not get properly selected.
+- Fixed an issue where changing years would not show notes in different years.
+- Fixed an issue where clicking the today button would not take you to the correct day if you were viewing a different year.
+
 ## v1.0.0 - Initial Release
 
 The initial public release of the simple calendar.

@@ -250,6 +250,30 @@ describe('Simple Calendar Class Tests', () => {
         expect(SimpleCalendar.instance.currentYear.months[0].visible).toBe(true);
         expect(SimpleCalendar.instance.currentYear.months[0].selected).toBe(true);
         expect(SimpleCalendar.instance.currentYear.months[0].days[0].selected).toBe(true);
+
+        SimpleCalendar.instance.currentYear.months[0].visible = false;
+        SimpleCalendar.instance.currentYear.months[0].selected = false;
+        SimpleCalendar.instance.currentYear.months[1].visible = true;
+        SimpleCalendar.instance.currentYear.months[1].selected = true;
+        SimpleCalendar.instance.currentYear.months[0].days[0].selected = false;
+        SimpleCalendar.instance.currentYear.months[1].days[0].selected = false;
+        SimpleCalendar.instance.todayClick(event);
+        expect(renderSpy).toHaveBeenCalled();
+        expect(SimpleCalendar.instance.currentYear.months[0].visible).toBe(true);
+        expect(SimpleCalendar.instance.currentYear.months[0].selected).toBe(true);
+        expect(SimpleCalendar.instance.currentYear.months[0].days[0].selected).toBe(true);
+
+        SimpleCalendar.instance.currentYear.months[0].visible = false;
+        SimpleCalendar.instance.currentYear.months[0].selected = false;
+        SimpleCalendar.instance.currentYear.months[1].visible = true;
+        SimpleCalendar.instance.currentYear.months[1].selected = true;
+        SimpleCalendar.instance.currentYear.months[0].days[0].selected = false;
+        SimpleCalendar.instance.currentYear.months[1].days[0].selected = true;
+        SimpleCalendar.instance.todayClick(event);
+        expect(renderSpy).toHaveBeenCalled();
+        expect(SimpleCalendar.instance.currentYear.months[0].visible).toBe(true);
+        expect(SimpleCalendar.instance.currentYear.months[0].selected).toBe(true);
+        expect(SimpleCalendar.instance.currentYear.months[0].days[0].selected).toBe(true);
     });
 
     test('GM Control Click', () => {
