@@ -47,7 +47,7 @@ export default class HandlebarsHelpers{
         if(options.hash.hasOwnProperty('day') && SimpleCalendar.instance.currentYear){
             const day = options.hash['day'].numericRepresentation;
             const month = SimpleCalendar.instance.currentYear.getVisibleMonth();
-            const year = SimpleCalendar.instance.currentYear.selectedYear;
+            const year = SimpleCalendar.instance.currentYear.visibleYear;
             if(month){
                 const note = SimpleCalendar.instance.notes.find(n => n.isVisible(year, month.numericRepresentation, day));
                 if(note){

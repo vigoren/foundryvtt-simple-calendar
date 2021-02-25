@@ -199,7 +199,7 @@ export default class SimpleCalendar extends Application{
                 if(visibleMonth && visibleMonth.days.length > index){
                     visibleMonth.selected = true;
                     visibleMonth.days[index].selected = true;
-                    this.currentYear.selectedYear = this.currentYear.numericRepresentation;
+                    this.currentYear.selectedYear = this.currentYear.visibleYear;
                 }
                 this.updateApp();
             } else {
@@ -217,14 +217,24 @@ export default class SimpleCalendar extends Application{
     public todayClick(e: Event) {
         e.preventDefault();
         if(this.currentYear){
-            const currentMonth = this.currentYear.getCurrentMonth();
-            if(currentMonth){
-                const currentDay = currentMonth.getCurrentDay();
-                const selectedDay = currentMonth.getSelectedDay();
+            const selectedMonth = this.currentYear.getSelectedMonth();
+            if(selectedMonth){
+                selectedMonth.selected = false;
+                const selectedDay = selectedMonth.getSelectedDay();
                 if(selectedDay){
                     selectedDay.selected = false;
                 }
+            }
+            const visibleMonth = this.currentYear.getVisibleMonth();
+            if(visibleMonth){
+                visibleMonth.visible = false;
+            }
+            const currentMonth = this.currentYear.getCurrentMonth();
+            if(currentMonth){
+                const currentDay = currentMonth.getCurrentDay();
                 if(currentDay){
+                    this.currentYear.selectedYear = this.currentYear.numericRepresentation;
+                    this.currentYear.visibleYear = this.currentYear.numericRepresentation;
                     currentMonth.visible = true;
                     currentMonth.selected = true;
                     currentDay.selected = true;
