@@ -200,9 +200,10 @@ describe('Simple Calendar Notes Tests', () => {
         SimpleCalendarNotes.instance.saveButtonClick(event);
         expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
 
-        SimpleCalendarNotes.instance.editors['content'].mce = {isNotDirty: false};
+        SimpleCalendarNotes.instance.editors['content'].mce = {getContent: ()=>{return 'a';},isNotDirty: false};
         SimpleCalendarNotes.instance.saveButtonClick(event);
         expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
+
         //@ts-ignore
         SimpleCalendarNotes.instance.element = {
             find: jest.fn()
@@ -216,7 +217,7 @@ describe('Simple Calendar Notes Tests', () => {
                 .mockReturnValueOnce({ is: () => {return true;} })
 
         };
-
+        SimpleCalendarNotes.instance.editors['content'].mce = {getContent: ()=>{return '';},isNotDirty: false};
         SimpleCalendarNotes.instance.richEditorSaved = true;
         SimpleCalendarNotes.instance.saveButtonClick(event);
         expect(ui.notifications.error).toHaveBeenCalledTimes(1);

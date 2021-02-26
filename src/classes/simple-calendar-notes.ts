@@ -210,7 +210,6 @@ export class SimpleCalendarNotes extends FormApplication {
         }
     }
 
-
     /**
      * The save button click
      * @param {Event} e The click event
@@ -218,7 +217,15 @@ export class SimpleCalendarNotes extends FormApplication {
     public async saveButtonClick(e: Event){
         Logger.debug('Saving New Note');
         e.preventDefault();
-        if(this.richEditorSaved || (this.editors['content'].mce && this.editors['content'].mce.isNotDirty)){
+        let detailsEmpty = true;
+        if(this.editors['content'].mce){
+            if(this.editors['content'].mce.getContent().trim() !== '' && !this.editors['content'].mce.isNotDirty){
+                detailsEmpty = false;
+            }
+        } else {
+            detailsEmpty = false;
+        }
+        if(this.richEditorSaved || detailsEmpty){
             const title = (<JQuery>this.element).find('#scNoteTitle').val();
             const playerVisible = (<JQuery>this.element).find('#scNoteVisibility').is(':checked');
             if(title){
