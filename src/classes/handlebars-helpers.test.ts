@@ -10,6 +10,7 @@ import "../../__mocks__/crypto";
 
 import HandlebarsHelpers from "./handlebars-helpers";
 import SimpleCalendar from "./simple-calendar";
+import {Note} from "./note";
 
 describe('Handlebars Helpers Tests', () => {
 
@@ -49,7 +50,17 @@ describe('Handlebars Helpers Tests', () => {
             SimpleCalendar.instance.currentYear.months[0].visible = true;
             expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
             options.hash['day'].numericRepresentation = 2;
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBe('has-notes');
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBe(`<span class="note-count">1</span>`);
+
+            for(let i = 0; i < 99; i++){
+                var n = new Note()
+                n.year = SimpleCalendar.instance.currentYear.numericRepresentation;
+                n.month = 1;
+                n.day = 2;
+                SimpleCalendar.instance.notes.push(n);
+            }
+            expect(SimpleCalendar.instance.notes.length).toBe(100);
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBe(`<span class="note-count">99</span>`);
         } else {
             fail('Current year is not set');
         }

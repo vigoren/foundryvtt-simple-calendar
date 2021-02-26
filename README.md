@@ -58,7 +58,7 @@ Previous/Next | Allow the user to change which month/year they are currently vie
 Today Button | Changes the calendar so that the current day (in the game world) is visible and selected.
 Blue Circle Day | This indicates the current day in the game world, can be changed by the GM
 Green Circle Day | This indicates the day the user currently has selected. This will show any notes on this day.
-Orange Icon | This shows on any days that have notes that the user can see.
+Red Indicator | This shows on any days that have notes that the user can see. It will show the number of notes on that day up to 99.
 Notes List | Any notes that appear in this list can be clicked on to open the note details.
 
 ### Note Details

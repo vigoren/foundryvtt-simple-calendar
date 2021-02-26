@@ -17,7 +17,8 @@
                     <div class="empty-day"></div>
                     {{/each}}
                     {{#each visibleMonth.days}}
-                    <div class="day {{#if ../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}} {{#day-has-note day=this}}{{/day-has-note}}" data-day="{{this.numericRepresentation}}">
+                    <div class="day {{#if ../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
+                        {{#day-has-note day=this}}{{/day-has-note}}
                         {{this.name}}
                     </div>
                     {{/each}}

@@ -82,18 +82,17 @@
         }
       }
 
-      &.has-notes{
-        &:after{
-          display: block;
-          content:'\f27a';
-          position: absolute;
-          top: 4px;
-          right: 4px;
-          font-family: "Font Awesome 5 Free";
-          font-weight: bold;
-          font-size: 0.75rem;
-          color: #ff4810;
-        }
+      .note-count{
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #c30505;
+        color: #ffffff;
+        width: 16px;
+        height: 16px;
+        font-size: 12px;
+        padding: 1px 1px 1px 2px;
+        border-radius: 8px;
       }
     }
   }
