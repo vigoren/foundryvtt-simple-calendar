@@ -1,5 +1,6 @@
 import {NoteConfig, NoteTemplate} from "../interfaces";
 import {GameSettings} from "./game-settings"
+import {NoteRepeat} from "../constants";
 
 /**
  * All content around a calendar note
@@ -50,6 +51,11 @@ export class Note{
      * @type {boolean}
      */
     playerVisible: boolean = false;
+    /**
+     * How often this note repeats
+     * @type {NoteRepeat}
+     */
+    repeats: NoteRepeat = NoteRepeat.Never;
 
     /**
      * The note constructor
@@ -86,6 +92,7 @@ export class Note{
         this.author = noteConfig.author;
         this.playerVisible = noteConfig.playerVisible;
         this.id = noteConfig.id;
+        this.repeats = noteConfig.repeats;
     }
 
     /**
@@ -102,6 +109,7 @@ export class Note{
         n.author = this.author;
         n.playerVisible = this.playerVisible;
         n.id = this.id;
+        n.repeats = this.repeats;
         return n;
     }
 
@@ -112,6 +120,15 @@ export class Note{
      * @param {number} day The day we are checking
      */
     isVisible(year: number, month: number ,day: number){
-        return (GameSettings.IsGm() || (!GameSettings.IsGm() && this.playerVisible)) && this.year === year && this.month === month && this.day === day;
+        const userVisible = (GameSettings.IsGm() || (!GameSettings.IsGm() && this.playerVisible));
+        let dayVisible = false;
+        if(this.repeats === NoteRepeat.Monthly){
+            dayVisible = this.day === day;
+        } else if(this.repeats === NoteRepeat.Yearly){
+            dayVisible = this.month === month && this.day === day;
+        } else {
+            dayVisible = this.year === year && this.month === month && this.day === day;
+        }
+        return userVisible && dayVisible;
     }
 }

@@ -1,6 +1,8 @@
 /**
  * Interface for the calendar template that is passed to the HTML for rendering
  */
+import {NoteRepeat} from "./constants";
+
 export interface CalendarTemplate {
     isGM: boolean;
     selectedYear: number;
@@ -113,6 +115,7 @@ export interface NoteConfig {
     monthDisplay: string;
     playerVisible: boolean;
     id: string;
+    repeats: NoteRepeat;
 }
 
 /**

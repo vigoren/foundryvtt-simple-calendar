@@ -1,6 +1,8 @@
 import {Note} from './note';
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
+import {NoteRepeat} from "../constants";
+import SimpleCalendar from "./simple-calendar";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**
@@ -72,6 +74,17 @@ export class SimpleCalendarNotes extends FormApplication {
         options.viewMode = this.viewMode;
         options.richButton = !this.viewMode;
         options.canEdit = GameSettings.IsGm();
+        options.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Monthly', 2: 'FSC.Notes.Repeat.Yearly'};
+        if((<Note>this.object).repeats === NoteRepeat.Yearly || (<Note>this.object).repeats === NoteRepeat.Monthly){
+            options.noteYear = SimpleCalendar.instance.currentYear?.visibleYear;
+        } else {
+            options.noteYear = (<Note>this.object).year;
+        }
+        if((<Note>this.object).repeats === NoteRepeat.Monthly){
+            options.noteMonth = SimpleCalendar.instance.currentYear?.getVisibleMonth()?.name;
+        } else {
+            options.noteMonth = (<Note>this.object).monthDisplay;
+        }
         return options;
     }
 
@@ -229,9 +242,16 @@ export class SimpleCalendarNotes extends FormApplication {
         if(this.richEditorSaved || detailsEmpty){
             const title = (<JQuery>this.element).find('#scNoteTitle').val();
             const playerVisible = (<JQuery>this.element).find('#scNoteVisibility').is(':checked');
+            let repeats = (<JQuery>this.element).find('#scNoteRepeats').find(":selected").val();
+            if(repeats){
+                repeats = parseInt(repeats.toString());
+            } else {
+                repeats = 0;
+            }
             if(title){
                 (<Note>this.object).title = title.toString();
                 (<Note>this.object).playerVisible = playerVisible;
+                (<Note>this.object).repeats = repeats;
                 const currentNotes = GameSettings.LoadNotes().map(n => {
                     const note = new Note();
                     note.loadFromConfig(n);

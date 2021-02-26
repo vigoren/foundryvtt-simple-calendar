@@ -242,7 +242,8 @@ export class GameSettings {
             day: w.day,
             monthDisplay: w.monthDisplay,
             playerVisible: w.playerVisible,
-            id: w.id
+            id: w.id,
+            repeats: w.repeats
         };});
         return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});
     }

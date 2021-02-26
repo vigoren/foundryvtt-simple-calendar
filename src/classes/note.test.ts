@@ -10,6 +10,7 @@ import "../../__mocks__/crypto";
 
 import {Note} from "./note";
 import {NoteConfig} from "../interfaces";
+import {NoteRepeat} from "../constants";
 
 
 describe('Note Tests', () => {
@@ -29,7 +30,7 @@ describe('Note Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(n).length).toBe(9); //Make sure no new properties have been added
+        expect(Object.keys(n).length).toBe(10); //Make sure no new properties have been added
         expect(n.year).toBe(0);
         expect(n.month).toBe(1);
         expect(n.day).toBe(2);
@@ -39,6 +40,7 @@ describe('Note Tests', () => {
         expect(n.author).toBe('');
         expect(n.playerVisible).toBe(false);
         expect(n.id).toBe('abc123');
+        expect(n.repeats).toBe(NoteRepeat.Never);
     });
 
     test('To Template', () => {
@@ -61,7 +63,8 @@ describe('Note Tests', () => {
             author: 'a',
             title: 't',
             content: 'c',
-            id: 'i'
+            id: 'i',
+            repeats: 1
         };
         n.loadFromConfig(config);
         expect(n.year).toBe(1);
@@ -73,6 +76,7 @@ describe('Note Tests', () => {
         expect(n.author).toBe('a');
         expect(n.playerVisible).toBe(true);
         expect(n.id).toBe('i');
+        expect(n.repeats).toBe(1);
     });
 
     test('Clone', () => {
@@ -88,5 +92,13 @@ describe('Note Tests', () => {
         game.user.isGM = true;
         expect(n.isVisible(0,0,0)).toBe(false);
         expect(n.isVisible(0,1,2)).toBe(true);
+
+        n.repeats = NoteRepeat.Monthly;
+        expect(n.isVisible(99,99,0)).toBe(false);
+        expect(n.isVisible(99,99,2)).toBe(true);
+
+        n.repeats = NoteRepeat.Yearly;
+        expect(n.isVisible(99,0,0)).toBe(false);
+        expect(n.isVisible(99,1,2)).toBe(true);
     });
 });

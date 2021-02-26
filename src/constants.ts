@@ -14,3 +14,13 @@ export enum SettingNames {
     Notes = 'notes',
     AllowPlayersToAddNotes = 'allow-players-add-notes'
 }
+
+/**
+ * The different intervals a note can repeat
+ */
+export enum NoteRepeat {
+    Never,
+    Monthly,
+    Yearly,
+    Weekly
+}

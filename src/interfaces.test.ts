@@ -109,8 +109,8 @@ describe('Interface Tests', () => {
     });
 
     test('Notes Config', () => {
-        const nc: NoteConfig = {year: 0, month:0, day:0, title: '', content: '', author: '', playerVisible: false, monthDisplay: '', id: ''};
-        expect(Object.keys(nc).length).toBe(9); //Make sure no new properties have been added
+        const nc: NoteConfig = {year: 0, month:0, day:0, title: '', content: '', author: '', playerVisible: false, monthDisplay: '', id: '', repeats: 0};
+        expect(Object.keys(nc).length).toBe(10); //Make sure no new properties have been added
         expect(nc.title).toBe('');
         expect(nc.content).toBe('');
         expect(nc.author).toBe('');
@@ -120,5 +120,6 @@ describe('Interface Tests', () => {
         expect(nc.playerVisible).toBe(false);
         expect(nc.monthDisplay).toBe('');
         expect(nc.id).toBe('');
+        expect(nc.repeats).toBe(0);
     });
 });

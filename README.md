@@ -93,6 +93,7 @@ Field | Description
 ------- | -----------
 Note Title | The title for the note, this title will appear in the listing of notes for the day.
 Player Visible | If this note can be seen by players or if it is for the GM only.
+Note Repeats | If this note repeats monthly, yearly or never. If the note repeats monthly and it is on a day that some months don't have (eg the 31st) months that don't go to that day will not have this note.
 Details | Here you can enter the details of a note using the built in text editor.
 
 After all of the details are filled out you can save the note.
