@@ -2,6 +2,8 @@ import Month from "./month";
 import {MonthTemplate, YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
+import {LeapYearRules} from "../constants";
+import LeapYear from "./leap-year";
 
 /**
  * Class for representing a year
@@ -37,7 +39,9 @@ export default class Year {
      * The days that make up a week
      * @type {Array.<Weekday>}
      */
-    weekdays: Weekday[] = []
+    weekdays: Weekday[] = [];
+
+    leapYearRule: LeapYear;
 
     /**
      * The Year constructor
@@ -47,6 +51,7 @@ export default class Year {
         this.numericRepresentation = numericRepresentation;
         this.selectedYear = numericRepresentation;
         this.visibleYear = numericRepresentation;
+        this.leapYearRule = new LeapYear();
     }
 
     /**
@@ -235,21 +240,37 @@ export default class Year {
      * Calculates the day of the week the first day of the currently visible month lands on
      * @return {number}
      */
-    visibleMonthStartingDayOfWeek(){
+    visibleMonthStartingDayOfWeek(): number {
+        const visibleMonth = this.getVisibleMonth();
+        if(visibleMonth){
+            return this.dayOfTheWeek(this.visibleYear, visibleMonth.numericRepresentation, 1);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Calculates the day of the week a passed in day falls on based on its month and year
+     * @param {number} year The year of the date to find its day of the week
+     * @param {number} targetMonth The month that the target day is in
+     * @param {number} targetDay  The day of the month that we want to check
+     * @return {number}
+     */
+    dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
             const daysPerYear = this.totalNumberOfDays();
             Logger.debug(`Days Per Year: ${daysPerYear}`);
             //Assuming a start year of 0
-            const totalDaysForYears = daysPerYear * this.visibleYear;
+            const totalDaysForYears = daysPerYear * year;
             Logger.debug(`Total Days For Years: ${totalDaysForYears}`);
             let daysSoFarThisYear = 0;
-            for(let i = 0; i < this.months.length; i++){
-                if(!this.months[i].visible){
-                    daysSoFarThisYear = daysSoFarThisYear + this.months[i].days.length;
-                } else {
-                    break;
-                }
+            for(let i = 0; i < (targetMonth - 1); i++){
+                daysSoFarThisYear = daysSoFarThisYear + this.months[i].days.length;
             }
+            if(targetDay < 1){
+                targetDay = 1;
+            }
+            daysSoFarThisYear += (targetDay - 1);
             Logger.debug(`Days So Far This Year: ${daysSoFarThisYear}`);
             Logger.debug(`Number of days per week: ${this.weekdays.length}`);
             return ((totalDaysForYears + daysSoFarThisYear)% this.weekdays.length + this.weekdays.length) % this.weekdays.length;

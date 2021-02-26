@@ -1,10 +1,16 @@
 
+import "./application";
+
 // @ts-ignore
-class FormApplication {
+class FormApplication extends Application{
     object;
+    // @ts-ignore
     element: any;
     editors: any = [];
+    _tabs: any = [{active: ''}];
+
     constructor(o: any) {
+        super();
         this.object = o;
 
         const noDataAttr = document.createElement("input");
@@ -40,8 +46,10 @@ class FormApplication {
 
     static get defaultOptions() { return {title:'',template:'',resizable: false, classes: []}; }
 
+    // @ts-ignore
     rendered = true;
 
+    // @ts-ignore
     render(force: boolean, options: any){}
 
     close(){return Promise.resolve();}

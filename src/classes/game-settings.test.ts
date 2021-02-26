@@ -37,7 +37,12 @@ describe('Game Settings Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect(game.settings.register).toHaveBeenCalled();
-        expect(game.settings.register).toHaveBeenCalledTimes(5);
+        expect(game.settings.register).toHaveBeenCalledTimes(6);
+    });
+
+    test('Get Default Note Visibility', () => {
+        expect(GameSettings.GetDefaultNoteVisibility()).toBe(false);
+        expect(game.settings.get).toHaveBeenCalled();
     });
 
     test('Load Year Data', () => {

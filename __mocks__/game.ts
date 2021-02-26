@@ -49,6 +49,7 @@ const game = {
         get: jest.fn((moduleName: string, settingName: string): any => {
             switch (settingName){
                 case SettingNames.AllowPlayersToAddNotes:
+                case SettingNames.DefaultNoteVisibility:
                     return false;
                 case SettingNames.YearConfiguration:
                     return {numericRepresentation: 0, prefix: '', postfix: ''};

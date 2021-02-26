@@ -134,3 +134,8 @@ export interface WeekdayConfig {
     name: string;
     numericRepresentation: number;
 }
+
+export interface LeapYearConfig {
+    rule: string;
+    customMod: number;
+}

@@ -1,11 +1,12 @@
 import Year from "./year";
 import {Logger} from "./logging";
-import {CurrentDateConfig, MonthConfig, WeekdayConfig, YearConfig, NoteConfig} from "../interfaces";
+import {CurrentDateConfig, MonthConfig, WeekdayConfig, YearConfig, NoteConfig, LeapYearConfig} from "../interfaces";
 import {ModuleName, SettingNames} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import {Weekday} from "./weekday";
 import {Note} from "./note";
+import LeapYear from "./leap-year";
 
 export class GameSettings {
     /**
@@ -74,6 +75,21 @@ export class GameSettings {
             type: Object,
             onChange:  SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
         });
+        game.settings.register(ModuleName, SettingNames.LeapYearRule, {
+            name: "Leap Year Rule",
+            scope: "world",
+            config: false,
+            type: Object,
+            onChange: SimpleCalendar.instance.loadNotes.bind(SimpleCalendar.instance, true)
+        });
+        game.settings.register(ModuleName, SettingNames.DefaultNoteVisibility, {
+            name: "FSC.Configuration.DefaultNoteVisibility",
+            hint: "FSC.Configuration.DefaultNoteVisibilityHint",
+            scope: "world",
+            config: true,
+            type: Boolean,
+            default: false
+        });
         game.settings.register(ModuleName, SettingNames.Notes, {
             name: "Notes",
             scope: "world",
@@ -82,6 +98,14 @@ export class GameSettings {
             default: [],
             onChange: SimpleCalendar.instance.loadNotes.bind(SimpleCalendar.instance, true)
         });
+    }
+
+    /**
+     * Gets the default note visibility setting
+     * @return {boolean}
+     */
+    static GetDefaultNoteVisibility(){
+        return <boolean>game.settings.get(ModuleName, SettingNames.DefaultNoteVisibility);
     }
 
     /**
@@ -128,6 +152,10 @@ export class GameSettings {
             }
         }
         return returnData;
+    }
+
+    static LoadLeapYearRules(): LeapYearConfig {
+        return game.settings.get(ModuleName, SettingNames.LeapYearRule);
     }
 
     /**
@@ -223,6 +251,18 @@ export class GameSettings {
             Logger.debug(`Saving weekday configuration.`);
             const newConfig: WeekdayConfig[] = weekdays.map(w => {return {name: w.name, numericRepresentation: w.numericRepresentation}; });
             return game.settings.set(ModuleName, SettingNames.WeekdayConfiguration, newConfig).then(() => {return true;});
+        }
+        return false;
+    }
+
+    static async SaveLeapYearRules(leapYear: LeapYear): Promise<any>{
+        if(game.user.isGM) {
+            Logger.debug(`Saving leap year configuration.`);
+            const newlyc: LeapYearConfig = {
+                rule: leapYear.rule,
+                customMod: leapYear.customMod
+            };
+            return game.settings.set(ModuleName, SettingNames.LeapYearRule, newlyc);
         }
         return false;
     }

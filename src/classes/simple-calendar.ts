@@ -329,7 +329,7 @@ export default class SimpleCalendar extends Application{
                     newNote.monthDisplay = currentMonth.name;
                     newNote.title = 'New Note';
                     newNote.author = GameSettings.UserName();
-                    newNote.playerVisible = true;
+                    newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
                     SimpleCalendarNotes.instance = new SimpleCalendarNotes(newNote);
                     SimpleCalendarNotes.instance.showApp();
                 } else {

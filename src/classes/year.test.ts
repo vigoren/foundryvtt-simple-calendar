@@ -278,6 +278,23 @@ describe('Year Class Tests', () => {
         year.months.push(new Month("Test 2", 2, 22));
         year.months[1].visible = true;
         expect(year.visibleMonthStartingDayOfWeek()).toBe(2);
+
+        year.months[1].visible = false;
+        expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
+    });
+
+    test('Day of the Week', () => {
+        year.months.push(month);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, 1)).toBe(0);
+        year.weekdays.push(new Weekday(1, 'S'));
+        year.weekdays.push(new Weekday(2, 'M'));
+        year.weekdays.push(new Weekday(3, 'T'));
+        year.weekdays.push(new Weekday(4, 'W'));
+        year.weekdays.push(new Weekday(5, 'T'));
+        year.weekdays.push(new Weekday(6, 'F'));
+        year.weekdays.push(new Weekday(7, 'S'));
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, 2)).toBe(1);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, -1)).toBe(0);
     });
 
 });

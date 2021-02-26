@@ -93,10 +93,10 @@ Field | Description
 ------- | -----------
 Note Title | The title for the note, this title will appear in the listing of notes for the day.
 Player Visible | If this note can be seen by players or if it is for the GM only.
-Note Repeats | If this note repeats monthly, yearly or never. If the note repeats monthly and it is on a day that some months don't have (eg the 31st) months that don't go to that day will not have this note.
+Note Repeats | If this note repeats weekly, monthly, yearly or never. If the note repeats monthly and it is on a day that some months don't have (eg the 31st) months that don't go to that day will not have this note.
 Details | Here you can enter the details of a note using the built in text editor.
 
-After all of the details are filled out you can save the note.
+After all the details are filled out you can save the note.
 
 **Important**: If you have not saved the content in the text editor using the text editor save button, a warning will appear when you try to save the note letting you know.
 
@@ -147,3 +147,11 @@ Remove All Weekdays Button | This button will remove all of the weekdays from th
 
 
 After you have changed the settings to your liking don't forget to save the configuration by hitting the Save Configuration button!
+
+## Module Settings
+
+The module has the following settings that can be adjusted in Foundry's game settings under the module settings tab.
+
+Setting | Description
+-------- | ----------
+Note Default Player Visibility | For new notes, if by default the player visibility option is checked or not.

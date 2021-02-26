@@ -1,5 +1,10 @@
 #simpleCalendarConfiguration{
-  max-width: 500px;
+  .tabs{
+    line-height: 32px;
+    font-size: 16px;
+    border-bottom: 1px solid #782e22;
+    margin-bottom: 1rem;
+  }
 
   .center{
     text-align: center;

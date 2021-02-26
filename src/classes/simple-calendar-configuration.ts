@@ -3,6 +3,7 @@ import Year from "./year";
 import {GameSettings} from "./game-settings";
 import Month from "./month";
 import {Weekday} from "./weekday";
+import {LeapYearRules} from "../constants";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -24,6 +25,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     constructor(data: Year) {
         super(data);
+        this._tabs[0].active = "yearSettings";
         this.year = data;
     }
 
@@ -36,6 +38,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
         options.title = "FSC.Configuration.Title";
         options.classes = ["simple-calendar"];
         options.resizable = true;
+        options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
+        options.height = 700;
+        options.width = 650;
         return options;
     }
 
@@ -68,7 +73,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
         return {
             currentYear: (<Year>this.object),
             months: (<Year>this.object).months.map(m => m.toTemplate()),
-            weekdays: (<Year>this.object).weekdays.map(w => w.toTemplate())
+            weekdays: (<Year>this.object).weekdays.map(w => w.toTemplate()),
+            leapYearRules: {none: 'FSC.Configuration.LeapYear.Rules.None', gregorian: 'FSC.Configuration.LeapYear.Rules.Gregorian', custom: 'FSC.Configuration.LeapYear.Rules.Custom'},
+            leapYearRule: (<Year>this.object).leapYearRule
         };
     }
 
@@ -78,7 +85,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * @protected
      */
     protected activateListeners(html: JQuery | HTMLElement) {
+        super.activateListeners(html);
         if(html.hasOwnProperty("length")) {
+
             //Save button clicks
             (<JQuery>html).find("#scSubmit").on('click', SimpleCalendarConfiguration.instance.saveClick.bind(this));
 
@@ -97,6 +106,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             //Input Change
             (<JQuery>html).find(".month-settings table td input").on('change', SimpleCalendarConfiguration.instance.monthInputChange.bind(this));
             (<JQuery>html).find(".weekday-settings table td input").on('change', SimpleCalendarConfiguration.instance.weekdayInputChange.bind(this));
+            (<JQuery>html).find(".leapyear-settings #scNoteRepeats").on('change', SimpleCalendarConfiguration.instance.leapYearRuleChange.bind(this));
         }
     }
 
@@ -218,6 +228,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
         Logger.debug('Unable to set the weekday data on change.');
     }
 
+    public leapYearRuleChange(e: Event){
+        e.preventDefault();
+        console.log(e);
+    }
+
     /**
      * When the save button is clicked, apply those changes to the game settings and re-load the calendars across all players
      * @param {Event} e The click event
@@ -237,7 +252,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<Year>this.object).prefix = (<HTMLInputElement>document.getElementById("scYearPreFix")).value;
             (<Year>this.object).postfix = (<HTMLInputElement>document.getElementById("scYearPostFix")).value;
             await GameSettings.SaveYearConfiguration(<Year>this.object);
-
             // Update the Month Configuration
             const monthNames = (<JQuery>this.element).find('.month-name');
             const monthDays= (<JQuery>this.element).find('.month-days');
@@ -267,7 +281,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 }
             }
             await GameSettings.SaveMonthConfiguration((<Year>this.object).months);
-
             //Update Weekday Configuration
             const weekdayNames = (<JQuery>this.element).find('.weekday-name');
             for(let i = 0; i < weekdayNames.length; i++){
@@ -279,7 +292,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 }
             }
             await GameSettings.SaveWeekdayConfiguration((<Year>this.object).weekdays);
-
             if(updateCurrentDate){
                 await GameSettings.SaveCurrentDate(<Year>this.object);
             }

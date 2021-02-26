@@ -74,7 +74,7 @@ export class SimpleCalendarNotes extends FormApplication {
         options.viewMode = this.viewMode;
         options.richButton = !this.viewMode;
         options.canEdit = GameSettings.IsGm();
-        options.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Monthly', 2: 'FSC.Notes.Repeat.Yearly'};
+        options.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'};
         if((<Note>this.object).repeats === NoteRepeat.Yearly || (<Note>this.object).repeats === NoteRepeat.Monthly){
             options.noteYear = SimpleCalendar.instance.currentYear?.visibleYear;
         } else {
@@ -85,6 +85,8 @@ export class SimpleCalendarNotes extends FormApplication {
         } else {
             options.noteMonth = (<Note>this.object).monthDisplay;
         }
+        options.repeats = (<Note>this.object).repeats;
+        options.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(options.repeatOptions[options.repeats])}`;
         return options;
     }
 

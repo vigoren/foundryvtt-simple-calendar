@@ -1,7 +1,12 @@
 <div id="simpleCalendarNotes">
     <form autocomplete="off" onsubmit="event.preventDefault();">
         {{#if viewMode}}
-        <p>{{noteMonth}} {{object.day}}, {{noteYear}}</p>
+        <p>
+            {{noteMonth}} {{object.day}}, {{noteYear}}
+            {{#if repeats}}
+            <span class="note-repeat">{{repeatsText}}</span>
+            {{/if}}
+        </p>
         <h1>{{object.title}}</h1>
         {{else}}
         <h1>{{localize 'FSC.Notes.NewFor'}} {{object.monthDisplay}} {{object.day}}, {{object.year}}</h1>

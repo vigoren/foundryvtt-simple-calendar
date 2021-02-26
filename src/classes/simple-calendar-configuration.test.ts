@@ -53,11 +53,17 @@ describe('Simple Calendar Configuration Tests', () => {
     test('Default Options', () => {
         const spy = jest.spyOn(FormApplication, 'defaultOptions', 'get');
         const opts = SimpleCalendarConfiguration.defaultOptions;
-        expect(Object.keys(opts).length).toBe(4); //Make sure no new properties have been added
+        expect(Object.keys(opts).length).toBe(7); //Make sure no new properties have been added
         expect(opts.template).toBe('modules/foundryvtt-simple-calendar/templates/calendar-config.html');
         expect(opts.title).toBe('FSC.Configuration.Title');
         expect(opts.classes).toStrictEqual(["simple-calendar"]);
         expect(opts.resizable).toBe(true);
+        //@ts-ignore
+        expect(opts.width).toBe(550);
+        //@ts-ignore
+        expect(opts.height).toBe(700);
+        //@ts-ignore
+        expect(opts.tabs).toStrictEqual([{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}]);
         expect(spy).toHaveBeenCalled();
     });
 

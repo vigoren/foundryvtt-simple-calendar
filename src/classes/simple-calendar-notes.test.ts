@@ -44,7 +44,7 @@ describe('Simple Calendar Notes Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(SimpleCalendarNotes.instance).length).toBe(8); //Make sure no new properties have been added
+        expect(Object.keys(SimpleCalendarNotes.instance).length).toBe(9); //Make sure no new properties have been added
         expect(SimpleCalendarNotes.instance.updateNote).toBe(false);
         expect(SimpleCalendarNotes.instance.viewMode).toBe(false);
         expect(SimpleCalendarNotes.instance.richEditorSaved).toBe(false);

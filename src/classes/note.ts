@@ -1,6 +1,7 @@
 import {NoteConfig, NoteTemplate} from "../interfaces";
 import {GameSettings} from "./game-settings"
 import {NoteRepeat} from "../constants";
+import SimpleCalendar from "./simple-calendar";
 
 /**
  * All content around a calendar note
@@ -122,7 +123,14 @@ export class Note{
     isVisible(year: number, month: number ,day: number){
         const userVisible = (GameSettings.IsGm() || (!GameSettings.IsGm() && this.playerVisible));
         let dayVisible = false;
-        if(this.repeats === NoteRepeat.Monthly){
+        if(this.repeats === NoteRepeat.Weekly){
+            let noteDayOfWeek = 0, targetDayOfWeek = 1;
+            if(SimpleCalendar.instance.currentYear){
+                noteDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(this.year, this.month, this.day);
+                targetDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(year, month, day);
+            }
+            dayVisible = noteDayOfWeek === targetDayOfWeek;
+        } else if(this.repeats === NoteRepeat.Monthly){
             dayVisible = this.day === day;
         } else if(this.repeats === NoteRepeat.Yearly){
             dayVisible = this.month === month && this.day === day;
