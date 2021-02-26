@@ -60,6 +60,7 @@ export class SimpleCalendarNotes extends FormApplication {
         options.classes = ["form","simple-calendar"];
         options.resizable = true;
         options.closeOnSubmit = false;
+        options.width = 500;
         return options;
     }
 
