@@ -1,9 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: "[BUG] "
 labels: bug
-assignees: ''
+assignees: vigoren
 
 ---
 
@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Browser (please complete the following information):**
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
- - Browser Version [e.g. 22
+ - Browser Version [e.g. 22]
 
 **Additional context**
 Add any other context about the problem here.
