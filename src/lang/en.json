@@ -96,6 +96,8 @@
   "FSC.Configuration.LeapYear.Rules.None": "None",
   "FSC.Configuration.LeapYear.Rules.Gregorian": "Gregorian",
   "FSC.Configuration.LeapYear.Rules.Custom": "Custom",
+  "FSC.Configuration.LeapYear.Days": "Number of Days in a Leap Year",
+  "FSC.Configuration.LeapYear.DaysHelp": "The number of days that make up this month during a leap year.",
   "FSC.Error.Note.NoTitle": "Can't save a note with no title!",
   "FSC.Error.Note.RichText": "Please save the rich editor content.",
   "FSC.Error.Note.NoSelectedDay": "Unable to add new note, there is no selected day.",

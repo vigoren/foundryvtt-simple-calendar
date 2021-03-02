@@ -94,6 +94,7 @@
                 </div>
                 <p class="notes">{{localize 'FSC.Configuration.LeapYear.RuleHelp'}}</p>
             </div>
+            {{#if showLeapYearCustomMod}}
             <div class="form-group">
                 <label for="scLeapYearCustomMod">{{localize 'FSC.Configuration.LeapYear.CustomMod'}}</label>
                 <div class="form-fields">
@@ -101,6 +102,25 @@
                 </div>
                 <p class="notes">{{localize 'FSC.Configuration.LeapYear.CustomModHelp'}}</p>
             </div>
+            {{/if}}
+            {{#if showLeapYearMonths}}
+            <table>
+                <tr>
+                    <th title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</th>
+                    <th title="{{localize 'FSC.Configuration.Month.DaysHelp'}}">{{localize 'FSC.Configuration.LeapYear.Days'}}</th>
+                    <th title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</th>
+                </tr>
+                {{#each months}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>
+                        <input class="month-leap-days" value="{{numberOfLeapYearDays}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.LeapYear.DaysHelp'}}" />
+                    </td>
+                    <td class="center">{{numericRepresentation}}</td>
+                </tr>
+                {{/each}}
+            </table>
+            {{/if}}
         </div>
 
 

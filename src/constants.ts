@@ -14,7 +14,7 @@ export enum SettingNames {
     Notes = 'notes',
     AllowPlayersToAddNotes = 'allow-players-add-notes',
     DefaultNoteVisibility = 'default-note-visibility',
-    LeapYearRule = 'leap-year-rul'
+    LeapYearRule = 'leap-year-rule'
 }
 
 /**

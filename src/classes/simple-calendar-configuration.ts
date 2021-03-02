@@ -75,7 +75,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
             months: (<Year>this.object).months.map(m => m.toTemplate()),
             weekdays: (<Year>this.object).weekdays.map(w => w.toTemplate()),
             leapYearRules: {none: 'FSC.Configuration.LeapYear.Rules.None', gregorian: 'FSC.Configuration.LeapYear.Rules.Gregorian', custom: 'FSC.Configuration.LeapYear.Rules.Custom'},
-            leapYearRule: (<Year>this.object).leapYearRule
+            leapYearRule: (<Year>this.object).leapYearRule,
+            showLeapYearCustomMod: (<Year>this.object).leapYearRule.rule === LeapYearRules.Custom,
+            showLeapYearMonths: (<Year>this.object).leapYearRule.rule !== LeapYearRules.None
         };
     }
 
@@ -106,7 +108,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
             //Input Change
             (<JQuery>html).find(".month-settings table td input").on('change', SimpleCalendarConfiguration.instance.monthInputChange.bind(this));
             (<JQuery>html).find(".weekday-settings table td input").on('change', SimpleCalendarConfiguration.instance.weekdayInputChange.bind(this));
-            (<JQuery>html).find(".leapyear-settings #scNoteRepeats").on('change', SimpleCalendarConfiguration.instance.leapYearRuleChange.bind(this));
+            (<JQuery>html).find(".leapyear-settings #scLeapYearRule").on('change', SimpleCalendarConfiguration.instance.leapYearRuleChange.bind(this));
+            (<JQuery>html).find(".leapyear-settings table td input").on('change', SimpleCalendarConfiguration.instance.leapYearMonthChange.bind(this));
         }
     }
 
@@ -228,9 +231,39 @@ export class SimpleCalendarConfiguration extends FormApplication {
         Logger.debug('Unable to set the weekday data on change.');
     }
 
+    /**
+     * Event when the leap year rule dropdown has changed to temporarily store those changes so if the application is updated the correct values are displayed
+     * @param {Event} e The event that triggered the change
+     */
     public leapYearRuleChange(e: Event){
         e.preventDefault();
-        console.log(e);
+        const leapYearRule = (<HTMLSelectElement>e.currentTarget).value;
+        (<Year>this.object).leapYearRule.rule = <LeapYearRules>leapYearRule;
+        console.log(leapYearRule);
+        this.updateApp();
+    }
+
+    /**
+     * Event when a text box for the leap year month day count is change to temporarily store those changes so that if the application is updated the correct values are displayed
+     * @param {Event} e The event that triggered the change
+     */
+    public leapYearMonthChange(e: Event){
+        e.preventDefault();
+        const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
+        const cssClass = (<HTMLElement>e.currentTarget).getAttribute('class');
+        const value = (<HTMLInputElement>e.currentTarget).value;
+        if(dataIndex && cssClass && value){
+            const monthIndex = parseInt(dataIndex);
+            const months = (<Year>this.object).months;
+            if(!isNaN(monthIndex) && monthIndex < months.length){
+                const days = parseInt(value);
+                if(!isNaN(days) && days !== months[monthIndex].numberOfLeapYearDays){
+                    months[monthIndex].numberOfLeapYearDays = days;
+                }
+                return;
+            }
+        }
+        Logger.debug('Unable to set the months data on change.');
     }
 
     /**
@@ -255,6 +288,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             // Update the Month Configuration
             const monthNames = (<JQuery>this.element).find('.month-name');
             const monthDays= (<JQuery>this.element).find('.month-days');
+            const monthLeapDays= (<JQuery>this.element).find('.month-leap-days');
 
             for(let i = 0; i < monthNames.length; i++){
                 const monthIndex = monthNames[i].getAttribute('data-index');
@@ -262,21 +296,36 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     const index = parseInt(monthIndex);
                     const month = (<Year>this.object).months[index];
                     month.name = (<HTMLInputElement>monthNames[i]).value;
+                    if(i < monthLeapDays.length){
+                        const days = parseInt((<HTMLInputElement>monthLeapDays[i]).value);
+                        if(!isNaN(days) && month.numberOfLeapYearDays !== days){
+                            month.numberOfLeapYearDays = days;
+                        }
+                    } else {
+                        month.numberOfLeapYearDays = 0;
+                    }
                     const days = parseInt((<HTMLInputElement>monthDays[i]).value);
-                    if(!isNaN(days) && month.days.length !== days){
+                    if(!isNaN(days) && month.numberOfDays !== days){
+                        month.numberOfDays = days;
+                        if(month.numberOfLeapYearDays < 1){
+                            month.numberOfLeapYearDays = month.numberOfDays;
+                        }
+                    }
+                    const daysShouldBe = month.numberOfLeapYearDays > month.numberOfDays? month.numberOfLeapYearDays : month.numberOfDays;
+                    if(month.days.length !== daysShouldBe){
                         Logger.debug(`Days for month ${month.name} are different, rebuilding month days`);
-                        const monthCurrentDay = month.getCurrentDay();
-                        month.days = [];
+                        const monthCurrentDay = month.getDay();
                         let currentDay = null;
                         if(monthCurrentDay){
                             if(monthCurrentDay.numericRepresentation >= days){
-                                Logger.debug('The current day falls outside of the months news days, setting to first day of the month.');
+                                Logger.debug('The current day falls outside of the months new days, setting to first day of the month.');
                                 currentDay = 0;
                             } else {
                                 currentDay = monthCurrentDay.numericRepresentation;
                             }
                         }
-                        month.populateDays(days, currentDay);
+                        month.days = [];
+                        month.populateDays(daysShouldBe, currentDay);
                     }
                 }
             }
@@ -292,6 +341,20 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 }
             }
             await GameSettings.SaveWeekdayConfiguration((<Year>this.object).weekdays);
+
+            const leapYearRule = (<JQuery>this.element).find('#scLeapYearRule').find(":selected").val();
+            if(leapYearRule){
+                (<Year>this.object).leapYearRule.rule = <LeapYearRules>leapYearRule.toString();
+            }
+            if((<Year>this.object).leapYearRule.rule === LeapYearRules.Custom){
+                const leapYearCustomMod = parseInt((<HTMLInputElement>document.getElementById("scLeapYearCustomMod")).value);
+                if(!isNaN(leapYearCustomMod)){
+                    (<Year>this.object).leapYearRule.customMod = leapYearCustomMod;
+                }
+            }
+
+            await GameSettings.SaveLeapYearRules((<Year>this.object).leapYearRule);
+
             if(updateCurrentDate){
                 await GameSettings.SaveCurrentDate(<Year>this.object);
             }

@@ -81,7 +81,7 @@ export class SimpleCalendarNotes extends FormApplication {
             options.noteYear = (<Note>this.object).year;
         }
         if((<Note>this.object).repeats === NoteRepeat.Monthly){
-            options.noteMonth = SimpleCalendar.instance.currentYear?.getVisibleMonth()?.name;
+            options.noteMonth = SimpleCalendar.instance.currentYear?.getMonth('visible')?.name;
         } else {
             options.noteMonth = (<Note>this.object).monthDisplay;
         }

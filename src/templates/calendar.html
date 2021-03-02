@@ -4,7 +4,7 @@
             <div class="calendar" style="{{#calendar-width}}{{/calendar-width}}">
                 <div class="current-date">
                     <a class="fa fa-chevron-left" title="{{localize 'FSC.ChangePreviousMonth'}}"></a>
-                    <span>{{visibleMonth.name}} {{currentYear.display}}</span>
+                    <span>{{currentYear.visibleMonth.name}} {{currentYear.display}}</span>
                     <a class="fa fa-chevron-right" title="{{localize 'FSC.ChangeNextMonth'}}"></a>
                 </div>
                 <div class="weekdays">
@@ -13,10 +13,10 @@
                     {{/each}}
                 </div>
                 <div class="days">
-                    {{#each visibleMonthStartWeekday}}
+                    {{#each currentYear.visibleMonthWeekOffset}}
                     <div class="empty-day"></div>
                     {{/each}}
-                    {{#each visibleMonth.days}}
+                    {{#each currentYear.visibleMonth.days}}
                     <div class="day {{#if ../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
                         {{#day-has-note day=this}}{{/day-has-note}}
                         {{this.name}}
@@ -56,12 +56,7 @@
         {{/if}}
     </div>
     <div class="date-notes">
-        <h2>{{localize 'FSC.Notes.For'}}
-            {{#if selectedDay}}
-                {{selectedMonth.name}} {{selectedDay.name}}
-            {{else if currentDay}}
-                {{currentMonth.name}} {{currentDay.name}}
-            {{/if}}, {{selectedYear}}
+        <h2>{{localize 'FSC.Notes.For'}} {{currentYear.selectedDisplayMonth}} {{currentYear.selectedDisplayDay}}, {{currentYear.selectedDisplayYear}}
             {{#if isGM}}
             <button class="fa fa-plus control save add-note"> {{localize 'FSC.Notes.AddNew'}}</button>
             {{/if}}
