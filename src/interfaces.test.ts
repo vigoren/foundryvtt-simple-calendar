@@ -33,7 +33,8 @@ describe('Interface Tests', () => {
         numericRepresentation: 0,
         visibleMonth: mt,
         visibleMonthWeekOffset: [],
-        weekdays: [wt]
+        weekdays: [wt],
+        showWeekdayHeaders: false
     };
     const ct: CalendarTemplate = {
         isGM: false,
@@ -74,7 +75,7 @@ describe('Interface Tests', () => {
     });
 
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(8); //Make sure no new properties have been added
+        expect(Object.keys(yt).length).toBe(9); //Make sure no new properties have been added
         expect(yt.display).toBe('');
         expect(yt.selectedDisplayYear).toBe('');
         expect(yt.selectedDisplayMonth).toBe('');
@@ -83,7 +84,7 @@ describe('Interface Tests', () => {
         expect(yt.visibleMonth).toStrictEqual(mt);
         expect(yt.visibleMonthWeekOffset).toStrictEqual([]);
         expect(yt.weekdays).toStrictEqual([wt]);
-
+        expect(yt.showWeekdayHeaders).toStrictEqual(false);
     });
 
     test('Calendar Template', () => {
@@ -96,11 +97,12 @@ describe('Interface Tests', () => {
     });
 
     test('Year Config', () => {
-        const yc: YearConfig = {postfix: '', prefix: '', numericRepresentation: 0};
-        expect(Object.keys(yc).length).toBe(3); //Make sure no new properties have been added
+        const yc: YearConfig = {postfix: '', prefix: '', numericRepresentation: 0, showWeekdayHeadings: false};
+        expect(Object.keys(yc).length).toBe(4); //Make sure no new properties have been added
         expect(yc.postfix).toBe('');
         expect(yc.prefix).toBe('');
         expect(yc.numericRepresentation).toBe(0);
+        expect(yc.showWeekdayHeadings).toBe(false);
     });
 
     test('Month Config', () => {
