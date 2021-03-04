@@ -29,6 +29,8 @@ export interface YearTemplate {
     visibleMonth: MonthTemplate | undefined;
     /** An array of 0's where the array length is the weekday the visible month starts on  */
     visibleMonthWeekOffset: number[];
+    /** If to show the weekday headers on the calendar view */
+    showWeekdayHeaders: boolean;
     /** The days of the week */
     weekdays: WeekdayTemplate[];
 }
@@ -40,6 +42,7 @@ export interface YearConfig {
     numericRepresentation: number;
     prefix: string;
     postfix: string;
+    showWeekdayHeadings: boolean;
 }
 
 /**
@@ -55,6 +58,8 @@ export interface  MonthTemplate {
     days: any[];
     numberOfDays: number;
     numberOfLeapYearDays: number;
+    intercalary: boolean;
+    intercalaryInclude: boolean;
 }
 
 /**
@@ -65,6 +70,8 @@ export interface MonthConfig {
     numericRepresentation: number;
     numberOfDays: number;
     numberOfLeapYearDays: number;
+    intercalary: boolean;
+    intercalaryInclude: boolean;
 }
 
 /**

@@ -52,11 +52,13 @@ const game = {
                 case SettingNames.DefaultNoteVisibility:
                     return false;
                 case SettingNames.YearConfiguration:
-                    return {numericRepresentation: 0, prefix: '', postfix: ''};
+                    return {numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true};
                 case SettingNames.MonthConfiguration:
-                    return [[{numericRepresentation: 1, numberOfDays: 2, name: ''}]];
+                    return [[{name: '', numericRepresentation: 1, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false}]];
                 case SettingNames.WeekdayConfiguration:
-                    return [[{numericRepresentation: 0, name: ''}]];
+                    return [[{name: '', numericRepresentation: 0}]];
+                case SettingNames.LeapYearRule:
+                    return {rule: 'none', customMod: 0};
                 case SettingNames.CurrentDate:
                     return {year: 0, month: 1, day: 2};
                 case SettingNames.Notes:

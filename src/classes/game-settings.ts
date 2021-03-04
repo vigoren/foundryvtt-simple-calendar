@@ -219,12 +219,16 @@ export class GameSettings {
         if(game.user.isGM) {
             Logger.debug(`Saving year configuration.`);
             const currentYearConfig = <YearConfig> game.settings.get(ModuleName, SettingNames.YearConfiguration);
+            if(!currentYearConfig.hasOwnProperty('showWeekdayHeadings')){
+                currentYearConfig.showWeekdayHeadings = true;
+            }
             const yc: YearConfig = {
                 numericRepresentation: year.numericRepresentation,
                 prefix: year.prefix,
-                postfix: year.postfix
+                postfix: year.postfix,
+                showWeekdayHeadings: year.showWeekdayHeadings
             };
-            if(currentYearConfig.numericRepresentation !== yc.numericRepresentation || currentYearConfig.prefix !== yc.prefix || currentYearConfig.postfix !== yc.postfix){
+            if(currentYearConfig.numericRepresentation !== yc.numericRepresentation || currentYearConfig.prefix !== yc.prefix || currentYearConfig.postfix !== yc.postfix || currentYearConfig.showWeekdayHeadings !== yc.showWeekdayHeadings){
                 return game.settings.set(ModuleName, SettingNames.YearConfiguration, yc).then(() => { return true }); //Return true because if no error was thrown then the save was successful and we don't need the returned data.
             } else {
                 Logger.debug('Year configuration has not changed, not updating settings');
@@ -241,7 +245,14 @@ export class GameSettings {
         if(game.user.isGM) {
             Logger.debug(`Saving month configuration.`);
             const currentMonthConfig = JSON.stringify(GameSettings.LoadMonthData());
-            const newConfig: MonthConfig[] = months.map(m => { return {  name: m.name, numericRepresentation: m.numericRepresentation, numberOfDays: m.numberOfDays, numberOfLeapYearDays: m.numberOfLeapYearDays }; });
+            const newConfig: MonthConfig[] = months.map(m => { return {
+                name: m.name,
+                numericRepresentation: m.numericRepresentation,
+                numberOfDays: m.numberOfDays,
+                numberOfLeapYearDays: m.numberOfLeapYearDays,
+                intercalary: m.intercalary,
+                intercalaryInclude: m.intercalaryInclude
+            }; });
             if(currentMonthConfig !== JSON.stringify(newConfig)){
                 return game.settings.set(ModuleName, SettingNames.MonthConfiguration, newConfig).then(() => {return true;});
             } else {

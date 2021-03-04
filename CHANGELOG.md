@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.1.0 - Reoccurring Notes, Leap Years and Bug Fixes
+## v1.1.0 - Reoccurring Notes, Leap Years, Intercalary Months and Bug Fixes
 
 ### Reoccurring Notes
 This update adds the ability to have notes that repeat at certain intervals. When creating or editing a note the GM will be able to pick from these options for how often the note repeats:
@@ -23,15 +23,26 @@ The calendar configuration dialog now has a section for configuration of leap ye
 - When Leap Years Happen: **This only appears if the custom rule is selected**. The number of years when a leap year occurs. Example a value of 5 would mean every 5th year is a leap year.
 - Months List: A list of months will appear if you have the Gregorian or Custom rule selected. This list will show each month, and a textbox where you can change the number of days the corresponding month has during a leap year.
 
+### Intercalary Months
+
+When configuring the calendars months there is now an option to specify if a month is to be considered intercalary or not.
+An intercalary month is one that does not follow the standard month numbering and is skipped. Example: If we were to add an intercalary month between January and February, January would still be considered the first month and February would be considered the second month. The new month does not get a number.
+
+Intercalary months also do not count towards the years total days nor do they affect the day of the week subsequent months start on.
+
+When you select a month to be intercalary, there is the option to include these days as part of the years total days and have its days afect the day of the week subsequent months start on. The month though still is not numbered.
+
 ### Bug Fixes and QoL improvements
 
 This update also includes the following bug fixes and quality of life improvements:
 
-- Improved the layout of the calendar configuration dialog.
+- Added a new setting that will hide the day of week letter at the top of the calendar.
 - Added a new module setting Note Default Player Visibility. This allows the GM to set for new notes, if by default the player visibility option is checked or not.
-- Notes should be more consistent at saving with no details entered.
 - Updated the note indicator that shows days with notes. The indicator is now a reddish circle that contains the number of notes on that day.
 - The note dialog now opens at a consistent width so very long content will no longer stretch the dialog across the screen.
+- Notes should be more consistent at saving with no details entered.
+- Improved the layout of the calendar configuration dialog.
+  Added some predefined calendars that a GM can choose to use. These replace the existing calendar configuration with a new one to match the world.
 - Various improvements to the backend code.
 
 ## v1.0.3 - Bug Fixes

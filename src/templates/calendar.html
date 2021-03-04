@@ -7,11 +7,13 @@
                     <span>{{currentYear.visibleMonth.name}} {{currentYear.display}}</span>
                     <a class="fa fa-chevron-right" title="{{localize 'FSC.ChangeNextMonth'}}"></a>
                 </div>
+                {{#if currentYear.showWeekdayHeaders}}
                 <div class="weekdays">
                     {{#each currentYear.weekdays}}
                     <div class="weekday" title="{{name}}">{{firstCharacter}}</div>
                     {{/each}}
                 </div>
+                {{/if}}
                 <div class="days">
                     {{#each currentYear.visibleMonthWeekOffset}}
                     <div class="empty-day"></div>

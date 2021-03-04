@@ -147,7 +147,7 @@ export default class SimpleCalendar extends Application{
         Logger.debug('Changing view to previous month');
         e.stopPropagation()
         if(this.currentYear){
-            this.currentYear.changeMonth(false);
+            this.currentYear.changeMonth(-1);
             this.updateApp();
         }
     }
@@ -160,7 +160,7 @@ export default class SimpleCalendar extends Application{
         Logger.debug('Changing view to next month');
         e.stopPropagation()
         if(this.currentYear){
-            this.currentYear.changeMonth(true);
+            this.currentYear.changeMonth(1);
             this.updateApp();
         }
     }
@@ -252,7 +252,7 @@ export default class SimpleCalendar extends Application{
                 break;
             case 'month':
                 Logger.debug(`${isNext? 'Forward' : 'Back'} Month Clicked`);
-                this.currentYear?.changeMonth(isNext, 'current');
+                this.currentYear?.changeMonth(isNext? 1 : -1, 'current');
                 this.updateApp();
                 break;
             case 'year':
@@ -404,6 +404,10 @@ export default class SimpleCalendar extends Application{
             }
             this.currentYear.prefix = yearData.prefix;
             this.currentYear.postfix = yearData.postfix;
+
+            if(yearData.hasOwnProperty('showWeekdayHeadings')){
+                this.currentYear.showWeekdayHeadings = yearData.showWeekdayHeadings;
+            }
         } else {
             Logger.debug('No year configuration found, setting default year data.');
             this.currentYear = new Year(new Date().getFullYear());
@@ -415,9 +419,6 @@ export default class SimpleCalendar extends Application{
      */
     private loadMonthConfiguration(){
         Logger.debug('Loading month configuration from settings.');
-
-        const date = new Date();
-        const dYear = date.getFullYear();
         if(this.currentYear){
             const monthData = GameSettings.LoadMonthData();
             if(monthData.length){
@@ -425,7 +426,10 @@ export default class SimpleCalendar extends Application{
                 Logger.debug('Setting the months from data.');
                 for(let i = 0; i < monthData.length; i++){
                     if(Object.keys(monthData[i]).length){
-                        this.currentYear.months.push(new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numberOfDays, monthData[i].numberOfLeapYearDays));
+                        const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numberOfDays, monthData[i].numberOfLeapYearDays);
+                        newMonth.intercalary = monthData[i].intercalary;
+                        newMonth.intercalaryInclude = monthData[i].intercalaryInclude;
+                        this.currentYear.months.push(newMonth);
                     }
                 }
             }
@@ -493,8 +497,8 @@ export default class SimpleCalendar extends Application{
             this.currentYear.visibleYear = currentDate.year;
             this.currentYear.selectedYear = currentDate.year;
 
-            this.currentYear.clearDateProperty('current');
-            this.currentYear.clearDateProperty('visible');
+            this.currentYear.resetMonths('current');
+            this.currentYear.resetMonths('visible');
 
             const month = this.currentYear.months.find(m => m.numericRepresentation === currentDate.month);
             if(month){

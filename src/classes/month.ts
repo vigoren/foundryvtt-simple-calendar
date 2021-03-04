@@ -1,7 +1,6 @@
 import Day from "./day";
 import {DayTemplate, MonthTemplate} from "../interfaces";
 import {Logger} from "./logging";
-import webpack from "webpack";
 
 /**
  * Class representing a month
@@ -38,6 +37,10 @@ export default class Month {
      * @type {boolean}
      */
     intercalary: boolean = false;
+    /**
+     * If to include the intercalary days as part of the total year count/weekday positioning or not
+     */
+    intercalaryInclude: boolean = false;
     /**
      * If this month is the current month
      */
@@ -105,13 +108,15 @@ export default class Month {
         return {
             display: this.getDisplayName(),
             name: this.name,
-            numericRepresentation: this.numericRepresentation,
+            numericRepresentation: this.numericRepresentation < 0? 0 : this.numericRepresentation,
             current: this.current,
             visible: this.visible,
             selected: this.selected,
             days: this.getDaysForTemplate(isLeapYear),
             numberOfDays: this.numberOfDays,
-            numberOfLeapYearDays: this.numberOfLeapYearDays
+            numberOfLeapYearDays: this.numberOfLeapYearDays,
+            intercalary: this.intercalary,
+            intercalaryInclude: this.intercalaryInclude
         };
     }
 
@@ -127,6 +132,8 @@ export default class Month {
         m.days = this.days.map(d => d.clone());
         m.numberOfDays = this.numberOfDays;
         m.numberOfLeapYearDays = this.numberOfLeapYearDays;
+        m.intercalary = this.intercalary;
+        m.intercalaryInclude = this.intercalaryInclude;
         return m;
     }
 
@@ -203,9 +210,9 @@ export default class Month {
         const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
         const numberOfDays = isLeapYear? this.numberOfLeapYearDays : this.numberOfDays;
         this.resetDays(setting);
-        if(day === -1 || day >= numberOfDays){
+        if(day < 0 || day >= numberOfDays){
             this.days[numberOfDays - 1][verifiedSetting] = true;
-        } else if(day < numberOfDays){
+        } else {
             this.days[day][verifiedSetting] = true;
         }
     }

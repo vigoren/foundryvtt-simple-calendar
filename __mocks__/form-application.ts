@@ -28,19 +28,30 @@ class FormApplication extends Application{
         monthDays.setAttribute('data-index', '0');
         monthDays.value = '7';
 
+        const intercalary = document.createElement('input');
+        intercalary.setAttribute('data-index', '0');
+        intercalary.checked = false;
+
+        const monthLeapDays = document.createElement("input");
+        monthLeapDays.setAttribute('data-index', '0');
+        monthLeapDays.value = '7';
+
         const weekdayNames = document.createElement('input');
         weekdayNames.setAttribute('data-index', '0');
         weekdayNames.value = 'Z';
 
 
+
+
         this.element = {
             find: jest.fn()
-                .mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr])
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([weekdayNames])
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([sameMonthDays]).mockReturnValueOnce([weekdayNames])
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([monthDays]).mockReturnValueOnce([weekdayNames])
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([sameMonthDays]).mockReturnValueOnce([weekdayNames])
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([monthDays]).mockReturnValueOnce([weekdayNames])
+                .mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return '';})};})})
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})})
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([sameMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'custom';})};})})
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([sameMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'custom';})};})})
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([monthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})})
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})})
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([monthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})})
         };
     }
 
