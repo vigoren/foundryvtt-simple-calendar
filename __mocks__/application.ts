@@ -10,6 +10,8 @@ class Application {
     render(force: boolean, options: any){}
 
     close(){return Promise.resolve();}
+
+    activateListeners(data: any){}
 }
 
 

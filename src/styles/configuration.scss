@@ -1,8 +1,82 @@
 #simpleCalendarConfiguration{
-  max-width: 500px;
+  form{
+    height: 100%;
+    margin-bottom: 50px;
+  }
+  .tabs{
+    line-height: 32px;
+    font-size: 16px;
+    border-bottom: 1px solid #782e22;
+    margin-bottom: 1rem;
+  }
 
   .center{
     text-align: center;
+  }
+
+  .form-group{
+    margin: 0.75rem 2rem;
+    border-bottom: 1px solid #9e9c9c;
+    &:last-child{
+      border-width: 0;
+    }
+
+    button{
+      max-width: 200px;
+      margin: 0.5rem auto;
+    }
+  }
+
+  .f-table{
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #7a7971;
+    border-bottom: 1px solid #7a7971;
+    margin-bottom: 1rem;
+
+    .row{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      padding: 0.25rem 0;
+
+      &.head{
+        font-weight: 600;
+        text-align: center;
+        border-bottom: 1px solid #adadad;
+
+        .month-name, .month-days{
+          line-height: 35px;
+        }
+      }
+
+      &:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .month-name, .month-days{
+        width: 140px;
+      }
+      .month-intercalary, .month-number{
+        width: 60px;
+        text-align: center;
+      }
+      .remove-month{
+        width: 100px;
+      }
+      .hidden{
+        display: none;
+      }
+      .options{
+        flex: 1 1 100%;
+        padding: .25rem 2rem;
+        border-bottom: 1px solid #adadad;
+        .form-fields{
+          flex: 1;
+        }
+      }
+    }
   }
 
   .table-actions{
@@ -18,4 +92,10 @@
     }
   }
 
+  #scSubmit{
+    position: absolute;
+    bottom: 5px;
+    left: 25%;
+    width: 50%;
+  }
 }

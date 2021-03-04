@@ -1,7 +1,12 @@
 <div id="simpleCalendarNotes">
     <form autocomplete="off" onsubmit="event.preventDefault();">
         {{#if viewMode}}
-        <p>{{object.monthDisplay}} {{object.day}}, {{object.year}}</p>
+        <p>
+            {{noteMonth}} {{object.day}}, {{noteYear}}
+            {{#if repeats}}
+            <span class="note-repeat">{{repeatsText}}</span>
+            {{/if}}
+        </p>
         <h1>{{object.title}}</h1>
         {{else}}
         <h1>{{localize 'FSC.Notes.NewFor'}} {{object.monthDisplay}} {{object.day}}, {{object.year}}</h1>
@@ -18,6 +23,15 @@
                 <input value="{{object.playerVisible}}" type="checkbox" id="scNoteVisibility" {{#if object.playerVisible}}checked="checked"{{/if}} />
             </div>
             <p class="notes">{{localize 'FSC.Notes.PlayerVisibleHelp'}}</p>
+        </div>
+        <div class="form-group">
+            <label for="scNoteRepeats">{{localize 'FSC.Notes.Repeating'}}</label>
+            <div class="form-fields">
+                <select id="scNoteRepeats">
+                    {{selectOptions repeatOptions selected=object.repeats localize=true}}
+                </select>
+            </div>
+            <p class="notes">{{localize 'FSC.Notes.RepeatingHelp'}}</p>
         </div>
         <h2>Details</h2>
         {{/if}}

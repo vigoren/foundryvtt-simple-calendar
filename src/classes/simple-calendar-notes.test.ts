@@ -12,6 +12,10 @@ import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import {Note} from "./note";
 import SpyInstance = jest.SpyInstance;
 import Mock = jest.Mock;
+import {NoteRepeat} from "../constants";
+import SimpleCalendar from "./simple-calendar";
+import Year from "./year";
+import Month from "./month";
 
 describe('Simple Calendar Notes Tests', () => {
     let renderSpy: SpyInstance;
@@ -40,7 +44,7 @@ describe('Simple Calendar Notes Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(SimpleCalendarNotes.instance).length).toBe(8); //Make sure no new properties have been added
+        expect(Object.keys(SimpleCalendarNotes.instance).length).toBe(9); //Make sure no new properties have been added
         expect(SimpleCalendarNotes.instance.updateNote).toBe(false);
         expect(SimpleCalendarNotes.instance.viewMode).toBe(false);
         expect(SimpleCalendarNotes.instance.richEditorSaved).toBe(false);
@@ -51,13 +55,15 @@ describe('Simple Calendar Notes Tests', () => {
     test('Default Options', () => {
         const spy = jest.spyOn(FormApplication, 'defaultOptions', 'get');
         const opts = SimpleCalendarNotes.defaultOptions;
-        expect(Object.keys(opts).length).toBe(5); //Make sure no new properties have been added
+        expect(Object.keys(opts).length).toBe(6); //Make sure no new properties have been added
         expect(opts.template).toBe('modules/foundryvtt-simple-calendar/templates/calendar-notes.html');
         expect(opts.title).toBe('FSC.Notes.DialogTitle');
         expect(opts.classes).toStrictEqual(["form","simple-calendar"]);
         expect(opts.resizable).toBe(true);
         //@ts-ignore
         expect(opts.closeOnSubmit).toBe(false);
+        //@ts-ignore
+        expect(opts.width).toBe(500);
         expect(spy).toHaveBeenCalled()
     });
 
@@ -66,6 +72,29 @@ describe('Simple Calendar Notes Tests', () => {
         expect(data.viewMode).toBe(false);
         expect(data.richButton).toBe(true);
         expect(data.canEdit).toBe(false);
+        expect(data.noteYear).toBe(0);
+        expect(data.noteMonth).toBe('');
+
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendarNotes.instance.object.repeats = NoteRepeat.Yearly;
+        data = SimpleCalendarNotes.instance.getData();
+        expect(data.noteYear).toBeUndefined()
+        expect(data.noteMonth).toBe('');
+
+        SimpleCalendarNotes.instance.object.repeats = NoteRepeat.Monthly;
+        data = SimpleCalendarNotes.instance.getData();
+        expect(data.noteYear).toBeUndefined();
+        expect(data.noteMonth).toBeUndefined();
+
+        SimpleCalendar.instance.currentYear = new Year(1);
+        data = SimpleCalendarNotes.instance.getData();
+        expect(data.noteYear).toBe(1);
+        expect(data.noteMonth).toBeUndefined();
+        SimpleCalendar.instance.currentYear.months.push(new Month('Name', 1));
+        SimpleCalendar.instance.currentYear.months[0].visible = true;
+        data = SimpleCalendarNotes.instance.getData();
+        expect(data.noteYear).toBe(1);
+        expect(data.noteMonth).toBe('Name');
     });
 
     test('Set Up Text Editor', () => {
@@ -200,23 +229,27 @@ describe('Simple Calendar Notes Tests', () => {
         SimpleCalendarNotes.instance.saveButtonClick(event);
         expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
 
-        SimpleCalendarNotes.instance.editors['content'].mce = {isNotDirty: false};
+        SimpleCalendarNotes.instance.editors['content'].mce = {getContent: ()=>{return 'a';},isNotDirty: false};
         SimpleCalendarNotes.instance.saveButtonClick(event);
         expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
+
         //@ts-ignore
         SimpleCalendarNotes.instance.element = {
             find: jest.fn()
                 .mockReturnValueOnce({ val: () => {return '';} })
                 .mockReturnValueOnce({ is: () => {return false;} })
+                .mockReturnValueOnce({ find: () => {return {val: () => {return false;}}} })
                 .mockReturnValueOnce({ val: () => {return 'Title';} })
                 .mockReturnValueOnce({ is: () => {return true;} })
+                .mockReturnValueOnce({ find: () => {return {val: () => {return '0';}}} })
                 .mockReturnValueOnce({ val: () => {return 'Title';} })
                 .mockReturnValueOnce({ is: () => {return true;} })
+                .mockReturnValueOnce({ find: () => {return {val: () => {return '0';}}} })
                 .mockReturnValueOnce({ val: () => {return 'Title';} })
                 .mockReturnValueOnce({ is: () => {return true;} })
-
+                .mockReturnValueOnce({ find: () => {return {val: () => {return '0';}}} })
         };
-
+        SimpleCalendarNotes.instance.editors['content'].mce = {getContent: ()=>{return '';},isNotDirty: false};
         SimpleCalendarNotes.instance.richEditorSaved = true;
         SimpleCalendarNotes.instance.saveButtonClick(event);
         expect(ui.notifications.error).toHaveBeenCalledTimes(1);

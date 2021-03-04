@@ -10,6 +10,11 @@ import "../../__mocks__/crypto";
 
 import {Note} from "./note";
 import {NoteConfig} from "../interfaces";
+import {NoteRepeat} from "../constants";
+import SimpleCalendar from "./simple-calendar";
+import Year from "./year";
+import Month from "./month";
+import {Weekday} from "./weekday";
 
 
 describe('Note Tests', () => {
@@ -29,7 +34,7 @@ describe('Note Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(n).length).toBe(9); //Make sure no new properties have been added
+        expect(Object.keys(n).length).toBe(10); //Make sure no new properties have been added
         expect(n.year).toBe(0);
         expect(n.month).toBe(1);
         expect(n.day).toBe(2);
@@ -39,6 +44,7 @@ describe('Note Tests', () => {
         expect(n.author).toBe('');
         expect(n.playerVisible).toBe(false);
         expect(n.id).toBe('abc123');
+        expect(n.repeats).toBe(NoteRepeat.Never);
     });
 
     test('To Template', () => {
@@ -61,7 +67,8 @@ describe('Note Tests', () => {
             author: 'a',
             title: 't',
             content: 'c',
-            id: 'i'
+            id: 'i',
+            repeats: 1
         };
         n.loadFromConfig(config);
         expect(n.year).toBe(1);
@@ -73,6 +80,7 @@ describe('Note Tests', () => {
         expect(n.author).toBe('a');
         expect(n.playerVisible).toBe(true);
         expect(n.id).toBe('i');
+        expect(n.repeats).toBe(1);
     });
 
     test('Clone', () => {
@@ -88,5 +96,50 @@ describe('Note Tests', () => {
         game.user.isGM = true;
         expect(n.isVisible(0,0,0)).toBe(false);
         expect(n.isVisible(0,1,2)).toBe(true);
+
+        n.repeats = NoteRepeat.Monthly;
+        expect(n.isVisible(99,99,0)).toBe(false);
+        expect(n.isVisible(99,99,2)).toBe(true);
+
+        n.repeats = NoteRepeat.Yearly;
+        expect(n.isVisible(99,0,0)).toBe(false);
+        expect(n.isVisible(99,1,2)).toBe(true);
+
+        n.repeats = NoteRepeat.Weekly;
+        SimpleCalendar.instance = new SimpleCalendar();
+        expect(n.isVisible(0,0,0)).toBe(false);
+        expect(n.isVisible(0,1,2)).toBe(false);
+
+        SimpleCalendar.instance.currentYear = new Year(0);
+        SimpleCalendar.instance.currentYear.months.push(new Month('J', 1, 31));
+        SimpleCalendar.instance.currentYear.months.push(new Month('F', 2, 28));
+        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(1, 'S'));
+        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(2, 'M'));
+        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(3, 'T'));
+        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(4, 'W'));
+        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(5, 'T'));
+        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(6, 'F'));
+        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(7, 'S'));
+        expect(n.isVisible(0,0,0)).toBe(false);
+        expect(n.isVisible(0,1,1)).toBe(false);
+        expect(n.isVisible(0,1,2)).toBe(true);
+        expect(n.isVisible(0,1,3)).toBe(false);
+        expect(n.isVisible(0,1,4)).toBe(false);
+        expect(n.isVisible(0,1,5)).toBe(false);
+        expect(n.isVisible(0,1,6)).toBe(false);
+        expect(n.isVisible(0,1,7)).toBe(false);
+        expect(n.isVisible(0,1,8)).toBe(false);
+        expect(n.isVisible(0,1,9)).toBe(true);
+        expect(n.isVisible(0,1,16)).toBe(true);
+        expect(n.isVisible(0,1,23)).toBe(true);
+        expect(n.isVisible(0,1,30)).toBe(true);
+        expect(n.isVisible(0,1,19)).toBe(false);
+        expect(n.isVisible(0,2,1)).toBe(false);
+        expect(n.isVisible(0,2,2)).toBe(false);
+        expect(n.isVisible(0,2,3)).toBe(false);
+        expect(n.isVisible(0,2,4)).toBe(false);
+        expect(n.isVisible(0,2,5)).toBe(false);
+        expect(n.isVisible(0,2,6)).toBe(true);
+        expect(n.isVisible(0,2,7)).toBe(false);
     });
 });

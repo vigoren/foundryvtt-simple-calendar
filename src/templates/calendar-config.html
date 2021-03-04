@@ -2,8 +2,27 @@
     <form autocomplete="off" onsubmit="event.preventDefault();">
         <h1>{{localize 'FSC.Configuration.Title'}}</h1>
         <p>{{localize 'FSC.Configuration.Description'}}</p>
-        <div class="year-settings">
-            <h2>{{localize 'FSC.Configuration.Year.Title'}}</h2>
+
+        <nav class="sheet-tabs tabs">
+            <a class="item" data-tab="generalSettings">{{localize 'FSC.Configuration.General.Title'}}</a>
+            <a class="item" data-tab="yearSettings">{{localize 'FSC.Configuration.Year.Title'}}</a>
+            <a class="item" data-tab="monthSettings">{{localize 'FSC.Configuration.Month.Title'}}</a>
+            <a class="item" data-tab="weekdaySettings">{{localize 'FSC.Configuration.Weekday.Title'}}</a>
+            <a class="item" data-tab="leapYearSettings">{{localize 'FSC.Configuration.LeapYear.Title'}}</a>
+        </nav>
+        <div class="tab general-settings" data-tab="generalSettings">
+            <div class="form-group">
+                <label for="scPreDefined">{{localize 'FSC.Configuration.General.PreDefined'}}</label>
+                <div class="form-fields">
+                    <select id="scPreDefined">
+                        {{selectOptions predefined localize=true}}
+                    </select>
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.General.PreDefinedHelp'}}</p>
+                <button class="control save" id="scApplyPredefined">{{localize 'FSC.Apply'}}</button>
+            </div>
+        </div>
+        <div class="tab year-settings" data-tab="yearSettings">
             <div class="form-group">
                 <label for="scCurrentYear">{{localize 'FSC.Configuration.Year.Current'}}</label>
                 <div class="form-fields">
@@ -26,38 +45,56 @@
                 <p class="notes">{{localize 'FSC.Configuration.Year.PostfixHelp'}}</p>
             </div>
         </div>
-        <div class="month-settings">
-            <h2>{{localize 'FSC.Configuration.Month.Title'}}</h2>
-            <table>
-                <tr>
-                    <th title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</th>
-                    <th title="{{localize 'FSC.Configuration.Month.DaysHelp'}}">{{localize 'FSC.Configuration.Month.Days'}}</th>
-                    <th title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</th>
-                    <th></th>
-                </tr>
+        <div class="tab month-settings" data-tab="monthSettings"  >
+            <div class="f-table">
+                <div class="row head">
+                    <div class="month-name" title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</div>
+                    <div class="month-days" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}">{{localize 'FSC.Configuration.Month.Days'}}</div>
+                    <div class="month-intercalary" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}">{{localize 'FSC.Configuration.Month.Intercalary'}}</div>
+                    <div class="month-number" title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</div>
+                    <div class="remove-month"></div>
+                </div>
                 {{#each months}}
-                <tr>
-                    <td>
+                <div class="row">
+                    <div>
                         <input class="month-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.NameHelp'}}" />
-                    </td>
-                    <td>
+                    </div>
+                    <div>
                         <input class="month-days" value="{{numberOfDays}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}" />
-                    </td>
-                    <td class="center">{{numericRepresentation}}</td>
-                    <td>
+                    </div>
+                    <div style="text-align: center;">
+                        <input class="month-intercalary" value="{{intercalary}}" type="checkbox" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}" {{#if intercalary}}checked="checked"{{/if}} />
+                    </div>
+                    <div class="month-number">{{#if numericRepresentation}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
+                    <div>
                         <button class="remove-month control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
-                    </td>
-                </tr>
+                    </div>
+                    <div class="options {{#unless intercalary}}hidden{{/unless}}">
+                        <div class="form-group">
+                            <label for="scii{{@index}}">{{localize 'FSC.Configuration.Month.IntercalaryInclude'}}</label>
+                            <div class="form-fields">
+                                <input class="month-intercalary-include" value="{{intercalaryInclude}}" id="scii{{@index}}" type="checkbox" data-index="{{@index}}" {{#if intercalaryInclude}}checked="checked"{{/if}} />
+                            </div>
+                            <p class="notes">{{localize 'FSC.Configuration.Month.IntercalaryIncludeHelp'}}</p>
+                        </div>
+                    </div>
+                </div>
                 {{/each}}
-            </table>
+            </div>
             <div class="table-actions">
                 <button class="month-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Month.Add'}}</button>
                 <span class="spacer"></span>
                 <button class="remove-month control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.RemoveAll'}}</button>
             </div>
         </div>
-        <div class="weekday-settings">
-            <h2>{{localize 'FSC.Configuration.Weekday.Title'}}</h2>
+        <div class="tab weekday-settings" data-tab="weekdaySettings" >
+            <div class="form-group">
+                <label for="scShowWeekdayHeaders">{{localize 'FSC.Configuration.Weekday.ShowHeadings'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.showWeekdayHeadings}}" type="checkbox" id="scShowWeekdayHeaders" {{#if currentYear.showWeekdayHeadings}}checked="checked"{{/if}} />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Weekday.ShowHeadingsHelp'}}</p>
+            </div>
             <table>
                 <tr>
                     <th title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}">{{localize 'FSC.Configuration.Weekday.Name'}}</th>
@@ -80,6 +117,46 @@
                 <button class="remove-weekday control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Weekday.RemoveAll'}}</button>
             </div>
         </div>
+        <div class="tab leapyear-settings" data-tab="leapYearSettings">
+            <div class="form-group">
+                <label for="scLeapYearRule">{{localize 'FSC.Configuration.LeapYear.Rule'}}</label>
+                <div class="form-fields">
+                    <select id="scLeapYearRule">
+                        {{selectOptions leapYearRules selected=leapYearRule.rule localize=true}}
+                    </select>
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.LeapYear.RuleHelp'}}</p>
+            </div>
+            {{#if showLeapYearCustomMod}}
+            <div class="form-group">
+                <label for="scLeapYearCustomMod">{{localize 'FSC.Configuration.LeapYear.CustomMod'}}</label>
+                <div class="form-fields">
+                    <input value="{{leapYearRule.customMod}}" type="number" id="scLeapYearCustomMod" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.LeapYear.CustomModHelp'}}</p>
+            </div>
+            {{/if}}
+            {{#if showLeapYearMonths}}
+            <table>
+                <tr>
+                    <th title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</th>
+                    <th title="{{localize 'FSC.Configuration.Month.DaysHelp'}}">{{localize 'FSC.Configuration.LeapYear.Days'}}</th>
+                    <th title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</th>
+                </tr>
+                {{#each months}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>
+                        <input class="month-leap-days" value="{{numberOfLeapYearDays}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.LeapYear.DaysHelp'}}" />
+                    </td>
+                    <td class="center">{{#if numericRepresentation}}{{numericRepresentation}}{{else}}IC{{/if}}</td>
+                </tr>
+                {{/each}}
+            </table>
+            {{/if}}
+        </div>
+
+
         <button class="control save" id="scSubmit" type="submit" name="submit" title="{{localize 'FSC.Configuration.Save'}}">
             <i class="far fa-save"></i> {{localize 'FSC.Configuration.Save'}}
         </button>

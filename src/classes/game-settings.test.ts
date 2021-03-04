@@ -12,9 +12,16 @@ import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
 import {Note} from "./note";
+import LeapYear from "./leap-year";
+import {LeapYearRules} from "../constants";
 import Mock = jest.Mock;
 
 describe('Game Settings Class Tests', () => {
+
+    beforeEach(()=>{
+        (<Mock>game.settings.get).mockClear();
+        (<Mock>game.settings.set).mockClear();
+    });
 
     test('Localize', () => {
         expect(GameSettings.Localize('test')).toBe('');
@@ -37,11 +44,16 @@ describe('Game Settings Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect(game.settings.register).toHaveBeenCalled();
-        expect(game.settings.register).toHaveBeenCalledTimes(5);
+        expect(game.settings.register).toHaveBeenCalledTimes(7);
+    });
+
+    test('Get Default Note Visibility', () => {
+        expect(GameSettings.GetDefaultNoteVisibility()).toBe(false);
+        expect(game.settings.get).toHaveBeenCalled();
     });
 
     test('Load Year Data', () => {
-        expect(GameSettings.LoadYearData()).toStrictEqual({numericRepresentation: 0, prefix: '', postfix: ''});
+        expect(GameSettings.LoadYearData()).toStrictEqual({numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true});
         expect(game.settings.get).toHaveBeenCalled();
     });
 
@@ -51,7 +63,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Month Data', () => {
-        expect(GameSettings.LoadMonthData()).toStrictEqual([{numericRepresentation: 1, numberOfDays: 2, name: ''}]);
+        expect(GameSettings.LoadMonthData()).toStrictEqual([{name: '', numericRepresentation: 1, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false}]);
         expect(game.settings.get).toHaveBeenCalled();
         (<Mock>game.settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadMonthData()).toStrictEqual([]);
@@ -70,6 +82,11 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
         (<Mock>game.settings.get).mockReturnValueOnce([false]);
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
+    });
+
+    test('Load Leap Year Rule', () => {
+        expect(GameSettings.LoadLeapYearRules()).toStrictEqual({rule: 'none', customMod: 0});
+        expect(game.settings.get).toHaveBeenCalled();
     });
 
     test('Load Notes', () => {
@@ -123,6 +140,12 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(true);
         expect(game.settings.get).toHaveBeenCalled();
         expect(game.settings.set).toHaveBeenCalled();
+
+        const orig = game.settings.get;
+        game.settings.get =(moduleName: string, settingName: string) => { return {numericRepresentation: 0, prefix: '', postfix: ''};};
+        expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(true);
+        game.settings.get = orig;
+
     });
 
     test('Save Month Configuration', () => {
@@ -133,7 +156,13 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         game.user.isGM = true;
         expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(true);
-        expect(game.settings.set).toHaveBeenCalled();
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
+        month.name = '';
+        month.numericRepresentation = 1;
+        month.numberOfDays = 2;
+        month.numberOfLeapYearDays = 2;
+        expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(false);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
     });
 
     test('Save Weekday Configuration', () => {
@@ -143,8 +172,26 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
+        expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(false);
+        expect(game.settings.set).toHaveBeenCalledTimes(0);
+        weekday.numericRepresentation = 1;
         expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(true);
-        expect(game.settings.set).toHaveBeenCalled();
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
+    });
+
+    test('Save Leap Year Rule', () => {
+        // @ts-ignore
+        game.user.isGM = false;
+        const lr = new LeapYear();
+        expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(false);
+        expect(game.settings.set).toHaveBeenCalledTimes(0);
+        // @ts-ignore
+        game.user.isGM = true;
+        expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(false);
+        expect(game.settings.set).toHaveBeenCalledTimes(0);
+        lr.rule = LeapYearRules.Gregorian;
+        expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(true);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
     });
 
     test('Save Notes', () => {

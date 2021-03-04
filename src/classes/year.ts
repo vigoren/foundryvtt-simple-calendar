@@ -1,7 +1,8 @@
 import Month from "./month";
-import {MonthTemplate, YearTemplate} from "../interfaces";
+import {YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
+import LeapYear from "./leap-year";
 
 /**
  * Class for representing a year
@@ -37,7 +38,14 @@ export default class Year {
      * The days that make up a week
      * @type {Array.<Weekday>}
      */
-    weekdays: Weekday[] = []
+    weekdays: Weekday[] = [];
+
+    showWeekdayHeadings: boolean = true;
+    /**
+     * The leap year rules for the calendar
+     * @type {LeapYear}
+     */
+    leapYearRule: LeapYear;
 
     /**
      * The Year constructor
@@ -47,6 +55,7 @@ export default class Year {
         this.numericRepresentation = numericRepresentation;
         this.selectedYear = numericRepresentation;
         this.visibleYear = numericRepresentation;
+        this.leapYearRule = new LeapYear();
     }
 
     /**
@@ -54,11 +63,33 @@ export default class Year {
      * @returns {YearTemplate}
      */
     toTemplate(): YearTemplate{
+        const currentMonth = this.getMonth();
+        const selectedMonth = this.getMonth('selected');
+
+        let sMonth = '', sDay = '';
+        if(selectedMonth){
+            sMonth = selectedMonth.name;
+            const d = selectedMonth.getDay('selected');
+            if(d){
+                sDay = d.name;
+            }
+        } else if(currentMonth){
+            sMonth = currentMonth.name;
+            const d = currentMonth.getDay();
+            if(d){
+                sDay = d.name;
+            }
+        }
         return {
             display: this.getDisplayName(),
+            selectedDisplayYear: this.getDisplayName(true),
+            selectedDisplayMonth: sMonth,
+            selectedDisplayDay: sDay,
             numericRepresentation: this.numericRepresentation,
-            months: this.getMonthsForTemplate(),
-            weekdays: this.weekdays.map(w => w.toTemplate())
+            weekdays: this.weekdays.map(w => w.toTemplate()),
+            showWeekdayHeaders: this.showWeekdayHeadings,
+            visibleMonth: this.getMonth('visible')?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
+            visibleMonthWeekOffset:  Array(this.visibleMonthStartingDayOfWeek()).fill(0)
         }
     }
 
@@ -74,47 +105,75 @@ export default class Year {
         y.visibleYear = this.visibleYear;
         y.months = this.months.map(m => m.clone());
         y.weekdays = this.weekdays.map(w => w.clone());
+        y.leapYearRule.rule = this.leapYearRule.rule;
+        y.leapYearRule.customMod = this.leapYearRule.customMod;
+        y.showWeekdayHeadings = this.showWeekdayHeadings;
         return y;
     }
 
     /**
      * Generates the display text for this year
+     * @param {boolean} selected If to use the selected/current year
      * @returns {string}
      */
-    getDisplayName(): string {
-        return `${this.prefix}${this.visibleYear.toString()}${this.postfix}`;
+    getDisplayName(selected: boolean = false): string {
+        if(selected){
+            return `${this.prefix}${this.selectedYear.toString()}${this.postfix}`;
+        } else {
+            return `${this.prefix}${this.visibleYear.toString()}${this.postfix}`;
+        }
     }
 
     /**
-     * Returns an array of month objects to be used in HTML templating
-     * @returns {Array.<MonthTemplate>}
+     * Returns the month where the passed in setting is tru
+     * @param {string} [setting='current'] The setting to look for. Can be visible, current or selected
      */
-    getMonthsForTemplate(): MonthTemplate[] {
-        return this.months.map(m => m.toTemplate());
+    getMonth(setting: string = 'current'){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        return this.months.find(m => m[verifiedSetting]);
     }
 
     /**
-     * Returns the currently active month or undefined if no current month is found
-     * @return {Month|undefined}
+     * Resents the setting for all months and days to false
+     * @param {string} [setting='current']
      */
-    getCurrentMonth(): Month | undefined{
-        return this.months.find(m => m.current);
+    resetMonths(setting: string = 'current'){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        this.months.forEach(m => {if(setting!=='visible'){m.resetDays(setting);} m[verifiedSetting] = false;});
     }
 
     /**
-     * Returns the currently visible month or undefined if no month is visible
-     * @return {Month|undefined}
+     * Updates the specified setting for the specified month, also handles instances if the new month has 0 days
+     * @param {number} month The index of the new month, -1 will be the last month
+     * @param {string} setting The setting to update, can be 'visible', 'current' or 'selected'
+     * @param {boolean} next If the change moved the calendar forward(true) or back(false) this is used to determine the direction to go if the new month has 0 days
      */
-    getVisibleMonth(): Month | undefined{
-        return this.months.find(m => m.visible);
-    }
+    updateMonth(month: number, setting: string, next: boolean){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        const yearToUse = verifiedSetting === 'current'? this.numericRepresentation : verifiedSetting === 'visible'? this.visibleYear : this.selectedYear;
+        const isLeapYear = this.leapYearRule.isLeapYear(yearToUse);
+        this.resetMonths(setting);
+        if(month === -1 || month >= this.months.length){
+            month = this.months.length - 1;
+        }
+        //If the month we are going to show has no days, skip it
+        if((isLeapYear && this.months[month].numberOfLeapYearDays === 0) || (!isLeapYear && this.months[month].numberOfDays === 0)){
+            Logger.debug(`The month "${this.months[month].name}" has no days skipping to ${next? 'next' : 'previous'} month.`);
+            this.months[month][verifiedSetting] = true;
+            return this.changeMonth((next? 1 : -1), setting);
+        } else {
+            this.months[month][verifiedSetting] = true;
+        }
 
-    /**
-     * Returns the currently selected day
-     * @return {Month|undefined}
-     */
-    getSelectedMonth(): Month | undefined{
-        return this.months.find(m => m.selected);
+        // If we are adjusting the current date we need to propagate that down to the days of the new month as well
+        // We also need to set the visibility of the new month to true
+        if(verifiedSetting === 'current'){
+            //this.months[month].visible = false;
+            this.resetMonths('visible');
+            Logger.debug(`New Month: ${this.months[month].name}`);
+            this.months[month].visible = true;
+            this.months[month].updateDay(next? 0 : -1, isLeapYear);
+        }
     }
 
     /**
@@ -124,70 +183,45 @@ export default class Year {
      * @param {string} [setting='visible'] The month property we are changing. Can be 'visible', 'current' or 'selected'
      */
     changeYear(amount: number, updateMonth: boolean = true, setting: string = 'visible'){
-        if(setting === 'visible'){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        if(verifiedSetting === 'visible'){
             this.visibleYear = this.visibleYear + amount;
-        } else if(setting === 'selected'){
+        } else if(verifiedSetting === 'selected'){
             this.selectedYear = this.selectedYear + amount;
         } else {
             this.numericRepresentation = this.numericRepresentation + amount;
             this.visibleYear = this.numericRepresentation;
             Logger.debug(`New Year: ${this.numericRepresentation}`);
         }
-        if(this.months.length && updateMonth){
-            const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
-            this.months.map(m => m[verifiedSetting] = false);
-            let mIndex = 0;
-            if(amount === -1){
-                mIndex = this.months.length - 1;
+        if(this.months.length){
+            if(updateMonth){
+                let mIndex = 0;
+                if(amount === -1){
+                    mIndex = this.months.length - 1;
+                }
+                this.updateMonth(mIndex, setting, (amount > 0));
             }
-            this.months[mIndex][verifiedSetting] = true;
         }
     }
 
     /**
      * Changes the current, visible or selected month forward or back one month
-     * @param {boolean} next If we are moving forward (true) or back (false) one month
+     * @param {boolean} amount If we are moving forward (true) or back (false) one month
      * @param {string} [setting='visible'] The month property we are changing. Can be 'visible', 'current' or 'selected'
      */
-    changeMonth(next: boolean, setting: string = 'visible'){
+    changeMonth(amount: number, setting: string = 'visible'): void{
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
-        const changeAmount = next? 1 : -1;
+        const next = amount > 0;
+
         for(let i = 0; i < this.months.length; i++){
             const month = this.months[i];
             if(month[verifiedSetting]){
-                month[verifiedSetting] = false;
-                if((next && i === (this.months.length - 1)) || (!next && i === 0)){
+                if((next && i === (this.months.length - amount)) || (!next && i === Math.abs(amount) - 1)){
                     Logger.debug(`On ${next? 'last' : 'first'} month of the year, changing to ${next? 'next' : 'previous'} year`);
-                    this.changeYear(changeAmount, true, verifiedSetting);
+                    //We will never advance more than 1 year when changing months
+                    this.changeYear(next? 1 : -1, true, verifiedSetting);
                 } else {
-                    this.months[i + changeAmount][verifiedSetting] = true;
-                }
-                // If we are adjusting the current date we need to propagate that down to the days of the new month as well
-                // We also need to set the visibility of the new month to true
-                if(verifiedSetting === 'current'){
-                    month.visible = false;
-                    const newMonth = this.getCurrentMonth();
-                    if(newMonth){
-                        Logger.debug(`New Month: ${newMonth.name}`);
-                        newMonth.visible = true;
-                        const currentDay = month.getCurrentDay();
-                        if(currentDay){
-                            let found = false;
-                            // Look in the new month for a day that matches the current day of the old month
-                            for(let d = 0; d < newMonth.days.length; d++){
-                                if(newMonth.days[d].numericRepresentation === currentDay.numericRepresentation){
-                                    newMonth.days[d].current = true;
-                                    found = true;
-                                }
-                            }
-                            // If no day was found to match the numeric day of the old months current day
-                            // Then it is likely that the new month is shorter than the old one, so set the current to the last day of the new month
-                            if(!found){
-                                newMonth.days[newMonth.days.length - 1].current = true;
-                            }
-                            currentDay.current = false;
-                        }
-                    }
+                    this.updateMonth(i+amount, setting, next);
                 }
                 break;
             }
@@ -200,34 +234,27 @@ export default class Year {
      * @param {string} [setting='current'] The day property we are changing. Can be 'current' or 'selected'
      */
     changeDay(next: boolean, setting: string = 'current'){
-        const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
-        const currentMonth = this.getCurrentMonth();
+        const currentMonth = this.getMonth();
         if(currentMonth){
-            const res = currentMonth.changeDay(next, verifiedSetting);
+            const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
+            const yearToUse = verifiedSetting === 'current'? this.numericRepresentation : this.selectedYear;
+            const isLeapYear = this.leapYearRule.isLeapYear(yearToUse);
+            const res = currentMonth.changeDay(next, isLeapYear, verifiedSetting);
             // If it is positive or negative we need to change the current month
             if(res !== 0){
-                this.changeMonth(res > 0, verifiedSetting);
-                if(verifiedSetting === 'current'){
-                    const newCurrentMonth = this.getCurrentMonth();
-                    if(newCurrentMonth && newCurrentMonth.days.length){
-                        if(res > 0){
-                            newCurrentMonth.days[0][verifiedSetting] = true;
-                        } else {
-                            newCurrentMonth.days[newCurrentMonth.days.length - 1][verifiedSetting] = true;
-                        }
-                    }
-                }
+                this.changeMonth(res, verifiedSetting);
             }
         }
     }
 
     /**
      * Generates the total number of days in a year
+     * @param {boolean} [leapYear=false] If to count the total number of days in a leap year
      * @return {number}
      */
-    totalNumberOfDays(): number {
+    totalNumberOfDays(leapYear: boolean = false): number {
         let total = 0;
-        this.months.forEach((m) => {total += m.days.length;});
+        this.months.forEach((m) => { if((m.intercalary && m.intercalaryInclude) || !m.intercalary){total += leapYear? m.numberOfLeapYearDays : m.numberOfDays;} });
         return total;
     }
 
@@ -235,21 +262,55 @@ export default class Year {
      * Calculates the day of the week the first day of the currently visible month lands on
      * @return {number}
      */
-    visibleMonthStartingDayOfWeek(){
+    visibleMonthStartingDayOfWeek(): number {
+        const visibleMonth = this.getMonth('visible');
+        if(visibleMonth){
+            if(visibleMonth.intercalary && !visibleMonth.intercalaryInclude){
+                return 0;
+            } else {
+                return this.dayOfTheWeek(this.visibleYear, visibleMonth.numericRepresentation, 1);
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Calculates the day of the week a passed in day falls on based on its month and year
+     * @param {number} year The year of the date to find its day of the week
+     * @param {number} targetMonth The month that the target day is in
+     * @param {number} targetDay  The day of the month that we want to check
+     * @return {number}
+     */
+    dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
             const daysPerYear = this.totalNumberOfDays();
+            const daysPerLeapYear = this.totalNumberOfDays(true);
+            const leapYearDayDifference = daysPerLeapYear - daysPerYear;
+            const numberOfLeapYears = this.leapYearRule.howManyLeapYears(year);
             Logger.debug(`Days Per Year: ${daysPerYear}`);
+            Logger.debug(`Days Per Leap Year: ${daysPerLeapYear}`);
+            Logger.debug(`How man days extra per leap year: ${leapYearDayDifference}`);
+            Logger.debug(`Number of leap years so far: ${numberOfLeapYears}`);
+
             //Assuming a start year of 0
-            const totalDaysForYears = daysPerYear * this.visibleYear;
+            const totalDaysForYears = (daysPerYear * year) + (numberOfLeapYears * leapYearDayDifference);
             Logger.debug(`Total Days For Years: ${totalDaysForYears}`);
+            const isLeapYear = this.leapYearRule.isLeapYear(year);
             let daysSoFarThisYear = 0;
-            for(let i = 0; i < this.months.length; i++){
-                if(!this.months[i].visible){
-                    daysSoFarThisYear = daysSoFarThisYear + this.months[i].days.length;
-                } else {
-                    break;
+            for(let i = 0; i < (targetMonth - 1); i++){
+                if(!this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude)){
+                    if(isLeapYear){
+                        daysSoFarThisYear = daysSoFarThisYear + this.months[i].numberOfLeapYearDays;
+                    } else {
+                        daysSoFarThisYear = daysSoFarThisYear + this.months[i].numberOfDays;
+                    }
                 }
             }
+            if(targetDay < 1){
+                targetDay = 1;
+            }
+            daysSoFarThisYear += (targetDay - 1);
             Logger.debug(`Days So Far This Year: ${daysSoFarThisYear}`);
             Logger.debug(`Number of days per week: ${this.weekdays.length}`);
             return ((totalDaysForYears + daysSoFarThisYear)% this.weekdays.length + this.weekdays.length) % this.weekdays.length;

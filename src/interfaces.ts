@@ -1,17 +1,11 @@
 /**
  * Interface for the calendar template that is passed to the HTML for rendering
  */
+import {LeapYearRules, NoteRepeat} from "./constants";
+
 export interface CalendarTemplate {
     isGM: boolean;
-    selectedYear: number;
-    selectedMonth: MonthTemplate | undefined;
-    selectedDay: DayTemplate | undefined;
-    visibleYear: number;
-    visibleMonth: MonthTemplate | undefined;
-    visibleMonthStartWeekday: any[];
     currentYear: YearTemplate;
-    currentMonth: MonthTemplate | undefined;
-    currentDay: DayTemplate | undefined;
     showSelectedDay: boolean;
     showCurrentDay: boolean;
     notes: NoteTemplate[];
@@ -23,10 +17,20 @@ export interface CalendarTemplate {
 export interface YearTemplate {
     /** The display text of the year */
     display: string;
+    /** The display text for the selected, or current, year */
+    selectedDisplayYear: string;
+    /** The display text for the selected, or current, month */
+    selectedDisplayMonth: string;
+    /** The display text for the selected, or current, day */
+    selectedDisplayDay: string;
     /** The numeric representation of the year */
     numericRepresentation: number;
     /** The months that make up the year */
-    months: MonthTemplate[];
+    visibleMonth: MonthTemplate | undefined;
+    /** An array of 0's where the array length is the weekday the visible month starts on  */
+    visibleMonthWeekOffset: number[];
+    /** If to show the weekday headers on the calendar view */
+    showWeekdayHeaders: boolean;
     /** The days of the week */
     weekdays: WeekdayTemplate[];
 }
@@ -38,6 +42,7 @@ export interface YearConfig {
     numericRepresentation: number;
     prefix: string;
     postfix: string;
+    showWeekdayHeadings: boolean;
 }
 
 /**
@@ -52,6 +57,9 @@ export interface  MonthTemplate {
     selected: boolean;
     days: any[];
     numberOfDays: number;
+    numberOfLeapYearDays: number;
+    intercalary: boolean;
+    intercalaryInclude: boolean;
 }
 
 /**
@@ -61,6 +69,9 @@ export interface MonthConfig {
     name: string;
     numericRepresentation: number;
     numberOfDays: number;
+    numberOfLeapYearDays: number;
+    intercalary: boolean;
+    intercalaryInclude: boolean;
 }
 
 /**
@@ -113,6 +124,7 @@ export interface NoteConfig {
     monthDisplay: string;
     playerVisible: boolean;
     id: string;
+    repeats: NoteRepeat;
 }
 
 /**
@@ -130,4 +142,9 @@ export interface WeekdayTemplate {
 export interface WeekdayConfig {
     name: string;
     numericRepresentation: number;
+}
+
+export interface LeapYearConfig {
+    rule: LeapYearRules;
+    customMod: number;
 }

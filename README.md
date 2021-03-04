@@ -23,6 +23,8 @@ If you are looking for a module that tracks in game time and has weather related
     * Define how many months in a year
     * Set a custom name for each month
     * Set the number of days in each month
+    * Choose if months are considered intercalary
+    * Set up your own Leap Year rules
 * Set and change the current day as your game story progresses
 * Add notes to specific days on the calendar to remind yourself of events or other world related things
     * These notes can either be visible to players as well as the GM or just the GM
@@ -58,7 +60,7 @@ Previous/Next | Allow the user to change which month/year they are currently vie
 Today Button | Changes the calendar so that the current day (in the game world) is visible and selected.
 Blue Circle Day | This indicates the current day in the game world, can be changed by the GM
 Green Circle Day | This indicates the day the user currently has selected. This will show any notes on this day.
-Orange Icon | This shows on any days that have notes that the user can see.
+Red Indicator | This shows on any days that have notes that the user can see. It will show the number of notes on that day up to 99.
 Notes List | Any notes that appear in this list can be clicked on to open the note details.
 
 ### Note Details
@@ -93,9 +95,10 @@ Field | Description
 ------- | -----------
 Note Title | The title for the note, this title will appear in the listing of notes for the day.
 Player Visible | If this note can be seen by players or if it is for the GM only.
+Note Repeats | If this note repeats weekly, monthly, yearly or never. If the note repeats monthly and it is on a day that some months don't have (eg the 31st) months that don't go to that day will not have this note.
 Details | Here you can enter the details of a note using the built in text editor.
 
-After all of the details are filled out you can save the note.
+After all the details are filled out you can save the note.
 
 **Important**: If you have not saved the content in the text editor using the text editor save button, a warning will appear when you try to save the note letting you know.
 
@@ -110,9 +113,27 @@ The Delete button | This will open up a confirmation dialog, where selecting del
 
 Configuration of the calendar is straight forward. As the GM open the configuration dialog and start customizing your calendar!
 
+### General Settings
+
+This tab allows you to set some general settings for the entire calendar. 
+
+Right now the only setting is to choose from a list of predefined calendars to get yours started with. The following calendars can be selected to configure the game calendar:
+
+Calendar|Description|Initial Date
+--------|-----------|-------------
+Gregorian|This the standard real life calendar|The current date will be used
+Eberron| This is the calendar from the Eberron setting for Dungeons and Dragons | Zarantyr 1, 998 YK
+Exandrian |This is the calendar from the Exandria setting for Dungeons and Dragons | Horisal 1, 812 P.D.
+Golarian | This is the calendar from the Pathfinder game | Abadius 1, 4710 AR
+Greyhawk | This is the calendar from the Greyhawk setting for Dungeons and Dragons | Needfest 1, 591 cy
+Harptos | This is the calendar used across Faerun in the Forgotten Realms | Hammer 1, 1495 DR
+Warhammer | This is the calendar used by the Imperium in the Fantasy Warhammer game | Hexenstag 1, 2522
+
+All of these calendars can be further customized after they are loaded. They are here to provide a simple starting point for your game.
+
 ### Year Settings
 
-This section allows you to change some settings about the years in your game world
+This tab allows you to change some settings about the years in your game world
 
 Setting | Description
 -------- | ----------
@@ -122,12 +143,14 @@ Year Postfix | Text that will appear after the year number.
 
 ### Month Settings
 
-This section displays all the months that exist in the calendar. Here you can change month names, the number of days in a month, remove a month, add a new month or remove all months.
+This tab displays all the months that exist in the calendar. Here you can change month names, the number of days in a month, remove a month, add a new month or remove all months.
 
 Setting | Description
 -------- | ----------
 Month Name | These text boxes for each month allow you to change the name of an existing month.
-Number of Days | These text boxes for each month allow you to change the number of days in each month.
+Number of Days | These text boxes for each month allow you to change the number of days in each month. A month can have a minimum of 0 days.
+Intercalary Month | An intercalary month is one that does not follow the standard month numbering and is skipped.<br/>Example: If we were to add an intercalary month between January and February, January would still be considered the first month and February would be considered the second month. The new month does not get a number.<br/>Intercalary months also do not count towards the years total days nor do they affect the day of the week subsequent months start on.
+Include Intercalary Month In Total Day Count | When you select a month to be intercalary, an option will show to include these days as part of the years total days and have its days afect the day of the week subsequent months start on. The month though still is not numbered.
 Remove Button | These buttons for each month allow you to remove the month from the list.
 Add New Month Button | This button will add a new month to the bottom of the list with a default name and number of days that you can then configure to your liking.
 Remove All Months Button | This button will remove all of the months from the list. 
@@ -144,5 +167,22 @@ Remove Button | These buttons for each weekday allow you to remove the weekday f
 Add New Weekday Button | This button will add a new weekday to the bottom of the list with a default name that you can then configure to your liking.
 Remove All Weekdays Button | This button will remove all of the weekdays from the list.
 
+### Leap Year Settings
+
+This section allows the GM to configure how leap years work for this calendar.
+
+Setting | Description
+-------- | ----------
+Leap Year Rule | Which ruleset to follow when determining leap years. The options are <ul><li>None: The calendar contains no leap years</li><li>Gregorian: The calendars leap year rules are like the standard calendar (Every year that is exactly divisible by four is a leap year, except for years that are exactly divisible by 100, but these years are leap years if they are exactly divisible by 400)</li><li>Custom: Allows you to specify n interval in years for when a leap year happens.</li></ul>
+When Leap Years Happen | **This only appears if the Custom leap year rule is selected**.<br/>The number of years when a leap year occurs. Example a value of 5 would mean every 5th year is a leap year.
+Months List | **This only appears if the Custom or Gregorian leap year rule is selected**.<br/>A list of months will appear that shows each month, and a textbox where you can change the number of days the corresponding month has during a leap year. A month can have a minimum of 0 leap year days.
 
 After you have changed the settings to your liking don't forget to save the configuration by hitting the Save Configuration button!
+
+## Module Settings
+
+The module has the following settings that can be adjusted in Foundry's game settings under the module settings tab.
+
+Setting | Description
+-------- | ----------
+Note Default Player Visibility | For new notes, if by default the player visibility option is checked or not.

@@ -1,11 +1,12 @@
 import Year from "./year";
 import {Logger} from "./logging";
-import {CurrentDateConfig, MonthConfig, WeekdayConfig, YearConfig, NoteConfig} from "../interfaces";
+import {CurrentDateConfig, MonthConfig, WeekdayConfig, YearConfig, NoteConfig, LeapYearConfig} from "../interfaces";
 import {ModuleName, SettingNames} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import {Weekday} from "./weekday";
 import {Note} from "./note";
+import LeapYear from "./leap-year";
 
 export class GameSettings {
     /**
@@ -49,7 +50,7 @@ export class GameSettings {
             scope: "world",
             config: false,
             type: Object,
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'year')
         });
         game.settings.register(ModuleName, SettingNames.WeekdayConfiguration, {
             name: "Weekday Configuration",
@@ -57,7 +58,7 @@ export class GameSettings {
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'weekday')
         });
         game.settings.register(ModuleName, SettingNames.MonthConfiguration, {
             name: "Month Configuration",
@@ -65,14 +66,29 @@ export class GameSettings {
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'month')
         });
         game.settings.register(ModuleName, SettingNames.CurrentDate, {
             name: "Current Date",
             scope: "world",
             config: false,
             type: Object,
-            onChange:  SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true)
+            onChange:  SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'current')
+        });
+        game.settings.register(ModuleName, SettingNames.LeapYearRule, {
+            name: "Leap Year Rule",
+            scope: "world",
+            config: false,
+            type: Object,
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'leapyear')
+        });
+        game.settings.register(ModuleName, SettingNames.DefaultNoteVisibility, {
+            name: "FSC.Configuration.DefaultNoteVisibility",
+            hint: "FSC.Configuration.DefaultNoteVisibilityHint",
+            scope: "world",
+            config: true,
+            type: Boolean,
+            default: false
         });
         game.settings.register(ModuleName, SettingNames.Notes, {
             name: "Notes",
@@ -82,6 +98,14 @@ export class GameSettings {
             default: [],
             onChange: SimpleCalendar.instance.loadNotes.bind(SimpleCalendar.instance, true)
         });
+    }
+
+    /**
+     * Gets the default note visibility setting
+     * @return {boolean}
+     */
+    static GetDefaultNoteVisibility(){
+        return <boolean>game.settings.get(ModuleName, SettingNames.DefaultNoteVisibility);
     }
 
     /**
@@ -131,6 +155,14 @@ export class GameSettings {
     }
 
     /**
+     * Loads the leap year rules from the settings
+     * @return {LeapYearConfig}
+     */
+    static LoadLeapYearRules(): LeapYearConfig {
+        return game.settings.get(ModuleName, SettingNames.LeapYearRule);
+    }
+
+    /**
      * Loads the notes from the game world settings
      * @return {Array.<NoteConfig>}
      */
@@ -152,9 +184,9 @@ export class GameSettings {
     static async SaveCurrentDate(year: Year){
         if(game.user.isGM){
             Logger.debug(`Saving current date.`);
-            const currentMonth = year.getCurrentMonth();
+            const currentMonth = year.getMonth();
             if(currentMonth){
-                const currentDay = currentMonth.getCurrentDay();
+                const currentDay = currentMonth.getDay();
                 if(currentDay){
                     const currentDate = <CurrentDateConfig> game.settings.get(ModuleName, SettingNames.CurrentDate);
                     const newDate: CurrentDateConfig = {
@@ -187,12 +219,16 @@ export class GameSettings {
         if(game.user.isGM) {
             Logger.debug(`Saving year configuration.`);
             const currentYearConfig = <YearConfig> game.settings.get(ModuleName, SettingNames.YearConfiguration);
+            if(!currentYearConfig.hasOwnProperty('showWeekdayHeadings')){
+                currentYearConfig.showWeekdayHeadings = true;
+            }
             const yc: YearConfig = {
                 numericRepresentation: year.numericRepresentation,
                 prefix: year.prefix,
-                postfix: year.postfix
+                postfix: year.postfix,
+                showWeekdayHeadings: year.showWeekdayHeadings
             };
-            if(currentYearConfig.numericRepresentation !== yc.numericRepresentation || currentYearConfig.prefix !== yc.prefix || currentYearConfig.postfix !== yc.postfix){
+            if(currentYearConfig.numericRepresentation !== yc.numericRepresentation || currentYearConfig.prefix !== yc.prefix || currentYearConfig.postfix !== yc.postfix || currentYearConfig.showWeekdayHeadings !== yc.showWeekdayHeadings){
                 return game.settings.set(ModuleName, SettingNames.YearConfiguration, yc).then(() => { return true }); //Return true because if no error was thrown then the save was successful and we don't need the returned data.
             } else {
                 Logger.debug('Year configuration has not changed, not updating settings');
@@ -208,8 +244,20 @@ export class GameSettings {
     static async SaveMonthConfiguration(months: Month[]): Promise<any> {
         if(game.user.isGM) {
             Logger.debug(`Saving month configuration.`);
-            const newConfig: MonthConfig[] = months.map(m => { return {  name: m.name, numericRepresentation: m.numericRepresentation, numberOfDays: m.days.length }; });
-            return game.settings.set(ModuleName, SettingNames.MonthConfiguration, newConfig).then(() => {return true;});
+            const currentMonthConfig = JSON.stringify(GameSettings.LoadMonthData());
+            const newConfig: MonthConfig[] = months.map(m => { return {
+                name: m.name,
+                numericRepresentation: m.numericRepresentation,
+                numberOfDays: m.numberOfDays,
+                numberOfLeapYearDays: m.numberOfLeapYearDays,
+                intercalary: m.intercalary,
+                intercalaryInclude: m.intercalaryInclude
+            }; });
+            if(currentMonthConfig !== JSON.stringify(newConfig)){
+                return game.settings.set(ModuleName, SettingNames.MonthConfiguration, newConfig).then(() => {return true;});
+            } else {
+                Logger.debug('Month configuration has not changed, not updating settings');
+            }
         }
         return false;
     }
@@ -221,8 +269,36 @@ export class GameSettings {
     static async SaveWeekdayConfiguration(weekdays: Weekday[]): Promise<any> {
         if(game.user.isGM) {
             Logger.debug(`Saving weekday configuration.`);
+            const currentWeekdayConfig = JSON.stringify(GameSettings.LoadWeekdayData());
             const newConfig: WeekdayConfig[] = weekdays.map(w => {return {name: w.name, numericRepresentation: w.numericRepresentation}; });
-            return game.settings.set(ModuleName, SettingNames.WeekdayConfiguration, newConfig).then(() => {return true;});
+            if(currentWeekdayConfig !== JSON.stringify(newConfig)){
+                return game.settings.set(ModuleName, SettingNames.WeekdayConfiguration, newConfig).then(() => {return true;});
+            } else {
+                Logger.debug('Weekday configuration has not changed, not updating settings');
+            }
+
+        }
+        return false;
+    }
+
+    /**
+     * Saves the passed in leap year configuration into the world settings
+     * @param {LeapYear} leapYear The leap year settings to save
+     */
+    static async SaveLeapYearRules(leapYear: LeapYear): Promise<any>{
+        if(game.user.isGM) {
+            Logger.debug(`Saving leap year configuration.`);
+            const current = GameSettings.LoadLeapYearRules();
+            const newlyc: LeapYearConfig = {
+                rule: leapYear.rule,
+                customMod: leapYear.customMod
+            };
+            if(current.rule !== newlyc.rule || current.customMod !== newlyc.customMod){
+                return game.settings.set(ModuleName, SettingNames.LeapYearRule, newlyc);
+            } else {
+                Logger.debug('Leap Year configuration has not changed, not updating settings');
+            }
+
         }
         return false;
     }
@@ -242,7 +318,8 @@ export class GameSettings {
             day: w.day,
             monthDisplay: w.monthDisplay,
             playerVisible: w.playerVisible,
-            id: w.id
+            id: w.id,
+            repeats: w.repeats
         };});
         return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});
     }

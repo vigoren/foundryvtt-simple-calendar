@@ -59,19 +59,9 @@ export default class SimpleCalendar extends Application{
      */
     public getData(): CalendarTemplate | undefined {
         if(this.currentYear){
-            const currentMonth = this.currentYear.getCurrentMonth();
-            const selectedMonth = this.currentYear.getSelectedMonth();
             return {
                 isGM: GameSettings.IsGm(),
                 currentYear: this.currentYear.toTemplate(),
-                currentMonth: currentMonth?.toTemplate(),
-                currentDay: currentMonth?.getCurrentDay()?.toTemplate(),
-                selectedYear: this.currentYear.selectedYear,
-                selectedMonth: selectedMonth?.toTemplate(),
-                selectedDay : selectedMonth?.getSelectedDay(),
-                visibleYear: this.currentYear.visibleYear,
-                visibleMonth: this.currentYear.getVisibleMonth()?.toTemplate(),
-                visibleMonthStartWeekday: Array(this.currentYear.visibleMonthStartingDayOfWeek()).fill(0),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
                 notes: this.getNotesForDay()
@@ -157,7 +147,7 @@ export default class SimpleCalendar extends Application{
         Logger.debug('Changing view to previous month');
         e.stopPropagation()
         if(this.currentYear){
-            this.currentYear.changeMonth(false);
+            this.currentYear.changeMonth(-1);
             this.updateApp();
         }
     }
@@ -170,7 +160,7 @@ export default class SimpleCalendar extends Application{
         Logger.debug('Changing view to next month');
         e.stopPropagation()
         if(this.currentYear){
-            this.currentYear.changeMonth(true);
+            this.currentYear.changeMonth(1);
             this.updateApp();
         }
     }
@@ -187,15 +177,15 @@ export default class SimpleCalendar extends Application{
         if(dataDate){
             const index = parseInt(dataDate) - 1;
             if(this.currentYear && index > -1){
-                const currentSelectedMonth = this.currentYear.getSelectedMonth();
-                const currentSelectedDay = currentSelectedMonth?.getSelectedDay();
+                const currentSelectedMonth = this.currentYear.getMonth('selected');
+                const currentSelectedDay = currentSelectedMonth?.getDay('selected');
                 if(currentSelectedMonth){
                     currentSelectedMonth.selected = false;
                 }
                 if(currentSelectedDay){
                     currentSelectedDay.selected = false;
                 }
-                const visibleMonth = this.currentYear.getVisibleMonth();
+                const visibleMonth = this.currentYear.getMonth('visible');
                 if(visibleMonth && visibleMonth.days.length > index){
                     visibleMonth.selected = true;
                     visibleMonth.days[index].selected = true;
@@ -217,21 +207,21 @@ export default class SimpleCalendar extends Application{
     public todayClick(e: Event) {
         e.preventDefault();
         if(this.currentYear){
-            const selectedMonth = this.currentYear.getSelectedMonth();
+            const selectedMonth = this.currentYear.getMonth('selected');
             if(selectedMonth){
                 selectedMonth.selected = false;
-                const selectedDay = selectedMonth.getSelectedDay();
+                const selectedDay = selectedMonth.getDay('selected');
                 if(selectedDay){
                     selectedDay.selected = false;
                 }
             }
-            const visibleMonth = this.currentYear.getVisibleMonth();
+            const visibleMonth = this.currentYear.getMonth('visible');
             if(visibleMonth){
                 visibleMonth.visible = false;
             }
-            const currentMonth = this.currentYear.getCurrentMonth();
+            const currentMonth = this.currentYear.getMonth();
             if(currentMonth){
-                const currentDay = currentMonth.getCurrentDay();
+                const currentDay = currentMonth.getDay();
                 if(currentDay){
                     this.currentYear.selectedYear = this.currentYear.numericRepresentation;
                     this.currentYear.visibleYear = this.currentYear.numericRepresentation;
@@ -262,7 +252,7 @@ export default class SimpleCalendar extends Application{
                 break;
             case 'month':
                 Logger.debug(`${isNext? 'Forward' : 'Back'} Month Clicked`);
-                this.currentYear?.changeMonth(isNext, 'current');
+                this.currentYear?.changeMonth(isNext? 1 : -1, 'current');
                 this.updateApp();
                 break;
             case 'year':
@@ -315,9 +305,9 @@ export default class SimpleCalendar extends Application{
     public addNote(e: Event) {
         e.stopPropagation();
         if(this.currentYear){
-            const currentMonth = this.currentYear.getSelectedMonth() || this.currentYear.getCurrentMonth();
+            const currentMonth = this.currentYear.getMonth('selected') || this.currentYear.getMonth();
             if(currentMonth){
-                const currentDay = currentMonth.getSelectedDay() || currentMonth.getCurrentDay();
+                const currentDay = currentMonth.getDay('selected') || currentMonth.getDay();
                 if(currentDay){
                     const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
                     const month = currentMonth.numericRepresentation;
@@ -329,6 +319,7 @@ export default class SimpleCalendar extends Application{
                     newNote.monthDisplay = currentMonth.name;
                     newNote.title = 'New Note';
                     newNote.author = GameSettings.UserName();
+                    newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
                     SimpleCalendarNotes.instance = new SimpleCalendarNotes(newNote);
                     SimpleCalendarNotes.instance.showApp();
                 } else {
@@ -373,13 +364,25 @@ export default class SimpleCalendar extends Application{
     /**
      * Called when a setting is updated, refreshes the configurations for all types
      * @param {boolean} [update=false] If to update the display
+     * @param {string} [type='all']
      */
-    public settingUpdate(update: boolean = false){
-        this.loadYearConfiguration();
-        this.loadMonthConfiguration();
-        this.loadWeekdayConfiguration();
+    public settingUpdate(update: boolean = false, type: string = 'all'){
+        if(type === 'all' || type === 'year'){
+            this.loadYearConfiguration();
+        }
+        if(type === 'all' || type === 'month'){
+            this.loadMonthConfiguration();
+        }
+        if(type === 'all' || type === 'weekday'){
+            this.loadWeekdayConfiguration();
+        }
+        if(type === 'all' || type === 'notes'){
+            this.loadNotes();
+        }
+        if(type === 'leapyear'){
+            this.currentYear?.leapYearRule.loadFromSettings();
+        }
         this.loadCurrentDate();
-        this.loadNotes();
         if(update) {
             this.updateApp();
         }
@@ -401,6 +404,10 @@ export default class SimpleCalendar extends Application{
             }
             this.currentYear.prefix = yearData.prefix;
             this.currentYear.postfix = yearData.postfix;
+
+            if(yearData.hasOwnProperty('showWeekdayHeadings')){
+                this.currentYear.showWeekdayHeadings = yearData.showWeekdayHeadings;
+            }
         } else {
             Logger.debug('No year configuration found, setting default year data.');
             this.currentYear = new Year(new Date().getFullYear());
@@ -412,9 +419,6 @@ export default class SimpleCalendar extends Application{
      */
     private loadMonthConfiguration(){
         Logger.debug('Loading month configuration from settings.');
-
-        const date = new Date();
-        const dYear = date.getFullYear();
         if(this.currentYear){
             const monthData = GameSettings.LoadMonthData();
             if(monthData.length){
@@ -422,7 +426,10 @@ export default class SimpleCalendar extends Application{
                 Logger.debug('Setting the months from data.');
                 for(let i = 0; i < monthData.length; i++){
                     if(Object.keys(monthData[i]).length){
-                        this.currentYear.months.push(new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numberOfDays));
+                        const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numberOfDays, monthData[i].numberOfLeapYearDays);
+                        newMonth.intercalary = monthData[i].intercalary;
+                        newMonth.intercalaryInclude = monthData[i].intercalaryInclude;
+                        this.currentYear.months.push(newMonth);
                     }
                 }
             }
@@ -430,7 +437,7 @@ export default class SimpleCalendar extends Application{
                 Logger.debug('No month configuration found, setting default month data.');
                 this.currentYear.months = [
                     new Month(GameSettings.Localize("FSC.Date.January"), 1, 31),
-                    new Month(GameSettings.Localize("FSC.Date.February"), 2, (((dYear % 4 == 0) && (dYear % 100 != 0)) || (dYear % 400 == 0))? 29 : 28),
+                    new Month(GameSettings.Localize("FSC.Date.February"), 2, 28, 29),
                     new Month(GameSettings.Localize("FSC.Date.March"),3, 31),
                     new Month(GameSettings.Localize("FSC.Date.April"),4, 30),
                     new Month(GameSettings.Localize("FSC.Date.May"),5, 31),
@@ -489,6 +496,10 @@ export default class SimpleCalendar extends Application{
             this.currentYear.numericRepresentation = currentDate.year;
             this.currentYear.visibleYear = currentDate.year;
             this.currentYear.selectedYear = currentDate.year;
+
+            this.currentYear.resetMonths('current');
+            this.currentYear.resetMonths('visible');
+
             const month = this.currentYear.months.find(m => m.numericRepresentation === currentDate.month);
             if(month){
                 month.current = true;
@@ -542,9 +553,9 @@ export default class SimpleCalendar extends Application{
         const dayNotes: NoteTemplate[] = [];
         if(this.currentYear){
             const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
-            const month = this.currentYear.getSelectedMonth() || this.currentYear.getCurrentMonth();
+            const month = this.currentYear.getMonth('selected') || this.currentYear.getMonth();
             if(month){
-                const day = month.getSelectedDay() || month.getCurrentDay();
+                const day = month.getDay('selected') || month.getDay();
                 if(day){
                     this.notes.forEach((note) => {
                         if(note.isVisible(year, month.numericRepresentation, day.numericRepresentation)){

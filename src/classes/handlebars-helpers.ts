@@ -46,12 +46,13 @@ export default class HandlebarsHelpers{
     static DayHasNotes(options: any){
         if(options.hash.hasOwnProperty('day') && SimpleCalendar.instance.currentYear){
             const day = options.hash['day'].numericRepresentation;
-            const month = SimpleCalendar.instance.currentYear.getVisibleMonth();
+            const month = SimpleCalendar.instance.currentYear.getMonth('visible');
             const year = SimpleCalendar.instance.currentYear.visibleYear;
             if(month){
-                const note = SimpleCalendar.instance.notes.find(n => n.isVisible(year, month.numericRepresentation, day));
-                if(note){
-                    return 'has-notes';
+                const notes = SimpleCalendar.instance.notes.filter(n => n.isVisible(year, month.numericRepresentation, day));
+                if(notes.length){
+                    const count = notes.length < 100? notes.length : 99;
+                    return `<span class="note-count">${count}</span>`;
                 }
             }
         }

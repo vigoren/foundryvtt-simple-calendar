@@ -1,6 +1,51 @@
 # Change Log
 
-## v1.0.3
+## v1.1.0 - Reoccurring Notes, Leap Years, Intercalary Months and Bug Fixes
+
+### Reoccurring Notes
+This update adds the ability to have notes that repeat at certain intervals. When creating or editing a note the GM will be able to pick from these options for how often the note repeats:
+
+- Never: This is the default option, this note will not repeat.
+- Weekly: The note will repeat every week on the same day of the week.
+- Monthly: The note will repeat every month on the same day of the month. **Important**: If the note is on a day of the month that not all months have (example: the 31st) then the note will not appear on months that don't have that day.
+- Yearly: The note will repeat every year on the same month and day.
+
+When viewing a note that is repeating there will be a message on the top right of the note indicating that this is a repeating note and how often it repeats.
+
+### Leap Years
+
+The calendar configuration dialog now has a section for configuration of leap years. There are several new options that should make setting up your own leap years easy.
+
+- Leap Year Rule: This setting lets you define the rules you want around leap years. The options are:
+    - None: The calendar contains no leap years
+    - Gregorian: The calendars leap year rules are like the standard calendar (Every year that is exactly divisible by four is a leap year, except for years that are exactly divisible by 100, but these years are leap years if they are exactly divisible by 400)
+    - Custom: Allows you to specify n interval in years for when a leap year happens.
+- When Leap Years Happen: **This only appears if the custom rule is selected**. The number of years when a leap year occurs. Example a value of 5 would mean every 5th year is a leap year.
+- Months List: A list of months will appear if you have the Gregorian or Custom rule selected. This list will show each month, and a textbox where you can change the number of days the corresponding month has during a leap year.
+
+### Intercalary Months
+
+When configuring the calendars months there is now an option to specify if a month is to be considered intercalary or not.
+An intercalary month is one that does not follow the standard month numbering and is skipped. Example: If we were to add an intercalary month between January and February, January would still be considered the first month and February would be considered the second month. The new month does not get a number.
+
+Intercalary months also do not count towards the years total days nor do they affect the day of the week subsequent months start on.
+
+When you select a month to be intercalary, there is the option to include these days as part of the years total days and have its days afect the day of the week subsequent months start on. The month though still is not numbered.
+
+### Bug Fixes and QoL improvements
+
+This update also includes the following bug fixes and quality of life improvements:
+
+- Added a new setting that will hide the day of week letter at the top of the calendar.
+- Added a new module setting Note Default Player Visibility. This allows the GM to set for new notes, if by default the player visibility option is checked or not.
+- Updated the note indicator that shows days with notes. The indicator is now a reddish circle that contains the number of notes on that day.
+- The note dialog now opens at a consistent width so very long content will no longer stretch the dialog across the screen.
+- Notes should be more consistent at saving with no details entered.
+- Improved the layout of the calendar configuration dialog.
+  Added some predefined calendars that a GM can choose to use. These replace the existing calendar configuration with a new one to match the world.
+- Various improvements to the backend code.
+
+## v1.0.3 - Bug Fixes
 
 Fixed issues around viewing notes in years that were not the current year.
 
