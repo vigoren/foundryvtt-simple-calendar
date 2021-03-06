@@ -14,7 +14,7 @@ export class GameSettings {
      * @return {boolean}
      */
     static IsGm(): boolean {
-        return game.user.isGM;
+        return game.user? game.user.isGM : false;
     }
 
     /**
@@ -22,7 +22,7 @@ export class GameSettings {
      * @return {string}
      */
     static UserName(): string {
-        return game.user.name;
+        return game.user? game.user.name : '';
     }
 
     /**
@@ -30,7 +30,7 @@ export class GameSettings {
      * @return {string}
      */
     static UserID(): string {
-        return game.user.id;
+        return game.user? game.user.id : '';
     }
 
     /**
@@ -86,7 +86,6 @@ export class GameSettings {
             name: "FSC.Configuration.DefaultNoteVisibility",
             hint: "FSC.Configuration.DefaultNoteVisibilityHint",
             scope: "world",
-            config: true,
             type: Boolean,
             default: false
         });
@@ -182,7 +181,7 @@ export class GameSettings {
      * @param {Year} year The year that has the current date
      */
     static async SaveCurrentDate(year: Year){
-        if(game.user.isGM){
+        if(game.user && game.user.isGM){
             Logger.debug(`Saving current date.`);
             const currentMonth = year.getMonth();
             if(currentMonth){
@@ -216,7 +215,7 @@ export class GameSettings {
      * @param {Year} year The year that makes up the configuration
      */
     static async SaveYearConfiguration(year: Year): Promise<boolean> {
-        if(game.user.isGM) {
+        if(game.user && game.user.isGM) {
             Logger.debug(`Saving year configuration.`);
             const currentYearConfig = <YearConfig> game.settings.get(ModuleName, SettingNames.YearConfiguration);
             if(!currentYearConfig.hasOwnProperty('showWeekdayHeadings')){
@@ -242,7 +241,7 @@ export class GameSettings {
      * @param {Array.<Month>} months
      */
     static async SaveMonthConfiguration(months: Month[]): Promise<any> {
-        if(game.user.isGM) {
+        if(game.user && game.user.isGM) {
             Logger.debug(`Saving month configuration.`);
             const currentMonthConfig = JSON.stringify(GameSettings.LoadMonthData());
             const newConfig: MonthConfig[] = months.map(m => { return {
@@ -267,7 +266,7 @@ export class GameSettings {
      * @param {Array.<Weekday>} weekdays The weekdays that make up the configuration
      */
     static async SaveWeekdayConfiguration(weekdays: Weekday[]): Promise<any> {
-        if(game.user.isGM) {
+        if(game.user && game.user.isGM) {
             Logger.debug(`Saving weekday configuration.`);
             const currentWeekdayConfig = JSON.stringify(GameSettings.LoadWeekdayData());
             const newConfig: WeekdayConfig[] = weekdays.map(w => {return {name: w.name, numericRepresentation: w.numericRepresentation}; });
@@ -286,7 +285,7 @@ export class GameSettings {
      * @param {LeapYear} leapYear The leap year settings to save
      */
     static async SaveLeapYearRules(leapYear: LeapYear): Promise<any>{
-        if(game.user.isGM) {
+        if(game.user && game.user.isGM) {
             Logger.debug(`Saving leap year configuration.`);
             const current = GameSettings.LoadLeapYearRules();
             const newlyc: LeapYearConfig = {
@@ -325,17 +324,32 @@ export class GameSettings {
     }
 
     /**
+     * Sets the default note visibility settings
+     * @param {boolean} visibility What to set the default visibility too
+     */
+    static async SetDefaultNoteVisibility(visibility: boolean): Promise<boolean>{
+        if(game.user && game.user.isGM) {
+            return await game.settings.set(ModuleName, SettingNames.DefaultNoteVisibility, visibility).then(() => {return true;});
+        }
+        return false;
+    }
+
+    /**
      * Display a notification using the game UI
      * @param {string} message The message to display
      * @param {string} type The type of notification to show
      */
     static UiNotification(message: string, type: string = 'info'){
-        if(type === 'info'){
-            ui.notifications.info(message);
-        } else if(type === 'warn'){
-            ui.notifications.warn(message);
-        } else if(type === 'error'){
-            ui.notifications.error(message);
+        if(ui.notifications){
+            if(type === 'info'){
+                ui.notifications.info(message);
+            } else if(type === 'warn'){
+                ui.notifications.warn(message);
+            } else if(type === 'error'){
+                ui.notifications.error(message);
+            }
+        } else {
+            Logger.error('The UI class is not initialized.');
         }
     }
 }

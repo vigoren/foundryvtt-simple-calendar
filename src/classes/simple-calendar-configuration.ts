@@ -4,7 +4,6 @@ import {GameSettings} from "./game-settings";
 import Month from "./month";
 import {Weekday} from "./weekday";
 import {LeapYearRules} from "../constants";
-import SimpleCalendar from "./simple-calendar";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -20,7 +19,15 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     private year: Year;
 
+    /**
+     * If the year has changed
+     * @private
+     */
     private yearChanged = false;
+
+    private generalSettings = {
+        defaultPlayerNoteVisibility: true
+    }
 
     /**
      * The Calendar configuration constructor
@@ -28,8 +35,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     constructor(data: Year) {
         super(data);
-        this._tabs[0].active = "yearSettings";
+        this._tabs[0].active = "generalSettings";
         this.year = data;
+
+        this.generalSettings.defaultPlayerNoteVisibility = GameSettings.GetDefaultNoteVisibility();
     }
 
     /**
@@ -72,8 +81,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
     /**
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
-    public getData(){
-        return {
+    public getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
+        let data = {
+            ...super.getData(options),
+            defaultPlayerNoteVisibility: this.generalSettings.defaultPlayerNoteVisibility,
             currentYear: (<Year>this.object),
             months: (<Year>this.object).months.map(m => m.toTemplate()),
             weekdays: (<Year>this.object).weekdays.map(w => w.toTemplate()),
@@ -91,14 +102,25 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 warhammer: "Warhammer"
             }
         };
+        return data;
+    }
+
+    /**
+     * Updates the data object
+     * @param event
+     * @param formData
+     * @protected
+     */
+    protected _updateObject(event: Event, formData?: object): Promise<unknown> {
+        return Promise.resolve(undefined);
     }
 
     /**
      * Adds any event listeners to the application DOM
-     * @param {JQuery | HTMLElement} html The root HTML of the application window
+     * @param {JQuery<HTMLElement>} html The root HTML of the application window
      * @protected
      */
-    protected activateListeners(html: JQuery | HTMLElement) {
+    public activateListeners(html: JQuery<HTMLElement>) {
         super.activateListeners(html);
         if(html.hasOwnProperty("length")) {
 
@@ -121,6 +143,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".weekday-add").on('click', SimpleCalendarConfiguration.instance.addWeekday.bind(this));
 
             //Input Change
+            (<JQuery>html).find("#scDefaultPlayerVisibility").on('change', SimpleCalendarConfiguration.instance.generalInputChange.bind(this));
             (<JQuery>html).find(".year-settings input").on('change', SimpleCalendarConfiguration.instance.yearInputChange.bind(this));
             (<JQuery>html).find(".month-settings .f-table .row div input").on('change', SimpleCalendarConfiguration.instance.monthInputChange.bind(this));
             (<JQuery>html).find(".weekday-settings #scShowWeekdayHeaders").on('change', SimpleCalendarConfiguration.instance.showWeekdayInputChange.bind(this));
@@ -524,6 +547,17 @@ export class SimpleCalendarConfiguration extends FormApplication {
     }
 
     /**
+     * Event when a general settings input changes
+     * @param {Event} e The event
+     */
+    public generalInputChange(e: Event){
+        const id = (<HTMLElement>e.currentTarget).id;
+        if(id === "scDefaultPlayerVisibility"){
+            this.generalSettings.defaultPlayerNoteVisibility = (<HTMLInputElement>e.currentTarget).checked;
+        }
+    }
+
+    /**
      * Event when any year inputs are changed
      * @param {Event} e The event
      */
@@ -748,6 +782,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
             if(this.yearChanged){
                 await GameSettings.SaveCurrentDate(<Year>this.object);
             }
+
+            const noteDefaultPlayerVisibility = (<HTMLInputElement>document.getElementById('scDefaultPlayerVisibility')).checked;
+            await GameSettings.SetDefaultNoteVisibility(noteDefaultPlayerVisibility);
+
             this.closeApp();
         } catch (error){
             Logger.error(error);

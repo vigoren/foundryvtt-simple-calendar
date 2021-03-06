@@ -8,6 +8,8 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 import "../../__mocks__/dialog";
+import "../../__mocks__/merge-object";
+import "../../__mocks__/text-editor";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import {Note} from "./note";
 import SpyInstance = jest.SpyInstance;
@@ -56,9 +58,12 @@ describe('Simple Calendar Notes Tests', () => {
         const spy = jest.spyOn(FormApplication, 'defaultOptions', 'get');
         const opts = SimpleCalendarNotes.defaultOptions;
         expect(Object.keys(opts).length).toBe(6); //Make sure no new properties have been added
+        //@ts-ignore
         expect(opts.template).toBe('modules/foundryvtt-simple-calendar/templates/calendar-notes.html');
+        //@ts-ignore
         expect(opts.title).toBe('FSC.Notes.DialogTitle');
         expect(opts.classes).toStrictEqual(["form","simple-calendar"]);
+        //@ts-ignore
         expect(opts.resizable).toBe(true);
         //@ts-ignore
         expect(opts.closeOnSubmit).toBe(false);
@@ -68,32 +73,48 @@ describe('Simple Calendar Notes Tests', () => {
     });
 
     test('Get Data', () => {
+        SimpleCalendar.instance = new SimpleCalendar();
         let data = SimpleCalendarNotes.instance.getData();
+        //@ts-ignore
         expect(data.viewMode).toBe(false);
+        //@ts-ignore
         expect(data.richButton).toBe(true);
+        //@ts-ignore
         expect(data.canEdit).toBe(false);
+        //@ts-ignore
         expect(data.noteYear).toBe(0);
+        //@ts-ignore
         expect(data.noteMonth).toBe('');
 
         SimpleCalendar.instance = new SimpleCalendar();
+        //@ts-ignore
         SimpleCalendarNotes.instance.object.repeats = NoteRepeat.Yearly;
         data = SimpleCalendarNotes.instance.getData();
-        expect(data.noteYear).toBeUndefined()
+        //@ts-ignore
+        expect(data.noteYear).toBe(0);
+        //@ts-ignore
         expect(data.noteMonth).toBe('');
 
+        //@ts-ignore
         SimpleCalendarNotes.instance.object.repeats = NoteRepeat.Monthly;
         data = SimpleCalendarNotes.instance.getData();
-        expect(data.noteYear).toBeUndefined();
-        expect(data.noteMonth).toBeUndefined();
+        //@ts-ignore
+        expect(data.noteYear).toBe(0);
+        //@ts-ignore
+        expect(data.noteMonth).toBe('');
 
         SimpleCalendar.instance.currentYear = new Year(1);
         data = SimpleCalendarNotes.instance.getData();
+        //@ts-ignore
         expect(data.noteYear).toBe(1);
-        expect(data.noteMonth).toBeUndefined();
+        //@ts-ignore
+        expect(data.noteMonth).toBe('');
         SimpleCalendar.instance.currentYear.months.push(new Month('Name', 1));
         SimpleCalendar.instance.currentYear.months[0].visible = true;
         data = SimpleCalendarNotes.instance.getData();
+        //@ts-ignore
         expect(data.noteYear).toBe(1);
+        //@ts-ignore
         expect(data.noteMonth).toBe('Name');
     });
 
@@ -115,38 +136,81 @@ describe('Simple Calendar Notes Tests', () => {
         // Initial setup where everything is valid
         //@ts-ignore
         SimpleCalendarNotes.instance.setUpTextEditor(fakeQuery);
-        expect(SimpleCalendarNotes.instance.editors['content'].options.target).toBeDefined();
-        expect(SimpleCalendarNotes.instance.editors['content'].button).toBe(false);
-        expect(SimpleCalendarNotes.instance.editors['content'].hasButton).toBe(false);
-        expect(SimpleCalendarNotes.instance.editors['content'].active).toBe(true);
+        if(SimpleCalendarNotes.instance.editors['content']){
+            expect(SimpleCalendarNotes.instance.editors['content'].options.target).toBeDefined();
+            expect(SimpleCalendarNotes.instance.editors['content'].button).toBe(false);
+            expect(SimpleCalendarNotes.instance.editors['content'].hasButton).toBe(false);
+            //@ts-ignore
+            expect(SimpleCalendarNotes.instance.editors['content'].active).toBe(true);
 
-        SimpleCalendarNotes.instance.editors['content'].button = null;
-        //@ts-ignore
-        SimpleCalendarNotes.instance.setUpTextEditor(fakeQuery);
-        expect(SimpleCalendarNotes.instance.editors['content'].options.target).toBeDefined();
-        expect(SimpleCalendarNotes.instance.editors['content'].button).toBeDefined()
-        expect(SimpleCalendarNotes.instance.editors['content'].hasButton).toBe(true);
-        expect(SimpleCalendarNotes.instance.editors['content'].active).toBe(true);
+            //@ts-ignore
+            SimpleCalendarNotes.instance.editors['content'].button = null;
+            //@ts-ignore
+            SimpleCalendarNotes.instance.setUpTextEditor(fakeQuery);
+            expect(SimpleCalendarNotes.instance.editors['content'].options.target).toBeDefined();
+            expect(SimpleCalendarNotes.instance.editors['content'].button).toBeDefined();
+            expect(SimpleCalendarNotes.instance.editors['content'].hasButton).toBe(true);
+            //@ts-ignore
+            expect(SimpleCalendarNotes.instance.editors['content'].active).toBe(true);
 
-        SimpleCalendarNotes.instance.editors['content'].mce = {};
-        //@ts-ignore
-        SimpleCalendarNotes.instance.setUpTextEditor(fakeQuery);
+            //@ts-ignore
+            SimpleCalendarNotes.instance.editors['content'].button = null;
+            button.classList.remove('editor-edit');
+            //@ts-ignore
+            SimpleCalendarNotes.instance.setUpTextEditor(fakeQuery);
+            expect(SimpleCalendarNotes.instance.editors['content'].options.target).toBeDefined();
+            expect(SimpleCalendarNotes.instance.editors['content'].button).toBeDefined()
+            expect(SimpleCalendarNotes.instance.editors['content'].hasButton).toBe(false);
+            //@ts-ignore
+            expect(SimpleCalendarNotes.instance.editors['content'].active).toBe(true);
 
-        SimpleCalendarNotes.instance.viewMode = true;
-        SimpleCalendarNotes.instance.editors['content'].button = null;
+
+            //@ts-ignore
+            SimpleCalendarNotes.instance.editors['content'].mce = {};
+            //@ts-ignore
+            SimpleCalendarNotes.instance.setUpTextEditor(fakeQuery);
+
+            SimpleCalendarNotes.instance.viewMode = true;
+            //@ts-ignore
+            SimpleCalendarNotes.instance.editors['content'].button = null;
+            //@ts-ignore
+            SimpleCalendarNotes.instance.setUpTextEditor(fakeQuery);
+            expect(SimpleCalendarNotes.instance.editors['content'].options.target).toBeDefined();
+            expect(SimpleCalendarNotes.instance.editors['content'].button).toBeDefined()
+            expect(SimpleCalendarNotes.instance.editors['content'].hasButton).toBe(false);
+            //@ts-ignore
+            expect(SimpleCalendarNotes.instance.editors['content'].active).toBe(true);
+
+
+            const cb = SimpleCalendarNotes.instance.editors['content'];
+            SimpleCalendarNotes.instance.editors['content'] = undefined;
+            //@ts-ignore
+            SimpleCalendarNotes.instance.setUpTextEditor(fakeQuery);
+            expect(SimpleCalendarNotes.instance.editors['content']).toBeUndefined();
+            SimpleCalendarNotes.instance.editors['content'] = cb;
+
+        }
+    });
+
+    test('Activate Editor', () => {
+        expect(() => {SimpleCalendarNotes.instance.activateEditor('asd')}).toThrow(Error);
+        SimpleCalendarNotes.instance.activateEditor('content');
         //@ts-ignore
-        SimpleCalendarNotes.instance.setUpTextEditor(fakeQuery);
-        expect(SimpleCalendarNotes.instance.editors['content'].options.target).toBeDefined();
-        expect(SimpleCalendarNotes.instance.editors['content'].button).toBeDefined()
-        expect(SimpleCalendarNotes.instance.editors['content'].hasButton).toBe(true);
-        expect(SimpleCalendarNotes.instance.editors['content'].active).toBe(true);
+        expect(TextEditor.changeResult()).toBe(true);
     });
 
     test('Text Editor Button Click', () => {
+        //@ts-ignore
         SimpleCalendarNotes.instance.editors['content'].button = document.createElement('a');
         SimpleCalendarNotes.instance.textEditorButtonClick(new Event('click'));
+        //@ts-ignore
         expect(SimpleCalendarNotes.instance.editors['content'].button.style.display).toBe('none');
         expect(SimpleCalendarNotes.instance.richEditorSaved).toBe(false);
+
+        const cb = SimpleCalendarNotes.instance.editors['content'];
+        SimpleCalendarNotes.instance.editors['content'] = undefined;
+        expect(() => {SimpleCalendarNotes.instance.textEditorButtonClick(new Event('click'))}).toThrow(Error);
+        SimpleCalendarNotes.instance.editors['content'] = cb;
     });
 
     test('Activate Listeners', () => {
@@ -162,9 +226,17 @@ describe('Simple Calendar Notes Tests', () => {
         //@ts-ignore
         fakeQuery.length = 1;
         //@ts-ignore
+        const el = SimpleCalendarNotes.instance.element;
+        //@ts-ignore
+        SimpleCalendarNotes.instance.element = {
+            find: jest.fn().mockReturnValue({focus: jest.fn()})
+        }
+        //@ts-ignore
         SimpleCalendarNotes.instance.activateListeners(fakeQuery);
         expect(fakeQuery.find).toHaveBeenCalledTimes(4);
         expect(onFunc).toHaveBeenCalledTimes(3);
+        //@ts-ignore
+        SimpleCalendarNotes.instance.element = el;
     });
 
     test('Update Object', async () => {
@@ -173,6 +245,7 @@ describe('Simple Calendar Notes Tests', () => {
         //@ts-ignore
         await expect(SimpleCalendarNotes.instance._updateObject(event, formData)).resolves.toBe(false);
         expect(SimpleCalendarNotes.instance.richEditorSaved).toBe(true);
+        //@ts-ignore
         expect(SimpleCalendarNotes.instance.object.content).toBe('asd');
     });
 
@@ -217,6 +290,7 @@ describe('Simple Calendar Notes Tests', () => {
         expect(game.settings.get).toHaveBeenCalledTimes(1);
         expect(game.settings.set).not.toHaveBeenCalled();
 
+        //@ts-ignore
         SimpleCalendarNotes.instance.object.id = "abc123";
         SimpleCalendarNotes.instance.deleteConfirm();
         expect(game.settings.get).toHaveBeenCalledTimes(2);
@@ -227,10 +301,13 @@ describe('Simple Calendar Notes Tests', () => {
     test('Save Button Click', () => {
         const event = new Event('click');
         SimpleCalendarNotes.instance.saveButtonClick(event);
+        //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
 
+        //@ts-ignore
         SimpleCalendarNotes.instance.editors['content'].mce = {getContent: ()=>{return 'a';},isNotDirty: false};
         SimpleCalendarNotes.instance.saveButtonClick(event);
+        //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
 
         //@ts-ignore
@@ -249,13 +326,17 @@ describe('Simple Calendar Notes Tests', () => {
                 .mockReturnValueOnce({ is: () => {return true;} })
                 .mockReturnValueOnce({ find: () => {return {val: () => {return '0';}}} })
         };
+        //@ts-ignore
         SimpleCalendarNotes.instance.editors['content'].mce = {getContent: ()=>{return '';},isNotDirty: false};
         SimpleCalendarNotes.instance.richEditorSaved = true;
         SimpleCalendarNotes.instance.saveButtonClick(event);
+        //@ts-ignore
         expect(ui.notifications.error).toHaveBeenCalledTimes(1);
 
         SimpleCalendarNotes.instance.saveButtonClick(event);
+        //@ts-ignore
         expect(SimpleCalendarNotes.instance.object.title).toBe('Title');
+        //@ts-ignore
         expect(SimpleCalendarNotes.instance.object.playerVisible).toBe(true);
         expect(game.settings.get).toHaveBeenCalledTimes(1);
         expect(game.settings.set).toHaveBeenCalledTimes(1);
@@ -265,6 +346,7 @@ describe('Simple Calendar Notes Tests', () => {
         expect(game.settings.get).toHaveBeenCalledTimes(2);
         expect(game.settings.set).toHaveBeenCalledTimes(2);
 
+        //@ts-ignore
         SimpleCalendarNotes.instance.object.id = "abc123";
         SimpleCalendarNotes.instance.saveButtonClick(event);
         expect(game.settings.get).toHaveBeenCalledTimes(3);
