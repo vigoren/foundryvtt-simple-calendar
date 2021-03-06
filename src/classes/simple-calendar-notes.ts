@@ -37,16 +37,19 @@ export class SimpleCalendarNotes extends FormApplication {
         this.updateNote = false;
         this.editors['content'] = {
             target: 'content',
-            mce: null,
             changed: false,
             initial: (<Note>this.object).content,
-            hasButton: false,
+            //@ts-ignore
             button: null,
+            hasButton: false,
             active: false,
+            //@ts-ignore
+            mce: null,
             options: {
-                target: null,
-                height: 200,
                 //@ts-ignore
+                target: null,
+                //@ts-ignore
+                height: 200,
                 save_onsavecallback: this.saveEditor.bind(this, 'content')
             },
         };
@@ -69,48 +72,79 @@ export class SimpleCalendarNotes extends FormApplication {
     /**
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
-    getData(): any {
-        const options = super.getData();
-        options.viewMode = this.viewMode;
-        options.richButton = !this.viewMode;
-        options.canEdit = GameSettings.IsGm();
-        options.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'};
-        if((<Note>this.object).repeats === NoteRepeat.Yearly || (<Note>this.object).repeats === NoteRepeat.Monthly){
-            options.noteYear = SimpleCalendar.instance.currentYear?.visibleYear;
+    getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
+        let data = {
+            ... super.getData(options),
+            viewMode: this.viewMode,
+            richButton: !this.viewMode,
+            canEdit: GameSettings.IsGm(),
+            noteYear: 0,
+            noteMonth: '',
+            repeatOptions: {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
+            repeats: (<Note>this.object).repeats,
+            repeatsText: ''
+        };
+        if(SimpleCalendar.instance.currentYear && ((<Note>this.object).repeats === NoteRepeat.Yearly || (<Note>this.object).repeats === NoteRepeat.Monthly)){
+            data.noteYear = SimpleCalendar.instance.currentYear.visibleYear;
         } else {
-            options.noteYear = (<Note>this.object).year;
+            data.noteYear = (<Note>this.object).year;
         }
-        if((<Note>this.object).repeats === NoteRepeat.Monthly){
-            options.noteMonth = SimpleCalendar.instance.currentYear?.getMonth('visible')?.name;
+        if(SimpleCalendar.instance.currentYear && (<Note>this.object).repeats === NoteRepeat.Monthly){
+            const visibleMonth = SimpleCalendar.instance.currentYear.getMonth('visible');
+            data.noteMonth = visibleMonth? visibleMonth.name : (<Note>this.object).monthDisplay;
         } else {
-            options.noteMonth = (<Note>this.object).monthDisplay;
+            data.noteMonth = (<Note>this.object).monthDisplay;
         }
-        options.repeats = (<Note>this.object).repeats;
-        options.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(options.repeatOptions[options.repeats])}`;
-        return options;
+        data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(data.repeatOptions[data.repeats])}`
+        return data;
     }
 
     /**
      * Sets up our rich text editor when the app is shown
-     * @param {JQuery|HTMLElement} html The element that makes up the root of the application
+     * @param {JQuery<HTMLElement>} html The element that makes up the root of the application
      * @private
      */
-    private setUpTextEditor(html: JQuery | HTMLElement){
-        if(this.editors['content'].mce === null){
-            this.editors['content'].options.target = (<JQuery>html).find('.editor .editor-content')[0];
-        }
-        if(!this.viewMode && this.editors['content'].options.target && this.editors['content'].button === null){
-            this.editors['content'].button = this.editors['content'].options.target.nextElementSibling;
-            this.editors['content'].hasButton = this.editors['content'].button && this.editors['content'].button.classList.contains("editor-edit");
-            this.editors['content'].active = !this.viewMode;
-            if(this.editors['content'].hasButton){
-                this.editors['content'].button.onclick = SimpleCalendarNotes.instance.textEditorButtonClick.bind(this)
+    private setUpTextEditor(html: JQuery<HTMLElement>){
+        if(this.editors['content']){
+            if(this.editors['content'].mce === null){
+                this.editors['content'].options.target = (<JQuery>html).find('.editor .editor-content')[0];
+            }
+            if(!this.viewMode && this.editors['content'].options.target && this.editors['content'].button === null){
+                this.editors['content'].button = <HTMLElement>this.editors['content'].options.target.nextElementSibling;
+                this.editors['content'].hasButton = this.editors['content'].button && this.editors['content'].button.classList.contains("editor-edit");
+                //@ts-ignore
+                this.editors['content'].active = !this.viewMode;
+                if(this.editors['content'].hasButton){
+                    this.editors['content'].button.onclick = SimpleCalendarNotes.instance.textEditorButtonClick.bind(this)
+                }
+            }
+            //@ts-ignore
+            if(this.editors['content'].mce === null && this.editors['content'].active){
+                //@ts-ignore
+                this.activateEditor('content');
             }
         }
-        if(this.editors['content'].mce === null && this.editors['content'].active){
+    }
+
+    /**
+     * Activates a rich text editor, copied code from the main code file but with the editor focus removed
+     * @param name
+     * @param options
+     * @param initialContent
+     */
+    public activateEditor(name: string, options: any ={}, initialContent="") {
+        const editor = this.editors[name];
+        if ( !editor ) throw new Error(`${name} is not a registered editor name!`);
+        options = mergeObject(editor.options, options);
+        options.height = options.target.offsetHeight;
+        TextEditor.create(options, initialContent || editor.initial).then(mce => {
             //@ts-ignore
-            this.activateEditor('content');
-        }
+            editor.mce = mce;
+            editor.changed = false;
+            //@ts-ignore
+            editor.active = true;
+            mce.on('change', ev => editor.changed = true);
+        });
     }
 
     /**
@@ -118,21 +152,22 @@ export class SimpleCalendarNotes extends FormApplication {
      * @param {Event} e The click event
      */
     public textEditorButtonClick(e: Event){
-        this.editors['content'].button.style.display = "none";
+        if(this.editors['content']){
+            this.editors['content'].button.style.display = "none";
+        }
         this.richEditorSaved = false;
-        //@ts-ignore
         this.activateEditor('content');
     }
 
     /**
      * Adds any event listeners to the application DOM
-     * @param {JQuery | HTMLElement} html The root HTML of the application window
+     * @param {JQuery<HTMLElement>} html The root HTML of the application window
      * @protected
      */
-    protected activateListeners(html: JQuery | HTMLElement) {
+    public activateListeners(html: JQuery<HTMLElement>) {
         if(html.hasOwnProperty("length")) {
             this.setUpTextEditor(html);
-
+            (<JQuery>this.element).find('#scNoteTitle').focus();
             (<JQuery>html).find('#scSubmit').on('click', SimpleCalendarNotes.instance.saveButtonClick.bind(SimpleCalendarNotes.instance));
 
             (<JQuery>html).find('#scNoteEdit').on('click', SimpleCalendarNotes.instance.editButtonClick.bind(SimpleCalendarNotes.instance));
@@ -234,7 +269,8 @@ export class SimpleCalendarNotes extends FormApplication {
         Logger.debug('Saving New Note');
         e.preventDefault();
         let detailsEmpty = true;
-        if(this.editors['content'].mce){
+        if(this.editors['content'] && this.editors['content'].mce){
+            //@ts-ignore
             if(this.editors['content'].mce.getContent().trim() !== '' && !this.editors['content'].mce.isNotDirty){
                 detailsEmpty = false;
             }
@@ -265,6 +301,7 @@ export class SimpleCalendarNotes extends FormApplication {
                         updateNote.title = (<Note>this.object).title;
                         updateNote.content = (<Note>this.object).content;
                         updateNote.playerVisible = (<Note>this.object).playerVisible;
+                        updateNote.repeats = (<Note>this.object).repeats;
                     }
                 } else {
                     currentNotes.push(<Note>this.object);
