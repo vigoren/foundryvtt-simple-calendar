@@ -29,15 +29,33 @@ describe('Game Settings Class Tests', () => {
     });
 
     test( 'Is GM', () => {
+        const origGameUser = game.user;
         expect(GameSettings.IsGm()).toBe(false);
+        //@ts-ignore
+        game.user = undefined;
+        expect(GameSettings.IsGm()).toBe(false);
+        //@ts-ignore
+        game.user = origGameUser;
     });
 
     test('User Name', () => {
+        const origGameUser = game.user;
         expect(GameSettings.UserName()).toBe('');
+        //@ts-ignore
+        game.user = undefined;
+        expect(GameSettings.UserName()).toBe('');
+        //@ts-ignore
+        game.user = origGameUser;
     });
 
     test('User ID', () => {
+        const origGameUser = game.user;
         expect(GameSettings.UserID()).toBe('');
+        //@ts-ignore
+        game.user = undefined;
+        expect(GameSettings.UserID()).toBe('');
+        //@ts-ignore
+        game.user = origGameUser;
     });
 
     test('Register Settings', () => {
@@ -203,16 +221,38 @@ describe('Game Settings Class Tests', () => {
         expect(game.settings.set).toHaveBeenCalled();
     });
 
+    test('Set Default Note Visibility', () => {
+        // @ts-ignore
+        game.user.isGM = false;
+        expect(GameSettings.SetDefaultNoteVisibility(true)).resolves.toBe(false);
+        // @ts-ignore
+        game.user.isGM = true;
+        expect(GameSettings.SetDefaultNoteVisibility(true)).resolves.toBe(true);
+        expect(game.settings.set).toHaveBeenCalled();
+    });
+
     test('UI Notification', () => {
         GameSettings.UiNotification('');
+        //@ts-ignore
         expect(ui.notifications.info).toHaveBeenCalledTimes(1);
         GameSettings.UiNotification('', 'warn');
+        //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
         GameSettings.UiNotification('', 'error');
+        //@ts-ignore
         expect(ui.notifications.error).toHaveBeenCalledTimes(1);
         GameSettings.UiNotification('', 'asdasd');
+        //@ts-ignore
         expect(ui.notifications.info).toHaveBeenCalledTimes(1);
+        //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
+        //@ts-ignore
         expect(ui.notifications.error).toHaveBeenCalledTimes(1);
+
+        const origUi = ui.notifications;
+        ui.notifications = undefined;
+        GameSettings.UiNotification('');
+        expect(console.error).toHaveBeenCalled();
+        ui.notifications = origUi;
     });
 });

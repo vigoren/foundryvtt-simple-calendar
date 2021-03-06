@@ -3,17 +3,14 @@
  */
 import {SettingNames} from "../src/constants";
 
-// @ts-ignore
+//@ts-ignore
 const local: Localization = {
     lang: '',
     translations: {},
     initialize: jest.fn(() => {return Promise.resolve();}),
     localize: jest.fn((stringId: string) => {return '';}),
     format: jest.fn((stringId: string, replacements: any) => {return '';}),
-    setLanguage: jest.fn((lang: string) => {return Promise.resolve();}),
-    _discoverLanguages: jest.fn(() => {}),
-    _getTranslations: jest.fn((lang: string) => {return Promise.resolve();}),
-    _loadTranslationFile: jest.fn((src: string) => {return Promise.resolve();})
+    setLanguage: jest.fn((lang: string) => {return Promise.resolve();})
 };
 
 // @ts-ignore
@@ -21,7 +18,6 @@ const user: User = {
     name: '',
     id: '',
     active: true,
-    targets: new Set(),
     viewedScene: '',
     avatar: '',
     //character: {},
@@ -34,7 +30,6 @@ const user: User = {
     hasRole: jest.fn((role: string) => {return false;}),
     isRole: jest.fn((role: string) => {return false;}),
     setPermission: jest.fn((premission: string, allowed: boolean) => {}),
-    broadCastActivity: jest.fn((activityData?: UserActivityData) => {}),
     assignHotbarMacro: jest.fn((macro: Macro | null, slot: number, {fromSlot}: { fromSlot?: number }): Promise<User> => { return Promise.resolve(user);}),
     getHotbarMacros: jest.fn((page?: number): Macro[] => {return [];})
 };

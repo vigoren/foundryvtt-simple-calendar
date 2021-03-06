@@ -57,7 +57,7 @@ export default class SimpleCalendar extends Application{
     /**
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
-    public getData(): CalendarTemplate | undefined {
+    getData(options?: Application.RenderOptions): CalendarTemplate | Promise<CalendarTemplate> {
         if(this.currentYear){
             return {
                 isGM: GameSettings.IsGm(),
@@ -67,7 +67,13 @@ export default class SimpleCalendar extends Application{
                 notes: this.getNotesForDay()
             };
         } else {
-            return;
+            return {
+                isGM: false,
+                currentYear: new Year(0).toTemplate(),
+                showCurrentDay: false,
+                showSelectedDay: false,
+                notes: []
+            };
         }
     }
 
@@ -89,6 +95,62 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
+     * A globally exposed function for macros to show the calendar. If a date is passed in, the calendar will open so that date is visible and selected
+     * @param {number | null} [year=null] The year to set as visible, it not passed in what ever the users current visible year will be used
+     * @param {number | null} [month=null] The month to set as visible, it not passed in what ever the users current visible month will be used
+     * @param {number | null} [day=null] The day to set as selected, it not passed in what ever the users current selected day will be used
+     */
+    public macroShow(year: number | null = null, month: number | null = null, day: number | null = null){
+        if(this.currentYear){
+            if(year !== null){
+                year = parseInt(year.toString());
+                if(!isNaN(year)){
+                    this.currentYear.visibleYear = year;
+                } else {
+                    Logger.error('Invalid year was passed in.');
+                }
+            }
+            const isLeapYear = this.currentYear.leapYearRule.isLeapYear(this.currentYear.visibleYear);
+            if(month !== null){
+                month = parseInt(month.toString());
+                if(!isNaN(month)){
+                    if(month === -1 || month > this.currentYear.months.length){
+                        month = this.currentYear.months.length - 1;
+                    }
+                    this.currentYear.resetMonths('visible');
+                    this.currentYear.months[month].visible = true;
+                } else {
+                    Logger.error('Invalid month was passed in.');
+                }
+            }
+            if(day !== null){
+                day = parseInt(day.toString());
+                if(!isNaN(day)){
+                    const visibleMonth = this.currentYear.getMonth('visible') || this.currentYear.getMonth('current');
+                    if(visibleMonth){
+                        const numberOfDays = isLeapYear? visibleMonth.numberOfDays : visibleMonth.numberOfLeapYearDays;
+                        if(day > 0){
+                            day = day - 1;
+                        }
+                        if(day == -1 || day > numberOfDays){
+                            day = numberOfDays - 1;
+                        }
+                        this.currentYear.resetMonths('selected');
+                        visibleMonth.days[day].selected = true;
+                        visibleMonth.selected = true;
+                        this.currentYear.selectedYear = this.currentYear.visibleYear;
+                    }
+                } else {
+                    Logger.error('Invalid day was passed in.');
+                }
+            }
+            this.showApp();
+        } else {
+            Logger.error('The current year is not defined, can not use macro');
+        }
+    }
+
+    /**
      * Shows the application window
      */
     public showApp(){
@@ -104,10 +166,10 @@ export default class SimpleCalendar extends Application{
 
     /**
      * Adds any event listeners to the application DOM
-     * @param {JQuery | HTMLElement} html The root HTML of the application window
+     * @param {JQuery<HTMLElement>} html The root HTML of the application window
      * @protected
      */
-    protected activateListeners(html: JQuery | HTMLElement) {
+    public activateListeners(html: JQuery<HTMLElement>) {
         if(html.hasOwnProperty("length")) {
             // Change the month that is being viewed
             const nextPrev = (<JQuery>html).find(".current-date .fa");
@@ -317,7 +379,7 @@ export default class SimpleCalendar extends Application{
                     newNote.month = month;
                     newNote.day = day;
                     newNote.monthDisplay = currentMonth.name;
-                    newNote.title = 'New Note';
+                    newNote.title = '';
                     newNote.author = GameSettings.UserName();
                     newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
                     SimpleCalendarNotes.instance = new SimpleCalendarNotes(newNote);

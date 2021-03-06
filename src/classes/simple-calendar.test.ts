@@ -13,9 +13,9 @@ import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";
 import {Note} from "./note";
+import {LeapYearRules, SettingNames} from "../constants";
 import Mock = jest.Mock;
 import SpyInstance = jest.SpyInstance;
-import {SettingNames} from "../constants";
 
 describe('Simple Calendar Class Tests', () => {
     let y: Year;
@@ -34,6 +34,7 @@ describe('Simple Calendar Class Tests', () => {
         (<Mock>console.error).mockClear();
         renderSpy.mockClear();
         (<Mock>game.settings.get).mockClear();
+        //@ts-ignore
         (<Mock>ui.notifications.warn).mockClear();
 
 
@@ -86,17 +87,33 @@ describe('Simple Calendar Class Tests', () => {
         game.user.isGM = false;
     });
 
-    test('Get Data', () => {
-        let data = SimpleCalendar.instance.getData();
-        expect(data).toBeUndefined();
+    test('Get Data', async () => {
+        let data = await SimpleCalendar.instance.getData();
+        expect(data).toStrictEqual({
+            "currentYear": {
+                "display": "0",
+                "numericRepresentation": 0,
+                "selectedDisplayDay": "",
+                "selectedDisplayMonth": "",
+                "selectedDisplayYear": "0",
+                "showWeekdayHeaders": true,
+                "visibleMonth": undefined,
+                "visibleMonthWeekOffset": [],
+                "weekdays": []
+            },
+            "isGM": false,
+            "notes": [],
+            "showCurrentDay": false,
+            "showSelectedDay": false
+        });
         SimpleCalendar.instance.currentYear = y;
         //Nothing Undefined
-        data = SimpleCalendar.instance.getData();
-        expect(data?.isGM).toBe(false);
-        expect(data?.currentYear).toStrictEqual(y.toTemplate());
-        expect(data?.showSelectedDay).toBe(true);
-        expect(data?.showCurrentDay).toBe(true);
-        expect(data?.notes).toStrictEqual([]);
+        data = await SimpleCalendar.instance.getData();
+        expect(data.isGM).toBe(false);
+        expect(data.currentYear).toStrictEqual(y.toTemplate());
+        expect(data.showSelectedDay).toBe(true);
+        expect(data.showCurrentDay).toBe(true);
+        expect(data.notes).toStrictEqual([]);
     });
 
     test('Get Scene Control Buttons', () => {
@@ -113,6 +130,105 @@ describe('Simple Calendar Class Tests', () => {
         expect(controls.length).toBe(2);
         expect(controls[0].tools.length).toBe(0);
         expect(controls[1].tools.length).toBe(1);
+    });
+
+    test('Macro Show', () => {
+        SimpleCalendar.instance.macroShow();
+        expect(renderSpy).toHaveBeenCalledTimes(0);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.macroShow();
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        SimpleCalendar.instance.macroShow('abc');
+        expect(y.visibleYear).toBe(0);
+        expect(renderSpy).toHaveBeenCalledTimes(2);
+        expect(console.error).toHaveBeenCalledTimes(2);
+
+        SimpleCalendar.instance.macroShow(1);
+        expect(y.visibleYear).toBe(1);
+        expect(renderSpy).toHaveBeenCalledTimes(3);
+        expect(console.error).toHaveBeenCalledTimes(2);
+
+        //@ts-ignore
+        SimpleCalendar.instance.macroShow(1, 'abc');
+        expect(y.visibleYear).toBe(1);
+        expect(y.months[0].visible).toBe(true);
+        expect(renderSpy).toHaveBeenCalledTimes(4);
+        expect(console.error).toHaveBeenCalledTimes(3);
+
+        SimpleCalendar.instance.macroShow(1, 1);
+        expect(y.visibleYear).toBe(1);
+        expect(y.months[0].visible).toBe(false);
+        expect(y.months[1].visible).toBe(true);
+        expect(renderSpy).toHaveBeenCalledTimes(5);
+        expect(console.error).toHaveBeenCalledTimes(3);
+
+        y.months[0].visible = true;
+        y.months[1].visible = false;
+        SimpleCalendar.instance.macroShow(1, -1);
+        expect(y.visibleYear).toBe(1);
+        expect(y.months[0].visible).toBe(false);
+        expect(y.months[1].visible).toBe(true);
+        expect(renderSpy).toHaveBeenCalledTimes(6);
+        expect(console.error).toHaveBeenCalledTimes(3);
+
+        //@ts-ignore
+        SimpleCalendar.instance.macroShow(1, 0, 'asd');
+        expect(y.visibleYear).toBe(1);
+        expect(y.months[0].visible).toBe(true);
+        expect(y.months[0].days[0].selected).toBe(true);
+        expect(renderSpy).toHaveBeenCalledTimes(7);
+        expect(console.error).toHaveBeenCalledTimes(4);
+
+        SimpleCalendar.instance.macroShow(1, 0, 0);
+        expect(y.visibleYear).toBe(1);
+        expect(y.months[0].visible).toBe(true);
+        expect(y.months[0].days[0].selected).toBe(true);
+        expect(renderSpy).toHaveBeenCalledTimes(8);
+        expect(console.error).toHaveBeenCalledTimes(4);
+
+        SimpleCalendar.instance.macroShow(4, 0, 2);
+        expect(y.visibleYear).toBe(4);
+        expect(y.months[0].visible).toBe(true);
+        expect(y.months[0].days[1].selected).toBe(true);
+        expect(renderSpy).toHaveBeenCalledTimes(9);
+        expect(console.error).toHaveBeenCalledTimes(4);
+
+        SimpleCalendar.instance.macroShow(1, 0, -1);
+        expect(y.visibleYear).toBe(1);
+        expect(y.months[0].visible).toBe(true);
+        expect(y.months[0].days[4].selected).toBe(true);
+        expect(renderSpy).toHaveBeenCalledTimes(10);
+        expect(console.error).toHaveBeenCalledTimes(4);
+
+        y.months[0].visible = false;
+        SimpleCalendar.instance.macroShow(1, null, 1);
+        expect(y.visibleYear).toBe(1);
+        expect(y.months[0].visible).toBe(false);
+        expect(y.months[0].days[0].selected).toBe(true);
+        expect(renderSpy).toHaveBeenCalledTimes(11);
+        expect(console.error).toHaveBeenCalledTimes(4);
+
+        y.months[0].current = false;
+        SimpleCalendar.instance.macroShow(1, null, 2);
+        expect(y.visibleYear).toBe(1);
+        expect(y.months[0].visible).toBe(false);
+        expect(y.months[0].days[0].selected).toBe(true);
+        expect(y.months[0].days[1].selected).toBe(false);
+        expect(renderSpy).toHaveBeenCalledTimes(12);
+        expect(console.error).toHaveBeenCalledTimes(4);
+
+        y.leapYearRule.rule = LeapYearRules.Gregorian;
+        SimpleCalendar.instance.macroShow(4, 0, 2);
+        expect(y.visibleYear).toBe(4);
+        expect(y.months[0].visible).toBe(true);
+        expect(y.months[0].days[1].selected).toBe(true);
+        expect(renderSpy).toHaveBeenCalledTimes(13);
+        expect(console.error).toHaveBeenCalledTimes(4);
     });
 
     test('Show App', () => {
@@ -311,6 +427,7 @@ describe('Simple Calendar Class Tests', () => {
         // @ts-ignore
         game.user.isGM = false;
         SimpleCalendar.instance.dateControlApply(event);
+        //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
     });
 
@@ -325,6 +442,7 @@ describe('Simple Calendar Class Tests', () => {
         // @ts-ignore
         game.user.isGM = false;
         SimpleCalendar.instance.configurationClick(event);
+        //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
     });
 
@@ -340,17 +458,20 @@ describe('Simple Calendar Class Tests', () => {
 
         //No Current or selected month
         SimpleCalendar.instance.addNote(event);
+        //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
 
         //Current Month but no selected or current day
         SimpleCalendar.instance.currentYear.months[0].current = true;
         SimpleCalendar.instance.addNote(event);
+        //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
 
         //Current and Selected Month, current day but no selected day
         SimpleCalendar.instance.currentYear.months[0].selected = true;
         SimpleCalendar.instance.currentYear.months[0].days[0].current = true;
         SimpleCalendar.instance.addNote(event);
+        //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
     });
 
