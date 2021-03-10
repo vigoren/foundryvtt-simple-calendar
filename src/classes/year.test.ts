@@ -412,12 +412,12 @@ describe('Year Class Tests', () => {
         year.months.push(new Month("Test 3", 3, 2));
         year.months.push(new Month("Test 2", 2, 22));
         year.months[1].intercalary = true;
-        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(3);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(4);
 
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
         year.numericRepresentation = 4;
-        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(1);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(2);
     });
 
 });
