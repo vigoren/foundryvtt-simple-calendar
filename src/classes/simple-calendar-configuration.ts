@@ -482,7 +482,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).months[9].intercalary = true;
                 (<Year>this.object).months[10].intercalary = true;
                 (<Year>this.object).months[13].intercalary = true;
-                (<Year>this.object).months[17].intercalary = true;
+                (<Year>this.object).months[16].intercalary = true;
                 (<Year>this.object).showWeekdayHeadings = false;
                 (<Year>this.object).weekdays = [
                     new Weekday(1, '1st'),

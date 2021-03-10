@@ -327,8 +327,9 @@ export default class Year {
             Logger.debug(`Total Days For Years: ${totalDaysForYears}`);
             const isLeapYear = this.leapYearRule.isLeapYear(year);
             let daysSoFarThisYear = 0;
-            for(let i = 0; i < (targetMonth - 1); i++){
-                if(!this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude)){
+            for(let i = 0; i < this.months.length; i++){
+                //Only look at the month preceding the month we want and is not intercalary or is intercalary if the include setting is set otherwise skip
+                if(this.months[i].numericRepresentation < targetMonth && (!this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
                     if(isLeapYear){
                         daysSoFarThisYear = daysSoFarThisYear + this.months[i].numberOfLeapYearDays;
                     } else {
