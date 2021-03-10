@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.1.8 - Bug Fixes
+
+- Fixed a rare bug where the day of the week a month starts on would be incorrect.
+- Fixed an issue with the Harptos calendar preset where the wrong month was getting set as intercalary (oops)
+
 ## v1.1.6 - Bug Fixes & QoL Improvements
 
 ### Bug Fixes
