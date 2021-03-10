@@ -1,12 +1,21 @@
 import Year from "./year";
 import {Logger} from "./logging";
-import {CurrentDateConfig, MonthConfig, WeekdayConfig, YearConfig, NoteConfig, LeapYearConfig} from "../interfaces";
+import {
+    CurrentDateConfig,
+    MonthConfig,
+    WeekdayConfig,
+    YearConfig,
+    NoteConfig,
+    LeapYearConfig,
+    TimeConfig
+} from "../interfaces";
 import {ModuleName, SettingNames} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import {Weekday} from "./weekday";
 import {Note} from "./note";
 import LeapYear from "./leap-year";
+import Time from "./time";
 
 export class GameSettings {
     /**
@@ -97,6 +106,14 @@ export class GameSettings {
             default: [],
             onChange: SimpleCalendar.instance.loadNotes.bind(SimpleCalendar.instance, true)
         });
+        game.settings.register(ModuleName, SettingNames.TimeConfiguration, {
+            name: "Time",
+            scope: "world",
+            config: false,
+            type: Object,
+            default: {},
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'time')
+        });
     }
 
     /**
@@ -162,6 +179,13 @@ export class GameSettings {
     }
 
     /**
+     * Loads the time configuration from the game world settings
+     */
+    static LoadTimeData(): TimeConfig {
+        return game.settings.get(ModuleName, SettingNames.TimeConfiguration);
+    }
+
+    /**
      * Loads the notes from the game world settings
      * @return {Array.<NoteConfig>}
      */
@@ -191,9 +215,10 @@ export class GameSettings {
                     const newDate: CurrentDateConfig = {
                         year: year.numericRepresentation,
                         month: currentMonth.numericRepresentation,
-                        day: currentDay.numericRepresentation
+                        day: currentDay.numericRepresentation,
+                        seconds: year.time.seconds
                     };
-                    if(currentDate.year !== newDate.year || currentDate.month !== newDate.month || currentDate.day !== newDate.day){
+                    if(currentDate.year !== newDate.year || currentDate.month !== newDate.month || currentDate.day !== newDate.day || currentDate.seconds !== newDate.seconds){
                         return game.settings.set(ModuleName, SettingNames.CurrentDate, newDate);
                     } else {
                         Logger.debug('Current Date data has not changed, not updating settings');
@@ -298,6 +323,32 @@ export class GameSettings {
                 Logger.debug('Leap Year configuration has not changed, not updating settings');
             }
 
+        }
+        return false;
+    }
+
+    /**
+     * Saves the time configuration into the world settings
+     * @param {Time} time The time object to save
+     */
+    static async SaveTimeConfiguration(time: Time): Promise<boolean> {
+        if(game.user && game.user.isGM) {
+            Logger.debug(`Saving time configuration.`);
+            const current = GameSettings.LoadTimeData();
+            const newtc: TimeConfig = {
+                enabled: time.enabled,
+                hoursInDay: time.hoursInDay,
+                minutesInHour: time.minutesInHour,
+                secondsInMinute: time.secondsInMinute,
+                secondsPerRound: time.secondsPerRound,
+                automaticTime: time.automaticTime,
+                gameTimeRatio: time.gameTimeRatio
+            };
+            if(JSON.stringify(current) !== JSON.stringify(newtc)){
+                return game.settings.set(ModuleName, SettingNames.TimeConfiguration, newtc).then(() => { return true });
+            } else {
+                Logger.debug('Time configuration has not changed, not updating settings');
+            }
         }
         return false;
     }

@@ -14,7 +14,8 @@ export enum SettingNames {
     Notes = 'notes',
     AllowPlayersToAddNotes = 'allow-players-add-notes',
     DefaultNoteVisibility = 'default-note-visibility',
-    LeapYearRule = 'leap-year-rule'
+    LeapYearRule = 'leap-year-rule',
+    TimeConfiguration = 'time-configuration'
 }
 
 /**
@@ -31,4 +32,10 @@ export enum LeapYearRules {
     None = 'none',
     Gregorian = 'gregorian',
     Custom = 'custom'
+}
+
+export enum TimeKeeper {
+    None = 'none',
+    Self = 'self',
+    AboutTime = 'about-time'
 }

@@ -98,6 +98,19 @@
   }
 }
 
+.time-display{
+  text-align: center;
+  font-size: 1.25rem;
+  margin: -1rem 0 1rem;
+  background-color: #fff;
+  border-top: 0;
+  border-left: 1px solid #c3c3c3;
+  border-right: 1px solid #c3c3c3;
+  border-bottom: 1px solid #c3c3c3;
+  box-shadow: 2px 2px 2px #c3c3c3;
+  padding: 0.5rem 0;
+}
+
 .calendar-controls{
   display: flex;
   flex-direction: row;

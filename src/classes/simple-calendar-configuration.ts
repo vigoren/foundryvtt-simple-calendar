@@ -3,7 +3,7 @@ import Year from "./year";
 import {GameSettings} from "./game-settings";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {LeapYearRules} from "../constants";
+import {LeapYearRules, TimeKeeper} from "../constants";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -52,7 +52,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
         options.resizable = true;
         options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
         options.height = 700;
-        options.width = 710;
+        options.width = 825;
         return options;
     }
 
@@ -100,6 +100,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 greyhawk: 'Greyhawk',
                 harptos: 'Harptos',
                 warhammer: "Warhammer"
+            },
+            timeTrackers: {
+                none: 'FSC.Configuration.Time.None',
+                self: 'FSC.Configuration.Time.Self',
+                'about-time': 'FSC.Configuration.Time.AboutTime'
             }
         };
         return data;
@@ -150,6 +155,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".weekday-settings table td input").on('change', SimpleCalendarConfiguration.instance.weekdayInputChange.bind(this));
             (<JQuery>html).find(".leapyear-settings #scLeapYearRule").on('change', SimpleCalendarConfiguration.instance.leapYearRuleChange.bind(this));
             (<JQuery>html).find(".leapyear-settings table td input").on('change', SimpleCalendarConfiguration.instance.leapYearMonthChange.bind(this));
+            (<JQuery>html).find(".time-settings input").on('change', SimpleCalendarConfiguration.instance.timeInputChange.bind(this));
         }
     }
 
@@ -682,6 +688,42 @@ export class SimpleCalendarConfiguration extends FormApplication {
         Logger.debug('Unable to set the months data on change.');
     }
 
+    public timeInputChange(e: Event) {
+        e.preventDefault();
+        const id = (<HTMLElement>e.currentTarget).id;
+        const value = (<HTMLInputElement>e.currentTarget).value;
+        if(id === 'scTimeTracker'){
+            (<Year>this.object).time.enabled = <TimeKeeper>value;
+        } else if(id === 'scHoursInDay'){
+            const min = parseInt(value);
+            if(!isNaN(min)){
+                (<Year>this.object).time.hoursInDay = min;
+            }
+        } else if(id === 'scMinutesInHour'){
+            const min = parseInt(value);
+            if(!isNaN(min)){
+                (<Year>this.object).time.minutesInHour = min;
+            }
+        } else if(id === 'scSecondsInMinute'){
+            const min = parseInt(value);
+            if(!isNaN(min)){
+                (<Year>this.object).time.secondsInMinute = min;
+            }
+        } else if(id === 'scSecondsPerRound'){
+            const min = parseInt(value);
+            if(!isNaN(min)){
+                (<Year>this.object).time.secondsPerRound = min;
+            }
+        } else if(id === 'scAutomaticTime'){
+            (<Year>this.object).time.automaticTime = (<HTMLInputElement>e.currentTarget).checked;
+        } else if(id === 'scGameTimeRatio'){
+            const min = parseFloat(value);
+            if(!isNaN(min)){
+                (<Year>this.object).time.gameTimeRatio = min;
+            }
+        }
+    }
+
     /**
      * When the save button is clicked, apply those changes to the game settings and re-load the calendars across all players
      * @param {Event} e The click event
@@ -766,6 +808,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             }
             await GameSettings.SaveWeekdayConfiguration((<Year>this.object).weekdays);
 
+            //Update Leap Year Configuration
             const leapYearRule = (<JQuery>this.element).find('#scLeapYearRule').find(":selected").val();
             if(leapYearRule){
                 (<Year>this.object).leapYearRule.rule = <LeapYearRules>leapYearRule.toString();
@@ -776,8 +819,32 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     (<Year>this.object).leapYearRule.customMod = leapYearCustomMod;
                 }
             }
-
             await GameSettings.SaveLeapYearRules((<Year>this.object).leapYearRule);
+
+            //Update Time Configuration
+            (<Year>this.object).time.enabled = <TimeKeeper>(<HTMLInputElement>document.getElementById("scTimeTracker")).value;
+            const timeHoursPerDay = parseInt((<HTMLInputElement>document.getElementById("scHoursInDay")).value);
+            if(!isNaN(timeHoursPerDay)){
+                (<Year>this.object).time.hoursInDay = timeHoursPerDay;
+            }
+            const timeMinutesPerHour = parseInt((<HTMLInputElement>document.getElementById("scMinutesInHour")).value);
+            if(!isNaN(timeMinutesPerHour)){
+                (<Year>this.object).time.minutesInHour = timeMinutesPerHour;
+            }
+            const timeSecondsPerMinute = parseInt((<HTMLInputElement>document.getElementById("scSecondsInMinute")).value);
+            if(!isNaN(timeSecondsPerMinute)){
+                (<Year>this.object).time.secondsInMinute = timeSecondsPerMinute;
+            }
+            const timeSecondsPerRound = parseInt((<HTMLInputElement>document.getElementById("scSecondsPerRound")).value);
+            if(!isNaN(timeSecondsPerRound)){
+                (<Year>this.object).time.secondsPerRound = timeSecondsPerRound;
+            }
+            (<Year>this.object).time.automaticTime = (<HTMLInputElement>document.getElementById("scAutomaticTime")).checked;
+            const timeGameTimeRatio = parseInt((<HTMLInputElement>document.getElementById("scGameTimeRatio")).value);
+            if(!isNaN(timeGameTimeRatio)){
+                (<Year>this.object).time.gameTimeRatio = timeGameTimeRatio;
+            }
+            await GameSettings.SaveTimeConfiguration((<Year>this.object).time);
 
             if(this.yearChanged){
                 await GameSettings.SaveCurrentDate(<Year>this.object);

@@ -3,6 +3,8 @@ import {YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
+import Time from "./time";
+import {TimeKeeper} from "../constants";
 
 /**
  * Class for representing a year
@@ -39,13 +41,18 @@ export default class Year {
      * @type {Array.<Weekday>}
      */
     weekdays: Weekday[] = [];
-
+    /**
+     * If to show the weekday headings row or not on the calendar
+     * @type {boolean}
+     */
     showWeekdayHeadings: boolean = true;
     /**
      * The leap year rules for the calendar
      * @type {LeapYear}
      */
     leapYearRule: LeapYear;
+
+    time: Time;
 
     /**
      * The Year constructor
@@ -56,6 +63,7 @@ export default class Year {
         this.selectedYear = numericRepresentation;
         this.visibleYear = numericRepresentation;
         this.leapYearRule = new LeapYear();
+        this.time = new Time();
     }
 
     /**
@@ -89,7 +97,9 @@ export default class Year {
             weekdays: this.weekdays.map(w => w.toTemplate()),
             showWeekdayHeaders: this.showWeekdayHeadings,
             visibleMonth: this.getMonth('visible')?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
-            visibleMonthWeekOffset:  Array(this.visibleMonthStartingDayOfWeek()).fill(0)
+            visibleMonthWeekOffset:  Array(this.visibleMonthStartingDayOfWeek()).fill(0),
+            showTime: this.time.enabled !== TimeKeeper.None,
+            currentTime: this.time.getCurrentTime()
         }
     }
 
@@ -108,6 +118,7 @@ export default class Year {
         y.leapYearRule.rule = this.leapYearRule.rule;
         y.leapYearRule.customMod = this.leapYearRule.customMod;
         y.showWeekdayHeadings = this.showWeekdayHeadings;
+        y.time = this.time.clone();
         return y;
     }
 
@@ -247,6 +258,24 @@ export default class Year {
         }
     }
 
+    changeTime(next: boolean, type: string){
+        type = type.toLowerCase();
+        const amount = next? 1 : -1;
+        let dayChange = 0;
+
+        if(type === 'hour'){
+            dayChange = this.time.changeTime(amount);
+        } else if(type === 'minute'){
+            dayChange = this.time.changeTime(0, amount);
+        } else if(type === 'second'){
+            dayChange = this.time.changeTime(0, 0, amount);
+        }
+
+        if(dayChange !== 0){
+            this.changeDay(dayChange > 0);
+        }
+    }
+
     /**
      * Generates the total number of days in a year
      * @param {boolean} [leapYear=false] If to count the total number of days in a leap year
@@ -319,4 +348,14 @@ export default class Year {
         }
     }
 
+    async syncTime(){
+        const daysPerYear = this.totalNumberOfDays();
+        const daysPerLeapYear = this.totalNumberOfDays(true);
+        const leapYearDayDifference = daysPerLeapYear - daysPerYear;
+        const numberOfLeapYears = this.leapYearRule.howManyLeapYears(this.numericRepresentation);
+        const totalDays = (daysPerYear * this.numericRepresentation) + (numberOfLeapYears * leapYearDayDifference);
+        const totalSeconds = this.time.getTotalSeconds(totalDays);
+        Logger.debug(`Total Seconds: ${totalSeconds}`);
+        await this.time.setWorldTime(totalSeconds);
+    }
 }

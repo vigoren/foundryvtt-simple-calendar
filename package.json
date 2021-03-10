@@ -23,7 +23,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@league-of-foundry-developers/foundry-vtt-types": "^0.7.9-0",
+    "@league-of-foundry-developers/foundry-vtt-types": "^0.7.9-1",
     "@types/copy-webpack-plugin": "^6.4.0",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.31",

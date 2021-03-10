@@ -1,8 +1,10 @@
-[![foundry](https://img.shields.io/badge/Foundry-0.7.9-orange)](https://foundryvtt.com/releases/)
+[![foundry](https://img.shields.io/badge/dynamic/json.svg?url=https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json&label=Foundry&query=$.compatibleCoreVersion&colorB=orange)](https://foundryvtt.com/releases/)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/vigoren/foundryvtt-simple-calendar)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE)
-[![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vigoren/foundryvtt-simple-calendar/Node.js%20CI)
 [![codecov](https://codecov.io/gh/vigoren/foundryvtt-simple-calendar/branch/main/graph/badge.svg?token=43TJ117WP1)](https://codecov.io/gh/vigoren/foundryvtt-simple-calendar)
+[![forge](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%&url=https://forge-vtt.com/api/bazaar/package/foundryvtt-simple-calendar&colorB=3d8b41)](https://forge-vtt.com/)
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/vigoren/foundryvtt-simple-calendar/latest/total)
 
 ![Logo](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.png)
 

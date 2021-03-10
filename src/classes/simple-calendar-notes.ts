@@ -43,7 +43,6 @@ export class SimpleCalendarNotes extends FormApplication {
             button: null,
             hasButton: false,
             active: false,
-            //@ts-ignore
             mce: null,
             options: {
                 //@ts-ignore
@@ -112,15 +111,12 @@ export class SimpleCalendarNotes extends FormApplication {
             if(!this.viewMode && this.editors['content'].options.target && this.editors['content'].button === null){
                 this.editors['content'].button = <HTMLElement>this.editors['content'].options.target.nextElementSibling;
                 this.editors['content'].hasButton = this.editors['content'].button && this.editors['content'].button.classList.contains("editor-edit");
-                //@ts-ignore
                 this.editors['content'].active = !this.viewMode;
                 if(this.editors['content'].hasButton){
                     this.editors['content'].button.onclick = SimpleCalendarNotes.instance.textEditorButtonClick.bind(this)
                 }
             }
-            //@ts-ignore
             if(this.editors['content'].mce === null && this.editors['content'].active){
-                //@ts-ignore
                 this.activateEditor('content');
             }
         }
@@ -138,10 +134,8 @@ export class SimpleCalendarNotes extends FormApplication {
         options = mergeObject(editor.options, options);
         options.height = options.target.offsetHeight;
         TextEditor.create(options, initialContent || editor.initial).then(mce => {
-            //@ts-ignore
             editor.mce = mce;
             editor.changed = false;
-            //@ts-ignore
             editor.active = true;
             mce.on('change', ev => editor.changed = true);
         });
@@ -270,7 +264,6 @@ export class SimpleCalendarNotes extends FormApplication {
         e.preventDefault();
         let detailsEmpty = true;
         if(this.editors['content'] && this.editors['content'].mce){
-            //@ts-ignore
             if(this.editors['content'].mce.getContent().trim() !== '' && !this.editors['content'].mce.isNotDirty){
                 detailsEmpty = false;
             }

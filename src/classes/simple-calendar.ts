@@ -8,6 +8,7 @@ import {GameSettings} from "./game-settings";
 import {Weekday} from "./weekday";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
+import {ModuleName, TimeKeeper} from "../constants";
 
 
 /**
@@ -48,10 +49,15 @@ export default class SimpleCalendar extends Application{
     /**
      * Initializes the dialogs once foundry is ready to go
      */
-    public init(){
+    public async init(){
         HandlebarsHelpers.Register();
         GameSettings.RegisterSettings();
         this.settingUpdate();
+        await this.timeKeepingCheck();
+        await this.checkJournalFolder();
+        if(GameSettings.IsGm()){
+            await this.testCreateJournal();
+        }
     }
 
     /**
@@ -77,6 +83,42 @@ export default class SimpleCalendar extends Application{
         }
     }
 
+    async checkJournalFolder(){
+        if(game.folders && !game.folders.find(f => f.type === 'JournalEntry' && f.parent === null && <boolean>f.getFlag(ModuleName, 'folder'))) {
+            const scJournalFolder = await Folder.create({
+                name: 'Simple Calendar Notes',
+                type: 'JournalEntry',
+                parent: null
+            });
+            if(scJournalFolder){
+                await scJournalFolder.setFlag(ModuleName, 'folder', true);
+            } else {
+                Logger.error(`Unable to create the journal folder to hold the calendar notes`);
+            }
+            console.log(scJournalFolder);
+        }
+    }
+
+    async testCreateJournal(){
+        if(game.folders){
+            const folder = game.folders.filter(f => f.type === 'JournalEntry' && f.parent === null && <boolean>f.getFlag(ModuleName, 'folder'));
+            const je = await JournalEntry.create({
+                name: 'Test Article',
+                content: 'Content',
+                type: 'JournalEntry',
+                folder: folder.length? folder[0].data._id : '',
+            });
+            if(je){
+                await je.setFlag(ModuleName, 'playerVisible', true);
+                je.data.permission.default = 1;
+            } else {
+                Logger.error(`Unable to create the journal entry.`);
+            }
+            console.log(je);
+        }
+
+    }
+    
     /**
      * Adds the calendar button to the token button list
      * @param controls
@@ -307,6 +349,21 @@ export default class SimpleCalendar extends Application{
         const isNext = target.classList.contains('next');
 
         switch (dataType){
+            case 'second':
+                Logger.debug(`${isNext? 'Forward' : 'Back'} Second Clicked`);
+                this.currentYear?.changeTime(isNext, 'second');
+                this.updateApp();
+                break;
+            case 'minute':
+                Logger.debug(`${isNext? 'Forward' : 'Back'} Minute Clicked`);
+                this.currentYear?.changeTime(isNext, 'minute');
+                this.updateApp();
+                break;
+            case 'hour':
+                Logger.debug(`${isNext? 'Forward' : 'Back'} Hour Clicked`);
+                this.currentYear?.changeTime(isNext, 'hour');
+                this.updateApp();
+                break;
             case 'day':
                 Logger.debug(`${isNext? 'Forward' : 'Back'} Day Clicked`);
                 this.currentYear?.changeDay(isNext, 'current');
@@ -444,6 +501,9 @@ export default class SimpleCalendar extends Application{
         if(type === 'leapyear'){
             this.currentYear?.leapYearRule.loadFromSettings();
         }
+        if(type === 'all' || type === 'time'){
+            this.loadTimeConfiguration();
+        }
         this.loadCurrentDate();
         if(update) {
             this.updateApp();
@@ -547,6 +607,24 @@ export default class SimpleCalendar extends Application{
         }
     }
 
+    private loadTimeConfiguration(){
+        Logger.debug('Loading time configuration from settings.');
+        if(this.currentYear){
+            const timeData = GameSettings.LoadTimeData();
+            if(timeData && Object.keys(timeData).length){
+                this.currentYear.time.enabled = timeData.enabled;
+                this.currentYear.time.hoursInDay = timeData.hoursInDay;
+                this.currentYear.time.minutesInHour = timeData.minutesInHour;
+                this.currentYear.time.secondsInMinute = timeData.secondsInMinute;
+                this.currentYear.time.secondsPerRound = timeData.secondsPerRound;
+                this.currentYear.time.automaticTime = timeData.automaticTime;
+                this.currentYear.time.gameTimeRatio = timeData.gameTimeRatio;
+            }
+        } else {
+            Logger.error('No Current year configured, can not load time data.');
+        }
+    }
+
     /**
      * Loads the current date data from the settings and applies them to the current year
      */
@@ -578,6 +656,10 @@ export default class SimpleCalendar extends Application{
                 this.currentYear.months[0].current = true;
                 this.currentYear.months[0].visible = true;
                 this.currentYear.months[0].days[0].current = true;
+            }
+            this.currentYear.time.seconds = currentDate.seconds;
+            if(this.currentYear.time.seconds === undefined){
+                this.currentYear.time.seconds = 0;
             }
         } else if(this.currentYear && this.currentYear.months.length) {
             Logger.debug('No current date setting found, setting default current date.');
@@ -628,6 +710,52 @@ export default class SimpleCalendar extends Application{
             }
         }
         return dayNotes;
+    }
+
+
+    async timeKeepingCheck(){
+        //TODO: Load the time configuration stuff from settings
+        if(this.currentYear){this.currentYear.time.enabled = TimeKeeper.Self;}
+        //If the current year is set up and the calendar is set up for time keeping
+        if(this.currentYear && this.currentYear.time.enabled !== TimeKeeper.None){
+
+            //If the user is the GM and we find modules with potential conflicts
+            if(GameSettings.IsGm()){
+                const calendarWeather = game.modules.get('calendar-weather');
+                const aboutTime = game.modules.get('about-time');
+                //TODO: Load settings that will determine if we have asked this question all ready, if not show otherwise ignore
+                if(calendarWeather && calendarWeather.active){
+                    Logger.debug('Calendar/Weather detected, import settings?');
+                    //TODO: Show Dialog with option to load the calendar weather data into simple calendar
+                    const cwD = new Dialog({
+                        title: GameSettings.Localize('FSC.Module.CalendarWeather.Title'),
+                        content: GameSettings.Localize("FSC.Module.CalendarWeather.Message"),
+                        buttons:{
+                            yes: {
+                                icon: '<i class="fas fa-check"></i>',
+                                label: GameSettings.Localize('FSC.Apply'),
+                                callback: () => {}
+                            },
+                            no: {
+                                icon: '<i class="fas fa-times"></i>',
+                                label: GameSettings.Localize('FSC.Cancel')
+                            }
+                        },
+                        default: "no"
+                    });
+                    cwD.render(true);
+                }
+                if(aboutTime && aboutTime.active){
+                    Logger.debug(`About Time detected, use as time keeper?`);
+                    //TODO: Show dialog with option to use about time as the time keeper or to use simple calendar
+                }
+                if(this.currentYear){
+                    await this.currentYear.syncTime();
+                }
+            }
+
+
+        }
     }
 
 }

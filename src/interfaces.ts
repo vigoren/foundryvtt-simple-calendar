@@ -1,7 +1,7 @@
 /**
  * Interface for the calendar template that is passed to the HTML for rendering
  */
-import {LeapYearRules, NoteRepeat} from "./constants";
+import {LeapYearRules, NoteRepeat, TimeKeeper} from "./constants";
 
 export interface CalendarTemplate {
     isGM: boolean;
@@ -33,6 +33,10 @@ export interface YearTemplate {
     showWeekdayHeaders: boolean;
     /** The days of the week */
     weekdays: WeekdayTemplate[];
+
+    showTime: boolean;
+
+    currentTime: TimeTemplate;
 }
 
 /**
@@ -98,6 +102,8 @@ export interface CurrentDateConfig {
     month: number;
     /** The current day */
     day: number
+    /** The current time of day */
+    seconds: number
 }
 
 /**
@@ -147,4 +153,21 @@ export interface WeekdayConfig {
 export interface LeapYearConfig {
     rule: LeapYearRules;
     customMod: number;
+}
+
+
+export interface TimeConfig {
+    enabled: TimeKeeper;
+    hoursInDay: number;
+    minutesInHour: number;
+    secondsInMinute: number;
+    secondsPerRound: number;
+    automaticTime: boolean;
+    gameTimeRatio: number;
+}
+
+export interface TimeTemplate {
+    hour: string;
+    minute: string;
+    second: string;
 }

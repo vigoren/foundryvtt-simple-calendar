@@ -26,6 +26,11 @@
                     {{/each}}
                 </div>
             </div>
+            {{#if currentYear.showTime}}
+            <div class="time-display">
+                {{localize 'FSC.Time.Current'}}: {{currentYear.currentTime.hour}}:{{currentYear.currentTime.minute}}:{{currentYear.currentTime.second}}
+            </div>
+            {{/if}}
             <div class="calendar-controls">
                 <a class="fa fa-calendar-day control today" title="{{localize 'FSC.Today'}}"> {{localize 'FSC.Today'}}</a>
                 {{#if isGM}}
@@ -38,6 +43,21 @@
         <div class="controls">
             <h2>{{localize 'FSC.DateControls'}}</h2>
             <p>{{localize 'FSC.DateControlsHelp'}}</p>
+            <div class="control-group">
+                <a class="control previous" title="{{localize 'FSC.MoveDayBack'}}" data-type="second"><span class="fa fa-angle-left"></span>{{localize 'FSC.Back'}}</a>
+                <span class="control-name">{{localize 'FSC.Second'}}</span>
+                <a class="control next" title="{{localize 'FSC.MoveDayForward'}}" data-type="second">{{localize 'FSC.Forward'}}<span class="fa fa-angle-right"></span></a>
+            </div>
+            <div class="control-group">
+                <a class="control previous" title="{{localize 'FSC.MoveDayBack'}}" data-type="minute"><span class="fa fa-angle-left"></span>{{localize 'FSC.Back'}}</a>
+                <span class="control-name">{{localize 'FSC.Minute'}}</span>
+                <a class="control next" title="{{localize 'FSC.MoveDayForward'}}" data-type="minute">{{localize 'FSC.Forward'}}<span class="fa fa-angle-right"></span></a>
+            </div>
+            <div class="control-group">
+                <a class="control previous" title="{{localize 'FSC.MoveDayBack'}}" data-type="hour"><span class="fa fa-angle-left"></span>{{localize 'FSC.Back'}}</a>
+                <span class="control-name">{{localize 'FSC.Hour'}}</span>
+                <a class="control next" title="{{localize 'FSC.MoveDayForward'}}" data-type="hour">{{localize 'FSC.Forward'}}<span class="fa fa-angle-right"></span></a>
+            </div>
             <div class="control-group">
                 <a class="control previous" title="{{localize 'FSC.MoveDayBack'}}" data-type="day"><span class="fa fa-angle-left"></span>{{localize 'FSC.Back'}}</a>
                 <span class="control-name">{{localize 'FSC.Day'}}</span>

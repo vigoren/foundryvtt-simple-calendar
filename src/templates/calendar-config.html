@@ -9,6 +9,7 @@
             <a class="item" data-tab="monthSettings">{{localize 'FSC.Configuration.Month.Title'}}</a>
             <a class="item" data-tab="weekdaySettings">{{localize 'FSC.Configuration.Weekday.Title'}}</a>
             <a class="item" data-tab="leapYearSettings">{{localize 'FSC.Configuration.LeapYear.Title'}}</a>
+            <a class="item" data-tab="timeSettings">{{localize 'FSC.Configuration.Time.Title'}}</a>
         </nav>
         <div class="tab general-settings" data-tab="generalSettings">
             <div class="form-group">
@@ -162,7 +163,60 @@
             </table>
             {{/if}}
         </div>
-
+        <div class="tab time-settings" data-tab="timeSettings">
+            <div class="form-group">
+                <label for="scTimeTracker">{{localize 'FSC.Configuration.Time.Tracker'}}</label>
+                <div class="form-fields">
+                    <select id="scTimeTracker">
+                        {{selectOptions timeTrackers selected=currentYear.time.enabled localize=true}}
+                    </select>
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Time.TrackerHelp'}}</p>
+            </div>
+            <div class="form-group">
+                <label for="scHoursInDay">{{localize 'FSC.Configuration.Time.HoursInDay'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.time.hoursInDay}}" type="number" id="scHoursInDay" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Time.HoursInDayHelp'}}</p>
+            </div>
+            <div class="form-group">
+                <label for="scMinutesInHour">{{localize 'FSC.Configuration.Time.MinutesInHour'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.time.minutesInHour}}" type="number" id="scMinutesInHour" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Time.MinutesInHourHelp'}}</p>
+            </div>
+            <div class="form-group">
+                <label for="scSecondsInMinute">{{localize 'FSC.Configuration.Time.SecondsInMinute'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.time.secondsInMinute}}" type="number" id="scSecondsInMinute" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInMinuteHelp'}}</p>
+            </div>
+            <h2>{{localize 'FSC.AdvancedOptions'}}</h2>
+            <div class="form-group">
+                <label for="scSecondsPerRound">{{localize 'FSC.Configuration.Time.SecondsPerRound'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.time.secondsPerRound}}" type="number" id="scSecondsPerRound" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Time.SecondsPerRoundHelp'}}</p>
+            </div>
+            <div class="form-group">
+                <label for="scAutomaticTime">{{localize 'FSC.Configuration.Time.AutomaticTime'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.time.automaticTime}}" type="checkbox" id="scAutomaticTime" {{#if currentYear.time.automaticTime}}checked="checked"{{/if}}/>
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Time.AutomaticTimeHelp'}}</p>
+            </div>
+            <div class="form-group">
+                <label for="scGameTimeRatio">{{localize 'FSC.Configuration.Time.GameTimeRatio'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.time.gameTimeRatio}}" type="number" id="scGameTimeRatio" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Time.GameTimeRatioHelp'}}</p>
+            </div>
+        </div>
 
         <button class="control save" id="scSubmit" type="submit" name="submit" title="{{localize 'FSC.Configuration.Save'}}">
             <i class="far fa-save"></i> {{localize 'FSC.Configuration.Save'}}
