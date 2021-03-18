@@ -3,7 +3,8 @@ import Year from "./year";
 import {GameSettings} from "./game-settings";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {LeapYearRules, TimeKeeper} from "../constants";
+import {LeapYearRules, GameWorldTimeIntegrations} from "../constants";
+import Importer from "./importer";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -102,11 +103,24 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 warhammer: "Warhammer"
             },
             timeTrackers: {
-                none: 'FSC.Configuration.Time.None',
-                self: 'FSC.Configuration.Time.Self',
-                'about-time': 'FSC.Configuration.Time.AboutTime'
+                none: 'FSC.Configuration.General.None',
+                self: 'FSC.Configuration.General.Self',
+                'third-party': 'FSC.Configuration.General.ThirdParty',
+                'mixed': 'FSC.Configuration.General.Mixed'
+            },
+            importing: {
+                showAboutTime: false,
+                showCalendarWeather:false
             }
         };
+
+        const calendarWeather = game.modules.get('calendar-weather');
+        const aboutTime = game.modules.get('about-time');
+
+        data.importing.showCalendarWeather = calendarWeather !== undefined && calendarWeather.active;
+        data.importing.showAboutTime = aboutTime !== undefined && aboutTime.active;
+
+
         return data;
     }
 
@@ -133,7 +147,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find("#scSubmit").on('click', SimpleCalendarConfiguration.instance.saveClick.bind(this));
 
             //Predefined calendar apply
-            (<JQuery>html).find("#scApplyPredefined").on('click', SimpleCalendarConfiguration.instance.predefinedApply.bind(this));
+            (<JQuery>html).find("#scApplyPredefined").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'predefined', ''));
 
             //Month Deletes
             (<JQuery>html).find(".remove-month").on('click', SimpleCalendarConfiguration.instance.removeMonth.bind(this));
@@ -147,8 +161,16 @@ export class SimpleCalendarConfiguration extends FormApplication {
             //Add Weekday
             (<JQuery>html).find(".weekday-add").on('click', SimpleCalendarConfiguration.instance.addWeekday.bind(this));
 
+            //Import Buttons
+            (<JQuery>html).find("#scAboutTimeImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'about-time'));
+            (<JQuery>html).find("#scAboutTimeExport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-export','about-time'));
+            (<JQuery>html).find("#scCalendarWeatherImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'calendar-weather'));
+            (<JQuery>html).find("#scCalendarWeatherExport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-export','calendar-weather'));
+
             //Input Change
             (<JQuery>html).find("#scDefaultPlayerVisibility").on('change', SimpleCalendarConfiguration.instance.generalInputChange.bind(this));
+            (<JQuery>html).find("#scGameWorldTime").on('change', SimpleCalendarConfiguration.instance.generalInputChange.bind(this));
+            (<JQuery>html).find("#scShowClock").on('change', SimpleCalendarConfiguration.instance.generalInputChange.bind(this));
             (<JQuery>html).find(".year-settings input").on('change', SimpleCalendarConfiguration.instance.yearInputChange.bind(this));
             (<JQuery>html).find(".month-settings .f-table .row div input").on('change', SimpleCalendarConfiguration.instance.monthInputChange.bind(this));
             (<JQuery>html).find(".weekday-settings #scShowWeekdayHeaders").on('change', SimpleCalendarConfiguration.instance.showWeekdayInputChange.bind(this));
@@ -250,31 +272,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
     }
 
     /**
-     * When the Apply button for the predefined calendar is clicked, show a dialog to confirm their actions
-     * @param {Event} e The event that triggered this
-     */
-    public predefinedApply(e: Event){
-        e.preventDefault();
-        const dialog = new Dialog({
-            title: GameSettings.Localize('FSC.OverwriteConfirm'),
-            content: GameSettings.Localize("FSC.OverwriteConfirmText"),
-            buttons:{
-                yes: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: GameSettings.Localize('FSC.Apply'),
-                    callback: SimpleCalendarConfiguration.instance.predefinedApplyConfirm.bind(this)
-                },
-                no: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: GameSettings.Localize('FSC.Cancel')
-                }
-            },
-            default: "no"
-        });
-        dialog.render(true);
-    }
-
-    /**
      * When the GM confirms using a predefined calendar
      */
     public predefinedApplyConfirm() {
@@ -310,6 +307,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(6, GameSettings.Localize('FSC.Date.Friday')),
                     new Weekday(7, GameSettings.Localize('FSC.Date.Saturday'))
                 ];
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
                 (<Year>this.object).leapYearRule.rule = LeapYearRules.Gregorian;
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[currentDate.getMonth()].current = true;
@@ -343,6 +344,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(6, 'Far'),
                     new Weekday(7, 'Sar')
                 ];
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
                 (<Year>this.object).leapYearRule.rule = LeapYearRules.None;
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[0].current = true;
@@ -374,6 +379,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(5, 'Yulisen'),
                     new Weekday(6, 'Da\'leysen')
                 ];
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
                 (<Year>this.object).leapYearRule.rule = LeapYearRules.None;
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[0].current = true;
@@ -407,6 +416,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(6, 'Starday'),
                     new Weekday(7, 'Sunday')
                 ];
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
                 (<Year>this.object).leapYearRule.rule = LeapYearRules.Custom;
                 (<Year>this.object).leapYearRule.customMod = 8;
                 (<Year>this.object).months[0].current = true;
@@ -448,6 +461,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(6, 'Earthday'),
                     new Weekday(7, 'Freeday')
                 ];
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
                 (<Year>this.object).leapYearRule.rule = LeapYearRules.None;
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[0].current = true;
@@ -496,6 +513,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(9, '9th'),
                     new Weekday(10, '10th')
                 ];
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
                 (<Year>this.object).leapYearRule.rule = LeapYearRules.Custom;
                 (<Year>this.object).leapYearRule.customMod = 4;
                 (<Year>this.object).months[0].current = true;
@@ -542,6 +563,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(7, 'Angestag'),
                     new Weekday(8, 'Festag')
                 ];
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
                 (<Year>this.object).leapYearRule.rule = LeapYearRules.None;
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[0].current = true;
@@ -560,6 +585,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
         const id = (<HTMLElement>e.currentTarget).id;
         if(id === "scDefaultPlayerVisibility"){
             this.generalSettings.defaultPlayerNoteVisibility = (<HTMLInputElement>e.currentTarget).checked;
+        } else if(id === 'scGameWorldTime'){
+            (<Year>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>(<HTMLInputElement>e.currentTarget).value;
+        } else if(id === 'scShowClock'){
+            (<Year>this.object).generalSettings.showClock = (<HTMLInputElement>e.currentTarget).checked;
         }
     }
 
@@ -688,13 +717,15 @@ export class SimpleCalendarConfiguration extends FormApplication {
         Logger.debug('Unable to set the months data on change.');
     }
 
+    /**
+     * Event when an input is changed under the time settings tab
+     * @param {Event} e The triggering event
+     */
     public timeInputChange(e: Event) {
         e.preventDefault();
         const id = (<HTMLElement>e.currentTarget).id;
         const value = (<HTMLInputElement>e.currentTarget).value;
-        if(id === 'scTimeTracker'){
-            (<Year>this.object).time.enabled = <TimeKeeper>value;
-        } else if(id === 'scHoursInDay'){
+        if(id === 'scHoursInDay'){
             const min = parseInt(value);
             if(!isNaN(min)){
                 (<Year>this.object).time.hoursInDay = min;
@@ -709,18 +740,65 @@ export class SimpleCalendarConfiguration extends FormApplication {
             if(!isNaN(min)){
                 (<Year>this.object).time.secondsInMinute = min;
             }
-        } else if(id === 'scSecondsPerRound'){
-            const min = parseInt(value);
-            if(!isNaN(min)){
-                (<Year>this.object).time.secondsPerRound = min;
-            }
-        } else if(id === 'scAutomaticTime'){
-            (<Year>this.object).time.automaticTime = (<HTMLInputElement>e.currentTarget).checked;
         } else if(id === 'scGameTimeRatio'){
             const min = parseFloat(value);
             if(!isNaN(min)){
                 (<Year>this.object).time.gameTimeRatio = min;
             }
+        }
+    }
+
+    /**
+     * Shows a confirmation dialog to the user to confirm that they want to do the action they chose
+     * @param {string} type They type of action the user is attempting to preform - Used to call the correct functions
+     * @param {string} type2 The sub type of the above type the user is attempting to preform
+     * @param {Event} e The click event
+     */
+    public overwriteConfirmationDialog(type: string, type2: string, e: Event){
+        e.preventDefault();
+        const dialog = new Dialog({
+            title: GameSettings.Localize('FSC.OverwriteConfirm'),
+            content: GameSettings.Localize("FSC.OverwriteConfirmText"),
+            buttons:{
+                yes: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: GameSettings.Localize('FSC.Apply'),
+                    callback: SimpleCalendarConfiguration.instance.overwriteConfirmationYes.bind(this, type, type2)
+                },
+                no: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: GameSettings.Localize('FSC.Cancel')
+                }
+            },
+            default: "no"
+        });
+        dialog.render(true);
+    }
+
+    /**
+     * Based on the passed in types calls the correct functionality
+     * @param {string} type The type of action being preformed
+     * @param {string} type2 The sub type of the above type
+     */
+    public async overwriteConfirmationYes(type: string, type2: string){
+        if(type === 'predefined'){
+            this.predefinedApplyConfirm();
+        } else if(type === 'tp-import'){
+            if(type2 === 'about-time'){
+                await Importer.importAboutTime(<Year>this.object);
+                this.updateApp();
+            } else if(type2 === 'calendar-weather'){
+                await Importer.importCalendarWeather(<Year>this.object);
+                this.updateApp();
+            }
+            await GameSettings.SetImportRan(true);
+        } else if(type === 'tp-export'){
+            if(type2 === 'about-time'){
+                await Importer.exportToAboutTime(<Year>this.object);
+            } else if(type2 === 'calendar-weather'){
+                await Importer.exportCalendarWeather(<Year>this.object);
+            }
+            await GameSettings.SetImportRan(true);
         }
     }
 
@@ -731,6 +809,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public async saveClick(e: Event) {
         e.preventDefault();
         try{
+            // Update the general Settings
+            (<Year>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>(<HTMLInputElement>document.getElementById("scGameWorldTime")).value;
+            (<Year>this.object).generalSettings.showClock = (<HTMLInputElement>document.getElementById("scShowClock")).checked;
+
+            await GameSettings.SaveGeneralSettings((<Year>this.object).generalSettings);
+
             // Update the Year Configuration
             const currentYear = parseInt((<HTMLInputElement>document.getElementById("scCurrentYear")).value);
             if(!isNaN(currentYear)){
@@ -822,7 +906,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
             await GameSettings.SaveLeapYearRules((<Year>this.object).leapYearRule);
 
             //Update Time Configuration
-            (<Year>this.object).time.enabled = <TimeKeeper>(<HTMLInputElement>document.getElementById("scTimeTracker")).value;
             const timeHoursPerDay = parseInt((<HTMLInputElement>document.getElementById("scHoursInDay")).value);
             if(!isNaN(timeHoursPerDay)){
                 (<Year>this.object).time.hoursInDay = timeHoursPerDay;
@@ -835,11 +918,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
             if(!isNaN(timeSecondsPerMinute)){
                 (<Year>this.object).time.secondsInMinute = timeSecondsPerMinute;
             }
-            const timeSecondsPerRound = parseInt((<HTMLInputElement>document.getElementById("scSecondsPerRound")).value);
-            if(!isNaN(timeSecondsPerRound)){
-                (<Year>this.object).time.secondsPerRound = timeSecondsPerRound;
-            }
-            (<Year>this.object).time.automaticTime = (<HTMLInputElement>document.getElementById("scAutomaticTime")).checked;
             const timeGameTimeRatio = parseInt((<HTMLInputElement>document.getElementById("scGameTimeRatio")).value);
             if(!isNaN(timeGameTimeRatio)){
                 (<Year>this.object).time.gameTimeRatio = timeGameTimeRatio;

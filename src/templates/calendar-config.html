@@ -12,6 +12,7 @@
             <a class="item" data-tab="timeSettings">{{localize 'FSC.Configuration.Time.Title'}}</a>
         </nav>
         <div class="tab general-settings" data-tab="generalSettings">
+            <h2>Quick Setup</h2>
             <div class="form-group">
                 <label for="scPreDefined">{{localize 'FSC.Configuration.General.PreDefined'}}</label>
                 <div class="form-fields">
@@ -22,6 +23,24 @@
                 <p class="notes">{{localize 'FSC.Configuration.General.PreDefinedHelp'}}</p>
                 <button class="control save" id="scApplyPredefined">{{localize 'FSC.Apply'}}</button>
             </div>
+            <h2>Game World Time Integration</h2>
+            <div class="form-group">
+                <label for="scGameWorldTime">{{localize 'FSC.Configuration.General.GameWorldTime'}}</label>
+                <div class="form-fields">
+                    <select id="scGameWorldTime">
+                        {{selectOptions timeTrackers selected=currentYear.generalSettings.gameWorldTimeIntegration localize=true}}
+                    </select>
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.General.GameWorldTimeHelp'}}</p>
+            </div>
+            <div class="form-group">
+                <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
+                <div class="form-fields">
+                    <input value="{{currentYear.generalSettings.showClock}}" type="checkbox" id="scShowClock" {{#if currentYear.generalSettings.showClock}}checked="checked"{{/if}} />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.General.ShowClockHelp'}}</p>
+            </div>
+            <h2>Notes</h2>
             <div class="form-group">
                 <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
                 <div class="form-fields">
@@ -29,6 +48,26 @@
                 </div>
                 <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
             </div>
+            <h2>Third Party Module Import/Export</h2>
+            {{#if importing.showCalendarWeather}}
+            <div class="import-group">
+                <h3>{{localize 'FSC.Module.CalendarWeather.Title'}}</h3>
+                <p>{{{localize 'FSC.Module.CalendarWeather.Configuration.Message'}}}</p>
+                <div class="import-options">
+                    <button class="control fa fa-file-import" id="scCalendarWeatherImport">{{localize 'FSC.Module.Import'}}</button>
+                    <button class="control fa fa-file-export" id="scCalendarWeatherExport">{{localize 'FSC.Module.CalendarWeather.Export'}}</button>
+                </div>
+            </div>
+            {{else importing.showAboutTime}}
+            <div class="import-group">
+                <h3>{{localize 'FSC.Module.AboutTime.Title'}}</h3>
+                <p>{{{localize 'FSC.Module.AboutTime.Configuration.Message'}}}</p>
+                <div class="import-options">
+                    <button class="control fa fa-file-import" id="scAboutTimeImport">{{localize 'FSC.Module.Import'}}</button>
+                    <button class="control fa fa-file-export" id="scAboutTimeExport">{{localize 'FSC.Module.AboutTime.Export'}}</button>
+                </div>
+            </div>
+            {{/if}}
         </div>
         <div class="tab year-settings" data-tab="yearSettings">
             <div class="form-group">
@@ -165,15 +204,6 @@
         </div>
         <div class="tab time-settings" data-tab="timeSettings">
             <div class="form-group">
-                <label for="scTimeTracker">{{localize 'FSC.Configuration.Time.Tracker'}}</label>
-                <div class="form-fields">
-                    <select id="scTimeTracker">
-                        {{selectOptions timeTrackers selected=currentYear.time.enabled localize=true}}
-                    </select>
-                </div>
-                <p class="notes">{{localize 'FSC.Configuration.Time.TrackerHelp'}}</p>
-            </div>
-            <div class="form-group">
                 <label for="scHoursInDay">{{localize 'FSC.Configuration.Time.HoursInDay'}}</label>
                 <div class="form-fields">
                     <input value="{{currentYear.time.hoursInDay}}" type="number" id="scHoursInDay" />
@@ -193,21 +223,6 @@
                     <input value="{{currentYear.time.secondsInMinute}}" type="number" id="scSecondsInMinute" />
                 </div>
                 <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInMinuteHelp'}}</p>
-            </div>
-            <h2>{{localize 'FSC.AdvancedOptions'}}</h2>
-            <div class="form-group">
-                <label for="scSecondsPerRound">{{localize 'FSC.Configuration.Time.SecondsPerRound'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.time.secondsPerRound}}" type="number" id="scSecondsPerRound" />
-                </div>
-                <p class="notes">{{localize 'FSC.Configuration.Time.SecondsPerRoundHelp'}}</p>
-            </div>
-            <div class="form-group">
-                <label for="scAutomaticTime">{{localize 'FSC.Configuration.Time.AutomaticTime'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.time.automaticTime}}" type="checkbox" id="scAutomaticTime" {{#if currentYear.time.automaticTime}}checked="checked"{{/if}}/>
-                </div>
-                <p class="notes">{{localize 'FSC.Configuration.Time.AutomaticTimeHelp'}}</p>
             </div>
             <div class="form-group">
                 <label for="scGameTimeRatio">{{localize 'FSC.Configuration.Time.GameTimeRatio'}}</label>

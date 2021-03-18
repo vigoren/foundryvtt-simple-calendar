@@ -8,6 +8,7 @@
   "compatibleCoreVersion": "0.7.9",
   "url": "https://github.com/vigoren/foundryvtt-simple-calendar",
   "bugs": "https://github.com/vigoren/foundryvtt-simple-calendar/issues",
+  "allowBugReporter": true,
   "readme": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/README.md",
   "license": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE",
   "manifest": "",
@@ -25,5 +26,6 @@
       "name": "English",
       "path": "lang/en.json"
     }
-  ]
+  ],
+  "socket": true
 }

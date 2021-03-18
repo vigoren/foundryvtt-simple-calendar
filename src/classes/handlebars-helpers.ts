@@ -21,7 +21,8 @@ export default class HandlebarsHelpers{
      */
     static CalendarWidth(){
         if(SimpleCalendar.instance.currentYear){
-            return `width:${(SimpleCalendar.instance.currentYear.weekdays.length * 40) + 12}px;`;
+            let width = (SimpleCalendar.instance.currentYear.weekdays.length * 40) + 12;
+            return `width:${width}px;`;
         }
         return '';
     }
@@ -32,8 +33,11 @@ export default class HandlebarsHelpers{
      */
     static CalendarRowWidth(){
         if(GameSettings.IsGm() && SimpleCalendar.instance.currentYear){
-            let width = (SimpleCalendar.instance.currentYear.weekdays.length * 40) + 312;
-            return `width:${width}px;`;
+            let width = (SimpleCalendar.instance.currentYear.weekdays.length * 40) + 12;
+            if(SimpleCalendar.instance.currentYear.generalSettings.showClock && width < 250){
+                width = 250;
+            }
+            return `width:${width+300}px;`;
         }
         return '';
     }

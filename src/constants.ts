@@ -3,6 +3,8 @@
  */
 export const ModuleName = 'foundryvtt-simple-calendar';
 
+export const ModuleSocketName = `module.${ModuleName}`;
+
 /**
  * The name of the settings that are saved in the world settings database
  */
@@ -15,7 +17,9 @@ export enum SettingNames {
     AllowPlayersToAddNotes = 'allow-players-add-notes',
     DefaultNoteVisibility = 'default-note-visibility',
     LeapYearRule = 'leap-year-rule',
-    TimeConfiguration = 'time-configuration'
+    TimeConfiguration = 'time-configuration',
+    GeneralConfiguration = 'general-configuration',
+    ImportRan = 'import-ran'
 }
 
 /**
@@ -34,8 +38,38 @@ export enum LeapYearRules {
     Custom = 'custom'
 }
 
-export enum TimeKeeper {
+export enum SocketTypes {
+    time = 'time',
+    journal = 'journal'
+}
+
+export enum GameWorldTimeIntegrations {
+    /**
+     * Time tracking is disabled for this calendar
+     * no clock will be shown
+     * no time controls will be shown
+     * date controls will be shown
+     */
     None = 'none',
+    /**
+     * Simple Calendar is the main controller of the world time, updates to the game world time not initiated by simple calendar are ignored
+     * clock will be shown
+     * time controls will be shown
+     * date controls will be shown
+     */
     Self = 'self',
-    AboutTime = 'about-time'
+    /**
+     * Another module is responsible for updating the game world time, simple calendar will not update the game world time
+     * clock will be shown
+     * time controls will not be shown
+     * date controls will not be shown
+     */
+    ThirdParty = 'third-party',
+    /**
+     * Simple Calendar and other modules can both update the game world time, this could cause odd behaviour depending on what the other module is doing
+     * clock will be shown
+     * time controls will be shown
+     * date controls will be shown
+     */
+    Mixed = 'mixed'
 }

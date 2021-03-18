@@ -14,6 +14,36 @@
     text-align: center;
   }
 
+  h2,h3{
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+
+  .import-group{
+    margin: 0.75rem 2rem;
+    padding: 0.5rem;
+    box-shadow: 2px 2px 4px grey;
+    border: 1px solid grey;
+
+    h3{
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .import-options{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+
+      .control{
+        width: auto;
+        &:before{
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
   .form-group{
     margin: 0.75rem 2rem;
     border-bottom: 1px solid #9e9c9c;

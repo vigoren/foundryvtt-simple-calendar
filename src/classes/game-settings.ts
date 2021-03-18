@@ -7,7 +7,7 @@ import {
     YearConfig,
     NoteConfig,
     LeapYearConfig,
-    TimeConfig
+    TimeConfig, GeneralSettings
 } from "../interfaces";
 import {ModuleName, SettingNames} from "../constants";
 import SimpleCalendar from "./simple-calendar";
@@ -54,6 +54,13 @@ export class GameSettings {
      * Register the settings this module needs to use with the game
      */
     static RegisterSettings(){
+        game.settings.register(ModuleName, SettingNames.GeneralConfiguration, {
+            name: "General Configuration",
+            scope: "world",
+            config: false,
+            type: Object,
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'general')
+        });
         game.settings.register(ModuleName, SettingNames.YearConfiguration, {
             name: "Year Configuration",
             scope: "world",
@@ -114,6 +121,20 @@ export class GameSettings {
             default: {},
             onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'time')
         });
+        game.settings.register(ModuleName, SettingNames.ImportRan, {
+            name: "Import",
+            scope: "world",
+            config: false,
+            type: Boolean,
+            default: false
+        });
+    }
+
+    /**
+     * Gets if the import question has been run for modules
+     */
+    static GetImportRan(){
+        return <boolean>game.settings.get(ModuleName, SettingNames.ImportRan);
     }
 
     /**
@@ -122,6 +143,13 @@ export class GameSettings {
      */
     static GetDefaultNoteVisibility(){
         return <boolean>game.settings.get(ModuleName, SettingNames.DefaultNoteVisibility);
+    }
+
+    /**
+     * Loads the general settings from the game world settings
+     */
+    static LoadGeneralSettings(): GeneralSettings {
+        return game.settings.get(ModuleName, SettingNames.GeneralConfiguration);
     }
 
     /**
@@ -198,6 +226,35 @@ export class GameSettings {
             }
         }
         return returnData;
+    }
+
+    /**
+     * Sets the import ran setting
+     * @param {boolean} ran If the import was ran/asked about
+     */
+    static async SetImportRan(ran: boolean){
+        if(GameSettings.IsGm()){
+            await game.settings.set(ModuleName, SettingNames.ImportRan, ran);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Saves the general settings to the world settings
+     * @param {GeneralSettings} settings The settings to save
+     */
+    static async SaveGeneralSettings(settings: GeneralSettings): Promise<boolean> {
+        if(GameSettings.IsGm()){
+            Logger.debug('Saving General Settings.');
+            const currentSettings = GameSettings.LoadGeneralSettings();
+            if(JSON.stringify(settings) !== JSON.stringify(currentSettings)){
+                return game.settings.set(ModuleName, SettingNames.GeneralConfiguration, settings).then(()=>{return true;});
+            } else {
+                Logger.debug('General Settings have not changed, not updating.');
+            }
+        }
+        return false
     }
 
     /**
@@ -336,12 +393,9 @@ export class GameSettings {
             Logger.debug(`Saving time configuration.`);
             const current = GameSettings.LoadTimeData();
             const newtc: TimeConfig = {
-                enabled: time.enabled,
                 hoursInDay: time.hoursInDay,
                 minutesInHour: time.minutesInHour,
                 secondsInMinute: time.secondsInMinute,
-                secondsPerRound: time.secondsPerRound,
-                automaticTime: time.automaticTime,
                 gameTimeRatio: time.gameTimeRatio
             };
             if(JSON.stringify(current) !== JSON.stringify(newtc)){

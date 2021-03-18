@@ -1,26 +1,26 @@
 import {Logger} from "./logging";
-import {TimeKeeper} from "../constants";
-import {TimeTemplate} from "../interfaces";
+import {SimpleCalendarSocket, TimeTemplate} from "../interfaces";
+import Timeout = NodeJS.Timeout;
+import SimpleCalendar from "./simple-calendar";
+import {ModuleSocketName, SocketTypes} from "../constants";
+import {GameSettings} from "./game-settings";
 
 export default class Time {
-    enabled: TimeKeeper;
     hoursInDay: number;
     minutesInHour: number;
     secondsInMinute: number;
-    secondsPerRound: number;
-    automaticTime: boolean;
     gameTimeRatio: number;
 
     seconds: number = 0;
     secondsPerDay: number;
 
-    constructor(enabled: TimeKeeper = TimeKeeper.None, hoursInDay: number = 24, minutesInHour: number = 60, secondsInMinute: number = 60) {
-        this.enabled = enabled;
+    keeper: Timeout | undefined;
+    combatRunning: boolean = false;
+
+    constructor(hoursInDay: number = 24, minutesInHour: number = 60, secondsInMinute: number = 60) {
         this.hoursInDay = hoursInDay;
         this.minutesInHour = minutesInHour;
         this.secondsInMinute = secondsInMinute;
-        this.secondsPerRound = 6;
-        this.automaticTime = false;
         this.gameTimeRatio = 1;
 
         this.secondsPerDay = this.hoursInDay * this.minutesInHour * this.secondsInMinute;
@@ -30,10 +30,8 @@ export default class Time {
      * Makes a clone of this class with all the same settings
      */
     clone() {
-        const t = new Time(this.enabled, this.hoursInDay, this.minutesInHour, this.secondsInMinute);
+        const t = new Time(this.hoursInDay, this.minutesInHour, this.secondsInMinute);
         t.seconds = this.seconds;
-        t.secondsPerRound = this.secondsPerRound ;
-        t.automaticTime = this.automaticTime;
         t.gameTimeRatio = this.gameTimeRatio;
         return t;
     }
@@ -53,6 +51,10 @@ export default class Time {
             minute: m < 10? `0${m}` : m.toString(),
             second: s < 10? `0${s}` : s.toString()
         };
+    }
+
+    setTime(hour: number = 0, minute: number = 0, second: number = 0){
+        this.seconds = (hour * this.minutesInHour * this.secondsInMinute) + (minute * this.secondsInMinute) + second;
     }
 
     changeTime(hour: number = 0, minute: number = 0, second: number = 0): number{
@@ -80,16 +82,63 @@ export default class Time {
         return (totalDays * this.hoursInDay * this.minutesInHour * this.secondsInMinute) + (includeToday? this.seconds : 0);
     }
 
+    getClockClass(){
+        if(this.keeper !== undefined){
+            if(!game.paused && !this.combatRunning){
+                return 'go';
+            } else {
+                return 'paused';
+            }
+        }
+        return 'stopped';
+    }
 
     async setWorldTime(seconds: number){
-        //We only want to set the world time if simple calendar is the time keeper
-        if(this.enabled === TimeKeeper.Self){
-            const currentWorldTime = game.time.worldTime;
-            const diff = seconds - currentWorldTime;
-            const newTime = await game.time.advance(diff);
-            Logger.debug(`Set New Time: ${newTime}`);
+        const currentWorldTime = game.time.worldTime;
+        let diff = seconds - currentWorldTime;
+        const newTime = await game.time.advance(diff);
+        Logger.debug(`Set New Game World Time: ${newTime}`);
+    }
+
+    startTimeKeeper(){
+        if(this.keeper === undefined){
+            Logger.debug('Starting the built in Time Keeper');
+            this.keeper = setInterval(this.timeKeeper.bind(this), 30000);
+            this.timeKeeper();
+        }
+    }
+
+    stopTimeKeeper(){
+        if(this.keeper){
+            Logger.debug('Stopping the built in Time Keeper');
+            clearInterval(this.keeper);
+            this.keeper = undefined;
+            this.updateUsers();
+        }
+    }
+
+    timeKeeper(){
+        this.updateUsers();
+        if(!game.paused && !this.combatRunning){
+            Logger.debug('Updating Time...');
+            const modifiedSeconds = 30 * this.gameTimeRatio;
+            const dayChange = this.changeTime(0,0,modifiedSeconds);
+            if(dayChange !== 0){
+                SimpleCalendar.instance.currentYear?.changeDay(dayChange > 0);
+            }
+            SimpleCalendar.instance.currentYear?.syncTime();
+
         } else {
-            Logger.warn(`Time Keeping is disabled, not changing the world time.`);
+            Logger.debug('Game Paused or combat started, not updating time.');
+        }
+    }
+
+    updateUsers(){
+        if(GameSettings.IsGm()){
+            const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.time, data: {clockClass: this.getClockClass()}};
+            Logger.debug(`Update Users Clock Class: ${(<SimpleCalendarSocket.SimpleCalendarSocketTime>socketData.data).clockClass}`);
+            game.socket.emit(ModuleSocketName, socketData);
+            SimpleCalendar.instance.processSocket(socketData);
         }
     }
 

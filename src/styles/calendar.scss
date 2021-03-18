@@ -108,7 +108,68 @@
   border-right: 1px solid #c3c3c3;
   border-bottom: 1px solid #c3c3c3;
   box-shadow: 2px 2px 2px #c3c3c3;
-  padding: 0.5rem 0;
+  padding: 0.5rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  .clock {
+    position:relative;
+    transform:scale(1.25);
+    border-radius:50%;
+    border:2px solid;
+    width:20px;
+    height:20px;
+    margin-top: 2px;
+    margin-right: 8px;
+
+    &:after {
+      position:absolute;
+      width:0px;
+      height:6px;
+      display:block;
+      border-left:1px solid #000;
+      content:'';
+      left: 8.25px;
+      top: 1.75px;
+      animation-duration: 1s;
+    }
+
+    &:before {
+      position:absolute;
+      width:0px;
+      height:4px;
+      display:block;
+      border-left:1px solid #000;
+      content:'';
+      left: 8.25px;
+      top: 3.75px;
+      animation-duration: 60s;
+    }
+    &.stopped{
+      border-color:#c12121;
+      &:before, &:after{
+        border-color:#c12121;
+      }
+    }
+    &.paused{
+      border-color:#de810d;
+      &:before, &:after{
+        border-color:#de810d;
+      }
+    }
+    &.go{
+      &:before, &:after{
+        border-color: green;
+        transform-origin: bottom;
+        animation-name: dial;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+      border-color: green;
+    }
+  }
 }
 
 .calendar-controls{
@@ -119,4 +180,11 @@
   .spacer{
     flex: 1;
   }
+}
+
+
+
+@keyframes dial {
+  0%   {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
 }
