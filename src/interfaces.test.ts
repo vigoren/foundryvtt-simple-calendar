@@ -1,15 +1,24 @@
 import {
     CalendarTemplate,
-    YearTemplate,
-    MonthTemplate,
+    CurrentDateConfig,
     DayTemplate,
-    YearConfig,
+    LeapYearConfig,
     MonthConfig,
-    CurrentDateConfig, WeekdayTemplate, WeekdayConfig, NoteConfig, NoteTemplate
+    MonthTemplate,
+    NoteConfig,
+    NoteTemplate,
+    SimpleCalendarSocket,
+    TimeConfig,
+    TimeTemplate,
+    WeekdayConfig,
+    WeekdayTemplate,
+    YearConfig,
+    YearTemplate
 } from "./interfaces";
+import {LeapYearRules, SocketTypes} from "./constants";
 
 describe('Interface Tests', () => {
-
+    const tt: TimeTemplate = {hour: '', minute: '', second: ''};
     const dt: DayTemplate = {selected: false, current: false, name: '', numericRepresentation: 0};
     const wt: WeekdayTemplate = {firstCharacter:'', name:'', numericRepresentation:0};
     const mt: MonthTemplate = {
@@ -34,14 +43,21 @@ describe('Interface Tests', () => {
         visibleMonth: mt,
         visibleMonthWeekOffset: [],
         weekdays: [wt],
-        showWeekdayHeaders: false
+        showWeekdayHeaders: false,
+        showClock: false,
+        clockClass: '',
+        showDateControls: false,
+        showTimeControls: false,
+        currentTime: tt
     };
     const ct: CalendarTemplate = {
         isGM: false,
         currentYear: yt,
         showSelectedDay: false,
         showCurrentDay: false,
-        notes: []
+        notes: [],
+        clockClass: '',
+        timeUnits: {}
     };
 
 
@@ -75,7 +91,7 @@ describe('Interface Tests', () => {
     });
 
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(9); //Make sure no new properties have been added
+        expect(Object.keys(yt).length).toBe(14); //Make sure no new properties have been added
         expect(yt.display).toBe('');
         expect(yt.selectedDisplayYear).toBe('');
         expect(yt.selectedDisplayMonth).toBe('');
@@ -85,15 +101,22 @@ describe('Interface Tests', () => {
         expect(yt.visibleMonthWeekOffset).toStrictEqual([]);
         expect(yt.weekdays).toStrictEqual([wt]);
         expect(yt.showWeekdayHeaders).toStrictEqual(false);
+        expect(yt.showClock).toStrictEqual(false);
+        expect(yt.showTimeControls).toStrictEqual(false);
+        expect(yt.showDateControls).toStrictEqual(false);
+        expect(yt.clockClass).toStrictEqual('');
+        expect(yt.currentTime).toStrictEqual(tt);
     });
 
     test('Calendar Template', () => {
-        expect(Object.keys(ct).length).toBe(5); //Make sure no new properties have been added
+        expect(Object.keys(ct).length).toBe(7); //Make sure no new properties have been added
         expect(ct.isGM).toBe(false);
         expect(ct.currentYear).toStrictEqual(yt);
         expect(ct.showSelectedDay).toBe(false);
         expect(ct.showCurrentDay).toBe(false);
         expect(ct.notes).toStrictEqual([]);
+        expect(ct.clockClass).toStrictEqual('');
+        expect(ct.timeUnits).toStrictEqual({});
     });
 
     test('Year Config', () => {
@@ -124,11 +147,12 @@ describe('Interface Tests', () => {
     });
 
     test('Current Date Config', () => {
-        const yc: CurrentDateConfig = {year: 0, month: 0, day: 0};
-        expect(Object.keys(yc).length).toBe(3); //Make sure no new properties have been added
+        const yc: CurrentDateConfig = {year: 0, month: 0, day: 0, seconds: 0};
+        expect(Object.keys(yc).length).toBe(4); //Make sure no new properties have been added
         expect(yc.year).toBe(0);
         expect(yc.month).toBe(0);
         expect(yc.day).toBe(0);
+        expect(yc.seconds).toBe(0);
     });
 
     test('Notes Template', () => {
@@ -153,5 +177,50 @@ describe('Interface Tests', () => {
         expect(nc.monthDisplay).toBe('');
         expect(nc.id).toBe('');
         expect(nc.repeats).toBe(0);
+    });
+
+    test('Leap Year Config', () => {
+        const lyc: LeapYearConfig = {customMod: 0, rule: LeapYearRules.None};
+        expect(Object.keys(lyc).length).toBe(2); //Make sure no new properties have been added
+        expect(lyc.customMod).toBe(0);
+        expect(lyc.rule).toBe(LeapYearRules.None);
+    });
+
+    test('Time Configuration', () => {
+        const tc: TimeConfig = {gameTimeRatio:1, secondsInMinute: 0, minutesInHour: 0, hoursInDay: 0};
+        expect(Object.keys(tc).length).toBe(4); //Make sure no new properties have been added
+        expect(tc.gameTimeRatio).toBe(1);
+        expect(tc.secondsInMinute).toBe(0);
+        expect(tc.minutesInHour).toBe(0);
+        expect(tc.hoursInDay).toBe(0);
+    });
+
+    test('Time Template', () => {
+        expect(Object.keys(tt).length).toBe(3); //Make sure no new properties have been added
+        expect(tt.hour).toBe('');
+        expect(tt.minute).toBe('');
+        expect(tt.second).toBe('');
+    });
+
+    describe('Simple Calendar Socket', () => {
+
+        test('Data', () => {
+            const d: SimpleCalendarSocket.Data = {data: {}, type: SocketTypes.time};
+            expect(Object.keys(d).length).toBe(2); //Make sure no new properties have been added
+            expect(d.data).toStrictEqual({});
+            expect(d.type).toBe(SocketTypes.time);
+        });
+
+        test('Simple Calendar Socket Time', () => {
+            const scst: SimpleCalendarSocket.SimpleCalendarSocketTime = {clockClass: ''};
+            expect(Object.keys(scst).length).toBe(1); //Make sure no new properties have been added
+            expect(scst.clockClass).toBe('');
+        });
+
+        test('Simple Calendar Socket Journal', () => {
+            const scsj: SimpleCalendarSocket.SimpleCalendarSocketJournal = {};
+            expect(Object.keys(scsj).length).toBe(0); //Make sure no new properties have been added
+        });
+
     });
 });

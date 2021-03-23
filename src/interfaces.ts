@@ -153,7 +153,7 @@ export interface NoteConfig {
 }
 
 /**
- * Interface for the weekday tempalte that is passed to the HTML for rendering
+ * Interface for the weekday template that is passed to the HTML for rendering
  */
 export interface WeekdayTemplate {
     name: string;
@@ -169,12 +169,17 @@ export interface WeekdayConfig {
     numericRepresentation: number;
 }
 
+/**
+ * Interface for the data save to the game settings for the leap year information
+ */
 export interface LeapYearConfig {
     rule: LeapYearRules;
     customMod: number;
 }
 
-
+/**
+ * Interface for the data saved to the game settings for the time information
+ */
 export interface TimeConfig {
     hoursInDay: number;
     minutesInHour: number;
@@ -182,28 +187,51 @@ export interface TimeConfig {
     gameTimeRatio: number;
 }
 
+/**
+ * Interface for displaying the time information
+ */
 export interface TimeTemplate {
     hour: string;
     minute: string;
     second: string;
 }
 
+/**
+ * Namespace for our own socket information
+ */
 export namespace SimpleCalendarSocket{
+
+    /**
+     * Interface for the data that is sent with each socket
+     */
     export interface Data {
         type: SocketTypes;
         data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime;
     }
 
+    /**
+     * Interface for socket data that has to do with the time
+     */
     export interface SimpleCalendarSocketTime{
         clockClass: string;
     }
 
+    /**
+     * Interface for socket data that has to do with journals
+     */
     export interface SimpleCalendarSocketJournal{
 
     }
 }
 
+/**
+ * Interfaces that have to do with the about time classes
+ * These are not apart of our interface unit tests
+ */
 export namespace AboutTimeImport {
+    /**
+     * The about-time calendar object
+     */
     export interface Calendar {
         "clock_start_year": number;
         "first_day": number;
@@ -218,17 +246,30 @@ export namespace AboutTimeImport {
         "notes": {};
     }
 
+    /**
+     * Calendar month list
+     */
     export interface MonthList{
         [key: string]: Month
     }
 
+    /**
+     * About time month object
+     */
     export interface Month {
         "days": number[];
         "intercalary": boolean;
     }
 }
 
+/**
+ * Interfaces that have to do with the calendar/weather classes
+ * These are not apart of our interface unit tests
+ */
 export namespace CalendarWeatherImport{
+    /**
+     * Calendar/Weather month class
+     */
     export interface Month {
         name: string;
         length: number;
@@ -237,12 +278,18 @@ export namespace CalendarWeatherImport{
         abbrev: string;
     }
 
+    /**
+     * Calendar/Weather date class
+     */
     export interface Date {
         month: string;
         day: number;
         combined: string;
     }
 
+    /**
+     * Calendar/Weather weather class
+     */
     export interface Weather {
         humidity: number;
         temp: number;
@@ -268,6 +315,10 @@ export namespace CalendarWeatherImport{
             min: number;
         }
     }
+
+    /**
+     * Calendar/Weather seasons class
+     */
     export interface Seasons {
         name: string;
         rolltable: string;
@@ -278,6 +329,10 @@ export namespace CalendarWeatherImport{
         dawn: number;
         dusk: number;
     }
+
+    /**
+     * Calendar/Weather moon class
+     */
     export interface Moons {
         name: string;
         cycleLength: number;
@@ -287,12 +342,19 @@ export namespace CalendarWeatherImport{
         referenceTime: number;
         referencePercent: number;
     }
+
+    /**
+     * Calendar/Weather event class
+     */
     export interface Event {
         name: string;
         text: string;
         date: Date;
     }
 
+    /**
+     * Calendar/Weather calendar class
+     */
     export interface Calendar {
         months: Month[];
         daysOfTheWeek: string[];

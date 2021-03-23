@@ -400,6 +400,10 @@ export default class Year {
         }
     }
 
+    /**
+     * Convert a number of seconds to year, month, day, hour, minute, seconds
+     * @param {number} seconds The seconds to convert
+     */
     secondsToDate(seconds: number){
         let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
         if(sec >= this.time.secondsInMinute){
@@ -448,6 +452,10 @@ export default class Year {
         }
     }
 
+    /**
+     * Updates the year's data with passed in date information
+     * @param parsedDate
+     */
     updateTime(parsedDate: any){
         this.numericRepresentation = parsedDate.year;
         this.updateMonth(parsedDate.month, 'current', true);

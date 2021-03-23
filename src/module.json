@@ -27,5 +27,11 @@
       "path": "lang/en.json"
     }
   ],
-  "socket": true
+  "socket": true,
+  "media": [
+    {
+      "type": "cover",
+      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.png"
+    }
+  ]
 }

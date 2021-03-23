@@ -1,22 +1,58 @@
 import {Logger} from "./logging";
 import {SimpleCalendarSocket, TimeTemplate} from "../interfaces";
-import Timeout = NodeJS.Timeout;
 import SimpleCalendar from "./simple-calendar";
 import {ModuleSocketName, SocketTypes} from "../constants";
 import {GameSettings} from "./game-settings";
 
+/**
+ * Class representing the time of day
+ */
 export default class Time {
+    /**
+     * How many hours are in a day
+     * @type {number}
+     */
     hoursInDay: number;
+    /**
+     * How many minutes are in an hour
+     * @type {number}
+     */
     minutesInHour: number;
+    /**
+     * How many seconds are in a minute
+     * @type {number}
+     */
     secondsInMinute: number;
+    /**
+     * The ratio at which to advance game time while real time passes, ratio of 1 is the same, ratio of 2 is twice as fast
+     * @type {number}
+     */
     gameTimeRatio: number;
-
+    /**
+     * The number of seconds that have passed for the current day
+     * @type {number}
+     */
     seconds: number = 0;
+    /**
+     * The number of seconds in a day
+     * @type {number}
+     */
     secondsPerDay: number;
-
-    keeper: Timeout | undefined;
+    /**
+     * The build in time keeper interval
+     */
+    keeper: number | undefined;
+    /**
+     * If a combat is currently running or not
+     */
     combatRunning: boolean = false;
 
+    /**
+     * A new Time constructor
+     * @param {number} [hoursInDay=24] How many hours in a day
+     * @param {number} [minutesInHour=60] How many minutes in an hour
+     * @param {number} [secondsInMinute=60] How many seconds in a minute
+     */
     constructor(hoursInDay: number = 24, minutesInHour: number = 60, secondsInMinute: number = 60) {
         this.hoursInDay = hoursInDay;
         this.minutesInHour = minutesInHour;
@@ -33,9 +69,14 @@ export default class Time {
         const t = new Time(this.hoursInDay, this.minutesInHour, this.secondsInMinute);
         t.seconds = this.seconds;
         t.gameTimeRatio = this.gameTimeRatio;
+        t.combatRunning = this.combatRunning;
         return t;
     }
 
+    /**
+     * Returns the current time as string parts
+     * @return {TimeTemplate}
+     */
     getCurrentTime(): TimeTemplate{
         let s = this.seconds, m = 0, h = 0;
         if(s >= this.secondsInMinute){
@@ -53,10 +94,23 @@ export default class Time {
         };
     }
 
+    /**
+     * Sets the current number of seconds based on the passed in hours, minutes and seconds
+     * @param {number} [hour=0] The hour of the day
+     * @param {number} [minute=0] The minute of the day
+     * @param {number} [second=0] The seconds of the day
+     */
     setTime(hour: number = 0, minute: number = 0, second: number = 0){
         this.seconds = (hour * this.minutesInHour * this.secondsInMinute) + (minute * this.secondsInMinute) + second;
     }
 
+    /**
+     * Changes the current time by the passed in number of hours, minutes and seconds
+     * @param {number} [hour=0] The number of hours to change the time by
+     * @param {number} [minute=0] The number of minutes to change the time by
+     * @param {number} [second=0] The number of seconds to change the time by
+     * @return {number} The number of days that have changed as a result of the time change
+     */
     changeTime(hour: number = 0, minute: number = 0, second: number = 0): number{
         const changeAmount  = (hour * this.minutesInHour * this.secondsInMinute) + (minute * this.secondsInMinute) + second;
         const newAmount = this.seconds + changeAmount;
@@ -78,11 +132,20 @@ export default class Time {
         return 0;
     }
 
+    /**
+     * Gets the total number of seconds based on the number of days
+     * @param {number} totalDays The number of days to turn into seconds
+     * @param {number} [includeToday=true] If to include todays time
+     */
     getTotalSeconds(totalDays: number, includeToday: boolean = true){
         return (totalDays * this.hoursInDay * this.minutesInHour * this.secondsInMinute) + (includeToday? this.seconds : 0);
     }
 
-    getClockClass(){
+    /**
+     * Gets the clock CSS class
+     * @return {string} The css class to apply to the animated clock
+     */
+    getClockClass(): string{
         if(this.keeper !== undefined){
             if(!game.paused && !this.combatRunning){
                 return 'go';
@@ -93,6 +156,10 @@ export default class Time {
         return 'stopped';
     }
 
+    /**
+     * Sets the world time to the passed in number of seconds
+     * @param {number} seconds The number of seconds to set the world time too
+     */
     async setWorldTime(seconds: number){
         const currentWorldTime = game.time.worldTime;
         let diff = seconds - currentWorldTime;
@@ -100,16 +167,22 @@ export default class Time {
         Logger.debug(`Set New Game World Time: ${newTime}`);
     }
 
+    /**
+     * Starts the build in time keeper
+     */
     startTimeKeeper(){
         if(this.keeper === undefined){
             Logger.debug('Starting the built in Time Keeper');
-            this.keeper = setInterval(this.timeKeeper.bind(this), 30000);
+            this.keeper = window.setInterval(this.timeKeeper.bind(this), 30000);
             this.timeKeeper();
         }
     }
 
+    /**
+     * Stops the built in time keeper
+     */
     stopTimeKeeper(){
-        if(this.keeper){
+        if(this.keeper !== undefined){
             Logger.debug('Stopping the built in Time Keeper');
             clearInterval(this.keeper);
             this.keeper = undefined;
@@ -117,6 +190,9 @@ export default class Time {
         }
     }
 
+    /**
+     * Updates the current time based on the time keepers running time
+     */
     timeKeeper(){
         this.updateUsers();
         if(!game.paused && !this.combatRunning){
@@ -133,6 +209,9 @@ export default class Time {
         }
     }
 
+    /**
+     * Sends an update to all connected users over our socket
+     */
     updateUsers(){
         if(GameSettings.IsGm()){
             const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.time, data: {clockClass: this.getClockClass()}};

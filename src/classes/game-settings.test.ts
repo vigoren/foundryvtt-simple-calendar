@@ -13,8 +13,10 @@ import Month from "./month";
 import {Weekday} from "./weekday";
 import {Note} from "./note";
 import LeapYear from "./leap-year";
-import {LeapYearRules} from "../constants";
+import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
+import {GeneralSettings, TimeConfig} from "../interfaces";
 import Mock = jest.Mock;
+import Time from "./time";
 
 describe('Game Settings Class Tests', () => {
 
@@ -62,11 +64,21 @@ describe('Game Settings Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect(game.settings.register).toHaveBeenCalled();
-        expect(game.settings.register).toHaveBeenCalledTimes(7);
+        expect(game.settings.register).toHaveBeenCalledTimes(10);
+    });
+
+    test('Get Import Ran', () => {
+        expect(GameSettings.GetImportRan()).toBe(false);
+        expect(game.settings.get).toHaveBeenCalled();
     });
 
     test('Get Default Note Visibility', () => {
         expect(GameSettings.GetDefaultNoteVisibility()).toBe(false);
+        expect(game.settings.get).toHaveBeenCalled();
+    });
+
+    test('Load General Settings', () => {
+        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false});
         expect(game.settings.get).toHaveBeenCalled();
     });
 
@@ -76,7 +88,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Current Date', () => {
-        expect(GameSettings.LoadCurrentDate()).toStrictEqual({year: 0, month: 1, day: 2});
+        expect(GameSettings.LoadCurrentDate()).toStrictEqual({year: 0, month: 1, day: 2, seconds: 3});
         expect(game.settings.get).toHaveBeenCalled();
     });
 
@@ -107,6 +119,11 @@ describe('Game Settings Class Tests', () => {
         expect(game.settings.get).toHaveBeenCalled();
     });
 
+    test('Load Time Data', () => {
+        expect(GameSettings.LoadTimeData()).toStrictEqual({hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3});
+        expect(game.settings.get).toHaveBeenCalled();
+    });
+
     test('Load Notes', () => {
         expect(GameSettings.LoadNotes()).toStrictEqual([{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible: false, id: "abc123"}]);
         expect(game.settings.get).toHaveBeenCalled();
@@ -118,11 +135,38 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.LoadNotes()).toStrictEqual([]);
     });
 
+    test('Set Import Ran', () => {
+        // @ts-ignore
+        game.user.isGM = false;
+        expect(GameSettings.SetImportRan(true)).resolves.toBe(false);
+        // @ts-ignore
+        game.user.isGM = true;
+        expect(GameSettings.SetImportRan(true)).resolves.toBe(true);
+        expect(game.settings.set).toHaveBeenCalled();
+    });
+
+    test('Save General Settings', () => {
+        // @ts-ignore
+        game.user.isGM = false;
+        let gs: GeneralSettings = {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false};
+        expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
+        // @ts-ignore
+        game.user.isGM = true;
+        expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
+
+        gs.showClock = true;
+        expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(true);
+        expect(game.settings.set).toHaveBeenCalled();
+    });
+
     test('Save Current Date', () => {
         jest.spyOn(console, 'error').mockImplementation();
+        // @ts-ignore
+        game.user.isGM = false;
         const year = new Year(0);
         const month = new Month('T', 1, 10);
         year.months.push(month);
+        year.time.seconds = 3;
         expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
         expect(console.error).toHaveBeenCalledTimes(1);
         // @ts-ignore
@@ -210,6 +254,21 @@ describe('Game Settings Class Tests', () => {
         lr.rule = LeapYearRules.Gregorian;
         expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalledTimes(1);
+    });
+
+    test('Save Time Configuration', () => {
+        // @ts-ignore
+        game.user.isGM = false;
+        let gs = new Time(0, 1, 2);
+        gs.gameTimeRatio = 3;
+        expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(false);
+        // @ts-ignore
+        game.user.isGM = true;
+        expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(false);
+
+        gs.gameTimeRatio = 4;
+        expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(true);
+        expect(game.settings.set).toHaveBeenCalled();
     });
 
     test('Save Notes', () => {

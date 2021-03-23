@@ -69,6 +69,7 @@ class FormApplication extends Application{
 
     activateEditor(a: string){}
     saveEditor(a: string){}
+    bringToTop(){}
 }
 
 // @ts-ignore

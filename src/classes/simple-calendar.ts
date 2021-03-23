@@ -121,42 +121,6 @@ export default class SimpleCalendar extends Application{
             };
         }
     }
-
-    async checkJournalFolder(){
-        if(game.folders && !game.folders.find(f => f.type === 'JournalEntry' && f.parent === null && <boolean>f.getFlag(ModuleName, 'folder'))) {
-            const scJournalFolder = await Folder.create({
-                name: 'Simple Calendar Notes',
-                type: 'JournalEntry',
-                parent: null
-            });
-            if(scJournalFolder){
-                await scJournalFolder.setFlag(ModuleName, 'folder', true);
-            } else {
-                Logger.error(`Unable to create the journal folder to hold the calendar notes`);
-            }
-            console.log(scJournalFolder);
-        }
-    }
-
-    async testCreateJournal(){
-        if(game.folders){
-            const folder = game.folders.filter(f => f.type === 'JournalEntry' && f.parent === null && <boolean>f.getFlag(ModuleName, 'folder'));
-            const je = await JournalEntry.create({
-                name: 'Test Article',
-                content: 'Content',
-                type: 'JournalEntry',
-                folder: folder.length? folder[0].data._id : '',
-            });
-            if(je){
-                await je.setFlag(ModuleName, 'playerVisible', true);
-                je.data.permission.default = 1;
-            } else {
-                Logger.error(`Unable to create the journal entry.`);
-            }
-            console.log(je);
-        }
-
-    }
     
     /**
      * Adds the calendar button to the token button list
@@ -394,7 +358,6 @@ export default class SimpleCalendar extends Application{
             this.timeUnits.minute = false;
             this.timeUnits.hour = false;
             this.timeUnits[dataType] = true;
-            console.log(this.timeUnits);
             this.updateApp();
         }
     }
@@ -868,7 +831,9 @@ export default class SimpleCalendar extends Application{
         }
     }
 
-
+    /**
+     * Checks to see if the module import/export dialog needs to be shown and syncs the game world time with the simple calendar
+     */
     async timeKeepingCheck(){
         //If the current year is set up and the calendar is set up for time keeping and the user is the GM
         if(this.currentYear && this.currentYear.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.None && GameSettings.IsGm() ){
@@ -930,6 +895,10 @@ export default class SimpleCalendar extends Application{
         }
     }
 
+    /**
+     * Called when the import option is selection from the importing/exporting module dialog
+     * @param {string} type The module
+     */
     async moduleImportClick(type: string) {
         if(this.currentYear){
             if(type === 'about-time'){
@@ -945,6 +914,10 @@ export default class SimpleCalendar extends Application{
         }
     }
 
+    /**
+     * Called when the export option is selection from the importing/exporting module dialog
+     * @param {string} type The module
+     */
     async moduleExportClick(type: string){
         if(this.currentYear){
             if(type === 'about-time'){
@@ -958,7 +931,9 @@ export default class SimpleCalendar extends Application{
         }
     }
 
-
+    /**
+     * Called when the no change dialog option is clicked for importing/exporting module data
+     */
     async moduleDialogNoChangeClick(){
         await GameSettings.SetImportRan(true);
     }

@@ -36,6 +36,11 @@ describe('Handlebars Helpers Tests', () => {
         // @ts-ignore
         game.user.isGM = true;
         expect(HandlebarsHelpers.CalendarRowWidth()).toBe('width:352px;');
+        if(SimpleCalendar.instance.currentYear){
+            SimpleCalendar.instance.currentYear.generalSettings.showClock = true;
+            expect(HandlebarsHelpers.CalendarRowWidth()).toBe('width:550px;');
+        }
+
     });
 
     test('Day Has Notes', () => {

@@ -3,6 +3,9 @@
  */
 export const ModuleName = 'foundryvtt-simple-calendar';
 
+/**
+ * The name of the module specific socket
+ */
 export const ModuleSocketName = `module.${ModuleName}`;
 
 /**
@@ -32,17 +35,26 @@ export enum NoteRepeat {
     Yearly
 }
 
+/**
+ * The different rules used for leap years
+ */
 export enum LeapYearRules {
     None = 'none',
     Gregorian = 'gregorian',
     Custom = 'custom'
 }
 
+/**
+ * The different types of information we send over our socket
+ */
 export enum SocketTypes {
     time = 'time',
     journal = 'journal'
 }
 
+/**
+ * The different game world integrations offered
+ */
 export enum GameWorldTimeIntegrations {
     /**
      * Time tracking is disabled for this calendar

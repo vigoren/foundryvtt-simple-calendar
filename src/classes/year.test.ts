@@ -11,7 +11,7 @@ import "../../__mocks__/dialog";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {LeapYearRules} from "../constants";
+import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
 import LeapYear from "./leap-year";
 
 describe('Year Class Tests', () => {
@@ -26,7 +26,7 @@ describe('Year Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(year).length).toBe(9); //Make sure no new properties have been added
+        expect(Object.keys(year).length).toBe(13); //Make sure no new properties have been added
         expect(year.months).toStrictEqual([]);
         expect(year.weekdays).toStrictEqual([]);
         expect(year.prefix).toBe("");
@@ -37,12 +37,16 @@ describe('Year Class Tests', () => {
         expect(year.leapYearRule.customMod).toBe(0);
         expect(year.leapYearRule.rule).toBe(LeapYearRules.None);
         expect(year.showWeekdayHeadings).toBe(true);
+        expect(year.time).toBeDefined();
+        expect(year.timeChangeTriggered).toBe(false);
+        expect(year.combatChangeTriggered).toBe(false);
+        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false })
     });
 
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(9); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(14); //Make sure no new properties have been added
         expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
         expect(t.display).toBe("0");
         expect(t.numericRepresentation).toBe(0);
@@ -52,6 +56,11 @@ describe('Year Class Tests', () => {
         expect(t.visibleMonth).toBeUndefined();
         expect(t.visibleMonthWeekOffset).toStrictEqual([]);
         expect(t.showWeekdayHeaders).toBe(true);
+        expect(t.showClock).toBe(false);
+        expect(t.showDateControls).toBe(true);
+        expect(t.showTimeControls).toBe(false);
+        expect(t.clockClass).toBe("stopped");
+        expect(t.currentTime).toStrictEqual({hour:"00", minute:"00", second: "00"});
 
         year.months.push(month);
         year.months[0].current = true;
@@ -75,6 +84,12 @@ describe('Year Class Tests', () => {
         year.months[0].visible = true;
         t = year.toTemplate();
         expect(t.visibleMonth).toStrictEqual(year.months[0].toTemplate());
+
+        year.generalSettings.showClock = true;
+        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.ThirdParty;
+        t = year.toTemplate();
+        expect(t.showDateControls).toBe(false);
+        expect(t.showTimeControls).toBe(false);
 
     });
 
@@ -356,6 +371,20 @@ describe('Year Class Tests', () => {
         expect(year.months[1].days[21].selected).toBe(false);
     });
 
+    test('Change Time', () => {
+        year.changeTime(true, 'hour');
+        expect(year.time.seconds).toBe(3600);
+        year.changeTime(true, 'minute', 2);
+        expect(year.time.seconds).toBe(3720);
+        year.changeTime(true, 'second', 3);
+        expect(year.time.seconds).toBe(3723);
+        year.changeTime(true, 'asd', 3);
+        expect(year.time.seconds).toBe(3723);
+
+        year.changeTime(false, 'hour', 3);
+        expect(year.time.seconds).toBe(79323);
+    });
+
     test('Total Number of Days', () => {
         year.months.push(month);
         expect(year.totalNumberOfDays()).toBe(30);
@@ -418,6 +447,112 @@ describe('Year Class Tests', () => {
         year.leapYearRule.rule = LeapYearRules.Gregorian;
         year.numericRepresentation = 4;
         expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(2);
+    });
+
+    test('Date to Days', () => {
+        year.months.push(month);
+        year.months.push(new Month("Test 2", 2, 22, 23));
+        expect(year.dateToDays(0,0,1)).toBe(1);
+        expect(year.dateToDays(5,0,1)).toBe(261);
+        year.leapYearRule = new LeapYear();
+        year.leapYearRule.rule = LeapYearRules.Gregorian;
+        expect(year.dateToDays(5,0,1, true)).toBe(263);
+        year.months[0].intercalary = true;
+        expect(year.dateToDays(5,0,1, true)).toBe(113);
+        year.months[0].intercalaryInclude = true;
+        expect(year.dateToDays(5,2,1, true)).toBe(293);
+    });
+
+    test('Sync Time', () => {
+        //@ts-ignore
+        game.time.advance.mockClear();
+        year.syncTime();
+        expect(game.time.advance).not.toHaveBeenCalled();
+        //@ts-ignore
+        game.user.isGM = true;
+        year.syncTime()
+        expect(game.time.advance).not.toHaveBeenCalled();
+        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
+        year.months.push(month);
+        year.syncTime()
+        expect(game.time.advance).not.toHaveBeenCalled();
+
+        month.current = true;
+        year.syncTime()
+        expect(game.time.advance).toHaveBeenCalledTimes(1);
+        month.days[0].current = true;
+        year.syncTime()
+        expect(game.time.advance).toHaveBeenCalledTimes(2);
+    });
+
+    test('Seconds To Date', () => {
+        year.months.push(month);
+        year.months.push(new Month("Test 2", 2, 22, 23));
+        year.months[1].intercalary = true;
+        expect(year.secondsToDate(10)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 0, second: 10});
+        expect(year.secondsToDate(70)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 1, second: 10});
+        expect(year.secondsToDate(3670)).toStrictEqual({year: 0, month: 0, day: 1, hour: 1, minute: 1, second: 10});
+        expect(year.secondsToDate(90070)).toStrictEqual({year: 0, month: 0, day: 2, hour: 1, minute: 1, second: 10});
+        expect(year.secondsToDate(2682070)).toStrictEqual({year: 1, month: 0, day: 2, hour: 1, minute: 1, second: 10});
+        year.months[1].intercalary = false;
+        year.leapYearRule = new LeapYear();
+        year.leapYearRule.rule = LeapYearRules.Gregorian;
+        expect(year.secondsToDate(20908800)).toStrictEqual({year: 4, month: 1, day: 4, hour: 0, minute: 0, second: 0});
+    });
+
+    test('Update Time', () => {
+        year.months.push(month);
+        year.months.push(new Month("Test 2", 2, 22, 23));
+        year.updateTime({year: 1, month: 1, day: 3, hour: 4, minute: 5, second: 6});
+        expect(year.numericRepresentation).toBe(1);
+        expect(year.months[1].current).toBe(true);
+        expect(year.months[1].days[2].current).toBe(true);
+        expect(year.time.seconds).toBe(14706);
+    });
+
+    test('Set From Time', () => {
+        year.months.push(month);
+        month.current = true;
+        //@ts-ignore
+        game.user.isGM = false;
+        year.time.seconds = 60;
+        year.timeChangeTriggered = true;
+        year.setFromTime(120, 0);
+        expect(year.time.seconds).toBe(60);
+        expect(year.timeChangeTriggered).toBe(false);
+        year.timeChangeTriggered = true;
+        year.setFromTime(120, 60);
+        expect(year.time.seconds).toBe(60);
+        expect(year.timeChangeTriggered).toBe(false);
+
+        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
+        year.timeChangeTriggered = false;
+        year.setFromTime(120, 60);
+        expect(year.time.seconds).toBe(60);
+        expect(year.timeChangeTriggered).toBe(false);
+
+        year.timeChangeTriggered = true;
+        year.setFromTime(120, 60);
+        expect(year.time.seconds).toBe(60);
+        expect(year.timeChangeTriggered).toBe(false);
+
+        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.ThirdParty;
+        year.setFromTime(120, 60);
+        expect(year.time.seconds).toBe(120);
+
+        year.time.seconds = 60;
+        //@ts-ignore
+        game.user.isGM = true;
+        year.setFromTime(120, 60);
+        expect(year.time.seconds).toBe(120);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
+
+        year.time.seconds = 60;
+        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
+        year.combatChangeTriggered = true;
+        year.setFromTime(120, 60);
+        expect(year.time.seconds).toBe(120);
+        expect(game.settings.set).toHaveBeenCalledTimes(2);
     });
 
 });
