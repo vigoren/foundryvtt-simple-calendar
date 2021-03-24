@@ -7,53 +7,97 @@
     line-height: 32px;
     font-size: 16px;
     border-bottom: 1px solid #782e22;
-    margin-bottom: 1rem;
+
+    .item{
+      &.active{
+        border-top: 1px solid #782e22;
+        border-left: 1px solid #782e22;
+        border-right: 1px solid #782e22;
+        border-bottom: 1px solid #fafafa;
+        margin-bottom: -1px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        background-color: #fafafa;
+      }
+    }
+  }
+
+  .tab{
+    border-bottom: 1px solid #782e22;
+    border-left: 1px solid #782e22;
+    border-right: 1px solid #782e22;
+    background-color:#fafafa;
+    color:#000000;
+    padding-top: 1rem;
   }
 
   .center{
     text-align: center;
   }
 
-  h2,h3{
-    margin-left: 2rem;
-    margin-right: 2rem;
-  }
-
-  .import-group{
+  .settings-group{
     margin: 0.75rem 2rem;
-    padding: 0.5rem;
-    box-shadow: 2px 2px 4px grey;
-    border: 1px solid grey;
 
-    h3{
-      margin-left: 0;
-      margin-right: 0;
+    &:first-child{
+      margin-top: 0;
     }
 
-    .import-options{
-      display: flex;
-      flex-direction: row;
-      justify-content: space-evenly;
+    h2{
+      a{
+        color: #191813;
+        font-size: 0.85rem;
+        text-decoration: none;
+        margin-left: 5px;
+      }
+    }
+    .form-group{
+      margin: 0.75rem 0;
+      border-bottom: 1px solid #9e9c9c;
+      &:last-child{
+        border-width: 0;
+      }
 
-      .control{
-        width: auto;
-        &:before{
-          margin-right: 5px;
+      .notes{
+        margin: 0.5rem 0;
+        color:#191813;
+      }
+
+      button{
+        max-width: 200px;
+        margin: 0.5rem auto;
+      }
+    }
+
+    .import-group{
+      margin: 0.75rem 0;
+      padding: 0.5rem;
+      box-shadow: 2px 2px 4px grey;
+      border: 1px solid grey;
+
+      h3{
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .import-options{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+
+        .control{
+          width: auto;
+          &:before{
+            margin-right: 5px;
+          }
         }
       }
     }
-  }
 
-  .form-group{
-    margin: 0.75rem 2rem;
-    border-bottom: 1px solid #9e9c9c;
-    &:last-child{
-      border-width: 0;
-    }
-
-    button{
-      max-width: 200px;
-      margin: 0.5rem auto;
+    .f-table{
+      border-top: 0;
+      border-left: 1px solid #7a7971;
+      border-right: 1px solid #7a7971;
+      margin-top: -0.5rem;
     }
   }
 
@@ -122,10 +166,20 @@
     }
   }
 
-  #scSubmit{
+  .config-save{
     position: absolute;
-    bottom: 5px;
-    left: 25%;
-    width: 50%;
+    text-align: center;
+    width: 100%;
+    backdrop-filter: blur(2px);
+    left: 0;
+    bottom: 0;
+    height: 30px;
+    border-top: 1px solid #b5b5b5;
+
+    #scSubmit{
+      width: 50%;
+      margin-top: 3px;
+    }
   }
+
 }

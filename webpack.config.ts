@@ -21,7 +21,11 @@ const config: webpack.Configuration = {
                 { context: './src/', from : '**/*.json', to : './' },
                 { context: './src/', from : '**/*.html', to : './' },
                 { context: './', from : 'README.md', to : './' },
-                { context: './', from : 'LICENSE', to : './' }
+                { context: './', from : 'LICENSE', to : './' },
+                { context: './docs', from : 'Configuration.md', to : './docs' },
+                { context: './docs', from : 'Macros.md', to : './docs' },
+                { context: './docs', from : 'Notes.md', to : './docs' },
+                { context: './docs', from : 'UpdatingDateTime.md', to : './docs' },
             ]
         }),
         new MiniCssExtractPlugin({

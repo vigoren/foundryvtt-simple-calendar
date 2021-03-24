@@ -2,6 +2,7 @@
     <form autocomplete="off" onsubmit="event.preventDefault();">
         <h1>{{localize 'FSC.Configuration.Title'}}</h1>
         <p>{{localize 'FSC.Configuration.Description'}}</p>
+        <p>{{{localize 'FSC.Configuration.Help'}}}</p>
 
         <nav class="sheet-tabs tabs">
             <a class="item" data-tab="generalSettings">{{localize 'FSC.Configuration.General.Title'}}</a>
@@ -12,229 +13,265 @@
             <a class="item" data-tab="timeSettings">{{localize 'FSC.Configuration.Time.Title'}}</a>
         </nav>
         <div class="tab general-settings" data-tab="generalSettings">
-            <h2>Quick Setup</h2>
-            <div class="form-group">
-                <label for="scPreDefined">{{localize 'FSC.Configuration.General.PreDefined'}}</label>
-                <div class="form-fields">
-                    <select id="scPreDefined">
-                        {{selectOptions predefined localize=true}}
-                    </select>
-                </div>
-                <p class="notes">{{localize 'FSC.Configuration.General.PreDefinedHelp'}}</p>
-                <button class="control save" id="scApplyPredefined">{{localize 'FSC.Apply'}}</button>
-            </div>
-            <h2>Game World Time Integration</h2>
-            <div class="form-group">
-                <label for="scGameWorldTime">{{localize 'FSC.Configuration.General.GameWorldTime'}}</label>
-                <div class="form-fields">
-                    <select id="scGameWorldTime">
-                        {{selectOptions timeTrackers selected=currentYear.generalSettings.gameWorldTimeIntegration localize=true}}
-                    </select>
-                </div>
-                <p class="notes">{{localize 'FSC.Configuration.General.GameWorldTimeHelp'}}</p>
-            </div>
-            <div class="form-group">
-                <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.generalSettings.showClock}}" type="checkbox" id="scShowClock" {{#if currentYear.generalSettings.showClock}}checked="checked"{{/if}} />
-                </div>
-                <p class="notes">{{localize 'FSC.Configuration.General.ShowClockHelp'}}</p>
-            </div>
-            <h2>Notes</h2>
-            <div class="form-group">
-                <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
-                <div class="form-fields">
-                    <input value="{{defaultPlayerNoteVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{#if defaultPlayerNoteVisibility}}checked="checked"{{/if}} />
-                </div>
-                <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
-            </div>
-            <h2>Third Party Module Import/Export</h2>
-            {{#if importing.showCalendarWeather}}
-            <div class="import-group">
-                <h3>{{localize 'FSC.Module.CalendarWeather.Title'}}</h3>
-                <p>{{{localize 'FSC.Module.CalendarWeather.Configuration.Message'}}}</p>
-                <div class="import-options">
-                    <button class="control fa fa-file-import" id="scCalendarWeatherImport">{{localize 'FSC.Module.Import'}}</button>
-                    <button class="control fa fa-file-export" id="scCalendarWeatherExport">{{localize 'FSC.Module.CalendarWeather.Export'}}</button>
+            <div class="settings-group">
+                <h2>Quick Setup <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#quick-setup" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scPreDefined">{{localize 'FSC.Configuration.General.PreDefined'}} </label>
+                    <div class="form-fields">
+                        <select id="scPreDefined">
+                            {{selectOptions predefined localize=true}}
+                        </select>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.PreDefinedHelp'}}</p>
+                    <button class="control save" id="scApplyPredefined">{{localize 'FSC.Apply'}}</button>
                 </div>
             </div>
-            {{else importing.showAboutTime}}
-            <div class="import-group">
-                <h3>{{localize 'FSC.Module.AboutTime.Title'}}</h3>
-                <p>{{{localize 'FSC.Module.AboutTime.Configuration.Message'}}}</p>
-                <div class="import-options">
-                    <button class="control fa fa-file-import" id="scAboutTimeImport">{{localize 'FSC.Module.Import'}}</button>
-                    <button class="control fa fa-file-export" id="scAboutTimeExport">{{localize 'FSC.Module.AboutTime.Export'}}</button>
+            <div class="settings-group">
+                <h2>Game World Time Integration <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#game-world-time-integration" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scGameWorldTime">{{localize 'FSC.Configuration.General.GameWorldTime'}}</label>
+                    <div class="form-fields">
+                        <select id="scGameWorldTime">
+                            {{selectOptions timeTrackers selected=currentYear.generalSettings.gameWorldTimeIntegration localize=true}}
+                        </select>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.GameWorldTimeHelp'}}</p>
                 </div>
+                <div class="form-group">
+                    <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.generalSettings.showClock}}" type="checkbox" id="scShowClock" {{#if currentYear.generalSettings.showClock}}checked="checked"{{/if}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.ShowClockHelp'}}</p>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h2>Notes <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#notes" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
+                    <div class="form-fields">
+                        <input value="{{defaultPlayerNoteVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{#if defaultPlayerNoteVisibility}}checked="checked"{{/if}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
+                </div>
+            </div>
+            {{#if (or importing.showCalendarWeather importing.showAboutTime)}}
+            <div class="settings-group">
+                <h2>Third Party Module Import/Export <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#third-party-importexport" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                {{#if importing.showCalendarWeather}}
+                <div class="import-group">
+                    <h3>{{localize 'FSC.Module.CalendarWeather.Title'}}</h3>
+                    <p>{{{localize 'FSC.Module.CalendarWeather.Configuration.Message'}}}</p>
+                    <div class="import-options">
+                        <button class="control fa fa-file-import" id="scCalendarWeatherImport">{{localize 'FSC.Module.Import'}}</button>
+                        <button class="control fa fa-file-export" id="scCalendarWeatherExport">{{localize 'FSC.Module.CalendarWeather.Export'}}</button>
+                    </div>
+                </div>
+                {{else importing.showAboutTime}}
+                <div class="import-group">
+                    <h3>{{localize 'FSC.Module.AboutTime.Title'}}</h3>
+                    <p>{{{localize 'FSC.Module.AboutTime.Configuration.Message'}}}</p>
+                    <div class="import-options">
+                        <button class="control fa fa-file-import" id="scAboutTimeImport">{{localize 'FSC.Module.Import'}}</button>
+                        <button class="control fa fa-file-export" id="scAboutTimeExport">{{localize 'FSC.Module.AboutTime.Export'}}</button>
+                    </div>
+                </div>
+                {{/if}}
             </div>
             {{/if}}
         </div>
         <div class="tab year-settings" data-tab="yearSettings">
-            <div class="form-group">
-                <label for="scCurrentYear">{{localize 'FSC.Configuration.Year.Current'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.numericRepresentation}}" type="number" id="scCurrentYear" />
+            <div class="settings-group">
+                <h2>Current Year <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scCurrentYear">{{localize 'FSC.Configuration.Year.Current'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.numericRepresentation}}" type="number" id="scCurrentYear" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Year.CurrentHelp'}}</p>
                 </div>
-                <p class="notes">{{localize 'FSC.Configuration.Year.CurrentHelp'}}</p>
+                <div class="form-group">
+                    <label for="scYearPreFix">{{localize 'FSC.Configuration.Year.Prefix'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.prefix}}" type="text" id="scYearPreFix" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Year.PrefixHelp'}}</p>
+                </div>
+                <div class="form-group">
+                    <label for="scYearPostFix">{{localize 'FSC.Configuration.Year.Postfix'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.postfix}}" type="text" id="scYearPostFix" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Year.PostfixHelp'}}</p>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="scYearPreFix">{{localize 'FSC.Configuration.Year.Prefix'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.prefix}}" type="text" id="scYearPreFix" />
-                </div>
-                <p class="notes">{{localize 'FSC.Configuration.Year.PrefixHelp'}}</p>
-            </div>
-            <div class="form-group">
-                <label for="scYearPostFix">{{localize 'FSC.Configuration.Year.Postfix'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.postfix}}" type="text" id="scYearPostFix" />
-                </div>
-                <p class="notes">{{localize 'FSC.Configuration.Year.PostfixHelp'}}</p>
+            <div class="settings-group">
+                <h2>Seasons</h2>
             </div>
         </div>
         <div class="tab month-settings" data-tab="monthSettings"  >
-            <div class="f-table">
-                <div class="row head">
-                    <div class="month-name" title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</div>
-                    <div class="month-days" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}">{{localize 'FSC.Configuration.Month.Days'}}</div>
-                    <div class="month-intercalary" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}">{{localize 'FSC.Configuration.Month.Intercalary'}}</div>
-                    <div class="month-number" title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</div>
-                    <div class="remove-month"></div>
-                </div>
-                {{#each months}}
-                <div class="row">
-                    <div>
-                        <input class="month-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.NameHelp'}}" />
+            <div class="settings-group">
+                <h2>Months <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#month-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="f-table">
+                    <div class="row head">
+                        <div class="month-name" title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</div>
+                        <div class="month-days" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}">{{localize 'FSC.Configuration.Month.Days'}}</div>
+                        <div class="month-intercalary" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}">{{localize 'FSC.Configuration.Month.Intercalary'}}</div>
+                        <div class="month-number" title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</div>
+                        <div class="remove-month"></div>
                     </div>
-                    <div>
-                        <input class="month-days" value="{{numberOfDays}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}" />
-                    </div>
-                    <div style="text-align: center;">
-                        <input class="month-intercalary" value="{{intercalary}}" type="checkbox" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}" {{#if intercalary}}checked="checked"{{/if}} />
-                    </div>
-                    <div class="month-number">{{#if numericRepresentation}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
-                    <div>
-                        <button class="remove-month control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
-                    </div>
-                    <div class="options {{#unless intercalary}}hidden{{/unless}}">
-                        <div class="form-group">
-                            <label for="scii{{@index}}">{{localize 'FSC.Configuration.Month.IntercalaryInclude'}}</label>
-                            <div class="form-fields">
-                                <input class="month-intercalary-include" value="{{intercalaryInclude}}" id="scii{{@index}}" type="checkbox" data-index="{{@index}}" {{#if intercalaryInclude}}checked="checked"{{/if}} />
+                    {{#each months}}
+                    <div class="row">
+                        <div>
+                            <input class="month-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.NameHelp'}}" />
+                        </div>
+                        <div>
+                            <input class="month-days" value="{{numberOfDays}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}" />
+                        </div>
+                        <div style="text-align: center;">
+                            <input class="month-intercalary" value="{{intercalary}}" type="checkbox" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}" {{#if intercalary}}checked="checked"{{/if}} />
+                        </div>
+                        <div class="month-number">{{#if numericRepresentation}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
+                        <div>
+                            <button class="remove-month control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                        </div>
+                        <div class="options {{#unless intercalary}}hidden{{/unless}}">
+                            <div class="form-group">
+                                <label for="scii{{@index}}">{{localize 'FSC.Configuration.Month.IntercalaryInclude'}}</label>
+                                <div class="form-fields">
+                                    <input class="month-intercalary-include" value="{{intercalaryInclude}}" id="scii{{@index}}" type="checkbox" data-index="{{@index}}" {{#if intercalaryInclude}}checked="checked"{{/if}} />
+                                </div>
+                                <p class="notes">{{localize 'FSC.Configuration.Month.IntercalaryIncludeHelp'}}</p>
                             </div>
-                            <p class="notes">{{localize 'FSC.Configuration.Month.IntercalaryIncludeHelp'}}</p>
                         </div>
                     </div>
+                    {{/each}}
                 </div>
-                {{/each}}
-            </div>
-            <div class="table-actions">
-                <button class="month-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Month.Add'}}</button>
-                <span class="spacer"></span>
-                <button class="remove-month control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.RemoveAll'}}</button>
+                <div class="table-actions">
+                    <button class="month-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Month.Add'}}</button>
+                    <span class="spacer"></span>
+                    <button class="remove-month control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.RemoveAll'}}</button>
+                </div>
             </div>
         </div>
         <div class="tab weekday-settings" data-tab="weekdaySettings" >
-            <div class="form-group">
-                <label for="scShowWeekdayHeaders">{{localize 'FSC.Configuration.Weekday.ShowHeadings'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.showWeekdayHeadings}}" type="checkbox" id="scShowWeekdayHeaders" {{#if currentYear.showWeekdayHeadings}}checked="checked"{{/if}} />
+            <div class="settings-group">
+                <h2>Weekday Options <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#weekday-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scShowWeekdayHeaders">{{localize 'FSC.Configuration.Weekday.ShowHeadings'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.showWeekdayHeadings}}" type="checkbox" id="scShowWeekdayHeaders" {{#if currentYear.showWeekdayHeadings}}checked="checked"{{/if}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Weekday.ShowHeadingsHelp'}}</p>
                 </div>
-                <p class="notes">{{localize 'FSC.Configuration.Weekday.ShowHeadingsHelp'}}</p>
             </div>
-            <table>
-                <tr>
-                    <th title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}">{{localize 'FSC.Configuration.Weekday.Name'}}</th>
-                    <th></th>
-                </tr>
-                {{#each weekdays}}
-                <tr>
-                    <td>
-                        <input class="weekday-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}" />
-                    </td>
-                    <td>
-                        <button class="remove-weekday control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
-                    </td>
-                </tr>
-                {{/each}}
-            </table>
-            <div class="table-actions">
-                <button class="weekday-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Weekday.Add'}}</button>
-                <span class="spacer"></span>
-                <button class="remove-weekday control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Weekday.RemoveAll'}}</button>
+            <div class="settings-group">
+                <h2>Weekdays <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#weekday-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="f-table">
+                    <div class="row head">
+                        <div class="month-name" title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}" style="min-width: 30%;">{{localize 'FSC.Configuration.Weekday.Name'}}</div>
+                        <div class="remove-month" style="min-width: 15%;"></div>
+                    </div>
+                    {{#each weekdays}}
+                    <div class="row">
+                        <div style="min-width: 30%;">
+                            <input class="weekday-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}" />
+                        </div>
+                        <div style="min-width: 15%;">
+                            <button class="remove-weekday control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                <div class="table-actions">
+                    <button class="weekday-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Weekday.Add'}}</button>
+                    <span class="spacer"></span>
+                    <button class="remove-weekday control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Weekday.RemoveAll'}}</button>
+                </div>
             </div>
         </div>
         <div class="tab leapyear-settings" data-tab="leapYearSettings">
-            <div class="form-group">
-                <label for="scLeapYearRule">{{localize 'FSC.Configuration.LeapYear.Rule'}}</label>
-                <div class="form-fields">
-                    <select id="scLeapYearRule">
-                        {{selectOptions leapYearRules selected=leapYearRule.rule localize=true}}
-                    </select>
+            <div class="settings-group">
+                <h2>Leap Year Options <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#leap-year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scLeapYearRule">{{localize 'FSC.Configuration.LeapYear.Rule'}}</label>
+                    <div class="form-fields">
+                        <select id="scLeapYearRule">
+                            {{selectOptions leapYearRules selected=leapYearRule.rule localize=true}}
+                        </select>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.LeapYear.RuleHelp'}}</p>
                 </div>
-                <p class="notes">{{localize 'FSC.Configuration.LeapYear.RuleHelp'}}</p>
-            </div>
-            {{#if showLeapYearCustomMod}}
-            <div class="form-group">
-                <label for="scLeapYearCustomMod">{{localize 'FSC.Configuration.LeapYear.CustomMod'}}</label>
-                <div class="form-fields">
-                    <input value="{{leapYearRule.customMod}}" type="number" id="scLeapYearCustomMod" />
+                {{#if showLeapYearCustomMod}}
+                <div class="form-group">
+                    <label for="scLeapYearCustomMod">{{localize 'FSC.Configuration.LeapYear.CustomMod'}}</label>
+                    <div class="form-fields">
+                        <input value="{{leapYearRule.customMod}}" type="number" id="scLeapYearCustomMod" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.LeapYear.CustomModHelp'}}</p>
                 </div>
-                <p class="notes">{{localize 'FSC.Configuration.LeapYear.CustomModHelp'}}</p>
+                {{/if}}
             </div>
-            {{/if}}
             {{#if showLeapYearMonths}}
-            <table>
-                <tr>
-                    <th title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</th>
-                    <th title="{{localize 'FSC.Configuration.Month.DaysHelp'}}">{{localize 'FSC.Configuration.LeapYear.Days'}}</th>
-                    <th title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</th>
-                </tr>
-                {{#each months}}
-                <tr>
-                    <td>{{name}}</td>
-                    <td>
-                        <input class="month-leap-days" value="{{numberOfLeapYearDays}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.LeapYear.DaysHelp'}}" />
-                    </td>
-                    <td class="center">{{#if numericRepresentation}}{{numericRepresentation}}{{else}}IC{{/if}}</td>
-                </tr>
-                {{/each}}
-            </table>
+            <div class="settings-group">
+                <h2>Months <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#leap-year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="f-table">
+                    <div class="row head">
+                        <div style="min-width: 25%;" title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</div>
+                        <div style="min-width: 25%;" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}">{{localize 'FSC.Configuration.LeapYear.Days'}}</div>
+                        <div style="min-width: 25%;" title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</div>
+                    </div>
+                    {{#each months}}
+                    <div class="row">
+                        <div class="center" style="min-width: 25%;">{{name}}</div>
+                        <div style="min-width: 25%;">
+                            <input class="month-leap-days" value="{{numberOfLeapYearDays}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.LeapYear.DaysHelp'}}" />
+                        </div>
+                        <div class="center" style="min-width: 25%;">{{#if numericRepresentation}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
             {{/if}}
         </div>
         <div class="tab time-settings" data-tab="timeSettings">
-            <div class="form-group">
-                <label for="scHoursInDay">{{localize 'FSC.Configuration.Time.HoursInDay'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.time.hoursInDay}}" type="number" id="scHoursInDay" />
+            <div class="settings-group">
+                <h2>Time Options <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#time-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scHoursInDay">{{localize 'FSC.Configuration.Time.HoursInDay'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.time.hoursInDay}}" type="number" id="scHoursInDay" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Time.HoursInDayHelp'}}</p>
                 </div>
-                <p class="notes">{{localize 'FSC.Configuration.Time.HoursInDayHelp'}}</p>
-            </div>
-            <div class="form-group">
-                <label for="scMinutesInHour">{{localize 'FSC.Configuration.Time.MinutesInHour'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.time.minutesInHour}}" type="number" id="scMinutesInHour" />
+                <div class="form-group">
+                    <label for="scMinutesInHour">{{localize 'FSC.Configuration.Time.MinutesInHour'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.time.minutesInHour}}" type="number" id="scMinutesInHour" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Time.MinutesInHourHelp'}}</p>
                 </div>
-                <p class="notes">{{localize 'FSC.Configuration.Time.MinutesInHourHelp'}}</p>
-            </div>
-            <div class="form-group">
-                <label for="scSecondsInMinute">{{localize 'FSC.Configuration.Time.SecondsInMinute'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.time.secondsInMinute}}" type="number" id="scSecondsInMinute" />
+                <div class="form-group">
+                    <label for="scSecondsInMinute">{{localize 'FSC.Configuration.Time.SecondsInMinute'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.time.secondsInMinute}}" type="number" id="scSecondsInMinute" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInMinuteHelp'}}</p>
                 </div>
-                <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInMinuteHelp'}}</p>
-            </div>
-            <div class="form-group">
-                <label for="scGameTimeRatio">{{localize 'FSC.Configuration.Time.GameTimeRatio'}}</label>
-                <div class="form-fields">
-                    <input value="{{currentYear.time.gameTimeRatio}}" type="number" id="scGameTimeRatio" />
+                <div class="form-group">
+                    <label for="scGameTimeRatio">{{localize 'FSC.Configuration.Time.GameTimeRatio'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.time.gameTimeRatio}}" type="number" id="scGameTimeRatio" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Time.GameTimeRatioHelp'}}</p>
                 </div>
-                <p class="notes">{{localize 'FSC.Configuration.Time.GameTimeRatioHelp'}}</p>
             </div>
         </div>
 
-        <button class="control save" id="scSubmit" type="submit" name="submit" title="{{localize 'FSC.Configuration.Save'}}">
-            <i class="far fa-save"></i> {{localize 'FSC.Configuration.Save'}}
-        </button>
+        <div class="config-save">
+            <button class="control save" id="scSubmit" type="submit" name="submit" title="{{localize 'FSC.Configuration.Save'}}">
+                <i class="far fa-save"></i> {{localize 'FSC.Configuration.Save'}}
+            </button>
+        </div>
     </form>
 </div>
