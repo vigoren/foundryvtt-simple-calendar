@@ -7,9 +7,9 @@ import {
     YearConfig,
     NoteConfig,
     LeapYearConfig,
-    TimeConfig, GeneralSettings
+    TimeConfig, GeneralSettings, SimpleCalendarSocket
 } from "../interfaces";
-import {ModuleName, SettingNames} from "../constants";
+import {ModuleName, ModuleSocketName, SettingNames, SocketTypes} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import {Weekday} from "./weekday";
@@ -425,7 +425,15 @@ export class GameSettings {
             id: w.id,
             repeats: w.repeats
         };});
-        return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});
+        if(GameSettings.IsGm()){
+            return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});
+        } else {
+            const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.journal, data: {notes: notes}};
+            Logger.debug(`User saving notes...`);
+            await game.socket.emit(ModuleSocketName, socketData);
+            return;
+        }
+
     }
 
     /**

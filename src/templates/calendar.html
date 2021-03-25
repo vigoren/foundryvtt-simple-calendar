@@ -53,8 +53,10 @@
                         <div class="selector {{#if timeUnits.minute}}selected{{/if}}" data-type="minute">{{localize 'FSC.Minute'}}</div>
                         <div class="selector {{#if timeUnits.hour}}selected{{/if}}" data-type="hour">{{localize 'FSC.Hour'}}</div>
                     </div>
+                    {{#if isPrimary}}
                     <a class="time-start {{clockClass}} fa fa-play" title="{{localize 'FSC.Time.Start'}}"></a>
                     <a class="time-stop {{clockClass}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></a>
+                    {{/if}}
                 </div>
                 <div class="row time-amount">
                     <a class="control previous" title="{{localize 'FSC.Time.Backward'}}" data-type="time" data-amount="5">
@@ -109,7 +111,7 @@
     </div>
     <div class="date-notes">
         <h2>{{localize 'FSC.Notes.For'}} {{currentYear.selectedDisplayMonth}} {{currentYear.selectedDisplayDay}}, {{currentYear.selectedDisplayYear}}
-            {{#if isGM}}
+            {{#if addNotes}}
             <button class="fa fa-plus control save add-note"> {{localize 'FSC.Notes.AddNew'}}</button>
             {{/if}}
         </h2>

@@ -64,7 +64,8 @@ export default class Year {
      */
     generalSettings: GeneralSettings = {
         gameWorldTimeIntegration: GameWorldTimeIntegrations.None,
-        showClock: false
+        showClock: false,
+        playersAddNotes: false
     };
 
     /**
@@ -137,6 +138,7 @@ export default class Year {
         y.time = this.time.clone();
         y.generalSettings.gameWorldTimeIntegration = this.generalSettings.gameWorldTimeIntegration;
         y.generalSettings.showClock = this.generalSettings.showClock;
+        y.generalSettings.playersAddNotes = this.generalSettings.playersAddNotes;
         return y;
     }
 

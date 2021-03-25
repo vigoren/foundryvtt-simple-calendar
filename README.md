@@ -38,6 +38,7 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 * Browse a calendar interface to see the years, months and day of the game world.
 * See the current day and time of the game world.
 * Select days to view any notes/events specific to that day.
+* If the GM allows it, the ability to add their own notes to the calendar.
 
 ##Contents
 

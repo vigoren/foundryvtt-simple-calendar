@@ -52,6 +52,8 @@ describe('Interface Tests', () => {
     };
     const ct: CalendarTemplate = {
         isGM: false,
+        addNotes: false,
+        isPrimary: false,
         currentYear: yt,
         showSelectedDay: false,
         showCurrentDay: false,
@@ -109,8 +111,10 @@ describe('Interface Tests', () => {
     });
 
     test('Calendar Template', () => {
-        expect(Object.keys(ct).length).toBe(7); //Make sure no new properties have been added
+        expect(Object.keys(ct).length).toBe(9); //Make sure no new properties have been added
         expect(ct.isGM).toBe(false);
+        expect(ct.addNotes).toBe(false);
+        expect(ct.isPrimary).toBe(false);
         expect(ct.currentYear).toStrictEqual(yt);
         expect(ct.showSelectedDay).toBe(false);
         expect(ct.showCurrentDay).toBe(false);
@@ -218,8 +222,9 @@ describe('Interface Tests', () => {
         });
 
         test('Simple Calendar Socket Journal', () => {
-            const scsj: SimpleCalendarSocket.SimpleCalendarSocketJournal = {};
-            expect(Object.keys(scsj).length).toBe(0); //Make sure no new properties have been added
+            const scsj: SimpleCalendarSocket.SimpleCalendarSocketJournal = {notes: []};
+            expect(Object.keys(scsj).length).toBe(1); //Make sure no new properties have been added
+            expect(scsj.notes).toStrictEqual([]);
         });
 
     });

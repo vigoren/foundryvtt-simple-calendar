@@ -47,6 +47,10 @@ For two of the more common modules Simple Calendar can also import their setting
 
 ### Notes
 
+A configuration option has been added to allow players to add their own notes to the Calendar. If enabled they will see the "Add New Note" button on the main calendar display.
+
+**Important**: For a user to add their own note a GM must also be logged in at the same time, a warning is displayed if a user attempts to add a note when not GM is logged in.
+
 
 ## v1.1.8 - Bug Fixes
 

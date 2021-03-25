@@ -78,7 +78,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load General Settings', () => {
-        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false});
+        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false});
         expect(game.settings.get).toHaveBeenCalled();
     });
 
@@ -148,7 +148,7 @@ describe('Game Settings Class Tests', () => {
     test('Save General Settings', () => {
         // @ts-ignore
         game.user.isGM = false;
-        let gs: GeneralSettings = {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false};
+        let gs: GeneralSettings = {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false};
         expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
@@ -271,13 +271,18 @@ describe('Game Settings Class Tests', () => {
         expect(game.settings.set).toHaveBeenCalled();
     });
 
-    test('Save Notes', () => {
+    test('Save Notes', async () => {
         const note = new Note();
         note.year = 0;
         note.month = 1;
         note.day = 2;
-        expect(GameSettings.SaveNotes([note])).resolves.toBe(true);
-        expect(game.settings.set).toHaveBeenCalled();
+        await GameSettings.SaveNotes([note]);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
+        // @ts-ignore
+        game.user.isGM = false;
+        await GameSettings.SaveNotes([note]);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
+        expect(game.socket.emit).toHaveBeenCalledTimes(1);
     });
 
     test('Set Default Note Visibility', () => {

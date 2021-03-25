@@ -48,6 +48,7 @@ export enum LeapYearRules {
  * The different types of information we send over our socket
  */
 export enum SocketTypes {
+    primary = 'primary',
     time = 'time',
     journal = 'journal'
 }

@@ -1,8 +1,9 @@
 import {Note} from './note';
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
-import {NoteRepeat} from "../constants";
+import {ModuleName, ModuleSocketName, NoteRepeat, SettingNames, SocketTypes} from "../constants";
 import SimpleCalendar from "./simple-calendar";
+import {SimpleCalendarSocket} from "../interfaces";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**
@@ -52,6 +53,9 @@ export class SimpleCalendarNotes extends FormApplication {
                 save_onsavecallback: this.saveEditor.bind(this, 'content')
             },
         };
+        if(!GameSettings.IsGm()){
+            (<Note>this.object).playerVisible = true;
+        }
     }
 
     /**
@@ -74,14 +78,16 @@ export class SimpleCalendarNotes extends FormApplication {
     getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
         let data = {
             ... super.getData(options),
+            isGM: GameSettings.IsGm(),
             viewMode: this.viewMode,
             richButton: !this.viewMode,
-            canEdit: GameSettings.IsGm(),
+            canEdit: GameSettings.IsGm() || GameSettings.UserID() === (<Note>this.object).author,
             noteYear: 0,
             noteMonth: '',
             repeatOptions: {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             repeats: (<Note>this.object).repeats,
-            repeatsText: ''
+            repeatsText: '',
+            authorName: (<Note>this.object).author
         };
         if(SimpleCalendar.instance.currentYear && ((<Note>this.object).repeats === NoteRepeat.Yearly || (<Note>this.object).repeats === NoteRepeat.Monthly)){
             data.noteYear = SimpleCalendar.instance.currentYear.visibleYear;
@@ -94,7 +100,15 @@ export class SimpleCalendarNotes extends FormApplication {
         } else {
             data.noteMonth = (<Note>this.object).monthDisplay;
         }
-        data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(data.repeatOptions[data.repeats])}`
+        data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(data.repeatOptions[data.repeats])}`;
+
+        if(game.users){
+            Logger.debug(`Looking for users with the id "${(<Note>this.object).author}"`);
+            const user = game.users.get((<Note>this.object).author);
+            if(user){
+                data.authorName = user.name;
+            }
+        }
         return data;
     }
 

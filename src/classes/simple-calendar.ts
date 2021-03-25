@@ -8,7 +8,7 @@ import {GameSettings} from "./game-settings";
 import {Weekday} from "./weekday";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
-import {GameWorldTimeIntegrations, ModuleName, ModuleSocketName, SocketTypes} from "../constants";
+import {GameWorldTimeIntegrations, ModuleSocketName, SocketTypes} from "../constants";
 import Importer from "./importer";
 
 
@@ -49,6 +49,13 @@ export default class SimpleCalendar extends Application{
     };
 
     /**
+     * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
+     */
+    public primary: boolean = false;
+
+    private primaryCheckTimeout: number | undefined;
+
+    /**
      * Simple Calendar constructor
      */
     constructor() {super();}
@@ -79,19 +86,41 @@ export default class SimpleCalendar extends Application{
         if(this.currentYear){
             this.currentYear.time.updateUsers();
         }
+
+        if(GameSettings.IsGm()){
+            this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
+        }
+    }
+
+    /**
+     * Called after the timeout delay set to see if another GM account has been set as the primary
+     */
+    primaryCheckTimeoutCall(){
+        Logger.debug('No primary GM found, taking over as primary');
+        this.primary = true;
+        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {}};
+        game.socket.emit(ModuleSocketName, socketData);
     }
 
     /**
      * Process any data received over our socket
      * @param {SimpleCalendarSocket.Data} data The data received
      */
-    processSocket(data: SimpleCalendarSocket.Data){
+    async processSocket(data: SimpleCalendarSocket.Data){
         Logger.debug(`Processing ${data.type} socket emit`);
         if(data.type === SocketTypes.time){
+            // This is processed by all players to update the animated clock
             this.clockClass = (<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).clockClass;
             this.updateApp();
         } else if (data.type === SocketTypes.journal){
-
+            // If user is a GM and the primary GM then save the journal requests, otherwise do nothing
+            if(GameSettings.IsGm() && this.primary){
+                Logger.debug(`Saving notes from user.`);
+                await GameSettings.SaveNotes((<SimpleCalendarSocket.SimpleCalendarSocketJournal>data.data).notes)
+            }
+        } else if (data.type === SocketTypes.primary){
+            Logger.debug('A primary GM is all ready present.');
+            window.clearTimeout(this.primaryCheckTimeout);
         }
     }
 
@@ -102,6 +131,8 @@ export default class SimpleCalendar extends Application{
         if(this.currentYear){
             return {
                 isGM: GameSettings.IsGm(),
+                isPrimary: this.primary,
+                addNotes: GameSettings.IsGm() || this.currentYear.generalSettings.playersAddNotes,
                 currentYear: this.currentYear.toTemplate(),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
@@ -112,6 +143,8 @@ export default class SimpleCalendar extends Application{
         } else {
             return {
                 isGM: false,
+                isPrimary: this.primary,
+                addNotes: false,
                 currentYear: new Year(0).toTemplate(),
                 showCurrentDay: false,
                 showSelectedDay: false,
@@ -451,28 +484,32 @@ export default class SimpleCalendar extends Application{
     public addNote(e: Event) {
         e.stopPropagation();
         if(this.currentYear){
-            const currentMonth = this.currentYear.getMonth('selected') || this.currentYear.getMonth();
-            if(currentMonth){
-                const currentDay = currentMonth.getDay('selected') || currentMonth.getDay();
-                if(currentDay){
-                    const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
-                    const month = currentMonth.numericRepresentation;
-                    const day = currentDay.numericRepresentation;
-                    const newNote = new Note();
-                    newNote.year = year;
-                    newNote.month = month;
-                    newNote.day = day;
-                    newNote.monthDisplay = currentMonth.name;
-                    newNote.title = '';
-                    newNote.author = GameSettings.UserName();
-                    newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
-                    SimpleCalendarNotes.instance = new SimpleCalendarNotes(newNote);
-                    SimpleCalendarNotes.instance.showApp();
-                } else {
-                    GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedDay"), 'warn');
-                }
+            if(game.users && !game.users.find(u => u.isGM && u.active)){
+                GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
             } else {
-                GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedMonth"), 'warn');
+                const currentMonth = this.currentYear.getMonth('selected') || this.currentYear.getMonth();
+                if(currentMonth){
+                    const currentDay = currentMonth.getDay('selected') || currentMonth.getDay();
+                    if(currentDay){
+                        const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
+                        const month = currentMonth.numericRepresentation;
+                        const day = currentDay.numericRepresentation;
+                        const newNote = new Note();
+                        newNote.year = year;
+                        newNote.month = month;
+                        newNote.day = day;
+                        newNote.monthDisplay = currentMonth.name;
+                        newNote.title = '';
+                        newNote.author = GameSettings.UserID();
+                        newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
+                        SimpleCalendarNotes.instance = new SimpleCalendarNotes(newNote);
+                        SimpleCalendarNotes.instance.showApp();
+                    } else {
+                        GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedDay"), 'warn');
+                    }
+                } else {
+                    GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedMonth"), 'warn');
+                }
             }
         } else {
             Logger.error('The Current year is not configured.');

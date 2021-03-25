@@ -61,7 +61,7 @@ const game = {
                 case SettingNames.Notes:
                     return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false, id: 'abc123'}]];
                 case SettingNames.GeneralConfiguration:
-                    return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false}
+                    return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false}
                 case SettingNames.TimeConfiguration:
                     return {hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3};
             }
@@ -90,6 +90,12 @@ const game = {
         DTC: {
             saveUserCalendar: jest.fn()
         }
+    },
+    users: {
+        get: jest.fn(),
+        find: jest.fn((v)=>{
+            return v.call(undefined, {isGM: false, active: true});
+        })
     }
 };
 

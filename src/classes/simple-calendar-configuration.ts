@@ -589,6 +589,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<Year>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>(<HTMLInputElement>e.currentTarget).value;
         } else if(id === 'scShowClock'){
             (<Year>this.object).generalSettings.showClock = (<HTMLInputElement>e.currentTarget).checked;
+        } else if(id === 'scPlayersAddNotes'){
+            (<Year>this.object).generalSettings.playersAddNotes = (<HTMLInputElement>e.currentTarget).checked;
         }
     }
 
@@ -812,6 +814,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             // Update the general Settings
             (<Year>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>(<HTMLInputElement>document.getElementById("scGameWorldTime")).value;
             (<Year>this.object).generalSettings.showClock = (<HTMLInputElement>document.getElementById("scShowClock")).checked;
+            (<Year>this.object).generalSettings.playersAddNotes = (<HTMLInputElement>document.getElementById("scPlayersAddNotes")).checked;
 
             await GameSettings.SaveGeneralSettings((<Year>this.object).generalSettings);
 

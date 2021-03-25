@@ -40,6 +40,7 @@ describe('Simple Calendar Class Tests', () => {
         renderSpy.mockClear();
         (<Mock>game.settings.get).mockClear();
         (<Mock>game.settings.set).mockClear();
+        (<Mock>game.socket.emit).mockClear();
         //@ts-ignore
         (<Mock>ui.notifications.warn).mockClear();
 
@@ -58,7 +59,7 @@ describe('Simple Calendar Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(SimpleCalendar.instance).length).toBe(6); //Make sure no new properties have been added
+        expect(Object.keys(SimpleCalendar.instance).length).toBe(7); //Make sure no new properties have been added
     });
 
     test('Default Options', () => {
@@ -72,9 +73,9 @@ describe('Simple Calendar Class Tests', () => {
         expect(spy).toHaveBeenCalled()
     });
 
-    test('Init', () => {
+    test('Init', async () => {
         expect(SimpleCalendar.instance.currentYear).toBeNull();
-        SimpleCalendar.instance.init();
+        await SimpleCalendar.instance.init();
         expect(Handlebars.registerHelper).toHaveBeenCalledTimes(3);
         expect(game.settings.register).toHaveBeenCalledTimes(10);
         expect(game.settings.get).toHaveBeenCalledTimes(9);
@@ -87,29 +88,52 @@ describe('Simple Calendar Class Tests', () => {
         //Testing the functions within the handlebar helpers
         // @ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.init();
+        await SimpleCalendar.instance.init();
         expect(Handlebars.registerHelper).toHaveBeenCalledTimes(6);
+        // @ts-ignore
+        expect(SimpleCalendar.instance.primaryCheckTimeout).toBeDefined();
+        expect(game.socket.emit).toHaveBeenCalledTimes(1);
         // @ts-ignore
         game.user.isGM = false;
     });
 
-    test('Process Socket', () => {
+    test('Primary Check Timeout Call', () => {
+        SimpleCalendar.instance.primaryCheckTimeoutCall();
+        expect(SimpleCalendar.instance.primary).toBe(true);
+        expect(game.socket.emit).toHaveBeenCalledTimes(1);
+    })
+
+    test('Process Socket', async () => {
         const d: SimpleCalendarSocket.Data = {
             type: SocketTypes.time,
             data: {
                 clockClass: ''
             }
         };
-        SimpleCalendar.instance.processSocket(d);
+        await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
         d.type = SocketTypes.journal;
-        SimpleCalendar.instance.processSocket(d);
+        d.data = {notes: []};
+        await SimpleCalendar.instance.processSocket(d);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+
+        // @ts-ignore
+        game.user.isGM = true;
+        SimpleCalendar.instance.primary = true;
+        await SimpleCalendar.instance.processSocket(d);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+
+        // @ts-ignore
+        game.user.isGM = false;
+
+        d.type = SocketTypes.primary;
+        await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         d.type = 'asd';
-        SimpleCalendar.instance.processSocket(d);
+        await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -117,6 +141,7 @@ describe('Simple Calendar Class Tests', () => {
         let data = await SimpleCalendar.instance.getData();
         expect(data).toStrictEqual({
             "isGM": false,
+            "isPrimary": false,
             "currentYear": {
                 "clockClass": "stopped",
                 "currentTime": {
@@ -140,6 +165,7 @@ describe('Simple Calendar Class Tests', () => {
             "showCurrentDay": false,
             "showSelectedDay": false,
             "notes": [],
+            "addNotes": false,
             "clockClass": 'stopped',
             "timeUnits": {
                 second: true,
@@ -546,23 +572,34 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.currentYear.months[0].days[0].current = false;
         SimpleCalendar.instance.currentYear.months[0].days[0].selected = false;
 
-        //No Current or selected month
+        //No GM Present
         SimpleCalendar.instance.addNote(event);
         //@ts-ignore
         expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
+
+        //GM is present
+        //@ts-ignore
+        (<Mock>game.users.find) = jest.fn((v)=>{
+            return v.call(undefined, {isGM: true, active: true});
+        });
+
+        //No Current or selected month
+        SimpleCalendar.instance.addNote(event);
+        //@ts-ignore
+        expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
 
         //Current Month but no selected or current day
         SimpleCalendar.instance.currentYear.months[0].current = true;
         SimpleCalendar.instance.addNote(event);
         //@ts-ignore
-        expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
+        expect(ui.notifications.warn).toHaveBeenCalledTimes(3);
 
         //Current and Selected Month, current day but no selected day
         SimpleCalendar.instance.currentYear.months[0].selected = true;
         SimpleCalendar.instance.currentYear.months[0].days[0].current = true;
         SimpleCalendar.instance.addNote(event);
         //@ts-ignore
-        expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
+        expect(ui.notifications.warn).toHaveBeenCalledTimes(3);
     });
 
     test('View Note', () => {

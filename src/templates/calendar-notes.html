@@ -8,6 +8,7 @@
             {{/if}}
         </p>
         <h1>{{object.title}}</h1>
+        <div class="note-author">{{localize 'FSC.Notes.Author'}}: {{authorName}}</div>
         {{else}}
         <h1>{{localize 'FSC.Notes.NewFor'}} {{object.monthDisplay}} {{object.day}}, {{object.year}}</h1>
         <div class="form-group">
@@ -20,7 +21,7 @@
         <div class="form-group">
             <label for="scNoteVisibility">{{localize 'FSC.Notes.PlayerVisible'}}</label>
             <div class="form-fields">
-                <input value="{{object.playerVisible}}" type="checkbox" id="scNoteVisibility" {{#if object.playerVisible}}checked="checked"{{/if}} />
+                <input value="{{object.playerVisible}}" type="checkbox" id="scNoteVisibility" {{#if object.playerVisible}}checked="checked"{{/if}} {{#unless isGM}}disabled="disabled"{{/unless}} />
             </div>
             <p class="notes">{{localize 'FSC.Notes.PlayerVisibleHelp'}}</p>
         </div>

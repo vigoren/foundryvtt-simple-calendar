@@ -2,6 +2,7 @@
  * Interface for the calendar template that is passed to the HTML for rendering
  */
 import {LeapYearRules, NoteRepeat, GameWorldTimeIntegrations, SocketTypes} from "./constants";
+import {Note} from "./classes/note";
 
 /**
  * The general settings for the Simple calendar
@@ -12,10 +13,14 @@ export interface GeneralSettings {
     gameWorldTimeIntegration: GameWorldTimeIntegrations;
     /** If to show the clock below the calendar */
     showClock: boolean;
+    /** If players can add their own notes */
+    playersAddNotes: boolean;
 }
 
 export interface CalendarTemplate {
     isGM: boolean;
+    isPrimary: boolean;
+    addNotes: boolean;
     currentYear: YearTemplate;
     showSelectedDay: boolean;
     showCurrentDay: boolean;
@@ -206,7 +211,7 @@ export namespace SimpleCalendarSocket{
      */
     export interface Data {
         type: SocketTypes;
-        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime;
+        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary;
     }
 
     /**
@@ -220,6 +225,13 @@ export namespace SimpleCalendarSocket{
      * Interface for socket data that has to do with journals
      */
     export interface SimpleCalendarSocketJournal{
+        notes: Note[];
+    }
+
+    /**
+     * Interface for a GM to take over being the primary source
+     */
+    export interface SimpleCalendarPrimary{
 
     }
 }

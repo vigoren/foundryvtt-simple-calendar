@@ -48,6 +48,7 @@ These are the settings pertaining to notes.
 Setting | Description
 -------- | ----------
 Note Default Player Visibility | For new notes, if by default the player visibility option is checked or not.
+Players Can Add Notes | If checked players will be allowed to add their own notes to the calendar.
 
 ### Third Party Module Import/Export
 
