@@ -74,17 +74,42 @@ Most settings can be imported and exported between these two modules with these 
     - When Importing from Calendar/Weather no leap year rule will be set in Simple Calendar.
     - When Exporting to Calendar/Weather the date will be off by the number of leap days that have passed so far. Example if there have been 4 leap years with 1 extra day each year the Calendar/Weather's calendar will be ahead by 4 days. This gets very exaggerated when using a Gregorian calendar for today's date as there have been 490 extra leap days for 2021.
 - Calendar/Weather uses about-time at its core, because of this the [intercalary issue](#about-time) exists as well.
+- Calendar/Weather's season colors and Simple Calendar's season colors do not line up so they are not Imported or Exported.
+- Calendar/Weather's season month is not properly stored:
+    - When Importing from Calendar/Weather every season will have its month set to be the first month.
+    - When Exporting to Calendar/Weather every season will have no month set.
 
 
 ## Year Settings
 
 This tab allows you to change some settings about the years in your game world
 
+### Current Year
+
+This section is for setting information about the current year. The settings that are available to change are listed below:
+
 Setting | Description
 -------- | ----------
 Current Year | The Current year your game world is in. This can be any positive number.
 Year Prefix | Text that will appear before the year number.
 Year Postfix | Text that will appear after the year number.
+
+### Seasons
+
+This section displays all the seasons that exist in the calendar. 
+Seasons are optional but can provide a nice thematic for your world.
+The options available for customizing each Season are listed below:
+
+Setting | Description
+--------|------------
+Season Name | These text boxes for each season allow you to change the name of an existing season.
+Starting Month | These drop downs for each season show all of the months of your calendar and allow you to choose which month this season starts in.
+Starting Day | These drop downs for each season show all of the days for the selected Starting Month and allow you to choose with day the season starts on in that month.
+Color | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color.
+Custom Color | If the color option is set to Custom Color this text box will appear where you can enter a custom Hex representation of a color to use for the season.
+Remove Button | These buttons for each season allow you to remove the specific season from the list.
+Add New Season Button | This button will add a new season to the bottom of the list with a default name that you can then configure to your liking.
+Remove All Seasons Button | This button will remove all of the seasons from the list.
 
 ## Month Settings
 

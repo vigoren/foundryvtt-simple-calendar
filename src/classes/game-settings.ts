@@ -7,7 +7,7 @@ import {
     YearConfig,
     NoteConfig,
     LeapYearConfig,
-    TimeConfig, GeneralSettings, SimpleCalendarSocket
+    TimeConfig, GeneralSettings, SimpleCalendarSocket, SeasonConfiguration, MoonConfiguration
 } from "../interfaces";
 import {ModuleName, ModuleSocketName, SettingNames, SocketTypes} from "../constants";
 import SimpleCalendar from "./simple-calendar";
@@ -16,6 +16,7 @@ import {Weekday} from "./weekday";
 import {Note} from "./note";
 import LeapYear from "./leap-year";
 import Time from "./time";
+import Season from "./season";
 
 export class GameSettings {
     /**
@@ -128,6 +129,22 @@ export class GameSettings {
             type: Boolean,
             default: false
         });
+        game.settings.register(ModuleName, SettingNames.SeasonConfiguration, {
+            name: "Season Configuration",
+            scope: "world",
+            config: false,
+            type: Array,
+            default: [],
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'season')
+        });
+        game.settings.register(ModuleName, SettingNames.MoonConfiguration, {
+            name: "Moon Configuration",
+            scope: "world",
+            config: false,
+            type: Array,
+            default: [],
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'moon')
+        });
     }
 
     /**
@@ -193,6 +210,36 @@ export class GameSettings {
         if(weekdayData && weekdayData.length) {
             if (Array.isArray(weekdayData[0])) {
                 returnData = <WeekdayConfig[]>weekdayData[0];
+            }
+        }
+        return returnData;
+    }
+
+    /**
+     * Loads the season configuration from the game world settings
+     * @return {Array.<SeasonConfiguration>}
+     */
+    static LoadSeasonData(): SeasonConfiguration[] {
+        let returnData: SeasonConfiguration[] = [];
+        let seasonData = <any[]>game.settings.get(ModuleName, SettingNames.SeasonConfiguration);
+        if(seasonData && seasonData.length) {
+            if (Array.isArray(seasonData[0])) {
+                returnData = <SeasonConfiguration[]>seasonData[0];
+            }
+        }
+        return returnData;
+    }
+
+    /**
+     * Loads the moon configuration from the game world settings
+     * @return {Array.<SeasonConfiguration>}
+     */
+    static LoadMoonData(): MoonConfiguration[] {
+        let returnData: MoonConfiguration[] = [];
+        let seasonData = <any[]>game.settings.get(ModuleName, SettingNames.MoonConfiguration);
+        if(seasonData && seasonData.length) {
+            if (Array.isArray(seasonData[0])) {
+                returnData = <MoonConfiguration[]>seasonData[0];
             }
         }
         return returnData;
@@ -358,6 +405,42 @@ export class GameSettings {
                 Logger.debug('Weekday configuration has not changed, not updating settings');
             }
 
+        }
+        return false;
+    }
+
+    /**
+     * Saves the passed in season configuration in the world settings
+     * @param {Array.<Season>>} seasons List of seasons
+     */
+    static async SaveSeasonConfiguration(seasons: Season[]): Promise<boolean> {
+        if(GameSettings.IsGm()){
+            Logger.debug('Saving season configuration.');
+            const currentConfig = JSON.stringify(GameSettings.LoadSeasonData());
+            const newConfig: SeasonConfiguration[] = seasons.map(s => {return {name: s.name, staringMonth: s.startingMonth, startingDay: s.startingDay, color: s.color, customColor: s.customColor}});
+            if(currentConfig !== JSON.stringify(newConfig)){
+                return game.settings.set(ModuleName, SettingNames.SeasonConfiguration, newConfig).then(() => {return true;});
+            } else {
+                Logger.debug('Season configuration has not changed, not updating.');
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Saves the passed in moon configuration in the world settings
+     * @param {Array.<Moon>} moons List of moons
+     */
+    static async SaveMoonConfiguration(moons: Season[]): Promise<boolean> {
+        if(GameSettings.IsGm()){
+            Logger.debug('Saving moon configuration.');
+            const currentConfig = JSON.stringify(GameSettings.LoadMoonData());
+            const newConfig: MoonConfiguration[] = moons.map(m => {return {}});
+            if(currentConfig !== JSON.stringify(newConfig)){
+                return game.settings.set(ModuleName, SettingNames.MoonConfiguration, newConfig).then(() => {return true;});
+            } else {
+                Logger.debug('Moon configuration has not changed, not updating.');
+            }
         }
         return false;
     }

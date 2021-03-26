@@ -61,6 +61,10 @@ export interface YearTemplate {
     showDateControls: boolean;
 
     currentTime: TimeTemplate;
+
+    currentSeasonName: string;
+
+    currentSeasonColor: string;
 }
 
 /**
@@ -199,6 +203,27 @@ export interface TimeTemplate {
     hour: string;
     minute: string;
     second: string;
+}
+
+export interface SeasonTemplate {
+    name: string;
+    startingMonth: number;
+    startingDay: number;
+    color: string;
+    customColor: string;
+    dayList: DayTemplate[]
+}
+
+export interface SeasonConfiguration {
+    name: string;
+    staringMonth: number;
+    startingDay: number;
+    color: string;
+    customColor: string;
+}
+
+export interface MoonConfiguration {
+
 }
 
 /**

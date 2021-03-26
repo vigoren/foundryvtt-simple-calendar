@@ -125,8 +125,8 @@
         }
       }
 
-      &:nth-child(even) {
-        background-color: rgba(255, 255, 255, 0.2);
+      &:nth-child(odd) {
+        background-color: #b1b1b133;
       }
 
       .month-name, .month-days{
@@ -161,7 +161,7 @@
     .spacer{
       flex: 1 1;
     }
-    .remove-month, .month-add{
+    button{
       width: 200px;
     }
   }

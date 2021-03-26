@@ -6,6 +6,7 @@ import LeapYear from "./leap-year";
 import Time from "./time";
 import {GameWorldTimeIntegrations} from "../constants";
 import {GameSettings} from "./game-settings";
+import Season from "./season";
 
 /**
  * Class for representing a year
@@ -52,11 +53,20 @@ export default class Year {
      * @type {LeapYear}
      */
     leapYearRule: LeapYear;
-
+    /**
+     * The time object responsible for all time related functionality
+     * @type {Time}
+     */
     time: Time;
-
+    /**
+     * If Simple Calendar has initiated a time change
+     * @type {boolean}
+     */
     timeChangeTriggered: boolean = false;
-
+    /**
+     * If a combat change has been triggered
+     * @type {boolean}
+     */
     combatChangeTriggered: boolean = false;
 
     /**
@@ -67,6 +77,11 @@ export default class Year {
         showClock: false,
         playersAddNotes: false
     };
+    /**
+     * All of the seasons in this game
+     * @type {Array.<Season>}
+     */
+    seasons: Season[] = [];
 
     /**
      * The Year constructor
@@ -102,6 +117,7 @@ export default class Year {
                 sDay = d.name;
             }
         }
+        const currentSeason = this.getCurrentSeason();
         return {
             display: this.getDisplayName(),
             selectedDisplayYear: this.getDisplayName(true),
@@ -116,7 +132,9 @@ export default class Year {
             clockClass: this.time.getClockClass(),
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
-            currentTime: this.time.getCurrentTime()
+            currentTime: this.time.getCurrentTime(),
+            currentSeasonName: currentSeason.name,
+            currentSeasonColor: currentSeason.color
         }
     }
 
@@ -139,6 +157,7 @@ export default class Year {
         y.generalSettings.gameWorldTimeIntegration = this.generalSettings.gameWorldTimeIntegration;
         y.generalSettings.showClock = this.generalSettings.showClock;
         y.generalSettings.playersAddNotes = this.generalSettings.playersAddNotes;
+        y.seasons = this.seasons.map(s => s.clone());
         return y;
     }
 
@@ -504,5 +523,45 @@ export default class Year {
         Logger.debug('Resetting time change triggers.');
         this.timeChangeTriggered = false;
         this.combatChangeTriggered = false;
+    }
+
+    /**
+     * Gets the current season based on the current date
+     */
+    getCurrentSeason() {
+        let currentMonth = 0, currentDay = 0;
+
+        const month = this.getMonth();
+        if(month){
+            currentMonth = month.numericRepresentation;
+            const day = month.getDay();
+            if(day){
+                currentDay = day.numericRepresentation;
+            }
+        }
+        if(currentDay > 0 && currentMonth > 0){
+            let currentSeason: Season | null = null;
+            for(let i = 0; i < this.seasons.length; i++){
+                if(this.seasons[i].startingMonth === currentMonth && this.seasons[i].startingDay <= currentDay){
+                    currentSeason = this.seasons[i];
+                } else if (this.seasons[i].startingMonth < currentMonth){
+                    currentSeason = this.seasons[i];
+                }
+            }
+            if(currentSeason === null){
+                currentSeason = this.seasons[this.seasons.length - 1];
+            }
+
+            return {
+                name: currentSeason.name,
+                color: currentSeason.color === 'custom'? currentSeason.customColor : currentSeason.color
+            };
+        } else {
+            Logger.error(`Unable to determine the current season as no current date is selected`);
+        }
+        return {
+            name: '',
+            color: ''
+        };
     }
 }

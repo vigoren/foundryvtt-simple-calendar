@@ -4,6 +4,7 @@ import {Weekday} from "./weekday";
 import Month from "./month";
 import {LeapYearRules} from "../constants";
 import {GameSettings} from "./game-settings";
+import Season from "./season";
 
 export default class Importer{
 
@@ -118,6 +119,10 @@ export default class Importer{
     /**
      * Loads the calendar/weather calendar configuration into Simple Calendars configuration
      * @param {Year} year The year to load the about time configuration into
+     *
+     * Known Issues:
+     *      - Seasons: The month is not properly stored by calendar-weather so all months are set to the first month
+     *      - Seasons: The color of the seasons can not be transferred over
      */
     static async importCalendarWeather(year: Year){
         const currentSettings = <CalendarWeatherImport.Calendar> game.settings.get('calendar-weather', 'dateTime');
@@ -150,6 +155,13 @@ export default class Importer{
 
         year.leapYearRule.rule = LeapYearRules.None;
 
+        //Set up the seasons
+        year.seasons = [];
+        for(let i = 0; i < currentSettings.seasons.length; i++){
+            const nSeason = new Season(currentSettings.seasons[i].name, 1, currentSettings.seasons[i].date.day + 1);
+            year.seasons.push(nSeason);
+        }
+
         //Set the current time
         const currentTime = year.secondsToDate(game.time.worldTime);
         year.updateTime(currentTime);
@@ -170,6 +182,7 @@ export default class Importer{
      * Known Issues:
      *      - Calendar/Weather does not support leap years so any calendar that has leap years will not work properly and be out of sync with Simple Calendar
      *      - As About time is used as the base, the same known issues for that will apply here
+     *      - Seasons: Simple Calendars colors do not exist in Calendar/Weather so they can not be exported
      */
     static async exportCalendarWeather(year: Year){
         const currentSettings = <CalendarWeatherImport.Calendar>game.settings.get('calendar-weather', 'dateTime');
@@ -182,6 +195,24 @@ export default class Importer{
                 leapLength: year.months[i].numberOfLeapYearDays,
                 isNumbered: !year.months[i].intercalary,
                 abbrev: year.months[i].intercalary? year.months[i].name.substring(0,2) : ''
+            });
+        }
+
+        const seasonList: CalendarWeatherImport.Seasons[] = [];
+        for(let i = 0; i < year.seasons.length; i++){
+            seasonList.push({
+                name: year.seasons[i].name,
+                color: '',
+                dawn: 6,
+                dusk: 19,
+                humidity: '=',
+                rolltable: '',
+                temp: '=',
+                date: {
+                    day: year.seasons[i].startingDay - 1,
+                    month: '',
+                    combined: `-${year.seasons[i].startingDay - 1}`
+                }
             });
         }
 
@@ -199,6 +230,7 @@ export default class Importer{
         currentSettings.era = '';
         currentSettings.dayLength = year.time.hoursInDay
         currentSettings.first_day = 0;
+        currentSettings.seasons = seasonList;
         await game.settings.set('calendar-weather', 'dateTime', currentSettings);
         await Importer.exportToAboutTime(year);
         window.location.reload();

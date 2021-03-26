@@ -10,6 +10,7 @@ import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
 import {GameWorldTimeIntegrations, ModuleSocketName, SocketTypes} from "../constants";
 import Importer from "./importer";
+import Season from "./season";
 
 
 /**
@@ -568,6 +569,12 @@ export default class SimpleCalendar extends Application{
         if(type === 'all' || type === 'time'){
             this.loadTimeConfiguration();
         }
+        if(type === 'all' || type === 'season'){
+            this.loadSeasonConfiguration();
+        }
+        if(type === 'all' || type === 'moon'){
+            this.loadMoonConfiguration();
+        }
         if(type === 'all' || type === 'general'){
             this.loadGeneralSettings();
         }
@@ -687,6 +694,45 @@ export default class SimpleCalendar extends Application{
             }
         } else {
             Logger.error('No Current year configured, can not load weekday data.');
+        }
+    }
+
+    /**
+     * Loads the season configuration data from the settings and applies them to the current year
+     * @private
+     */
+    private loadSeasonConfiguration(){
+        Logger.debug('Loading season configuration from settings.');
+        if(this.currentYear){
+            const seasonData = GameSettings.LoadSeasonData();
+            if(seasonData.length){
+                Logger.debug('Setting the seasons from data.');
+                this.currentYear.seasons = [];
+                for(let i = 0; i < seasonData.length; i++){
+                    const newSeason = new Season(seasonData[i].name, seasonData[i].staringMonth, seasonData[i].startingDay);
+                    newSeason.color = seasonData[i].color;
+                    newSeason.customColor = seasonData[i].customColor;
+                    this.currentYear.seasons.push(newSeason);
+                }
+            }
+        } else {
+            Logger.error('No Current year configured, can not load season data.');
+        }
+    }
+
+    /**
+     * Loads the moon configuration data from the settings and applies them to the current year
+     * @private
+     */
+    private loadMoonConfiguration(){
+        Logger.debug('Loading moon configuration from settings.');
+        if(this.currentYear){
+            const moonData = GameSettings.LoadMoonData();
+            if(moonData.length){
+                Logger.debug('Setting the moons from data.');
+            }
+        } else {
+            Logger.error('No Current year configured, can not load moon data.');
         }
     }
 

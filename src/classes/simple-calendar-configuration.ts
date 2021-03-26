@@ -5,6 +5,7 @@ import Month from "./month";
 import {Weekday} from "./weekday";
 import {LeapYearRules, GameWorldTimeIntegrations} from "../constants";
 import Importer from "./importer";
+import Season from "./season";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -111,7 +112,37 @@ export class SimpleCalendarConfiguration extends FormApplication {
             importing: {
                 showAboutTime: false,
                 showCalendarWeather:false
-            }
+            },
+            seasons: (<Year>this.object).seasons.map(s => s.toTemplate()),
+            seasonColors: [
+                {
+                    value: '#ffffff',
+                    display: GameSettings.Localize("FSC.Configuration.Season.ColorWhite")
+                },
+                {
+                    value: '#fffce8',
+                    display: GameSettings.Localize("FSC.Configuration.Season.ColorSpring")
+                },
+                {
+                    value: '#f3fff3',
+                    display: GameSettings.Localize("FSC.Configuration.Season.ColorSummer")
+                },
+                {
+                    value: '#fff7f2',
+                    display: GameSettings.Localize("FSC.Configuration.Season.ColorFall")
+                },
+                {
+                    value: '#f2f8ff',
+                    display: GameSettings.Localize("FSC.Configuration.Season.ColorWinter")
+                },
+                {
+                    value: 'custom',
+                    display: GameSettings.Localize("FSC.Configuration.Season.ColorCustom")
+                }
+            ]
+
+
+
         };
 
         const calendarWeather = game.modules.get('calendar-weather');
@@ -155,11 +186,17 @@ export class SimpleCalendarConfiguration extends FormApplication {
             //Weekday Deletes
             (<JQuery>html).find(".remove-weekday").on('click', SimpleCalendarConfiguration.instance.removeWeekday.bind(this));
 
+            //Season Deletes
+            (<JQuery>html).find(".remove-season").on('click', SimpleCalendarConfiguration.instance.removeSeason.bind(this));
+
             //Add Month
             (<JQuery>html).find(".month-add").on('click', SimpleCalendarConfiguration.instance.addMonth.bind(this));
 
             //Add Weekday
             (<JQuery>html).find(".weekday-add").on('click', SimpleCalendarConfiguration.instance.addWeekday.bind(this));
+
+            //Add Season
+            (<JQuery>html).find(".season-add").on('click', SimpleCalendarConfiguration.instance.addSeason.bind(this));
 
             //Import Buttons
             (<JQuery>html).find("#scAboutTimeImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'about-time'));
@@ -172,6 +209,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find("#scGameWorldTime").on('change', SimpleCalendarConfiguration.instance.generalInputChange.bind(this));
             (<JQuery>html).find("#scShowClock").on('change', SimpleCalendarConfiguration.instance.generalInputChange.bind(this));
             (<JQuery>html).find(".year-settings input").on('change', SimpleCalendarConfiguration.instance.yearInputChange.bind(this));
+            (<JQuery>html).find(".year-settings select").on('change', SimpleCalendarConfiguration.instance.yearInputChange.bind(this));
             (<JQuery>html).find(".month-settings .f-table .row div input").on('change', SimpleCalendarConfiguration.instance.monthInputChange.bind(this));
             (<JQuery>html).find(".weekday-settings #scShowWeekdayHeaders").on('change', SimpleCalendarConfiguration.instance.showWeekdayInputChange.bind(this));
             (<JQuery>html).find(".weekday-settings table td input").on('change', SimpleCalendarConfiguration.instance.weekdayInputChange.bind(this));
@@ -272,6 +310,35 @@ export class SimpleCalendarConfiguration extends FormApplication {
     }
 
     /**
+     * Adds a new season to the list of seasons in the year
+     * @param {Event} e The click event
+     */
+    public addSeason(e: Event){
+        e.preventDefault();
+        (<Year>this.object).seasons.push(new Season('New Season', 1, 1));
+        this.updateApp();
+    }
+
+    /**
+     * Removes a specific season or all the seasons from the list of seasons in the year
+     * @param {Event} e The click event
+     */
+    public removeSeason(e: Event){
+        e.preventDefault();
+        const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
+        if(dataIndex && dataIndex !== 'all'){
+            const index = parseInt(dataIndex);
+            if(!isNaN(index) && index < (<Year>this.object).seasons.length){
+                (<Year>this.object).seasons.splice(index, 1);
+                this.updateApp();
+            }
+        } else if(dataIndex && dataIndex === 'all'){
+            (<Year>this.object).seasons = [];
+            this.updateApp();
+        }
+    }
+
+    /**
      * When the GM confirms using a predefined calendar
      */
     public predefinedApplyConfirm() {
@@ -307,6 +374,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(6, GameSettings.Localize('FSC.Date.Friday')),
                     new Weekday(7, GameSettings.Localize('FSC.Date.Saturday'))
                 ];
+                (<Year>this.object).seasons = [
+                    new Season('Spring', 3, 20),
+                    new Season('Summer', 6, 20),
+                    new Season('Fall', 9, 22),
+                    new Season('Winter', 12, 21)
+                ];
                 (<Year>this.object).time.hoursInDay = 24;
                 (<Year>this.object).time.minutesInHour = 60;
                 (<Year>this.object).time.secondsInMinute = 60;
@@ -315,6 +388,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[currentDate.getMonth()].current = true;
                 (<Year>this.object).months[currentDate.getMonth()].days[currentDate.getDate()-1].current = true;
+                (<Year>this.object).seasons[0].color = "#fffce8";
+                (<Year>this.object).seasons[1].color = "#f3fff3";
+                (<Year>this.object).seasons[2].color = "#fff7f2";
+                (<Year>this.object).seasons[3].color = "#f2f8ff";
                 break;
             case 'eberron':
                 (<Year>this.object).numericRepresentation = 998;
@@ -379,6 +456,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(5, 'Yulisen'),
                     new Weekday(6, 'Da\'leysen')
                 ];
+                (<Year>this.object).seasons = [
+                    new Season('Spring', 3, 13),
+                    new Season('Summer', 5, 26),
+                    new Season('Autumn', 8, 3),
+                    new Season('Winter', 11, 2)
+                ];
                 (<Year>this.object).time.hoursInDay = 24;
                 (<Year>this.object).time.minutesInHour = 60;
                 (<Year>this.object).time.secondsInMinute = 60;
@@ -387,6 +470,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[0].current = true;
                 (<Year>this.object).months[0].days[0].current = true;
+                (<Year>this.object).seasons[0].color = "#fffce8";
+                (<Year>this.object).seasons[1].color = "#f3fff3";
+                (<Year>this.object).seasons[2].color = "#fff7f2";
+                (<Year>this.object).seasons[3].color = "#f2f8ff";
                 break;
             case 'golarian':
                 (<Year>this.object).numericRepresentation = 4710;
@@ -416,6 +503,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(6, 'Starday'),
                     new Weekday(7, 'Sunday')
                 ];
+                (<Year>this.object).seasons = [
+                    new Season('Spring', 3, 1),
+                    new Season('Summer', 6, 1),
+                    new Season('Fall', 9, 1),
+                    new Season('Winter', 12, 1)
+                ];
                 (<Year>this.object).time.hoursInDay = 24;
                 (<Year>this.object).time.minutesInHour = 60;
                 (<Year>this.object).time.secondsInMinute = 60;
@@ -424,6 +517,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).leapYearRule.customMod = 8;
                 (<Year>this.object).months[0].current = true;
                 (<Year>this.object).months[0].days[0].current = true;
+                (<Year>this.object).seasons[0].color = "#fffce8";
+                (<Year>this.object).seasons[1].color = "#f3fff3";
+                (<Year>this.object).seasons[2].color = "#fff7f2";
+                (<Year>this.object).seasons[3].color = "#f2f8ff";
                 break;
             case 'greyhawk':
                 (<Year>this.object).numericRepresentation = 591 ;
@@ -461,6 +558,18 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(6, 'Earthday'),
                     new Weekday(7, 'Freeday')
                 ];
+                (<Year>this.object).seasons = [
+                    new Season('Spring', 2, 1),
+                    new Season('Low Summer', 4, 1),
+                    new Season('High Summer', 7, 1),
+                    new Season('Fall', 10, 1),
+                    new Season('Winter', 12, 1)
+                ];
+                (<Year>this.object).seasons[0].color = "#fffce8";
+                (<Year>this.object).seasons[1].color = "#f3fff3";
+                (<Year>this.object).seasons[2].color = "#f3fff3";
+                (<Year>this.object).seasons[3].color = "#fff7f2";
+                (<Year>this.object).seasons[4].color = "#f2f8ff";
                 (<Year>this.object).time.hoursInDay = 24;
                 (<Year>this.object).time.minutesInHour = 60;
                 (<Year>this.object).time.secondsInMinute = 60;
@@ -513,6 +622,16 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(9, '9th'),
                     new Weekday(10, '10th')
                 ];
+                (<Year>this.object).seasons = [
+                    new Season('Spring', 3, 19),
+                    new Season('Summer', 6, 20),
+                    new Season('Fall', 9, 21),
+                    new Season('Winter', 12, 20)
+                ];
+                (<Year>this.object).seasons[0].color = "#fffce8";
+                (<Year>this.object).seasons[1].color = "#f3fff3";
+                (<Year>this.object).seasons[2].color = "#fff7f2";
+                (<Year>this.object).seasons[3].color = "#f2f8ff";
                 (<Year>this.object).time.hoursInDay = 24;
                 (<Year>this.object).time.minutesInHour = 60;
                 (<Year>this.object).time.secondsInMinute = 60;
@@ -563,6 +682,16 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(7, 'Angestag'),
                     new Weekday(8, 'Festag')
                 ];
+                (<Year>this.object).seasons = [
+                    new Season('Spring', 3, 20),
+                    new Season('Summer', 6, 20),
+                    new Season('Fall', 9, 22),
+                    new Season('Winter', 12, 21)
+                ];
+                (<Year>this.object).seasons[0].color = "#fffce8";
+                (<Year>this.object).seasons[1].color = "#f3fff3";
+                (<Year>this.object).seasons[2].color = "#fff7f2";
+                (<Year>this.object).seasons[3].color = "#f2f8ff";
                 (<Year>this.object).time.hoursInDay = 24;
                 (<Year>this.object).time.minutesInHour = 60;
                 (<Year>this.object).time.secondsInMinute = 60;
@@ -600,7 +729,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public yearInputChange(e: Event){
         const id = (<HTMLElement>e.currentTarget).id;
-        const value = (<HTMLInputElement>e.currentTarget).value;
+        let value = (<HTMLInputElement>e.currentTarget).value.trim();
         if(id === "scCurrentYear"){
             const year = parseInt(value);
             if(!isNaN(year)){
@@ -611,7 +740,34 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<Year>this.object).prefix = value;
         } else if(id === 'scYearPostFix'){
             (<Year>this.object).postfix = value;
+        } else {
+            const cssClass = (<HTMLElement>e.currentTarget).getAttribute('class');
+            const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
+            if(dataIndex && cssClass){
+                const index = parseInt(dataIndex);
+                if(cssClass === 'season-name' && (<Year>this.object).seasons.length > index){
+                    (<Year>this.object).seasons[index].name = value;
+                } else if(cssClass === 'season-custom' && (<Year>this.object).seasons.length > index){
+                    if(value[0] !== "#"){
+                        value = '#'+value;
+                    }
+                    (<Year>this.object).seasons[index].customColor = value;
+                } else if(cssClass === 'season-month' && (<Year>this.object).seasons.length > index){
+                    const month = parseInt(value);
+                    if(!isNaN(month)){
+                        (<Year>this.object).seasons[index].startingMonth = month;
+                    }
+                } else if(cssClass === 'season-day' && (<Year>this.object).seasons.length > index){
+                    const day = parseInt(value);
+                    if(!isNaN(day)){
+                        (<Year>this.object).seasons[index].startingDay = day;
+                    }
+                } else if(cssClass === 'season-color' && (<Year>this.object).seasons.length > index){
+                    (<Year>this.object).seasons[index].color = value;
+                }
+            }
         }
+        this.updateApp();
     }
 
     /**
@@ -926,6 +1082,33 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).time.gameTimeRatio = timeGameTimeRatio;
             }
             await GameSettings.SaveTimeConfiguration((<Year>this.object).time);
+
+
+            //Update Season Configuration
+            const seasonNames = (<JQuery>this.element).find('.season-name');
+            const seasonStartingMonths = (<JQuery>this.element).find('.season-month');
+            const seasonStartingDays = (<JQuery>this.element).find('.season-day');
+            const seasonColors = (<JQuery>this.element).find('.season-color');
+            const seasonCustomColors = (<JQuery>this.element).find('.season-custom');
+            for(let i = 0; i < seasonNames.length; i++){
+                const dataIndex = seasonNames[i].getAttribute('data-index');
+                if(dataIndex) {
+                    const index = parseInt(dataIndex);
+                    (<Year>this.object).seasons[index].name = (<HTMLInputElement>seasonNames[i]).value;
+                    (<Year>this.object).seasons[index].startingMonth = parseInt((<HTMLSelectElement>seasonStartingMonths[i]).value);
+                    (<Year>this.object).seasons[index].startingDay = parseInt((<HTMLSelectElement>seasonStartingDays[i]).value);
+                    (<Year>this.object).seasons[index].color = (<HTMLSelectElement>seasonColors[i]).value;
+                    (<Year>this.object).seasons[index].customColor = (<HTMLInputElement>seasonCustomColors[i]).value;
+                    if(isNaN((<Year>this.object).seasons[index].startingMonth)){
+                        (<Year>this.object).seasons[index].startingMonth = 1;
+                    }
+                    if(isNaN((<Year>this.object).seasons[index].startingDay)){
+                        (<Year>this.object).seasons[index].startingDay = 1;
+                    }
+                }
+            }
+            await GameSettings.SaveSeasonConfiguration((<Year>this.object).seasons);
+
 
             if(this.yearChanged){
                 await GameSettings.SaveCurrentDate(<Year>this.object);

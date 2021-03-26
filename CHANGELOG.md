@@ -41,6 +41,21 @@ For two of the more common modules Simple Calendar can also import their setting
 
 ### Seasons
 
+Simple Calendar now supports seasons. Any number of seasons can be added to a calendar, and you are able to specify the following options for each season:
+
+Setting | Description
+--------|------------
+Season Name | Specify a custom name of the season.
+Starting Month | From a drop down choose which month this season starts in. This drop down is populated based on the custom months that have been set up.
+Starting Day | From a drop down choose which day of the the starting month this season begins on. This drop down is populated with a list of days based on the staring month selected.
+Color | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color.
+Custom Color | If the color option is set to Custom Color an option will appear where you can enter a custom Hex representation of a color to use for the seasons color.
+
+The calendar display has also been updated so that right below the month and year the name of the current season will be displayed.
+
+The background color of the calendar is also set based on the current season and its color settings.
+
+I think this gives the best approach for defining seasons and allowing customization in how they look.
 
 ### Moons
 

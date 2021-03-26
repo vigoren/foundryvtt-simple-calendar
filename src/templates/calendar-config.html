@@ -114,6 +114,60 @@
             </div>
             <div class="settings-group">
                 <h2>Seasons</h2>
+                <div class="f-table">
+                    <div class="row head">
+                        <div title="{{localize 'FSC.Configuration.Season.NameHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.Name'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Season.StartingMonthHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.StartingMonth'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Season.StartingDayHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.StartingDay'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Season.ColorHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.Color'}}</div>
+                        <div style="min-width: 15%;"></div>
+                    </div>
+                    {{#each seasons}}
+                    <div class="row">
+                        <div style="min-width: 15%;">
+                            <input class="season-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}" />
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <select class="season-month" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Season.StartingMonth'}}">
+                                {{#each ../months}}
+                                <option value="{{numericRepresentation}}" {{#if (eq numericRepresentation ../startingMonth)}}selected="selected"{{/if}}>{{name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <select class="season-day" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Season.StartingDay'}}">
+                                {{#each dayList}}
+                                <option value="{{numericRepresentation}}" {{#if (eq numericRepresentation ../startingDay)}}selected="selected"{{/if}}>{{name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <select class="season-color" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Season.Color'}}">
+                                {{#each ../seasonColors}}
+                                <option style="background-color: {{value}};" value="{{value}}" {{#if (eq value ../color)}}selected="selected"{{/if}}>{{display}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <button class="remove-season control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                        </div>
+                        <div class="options {{#unless (eq 'custom' color)}}hidden{{/unless}}">
+                            <div class="form-group">
+                                <label for="seasonCustom{{@index}}">{{localize 'FSC.Configuration.Season.ColorCustom'}}</label>
+                                <div class="form-fields">
+                                    <input class="season-custom" value="{{customColor}}" id="seasonCustom{{@index}}" type="text" data-index="{{@index}}" />
+                                </div>
+                                <p class="notes">{{localize 'FSC.Configuration.Season.ColorCustomHelp'}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                <div class="table-actions">
+                    <button class="season-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Season.Add'}}</button>
+                    <span class="spacer"></span>
+                    <button class="remove-season control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Season.RemoveAll'}}</button>
+                </div>
             </div>
         </div>
         <div class="tab month-settings" data-tab="monthSettings"  >
