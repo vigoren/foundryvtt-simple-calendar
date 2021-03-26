@@ -6,7 +6,7 @@ import {
     MonthConfig,
     MonthTemplate,
     NoteConfig,
-    NoteTemplate,
+    NoteTemplate, SeasonConfiguration, SeasonTemplate,
     SimpleCalendarSocket,
     TimeConfig,
     TimeTemplate,
@@ -48,7 +48,9 @@ describe('Interface Tests', () => {
         clockClass: '',
         showDateControls: false,
         showTimeControls: false,
-        currentTime: tt
+        currentTime: tt,
+        currentSeasonColor: '',
+        currentSeasonName: ''
     };
     const ct: CalendarTemplate = {
         isGM: false,
@@ -93,7 +95,7 @@ describe('Interface Tests', () => {
     });
 
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(yt).length).toBe(16); //Make sure no new properties have been added
         expect(yt.display).toBe('');
         expect(yt.selectedDisplayYear).toBe('');
         expect(yt.selectedDisplayMonth).toBe('');
@@ -108,6 +110,8 @@ describe('Interface Tests', () => {
         expect(yt.showDateControls).toStrictEqual(false);
         expect(yt.clockClass).toStrictEqual('');
         expect(yt.currentTime).toStrictEqual(tt);
+        expect(yt.currentSeasonName).toStrictEqual('');
+        expect(yt.currentSeasonColor).toStrictEqual('');
     });
 
     test('Calendar Template', () => {
@@ -204,6 +208,25 @@ describe('Interface Tests', () => {
         expect(tt.hour).toBe('');
         expect(tt.minute).toBe('');
         expect(tt.second).toBe('');
+    });
+
+    test('Season Template', () => {
+        const st: SeasonTemplate = {name: '', startingMonth: 1, startingDay: 1, color: '', customColor: '', dayList: []};
+        expect(st.name).toBe('');
+        expect(st.color).toBe('');
+        expect(st.customColor).toBe('');
+        expect(st.startingMonth).toBe(1);
+        expect(st.startingDay).toBe(1);
+        expect(st.dayList).toStrictEqual([]);
+    });
+
+    test('Season Configuration', () => {
+        const sc: SeasonConfiguration = {name: '', startingMonth: 1, startingDay: 1, color: '', customColor: ''};
+        expect(sc.name).toBe('');
+        expect(sc.color).toBe('');
+        expect(sc.customColor).toBe('');
+        expect(sc.startingMonth).toBe(1);
+        expect(sc.startingDay).toBe(1);
     });
 
     describe('Simple Calendar Socket', () => {

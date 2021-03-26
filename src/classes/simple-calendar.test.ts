@@ -77,8 +77,8 @@ describe('Simple Calendar Class Tests', () => {
         expect(SimpleCalendar.instance.currentYear).toBeNull();
         await SimpleCalendar.instance.init();
         expect(Handlebars.registerHelper).toHaveBeenCalledTimes(3);
-        expect(game.settings.register).toHaveBeenCalledTimes(10);
-        expect(game.settings.get).toHaveBeenCalledTimes(9);
+        expect(game.settings.register).toHaveBeenCalledTimes(12);
+        expect(game.settings.get).toHaveBeenCalledTimes(11);
         expect(SimpleCalendar.instance.currentYear?.numericRepresentation).toBe(0);
         expect(SimpleCalendar.instance.currentYear?.months.length).toBe(1);
         expect(SimpleCalendar.instance.currentYear?.months[0].days.length).toBe(2);
@@ -160,7 +160,9 @@ describe('Simple Calendar Class Tests', () => {
                 "showWeekdayHeaders": true,
                 "visibleMonth": undefined,
                 "visibleMonthWeekOffset": [],
-                "weekdays": []
+                "weekdays": [],
+                "currentSeasonColor": "",
+                "currentSeasonName": ""
             },
             "showCurrentDay": false,
             "showSelectedDay": false,
@@ -172,7 +174,6 @@ describe('Simple Calendar Class Tests', () => {
                 minute: false,
                 hour: false
             }
-
         });
         SimpleCalendar.instance.currentYear = y;
         //Nothing Undefined
@@ -834,7 +835,7 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.currentYear = null;
         SimpleCalendar.instance.settingUpdate();
         expect(SimpleCalendar.instance.currentYear).toBeNull();
-        expect(console.error).toHaveBeenCalledTimes(6);
+        expect(console.error).toHaveBeenCalledTimes(8);
         //@ts-ignore
         (<Mock>SimpleCalendar.instance.loadYearConfiguration).mockReset()
 

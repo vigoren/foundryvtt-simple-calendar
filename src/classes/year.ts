@@ -552,12 +552,12 @@ export default class Year {
                 currentSeason = this.seasons[this.seasons.length - 1];
             }
 
-            return {
-                name: currentSeason.name,
-                color: currentSeason.color === 'custom'? currentSeason.customColor : currentSeason.color
-            };
-        } else {
-            Logger.error(`Unable to determine the current season as no current date is selected`);
+            if(currentSeason){
+                return {
+                    name: currentSeason.name,
+                    color: currentSeason.color === 'custom'? currentSeason.customColor : currentSeason.color
+                };
+            }
         }
         return {
             name: '',

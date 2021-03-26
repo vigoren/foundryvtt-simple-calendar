@@ -1,0 +1,56 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__mocks__/game";
+import "../../__mocks__/form-application";
+import "../../__mocks__/application";
+import "../../__mocks__/handlebars";
+import "../../__mocks__/event";
+import "../../__mocks__/crypto";
+
+import Season from "./season";
+import SimpleCalendar from "./simple-calendar";
+import Year from "./year";
+import Month from "./month";
+
+describe('Season Tests', () => {
+
+    let s: Season;
+
+    beforeEach(() => {
+        s = new Season('Spring', 1, 1);
+    });
+
+    test('Properties', () => {
+        expect(Object.keys(s).length).toBe(5); //Make sure no new properties have been added
+        expect(s.name).toBe('Spring');
+        expect(s.startingMonth).toBe(1);
+        expect(s.startingDay).toBe(1);
+        expect(s.color).toBe('#ffffff');
+        expect(s.customColor).toBe('');
+    });
+
+    test('Clone', () => {
+        expect(s.clone()).toStrictEqual(s);
+    });
+
+    test('To Template', () => {
+        let c = s.toTemplate();
+        expect(Object.keys(c).length).toBe(6); //Make sure no new properties have been added
+        expect(c.name).toBe('Spring');
+        expect(c.startingMonth).toBe(1);
+        expect(c.startingDay).toBe(1);
+        expect(c.color).toBe('#ffffff');
+        expect(c.customColor).toBe('');
+        expect(c.dayList).toStrictEqual([]);
+
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.currentYear = new Year(0);
+        c = s.toTemplate();
+        expect(c.dayList.length).toStrictEqual(0);
+        SimpleCalendar.instance.currentYear.months.push(new Month("Month 1", 1, 10));
+        c = s.toTemplate();
+        expect(c.dayList.length).toStrictEqual(10);
+    });
+
+});

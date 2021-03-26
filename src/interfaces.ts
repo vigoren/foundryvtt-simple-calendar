@@ -205,6 +205,9 @@ export interface TimeTemplate {
     second: string;
 }
 
+/**
+ * Interface for displaying the season information
+ */
 export interface SeasonTemplate {
     name: string;
     startingMonth: number;
@@ -214,9 +217,12 @@ export interface SeasonTemplate {
     dayList: DayTemplate[]
 }
 
+/**
+ * Interface for saving season information
+ */
 export interface SeasonConfiguration {
     name: string;
-    staringMonth: number;
+    startingMonth: number;
     startingDay: number;
     color: string;
     customColor: string;

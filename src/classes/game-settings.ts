@@ -166,7 +166,7 @@ export class GameSettings {
      * Loads the general settings from the game world settings
      */
     static LoadGeneralSettings(): GeneralSettings {
-        return game.settings.get(ModuleName, SettingNames.GeneralConfiguration);
+        return <GeneralSettings>game.settings.get(ModuleName, SettingNames.GeneralConfiguration);
     }
 
     /**
@@ -174,7 +174,7 @@ export class GameSettings {
      * @return {YearConfig}
      */
     static LoadYearData(): YearConfig {
-        return game.settings.get(ModuleName, SettingNames.YearConfiguration);
+        return <YearConfig>game.settings.get(ModuleName, SettingNames.YearConfiguration);
     }
 
     /**
@@ -182,7 +182,7 @@ export class GameSettings {
      * @return {Array.<CurrentDateConfig>}
      */
     static LoadCurrentDate(): CurrentDateConfig {
-        return game.settings.get(ModuleName,  SettingNames.CurrentDate);
+        return <CurrentDateConfig>game.settings.get(ModuleName,  SettingNames.CurrentDate);
     }
 
     /**
@@ -250,14 +250,14 @@ export class GameSettings {
      * @return {LeapYearConfig}
      */
     static LoadLeapYearRules(): LeapYearConfig {
-        return game.settings.get(ModuleName, SettingNames.LeapYearRule);
+        return <LeapYearConfig>game.settings.get(ModuleName, SettingNames.LeapYearRule);
     }
 
     /**
      * Loads the time configuration from the game world settings
      */
     static LoadTimeData(): TimeConfig {
-        return game.settings.get(ModuleName, SettingNames.TimeConfiguration);
+        return <TimeConfig>game.settings.get(ModuleName, SettingNames.TimeConfiguration);
     }
 
     /**
@@ -417,7 +417,7 @@ export class GameSettings {
         if(GameSettings.IsGm()){
             Logger.debug('Saving season configuration.');
             const currentConfig = JSON.stringify(GameSettings.LoadSeasonData());
-            const newConfig: SeasonConfiguration[] = seasons.map(s => {return {name: s.name, staringMonth: s.startingMonth, startingDay: s.startingDay, color: s.color, customColor: s.customColor}});
+            const newConfig: SeasonConfiguration[] = seasons.map(s => {return {name: s.name, startingMonth: s.startingMonth, startingDay: s.startingDay, color: s.color, customColor: s.customColor}});
             if(currentConfig !== JSON.stringify(newConfig)){
                 return game.settings.set(ModuleName, SettingNames.SeasonConfiguration, newConfig).then(() => {return true;});
             } else {

@@ -41,17 +41,28 @@ class FormApplication extends Application{
         weekdayNames.value = 'Z';
 
 
+        const seasonNames = document.createElement('input');
+        seasonNames.setAttribute('data-index', '0');
+        seasonNames.value = 'Spring';
+        const seasonStart = document.createElement('input');
+        seasonStart.setAttribute('data-index', '0');
+        seasonStart.value = '2';
+        const seasonColor = document.createElement('input');
+        seasonColor.setAttribute('data-index', '0');
+        seasonColor.value = '#ffffff';
+
+
 
 
         this.element = {
             find: jest.fn()
-                .mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return '';})};})})
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})})
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([sameMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'custom';})};})})
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([sameMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'custom';})};})})
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([monthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})})
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})})
-                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([monthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})})
+                .mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return '';})};})}).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr]).mockReturnValueOnce([noDataAttr])
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})}).mockReturnValueOnce([seasonNames]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([seasonColor]).mockReturnValueOnce([seasonColor])
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([sameMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'custom';})};})}).mockReturnValueOnce([seasonNames]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonColor]).mockReturnValueOnce([seasonColor])
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([sameMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'custom';})};})}).mockReturnValueOnce([seasonNames]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonColor]).mockReturnValueOnce([seasonColor])
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([monthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})}).mockReturnValueOnce([seasonNames]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonColor]).mockReturnValueOnce([seasonColor])
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([invalidMonthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})}).mockReturnValueOnce([seasonNames]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonColor]).mockReturnValueOnce([seasonColor])
+                .mockReturnValueOnce([monthNames]).mockReturnValueOnce([monthDays]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([intercalary]).mockReturnValueOnce([monthLeapDays]).mockReturnValueOnce([weekdayNames]).mockReturnValueOnce({find: jest.fn(()=>{return {val: jest.fn(() => {return 'none';})};})}).mockReturnValueOnce([seasonNames]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonStart]).mockReturnValueOnce([seasonColor]).mockReturnValueOnce([seasonColor])
         };
     }
 

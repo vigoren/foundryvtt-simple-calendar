@@ -13,6 +13,7 @@ import Month from "./month";
 import {Weekday} from "./weekday";
 import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
 import LeapYear from "./leap-year";
+import Season from "./season";
 
 describe('Year Class Tests', () => {
     let year: Year;
@@ -26,7 +27,7 @@ describe('Year Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(year).length).toBe(13); //Make sure no new properties have been added
+        expect(Object.keys(year).length).toBe(14); //Make sure no new properties have been added
         expect(year.months).toStrictEqual([]);
         expect(year.weekdays).toStrictEqual([]);
         expect(year.prefix).toBe("");
@@ -40,13 +41,14 @@ describe('Year Class Tests', () => {
         expect(year.time).toBeDefined();
         expect(year.timeChangeTriggered).toBe(false);
         expect(year.combatChangeTriggered).toBe(false);
-        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false })
+        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false });
+        expect(year.seasons).toStrictEqual([]);
     });
 
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(16); //Make sure no new properties have been added
         expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
         expect(t.display).toBe("0");
         expect(t.numericRepresentation).toBe(0);
@@ -61,6 +63,8 @@ describe('Year Class Tests', () => {
         expect(t.showTimeControls).toBe(false);
         expect(t.clockClass).toBe("stopped");
         expect(t.currentTime).toStrictEqual({hour:"00", minute:"00", second: "00"});
+        expect(t.currentSeasonColor).toBe("");
+        expect(t.currentSeasonName).toBe("");
 
         year.months.push(month);
         year.months[0].current = true;
@@ -97,6 +101,7 @@ describe('Year Class Tests', () => {
         expect(year.clone()).toStrictEqual(year);
         year2.months.push(month);
         year2.weekdays.push(new Weekday(1, 'S'));
+        year2.seasons.push(new Season('S', 1, 1));
         expect(year2.clone()).toStrictEqual(year2);
     });
 
@@ -553,6 +558,42 @@ describe('Year Class Tests', () => {
         year.setFromTime(120, 60);
         expect(year.time.seconds).toBe(120);
         expect(game.settings.set).toHaveBeenCalledTimes(2);
+    });
+
+    test('Get Current Season', () => {
+        let data = year.getCurrentSeason();
+        expect(data.name).toBe('');
+        expect(data.color).toBe('');
+
+        year.months.push(month);
+        year.months.push(new Month('Month 2', 2, 20));
+        month.current = true;
+        data = year.getCurrentSeason();
+        expect(data.name).toBe('');
+        expect(data.color).toBe('');
+
+        month.days[0].current = true;
+        data = year.getCurrentSeason();
+        expect(data.name).toBe('');
+        expect(data.color).toBe('');
+
+        year.seasons.push(new Season('Spring', 1, 5));
+        year.seasons.push(new Season('Winter', 2, 10));
+        month.current = false;
+        month.days[0].current = false;
+        year.months[1].current = true;
+        year.months[1].days[0].current = true;
+        data = year.getCurrentSeason();
+        expect(data.name).toBe('Spring');
+        expect(data.color).toBe('#ffffff');
+
+        year.months[1].days[0].current = false;
+        year.months[1].days[9].current = true;
+        year.seasons[1].color = 'custom';
+        year.seasons[1].customColor = '#000000';
+        data = year.getCurrentSeason();
+        expect(data.name).toBe('Winter');
+        expect(data.color).toBe('#000000');
     });
 
 });

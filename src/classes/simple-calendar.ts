@@ -709,7 +709,7 @@ export default class SimpleCalendar extends Application{
                 Logger.debug('Setting the seasons from data.');
                 this.currentYear.seasons = [];
                 for(let i = 0; i < seasonData.length; i++){
-                    const newSeason = new Season(seasonData[i].name, seasonData[i].staringMonth, seasonData[i].startingDay);
+                    const newSeason = new Season(seasonData[i].name, seasonData[i].startingMonth, seasonData[i].startingDay);
                     newSeason.color = seasonData[i].color;
                     newSeason.customColor = seasonData[i].customColor;
                     this.currentYear.seasons.push(newSeason);

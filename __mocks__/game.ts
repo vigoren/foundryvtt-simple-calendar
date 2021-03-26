@@ -64,6 +64,10 @@ const game = {
                     return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false}
                 case SettingNames.TimeConfiguration:
                     return {hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3};
+                case SettingNames.SeasonConfiguration:
+                    return [[{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', customColor: ''}]];
+                case SettingNames.MoonConfiguration:
+                    return [[{}]];
             }
         }),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),

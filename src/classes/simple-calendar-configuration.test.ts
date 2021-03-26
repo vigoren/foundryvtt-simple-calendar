@@ -16,6 +16,7 @@ import Month from "./month";
 import {Weekday} from "./weekday";
 import {Logger} from "./logging";
 import {LeapYearRules} from "../constants";
+import Season from "./season";
 
 jest.mock('./importer');
 
@@ -34,6 +35,7 @@ describe('Simple Calendar Configuration Tests', () => {
         y.months.push(new Month('T', 2, 15));
         y.weekdays.push(new Weekday(1, 'S'));
         y.weekdays.push(new Weekday(2, 'F'));
+        y.seasons.push(new Season('S', 5, 5));
         y.selectedYear = 0;
         y.visibleYear = 0;
         y.months[0].current = true;
@@ -129,8 +131,8 @@ describe('Simple Calendar Configuration Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendarConfiguration.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(20);
-        expect(onFunc).toHaveBeenCalledTimes(20);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(23);
+        expect(onFunc).toHaveBeenCalledTimes(23);
     });
 
     test('Rebase Month Numbers', () => {
@@ -232,6 +234,49 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.removeWeekday(event);
         expect(renderSpy).toHaveBeenCalledTimes(2);
         expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(0);
+    });
+
+    test('Add Season', () => {
+        const event = new Event('click');
+        const currentLength = (<Year>SimpleCalendarConfiguration.instance.object).seasons.length;
+        SimpleCalendarConfiguration.instance.addSeason(event);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons.length).toBe(currentLength + 1);
+    });
+
+    test('Remove Season', () => {
+        const event = new Event('click');
+        let currentLength = (<Year>SimpleCalendarConfiguration.instance.object).seasons.length;
+        SimpleCalendarConfiguration.instance.removeSeason(event);
+        expect(renderSpy).not.toHaveBeenCalled();
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons.length).toBe(currentLength);
+
+        //Check for invalid index
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', 'a');
+        currentLength = (<Year>SimpleCalendarConfiguration.instance.object).seasons.length;
+        SimpleCalendarConfiguration.instance.removeSeason(event);
+        expect(renderSpy).not.toHaveBeenCalled();
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons.length).toBe(currentLength);
+
+        //Check for index outside of season length
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', '12');
+        currentLength = (<Year>SimpleCalendarConfiguration.instance.object).seasons.length;
+        SimpleCalendarConfiguration.instance.removeSeason(event);
+        expect(renderSpy).not.toHaveBeenCalled();
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons.length).toBe(currentLength);
+
+        //Check for valid index
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', '0');
+        currentLength = (<Year>SimpleCalendarConfiguration.instance.object).seasons.length;
+        SimpleCalendarConfiguration.instance.removeSeason(event);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons.length).toBe(currentLength - 1);
+
+        //Check for removing all seasons
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', 'all');
+        SimpleCalendarConfiguration.instance.removeSeason(event);
+        expect(renderSpy).toHaveBeenCalledTimes(2);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons.length).toBe(0);
     });
 
     test('Predefined Apply Confirm', () => {
@@ -361,6 +406,46 @@ describe('Simple Calendar Configuration Tests', () => {
         expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(10);
         expect((<Year>SimpleCalendarConfiguration.instance.object).prefix).toBe('Pre');
         expect((<Year>SimpleCalendarConfiguration.instance.object).postfix).toBe('Post');
+
+        //Season Stuff
+        (<HTMLInputElement>event.currentTarget).setAttribute('data-index', '0');
+        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-name');
+        (<HTMLInputElement>event.currentTarget).value = 'Wint';
+        SimpleCalendarConfiguration.instance.yearInputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].name).toBe('Wint');
+
+        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-custom');
+        (<HTMLInputElement>event.currentTarget).value = '#000000';
+        SimpleCalendarConfiguration.instance.yearInputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].customColor).toBe('#000000');
+        (<HTMLInputElement>event.currentTarget).value = '000000';
+        SimpleCalendarConfiguration.instance.yearInputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].customColor).toBe('#000000');
+
+        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-month');
+        (<HTMLInputElement>event.currentTarget).value = '2';
+        SimpleCalendarConfiguration.instance.yearInputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingMonth).toBe(2);
+        (<HTMLInputElement>event.currentTarget).value = 'qwe';
+        SimpleCalendarConfiguration.instance.yearInputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingMonth).toBe(2);
+
+        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-day');
+        (<HTMLInputElement>event.currentTarget).value = '2';
+        SimpleCalendarConfiguration.instance.yearInputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingDay).toBe(2);
+        (<HTMLInputElement>event.currentTarget).value = 'qwe';
+        SimpleCalendarConfiguration.instance.yearInputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingDay).toBe(2);
+
+        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-color');
+        (<HTMLInputElement>event.currentTarget).value = '#fffeee';
+        SimpleCalendarConfiguration.instance.yearInputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].color).toBe('#fffeee');
+
+        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-a');
+        SimpleCalendarConfiguration.instance.yearInputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].color).toBe('#fffeee');
     });
 
     test('Month Input Change', () => {
@@ -582,13 +667,13 @@ describe('Simple Calendar Configuration Tests', () => {
         //Invalid year, month and weekday
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(showWeekday).mockReturnValueOnce(showWeekday).mockReturnValueOnce(invalidYear).mockReturnValueOnce(pre).mockReturnValueOnce(post).mockReturnValueOnce(showWeekday).mockReturnValueOnce(invalidYear).mockReturnValueOnce(invalidYear).mockReturnValueOnce(invalidYear).mockReturnValueOnce(invalidYear).mockReturnValueOnce(showWeekday)
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(6);
+        expect(game.settings.set).toHaveBeenCalledTimes(7);
         expect(closeSpy).toHaveBeenCalledTimes(1);
 
         //Valid year weekday, invalid month days
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(showWeekday).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(pre).mockReturnValueOnce(post).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(12);
+        expect(game.settings.set).toHaveBeenCalledTimes(14);
         expect(closeSpy).toHaveBeenCalledTimes(2);
         expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(2);
         expect((<Year>SimpleCalendarConfiguration.instance.object).selectedYear).toBe(2);
@@ -601,14 +686,14 @@ describe('Simple Calendar Configuration Tests', () => {
         //Valid year weekday, month days the same as passed in days
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(showWeekday).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(pre).mockReturnValueOnce(post).mockReturnValueOnce(showWeekday).mockReturnValueOnce(invalidCustMod).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(19);
+        expect(game.settings.set).toHaveBeenCalledTimes(22);
         expect(closeSpy).toHaveBeenCalledTimes(3);
 
         //Valid year weekday valid month days
         (<Year>SimpleCalendarConfiguration.instance.object).months[0].days[3].current = true;
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(showWeekday).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(pre).mockReturnValueOnce(post).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validCustMod).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(26);
+        expect(game.settings.set).toHaveBeenCalledTimes(30);
         expect(closeSpy).toHaveBeenCalledTimes(4);
         expect((<Year>SimpleCalendarConfiguration.instance.object).months[0].days.length).toBe(7);
 
@@ -617,7 +702,7 @@ describe('Simple Calendar Configuration Tests', () => {
         (<Year>SimpleCalendarConfiguration.instance.object).months[0].days[6].current = true;
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(showWeekday).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(pre).mockReturnValueOnce(post).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(33);
+        expect(game.settings.set).toHaveBeenCalledTimes(38);
         expect(closeSpy).toHaveBeenCalledTimes(5);
         //expect((<Year>SimpleCalendarConfiguration.instance.object).months[0].days[0].current).toBe(true);
 
@@ -625,13 +710,13 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.yearChanged = true;
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(showWeekday).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(pre).mockReturnValueOnce(post).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(41);
+        expect(game.settings.set).toHaveBeenCalledTimes(47);
         expect(closeSpy).toHaveBeenCalledTimes(6);
 
         //Valid year weekday valid month days, no current day
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(showWeekday).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(pre).mockReturnValueOnce(post).mockReturnValueOnce(showWeekday).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(validYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(49);
+        expect(game.settings.set).toHaveBeenCalledTimes(56);
         expect(closeSpy).toHaveBeenCalledTimes(7);
     });
 

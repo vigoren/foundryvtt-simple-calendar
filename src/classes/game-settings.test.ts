@@ -17,6 +17,7 @@ import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
 import {GeneralSettings, TimeConfig} from "../interfaces";
 import Mock = jest.Mock;
 import Time from "./time";
+import Season from "./season";
 
 describe('Game Settings Class Tests', () => {
 
@@ -64,7 +65,7 @@ describe('Game Settings Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect(game.settings.register).toHaveBeenCalled();
-        expect(game.settings.register).toHaveBeenCalledTimes(10);
+        expect(game.settings.register).toHaveBeenCalledTimes(12);
     });
 
     test('Get Import Ran', () => {
@@ -112,6 +113,28 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
         (<Mock>game.settings.get).mockReturnValueOnce([false]);
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
+    });
+
+    test('Load Season Data', () => {
+        expect(GameSettings.LoadSeasonData()).toStrictEqual([{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', customColor: ''}]);
+        expect(game.settings.get).toHaveBeenCalled();
+        (<Mock>game.settings.get).mockReturnValueOnce(false);
+        expect(GameSettings.LoadSeasonData()).toStrictEqual([]);
+        (<Mock>game.settings.get).mockReturnValueOnce([]);
+        expect(GameSettings.LoadSeasonData()).toStrictEqual([]);
+        (<Mock>game.settings.get).mockReturnValueOnce([false]);
+        expect(GameSettings.LoadSeasonData()).toStrictEqual([]);
+    });
+
+    test('Load Moon Data', () => {
+        expect(GameSettings.LoadMoonData()).toStrictEqual([{}]);
+        expect(game.settings.get).toHaveBeenCalled();
+        (<Mock>game.settings.get).mockReturnValueOnce(false);
+        expect(GameSettings.LoadMoonData()).toStrictEqual([]);
+        (<Mock>game.settings.get).mockReturnValueOnce([]);
+        expect(GameSettings.LoadMoonData()).toStrictEqual([]);
+        (<Mock>game.settings.get).mockReturnValueOnce([false]);
+        expect(GameSettings.LoadMoonData()).toStrictEqual([]);
     });
 
     test('Load Leap Year Rule', () => {
@@ -239,6 +262,34 @@ describe('Game Settings Class Tests', () => {
         weekday.numericRepresentation = 1;
         expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalledTimes(1);
+    });
+
+    test('Save Season Configuration', () => {
+        // @ts-ignore
+        game.user.isGM = false;
+        const season = new Season('', 1, 1);
+        season.customColor = '';
+        expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(false);
+        // @ts-ignore
+        game.user.isGM = true;
+        expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(false);
+        expect(game.settings.set).toHaveBeenCalledTimes(0);
+        season.name = 'Spring';
+        expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(true);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
+    });
+
+    test('Save Moon Configuration', () => {
+        // @ts-ignore
+        game.user.isGM = false;
+        const moon: any = {};
+        expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
+        // @ts-ignore
+        game.user.isGM = true;
+        expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
+        expect(game.settings.set).toHaveBeenCalledTimes(0);
+        expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
+        expect(game.settings.set).toHaveBeenCalledTimes(0);
     });
 
     test('Save Leap Year Rule', () => {

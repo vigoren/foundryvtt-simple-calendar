@@ -14,6 +14,7 @@ import Importer from "./importer";
 import {LeapYearRules} from "../constants";
 import {Weekday} from "./weekday";
 import Mock = jest.Mock;
+import Season from "./season";
 
 describe('Importer Class Tests', () => {
     let y: Year;
@@ -25,6 +26,7 @@ describe('Importer Class Tests', () => {
         y.months.push(new Month('W', 3, 1));
         y.months[2].intercalary = true;
         y.weekdays.push(new Weekday(1, 'S'));
+        y.seasons.push(new Season('S', 1, 1));
         // @ts-ignore
         game.user.isGM = true;
     });
@@ -149,7 +151,22 @@ describe('Importer Class Tests', () => {
             timeDisp: '',
             dateNum: '',
             weather: {},
-            seasons: [],
+            seasons: [
+                {
+                    name: 'Spring',
+                    rolltable: '',
+                    date: {
+                        month: '',
+                        day: 1,
+                        combined: '-1'
+                    },
+                    temp: '=',
+                    humidity: '=',
+                    color: 'red',
+                    dawn: 6,
+                    dusk: 19
+                }
+            ],
             moons: [],
             events: [],
             reEvents: []

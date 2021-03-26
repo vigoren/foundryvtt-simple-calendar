@@ -421,6 +421,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Weekday(6, 'Far'),
                     new Weekday(7, 'Sar')
                 ];
+                (<Year>this.object).seasons = [];
                 (<Year>this.object).time.hoursInDay = 24;
                 (<Year>this.object).time.minutesInHour = 60;
                 (<Year>this.object).time.secondsInMinute = 60;
