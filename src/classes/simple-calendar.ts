@@ -11,6 +11,7 @@ import HandlebarsHelpers from "./handlebars-helpers";
 import {GameWorldTimeIntegrations, ModuleSocketName, SocketTypes} from "../constants";
 import Importer from "./importer";
 import Season from "./season";
+import Moon from "./moon";
 
 
 /**
@@ -705,9 +706,9 @@ export default class SimpleCalendar extends Application{
         Logger.debug('Loading season configuration from settings.');
         if(this.currentYear){
             const seasonData = GameSettings.LoadSeasonData();
+            this.currentYear.seasons = [];
             if(seasonData.length){
                 Logger.debug('Setting the seasons from data.');
-                this.currentYear.seasons = [];
                 for(let i = 0; i < seasonData.length; i++){
                     const newSeason = new Season(seasonData[i].name, seasonData[i].startingMonth, seasonData[i].startingDay);
                     newSeason.color = seasonData[i].color;
@@ -728,8 +729,19 @@ export default class SimpleCalendar extends Application{
         Logger.debug('Loading moon configuration from settings.');
         if(this.currentYear){
             const moonData = GameSettings.LoadMoonData();
+            this.currentYear.moons = [];
             if(moonData.length){
                 Logger.debug('Setting the moons from data.');
+                for(let i = 0; i < moonData.length; i++){
+                    const newMoon = new Moon(moonData[i].name, moonData[i].cycleLength);
+                    newMoon.phases = moonData[i].phases;
+                    newMoon.firstNewMoon = {
+                        year: moonData[i].firstNewMoon.year,
+                        month: moonData[i].firstNewMoon.month,
+                        day: moonData[i].firstNewMoon.day
+                    };
+                    this.currentYear.moons.push(newMoon);
+                }
             }
         } else {
             Logger.error('No Current year configured, can not load moon data.');

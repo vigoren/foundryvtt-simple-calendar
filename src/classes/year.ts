@@ -7,6 +7,7 @@ import Time from "./time";
 import {GameWorldTimeIntegrations} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
+import Moon from "./moon";
 
 /**
  * Class for representing a year
@@ -78,10 +79,14 @@ export default class Year {
         playersAddNotes: false
     };
     /**
-     * All of the seasons in this game
+     * All of the seasons for this calendar
      * @type {Array.<Season>}
      */
     seasons: Season[] = [];
+    /**
+     * All of the moons for this calendar
+     */
+    moons: Moon[] =[];
 
     /**
      * The Year constructor
@@ -158,6 +163,7 @@ export default class Year {
         y.generalSettings.showClock = this.generalSettings.showClock;
         y.generalSettings.playersAddNotes = this.generalSettings.playersAddNotes;
         y.seasons = this.seasons.map(s => s.clone());
+        y.moons = this.moons.map(m => m.clone());
         return y;
     }
 
@@ -369,7 +375,7 @@ export default class Year {
      * @param {number} year The year to convert
      * @param {number} month The month to convert
      * @param {number} day The day to convert
-     * @param {boolean} addLeapYearDiff If to add the leap your difference to the end result. Year 0 is not counted in the number of leap years so the total days will be off by that amount.
+     * @param {boolean} addLeapYearDiff If to add the leap year difference to the end result. Year 0 is not counted in the number of leap years so the total days will be off by that amount.
      * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
      */
     dateToDays(year: number, month: number, day: number, addLeapYearDiff: boolean = false, ignoreIntercalaryRules: boolean = false){

@@ -17,6 +17,7 @@ import {Note} from "./note";
 import LeapYear from "./leap-year";
 import Time from "./time";
 import Season from "./season";
+import Moon from "./moon";
 
 export class GameSettings {
     /**
@@ -236,10 +237,10 @@ export class GameSettings {
      */
     static LoadMoonData(): MoonConfiguration[] {
         let returnData: MoonConfiguration[] = [];
-        let seasonData = <any[]>game.settings.get(ModuleName, SettingNames.MoonConfiguration);
-        if(seasonData && seasonData.length) {
-            if (Array.isArray(seasonData[0])) {
-                returnData = <MoonConfiguration[]>seasonData[0];
+        let moonData = <any[]>game.settings.get(ModuleName, SettingNames.MoonConfiguration);
+        if(moonData && moonData.length) {
+            if (Array.isArray(moonData[0])) {
+                returnData = <MoonConfiguration[]>moonData[0];
             }
         }
         return returnData;
@@ -431,11 +432,16 @@ export class GameSettings {
      * Saves the passed in moon configuration in the world settings
      * @param {Array.<Moon>} moons List of moons
      */
-    static async SaveMoonConfiguration(moons: Season[]): Promise<boolean> {
+    static async SaveMoonConfiguration(moons: Moon[]): Promise<boolean> {
         if(GameSettings.IsGm()){
             Logger.debug('Saving moon configuration.');
             const currentConfig = JSON.stringify(GameSettings.LoadMoonData());
-            const newConfig: MoonConfiguration[] = moons.map(m => {return {}});
+            const newConfig: MoonConfiguration[] = moons.map(m => {return {
+                name: m.name,
+                cycleLength: m.cycleLength,
+                firstNewMoon: m.firstNewMoon,
+                phases: m.phases
+            };});
             if(currentConfig !== JSON.stringify(newConfig)){
                 return game.settings.set(ModuleName, SettingNames.MoonConfiguration, newConfig).then(() => {return true;});
             } else {

@@ -11,10 +11,11 @@
             <a class="item" data-tab="weekdaySettings">{{localize 'FSC.Configuration.Weekday.Title'}}</a>
             <a class="item" data-tab="leapYearSettings">{{localize 'FSC.Configuration.LeapYear.Title'}}</a>
             <a class="item" data-tab="timeSettings">{{localize 'FSC.Configuration.Time.Title'}}</a>
+            <a class="item" data-tab="moonSettings">{{localize 'FSC.Configuration.Moon.Title'}}</a>
         </nav>
         <div class="tab general-settings" data-tab="generalSettings">
             <div class="settings-group">
-                <h2>Quick Setup <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#quick-setup" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.General.QuickSetup'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#quick-setup" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group">
                     <label for="scPreDefined">{{localize 'FSC.Configuration.General.PreDefined'}} </label>
                     <div class="form-fields">
@@ -27,7 +28,7 @@
                 </div>
             </div>
             <div class="settings-group">
-                <h2>Game World Time Integration <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#game-world-time-integration" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.General.GameWorldTime'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#game-world-time-integration" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group">
                     <label for="scGameWorldTime">{{localize 'FSC.Configuration.General.GameWorldTime'}}</label>
                     <div class="form-fields">
@@ -46,7 +47,7 @@
                 </div>
             </div>
             <div class="settings-group">
-                <h2>Notes <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#notes" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.General.Notes'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#notes" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group">
                     <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
                     <div class="form-fields">
@@ -64,7 +65,7 @@
             </div>
             {{#if (or importing.showCalendarWeather importing.showAboutTime)}}
             <div class="settings-group">
-                <h2>Third Party Module Import/Export <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#third-party-importexport" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.General.ThirdPartyModule'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#third-party-importexport" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 {{#if importing.showCalendarWeather}}
                 <div class="import-group">
                     <h3>{{localize 'FSC.Module.CalendarWeather.Title'}}</h3>
@@ -89,7 +90,7 @@
         </div>
         <div class="tab year-settings" data-tab="yearSettings">
             <div class="settings-group">
-                <h2>Current Year <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Year.Current'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group">
                     <label for="scCurrentYear">{{localize 'FSC.Configuration.Year.Current'}}</label>
                     <div class="form-fields">
@@ -113,7 +114,7 @@
                 </div>
             </div>
             <div class="settings-group">
-                <h2>Seasons</h2>
+                <h2>{{localize 'FSC.Configuration.Year.Seasons'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="f-table">
                     <div class="row head">
                         <div title="{{localize 'FSC.Configuration.Season.NameHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.Name'}}</div>
@@ -125,7 +126,7 @@
                     {{#each seasons}}
                     <div class="row">
                         <div style="min-width: 15%;">
-                            <input class="season-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}" />
+                            <input class="season-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Season.NameHelp'}}" />
                         </div>
                         <div class="center" style="min-width: 15%;">
                             <select class="season-month" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Season.StartingMonth'}}">
@@ -172,7 +173,7 @@
         </div>
         <div class="tab month-settings" data-tab="monthSettings"  >
             <div class="settings-group">
-                <h2>Months <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#month-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Months'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#month-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="f-table">
                     <div class="row head">
                         <div class="month-name" title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</div>
@@ -217,7 +218,7 @@
         </div>
         <div class="tab weekday-settings" data-tab="weekdaySettings" >
             <div class="settings-group">
-                <h2>Weekday Options <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#weekday-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Weekday.Options'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#weekday-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group">
                     <label for="scShowWeekdayHeaders">{{localize 'FSC.Configuration.Weekday.ShowHeadings'}}</label>
                     <div class="form-fields">
@@ -227,7 +228,7 @@
                 </div>
             </div>
             <div class="settings-group">
-                <h2>Weekdays <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#weekday-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Weekdays'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#weekday-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="f-table">
                     <div class="row head">
                         <div class="month-name" title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}" style="min-width: 30%;">{{localize 'FSC.Configuration.Weekday.Name'}}</div>
@@ -253,7 +254,7 @@
         </div>
         <div class="tab leapyear-settings" data-tab="leapYearSettings">
             <div class="settings-group">
-                <h2>Leap Year Options <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#leap-year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.LeapYear.Options'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#leap-year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group">
                     <label for="scLeapYearRule">{{localize 'FSC.Configuration.LeapYear.Rule'}}</label>
                     <div class="form-fields">
@@ -275,7 +276,7 @@
             </div>
             {{#if showLeapYearMonths}}
             <div class="settings-group">
-                <h2>Months <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#leap-year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Months'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#leap-year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="f-table">
                     <div class="row head">
                         <div style="min-width: 25%;" title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</div>
@@ -297,7 +298,7 @@
         </div>
         <div class="tab time-settings" data-tab="timeSettings">
             <div class="settings-group">
-                <h2>Time Options <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#time-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Time.Options'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#time-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group">
                     <label for="scHoursInDay">{{localize 'FSC.Configuration.Time.HoursInDay'}}</label>
                     <div class="form-fields">
@@ -325,6 +326,82 @@
                         <input value="{{currentYear.time.gameTimeRatio}}" type="number" id="scGameTimeRatio" />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Time.GameTimeRatioHelp'}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="tab moon-settings" data-tab="moonSettings">
+            <div class="settings-group">
+                <h2>{{localize 'FSC.Configuration.Moons'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#moon-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="f-table">
+                    <div class="row head">
+                        <div title="{{localize 'FSC.Configuration.Moon.NameHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Moon.Name'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Moon.CycleLengthHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Moon.CycleLength'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Moon.YearHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Moon.Year'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Moon.MonthHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Moon.Month'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Moon.DayHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Moon.Day'}}</div>
+                        <div style="min-width: 15%;"></div>
+                    </div>
+                    {{#each moons}}
+                    <div class="row">
+                        <div style="min-width: 15%;">
+                            <input class="moon-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.NameHelp'}}" />
+                        </div>
+                        <div style="min-width: 15%;">
+                            <input class="moon-cycle-length" value="{{cycleLength}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.CycleLengthHelp'}}" />
+                        </div>
+                        <div style="min-width: 15%;">
+                            <input class="moon-year" value="{{firstNewMoon.year}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.YearHelp'}}" />
+                        </div>
+                        <div style="min-width: 15%;">
+                            <select class="moon-month" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.Month'}}">
+                                {{#each ../months}}
+                                <option value="{{numericRepresentation}}" {{#if (eq numericRepresentation ../firstNewMoon.month)}}selected="selected"{{/if}}>{{name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div style="min-width: 15%;">
+                            <select class="month-day" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.Day'}}">
+                                {{#each dayList}}
+                                <option value="{{numericRepresentation}}" {{#if (eq numericRepresentation ../firstNewMoon.day)}}selected="selected"{{/if}}>{{name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <button class="remove-moon control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                        </div>
+                        <div class="options">
+                            <h3>{{localize 'FSC.Configuration.Moon.Phases'}}</h3>
+                            <div class="f-table">
+                                <div class="row head">
+                                    <div title="{{localize 'FSC.Configuration.Moon.PhaseNameHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Moon.PhaseName'}}</div>
+                                    <div title="{{localize 'FSC.Configuration.Moon.PhaseLengthHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Moon.PhaseLength'}}</div>
+                                    <div style="min-width: 15%;"></div>
+                                </div>
+                                {{#each phases}}
+                                <div class="row">
+                                    <div style="min-width: 15%;">
+                                        <input class="moon-phase-name" value="{{name}}" type="text" data-moon-index="{{@../index}}" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.PhaseNameHelp'}}" />
+                                    </div>
+                                    <div style="min-width: 15%;">{{length}} {{localize 'FSC.Days'}}</div>
+                                    <div class="center" style="min-width: 15%;">
+                                        <button class="remove-moon-phase control delete" data-moon-index="{{@../index}}" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                                    </div>
+                                </div>
+                                {{/each}}
+                            </div>
+                            <div class="table-actions">
+                                <button class="moon-phase-add control" data-moon-index="{{@index}}"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Moon.PhaseAdd'}}</button>
+                                <span class="spacer"></span>
+                                <button class="remove-moon-phase control delete" data-moon-index="{{@index}}" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Moon.PhaseRemoveAll'}}</button>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                <div class="table-actions">
+                    <button class="moon-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Moon.Add'}}</button>
+                    <span class="spacer"></span>
+                    <button class="remove-moon control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Moon.RemoveAll'}}</button>
                 </div>
             </div>
         </div>

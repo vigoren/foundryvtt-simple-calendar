@@ -214,7 +214,7 @@ export interface SeasonTemplate {
     startingDay: number;
     color: string;
     customColor: string;
-    dayList: DayTemplate[]
+    dayList: DayTemplate[];
 }
 
 /**
@@ -228,8 +228,31 @@ export interface SeasonConfiguration {
     customColor: string;
 }
 
-export interface MoonConfiguration {
+export interface MoonPhase {
+    name: string;
+    length: number;
+}
 
+export interface FirstNewMoonDate {
+    year: number;
+    month: number;
+    day: number;
+}
+
+
+export interface MoonConfiguration {
+    name: string;
+    cycleLength: number;
+    phases: MoonPhase[];
+    firstNewMoon: FirstNewMoonDate;
+}
+
+export interface MoonTemplate {
+    name: string;
+    cycleLength: number;
+    firstNewMoon: FirstNewMoonDate;
+    phases: MoonPhase[];
+    dayList: DayTemplate[];
 }
 
 /**

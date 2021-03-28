@@ -1,5 +1,6 @@
 import SimpleCalendar from "./simple-calendar";
 import {SeasonTemplate} from "../interfaces";
+import Year from "./year";
 
 /**
  * All content around a season
@@ -56,8 +57,9 @@ export default class Season {
 
     /**
      * Creates a template of the season used to render its information
+     * @param {Year} year The year to look in for the months and days list
      */
-    toTemplate(){
+    toTemplate(year: Year){
         const data: SeasonTemplate =  {
             name: this.name,
             startingMonth: this.startingMonth,
@@ -67,11 +69,9 @@ export default class Season {
             dayList: []
         };
 
-        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            const month = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === data.startingMonth);
-            if(month){
-                data.dayList = month.days.map(d => d.toTemplate());
-            }
+        const month = year.months.find(m => m.numericRepresentation === data.startingMonth);
+        if(month){
+            data.dayList = month.days.map(d => d.toTemplate());
         }
         return data;
     }

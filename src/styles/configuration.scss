@@ -9,15 +9,22 @@
     border-bottom: 1px solid #782e22;
 
     .item{
+      border: 1px solid transparent;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
       &.active{
-        border-top: 1px solid #782e22;
-        border-left: 1px solid #782e22;
-        border-right: 1px solid #782e22;
-        border-bottom: 1px solid #fafafa;
+        border-top-color: #782e22;
+        border-left-color: #782e22;
+        border-right-color: #782e22;
+        border-bottom-color: #fafafa;
         margin-bottom: -1px;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+
         background-color: #fafafa;
+      }
+      &:hover{
+        border-top-color: #782e22;
+        border-left-color: #782e22;
+        border-right-color: #782e22;
       }
     }
   }
@@ -148,6 +155,12 @@
         border-bottom: 1px solid #adadad;
         .form-fields{
           flex: 1;
+        }
+
+        h3{
+          margin-top: 0.5rem;
+          border-bottom: 1px solid #782e22;
+          font-weight: 600;
         }
       }
     }
