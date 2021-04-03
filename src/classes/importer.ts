@@ -5,6 +5,7 @@ import Month from "./month";
 import {LeapYearRules} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
+import Moon from "./moon";
 
 export default class Importer{
 
@@ -162,6 +163,15 @@ export default class Importer{
             year.seasons.push(nSeason);
         }
 
+        year.moons = [];
+        for(let i = 0; i< currentSettings.moons.length; i++){
+            const newMoon = new Moon(currentSettings.moons[i].name, currentSettings.moons[i].cycleLength);
+            const currentTime = year.secondsToDate(currentSettings.moons[i].referenceTime);
+            newMoon.firstNewMoon.year = currentTime.year;
+            newMoon.firstNewMoon.month = currentTime.month;
+            newMoon.firstNewMoon.day = currentTime.day;
+        }
+
         //Set the current time
         const currentTime = year.secondsToDate(game.time.worldTime);
         year.updateTime(currentTime);
@@ -172,6 +182,7 @@ export default class Importer{
         await GameSettings.SaveWeekdayConfiguration(year.weekdays);
         await GameSettings.SaveLeapYearRules(year.leapYearRule);
         await GameSettings.SaveTimeConfiguration(year.time);
+        await GameSettings.SaveMoonConfiguration(year.moons);
         await GameSettings.SaveCurrentDate(year);
     }
 
@@ -216,6 +227,19 @@ export default class Importer{
             });
         }
 
+        const moonList: CalendarWeatherImport.Moons[] = [];
+        for(let i = 0; i < year.moons.length; i++){
+            moonList.push({
+                name: year.moons[i].name,
+                cycleLength: year.moons[i].cycleLength,
+                cyclePercent: 0,
+                lunarEclipseChange: 0,
+                solarEclipseChange: 0,
+                referencePercent: 0,
+                referenceTime: year.time.getTotalSeconds(year.dateToDays(year.moons[i].firstNewMoon.year, year.moons[i].firstNewMoon.month, year.moons[i].firstNewMoon.day, true, true) - 1)
+            });
+        }
+
         const currentMonth = year.getMonth();
         const currentDay = currentMonth?.getDay();
         const weekDays = year.weekdays.map( w => w.name)
@@ -231,6 +255,7 @@ export default class Importer{
         currentSettings.dayLength = year.time.hoursInDay
         currentSettings.first_day = 0;
         currentSettings.seasons = seasonList;
+        currentSettings.moons = moonList;
         await game.settings.set('calendar-weather', 'dateTime', currentSettings);
         await Importer.exportToAboutTime(year);
         window.location.reload();
