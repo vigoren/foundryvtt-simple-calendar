@@ -736,10 +736,14 @@ export default class SimpleCalendar extends Application{
                     const newMoon = new Moon(moonData[i].name, moonData[i].cycleLength);
                     newMoon.phases = moonData[i].phases;
                     newMoon.firstNewMoon = {
+                        yearReset: moonData[i].firstNewMoon.yearReset,
+                        yearX: moonData[i].firstNewMoon.yearX,
                         year: moonData[i].firstNewMoon.year,
                         month: moonData[i].firstNewMoon.month,
                         day: moonData[i].firstNewMoon.day
                     };
+                    newMoon.color = moonData[i].color;
+                    newMoon.cycleDayAdjust = moonData[i].cycleDayAdjust;
                     this.currentYear.moons.push(newMoon);
                 }
             }

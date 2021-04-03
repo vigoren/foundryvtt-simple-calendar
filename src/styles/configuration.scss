@@ -143,6 +143,10 @@
         width: 60px;
         text-align: center;
       }
+      input, select{
+        margin: 0 auto;
+        display: block;
+      }
       .remove-month{
         width: 100px;
       }

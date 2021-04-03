@@ -13,6 +13,7 @@ export default class HandlebarsHelpers{
         Handlebars.registerHelper("calendar-width", HandlebarsHelpers.CalendarWidth);
         Handlebars.registerHelper("calendar-row-width", HandlebarsHelpers.CalendarRowWidth);
         Handlebars.registerHelper("day-has-note", HandlebarsHelpers.DayHasNotes);
+        Handlebars.registerHelper("day-moon-phase", HandlebarsHelpers.DayMoonPhase);
     }
 
     /**
@@ -56,9 +57,24 @@ export default class HandlebarsHelpers{
                 const notes = SimpleCalendar.instance.notes.filter(n => n.isVisible(year, month.numericRepresentation, day));
                 if(notes.length){
                     const count = notes.length < 100? notes.length : 99;
-                    return `<span class="note-count">${count}</span>`;
+                    return `<span class="note-count" title="${count} ${GameSettings.Localize('FSC.Configuration.General.Notes')}">${count}</span>`;
                 }
             }
+        }
+        return '';
+    }
+
+    static DayMoonPhase(options: any){
+        if(options.hash.hasOwnProperty('day') && SimpleCalendar.instance.currentYear){
+            const day = options.hash['day'];
+            let html = ''
+            for(let i = 0; i < SimpleCalendar.instance.currentYear.moons.length; i++){
+                const mp = SimpleCalendar.instance.currentYear.moons[i].getMoonPhase(SimpleCalendar.instance.currentYear, 'visible', day);
+                if(mp.singleDay || day.selected || day.current){
+                    html += `<span class="moon-phase ${mp.icon}" title="${SimpleCalendar.instance.currentYear.moons[i].name} - ${mp.name}" style="background-color: ${SimpleCalendar.instance.currentYear.moons[i].color};"></span>`;
+                }
+            }
+            return html;
         }
         return '';
     }

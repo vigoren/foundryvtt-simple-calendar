@@ -1,7 +1,14 @@
 /**
  * Interface for the calendar template that is passed to the HTML for rendering
  */
-import {LeapYearRules, NoteRepeat, GameWorldTimeIntegrations, SocketTypes} from "./constants";
+import {
+    LeapYearRules,
+    NoteRepeat,
+    GameWorldTimeIntegrations,
+    SocketTypes,
+    MoonIcons,
+    MoonYearResetOptions
+} from "./constants";
 import {Note} from "./classes/note";
 
 /**
@@ -231,10 +238,14 @@ export interface SeasonConfiguration {
 export interface MoonPhase {
     name: string;
     length: number;
+    singleDay: boolean;
+    icon: MoonIcons;
 }
 
 export interface FirstNewMoonDate {
+    yearReset: MoonYearResetOptions;
     year: number;
+    yearX: number;
     month: number;
     day: number;
 }
@@ -245,6 +256,8 @@ export interface MoonConfiguration {
     cycleLength: number;
     phases: MoonPhase[];
     firstNewMoon: FirstNewMoonDate;
+    color: string;
+    cycleDayAdjust: number;
 }
 
 export interface MoonTemplate {
@@ -252,6 +265,8 @@ export interface MoonTemplate {
     cycleLength: number;
     firstNewMoon: FirstNewMoonDate;
     phases: MoonPhase[];
+    color: string;
+    cycleDayAdjust: number;
     dayList: DayTemplate[];
 }
 

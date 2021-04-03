@@ -440,7 +440,9 @@ export class GameSettings {
                 name: m.name,
                 cycleLength: m.cycleLength,
                 firstNewMoon: m.firstNewMoon,
-                phases: m.phases
+                phases: m.phases,
+                color: m.color,
+                cycleDayAdjust: m.cycleDayAdjust
             };});
             if(currentConfig !== JSON.stringify(newConfig)){
                 return game.settings.set(ModuleName, SettingNames.MoonConfiguration, newConfig).then(() => {return true;});

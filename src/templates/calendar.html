@@ -25,6 +25,9 @@
                     <div class="day {{#if ../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
                         {{#day-has-note day=this}}{{/day-has-note}}
                         {{this.name}}
+                        <div class="moons">
+                            {{#day-moon-phase day=this}}{{/day-moon-phase}}
+                        </div>
                     </div>
                     {{/each}}
                 </div>

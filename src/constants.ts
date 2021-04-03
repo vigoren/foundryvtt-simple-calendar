@@ -88,3 +88,21 @@ export enum GameWorldTimeIntegrations {
      */
     Mixed = 'mixed'
 }
+
+
+export enum MoonIcons {
+    NewMoon = 'new',
+    WaxingCrescent = 'waxing-crescent',
+    FirstQuarter = 'first-quarter',
+    WaxingGibbous = 'waxing-gibbous',
+    Full = 'full',
+    WaningGibbous = 'waning-gibbous',
+    LastQuarter = 'last-quarter',
+    WaningCrescent = 'waning-crescent'
+}
+
+export enum MoonYearResetOptions {
+    None = 'none',
+    LeapYear = 'leap-year',
+    XYears = 'x-years'
+}

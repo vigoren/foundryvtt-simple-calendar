@@ -70,3 +70,8 @@ These are other time keeping modules that Simple Calendar can work if they are i
 
 - [about-time](https://foundryvtt.com/packages/about-time): See the [about-time module configuration for Simple Calendar](./docs/Configuration.md#about-time) for more information.
 - [Calendar/Weather](https://foundryvtt.com/packages/calendar-weather): See the [Calendar/Weather module configuration for Simple Calendar](./docs/Configuration.md#calendarweather) for more information.
+
+
+## Credits
+
+Moon Icons by [Wolf Böse](https://thenounproject.com/neuedeutsche/)

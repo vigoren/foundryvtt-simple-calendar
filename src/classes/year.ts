@@ -385,9 +385,10 @@ export default class Year {
         const numberOfLeapYears = this.leapYearRule.howManyLeapYears(year);
         const isLeapYear = this.leapYearRule.isLeapYear(year);
         let daysSoFar = (daysPerYear * year) + (numberOfLeapYears * leapYearDayDifference);
+        const monthIndex = this.months.findIndex(m => m.numericRepresentation === month);
         for(let i = 0; i < this.months.length; i++){
             //Only look at the month preceding the month we want and is not intercalary or is intercalary if the include setting is set otherwise skip
-            if(this.months[i].numericRepresentation < month && (ignoreIntercalaryRules || !this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
+            if(i < monthIndex && (ignoreIntercalaryRules || !this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
                 if(isLeapYear){
                     daysSoFar = daysSoFar + this.months[i].numberOfLeapYearDays;
                 } else {
@@ -537,12 +538,14 @@ export default class Year {
     getCurrentSeason() {
         let currentMonth = 0, currentDay = 0;
 
-        const month = this.getMonth();
+        const month = this.getMonth('visible');
         if(month){
             currentMonth = month.numericRepresentation;
-            const day = month.getDay();
+            const day = month.getDay('selected') || month.getDay();
             if(day){
                 currentDay = day.numericRepresentation;
+            } else {
+                currentDay = 1;
             }
         }
         if(currentDay > 0 && currentMonth > 0){

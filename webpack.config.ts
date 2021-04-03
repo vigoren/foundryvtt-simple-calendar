@@ -48,6 +48,10 @@ const config: webpack.Configuration = {
                     // Compiles Sass to CSS
                     'sass-loader'
                 ],
+            },
+            {
+                test: /\.svg$/,
+                type: 'asset/inline'
             }
         ]
     },

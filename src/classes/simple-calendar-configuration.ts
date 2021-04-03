@@ -3,7 +3,7 @@ import Year from "./year";
 import {GameSettings} from "./game-settings";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {LeapYearRules, GameWorldTimeIntegrations} from "../constants";
+import {GameWorldTimeIntegrations, LeapYearRules, MoonIcons, MoonYearResetOptions} from "../constants";
 import Importer from "./importer";
 import Season from "./season";
 import Moon from "./moon";
@@ -141,7 +141,13 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorCustom")
                 }
             ],
-            moons: (<Year>this.object).moons.map(m => m.toTemplate(<Year>this.object))
+            moons: (<Year>this.object).moons.map(m => m.toTemplate(<Year>this.object)),
+            moonIcons: <{[key: string]: string}>{},
+            moonYearReset: {
+                none: 'FSC.Configuration.Moon.YearResetNo',
+                'leap-year': 'FSC.Configuration.Moon.YearResetLeap',
+                'x-years': 'FSC.Configuration.Moon.YearResetX'
+            }
         };
 
         const calendarWeather = game.modules.get('calendar-weather');
@@ -150,6 +156,15 @@ export class SimpleCalendarConfiguration extends FormApplication {
         data.importing.showCalendarWeather = calendarWeather !== undefined && calendarWeather.active;
         data.importing.showAboutTime = aboutTime !== undefined && aboutTime.active;
 
+
+        data.moonIcons[MoonIcons.NewMoon] = GameSettings.Localize('FSC.Moon.Phase.New');
+        data.moonIcons[MoonIcons.WaxingCrescent] = GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent');
+        data.moonIcons[MoonIcons.FirstQuarter] = GameSettings.Localize('FSC.Moon.Phase.FirstQuarter');
+        data.moonIcons[MoonIcons.WaxingGibbous] = GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous');
+        data.moonIcons[MoonIcons.Full] = GameSettings.Localize('FSC.Moon.Phase.Full');
+        data.moonIcons[MoonIcons.WaningGibbous] = GameSettings.Localize('FSC.Moon.Phase.WaningGibbous');
+        data.moonIcons[MoonIcons.LastQuarter] = GameSettings.Localize('FSC.Moon.Phase.LastQuarter');
+        data.moonIcons[MoonIcons.WaningCrescent] = GameSettings.Localize('FSC.Moon.Phase.WaningCrescent');
 
         return data;
     }
@@ -255,20 +270,22 @@ export class SimpleCalendarConfiguration extends FormApplication {
             case "moon":
                 const newMoon = new Moon('Moon', 29.53059);
                 newMoon.firstNewMoon = {
+                    yearReset: MoonYearResetOptions.None,
+                    yearX: 0,
                     year: 0,
                     month: 1,
                     day: 1
                 };
-                const phaseLength = Number((newMoon.cycleLength / 8).toPrecision(5));
+                const phaseLength = Number(((newMoon.cycleLength - 4) / 4).toPrecision(5));
                 newMoon.phases = [
-                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: phaseLength},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: phaseLength},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: phaseLength},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: phaseLength},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength}
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
                 (<Year>this.object).moons.push(newMoon);
                 break;
@@ -279,7 +296,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     if(!isNaN(moonIndex) && moonIndex < (<Year>this.object).moons.length){
                         (<Year>this.object).moons[moonIndex].phases.push({
                             name: "Phase",
-                            length: 1
+                            length: 1,
+                            icon: MoonIcons.NewMoon,
+                            singleDay: false
                         });
                         (<Year>this.object).moons[moonIndex].updatePhaseLength();
                     }
@@ -379,6 +398,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public predefinedApplyConfirm() {
         const selectedPredefined = (<HTMLInputElement>document.getElementById("scPreDefined")).value;
         Logger.debug(`Overwriting the existing calendar configuration with the "${selectedPredefined}" configuration`);
+        let phaseLength = 0;
         switch (selectedPredefined){
             case 'gregorian':
                 const currentDate = new Date();
@@ -427,6 +447,25 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).seasons[1].color = "#f3fff3";
                 (<Year>this.object).seasons[2].color = "#fff7f2";
                 (<Year>this.object).seasons[3].color = "#f2f8ff";
+                (<Year>this.object).moons = [
+                   new Moon('Moon', 29.53059)
+                ];
+                (<Year>this.object).moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                (<Year>this.object).moons[0].firstNewMoon.year = 2000;
+                (<Year>this.object).moons[0].firstNewMoon.month = 1;
+                (<Year>this.object).moons[0].firstNewMoon.day = 6;
+                (<Year>this.object).moons[0].cycleDayAdjust = 0.5;
+                phaseLength = Number((((<Year>this.object).moons[0].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[0].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
                 break;
             case 'eberron':
                 (<Year>this.object).numericRepresentation = 998;
@@ -465,6 +504,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[0].current = true;
                 (<Year>this.object).months[0].days[0].current = true;
+                (<Year>this.object).moons = []; //TODO: Maybe add all 12 moons?
                 break;
             case 'exandrian':
                 (<Year>this.object).numericRepresentation = 812;
@@ -510,6 +550,41 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).seasons[1].color = "#f3fff3";
                 (<Year>this.object).seasons[2].color = "#fff7f2";
                 (<Year>this.object).seasons[3].color = "#f2f8ff";
+                (<Year>this.object).moons = [
+                    new Moon('Catha', 33),
+                    new Moon('Ruidus', 328)
+                ];
+                (<Year>this.object).moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                (<Year>this.object).moons[0].firstNewMoon.year = 810;
+                (<Year>this.object).moons[0].firstNewMoon.month = 1;
+                (<Year>this.object).moons[0].firstNewMoon.day = 9;
+                phaseLength = Number((((<Year>this.object).moons[0].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[0].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
+                (<Year>this.object).moons[1].color = "#ab82f3";
+                (<Year>this.object).moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                (<Year>this.object).moons[1].firstNewMoon.year = 810;
+                (<Year>this.object).moons[1].firstNewMoon.month = 3;
+                (<Year>this.object).moons[1].firstNewMoon.day = 22;
+                phaseLength = Number((((<Year>this.object).moons[1].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[1].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
                 break;
             case 'golarian':
                 (<Year>this.object).numericRepresentation = 4710;
@@ -557,6 +632,25 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).seasons[1].color = "#f3fff3";
                 (<Year>this.object).seasons[2].color = "#fff7f2";
                 (<Year>this.object).seasons[3].color = "#f2f8ff";
+                (<Year>this.object).moons = [
+                    new Moon('Somal', 29.5)
+                ];
+                (<Year>this.object).moons[0].firstNewMoon.yearReset = MoonYearResetOptions.XYears;
+                (<Year>this.object).moons[0].firstNewMoon.yearX = 4;
+                (<Year>this.object).moons[0].firstNewMoon.year = 4700;
+                (<Year>this.object).moons[0].firstNewMoon.month = 1;
+                (<Year>this.object).moons[0].firstNewMoon.day = 8;
+                phaseLength = Number((((<Year>this.object).moons[0].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[0].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
                 break;
             case 'greyhawk':
                 (<Year>this.object).numericRepresentation = 591 ;
@@ -614,6 +708,41 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[0].current = true;
                 (<Year>this.object).months[0].days[0].current = true;
+                (<Year>this.object).moons = [
+                    new Moon('Luna', 28),
+                    new Moon('Celene', 91)
+                ];
+                (<Year>this.object).moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                (<Year>this.object).moons[0].firstNewMoon.year = 590;
+                (<Year>this.object).moons[0].firstNewMoon.month = 1;
+                (<Year>this.object).moons[0].firstNewMoon.day = 25;
+                phaseLength = Number((((<Year>this.object).moons[0].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[0].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
+                (<Year>this.object).moons[1].color = '#7FFFD4';
+                (<Year>this.object).moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                (<Year>this.object).moons[1].firstNewMoon.year = 590;
+                (<Year>this.object).moons[1].firstNewMoon.month = 2;
+                (<Year>this.object).moons[1].firstNewMoon.day = 12;
+                phaseLength = Number((((<Year>this.object).moons[1].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[1].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
                 break;
             case 'harptos':
                 (<Year>this.object).numericRepresentation = 1495;
@@ -676,6 +805,25 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).leapYearRule.customMod = 4;
                 (<Year>this.object).months[0].current = true;
                 (<Year>this.object).months[0].days[0].current = true;
+                (<Year>this.object).moons = [
+                    new Moon('Selûne', 30.45)
+                ];
+                (<Year>this.object).moons[0].firstNewMoon.yearReset = MoonYearResetOptions.LeapYear;
+                (<Year>this.object).moons[0].firstNewMoon.year = 1372;
+                (<Year>this.object).moons[0].firstNewMoon.month = 1;
+                (<Year>this.object).moons[0].firstNewMoon.day = 16;
+                (<Year>this.object).moons[0].cycleDayAdjust = 0.5;
+                phaseLength = Number((((<Year>this.object).moons[0].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[0].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
                 break;
             case 'warhammer':
                 (<Year>this.object).numericRepresentation = 2522;
@@ -736,6 +884,24 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[0].current = true;
                 (<Year>this.object).months[0].days[0].current = true;
+                (<Year>this.object).moons = [
+                    new Moon('Luna', 25)
+                ];
+                (<Year>this.object).moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                (<Year>this.object).moons[0].firstNewMoon.year = 2522;
+                (<Year>this.object).moons[0].firstNewMoon.month = 1;
+                (<Year>this.object).moons[0].firstNewMoon.day = 13;
+                phaseLength = Number((((<Year>this.object).moons[0].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[0].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
                 break;
         }
         this.yearChanged = true;
@@ -754,7 +920,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
         let value = (<HTMLInputElement>e.currentTarget).value.trim();
         const checked = (<HTMLInputElement>e.currentTarget).checked;
 
-        if(id){
+        if(id && id[0] !== '-'){
             Logger.debug(`ID "${id}" change found`);
             //General Setting Inputs
             if(id === "scDefaultPlayerVisibility"){
@@ -878,8 +1044,21 @@ export class SimpleCalendarConfiguration extends FormApplication {
                         const cycle = parseFloat(value);
                         if(!isNaN(cycle)){
                             (<Year>this.object).moons[index].cycleLength = cycle;
+                            (<Year>this.object).moons[index].updatePhaseLength();
                         }
-                    } else if(cssClass === 'moon-year' && (<Year>this.object).moons.length > index){
+                    } else if(cssClass === 'moon-cycle-adjustment' && (<Year>this.object).moons.length > index){
+                        const cycle = parseFloat(value);
+                        if(!isNaN(cycle)){
+                            (<Year>this.object).moons[index].cycleDayAdjust = cycle;
+                        }
+                    } else if(cssClass === 'moon-year-reset' && (<Year>this.object).moons.length > index){
+                        (<Year>this.object).moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>value;
+                    } else if(cssClass === 'moon-year-x' && (<Year>this.object).moons.length > index){
+                        const year = parseInt(value);
+                        if(!isNaN(year)){
+                            (<Year>this.object).moons[index].firstNewMoon.yearX = year;
+                        }
+                    }else if(cssClass === 'moon-year' && (<Year>this.object).moons.length > index){
                         const year = parseInt(value);
                         if(!isNaN(year)){
                             (<Year>this.object).moons[index].firstNewMoon.year = year;
@@ -889,17 +1068,30 @@ export class SimpleCalendarConfiguration extends FormApplication {
                         if(!isNaN(month)){
                             (<Year>this.object).moons[index].firstNewMoon.month = month;
                         }
-                    } else if(cssClass === 'month-day' && (<Year>this.object).moons.length > index){
+                    } else if(cssClass === 'moon-day' && (<Year>this.object).moons.length > index){
                         const day = parseInt(value);
                         if(!isNaN(day)){
                             (<Year>this.object).moons[index].firstNewMoon.day = day;
                         }
-                    } else if(cssClass === 'moon-phase-name'){
+                    } else if(cssClass === 'moon-color' && (<Year>this.object).moons.length > index){
+                        if(value[0] !== "#"){
+                            value = '#'+value;
+                        }
+                        (<Year>this.object).moons[index].color = value;
+                    } else if(cssClass === 'moon-phase-name' || cssClass === 'moon-phase-single-day' || cssClass === 'moon-phase-icon'){
                         const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
                         if(dataMoonIndex){
                             const moonIndex = parseInt(dataMoonIndex);
                             if(!isNaN(moonIndex) && (<Year>this.object).moons.length > moonIndex && (<Year>this.object).moons[moonIndex].phases.length > index){
-                                (<Year>this.object).moons[moonIndex].phases[index].name = value;
+                                if(cssClass === 'moon-phase-name'){
+                                    (<Year>this.object).moons[moonIndex].phases[index].name = value;
+                                } else if(cssClass === 'moon-phase-single-day'){
+                                    (<Year>this.object).moons[moonIndex].phases[index].singleDay = checked;
+                                    (<Year>this.object).moons[moonIndex].updatePhaseLength();
+                                } else if(cssClass === 'moon-phase-icon'){
+                                    (<Year>this.object).moons[moonIndex].phases[index].icon = <MoonIcons>value;
+                                }
+
                             }
                         }
                     }

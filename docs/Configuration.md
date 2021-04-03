@@ -59,10 +59,7 @@ The current supported modules for importing/exporting settings:
 
 The [about-time](https://foundryvtt.com/packages/about-time) module is used for many other modules but can also be used on its own. 
 
-Most settings can be imported and exported between these two modules with these notable exceptions:
-
-- There seems to be inconsistency in how about-time handles intercalary days so calendars that have intercalary days do not quite line up with about-time's time, the days will be slightly off.
-
+Most settings can be imported and exported between these two modules without issue.
 
 #### Calendar/Weather
 
@@ -73,7 +70,6 @@ Most settings can be imported and exported between these two modules with these 
 - Calendar/Weather does not seem to support Leap Years at all (see this [line of code](https://github.com/DasSauerkraut/calendar-weather/blob/89b59e047c86c979b246ae385c471f4e824eaaa1/modules/dateTime.mjs#L42)) as a result:
     - When Importing from Calendar/Weather no leap year rule will be set in Simple Calendar.
     - When Exporting to Calendar/Weather the date will be off by the number of leap days that have passed so far. Example if there have been 4 leap years with 1 extra day each year the Calendar/Weather's calendar will be ahead by 4 days. This gets very exaggerated when using a Gregorian calendar for today's date as there have been 490 extra leap days for 2021.
-- Calendar/Weather uses about-time at its core, because of this the [intercalary issue](#about-time) exists as well.
 - Calendar/Weather's season colors and Simple Calendar's season colors do not line up so they are not Imported or Exported.
 - Calendar/Weather's season month is not properly stored:
     - When Importing from Calendar/Weather every season will have its month set to be the first month.
