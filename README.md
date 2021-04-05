@@ -42,7 +42,7 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 * Select days to view any notes/events specific to that day.
 * If the GM allows it, the ability to add their own notes to the calendar.
 
-##Contents
+## Contents
 
 - [Installation](#installing-the-module)
 - [Compatible Modules](#compatible-modules)
