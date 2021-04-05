@@ -30,7 +30,7 @@ describe('Simple Calendar Notes Tests', () => {
         note.monthDisplay = '';
         note.title = '';
         note.content = '';
-        note.author = '';
+        note.author = '1';
         note.playerVisible = false;
 
         SimpleCalendarNotes.instance = new SimpleCalendarNotes(note);
@@ -38,6 +38,7 @@ describe('Simple Calendar Notes Tests', () => {
         //Spy on console.error calls
         jest.spyOn(console, 'error').mockImplementation();
         //Spy on the inherited render function of the new instance
+        //@ts-ignore
         renderSpy = jest.spyOn(SimpleCalendarNotes.instance, 'render');
         (<Mock>console.error).mockClear();
         renderSpy.mockClear();
@@ -116,6 +117,21 @@ describe('Simple Calendar Notes Tests', () => {
         expect(data.noteYear).toBe(1);
         //@ts-ignore
         expect(data.noteMonth).toBe('Name');
+
+        //@ts-ignore
+        (<Mock>game.users.get).mockReturnValueOnce({name:"asd"});
+        data = SimpleCalendarNotes.instance.getData();
+        //@ts-ignore
+        expect(data.authorName).toBe('asd');
+
+        const tusers = game.users;
+        game.users = undefined;
+        data = SimpleCalendarNotes.instance.getData();
+        //@ts-ignore
+        expect(data.authorName).toBe('1');
+
+        game.users = tusers;
+
     });
 
     test('Set Up Text Editor', () => {
@@ -286,6 +302,8 @@ describe('Simple Calendar Notes Tests', () => {
     });
 
     test('Delete Confirm', () => {
+        //@ts-ignore
+        game.user.isGM = true;
         SimpleCalendarNotes.instance.deleteConfirm();
         expect(game.settings.get).toHaveBeenCalledTimes(1);
         expect(game.settings.set).not.toHaveBeenCalled();

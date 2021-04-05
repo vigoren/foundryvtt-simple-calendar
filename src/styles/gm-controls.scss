@@ -1,6 +1,15 @@
 .control{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  &:before{
+    padding-right: 5px;
+  }
+
   &.previous{
-    span:last-child{
+    span:last-of-type{
       padding-right: 5px;
     }
     span.shift-back{
@@ -8,7 +17,7 @@
     }
   }
   &.next{
-    span:first-child{
+    span:first-of-type{
       padding-left: 5px;
     }
     span.shift-back{
@@ -17,25 +26,98 @@
   }
 }
 
-.controls{
-  background-color: #fff;
-  border: 1px solid #c3c3c3;
-  box-shadow: 2px 2px 2px #c3c3c3;
-  padding: 5px;
+.controls {
   width: 275px;
   margin: 0 0 1rem 1rem;
-  .control-group{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    border-top: 1px solid #b9b9b9;
-    margin-bottom: 10px;
-    padding-top: 5px;
 
-    .control-name{
-      font-weight: 600;
-      line-height: 1.25rem;
-      font-size: 1.25rem;
+  .time-controls{
+    padding: 0.5rem;
+    box-shadow: 2px 2px 5px #b9b9b9;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    .row{
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+
+      .time-unit{
+        display: flex;
+        border: 1px solid black;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        .selector{
+          padding: .15rem .5rem;
+          border-right: 1px solid black;
+          line-height: 1rem;
+          cursor: pointer;
+
+          &:first-child{
+            border-radius: 4px 0 0 4px;
+          }
+          &:last-child{
+            border-right-width: 0;
+            border-radius: 0 4px 4px 0;
+          }
+          &.selected{
+            background-color: #603382;
+            color:#ffffff;
+          }
+          &:hover{
+            background-color: #cd9cf3;
+          }
+        }
+      }
+      .time-start{
+        margin: 0 10px;
+        line-height: 22px;
+
+        &.go{
+          color: green;
+        }
+        &.paused{
+          color: #de810d;
+        }
+      }
+      .time-stop{
+        line-height: 22px;
+        color: #c12121;
+        &.stopped{
+          color: #6e6c6c
+        }
+      }
+      &.time-amount{
+        .control{
+          margin: 0 8px;
+        }
+      }
+    }
+  }
+
+  .date-controls{
+    padding: 0.5rem;
+    box-shadow: 2px 2px 5px #b9b9b9;
+    margin-bottom: 0.5rem;
+    background-color: #fff;
+
+    .control-group{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #b9b9b9;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+
+      &:last-child{
+        border-bottom-width: 0;
+        padding-bottom: 0;
+      }
+
+      .control-name{
+        font-weight: 600;
+        line-height: 1.25rem;
+        font-size: 1.25rem;
+      }
     }
   }
 }

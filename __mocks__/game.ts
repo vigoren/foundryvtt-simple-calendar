@@ -1,7 +1,7 @@
 /**
  * This file mocks the FoundryVTT game global so that it can be used in testing
  */
-import {SettingNames} from "../src/constants";
+import {GameWorldTimeIntegrations, MoonIcons, MoonYearResetOptions, SettingNames} from "../src/constants";
 
 //@ts-ignore
 const local: Localization = {
@@ -39,12 +39,14 @@ const game = {
     data: null,
     i18n: local,
     user: user,
+    paused: true,
     // @ts-ignore
     settings: {
         get: jest.fn((moduleName: string, settingName: string): any => {
             switch (settingName){
                 case SettingNames.AllowPlayersToAddNotes:
                 case SettingNames.DefaultNoteVisibility:
+                case SettingNames.ImportRan:
                     return false;
                 case SettingNames.YearConfiguration:
                     return {numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true};
@@ -55,17 +57,52 @@ const game = {
                 case SettingNames.LeapYearRule:
                     return {rule: 'none', customMod: 0};
                 case SettingNames.CurrentDate:
-                    return {year: 0, month: 1, day: 2};
+                    return {year: 0, month: 1, day: 2, seconds: 3};
                 case SettingNames.Notes:
                     return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false, id: 'abc123'}]];
+                case SettingNames.GeneralConfiguration:
+                    return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false}
+                case SettingNames.TimeConfiguration:
+                    return {hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3};
+                case SettingNames.SeasonConfiguration:
+                    return [[{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', customColor: ''}]];
+                case SettingNames.MoonConfiguration:
+                    return [[{"name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]];
             }
         }),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),
         set: jest.fn((moduleName: string, settingName: string, data: any) => {return Promise.resolve(true);})
+    },
+    time: {
+        worldTime: 10,
+        advance: jest.fn()
+    },
+    socket: {
+        on: jest.fn(),
+        emit: jest.fn()
+    },
+    combats: {
+        size: 0,
+        find: jest.fn((v)=>{
+            return v.call(undefined, {started: true});
+        })
+    },
+    modules: {
+        get: jest.fn()
+    },
+    Gametime: {
+        DTC: {
+            saveUserCalendar: jest.fn()
+        }
+    },
+    users: {
+        get: jest.fn(),
+        find: jest.fn((v)=>{
+            return v.call(undefined, {isGM: false, active: true});
+        })
     }
-    //keyboard: null,
-    //modules: null
 };
+
 // @ts-ignore
 global.game = game;
 

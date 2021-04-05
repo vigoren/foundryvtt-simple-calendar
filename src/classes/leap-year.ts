@@ -45,4 +45,32 @@ export default class LeapYear {
         return num;
     }
 
+    previousLeapYear(year: number): number | null {
+        if(this.rule === LeapYearRules.Gregorian || (this.rule === LeapYearRules.Custom && this.customMod !== 0)){
+            let testYear = year;
+            while(Number.isInteger(testYear)){
+                if(this.isLeapYear(testYear)){
+                    break;
+                } else {
+                    testYear--;
+                }
+            }
+            return testYear;
+        }
+        return null;
+    }
+
+    fraction(year: number){
+        const previousLeapYear = this.previousLeapYear(year);
+        if(previousLeapYear !== null){
+            const yearInto = year%previousLeapYear;
+            if(this.rule === LeapYearRules.Gregorian){
+                return yearInto / 4
+            } else {
+                return yearInto / this.customMod;
+            }
+        }
+        return 0;
+    }
+
 }
