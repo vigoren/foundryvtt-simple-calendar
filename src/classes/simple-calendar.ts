@@ -2,12 +2,16 @@ import {Logger} from "./logging";
 import Year from "./year";
 import Month from "./month";
 import {Note} from "./note";
-import {CalendarTemplate, NoteTemplate} from "../interfaces";
+import {CalendarTemplate, NoteTemplate, SimpleCalendarSocket} from "../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {GameSettings} from "./game-settings";
 import {Weekday} from "./weekday";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
+import {GameWorldTimeIntegrations, ModuleSocketName, SocketTypes} from "../constants";
+import Importer from "./importer";
+import Season from "./season";
+import Moon from "./moon";
 
 
 /**
@@ -26,7 +30,32 @@ export default class SimpleCalendar extends Application{
      */
     public currentYear: Year | null = null;
 
-    public notes: Note[] = []
+    /**
+     * List of all notes in the calendar
+     * @type {Array.<Note>}
+     */
+    public notes: Note[] = [];
+
+    /**
+     * The CSS class associated with the animated clock
+     */
+    clockClass = 'stopped';
+
+    /**
+     * The different time units that a user can choose from and which one is currently selected
+     */
+    timeUnits = {
+        second: true,
+        minute: false,
+        hour: false
+    };
+
+    /**
+     * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
+     */
+    public primary: boolean = false;
+
+    private primaryCheckTimeout: number | undefined;
 
     /**
      * Simple Calendar constructor
@@ -48,10 +77,53 @@ export default class SimpleCalendar extends Application{
     /**
      * Initializes the dialogs once foundry is ready to go
      */
-    public init(){
+    public async init(){
         HandlebarsHelpers.Register();
         GameSettings.RegisterSettings();
         this.settingUpdate();
+        await this.timeKeepingCheck();
+
+        //Set up the socket we use to forward data between players and the GM
+        game.socket.on(ModuleSocketName, this.processSocket.bind(this));
+        if(this.currentYear){
+            this.currentYear.time.updateUsers();
+        }
+
+        if(GameSettings.IsGm()){
+            this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
+        }
+    }
+
+    /**
+     * Called after the timeout delay set to see if another GM account has been set as the primary
+     */
+    primaryCheckTimeoutCall(){
+        Logger.debug('No primary GM found, taking over as primary');
+        this.primary = true;
+        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {}};
+        game.socket.emit(ModuleSocketName, socketData);
+    }
+
+    /**
+     * Process any data received over our socket
+     * @param {SimpleCalendarSocket.Data} data The data received
+     */
+    async processSocket(data: SimpleCalendarSocket.Data){
+        Logger.debug(`Processing ${data.type} socket emit`);
+        if(data.type === SocketTypes.time){
+            // This is processed by all players to update the animated clock
+            this.clockClass = (<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).clockClass;
+            this.updateApp();
+        } else if (data.type === SocketTypes.journal){
+            // If user is a GM and the primary GM then save the journal requests, otherwise do nothing
+            if(GameSettings.IsGm() && this.primary){
+                Logger.debug(`Saving notes from user.`);
+                await GameSettings.SaveNotes((<SimpleCalendarSocket.SimpleCalendarSocketJournal>data.data).notes)
+            }
+        } else if (data.type === SocketTypes.primary){
+            Logger.debug('A primary GM is all ready present.');
+            window.clearTimeout(this.primaryCheckTimeout);
+        }
     }
 
     /**
@@ -61,22 +133,30 @@ export default class SimpleCalendar extends Application{
         if(this.currentYear){
             return {
                 isGM: GameSettings.IsGm(),
+                isPrimary: this.primary,
+                addNotes: GameSettings.IsGm() || this.currentYear.generalSettings.playersAddNotes,
                 currentYear: this.currentYear.toTemplate(),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
-                notes: this.getNotesForDay()
+                notes: this.getNotesForDay(),
+                clockClass: this.clockClass,
+                timeUnits: this.timeUnits
             };
         } else {
             return {
                 isGM: false,
+                isPrimary: this.primary,
+                addNotes: false,
                 currentYear: new Year(0).toTemplate(),
                 showCurrentDay: false,
                 showSelectedDay: false,
-                notes: []
+                notes: [],
+                clockClass: this.clockClass,
+                timeUnits: this.timeUnits
             };
         }
     }
-
+    
     /**
      * Adds the calendar button to the token button list
      * @param controls
@@ -187,6 +267,7 @@ export default class SimpleCalendar extends Application{
             (<JQuery>html).find(".calendar-controls .today").on('click', SimpleCalendar.instance.todayClick.bind(this));
 
             // When the GM Date controls are clicked
+            (<JQuery>html).find(".time-controls .time-unit .selector").on('click', SimpleCalendar.instance.timeUnitClick.bind(this));
             (<JQuery>html).find(".controls .control").on('click', SimpleCalendar.instance.gmControlClick.bind(this));
             (<JQuery>html).find(".controls .btn-apply").on('click', SimpleCalendar.instance.dateControlApply.bind(this));
 
@@ -198,6 +279,9 @@ export default class SimpleCalendar extends Application{
 
             // Note Click
             (<JQuery>html).find(".date-notes .note").on('click', SimpleCalendar.instance.viewNote.bind(this));
+
+            (<JQuery>html).find(".time-start").on('click', SimpleCalendar.instance.startTime.bind(this));
+            (<JQuery>html).find(".time-stop").on('click', SimpleCalendar.instance.stopTime.bind(this));
         }
     }
 
@@ -297,33 +381,62 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
+     * Click event when a user is changing the time unit to adjust
+     * @param {Event} e The click event
+     */
+    public timeUnitClick(e: Event){
+        e.stopPropagation();
+        if(this.currentYear){
+            const target = <HTMLElement>e.currentTarget;
+            const dataType = target.getAttribute('data-type')?.toLowerCase() as 'second' | 'minute' | 'hour';
+            this.timeUnits.second = false;
+            this.timeUnits.minute = false;
+            this.timeUnits.hour = false;
+            this.timeUnits[dataType] = true;
+            this.updateApp();
+        }
+    }
+
+    /**
      * Click event when a gm user clicks on any of the next/back buttons for day/month/year
      * @param {Event} e The click event
      */
     public gmControlClick(e: Event){
         e.stopPropagation();
-        const target = <HTMLElement>e.currentTarget;
-        const dataType = target.getAttribute('data-type');
-        const isNext = target.classList.contains('next');
-
-        switch (dataType){
-            case 'day':
-                Logger.debug(`${isNext? 'Forward' : 'Back'} Day Clicked`);
-                this.currentYear?.changeDay(isNext, 'current');
-                this.updateApp();
-                break;
-            case 'month':
-                Logger.debug(`${isNext? 'Forward' : 'Back'} Month Clicked`);
-                this.currentYear?.changeMonth(isNext? 1 : -1, 'current');
-                this.updateApp();
-                break;
-            case 'year':
-                Logger.debug(`${isNext? 'Forward' : 'Back'} Year Clicked`);
-                this.currentYear?.changeYear(isNext? 1 : -1, false, "current");
-                this.updateApp();
-                break;
+        if(this.currentYear){
+            const target = <HTMLElement>e.currentTarget;
+            const dataType = target.getAttribute('data-type');
+            const isNext = target.classList.contains('next');
+            switch (dataType){
+                case 'time':
+                    const dataAmount = target.getAttribute('data-amount');
+                    if(dataAmount){
+                        const amount = parseInt(dataAmount);
+                        if(!isNaN(amount)){
+                            Logger.debug(`${isNext? 'Forward' : 'Back'} Time Clicked`);
+                            const unit = this.timeUnits.second? 'second' : this.timeUnits.minute? 'minute' : 'hour';
+                            this.currentYear.changeTime(isNext, unit, amount);
+                            this.updateApp();
+                        }
+                    }
+                    break;
+                case 'day':
+                    Logger.debug(`${isNext? 'Forward' : 'Back'} Day Clicked`);
+                    this.currentYear.changeDay(isNext, 'current');
+                    this.updateApp();
+                    break;
+                case 'month':
+                    Logger.debug(`${isNext? 'Forward' : 'Back'} Month Clicked`);
+                    this.currentYear.changeMonth(isNext? 1 : -1, 'current');
+                    this.updateApp();
+                    break;
+                case 'year':
+                    Logger.debug(`${isNext? 'Forward' : 'Back'} Year Clicked`);
+                    this.currentYear.changeYear(isNext? 1 : -1, false, "current");
+                    this.updateApp();
+                    break;
+            }
         }
-
     }
 
     /**
@@ -336,6 +449,8 @@ export default class SimpleCalendar extends Application{
         if(GameSettings.IsGm()){
             if(this.currentYear) {
                 GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
+                //Sync the current time on apply, this will propagate to other modules
+                this.currentYear.syncTime().catch(Logger.error);
             }
         } else {
             GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Calendar.GMCurrent"), 'warn');
@@ -350,8 +465,12 @@ export default class SimpleCalendar extends Application{
         e.stopPropagation();
         if(GameSettings.IsGm()){
             if(this.currentYear){
-                SimpleCalendarConfiguration.instance = new SimpleCalendarConfiguration(this.currentYear.clone());
-                SimpleCalendarConfiguration.instance.showApp();
+                if(!SimpleCalendarConfiguration.instance || (SimpleCalendarConfiguration.instance && !SimpleCalendarConfiguration.instance.rendered)){
+                    SimpleCalendarConfiguration.instance = new SimpleCalendarConfiguration(this.currentYear.clone());
+                    SimpleCalendarConfiguration.instance.showApp();
+                } else {
+                    SimpleCalendarConfiguration.instance.bringToTop();
+                }
             } else {
                 Logger.error('The Current year is not configured.');
             }
@@ -367,28 +486,32 @@ export default class SimpleCalendar extends Application{
     public addNote(e: Event) {
         e.stopPropagation();
         if(this.currentYear){
-            const currentMonth = this.currentYear.getMonth('selected') || this.currentYear.getMonth();
-            if(currentMonth){
-                const currentDay = currentMonth.getDay('selected') || currentMonth.getDay();
-                if(currentDay){
-                    const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
-                    const month = currentMonth.numericRepresentation;
-                    const day = currentDay.numericRepresentation;
-                    const newNote = new Note();
-                    newNote.year = year;
-                    newNote.month = month;
-                    newNote.day = day;
-                    newNote.monthDisplay = currentMonth.name;
-                    newNote.title = '';
-                    newNote.author = GameSettings.UserName();
-                    newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
-                    SimpleCalendarNotes.instance = new SimpleCalendarNotes(newNote);
-                    SimpleCalendarNotes.instance.showApp();
-                } else {
-                    GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedDay"), 'warn');
-                }
+            if(game.users && !game.users.find(u => u.isGM && u.active)){
+                GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
             } else {
-                GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedMonth"), 'warn');
+                const currentMonth = this.currentYear.getMonth('selected') || this.currentYear.getMonth();
+                if(currentMonth){
+                    const currentDay = currentMonth.getDay('selected') || currentMonth.getDay();
+                    if(currentDay){
+                        const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
+                        const month = currentMonth.numericRepresentation;
+                        const day = currentDay.numericRepresentation;
+                        const newNote = new Note();
+                        newNote.year = year;
+                        newNote.month = month;
+                        newNote.day = day;
+                        newNote.monthDisplay = currentMonth.name;
+                        newNote.title = '';
+                        newNote.author = GameSettings.UserID();
+                        newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
+                        SimpleCalendarNotes.instance = new SimpleCalendarNotes(newNote);
+                        SimpleCalendarNotes.instance.showApp();
+                    } else {
+                        GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedDay"), 'warn');
+                    }
+                } else {
+                    GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedMonth"), 'warn');
+                }
             }
         } else {
             Logger.error('The Current year is not configured.');
@@ -417,7 +540,7 @@ export default class SimpleCalendar extends Application{
      * Re renders the application window
      * @private
      */
-    private updateApp(){
+    public updateApp(){
         if(this.rendered){
             this.render(false, {width: 500, height: 500});
         }
@@ -444,9 +567,37 @@ export default class SimpleCalendar extends Application{
         if(type === 'leapyear'){
             this.currentYear?.leapYearRule.loadFromSettings();
         }
+        if(type === 'all' || type === 'time'){
+            this.loadTimeConfiguration();
+        }
+        if(type === 'all' || type === 'season'){
+            this.loadSeasonConfiguration();
+        }
+        if(type === 'all' || type === 'moon'){
+            this.loadMoonConfiguration();
+        }
+        if(type === 'all' || type === 'general'){
+            this.loadGeneralSettings();
+        }
         this.loadCurrentDate();
         if(update) {
             this.updateApp();
+        }
+    }
+
+    /**
+     * Loads the general settings from the world settings and apply them
+     * @private
+     */
+    private loadGeneralSettings(){
+        Logger.debug('Loading general settings from world settings');
+        const gSettings = GameSettings.LoadGeneralSettings();
+        if(gSettings && Object.keys(gSettings).length){
+            if(this.currentYear){
+                this.currentYear.generalSettings = gSettings;
+            } else {
+                Logger.error('No Current year configured, can not load general settings.');
+            }
         }
     }
 
@@ -548,13 +699,85 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
+     * Loads the season configuration data from the settings and applies them to the current year
+     * @private
+     */
+    private loadSeasonConfiguration(){
+        Logger.debug('Loading season configuration from settings.');
+        if(this.currentYear){
+            const seasonData = GameSettings.LoadSeasonData();
+            this.currentYear.seasons = [];
+            if(seasonData.length){
+                Logger.debug('Setting the seasons from data.');
+                for(let i = 0; i < seasonData.length; i++){
+                    const newSeason = new Season(seasonData[i].name, seasonData[i].startingMonth, seasonData[i].startingDay);
+                    newSeason.color = seasonData[i].color;
+                    newSeason.customColor = seasonData[i].customColor;
+                    this.currentYear.seasons.push(newSeason);
+                }
+            }
+        } else {
+            Logger.error('No Current year configured, can not load season data.');
+        }
+    }
+
+    /**
+     * Loads the moon configuration data from the settings and applies them to the current year
+     * @private
+     */
+    private loadMoonConfiguration(){
+        Logger.debug('Loading moon configuration from settings.');
+        if(this.currentYear){
+            const moonData = GameSettings.LoadMoonData();
+            this.currentYear.moons = [];
+            if(moonData.length){
+                Logger.debug('Setting the moons from data.');
+                for(let i = 0; i < moonData.length; i++){
+                    const newMoon = new Moon(moonData[i].name, moonData[i].cycleLength);
+                    newMoon.phases = moonData[i].phases;
+                    newMoon.firstNewMoon = {
+                        yearReset: moonData[i].firstNewMoon.yearReset,
+                        yearX: moonData[i].firstNewMoon.yearX,
+                        year: moonData[i].firstNewMoon.year,
+                        month: moonData[i].firstNewMoon.month,
+                        day: moonData[i].firstNewMoon.day
+                    };
+                    newMoon.color = moonData[i].color;
+                    newMoon.cycleDayAdjust = moonData[i].cycleDayAdjust;
+                    this.currentYear.moons.push(newMoon);
+                }
+            }
+        } else {
+            Logger.error('No Current year configured, can not load moon data.');
+        }
+    }
+
+    /**
+     * Loads the time configuration from the settings and applies them to the current year
+     * @private
+     */
+    private loadTimeConfiguration(){
+        Logger.debug('Loading time configuration from settings.');
+        if(this.currentYear){
+            const timeData = GameSettings.LoadTimeData();
+            if(timeData && Object.keys(timeData).length){
+                this.currentYear.time.hoursInDay = timeData.hoursInDay;
+                this.currentYear.time.minutesInHour = timeData.minutesInHour;
+                this.currentYear.time.secondsInMinute = timeData.secondsInMinute;
+                this.currentYear.time.gameTimeRatio = timeData.gameTimeRatio;
+            }
+        } else {
+            Logger.error('No Current year configured, can not load time data.');
+        }
+    }
+
+    /**
      * Loads the current date data from the settings and applies them to the current year
      */
     private loadCurrentDate(){
         Logger.debug('Loading current date from settings.');
         const currentDate = GameSettings.LoadCurrentDate();
         if(this.currentYear && currentDate && Object.keys(currentDate).length){
-            Logger.debug('Loading current date data from settings.');
             this.currentYear.numericRepresentation = currentDate.year;
             this.currentYear.visibleYear = currentDate.year;
             this.currentYear.selectedYear = currentDate.year;
@@ -578,6 +801,10 @@ export default class SimpleCalendar extends Application{
                 this.currentYear.months[0].current = true;
                 this.currentYear.months[0].visible = true;
                 this.currentYear.months[0].days[0].current = true;
+            }
+            this.currentYear.time.seconds = currentDate.seconds;
+            if(this.currentYear.time.seconds === undefined){
+                this.currentYear.time.seconds = 0;
             }
         } else if(this.currentYear && this.currentYear.months.length) {
             Logger.debug('No current date setting found, setting default current date.');
@@ -628,6 +855,186 @@ export default class SimpleCalendar extends Application{
             }
         }
         return dayNotes;
+    }
+
+    /**
+     * Triggered when anything updates the game world time
+     * @param {number} newTime The total time in seconds
+     * @param {number} delta How much the newTime has changed from the old time in seconds
+     */
+    worldTimeUpdate(newTime: number, delta: number){
+        Logger.debug(`World Time Update, new time: ${newTime}. Delta of: ${delta}.`);
+        if(this.currentYear){
+            this.currentYear.setFromTime(newTime, delta);
+        }
+    }
+
+    /**
+     * Triggered when a combat is create/started/turn advanced
+     * @param {Combat} combat The specific combat data
+     * @param {Combat.CurrentTurn} round The current turns data
+     * @param {Object} time The amount of time that has advanced
+     */
+    combatUpdate(combat: Combat, round: Combat.CurrentTurn, time: any){
+        Logger.debug('Combat Update');
+        if(this.currentYear && combat.started){
+            this.currentYear.time.combatRunning = true;
+            this.currentYear.time.updateUsers();
+            if(time && time.hasOwnProperty('advanceTime')){
+                Logger.debug('Combat Change Triggered');
+                this.currentYear.combatChangeTriggered = true;
+            }
+        }
+    }
+
+    /**
+     * Triggered when a combat is finished and removed
+     */
+    combatDelete(){
+        Logger.debug('Combat Ended');
+        if(this.currentYear){
+            this.currentYear.time.combatRunning = false;
+            this.currentYear.time.updateUsers();
+        }
+    }
+
+    /**
+     * Triggered when the game is paused/un-paused
+     * @param {boolean} paused If the game is now paused or not
+     */
+    gamePaused(paused: boolean){
+        if(this.currentYear){
+            this.currentYear.time.updateUsers();
+        }
+    }
+
+    /**
+     * Starts the built in time keeper
+     */
+    startTime(){
+        if(this.currentYear){
+            if(game.combats && game.combats.size > 0 && game.combats.find(g => g.started)){
+                GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
+            } else if(this.currentYear.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.currentYear.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
+                this.currentYear.time.startTimeKeeper();
+            }
+        }
+    }
+
+    /**
+     * Stops the built in time keeper
+     */
+    stopTime(){
+        if(this.currentYear){
+            this.currentYear.time.stopTimeKeeper();
+        }
+    }
+
+    /**
+     * Checks to see if the module import/export dialog needs to be shown and syncs the game world time with the simple calendar
+     */
+    async timeKeepingCheck(){
+        //If the current year is set up and the calendar is set up for time keeping and the user is the GM
+        if(this.currentYear && this.currentYear.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.None && GameSettings.IsGm() ){
+            const importRun = GameSettings.GetImportRan();
+            // If we haven't asked about the import in the past
+            if(!importRun){
+                const calendarWeather = game.modules.get('calendar-weather');
+                const aboutTime = game.modules.get('about-time');
+                //Ask about calendar/weather first, then about time
+                if(calendarWeather && calendarWeather.active){
+                    Logger.debug('Calendar/Weather detected.');
+                    const cwD = new Dialog({
+                        title: GameSettings.Localize('FSC.Module.CalendarWeather.Title'),
+                        content: GameSettings.Localize('FSC.Module.CalendarWeather.Message'),
+                        buttons:{
+                            import: {
+                                label: GameSettings.Localize('FSC.Module.Import'),
+                                callback: this.moduleImportClick.bind(this, 'calendar-weather')
+                            },
+                            export: {
+                                label: GameSettings.Localize('FSC.Module.CalendarWeather.Export'),
+                                callback: this.moduleExportClick.bind(this,'calendar-weather')
+                            },
+                            no: {
+                                label: GameSettings.Localize('FSC.Module.NoChanges'),
+                                callback: this.moduleDialogNoChangeClick.bind(this)
+                            }
+                        },
+                        default: "no"
+                    });
+                    cwD.render(true);
+                } else if(aboutTime && aboutTime.active){
+                    Logger.debug(`About Time detected.`);
+                    const cwD = new Dialog({
+                        title: GameSettings.Localize('FSC.Module.AboutTime.Title'),
+                        content: GameSettings.Localize('FSC.Module.AboutTime.Message'),
+                        buttons:{
+                            import: {
+                                label: GameSettings.Localize('FSC.Module.Import'),
+                                callback: this.moduleImportClick.bind(this, 'about-time')
+                            },
+                            export: {
+                                label: GameSettings.Localize('FSC.Module.AboutTime.Export'),
+                                callback: this.moduleExportClick.bind(this,'about-time')
+                            },
+                            no: {
+                                label: GameSettings.Localize('FSC.Module.NoChanges'),
+                                callback: this.moduleDialogNoChangeClick.bind(this)
+                            }
+                        },
+                        default: "no"
+                    });
+                    cwD.render(true);
+                }
+            }
+
+            //Sync the current world time with the simple calendar
+            await this.currentYear.syncTime();
+        }
+    }
+
+    /**
+     * Called when the import option is selection from the importing/exporting module dialog
+     * @param {string} type The module
+     */
+    async moduleImportClick(type: string) {
+        if(this.currentYear){
+            if(type === 'about-time'){
+                await Importer.importAboutTime(this.currentYear);
+                this.updateApp();
+            } else if(type === 'calendar-weather'){
+                await Importer.importCalendarWeather(this.currentYear);
+                this.updateApp();
+            }
+            await GameSettings.SetImportRan(true);
+        } else {
+            Logger.error('Could not export as the current year is not defined');
+        }
+    }
+
+    /**
+     * Called when the export option is selection from the importing/exporting module dialog
+     * @param {string} type The module
+     */
+    async moduleExportClick(type: string){
+        if(this.currentYear){
+            if(type === 'about-time'){
+                await Importer.exportToAboutTime(this.currentYear);
+            } else if(type === 'calendar-weather'){
+                await Importer.exportCalendarWeather(this.currentYear);
+            }
+            await GameSettings.SetImportRan(true);
+        } else {
+            Logger.error('Could not export as the current year is not defined');
+        }
+    }
+
+    /**
+     * Called when the no change dialog option is clicked for importing/exporting module data
+     */
+    async moduleDialogNoChangeClick(){
+        await GameSettings.SetImportRan(true);
     }
 
 }

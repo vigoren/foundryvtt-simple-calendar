@@ -31,6 +31,15 @@
 
   }
 
+  .season{
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 600;
+    margin-top: -8px;
+  }
+
   .weekdays{
     display: flex;
     flex-direction: row;
@@ -94,6 +103,123 @@
         padding: 1px 1px 1px 2px;
         border-radius: 8px;
       }
+
+      .moons{
+        position: absolute;
+        right: 2px;
+        display: flex;
+        flex-direction: row;
+
+        .moon-phase{
+          width: 10px;
+          height: 10px;
+          background-size: contain;
+          margin-right: 2px;
+          margin-bottom: 2px;
+          border-radius: 5px;
+
+          &.new{
+            background-image: url("../icons/new.svg") ;
+          }
+          &.waxing-crescent{
+            background-image: url("../icons/waxing-crescent.svg") ;
+          }
+          &.first-quarter{
+            background-image: url("../icons/first-quarter.svg") ;
+          }
+          &.waxing-gibbous{
+            background-image: url("../icons/waxing-gibbous.svg") ;
+          }
+          &.full{
+            background-image: url("../icons/full.svg") ;
+          }
+          &.waning-gibbous{
+            background-image: url("../icons/waning-gibbous.svg");
+          }
+          &.last-quarter{
+            background-image: url("../icons/last-quarter.svg") ;
+          }
+          &.waning-crescent{
+            background-image: url("../icons/waning-crescent.svg") ;
+          }
+
+        }
+      }
+
+    }
+  }
+}
+
+.time-display{
+  text-align: center;
+  font-size: 1.25rem;
+  margin: -1rem 0 1rem;
+  background-color: #fff;
+  border-top: 0;
+  border-left: 1px solid #c3c3c3;
+  border-right: 1px solid #c3c3c3;
+  border-bottom: 1px solid #c3c3c3;
+  box-shadow: 2px 2px 2px #c3c3c3;
+  padding: 0.5rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  .clock {
+    position:relative;
+    transform:scale(1.25);
+    border-radius:50%;
+    border:2px solid;
+    width:20px;
+    height:20px;
+    margin-top: 2px;
+    margin-right: 8px;
+
+    &:after {
+      position:absolute;
+      width:0px;
+      height:6px;
+      display:block;
+      border-left:1px solid #000;
+      content:'';
+      left: 8.25px;
+      top: 1.75px;
+      animation-duration: 1s;
+    }
+
+    &:before {
+      position:absolute;
+      width:0px;
+      height:4px;
+      display:block;
+      border-left:1px solid #000;
+      content:'';
+      left: 8.25px;
+      top: 3.75px;
+      animation-duration: 60s;
+    }
+    &.stopped{
+      border-color:#c12121;
+      &:before, &:after{
+        border-color:#c12121;
+      }
+    }
+    &.paused{
+      border-color:#de810d;
+      &:before, &:after{
+        border-color:#de810d;
+      }
+    }
+    &.go{
+      &:before, &:after{
+        border-color: green;
+        transform-origin: bottom;
+        animation-name: dial;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+      border-color: green;
     }
   }
 }
@@ -106,4 +232,11 @@
   .spacer{
     flex: 1;
   }
+}
+
+
+
+@keyframes dial {
+  0%   {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
 }

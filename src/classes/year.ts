@@ -1,8 +1,13 @@
 import Month from "./month";
-import {YearTemplate} from "../interfaces";
+import {GeneralSettings, YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
+import Time from "./time";
+import {GameWorldTimeIntegrations} from "../constants";
+import {GameSettings} from "./game-settings";
+import Season from "./season";
+import Moon from "./moon";
 
 /**
  * Class for representing a year
@@ -39,13 +44,49 @@ export default class Year {
      * @type {Array.<Weekday>}
      */
     weekdays: Weekday[] = [];
-
+    /**
+     * If to show the weekday headings row or not on the calendar
+     * @type {boolean}
+     */
     showWeekdayHeadings: boolean = true;
     /**
      * The leap year rules for the calendar
      * @type {LeapYear}
      */
     leapYearRule: LeapYear;
+    /**
+     * The time object responsible for all time related functionality
+     * @type {Time}
+     */
+    time: Time;
+    /**
+     * If Simple Calendar has initiated a time change
+     * @type {boolean}
+     */
+    timeChangeTriggered: boolean = false;
+    /**
+     * If a combat change has been triggered
+     * @type {boolean}
+     */
+    combatChangeTriggered: boolean = false;
+
+    /**
+     * The default general settings for the simple calendar
+     */
+    generalSettings: GeneralSettings = {
+        gameWorldTimeIntegration: GameWorldTimeIntegrations.None,
+        showClock: false,
+        playersAddNotes: false
+    };
+    /**
+     * All of the seasons for this calendar
+     * @type {Array.<Season>}
+     */
+    seasons: Season[] = [];
+    /**
+     * All of the moons for this calendar
+     */
+    moons: Moon[] =[];
 
     /**
      * The Year constructor
@@ -56,6 +97,7 @@ export default class Year {
         this.selectedYear = numericRepresentation;
         this.visibleYear = numericRepresentation;
         this.leapYearRule = new LeapYear();
+        this.time = new Time();
     }
 
     /**
@@ -80,6 +122,7 @@ export default class Year {
                 sDay = d.name;
             }
         }
+        const currentSeason = this.getCurrentSeason();
         return {
             display: this.getDisplayName(),
             selectedDisplayYear: this.getDisplayName(true),
@@ -89,7 +132,14 @@ export default class Year {
             weekdays: this.weekdays.map(w => w.toTemplate()),
             showWeekdayHeaders: this.showWeekdayHeadings,
             visibleMonth: this.getMonth('visible')?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
-            visibleMonthWeekOffset:  Array(this.visibleMonthStartingDayOfWeek()).fill(0)
+            visibleMonthWeekOffset:  Array(this.visibleMonthStartingDayOfWeek()).fill(0),
+            showClock: this.generalSettings.showClock,
+            clockClass: this.time.getClockClass(),
+            showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
+            showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
+            currentTime: this.time.getCurrentTime(),
+            currentSeasonName: currentSeason.name,
+            currentSeasonColor: currentSeason.color
         }
     }
 
@@ -108,6 +158,12 @@ export default class Year {
         y.leapYearRule.rule = this.leapYearRule.rule;
         y.leapYearRule.customMod = this.leapYearRule.customMod;
         y.showWeekdayHeadings = this.showWeekdayHeadings;
+        y.time = this.time.clone();
+        y.generalSettings.gameWorldTimeIntegration = this.generalSettings.gameWorldTimeIntegration;
+        y.generalSettings.showClock = this.generalSettings.showClock;
+        y.generalSettings.playersAddNotes = this.generalSettings.playersAddNotes;
+        y.seasons = this.seasons.map(s => s.clone());
+        y.moons = this.moons.map(m => m.clone());
         return y;
     }
 
@@ -234,27 +290,50 @@ export default class Year {
      * @param {string} [setting='current'] The day property we are changing. Can be 'current' or 'selected'
      */
     changeDay(next: boolean, setting: string = 'current'){
+        const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
         const currentMonth = this.getMonth();
-        if(currentMonth){
-            const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
-            const yearToUse = verifiedSetting === 'current'? this.numericRepresentation : this.selectedYear;
+        if (currentMonth) {
+            const yearToUse = verifiedSetting === 'current' ? this.numericRepresentation : this.selectedYear;
             const isLeapYear = this.leapYearRule.isLeapYear(yearToUse);
             const res = currentMonth.changeDay(next, isLeapYear, verifiedSetting);
             // If it is positive or negative we need to change the current month
-            if(res !== 0){
+            if (res !== 0) {
                 this.changeMonth(res, verifiedSetting);
             }
+        }
+    }
+
+    changeTime(next: boolean, type: string, clickedAmount: number = 1){
+        type = type.toLowerCase();
+        const amount = next? clickedAmount : clickedAmount * -1;
+        let dayChange = 0;
+        this.timeChangeTriggered = true;
+        if(type === 'hour'){
+            dayChange = this.time.changeTime(amount);
+        } else if(type === 'minute'){
+            dayChange = this.time.changeTime(0, amount);
+        } else if(type === 'second'){
+            dayChange = this.time.changeTime(0, 0, amount);
+        }
+
+        if(dayChange !== 0){
+            this.changeDay(dayChange > 0);
         }
     }
 
     /**
      * Generates the total number of days in a year
      * @param {boolean} [leapYear=false] If to count the total number of days in a leap year
+     * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
      * @return {number}
      */
-    totalNumberOfDays(leapYear: boolean = false): number {
+    totalNumberOfDays(leapYear: boolean = false, ignoreIntercalaryRules: boolean = false): number {
         let total = 0;
-        this.months.forEach((m) => { if((m.intercalary && m.intercalaryInclude) || !m.intercalary){total += leapYear? m.numberOfLeapYearDays : m.numberOfDays;} });
+        this.months.forEach((m) => {
+            if((m.intercalary && m.intercalaryInclude) || !m.intercalary || ignoreIntercalaryRules){
+                total += leapYear? m.numberOfLeapYearDays : m.numberOfDays;
+            }
+        });
         return total;
     }
 
@@ -284,40 +363,214 @@ export default class Year {
      */
     dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
-            const daysPerYear = this.totalNumberOfDays();
-            const daysPerLeapYear = this.totalNumberOfDays(true);
-            const leapYearDayDifference = daysPerLeapYear - daysPerYear;
-            const numberOfLeapYears = this.leapYearRule.howManyLeapYears(year);
-            Logger.debug(`Days Per Year: ${daysPerYear}`);
-            Logger.debug(`Days Per Leap Year: ${daysPerLeapYear}`);
-            Logger.debug(`How man days extra per leap year: ${leapYearDayDifference}`);
-            Logger.debug(`Number of leap years so far: ${numberOfLeapYears}`);
-
-            //Assuming a start year of 0
-            const totalDaysForYears = (daysPerYear * year) + (numberOfLeapYears * leapYearDayDifference);
-            Logger.debug(`Total Days For Years: ${totalDaysForYears}`);
-            const isLeapYear = this.leapYearRule.isLeapYear(year);
-            let daysSoFarThisYear = 0;
-            for(let i = 0; i < this.months.length; i++){
-                //Only look at the month preceding the month we want and is not intercalary or is intercalary if the include setting is set otherwise skip
-                if(this.months[i].numericRepresentation < targetMonth && (!this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
-                    if(isLeapYear){
-                        daysSoFarThisYear = daysSoFarThisYear + this.months[i].numberOfLeapYearDays;
-                    } else {
-                        daysSoFarThisYear = daysSoFarThisYear + this.months[i].numberOfDays;
-                    }
-                }
-            }
-            if(targetDay < 1){
-                targetDay = 1;
-            }
-            daysSoFarThisYear += (targetDay - 1);
-            Logger.debug(`Days So Far This Year: ${daysSoFarThisYear}`);
-            Logger.debug(`Number of days per week: ${this.weekdays.length}`);
-            return ((totalDaysForYears + daysSoFarThisYear)% this.weekdays.length + this.weekdays.length) % this.weekdays.length;
+            const daysSoFar = this.dateToDays(year, targetMonth, targetDay) - 1;
+            return (daysSoFar% this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
             return 0;
         }
     }
 
+    /**
+     * Converts the passed in date to the number of days that make up that date
+     * @param {number} year The year to convert
+     * @param {number} month The month to convert
+     * @param {number} day The day to convert
+     * @param {boolean} addLeapYearDiff If to add the leap year difference to the end result. Year 0 is not counted in the number of leap years so the total days will be off by that amount.
+     * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
+     */
+    dateToDays(year: number, month: number, day: number, addLeapYearDiff: boolean = false, ignoreIntercalaryRules: boolean = false){
+        const daysPerYear = this.totalNumberOfDays(false, ignoreIntercalaryRules);
+        const daysPerLeapYear = this.totalNumberOfDays(true, ignoreIntercalaryRules);
+        const leapYearDayDifference = daysPerLeapYear - daysPerYear;
+        const numberOfLeapYears = this.leapYearRule.howManyLeapYears(year);
+        const isLeapYear = this.leapYearRule.isLeapYear(year);
+        let daysSoFar = (daysPerYear * year) + (numberOfLeapYears * leapYearDayDifference);
+        const monthIndex = this.months.findIndex(m => m.numericRepresentation === month);
+        for(let i = 0; i < this.months.length; i++){
+            //Only look at the month preceding the month we want and is not intercalary or is intercalary if the include setting is set otherwise skip
+            if(i < monthIndex && (ignoreIntercalaryRules || !this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
+                if(isLeapYear){
+                    daysSoFar = daysSoFar + this.months[i].numberOfLeapYearDays;
+                } else {
+                    daysSoFar = daysSoFar + this.months[i].numberOfDays;
+                }
+            }
+        }
+        if(day < 1){
+            day = 1;
+        }
+        daysSoFar += day;
+        if(addLeapYearDiff){
+            daysSoFar += leapYearDayDifference;
+        }
+        return daysSoFar;
+    }
+
+    /**
+     * Sets the current game world time to match what our current time is
+     */
+    async syncTime(){
+        // Only GMs can sync the time
+        // Only if the time tracking rules are set to self or mixed
+        if(GameSettings.IsGm() && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
+            Logger.debug(`Year.syncTime()`);
+            const month = this.getMonth();
+            if(month){
+                const day = month.getDay();
+                //Get the days so for and add one to include the current day - Subtract one day to keep it in time with how about-time keeps track
+                const daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, true) - 1;
+                const totalSeconds = this.time.getTotalSeconds(daysSoFar);
+                //Let the local functions know that we all ready updated this time
+                this.timeChangeTriggered = true;
+                //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
+                await this.time.setWorldTime(totalSeconds);
+            }
+        }
+    }
+
+    /**
+     * Convert a number of seconds to year, month, day, hour, minute, seconds
+     * @param {number} seconds The seconds to convert
+     */
+    secondsToDate(seconds: number){
+        let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
+        if(sec >= this.time.secondsInMinute){
+            min = Math.floor(sec / this.time.secondsInMinute);
+            sec = sec - (min * this.time.secondsInMinute);
+        }
+        if(min >= this.time.minutesInHour){
+            hour = Math.floor(min / this.time.minutesInHour);
+            min = min - (hour * this.time.minutesInHour);
+        }
+        let dayCount = 0;
+        if(hour >= this.time.hoursInDay){
+            dayCount = Math.floor(hour / this.time.hoursInDay);
+            hour = hour - (dayCount * this.time.hoursInDay);
+        }
+        // Add one day to keep the time in sync with how about-time does it
+        dayCount++;
+        let daysProcessed = 0;
+        while(dayCount > 0){
+            let isLeapYear = this.leapYearRule.isLeapYear(year);
+            for(let i = 0; i < this.months.length; i ++){
+                if(!this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude)){
+                    const daysInMonth = isLeapYear? this.months[i].numberOfLeapYearDays : this.months[i].numberOfDays;
+                    month = i;
+                    if(dayCount < daysInMonth) {
+                        day = dayCount;
+                    }
+                    daysProcessed += daysInMonth;
+                    dayCount -= daysInMonth;
+                    if(dayCount <= 0){
+                        break;
+                    }
+                }
+            }
+            if(dayCount > 0){
+                year++;
+            }
+        }
+        return {
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: min,
+            second: sec
+        }
+    }
+
+    /**
+     * Updates the year's data with passed in date information
+     * @param parsedDate
+     */
+    updateTime(parsedDate: any){
+        this.numericRepresentation = parsedDate.year;
+        this.updateMonth(parsedDate.month, 'current', true);
+        this.months[parsedDate.month].updateDay(parsedDate.day-1, this.leapYearRule.isLeapYear(parsedDate.year));
+        this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.second);
+    }
+
+    /**
+     * Sets the simple calendars year, month, day and time from a passed in number of seconds
+     * @param {number} newTime The new time represented by seconds
+     * @param {number} changeAmount The amount that the time has changed by
+     */
+    setFromTime(newTime: number, changeAmount: number){
+        Logger.debug('Year.setFromTime()');
+        if(changeAmount !== 0){
+            // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
+            if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.timeChangeTriggered || this.combatChangeTriggered)){
+                Logger.debug(`Tracking Rule: Self.\nTriggered Change: Simple Calendar/Combat Turn. Applying Change!`);
+                //If we didn't request the change (from a combat change) we need to update the internal time to match the new world time
+                if(!this.timeChangeTriggered){
+                    const parsedDate = this.secondsToDate(newTime);
+                    this.updateTime(parsedDate);
+                }
+                // If the current player is the GM then we need to save this new value to the database
+                // Since the current date is updated this will trigger an update on all players as well
+                if(GameSettings.IsGm()){
+                    GameSettings.SaveCurrentDate(this).catch(Logger.error);
+                }
+            }
+            // If we didn't (locally) request this change then parse the new time into years, months, days and seconds and set those values
+            // This covers other modules/built in features updating the world time and Simple Calendar updating to reflect those changes
+            else if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.ThirdParty || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && !this.timeChangeTriggered){
+                Logger.debug('Tracking Rule: ThirdParty.\nTriggered Change: External Change. Applying Change!');
+                const parsedDate = this.secondsToDate(newTime);
+                this.updateTime(parsedDate);
+                //We need to save the change so that when the game is reloaded simple calendar will display the correct time
+                if(GameSettings.IsGm()){
+                    GameSettings.SaveCurrentDate(this).catch(Logger.error);
+                }
+            } else {
+                Logger.debug(`Not Applying Change!`);
+            }
+        }
+        Logger.debug('Resetting time change triggers.');
+        this.timeChangeTriggered = false;
+        this.combatChangeTriggered = false;
+    }
+
+    /**
+     * Gets the current season based on the current date
+     */
+    getCurrentSeason() {
+        let currentMonth = 0, currentDay = 0;
+
+        const month = this.getMonth('visible');
+        if(month){
+            currentMonth = month.numericRepresentation;
+            const day = month.getDay('selected') || month.getDay();
+            if(day){
+                currentDay = day.numericRepresentation;
+            } else {
+                currentDay = 1;
+            }
+        }
+        if(currentDay > 0 && currentMonth > 0){
+            let currentSeason: Season | null = null;
+            for(let i = 0; i < this.seasons.length; i++){
+                if(this.seasons[i].startingMonth === currentMonth && this.seasons[i].startingDay <= currentDay){
+                    currentSeason = this.seasons[i];
+                } else if (this.seasons[i].startingMonth < currentMonth){
+                    currentSeason = this.seasons[i];
+                }
+            }
+            if(currentSeason === null){
+                currentSeason = this.seasons[this.seasons.length - 1];
+            }
+
+            if(currentSeason){
+                return {
+                    name: currentSeason.name,
+                    color: currentSeason.color === 'custom'? currentSeason.customColor : currentSeason.color
+                };
+            }
+        }
+        return {
+            name: '',
+            color: ''
+        };
+    }
 }

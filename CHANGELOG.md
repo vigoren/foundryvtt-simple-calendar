@@ -1,5 +1,82 @@
 # Change Log
 
+## v1.2.0 - Time, Other Modules, Seasons, Moons and Notes
+
+This update was a long time coming so apologies for making you wait for it. This update with most of the currently requested changes to Simple Calendar
+
+### Time
+
+Simple Calendar now supports time of day! What this means is that Simple Calendar can now be tied into FoundryVTTs game world time. This allows any other module that ties into the game world time to be updated whe Simple Calendar updates or update Simple Calendar when they change the game world time.
+
+There are 4 different options on how to tie into the game world time to achieve the exact level of interaction you want for your world. They are:
+
+Option|Description|Update Game World Time|When Game World Time is Updated
+--------|--------------------|-------------------------------------------------|----------------------------------------------------------
+None (default)|Simple Calendar does not interact with the game world time at all. This setting is ideal if you want to keep Simple Calendar isolated from other modules.|Does not update the game world time|Simple Calendar is not updated when the game world time is updated by something else.
+Self|Treats Simple Calendar as the authority source for the game world time. This setting is ideal when you want Simple Calendar to be in control of the games time and don't want other modules updating Simple Calendar|Updates the game world time to match what is in Simple Calendar.|Combat round changes will update Simple Calendars time. Simple Calendar will ignore updates from all others modules.
+Third Party Module|This will instruct Simple Calendar to just display the Time in the game world time. All date changing controls are disabled and the changing of time relies 100% on another module. This setting is ideal if you are just want to use Simple Calenar to display the date in calendar form and/or take advantage of the notes.|Does not update the game world time.|Updates it's display everytime the game world time is changed, following what the other modules say the time is.
+Mixed|This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.|Will update the game world time|Will update it's own time based on changes to the game world time, following what other modules say the time is.
+
+You can check out the [configuration](./docs/Configuration.md#game-world-time-integration) section for more details.
+
+#### Simple Calendar Clock
+
+There is now a time of day clock that displays below the calendar to show the current time of the current day.
+The GM can manually control this clock if they wish, or they can start the clock and have it update as real time passes.
+The clock does also update as combat rounds pass. For more details on the clock check out [here](./docs/UsingTheCalendar.md#simple-calendars-clock).
+
+#### Configuration
+
+You can configure the calendar with how many hours in a day, minutes in an hour and seconds in a minute.
+
+You can also set the ratio of game time to real world seconds. This is used when the built-in clock is running and needs to update the game time as real world seconds pass. This ratio can be a decimal.
+A ratio of 1 would mean for every second that passes in the real world 1 second passes in game time, a ratio of 2 would mean for every second of real world time 2 seconds pass in game.
+
+### Other Modules
+
+Simple Calendar also now interfaces with other modules. These modules can be used to adjust the game world time and have those changes reflected in Simple Calendar.
+
+For two of the more common modules Simple Calendar can also import their settings into Simple Calendar or export Simple Calendars settings into those modules. The two modules that support this are about-time and Calendar/Weather. Check out this [documentation](./docs/Configuration.md#third-party-module-importexport) for more details on how it all works.
+
+
+### Seasons
+
+Simple Calendar now supports seasons. Any number of seasons can be added to a calendar, and you are able to specify the following options for each season:
+
+Setting | Description
+--------|------------
+Season Name | Specify a custom name of the season.
+Starting Month | From a drop down choose which month this season starts in. This drop down is populated based on the custom months that have been set up.
+Starting Day | From a drop down choose which day of the the starting month this season begins on. This drop down is populated with a list of days based on the staring month selected.
+Color | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color.
+Custom Color | If the color option is set to Custom Color an option will appear where you can enter a custom Hex representation of a color to use for the seasons color.
+
+The calendar display has also been updated so that right below the month and year the name of the current season will be displayed.
+
+The background color of the calendar is also set based on the current season and its color settings.
+
+I think this gives the best approach for defining seasons and allowing customization in how they look.
+
+### Moons
+
+Simple Calendar now supports the addition of moons. Any number of moons can be added to a calendar, and they can be customized to meet your needs.
+For details on how to add and customize a moon please check out the [configuration documentation](./docs/Configuration.md#moon-settings).
+
+The calendar now also displays the important (single day) moon phases on the calendar as well as the moon phase for the current day and selected day.
+
+The predefined calendars have been updated to set up their moon(s) for the calendar.
+
+### Notes
+
+A configuration option has been added to allow players to add their own notes to the Calendar. If enabled they will see the "Add New Note" button on the main calendar display.
+
+**Important**: For a user to add their own note a GM must also be logged in at the same time, a warning is displayed if a user attempts to add a note when not GM is logged in.
+
+### Documentation
+
+I did a complete re-organization/clean up of all the documentation around Simple Calendar. I also added in links within the Simple Calendar configuration window to this documentation. I hope this will help make configuration and use of the tool easier for all.
+
+
 ## v1.1.8 - Bug Fixes
 
 - Fixed a rare bug where the day of the week a month starts on would be incorrect.

@@ -7,23 +7,104 @@
     line-height: 32px;
     font-size: 16px;
     border-bottom: 1px solid #782e22;
-    margin-bottom: 1rem;
+
+    .item{
+      border: 1px solid transparent;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      &.active{
+        border-top-color: #782e22;
+        border-left-color: #782e22;
+        border-right-color: #782e22;
+        border-bottom-color: #fafafa;
+        margin-bottom: -1px;
+
+        background-color: #fafafa;
+      }
+      &:hover{
+        border-top-color: #782e22;
+        border-left-color: #782e22;
+        border-right-color: #782e22;
+      }
+    }
+  }
+
+  .tab{
+    border-bottom: 1px solid #782e22;
+    border-left: 1px solid #782e22;
+    border-right: 1px solid #782e22;
+    background-color:#fafafa;
+    color:#000000;
+    padding-top: 1rem;
   }
 
   .center{
     text-align: center;
   }
 
-  .form-group{
+  .settings-group{
     margin: 0.75rem 2rem;
-    border-bottom: 1px solid #9e9c9c;
-    &:last-child{
-      border-width: 0;
+
+    &:first-child{
+      margin-top: 0;
     }
 
-    button{
-      max-width: 200px;
-      margin: 0.5rem auto;
+    h2{
+      a{
+        color: #191813;
+        font-size: 0.85rem;
+        text-decoration: none;
+        margin-left: 5px;
+      }
+    }
+    .form-group{
+      margin: 0.75rem 0;
+      border-bottom: 1px solid #9e9c9c;
+      &:last-child{
+        border-width: 0;
+      }
+
+      .notes{
+        margin: 0.5rem 0;
+        color:#191813;
+      }
+
+      button{
+        max-width: 200px;
+        margin: 0.5rem auto;
+      }
+    }
+
+    .import-group{
+      margin: 0.75rem 0;
+      padding: 0.5rem;
+      box-shadow: 2px 2px 4px grey;
+      border: 1px solid grey;
+
+      h3{
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .import-options{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+
+        .control{
+          width: auto;
+          &:before{
+            margin-right: 5px;
+          }
+        }
+      }
+    }
+
+    .f-table{
+      border-top: 0;
+      border-left: 1px solid #7a7971;
+      border-right: 1px solid #7a7971;
+      margin-top: -0.5rem;
     }
   }
 
@@ -51,8 +132,8 @@
         }
       }
 
-      &:nth-child(even) {
-        background-color: rgba(255, 255, 255, 0.2);
+      &:nth-child(odd) {
+        background-color: #b1b1b133;
       }
 
       .month-name, .month-days{
@@ -61,6 +142,10 @@
       .month-intercalary, .month-number{
         width: 60px;
         text-align: center;
+      }
+      input, select{
+        margin: 0 auto;
+        display: block;
       }
       .remove-month{
         width: 100px;
@@ -75,6 +160,12 @@
         .form-fields{
           flex: 1;
         }
+
+        h3{
+          margin-top: 0.5rem;
+          border-bottom: 1px solid #782e22;
+          font-weight: 600;
+        }
       }
     }
   }
@@ -87,15 +178,25 @@
     .spacer{
       flex: 1 1;
     }
-    .remove-month, .month-add{
+    button{
       width: 200px;
     }
   }
 
-  #scSubmit{
+  .config-save{
     position: absolute;
-    bottom: 5px;
-    left: 25%;
-    width: 50%;
+    text-align: center;
+    width: 100%;
+    backdrop-filter: blur(2px);
+    left: 0;
+    bottom: 0;
+    height: 30px;
+    border-top: 1px solid #b5b5b5;
+
+    #scSubmit{
+      width: 50%;
+      margin-top: 3px;
+    }
   }
+
 }

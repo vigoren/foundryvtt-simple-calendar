@@ -1,8 +1,9 @@
 import {Note} from './note';
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
-import {NoteRepeat} from "../constants";
+import {ModuleName, ModuleSocketName, NoteRepeat, SettingNames, SocketTypes} from "../constants";
 import SimpleCalendar from "./simple-calendar";
+import {SimpleCalendarSocket} from "../interfaces";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**
@@ -43,7 +44,6 @@ export class SimpleCalendarNotes extends FormApplication {
             button: null,
             hasButton: false,
             active: false,
-            //@ts-ignore
             mce: null,
             options: {
                 //@ts-ignore
@@ -53,6 +53,9 @@ export class SimpleCalendarNotes extends FormApplication {
                 save_onsavecallback: this.saveEditor.bind(this, 'content')
             },
         };
+        if(!GameSettings.IsGm()){
+            (<Note>this.object).playerVisible = true;
+        }
     }
 
     /**
@@ -75,14 +78,16 @@ export class SimpleCalendarNotes extends FormApplication {
     getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
         let data = {
             ... super.getData(options),
+            isGM: GameSettings.IsGm(),
             viewMode: this.viewMode,
             richButton: !this.viewMode,
-            canEdit: GameSettings.IsGm(),
+            canEdit: GameSettings.IsGm() || GameSettings.UserID() === (<Note>this.object).author,
             noteYear: 0,
             noteMonth: '',
             repeatOptions: {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             repeats: (<Note>this.object).repeats,
-            repeatsText: ''
+            repeatsText: '',
+            authorName: (<Note>this.object).author
         };
         if(SimpleCalendar.instance.currentYear && ((<Note>this.object).repeats === NoteRepeat.Yearly || (<Note>this.object).repeats === NoteRepeat.Monthly)){
             data.noteYear = SimpleCalendar.instance.currentYear.visibleYear;
@@ -95,7 +100,15 @@ export class SimpleCalendarNotes extends FormApplication {
         } else {
             data.noteMonth = (<Note>this.object).monthDisplay;
         }
-        data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(data.repeatOptions[data.repeats])}`
+        data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(data.repeatOptions[data.repeats])}`;
+
+        if(game.users){
+            Logger.debug(`Looking for users with the id "${(<Note>this.object).author}"`);
+            const user = game.users.get((<Note>this.object).author);
+            if(user){
+                data.authorName = user.name;
+            }
+        }
         return data;
     }
 
@@ -112,15 +125,12 @@ export class SimpleCalendarNotes extends FormApplication {
             if(!this.viewMode && this.editors['content'].options.target && this.editors['content'].button === null){
                 this.editors['content'].button = <HTMLElement>this.editors['content'].options.target.nextElementSibling;
                 this.editors['content'].hasButton = this.editors['content'].button && this.editors['content'].button.classList.contains("editor-edit");
-                //@ts-ignore
                 this.editors['content'].active = !this.viewMode;
                 if(this.editors['content'].hasButton){
                     this.editors['content'].button.onclick = SimpleCalendarNotes.instance.textEditorButtonClick.bind(this)
                 }
             }
-            //@ts-ignore
             if(this.editors['content'].mce === null && this.editors['content'].active){
-                //@ts-ignore
                 this.activateEditor('content');
             }
         }
@@ -138,10 +148,8 @@ export class SimpleCalendarNotes extends FormApplication {
         options = mergeObject(editor.options, options);
         options.height = options.target.offsetHeight;
         TextEditor.create(options, initialContent || editor.initial).then(mce => {
-            //@ts-ignore
             editor.mce = mce;
             editor.changed = false;
-            //@ts-ignore
             editor.active = true;
             mce.on('change', ev => editor.changed = true);
         });
@@ -270,7 +278,6 @@ export class SimpleCalendarNotes extends FormApplication {
         e.preventDefault();
         let detailsEmpty = true;
         if(this.editors['content'] && this.editors['content'].mce){
-            //@ts-ignore
             if(this.editors['content'].mce.getContent().trim() !== '' && !this.editors['content'].mce.isNotDirty){
                 detailsEmpty = false;
             }
