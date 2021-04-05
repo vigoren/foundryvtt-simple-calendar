@@ -14,6 +14,7 @@ import {Weekday} from "./weekday";
 import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
 import LeapYear from "./leap-year";
 import Season from "./season";
+import Moon from "./moon";
 
 describe('Year Class Tests', () => {
     let year: Year;
@@ -27,7 +28,7 @@ describe('Year Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(year).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(year).length).toBe(15); //Make sure no new properties have been added
         expect(year.months).toStrictEqual([]);
         expect(year.weekdays).toStrictEqual([]);
         expect(year.prefix).toBe("");
@@ -102,6 +103,7 @@ describe('Year Class Tests', () => {
         year2.months.push(month);
         year2.weekdays.push(new Weekday(1, 'S'));
         year2.seasons.push(new Season('S', 1, 1));
+        year2.moons.push(new Moon('M',1))
         expect(year2.clone()).toStrictEqual(year2);
     });
 
@@ -446,12 +448,12 @@ describe('Year Class Tests', () => {
         year.months.push(new Month("Test 3", 3, 2));
         year.months.push(new Month("Test 2", 2, 22));
         year.months[1].intercalary = true;
-        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(4);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(3);
 
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
         year.numericRepresentation = 4;
-        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(2);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(1);
     });
 
     test('Date to Days', () => {
@@ -581,19 +583,24 @@ describe('Year Class Tests', () => {
         year.seasons.push(new Season('Winter', 2, 10));
         month.current = false;
         month.days[0].current = false;
-        year.months[1].current = true;
-        year.months[1].days[0].current = true;
+        year.months[1].visible = true;
+        year.months[1].days[0].selected = true;
         data = year.getCurrentSeason();
         expect(data.name).toBe('Spring');
         expect(data.color).toBe('#ffffff');
 
-        year.months[1].days[0].current = false;
+        year.months[1].days[0].selected = false;
         year.months[1].days[9].current = true;
         year.seasons[1].color = 'custom';
         year.seasons[1].customColor = '#000000';
         data = year.getCurrentSeason();
         expect(data.name).toBe('Winter');
         expect(data.color).toBe('#000000');
+
+        year.months[1].days[9].current = false;
+        data = year.getCurrentSeason();
+        expect(data.name).toBe('Spring');
+        expect(data.color).toBe('#ffffff');
     });
 
 });

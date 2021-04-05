@@ -13,11 +13,12 @@ import Month from "./month";
 import {Weekday} from "./weekday";
 import {Note} from "./note";
 import LeapYear from "./leap-year";
-import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
+import {GameWorldTimeIntegrations, LeapYearRules, MoonIcons, MoonYearResetOptions} from "../constants";
 import {GeneralSettings, TimeConfig} from "../interfaces";
 import Mock = jest.Mock;
 import Time from "./time";
 import Season from "./season";
+import Moon from "./moon";
 
 describe('Game Settings Class Tests', () => {
 
@@ -127,7 +128,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Moon Data', () => {
-        expect(GameSettings.LoadMoonData()).toStrictEqual([{}]);
+        expect(GameSettings.LoadMoonData()).toStrictEqual([{"name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]);
         expect(game.settings.get).toHaveBeenCalled();
         (<Mock>game.settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadMoonData()).toStrictEqual([]);
@@ -282,14 +283,15 @@ describe('Game Settings Class Tests', () => {
     test('Save Moon Configuration', () => {
         // @ts-ignore
         game.user.isGM = false;
-        const moon: any = {};
+        const moon = new Moon('', 0);
         expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
         expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
         expect(game.settings.set).toHaveBeenCalledTimes(0);
+        moon.name = "Moon";
         expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
-        expect(game.settings.set).toHaveBeenCalledTimes(0);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
     });
 
     test('Save Leap Year Rule', () => {

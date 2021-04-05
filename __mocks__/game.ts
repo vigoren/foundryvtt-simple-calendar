@@ -1,7 +1,7 @@
 /**
  * This file mocks the FoundryVTT game global so that it can be used in testing
  */
-import {GameWorldTimeIntegrations, SettingNames} from "../src/constants";
+import {GameWorldTimeIntegrations, MoonIcons, MoonYearResetOptions, SettingNames} from "../src/constants";
 
 //@ts-ignore
 const local: Localization = {
@@ -67,7 +67,7 @@ const game = {
                 case SettingNames.SeasonConfiguration:
                     return [[{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', customColor: ''}]];
                 case SettingNames.MoonConfiguration:
-                    return [[{}]];
+                    return [[{"name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]];
             }
         }),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),

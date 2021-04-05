@@ -28,6 +28,8 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
   * Choose if months are considered intercalary (fall outside normal months).
   * Set the number hours in a day, minutes in an hour and seconds in a minute.  
   * Set up your own Leap Year rules.
+  * Set up different seasons for your calendar and how they are displayed to the users.
+  * Set up your own custom moons.
   * Or choose from a selection of [preset calendars](./docs/Configuration.md#predefined-calendars).
 * Set and change the current day and time as your game story progresses or have it automatically advance based on real world time and passing combat rounds.
 * Add notes to specific days on the calendar to remind yourself of events or other world related things.

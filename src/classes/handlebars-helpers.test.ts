@@ -20,7 +20,7 @@ describe('Handlebars Helpers Tests', () => {
 
     test('Register', () => {
         HandlebarsHelpers.Register();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(3);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
     });
 
     test('Calendar Width', () => {
@@ -55,7 +55,7 @@ describe('Handlebars Helpers Tests', () => {
             SimpleCalendar.instance.currentYear.months[0].visible = true;
             expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
             options.hash['day'].numericRepresentation = 2;
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBe(`<span class="note-count">1</span>`);
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBe(`<span class="note-count" title="1 ">1</span>`);
 
             for(let i = 0; i < 99; i++){
                 var n = new Note()
@@ -65,10 +65,23 @@ describe('Handlebars Helpers Tests', () => {
                 SimpleCalendar.instance.notes.push(n);
             }
             expect(SimpleCalendar.instance.notes.length).toBe(100);
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBe(`<span class="note-count">99</span>`);
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBe(`<span class="note-count" title="99 ">99</span>`);
         } else {
             fail('Current year is not set');
         }
 
+    });
+
+    test('Day Moon Phase', () => {
+        const options: any = {hash:{}};
+        expect(HandlebarsHelpers.DayMoonPhase(options)).toBe('');
+        options.hash['day'] = {numericRepresentation: 1};
+        expect(HandlebarsHelpers.DayMoonPhase(options)).toBe('');
+        SimpleCalendar.instance.settingUpdate();
+        if(SimpleCalendar.instance.currentYear){
+            expect(HandlebarsHelpers.DayMoonPhase(options)).toBe('<span class="moon-phase new" title=" - " style="background-color: #ffffff;"></span>');
+            SimpleCalendar.instance.currentYear.moons[0].phases[0].singleDay = false;
+            expect(HandlebarsHelpers.DayMoonPhase(options)).toBe('');
+        }
     });
 });

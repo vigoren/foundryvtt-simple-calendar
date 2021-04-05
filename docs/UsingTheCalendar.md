@@ -12,8 +12,13 @@ Today Button | Changes the calendar so that the current day (in the game world) 
 Blue Circle Day | This indicates the current day in the game world, can be changed by the GM
 Green Circle Day | This indicates the day the user currently has selected. This will show any notes on this day.
 Red Indicator | This shows on any days that have notes that the user can see. It will show the number of notes on that day up to 99.
+Season Name | Appearing below the month and year if season are set up which season it current is will show.
+Calendar Background Color | If seasons are set up the background color of the calendar will change to match which season is being viewed.
+Moon Icons | Icons showing which phase of the moon will show on the bottom right of a day.
+Current Time | If the GM wants to display a clock of the current game time it will appear below the calendar and show the current time of day.
+Clock Icon | Next to the current time is a clock icon, this icon is used to indicate if the built in clock is running or not. More information [below](#simple-calendars-clock)!
 Notes List | Any notes that appear in this list can be clicked on to open the note details.
-
+Add New Note | If the GM allows players to add notes this button will appear in which a note can be added to the selected day.
 
 ## Simple Calendars Clock
 

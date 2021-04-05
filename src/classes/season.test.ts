@@ -35,7 +35,8 @@ describe('Season Tests', () => {
     });
 
     test('To Template', () => {
-        let c = s.toTemplate();
+        const y = new Year(0);
+        let c = s.toTemplate(y);
         expect(Object.keys(c).length).toBe(6); //Make sure no new properties have been added
         expect(c.name).toBe('Spring');
         expect(c.startingMonth).toBe(1);
@@ -45,11 +46,11 @@ describe('Season Tests', () => {
         expect(c.dayList).toStrictEqual([]);
 
         SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.currentYear = new Year(0);
-        c = s.toTemplate();
+
+        c = s.toTemplate(y);
         expect(c.dayList.length).toStrictEqual(0);
-        SimpleCalendar.instance.currentYear.months.push(new Month("Month 1", 1, 10));
-        c = s.toTemplate();
+        y.months.push(new Month("Month 1", 1, 10));
+        c = s.toTemplate(y);
         expect(c.dayList.length).toStrictEqual(10);
     });
 

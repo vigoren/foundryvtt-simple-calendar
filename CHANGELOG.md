@@ -2,7 +2,7 @@
 
 ## v1.2.0 - Time, Other Modules, Seasons, Moons and Notes
 
-A bigger update with most of the currently requested changes to Simple Calendar
+This update was a long time coming so apologies for making you wait for it. This update with most of the currently requested changes to Simple Calendar
 
 ### Time
 
@@ -59,12 +59,22 @@ I think this gives the best approach for defining seasons and allowing customiza
 
 ### Moons
 
+Simple Calendar now supports the addition of moons. Any number of moons can be added to a calendar, and they can be customized to meet your needs.
+For details on how to add and customize a moon please check out the [configuration documentation](./docs/Configuration.md#moon-settings).
+
+The calendar now also displays the important (single day) moon phases on the calendar as well as the moon phase for the current day and selected day.
+
+The predefined calendars have been updated to set up their moon(s) for the calendar.
 
 ### Notes
 
 A configuration option has been added to allow players to add their own notes to the Calendar. If enabled they will see the "Add New Note" button on the main calendar display.
 
 **Important**: For a user to add their own note a GM must also be logged in at the same time, a warning is displayed if a user attempts to add a note when not GM is logged in.
+
+### Documentation
+
+I did a complete re-organization/clean up of all the documentation around Simple Calendar. I also added in links within the Simple Calendar configuration window to this documentation. I hope this will help make configuration and use of the tool easier for all.
 
 
 ## v1.1.8 - Bug Fixes

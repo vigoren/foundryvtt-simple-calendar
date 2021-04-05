@@ -46,7 +46,7 @@ export default class LeapYear {
     }
 
     previousLeapYear(year: number): number | null {
-        if(this.rule !== LeapYearRules.None){
+        if(this.rule === LeapYearRules.Gregorian || (this.rule === LeapYearRules.Custom && this.customMod !== 0)){
             let testYear = year;
             while(Number.isInteger(testYear)){
                 if(this.isLeapYear(testYear)){
@@ -66,7 +66,7 @@ export default class LeapYear {
             const yearInto = year%previousLeapYear;
             if(this.rule === LeapYearRules.Gregorian){
                 return yearInto / 4
-            } else if(this.rule === LeapYearRules.Custom){
+            } else {
                 return yearInto / this.customMod;
             }
         }

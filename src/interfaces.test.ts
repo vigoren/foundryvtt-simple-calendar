@@ -2,11 +2,15 @@ import {
     CalendarTemplate,
     CurrentDateConfig,
     DayTemplate,
+    FirstNewMoonDate,
     LeapYearConfig,
     MonthConfig,
-    MonthTemplate,
+    MonthTemplate, MoonConfiguration,
+    MoonPhase, MoonTemplate,
     NoteConfig,
-    NoteTemplate, SeasonConfiguration, SeasonTemplate,
+    NoteTemplate,
+    SeasonConfiguration,
+    SeasonTemplate,
     SimpleCalendarSocket,
     TimeConfig,
     TimeTemplate,
@@ -15,7 +19,7 @@ import {
     YearConfig,
     YearTemplate
 } from "./interfaces";
-import {LeapYearRules, SocketTypes} from "./constants";
+import {LeapYearRules, MoonIcons, MoonYearResetOptions, SocketTypes} from "./constants";
 
 describe('Interface Tests', () => {
     const tt: TimeTemplate = {hour: '', minute: '', second: ''};
@@ -229,6 +233,44 @@ describe('Interface Tests', () => {
         expect(sc.startingDay).toBe(1);
     });
 
+    test('Moon Phase', () => {
+        const mp: MoonPhase = {name: '', length: 1, singleDay: false, icon: MoonIcons.NewMoon};
+        expect(mp.name).toBe('');
+        expect(mp.length).toBe(1);
+        expect(mp.singleDay).toBe(false);
+        expect(mp.icon).toBe(MoonIcons.NewMoon);
+    });
+
+    test('First New Moon Date', () => {
+        const mp: FirstNewMoonDate = {yearReset: MoonYearResetOptions.None, yearX: 0, year: 0, month: 0, day: 0};
+        expect(mp.yearReset).toBe(MoonYearResetOptions.None);
+        expect(mp.yearX).toBe(0);
+        expect(mp.year).toBe(0);
+        expect(mp.month).toBe(0);
+        expect(mp.day).toBe(0);
+    });
+
+    test('Moon Configuration', () => {
+        const mp: MoonConfiguration = {name: '', cycleLength: 0, cycleDayAdjust: 0, color: '', phases: [], firstNewMoon: {yearReset: MoonYearResetOptions.None, yearX: 0, year: 0, month: 0, day: 0}};
+        expect(mp.name).toBe('');
+        expect(mp.cycleLength).toBe(0);
+        expect(mp.cycleDayAdjust).toBe(0);
+        expect(mp.color).toBe('');
+        expect(mp.phases).toStrictEqual([]);
+        expect(mp.firstNewMoon).toStrictEqual({yearReset: MoonYearResetOptions.None, yearX: 0, year: 0, month: 0, day: 0});
+    });
+
+    test('Moon Template', () => {
+        const mp: MoonTemplate = {name: '', cycleLength: 0, cycleDayAdjust: 0, color: '', phases: [], firstNewMoon: {yearReset: MoonYearResetOptions.None, yearX: 0, year: 0, month: 0, day: 0}, dayList: []};
+        expect(mp.name).toBe('');
+        expect(mp.cycleLength).toBe(0);
+        expect(mp.cycleDayAdjust).toBe(0);
+        expect(mp.color).toBe('');
+        expect(mp.phases).toStrictEqual([]);
+        expect(mp.firstNewMoon).toStrictEqual({yearReset: MoonYearResetOptions.None, yearX: 0, year: 0, month: 0, day: 0});
+        expect(mp.dayList).toStrictEqual([]);
+    });
+
     describe('Simple Calendar Socket', () => {
 
         test('Data', () => {
@@ -248,6 +290,11 @@ describe('Interface Tests', () => {
             const scsj: SimpleCalendarSocket.SimpleCalendarSocketJournal = {notes: []};
             expect(Object.keys(scsj).length).toBe(1); //Make sure no new properties have been added
             expect(scsj.notes).toStrictEqual([]);
+        });
+
+        test('Simple Calendar Socket Primary', () => {
+            const scsj: SimpleCalendarSocket.SimpleCalendarPrimary = {};
+            expect(Object.keys(scsj).length).toBe(0); //Make sure no new properties have been added
         });
 
     });

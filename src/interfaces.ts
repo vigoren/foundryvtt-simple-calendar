@@ -235,6 +235,9 @@ export interface SeasonConfiguration {
     customColor: string;
 }
 
+/**
+ * Interface for a moon phase
+ */
 export interface MoonPhase {
     name: string;
     length: number;
@@ -242,6 +245,9 @@ export interface MoonPhase {
     icon: MoonIcons;
 }
 
+/**
+ * Interface for a moons first new moon date
+ */
 export interface FirstNewMoonDate {
     yearReset: MoonYearResetOptions;
     year: number;
@@ -250,7 +256,9 @@ export interface FirstNewMoonDate {
     day: number;
 }
 
-
+/**
+ * Interface for a moons configuration
+ */
 export interface MoonConfiguration {
     name: string;
     cycleLength: number;
@@ -260,6 +268,9 @@ export interface MoonConfiguration {
     cycleDayAdjust: number;
 }
 
+/**
+ * Interface for a moons template
+ */
 export interface MoonTemplate {
     name: string;
     cycleLength: number;

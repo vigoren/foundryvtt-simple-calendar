@@ -76,7 +76,7 @@ describe('Simple Calendar Class Tests', () => {
     test('Init', async () => {
         expect(SimpleCalendar.instance.currentYear).toBeNull();
         await SimpleCalendar.instance.init();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(3);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
         expect(game.settings.register).toHaveBeenCalledTimes(12);
         expect(game.settings.get).toHaveBeenCalledTimes(11);
         expect(SimpleCalendar.instance.currentYear?.numericRepresentation).toBe(0);
@@ -89,7 +89,7 @@ describe('Simple Calendar Class Tests', () => {
         // @ts-ignore
         game.user.isGM = true;
         await SimpleCalendar.instance.init();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(6);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(8);
         // @ts-ignore
         expect(SimpleCalendar.instance.primaryCheckTimeout).toBeDefined();
         expect(game.socket.emit).toHaveBeenCalledTimes(1);

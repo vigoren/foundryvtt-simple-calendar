@@ -64,6 +64,11 @@ export default class HandlebarsHelpers{
         return '';
     }
 
+    /**
+     * Checks to see the current phase of the moon for the given day
+     * @param {*} options The options object passed from Handlebars
+     * @return {string}
+     */
     static DayMoonPhase(options: any){
         if(options.hash.hasOwnProperty('day') && SimpleCalendar.instance.currentYear){
             const day = options.hash['day'];

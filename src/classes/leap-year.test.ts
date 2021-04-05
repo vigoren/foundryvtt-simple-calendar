@@ -87,4 +87,22 @@ describe('Leap Year Tests', () => {
         expect(lr.howManyLeapYears(2020)).toBe(403);
         expect(lr.howManyLeapYears(2021)).toBe(404);
     });
+
+    test('Previous Leap Year', () => {
+        expect(lr.previousLeapYear(1990)).toBe(null);
+        lr.rule = LeapYearRules.Gregorian;
+        expect(lr.previousLeapYear(1990)).toBe(1988);
+    });
+
+    test('Fraction', () => {
+        expect(lr.fraction(1990)).toBe(0);
+        lr.rule = LeapYearRules.Gregorian;
+        expect(lr.fraction(1990)).toBe(0.5);
+        lr.rule = LeapYearRules.Custom;
+        lr.customMod = 5;
+        expect(lr.fraction(1991)).toBe(0.2);
+
+        lr.customMod = 0;
+        expect(lr.fraction(1990)).toBe(0);
+    });
 });

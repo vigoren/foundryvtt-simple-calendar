@@ -38,6 +38,7 @@ describe('Simple Calendar Notes Tests', () => {
         //Spy on console.error calls
         jest.spyOn(console, 'error').mockImplementation();
         //Spy on the inherited render function of the new instance
+        //@ts-ignore
         renderSpy = jest.spyOn(SimpleCalendarNotes.instance, 'render');
         (<Mock>console.error).mockClear();
         renderSpy.mockClear();

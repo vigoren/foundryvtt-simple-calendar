@@ -15,6 +15,7 @@ import {LeapYearRules} from "../constants";
 import {Weekday} from "./weekday";
 import Mock = jest.Mock;
 import Season from "./season";
+import Moon from "./moon";
 
 describe('Importer Class Tests', () => {
     let y: Year;
@@ -27,6 +28,7 @@ describe('Importer Class Tests', () => {
         y.months[2].intercalary = true;
         y.weekdays.push(new Weekday(1, 'S'));
         y.seasons.push(new Season('S', 1, 1));
+        y.moons.push(new Moon('M', 1));
         // @ts-ignore
         game.user.isGM = true;
     });
@@ -167,7 +169,15 @@ describe('Importer Class Tests', () => {
                     dusk: 19
                 }
             ],
-            moons: [],
+            moons: [{
+                name:'moon',
+                cycleLength: 0,
+                cyclePercent:  0,
+                lunarEclipseChange:  0,
+                solarEclipseChange:  0,
+                referenceTime:  0,
+                referencePercent:  0,
+            }],
             events: [],
             reEvents: []
         };
