@@ -30,9 +30,13 @@ export class Weekday {
      * @return {WeekdayTemplate}
      */
     toTemplate(): WeekdayTemplate{
+        let abbrv = this.name.substring(0,1).toUpperCase();
+        if(this.name.length > 1){
+            abbrv += this.name.substring(1,2).toLowerCase();
+        }
         return {
             name: this.name,
-            firstCharacter: this.name.substring(0,1).toUpperCase(),
+            firstCharacter: abbrv,
             numericRepresentation: this.numericRepresentation
         };
     }

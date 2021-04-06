@@ -71,6 +71,7 @@ export default class SimpleCalendar extends Application{
         options.title = "FSC.Title";
         options.classes = ["simple-calendar"];
         options.resizable = true;
+        options.height = 475;
         return options;
     }
 
@@ -639,7 +640,15 @@ export default class SimpleCalendar extends Application{
                 Logger.debug('Setting the months from data.');
                 for(let i = 0; i < monthData.length; i++){
                     if(Object.keys(monthData[i]).length){
-                        const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numberOfDays, monthData[i].numberOfLeapYearDays);
+                        let numDays = parseInt(monthData[i].numberOfDays.toString());
+                        let numLeapDays = monthData[i].numberOfLeapYearDays === undefined? 0 : parseInt(monthData[i].numberOfLeapYearDays.toString());
+                        if(isNaN(numDays)){
+                            numDays = 1;
+                        }
+                        if(isNaN(numLeapDays)){
+                            numLeapDays = 1;
+                        }
+                        const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, numDays, numLeapDays);
                         newMonth.intercalary = monthData[i].intercalary;
                         newMonth.intercalaryInclude = monthData[i].intercalaryInclude;
                         this.currentYear.months.push(newMonth);

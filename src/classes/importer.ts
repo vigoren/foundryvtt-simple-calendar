@@ -142,7 +142,16 @@ export default class Importer{
         let mCount = 1;
         let mICount = 1;
         for(let i = 0; i < currentSettings.months.length; i++){
-            const nMonth = new Month(currentSettings.months[i].name, i+1, currentSettings.months[i].length, currentSettings.months[i].leapLength)
+            let numDays = parseInt(currentSettings.months[i].length.toString());
+            let numLeapDays = parseInt(currentSettings.months[i].leapLength.toString());
+            if(isNaN(numDays)){
+                numDays = 1;
+            }
+            if(isNaN(numLeapDays)){
+                numLeapDays = 1;
+            }
+
+            const nMonth = new Month(currentSettings.months[i].name, i+1, numDays, numLeapDays)
             if(!currentSettings.months[i].isNumbered){
                 nMonth.numericRepresentation = mICount * -1;
                 nMonth.intercalary = true;

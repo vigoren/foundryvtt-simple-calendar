@@ -364,8 +364,8 @@ export namespace CalendarWeatherImport{
      */
     export interface Month {
         name: string;
-        length: number;
-        leapLength: number;
+        length: number | string;
+        leapLength: number | string;
         isNumbered: boolean;
         abbrev: string;
     }

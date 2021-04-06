@@ -71,7 +71,7 @@ describe('Simple Calendar Configuration Tests', () => {
         //@ts-ignore
         expect(opts.resizable).toBe(true);
         //@ts-ignore
-        expect(opts.width).toBe(960);
+        expect(opts.width).toBe(900);
         //@ts-ignore
         expect(opts.height).toBe(700);
         //@ts-ignore

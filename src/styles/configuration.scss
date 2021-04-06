@@ -7,11 +7,18 @@
     line-height: 32px;
     font-size: 16px;
     border-bottom: 1px solid #782e22;
+    justify-content: space-between;
+    flex-wrap: nowrap;
 
     .item{
       border: 1px solid transparent;
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.25rem;
+      padding: 0.5rem 0.25rem;
+      flex: 0 1 125px;
       &.active{
         border-top-color: #782e22;
         border-left-color: #782e22;

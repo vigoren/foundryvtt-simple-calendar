@@ -326,7 +326,7 @@ describe('Simple Calendar Notes Tests', () => {
         SimpleCalendarNotes.instance.editors['content'].mce = {getContent: ()=>{return 'a';},isNotDirty: false};
         SimpleCalendarNotes.instance.saveButtonClick(event);
         //@ts-ignore
-        expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
+        expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         SimpleCalendarNotes.instance.element = {

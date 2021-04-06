@@ -109,6 +109,7 @@ export class SimpleCalendarNotes extends FormApplication {
                 data.authorName = user.name;
             }
         }
+        console.log(this.editors['content']);
         return data;
     }
 
@@ -191,6 +192,7 @@ export class SimpleCalendarNotes extends FormApplication {
      */
     protected _updateObject(event: Event | JQuery.Event, formData: any): Promise<any> {
         (<Note>this.object).content = formData['content'];
+        Logger.debug('Update Object Called');
         this.richEditorSaved = true;
         return Promise.resolve(false);
     }
@@ -279,7 +281,8 @@ export class SimpleCalendarNotes extends FormApplication {
         let detailsEmpty = true;
         if(this.editors['content'] && this.editors['content'].mce){
             if(this.editors['content'].mce.getContent().trim() !== '' && !this.editors['content'].mce.isNotDirty){
-                detailsEmpty = false;
+                (<Note>this.object).content = this.editors['content'].mce.getContent().trim();
+                this.richEditorSaved = true;
             }
         } else {
             detailsEmpty = false;

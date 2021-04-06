@@ -55,7 +55,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
         options.resizable = true;
         options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
         options.height = 700;
-        options.width = 960;
+        options.width = 900;
         return options;
     }
 
@@ -63,7 +63,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * Shows the application window
      */
     public showApp(){
-        this.render(true, {width: 500, height: 500});
+        this.render(true);
     }
 
     /**
