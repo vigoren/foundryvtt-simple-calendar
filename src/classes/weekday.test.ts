@@ -23,7 +23,7 @@ describe('Weekday Class Tests', () => {
         expect(w.firstCharacter).toBe("");
         expect(w.numericRepresentation).toBe(0);
         expect(w2.name).toBe("asd");
-        expect(w2.firstCharacter).toBe("A");
+        expect(w2.firstCharacter).toBe("As");
         expect(w2.numericRepresentation).toBe(1);
 
     });

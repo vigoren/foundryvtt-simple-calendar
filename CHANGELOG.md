@@ -1,5 +1,18 @@
 # Change Log
 
+## v1.2.5 - Bug Fixes and QoL Improvements
+
+### Quality of Life Improvements
+
+- Adjusted the styling around the calendar configuration tabs. The tab titles shouldn't break into multiple lines unless the config window is shrunk and if they do break into multiple lines it should look cleaner.
+- Adjusted the starting height of the calendar to have more space for the events list.
+- Updated adding/editing a note so that the text editor does not need to be saved before saving the note. When saving the note any content entered will be saved.
+- Updated the weekday headings so that the first 2 characters of the weekday name are shown. This will help distinguish between days of the week that start with the same character.
+
+### Bug Fixes
+
+- Fixed a bug where in some instances importing data from Calendar/Weather into Simple Calendar would incorrectly save numerical data as strings causing Simple Calendar to not open.
+
 ## v1.2.0 - Time, Other Modules, Seasons, Moons and Notes
 
 This update was a long time coming so apologies for making you wait for it. This update with most of the currently requested changes to Simple Calendar

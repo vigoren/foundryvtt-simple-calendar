@@ -65,11 +65,13 @@ describe('Simple Calendar Class Tests', () => {
     test('Default Options', () => {
         const spy = jest.spyOn(Application, 'defaultOptions', 'get');
         const opts = SimpleCalendar.defaultOptions;
-        expect(Object.keys(opts).length).toBe(4); //Make sure no new properties have been added
+        expect(Object.keys(opts).length).toBe(5); //Make sure no new properties have been added
         expect(opts.template).toBe('modules/foundryvtt-simple-calendar/templates/calendar.html');
         expect(opts.title).toBe('FSC.Title');
         expect(opts.classes).toStrictEqual(["simple-calendar"]);
         expect(opts.resizable).toBe(true);
+        //@ts-ignore
+        expect(opts.height).toBe(475);
         expect(spy).toHaveBeenCalled()
     });
 
@@ -813,7 +815,7 @@ describe('Simple Calendar Class Tests', () => {
                 case SettingNames.YearConfiguration:
                     return {numericRepresentation: 0, prefix: '', postfix: ''};
                 case SettingNames.MonthConfiguration:
-                    return [[{numericRepresentation: 1, numberOfDays: 2, name: ''}]];
+                    return [[{numericRepresentation: 1, numberOfDays: "asd", numberOfLeapYearDays: "asd", name: ''}]];
                 case SettingNames.WeekdayConfiguration:
                     return [[{numericRepresentation: 0, name: ''}]];
                 case SettingNames.CurrentDate:

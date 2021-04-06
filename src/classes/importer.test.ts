@@ -138,7 +138,15 @@ describe('Importer Class Tests', () => {
                     leapLength: 1,
                     isNumbered: false,
                     abbrev: ''
+                },
+                {
+                    name: 'Month 4',
+                    length: "asd",
+                    leapLength: "asd",
+                    isNumbered: true,
+                    abbrev: ''
                 }
+
             ],
             daysOfTheWeek: ["S","M","T"],
             year: 12,
@@ -192,7 +200,7 @@ describe('Importer Class Tests', () => {
         expect(y.weekdays[0].name).toBe('S');
         expect(y.weekdays[1].name).toBe('M');
         expect(y.weekdays[2].name).toBe('T');
-        expect(y.months.length).toBe(3);
+        expect(y.months.length).toBe(4);
         expect(y.months[0].name).toBe('Month 1');
         expect(y.months[0].numberOfDays).toBe(10);
         expect(y.months[0].numberOfLeapYearDays).toBe(10);
@@ -205,6 +213,10 @@ describe('Importer Class Tests', () => {
         expect(y.months[2].numberOfDays).toBe(1);
         expect(y.months[2].numberOfLeapYearDays).toBe(1);
         expect(y.months[2].intercalary).toBe(true);
+        expect(y.months[3].name).toBe('Month 4');
+        expect(y.months[3].numberOfDays).toBe(1);
+        expect(y.months[3].numberOfLeapYearDays).toBe(1);
+        expect(y.months[3].intercalary).toBe(false);
         expect(y.leapYearRule.rule).toBe(LeapYearRules.None);
     });
 
