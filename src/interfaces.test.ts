@@ -29,6 +29,7 @@ describe('Interface Tests', () => {
         display: '',
         name: '',
         numericRepresentation: 0,
+        numericRepresentationOffset: 0,
         current: false,
         visible: false,
         selected: false,
@@ -36,7 +37,8 @@ describe('Interface Tests', () => {
         numberOfDays: 0,
         numberOfLeapYearDays: 0,
         intercalary: false,
-        intercalaryInclude: false
+        intercalaryInclude: false,
+        showAdvanced: false
     };
     const yt: YearTemplate = {
         display: '',
@@ -78,10 +80,11 @@ describe('Interface Tests', () => {
     });
 
     test('Month Template', () => {
-        expect(Object.keys(mt).length).toBe(11); //Make sure no new properties have been added
+        expect(Object.keys(mt).length).toBe(13); //Make sure no new properties have been added
         expect(mt.display).toBe("");
         expect(mt.name).toBe("");
         expect(mt.numericRepresentation).toBe(0);
+        expect(mt.numericRepresentationOffset).toBe(0);
         expect(mt.selected).toBe(false);
         expect(mt.current).toBe(false);
         expect(mt.visible).toBe(false);
@@ -90,6 +93,7 @@ describe('Interface Tests', () => {
         expect(mt.numberOfLeapYearDays).toBe(0);
         expect(mt.intercalary).toBe(false);
         expect(mt.intercalaryInclude).toBe(false);
+        expect(mt.showAdvanced).toBe(false);
     });
 
     test('Weekday Template', () => {
@@ -141,12 +145,13 @@ describe('Interface Tests', () => {
     });
 
     test('Month Config', () => {
-        const yc: MonthConfig = {numberOfDays: 0, numericRepresentation: 0, name: '',intercalaryInclude: false, intercalary: false, numberOfLeapYearDays: 0};
-        expect(Object.keys(yc).length).toBe(6); //Make sure no new properties have been added
+        const yc: MonthConfig = {numberOfDays: 0, numericRepresentation: 0, numericRepresentationOffset: 0, name: '',intercalaryInclude: false, intercalary: false, numberOfLeapYearDays: 0};
+        expect(Object.keys(yc).length).toBe(7); //Make sure no new properties have been added
         expect(yc.name).toBe('');
         expect(yc.numberOfDays).toBe(0);
         expect(yc.numberOfLeapYearDays).toBe(0);
-        expect(yc.numericRepresentation).toBe(0)
+        expect(yc.numericRepresentation).toBe(0);
+        expect(yc.numericRepresentationOffset).toBe(0);
         expect(yc.intercalary).toBe(false);
         expect(yc.intercalaryInclude).toBe(false);
     });

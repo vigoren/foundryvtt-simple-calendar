@@ -377,6 +377,7 @@ export class GameSettings {
             const newConfig: MonthConfig[] = months.map(m => { return {
                 name: m.name,
                 numericRepresentation: m.numericRepresentation,
+                numericRepresentationOffset: m.numericRepresentationOffset,
                 numberOfDays: m.numberOfDays,
                 numberOfLeapYearDays: m.numberOfLeapYearDays,
                 intercalary: m.intercalary,

@@ -95,7 +95,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Month Data', () => {
-        expect(GameSettings.LoadMonthData()).toStrictEqual([{name: '', numericRepresentation: 1, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false}]);
+        expect(GameSettings.LoadMonthData()).toStrictEqual([{name: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false}]);
         expect(game.settings.get).toHaveBeenCalled();
         (<Mock>game.settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadMonthData()).toStrictEqual([]);
@@ -159,168 +159,168 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.LoadNotes()).toStrictEqual([]);
     });
 
-    test('Set Import Ran', () => {
+    test('Set Import Ran', async () => {
         // @ts-ignore
         game.user.isGM = false;
-        expect(GameSettings.SetImportRan(true)).resolves.toBe(false);
+        await expect(GameSettings.SetImportRan(true)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SetImportRan(true)).resolves.toBe(true);
+        await expect(GameSettings.SetImportRan(true)).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalled();
     });
 
-    test('Save General Settings', () => {
+    test('Save General Settings', async () => {
         // @ts-ignore
         game.user.isGM = false;
         let gs: GeneralSettings = {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false};
-        expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
+        await expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
+        await expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
 
         gs.showClock = true;
-        expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(true);
+        await expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalled();
     });
 
-    test('Save Current Date', () => {
+    test('Save Current Date', async () => {
         jest.spyOn(console, 'error').mockImplementation();
         // @ts-ignore
         game.user.isGM = false;
         const year = new Year(0);
-        const month = new Month('T', 1, 10);
+        const month = new Month('T', 1, 0, 10);
         year.months.push(month);
         year.time.seconds = 3;
-        expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
+        await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
         expect(console.error).toHaveBeenCalledTimes(1);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
+        await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
         expect(console.error).toHaveBeenCalledTimes(2);
         year.months[0].current = true;
-        expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
+        await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
         expect(console.error).toHaveBeenCalledTimes(3);
         year.months[0].days[1].current = true;
-        expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
+        await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(false);
         expect(game.settings.get).toHaveBeenCalled();
         expect(game.settings.set).not.toHaveBeenCalled();
         (<Mock>game.settings.get).mockClear();
         year.months[0].days[1].current = false;
         year.months[0].days[2].current = true;
-        expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
+        await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
         expect(game.settings.get).toHaveBeenCalled();
         expect(game.settings.set).toHaveBeenCalled();
     });
 
-    test('Save Year Configuration', () => {
+    test('Save Year Configuration', async () => {
         // @ts-ignore
         game.user.isGM = false;
         const year = new Year(0);
-        expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(false);
+        await expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(false);
+        await expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(false);
         expect(game.settings.get).toHaveBeenCalled();
         (<Mock>game.settings.get).mockClear();
         year.numericRepresentation = 1;
-        expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(true);
+        await expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(true);
         expect(game.settings.get).toHaveBeenCalled();
         expect(game.settings.set).toHaveBeenCalled();
 
         const orig = game.settings.get;
         game.settings.get =(moduleName: string, settingName: string) => { return {numericRepresentation: 0, prefix: '', postfix: ''};};
-        expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(true);
+        await expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(true);
         game.settings.get = orig;
 
     });
 
-    test('Save Month Configuration', () => {
+    test('Save Month Configuration', async () => {
         // @ts-ignore
         game.user.isGM = false;
-        const month = new Month('', 0, 1);
-        expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(false);
+        const month = new Month('', 0, 0, 1);
+        await expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(true);
+        await expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalledTimes(1);
         month.name = '';
         month.numericRepresentation = 1;
         month.numberOfDays = 2;
         month.numberOfLeapYearDays = 2;
-        expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(false);
+        await expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(false);
         expect(game.settings.set).toHaveBeenCalledTimes(1);
     });
 
-    test('Save Weekday Configuration', () => {
+    test('Save Weekday Configuration', async () => {
         // @ts-ignore
         game.user.isGM = false;
         const weekday = new Weekday(0, '');
-        expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(false);
+        await expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(false);
+        await expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(false);
         expect(game.settings.set).toHaveBeenCalledTimes(0);
         weekday.numericRepresentation = 1;
-        expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(true);
+        await expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalledTimes(1);
     });
 
-    test('Save Season Configuration', () => {
+    test('Save Season Configuration', async () => {
         // @ts-ignore
         game.user.isGM = false;
         const season = new Season('', 1, 1);
         season.customColor = '';
-        expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(false);
+        await expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(false);
+        await expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(false);
         expect(game.settings.set).toHaveBeenCalledTimes(0);
         season.name = 'Spring';
-        expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(true);
+        await expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalledTimes(1);
     });
 
-    test('Save Moon Configuration', () => {
+    test('Save Moon Configuration', async () => {
         // @ts-ignore
         game.user.isGM = false;
         const moon = new Moon('', 0);
-        expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
+        await expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
+        await expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
         expect(game.settings.set).toHaveBeenCalledTimes(0);
         moon.name = "Moon";
-        expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
+        await expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalledTimes(1);
     });
 
-    test('Save Leap Year Rule', () => {
+    test('Save Leap Year Rule', async () => {
         // @ts-ignore
         game.user.isGM = false;
         const lr = new LeapYear();
-        expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(false);
+        await expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(false);
         expect(game.settings.set).toHaveBeenCalledTimes(0);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(false);
+        await expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(false);
         expect(game.settings.set).toHaveBeenCalledTimes(0);
         lr.rule = LeapYearRules.Gregorian;
-        expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(true);
+        await expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalledTimes(1);
     });
 
-    test('Save Time Configuration', () => {
+    test('Save Time Configuration', async () => {
         // @ts-ignore
         game.user.isGM = false;
         let gs = new Time(0, 1, 2);
         gs.gameTimeRatio = 3;
-        expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(false);
+        await expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(false);
+        await expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(false);
 
         gs.gameTimeRatio = 4;
-        expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(true);
+        await expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalled();
     });
 
@@ -338,13 +338,13 @@ describe('Game Settings Class Tests', () => {
         expect(game.socket.emit).toHaveBeenCalledTimes(1);
     });
 
-    test('Set Default Note Visibility', () => {
+    test('Set Default Note Visibility', async () => {
         // @ts-ignore
         game.user.isGM = false;
-        expect(GameSettings.SetDefaultNoteVisibility(true)).resolves.toBe(false);
+        await expect(GameSettings.SetDefaultNoteVisibility(true)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
-        expect(GameSettings.SetDefaultNoteVisibility(true)).resolves.toBe(true);
+        await expect(GameSettings.SetDefaultNoteVisibility(true)).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalled();
     });
 

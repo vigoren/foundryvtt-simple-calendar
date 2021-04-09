@@ -23,7 +23,7 @@ describe('Year Class Tests', () => {
 
     beforeEach(() => {
         year = new Year(0);
-        month = new Month("Test", 1, 30);
+        month = new Month("Test", 1, 0, 30);
         year2 = new Year(2020);
     });
 
@@ -106,24 +106,24 @@ describe('Year Class Tests', () => {
         year.weekdays.push(new Weekday(3, "S"));
         year.weekdays.push(new Weekday(4, "S"));
         year.months.push(month);
-        let weeks = year.daysIntoWeeks(month, 0);
+        let weeks = year.daysIntoWeeks(month, year.numericRepresentation, 0);
         expect(weeks).toStrictEqual([]);
 
-        weeks = year.daysIntoWeeks(month, year.weekdays.length);
+        weeks = year.daysIntoWeeks(month, year.numericRepresentation, year.weekdays.length);
         expect(weeks.length).toStrictEqual(8);
 
-        const m2 = new Month("M", 2, 15);
+        const m2 = new Month("M", 2, 0, 15);
         month.visible = false;
         m2.visible = true;
         year.months.push(m2);
-        weeks = year.daysIntoWeeks(m2, year.weekdays.length);
+        weeks = year.daysIntoWeeks(m2, year.numericRepresentation, year.weekdays.length);
         expect(weeks.length).toStrictEqual(5);
 
-        const m3 = new Month("3", 3, 1);
+        const m3 = new Month("3", 3, 0, 1);
         m2.visible = false;
         m3.visible = true;
         year.months.push(m3);
-        weeks = year.daysIntoWeeks(m3, year.weekdays.length);
+        weeks = year.daysIntoWeeks(m3, year.numericRepresentation, year.weekdays.length);
         expect(weeks.length).toStrictEqual(1);
     });
 
@@ -189,7 +189,7 @@ describe('Year Class Tests', () => {
 
     test('Update Month', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
 
         expect(year.months[0].current).toBe(false);
         expect(year.months[1].current).toBe(false);
@@ -201,7 +201,7 @@ describe('Year Class Tests', () => {
         expect(year.months[0].current).toBe(false);
         expect(year.months[1].current).toBe(true);
 
-        year.months.push(new Month("Test 3", -1, 0));
+        year.months.push(new Month("Test 3", -1, 0, 0));
         year.updateMonth(-1, 'current', true);
         expect(year.months[0].current).toBe(true);
         expect(year.months[1].current).toBe(false);
@@ -216,7 +216,7 @@ describe('Year Class Tests', () => {
 
     test('Change Year Visibility', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].visible = true;
         year.changeYear(1);
         expect(year.visibleYear).toBe(1);
@@ -233,7 +233,7 @@ describe('Year Class Tests', () => {
 
     test('Change Year Current', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].current = true;
         year.changeYear(1, true, 'current');
         expect(year.numericRepresentation).toBe(1);
@@ -248,7 +248,7 @@ describe('Year Class Tests', () => {
         expect(year.numericRepresentation).toBe(1);
 
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.changeYear(-1, false, 'current');
         expect(year.numericRepresentation).toBe(0);
         year.months[1].current = true;
@@ -264,7 +264,7 @@ describe('Year Class Tests', () => {
 
     test('Change Year Selected', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].selected = true;
         year.changeYear(1, true, 'selected');
         expect(year.selectedYear).toBe(1);
@@ -281,7 +281,7 @@ describe('Year Class Tests', () => {
 
     test('Change Month Visible', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[0].visible = true
         year.changeMonth(1);
         expect(year.months[0].visible).toBe(false);
@@ -301,7 +301,7 @@ describe('Year Class Tests', () => {
 
     test('Change Month Selected', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[0].selected = true
         year.changeMonth(1, 'selected');
         expect(year.months[0].selected).toBe(false);
@@ -321,7 +321,7 @@ describe('Year Class Tests', () => {
 
     test('Change Month Current', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[0].current = true
         year.changeMonth(1, 'current');
         expect(year.months[0].current).toBe(false);
@@ -368,7 +368,7 @@ describe('Year Class Tests', () => {
 
     test('Change Day Current', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[0].days[0].current = true;
         year.changeDay(true);
         expect(year.months[0].days[0].current).toBe(true);
@@ -390,7 +390,7 @@ describe('Year Class Tests', () => {
 
     test('Change Day Selected', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[0].days[0].selected = true;
         year.changeDay(true, 'selected');
         expect(year.months[0].days[0].selected).toBe(true);
@@ -424,10 +424,10 @@ describe('Year Class Tests', () => {
     test('Total Number of Days', () => {
         year.months.push(month);
         expect(year.totalNumberOfDays()).toBe(30);
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         expect(year.totalNumberOfDays()).toBe(52);
 
-        year.months.push(new Month("Test 3", 3, 2));
+        year.months.push(new Month("Test 3", 3, 0, 2));
         year.months[2].intercalary = true;
         expect(year.totalNumberOfDays()).toBe(52);
         year.months[2].intercalaryInclude = true;
@@ -448,14 +448,14 @@ describe('Year Class Tests', () => {
         year.weekdays.push(new Weekday(7, 'S'));
         expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
         month.visible = false;
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].visible = true;
         expect(year.visibleMonthStartingDayOfWeek()).toBe(2);
 
         year.months[1].visible = false;
         expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
 
-        year.months.push(new Month("Test 3", 3, 2));
+        year.months.push(new Month("Test 3", 3, 0, 2));
         year.months[2].visible = true;
         year.months[2].intercalary = true;
         expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
@@ -474,8 +474,8 @@ describe('Year Class Tests', () => {
         expect(year.dayOfTheWeek(year.numericRepresentation, 1, 2)).toBe(1);
         expect(year.dayOfTheWeek(year.numericRepresentation, 1, -1)).toBe(0);
 
-        year.months.push(new Month("Test 3", 3, 2));
-        year.months.push(new Month("Test 2", 2, 22));
+        year.months.push(new Month("Test 3", 3, 0, 2));
+        year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].intercalary = true;
         expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(3);
 
@@ -487,7 +487,7 @@ describe('Year Class Tests', () => {
 
     test('Date to Days', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22, 23));
+        year.months.push(new Month("Test 2", 2, 0, 22, 23));
         expect(year.dateToDays(0,0,1)).toBe(1);
         expect(year.dateToDays(5,0,1)).toBe(261);
         year.leapYearRule = new LeapYear();
@@ -523,7 +523,7 @@ describe('Year Class Tests', () => {
 
     test('Seconds To Date', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22, 23));
+        year.months.push(new Month("Test 2", 2, 0, 22, 23));
         year.months[1].intercalary = true;
         expect(year.secondsToDate(10)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 0, second: 10});
         expect(year.secondsToDate(70)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 1, second: 10});
@@ -538,7 +538,7 @@ describe('Year Class Tests', () => {
 
     test('Update Time', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 22, 23));
+        year.months.push(new Month("Test 2", 2, 0, 22, 23));
         year.updateTime({year: 1, month: 1, day: 3, hour: 4, minute: 5, second: 6});
         expect(year.numericRepresentation).toBe(1);
         expect(year.months[1].current).toBe(true);
@@ -597,7 +597,7 @@ describe('Year Class Tests', () => {
         expect(data.color).toBe('');
 
         year.months.push(month);
-        year.months.push(new Month('Month 2', 2, 20));
+        year.months.push(new Month('Month 2', 2, 0, 20));
         month.current = true;
         data = year.getCurrentSeason();
         expect(data.name).toBe('');

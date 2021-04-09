@@ -1,11 +1,14 @@
 # Change Log
 
-## v1.2.7 - Bug Fixes and QoL Improvements
+## v1.2.10 - Bug Fixes and QoL Improvements
 
 ### Quality of Life Improvements
 
 - Cleaned up the styling of the calendar dialog. The calendar will now consistently open so that the calendar, date controls (if gm) and 2 rows of notes will be visible.
 - Resizing of the calendar dialog will now reset when you close and re-open the dialog.
+- Added the Traveller - Imperial Calendar as a predefined calendar.
+- Added a new section in month configuration called Advanced. Clicking on a months "Show Advanced" link will show the advanced options' area. This area will contain things that are probably not relevant to most calendars.
+- Added a new option to months advanced settings to offset the day numbers by an amount. This is to accommodate instances where a month may start on day 2. The best example is the Traveller calendar where days are numbered by what day of the year they are rather than which day of the month they are.
 
 ### Bug Fixes
 

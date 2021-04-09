@@ -51,7 +51,7 @@ const game = {
                 case SettingNames.YearConfiguration:
                     return {numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true};
                 case SettingNames.MonthConfiguration:
-                    return [[{name: '', numericRepresentation: 1, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false}]];
+                    return [[{name: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false}]];
                 case SettingNames.WeekdayConfiguration:
                     return [[{name: '', numericRepresentation: 0}]];
                 case SettingNames.LeapYearRule:

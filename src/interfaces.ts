@@ -91,6 +91,7 @@ export interface  MonthTemplate {
     display: string;
     name: string;
     numericRepresentation: number;
+    numericRepresentationOffset: number;
     current: boolean;
     visible: boolean;
     selected: boolean;
@@ -99,6 +100,7 @@ export interface  MonthTemplate {
     numberOfLeapYearDays: number;
     intercalary: boolean;
     intercalaryInclude: boolean;
+    showAdvanced: boolean;
 }
 
 /**
@@ -107,6 +109,7 @@ export interface  MonthTemplate {
 export interface MonthConfig {
     name: string;
     numericRepresentation: number;
+    numericRepresentationOffset: number;
     numberOfDays: number;
     numberOfLeapYearDays: number;
     intercalary: boolean;

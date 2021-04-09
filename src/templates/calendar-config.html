@@ -181,6 +181,7 @@
                         <div class="month-intercalary" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}">{{localize 'FSC.Configuration.Month.Intercalary'}}</div>
                         <div class="month-number" title="{{localize 'FSC.Configuration.Month.NumberHelp'}}">{{localize 'FSC.Configuration.Month.Number'}}</div>
                         <div class="remove-month"></div>
+                        <div class="remove-month"></div>
                     </div>
                     {{#each months}}
                     <div class="row">
@@ -195,15 +196,29 @@
                         </div>
                         <div class="month-number">{{#if numericRepresentation}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
                         <div>
+                            {{#if showAdvanced}}
+                            <a class="month-show-advanced" data-index="{{@index}}"><span class="fa fa-chevron-up"></span> {{localize 'FSC.HideAdvanced'}}</a>
+                            {{else}}
+                            <a class="month-show-advanced" data-index="{{@index}}"><span class="fa fa-chevron-down"></span> {{localize 'FSC.ShowAdvanced'}}</a>
+                            {{/if}}
+                        </div>
+                        <div>
                             <button class="remove-month control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                         </div>
-                        <div class="options {{#unless intercalary}}hidden{{/unless}}">
-                            <div class="form-group">
+                        <div class="options {{#unless (or showAdvanced intercalary)}}hidden{{/unless}}">
+                            <div class="form-group {{#unless intercalary}}hidden{{/unless}}">
                                 <label for="-scii{{@index}}">{{localize 'FSC.Configuration.Month.IntercalaryInclude'}}</label>
                                 <div class="form-fields">
                                     <input class="month-intercalary-include" value="{{intercalaryInclude}}" id="-scii{{@index}}" type="checkbox" data-index="{{@index}}" {{#if intercalaryInclude}}checked="checked"{{/if}} />
                                 </div>
                                 <p class="notes">{{localize 'FSC.Configuration.Month.IntercalaryIncludeHelp'}}</p>
+                            </div>
+                            <div class="form-group {{#unless showAdvanced}}hidden{{/unless}}">
+                                <label for="-mdo{{@index}}">{{localize 'FSC.Configuration.Month.DayOffset'}}</label>
+                                <div class="form-fields">
+                                    <input class="month-numeric-representation-offset" value="{{numericRepresentationOffset}}" id="-mdo{{@index}}" type="number" data-index="{{@index}}" />
+                                </div>
+                                <p class="notes">{{localize 'FSC.Configuration.Month.DayOffsetHelp'}}</p>
                             </div>
                         </div>
                     </div>

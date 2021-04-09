@@ -22,9 +22,9 @@ describe('Importer Class Tests', () => {
 
     beforeEach(() => {
         y = new Year(0);
-        y.months.push(new Month('M', 1, 5));
-        y.months.push(new Month('T', 2, 15));
-        y.months.push(new Month('W', 3, 1));
+        y.months.push(new Month('M', 1, 0, 5));
+        y.months.push(new Month('T', 2, 0, 15));
+        y.months.push(new Month('W', 3, 0, 1));
         y.months[2].intercalary = true;
         y.weekdays.push(new Weekday(1, 'S'));
         y.seasons.push(new Season('S', 1, 1));

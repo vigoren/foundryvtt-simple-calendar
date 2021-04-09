@@ -111,8 +111,8 @@ describe('Note Tests', () => {
         expect(n.isVisible(0,1,2)).toBe(false);
 
         SimpleCalendar.instance.currentYear = new Year(0);
-        SimpleCalendar.instance.currentYear.months.push(new Month('J', 1, 31));
-        SimpleCalendar.instance.currentYear.months.push(new Month('F', 2, 28));
+        SimpleCalendar.instance.currentYear.months.push(new Month('J', 1, 0, 31));
+        SimpleCalendar.instance.currentYear.months.push(new Month('F', 2, 0, 28));
         SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(1, 'S'));
         SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(2, 'M'));
         SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(3, 'T'));

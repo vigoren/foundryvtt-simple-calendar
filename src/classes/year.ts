@@ -127,7 +127,7 @@ export default class Year {
 
         let weeks: (boolean | DayTemplate)[][] = [];
         if(visibleMonth){
-            weeks = this.daysIntoWeeks(visibleMonth, this.weekdays.length);
+            weeks = this.daysIntoWeeks(visibleMonth, this.visibleYear, this.weekdays.length);
         }
 
         return {
@@ -153,12 +153,14 @@ export default class Year {
     /**
      * Will take the days of the passed in month and break it into an array of weeks
      * @param {Month} month The month to get the days from
+     * @param {number} year The year the month is in (for leap year calculation)
      * @param {number} weekLength How many days there are in a week
      */
-    daysIntoWeeks(month: Month, weekLength: number): (boolean | DayTemplate)[][]{
+    daysIntoWeeks(month: Month, year: number, weekLength: number): (boolean | DayTemplate)[][]{
         const weeks = [];
         const dayOfWeekOffset = this.visibleMonthStartingDayOfWeek();
-        const days = month.days.map(d => d.toTemplate());
+        const isLeapYear = this.leapYearRule.isLeapYear(year);
+        const days = month.getDaysForTemplate(isLeapYear);
 
         if(days.length && weekLength > 0){
             const startingWeek = [];

@@ -102,6 +102,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 golarian : 'Golarian',
                 greyhawk: 'Greyhawk',
                 harptos: 'Harptos',
+                'traveller-ic': 'Traveller: Imperial Calendar',
                 warhammer: "Warhammer"
             },
             timeTrackers: {
@@ -188,6 +189,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
         super.activateListeners(html);
         if(html.hasOwnProperty("length")) {
 
+            //Month advanced click
+            (<JQuery>html).find(".month-show-advanced").on('click', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+
             //Save button clicks
             (<JQuery>html).find("#scSubmit").on('click', SimpleCalendarConfiguration.instance.saveClick.bind(this));
 
@@ -257,7 +261,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
         switch (filteredSetting){
             case "month":
                 const newMonthNumber = (<Year>this.object).months.length + 1;
-                (<Year>this.object).months.push(new Month('New Month', newMonthNumber, 30));
+                (<Year>this.object).months.push(new Month('New Month', newMonthNumber, 0, 30));
                 this.rebaseMonthNumbers();
                 break;
             case "weekday":
@@ -406,18 +410,18 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = '';
                 (<Year>this.object).months = [
-                    new Month(GameSettings.Localize("FSC.Date.January"), 1, 31),
-                    new Month(GameSettings.Localize("FSC.Date.February"), 2, 28, 29),
-                    new Month(GameSettings.Localize("FSC.Date.March"),3, 31),
-                    new Month(GameSettings.Localize("FSC.Date.April"),4, 30),
-                    new Month(GameSettings.Localize("FSC.Date.May"),5, 31),
-                    new Month(GameSettings.Localize("FSC.Date.June"),6, 30),
-                    new Month(GameSettings.Localize("FSC.Date.July"),7, 31),
-                    new Month(GameSettings.Localize("FSC.Date.August"),8, 31),
-                    new Month(GameSettings.Localize("FSC.Date.September"),9, 30),
-                    new Month(GameSettings.Localize("FSC.Date.October"), 10, 31),
-                    new Month(GameSettings.Localize("FSC.Date.November"), 11, 30),
-                    new Month(GameSettings.Localize("FSC.Date.December"), 12, 31),
+                    new Month(GameSettings.Localize("FSC.Date.January"), 1, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.February"), 2, 0, 28, 29),
+                    new Month(GameSettings.Localize("FSC.Date.March"),3, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.April"),4, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.May"),5, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.June"),6, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.July"),7, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.August"),8, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.September"),9, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.October"), 10, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.November"), 11, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.December"), 12, 0, 31),
                 ];
                 (<Year>this.object).showWeekdayHeadings = true;
                 (<Year>this.object).weekdays = [
@@ -472,18 +476,18 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' YK';
                 (<Year>this.object).months = [
-                    new Month('Zarantyr', 1, 28),
-                    new Month('Olarune', 2, 28),
-                    new Month('Therendor', 3, 28),
-                    new Month('Eyre', 4, 28),
-                    new Month('Dravago', 5, 28),
-                    new Month('Nymm', 6, 28),
-                    new Month('Lharvion', 7, 28),
-                    new Month('Barrakas', 8, 28),
-                    new Month('Rhaan', 9, 28),
-                    new Month('Sypheros', 10, 28),
-                    new Month('Aryth', 11, 28),
-                    new Month('Vult', 12, 28)
+                    new Month('Zarantyr', 1, 0, 28),
+                    new Month('Olarune', 2, 0, 28),
+                    new Month('Therendor', 3, 0, 28),
+                    new Month('Eyre', 4, 0, 28),
+                    new Month('Dravago', 5, 0, 28),
+                    new Month('Nymm', 6, 0, 28),
+                    new Month('Lharvion', 7, 0, 28),
+                    new Month('Barrakas', 8, 0, 28),
+                    new Month('Rhaan', 9, 0, 28),
+                    new Month('Sypheros', 10, 0, 28),
+                    new Month('Aryth', 11, 0, 28),
+                    new Month('Vult', 12, 0, 28)
                 ];
                 (<Year>this.object).showWeekdayHeadings = true;
                 (<Year>this.object).weekdays = [
@@ -511,17 +515,17 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' P.D.';
                 (<Year>this.object).months = [
-                    new Month('Horisal', 1, 29),
-                    new Month('Misuthar', 2, 30),
-                    new Month('Dualahei', 3, 30),
-                    new Month('Thunsheer', 4, 31),
-                    new Month('Unndilar', 5, 28),
-                    new Month('Brussendar', 6, 31),
-                    new Month('Sydenstar', 7, 32),
-                    new Month('Fessuran', 8, 29),
-                    new Month('Quen\'pillar', 9, 27),
-                    new Month('Cuersaar', 10, 29),
-                    new Month('Duscar', 11, 32)
+                    new Month('Horisal', 1, 0, 29),
+                    new Month('Misuthar', 2, 0, 30),
+                    new Month('Dualahei', 3, 0, 30),
+                    new Month('Thunsheer', 4, 0, 31),
+                    new Month('Unndilar', 5, 0, 28),
+                    new Month('Brussendar', 6, 0, 31),
+                    new Month('Sydenstar', 7, 0, 32),
+                    new Month('Fessuran', 8, 0, 29),
+                    new Month('Quen\'pillar', 9, 0, 27),
+                    new Month('Cuersaar', 10, 0, 29),
+                    new Month('Duscar', 11, 0, 32)
                 ];
                 (<Year>this.object).showWeekdayHeadings = true;
                 (<Year>this.object).weekdays = [
@@ -591,18 +595,18 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' AR';
                 (<Year>this.object).months = [
-                    new Month('Abadius', 1, 31),
-                    new Month('Calistril', 2, 28, 29),
-                    new Month('Pharast', 3, 31),
-                    new Month('Gozran', 4, 30),
-                    new Month('Desnus', 5, 31),
-                    new Month('Sarenith', 6, 30),
-                    new Month('Erastus', 7, 31),
-                    new Month('Arodus', 8, 31),
-                    new Month('Rova', 9, 30),
-                    new Month('Lamashan', 10, 31),
-                    new Month('Neth', 11, 30),
-                    new Month('Kuthona', 12, 31)
+                    new Month('Abadius', 1, 0, 31),
+                    new Month('Calistril', 2, 0, 28, 29),
+                    new Month('Pharast', 3, 0, 31),
+                    new Month('Gozran', 4, 0, 30),
+                    new Month('Desnus', 5, 0, 31),
+                    new Month('Sarenith', 6, 0, 30),
+                    new Month('Erastus', 7, 0, 31),
+                    new Month('Arodus', 8, 0, 31),
+                    new Month('Rova', 9, 0, 30),
+                    new Month('Lamashan', 10, 0, 31),
+                    new Month('Neth', 11, 0, 30),
+                    new Month('Kuthona', 12, 0, 31)
                 ];
                 (<Year>this.object).showWeekdayHeadings = true;
                 (<Year>this.object).weekdays = [
@@ -657,22 +661,22 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' cy';
                 (<Year>this.object).months = [
-                    new Month('Needfest', -1, 7),
-                    new Month('Fireseek', 1, 28),
-                    new Month('Readying', 2, 28),
-                    new Month('Coldeven', 3, 28),
-                    new Month('Growfest', -2, 7),
-                    new Month('Planting', 4, 28),
-                    new Month('Flocktime', 5, 28),
-                    new Month('Wealsun', 6, 28),
-                    new Month('Richfest', -3, 7),
-                    new Month('Reaping', 7, 28),
-                    new Month('Goodmonth', 8, 28),
-                    new Month('Harvester', 9, 28),
-                    new Month('Brewfest', -4, 7),
-                    new Month('Patchwall', 10, 28),
-                    new Month('Ready\'reat', 11, 28),
-                    new Month('Sunsebb', 12, 28),
+                    new Month('Needfest', -1, 0, 7),
+                    new Month('Fireseek', 1, 0, 28),
+                    new Month('Readying', 2, 0, 28),
+                    new Month('Coldeven', 3, 0, 28),
+                    new Month('Growfest', -2, 0, 7),
+                    new Month('Planting', 4, 0, 28),
+                    new Month('Flocktime', 5, 0, 28),
+                    new Month('Wealsun', 6, 0, 28),
+                    new Month('Richfest', -3, 0, 7),
+                    new Month('Reaping', 7, 0, 28),
+                    new Month('Goodmonth', 8, 0, 28),
+                    new Month('Harvester', 9, 0, 28),
+                    new Month('Brewfest', -4, 0, 7),
+                    new Month('Patchwall', 10, 0, 28),
+                    new Month('Ready\'reat', 11, 0, 28),
+                    new Month('Sunsebb', 12, 0, 28),
                 ];
                 (<Year>this.object).months[0].intercalary = true;
                 (<Year>this.object).months[4].intercalary = true;
@@ -749,24 +753,24 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' DR';
                 (<Year>this.object).months = [
-                    new Month('Hammer', 1, 30),
-                    new Month('Midwinter', -1, 1),
-                    new Month('Alturiak', 2, 30),
-                    new Month('Ches', 3, 30),
-                    new Month('Tarsakh', 4, 30),
-                    new Month('Greengrass', -2, 1),
-                    new Month('Mirtul', 5, 30),
-                    new Month('Kythorn', 6, 30),
-                    new Month('Flamerule', 7, 30),
-                    new Month('Midsummer', -3, 1),
-                    new Month('Shieldmeet', -4, 0, 1),
-                    new Month('Eleasis', 8, 30),
-                    new Month('Eleint', 9, 30),
-                    new Month('Higharvestide', -5, 1),
-                    new Month('Marpenoth', 10, 30),
-                    new Month('Uktar', 11, 30),
-                    new Month('Feast Of the Moon', -6, 1),
-                    new Month('Nightal', 12, 30)
+                    new Month('Hammer', 1, 0, 30),
+                    new Month('Midwinter', -1, 0, 1),
+                    new Month('Alturiak', 2, 0, 30),
+                    new Month('Ches', 3, 0, 30),
+                    new Month('Tarsakh', 4, 0, 30),
+                    new Month('Greengrass', -2, 0, 1),
+                    new Month('Mirtul', 5, 0, 30),
+                    new Month('Kythorn', 6, 0, 30),
+                    new Month('Flamerule', 7, 0, 30),
+                    new Month('Midsummer', -3, 0, 1),
+                    new Month('Shieldmeet', -4, 0, 0, 1),
+                    new Month('Eleasis', 8, 0, 30),
+                    new Month('Eleint', 9, 0, 30),
+                    new Month('Higharvestide', -5, 0, 1),
+                    new Month('Marpenoth', 10, 0, 30),
+                    new Month('Uktar', 11, 0, 30),
+                    new Month('Feast Of the Moon', -6, 0, 1),
+                    new Month('Nightal', 12, 0, 30)
                 ];
                 (<Year>this.object).months[1].intercalary = true;
                 (<Year>this.object).months[5].intercalary = true;
@@ -825,29 +829,59 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
                 break;
+            case 'traveller-ic':
+                (<Year>this.object).numericRepresentation = 1000;
+                (<Year>this.object).prefix = '';
+                (<Year>this.object).postfix = '';
+                (<Year>this.object).months = [
+                    new Month('Holiday', -1, 0, 1),
+                    new Month('Year', 1,1, 364)
+                ];
+                (<Year>this.object).months[0].intercalary = true;
+                (<Year>this.object).showWeekdayHeadings = true;
+                (<Year>this.object).weekdays = [
+                    new Weekday(1, 'Wonday'),
+                    new Weekday(2, 'Tuday'),
+                    new Weekday(3, 'Thirday'),
+                    new Weekday(4, 'Forday'),
+                    new Weekday(5, 'Fiday'),
+                    new Weekday(6, 'Sixday'),
+                    new Weekday(7, 'Senday')
+                ];
+                (<Year>this.object).seasons = [];
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
+                (<Year>this.object).leapYearRule.rule = LeapYearRules.None;
+                (<Year>this.object).leapYearRule.customMod = 0;
+                (<Year>this.object).months[0].current = true;
+                (<Year>this.object).months[0].days[0].current = true;
+                (<Year>this.object).moons = [];
+                break;
             case 'warhammer':
                 (<Year>this.object).numericRepresentation = 2522;
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = '';
                 (<Year>this.object).months = [
-                    new Month('Hexenstag', -1, 1),
-                    new Month('Nachexen', 1, 32),
-                    new Month('Jahrdrung', 2, 33),
-                    new Month('Mitterfruhl', -2, 1),
-                    new Month('Pflugzeit', 3, 33),
-                    new Month('Sigmarzeit', 4, 33),
-                    new Month('Sommerzeit', 5, 33),
-                    new Month('Sonnstill', -3, 1),
-                    new Month('Vorgeheim', 6, 33),
-                    new Month('Geheimnistag', -4, 1),
-                    new Month('Nachgeheim', 7, 32),
-                    new Month('Erntezeit', 8, 33),
-                    new Month('Mittherbst', -5, 1),
-                    new Month('Brauzeit', 9, 33),
-                    new Month('Kaldezeit', 10, 33),
-                    new Month('Ulriczeit', 11, 33),
-                    new Month('Mondstille', -6, 1),
-                    new Month('Vorhexen', 12, 33)
+                    new Month('Hexenstag', -1, 0, 1),
+                    new Month('Nachexen', 1, 0, 32),
+                    new Month('Jahrdrung', 2, 0, 33),
+                    new Month('Mitterfruhl', -2, 0, 1),
+                    new Month('Pflugzeit', 3, 0, 33),
+                    new Month('Sigmarzeit', 4, 0, 33),
+                    new Month('Sommerzeit', 5, 0, 33),
+                    new Month('Sonnstill', -3, 0, 1),
+                    new Month('Vorgeheim', 6, 0, 33),
+                    new Month('Geheimnistag', -4, 0, 1),
+                    new Month('Nachgeheim', 7, 0, 32),
+                    new Month('Erntezeit', 8, 0, 33),
+                    new Month('Mittherbst', -5, 0, 1),
+                    new Month('Brauzeit', 9, 0, 33),
+                    new Month('Kaldezeit', 10, 0, 33),
+                    new Month('Ulriczeit', 11, 0, 33),
+                    new Month('Mondstille', -6, 0, 1),
+                    new Month('Vorhexen', 12, 0, 33)
                 ];
                 (<Year>this.object).months[0].intercalary = true;
                 (<Year>this.object).months[3].intercalary = true;
@@ -917,8 +951,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
         const id = (<HTMLElement>e.currentTarget).id;
         const cssClass = (<HTMLElement>e.currentTarget).getAttribute('class');
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
-        let value = (<HTMLInputElement>e.currentTarget).value.trim();
+        let value = (<HTMLInputElement>e.currentTarget).value;
         const checked = (<HTMLInputElement>e.currentTarget).checked;
+
+        if(value){
+            value = value.trim();
+        }
 
         if(id && id[0] !== '-'){
             Logger.debug(`ID "${id}" change found`);
@@ -1004,6 +1042,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                         (<Year>this.object).seasons[index].color = value;
                     }
                     //Month Setting Inputs
+                    else if(cssClass === 'month-show-advanced' && (<Year>this.object).months.length > index){
+                        (<Year>this.object).months[index].showAdvanced = !(<Year>this.object).months[index].showAdvanced;
+                    }
                     else if(cssClass === 'month-name' && (<Year>this.object).months.length > index){
                         (<Year>this.object).months[index].name = value;
                     } else if(cssClass === 'month-days' && (<Year>this.object).months.length > index){
@@ -1024,6 +1065,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     } else if (cssClass === 'month-intercalary-include' && (<Year>this.object).months.length > index){
                         (<Year>this.object).months[index].intercalaryInclude = checked;
                         this.rebaseMonthNumbers();
+                    } else if(cssClass === 'month-numeric-representation-offset' && (<Year>this.object).months.length > index){
+                        let v = parseInt(value);
+                        if(!isNaN(v)){
+                            (<Year>this.object).months[index].numericRepresentationOffset = v;
+                        }
                     }
                     //Weekday Setting Inputs
                     else if(cssClass === 'weekday-name' && (<Year>this.object).weekdays.length > index){

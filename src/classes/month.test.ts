@@ -7,24 +7,26 @@ describe('Month Class Tests', () => {
     let monthIc: Month;
 
     beforeEach(() => {
-        month = new Month("Test", 0, 0);
-        month2 = new Month("", 0, 30);
-        monthLy = new Month("LY", 2, 30, 31);
-        monthIc = new Month("IC", -1, 1, 1);
+        month = new Month("Test", 0, 0, 0);
+        month2 = new Month("", 0, 0, 30);
+        monthLy = new Month("LY", 2, 0, 30, 31);
+        monthIc = new Month("IC", -1, 0, 1, 1);
     });
 
     test('Properties', () => {
-        expect(Object.keys(month).length).toBe(10); //Make sure no new properties have been added
+        expect(Object.keys(month).length).toBe(12); //Make sure no new properties have been added
         expect(month.days).toStrictEqual([]);
         expect(month.numberOfDays).toBe(0);
         expect(month.numberOfLeapYearDays).toBe(0);
         expect(month.numericRepresentation).toBe(0);
+        expect(month.numericRepresentationOffset).toBe(0);
         expect(month.name).toBe('Test');
         expect(month.intercalary).toBe(false);
         expect(month.intercalaryInclude).toBe(false);
         expect(month.current).toBe(false);
         expect(month.selected).toBe(false);
         expect(month.visible).toBe(false);
+        expect(month.showAdvanced).toBe(false);
 
         expect(month2.name).toBe('0');
         expect(month2.days.length).toBe(30);
@@ -57,10 +59,11 @@ describe('Month Class Tests', () => {
 
     test('To Template', () => {
         const t = month.toTemplate();
-        expect(Object.keys(t).length).toBe(11); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(13); //Make sure no new properties have been added
         expect(t.display).toBe('Test (0)');
         expect(t.name).toBe('Test');
         expect(t.numericRepresentation).toBe(0);
+        expect(t.numericRepresentationOffset).toBe(0);
         expect(t.current).toBe(false);
         expect(t.selected).toBe(false);
         expect(t.visible).toBe(false);
@@ -69,6 +72,7 @@ describe('Month Class Tests', () => {
         expect(t.numberOfLeapYearDays).toBe(0);
         expect(t.intercalary).toBe(false);
         expect(t.intercalaryInclude).toBe(false);
+        expect(t.showAdvanced).toBe(false);
 
         //Intercalary days are represented by negative numbers, the template spits them out as 0
         const t2 = monthIc.toTemplate();

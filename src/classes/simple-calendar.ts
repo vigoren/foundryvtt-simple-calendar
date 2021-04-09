@@ -386,21 +386,17 @@ export default class SimpleCalendar extends Application{
         const target = <HTMLElement>e.target;
         const dataDate = target.getAttribute('data-day');
         if(dataDate){
-            const index = parseInt(dataDate) - 1;
-            if(this.currentYear && index > -1){
-                const currentSelectedMonth = this.currentYear.getMonth('selected');
-                const currentSelectedDay = currentSelectedMonth?.getDay('selected');
-                if(currentSelectedMonth){
-                    currentSelectedMonth.selected = false;
-                }
-                if(currentSelectedDay){
-                    currentSelectedDay.selected = false;
-                }
+            const dayNumber = parseInt(dataDate);
+            if(this.currentYear && dayNumber > -1){
+                this.currentYear.resetMonths('selected');
                 const visibleMonth = this.currentYear.getMonth('visible');
-                if(visibleMonth && visibleMonth.days.length > index){
-                    visibleMonth.selected = true;
-                    visibleMonth.days[index].selected = true;
-                    this.currentYear.selectedYear = this.currentYear.visibleYear;
+                if(visibleMonth){
+                    const dayIndex = visibleMonth.days.findIndex(d => d.numericRepresentation === dayNumber);
+                    if(dayIndex > -1){
+                        visibleMonth.selected = true;
+                        visibleMonth.days[dayIndex].selected = true;
+                        this.currentYear.selectedYear = this.currentYear.visibleYear;
+                    }
                 }
                 this.updateApp();
             } else {
@@ -712,7 +708,7 @@ export default class SimpleCalendar extends Application{
                         if(isNaN(numLeapDays)){
                             numLeapDays = 1;
                         }
-                        const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, numDays, numLeapDays);
+                        const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numericRepresentationOffset, numDays, numLeapDays);
                         newMonth.intercalary = monthData[i].intercalary;
                         newMonth.intercalaryInclude = monthData[i].intercalaryInclude;
                         this.currentYear.months.push(newMonth);
@@ -722,18 +718,18 @@ export default class SimpleCalendar extends Application{
             if(this.currentYear.months.length === 0) {
                 Logger.debug('No month configuration found, setting default month data.');
                 this.currentYear.months = [
-                    new Month(GameSettings.Localize("FSC.Date.January"), 1, 31),
-                    new Month(GameSettings.Localize("FSC.Date.February"), 2, 28, 29),
-                    new Month(GameSettings.Localize("FSC.Date.March"),3, 31),
-                    new Month(GameSettings.Localize("FSC.Date.April"),4, 30),
-                    new Month(GameSettings.Localize("FSC.Date.May"),5, 31),
-                    new Month(GameSettings.Localize("FSC.Date.June"),6, 30),
-                    new Month(GameSettings.Localize("FSC.Date.July"),7, 31),
-                    new Month(GameSettings.Localize("FSC.Date.August"),8, 31),
-                    new Month(GameSettings.Localize("FSC.Date.September"),9, 30),
-                    new Month(GameSettings.Localize("FSC.Date.October"), 10, 31),
-                    new Month(GameSettings.Localize("FSC.Date.November"), 11, 30),
-                    new Month(GameSettings.Localize("FSC.Date.December"), 12, 31),
+                    new Month(GameSettings.Localize("FSC.Date.January"), 1, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.February"), 2, 0, 28, 29),
+                    new Month(GameSettings.Localize("FSC.Date.March"),3, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.April"),4, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.May"),5, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.June"),6, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.July"),7, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.August"),8, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.September"),9, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.October"), 10, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.November"), 11, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.December"), 12, 0, 31),
                 ];
             }
         } else {

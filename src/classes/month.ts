@@ -32,6 +32,8 @@ export default class Month {
      */
     numericRepresentation: number;
 
+    numericRepresentationOffset: number = 0;
+
     /**
      * If this month should be treated an a intercalary month
      * @type {boolean}
@@ -54,16 +56,20 @@ export default class Month {
      */
     selected: boolean = false;
 
+    showAdvanced: boolean = false;
+
     /**
      * Month class constructor
      * @param {string} name The name of the month
      * @param {number} numericRepresentation The numeric representation of the month
+     * @param {number} numericRepresentationOffset When numbering days offset them by this amount
      * @param {number} numberOfDays The number of days in this month
      * @param {number} numberOfLeapYearDays The number of days in this month on a leap year
      */
-    constructor(name: string, numericRepresentation: number, numberOfDays: number = 0, numberOfLeapYearDays: number = 0) {
+    constructor(name: string, numericRepresentation: number, numericRepresentationOffset: number = 0, numberOfDays: number = 0, numberOfLeapYearDays: number = 0) {
         this.name = name.trim();
         this.numericRepresentation = numericRepresentation;
+        this.numericRepresentationOffset = numericRepresentationOffset;
         if(this.name === ''){
             this.name = numericRepresentation.toString();
         }
@@ -79,7 +85,7 @@ export default class Month {
      */
     public populateDays(numberOfDays: number, currentDay: number | null = null): void{
         for(let i = 1; i <= numberOfDays; i++){
-            const d = new Day(i);
+            const d = new Day(i + this.numericRepresentationOffset);
             if(i === currentDay){
                 d.current = true;
             }
@@ -109,6 +115,7 @@ export default class Month {
             display: this.getDisplayName(),
             name: this.name,
             numericRepresentation: this.numericRepresentation < 0? 0 : this.numericRepresentation,
+            numericRepresentationOffset: this.numericRepresentationOffset,
             current: this.current,
             visible: this.visible,
             selected: this.selected,
@@ -116,7 +123,8 @@ export default class Month {
             numberOfDays: this.numberOfDays,
             numberOfLeapYearDays: this.numberOfLeapYearDays,
             intercalary: this.intercalary,
-            intercalaryInclude: this.intercalaryInclude
+            intercalaryInclude: this.intercalaryInclude,
+            showAdvanced: this.showAdvanced
         };
     }
 
@@ -125,7 +133,7 @@ export default class Month {
      * @return {Month}
      */
     clone(): Month {
-        const m = new Month(this.name, this.numericRepresentation);
+        const m = new Month(this.name, this.numericRepresentation, this.numericRepresentationOffset);
         m.current = this.current;
         m.selected = this.selected;
         m.visible = this.visible;
@@ -134,6 +142,7 @@ export default class Month {
         m.numberOfLeapYearDays = this.numberOfLeapYearDays;
         m.intercalary = this.intercalary;
         m.intercalaryInclude = this.intercalaryInclude;
+        m.showAdvanced = this.showAdvanced;
         return m;
     }
 
@@ -178,8 +187,8 @@ export default class Month {
         let changeAmount = next? 1 : -1;
         const numberOfDays = isLeapYear? this.numberOfLeapYearDays : this.numberOfDays;
         if(targetDay){
-            let index = (targetDay.numericRepresentation - 1) + changeAmount;
-            if((next && index === numberOfDays) || (!next && index < 0)){
+            let index = this.days.findIndex(d => d.numericRepresentation === (targetDay.numericRepresentation + changeAmount));
+            if((next && index === numberOfDays) || (!next && index < 0) || index < 0){
                 Logger.debug(`On ${next? 'last' : 'first'} day of the month, changing to ${next? 'next' : 'previous'} month`);
                 this.resetDays(setting);
             } else {

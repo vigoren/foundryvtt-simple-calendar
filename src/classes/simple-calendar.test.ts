@@ -46,8 +46,8 @@ describe('Simple Calendar Class Tests', () => {
 
 
         y = new Year(0);
-        y.months.push(new Month('M', 1, 5));
-        y.months.push(new Month('T', 2, 15));
+        y.months.push(new Month('M', 1, 0, 5));
+        y.months.push(new Month('T', 2, 0, 15));
 
         y.selectedYear = 0;
         y.visibleYear = 0;
@@ -418,7 +418,7 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.dayClick(event);
         expect(console.error).toHaveBeenCalledTimes(1);
         expect(renderSpy).not.toHaveBeenCalled();
-        (<HTMLElement>event.target).setAttribute('data-day', '0');
+        (<HTMLElement>event.target).setAttribute('data-day', '-1');
         SimpleCalendar.instance.dayClick(event);
         expect(console.error).toHaveBeenCalledTimes(2);
         expect(renderSpy).not.toHaveBeenCalled();
@@ -431,7 +431,7 @@ describe('Simple Calendar Class Tests', () => {
         (<HTMLElement>event.target).setAttribute('data-day', '1');
         SimpleCalendar.instance.dayClick(event);
         expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect(SimpleCalendar.instance.currentYear.months[0].days[1].selected).toBe(true);
+        expect(SimpleCalendar.instance.currentYear.months[0].days[1].selected).toBe(false);
         expect(SimpleCalendar.instance.currentYear.months[0].days[0].selected).toBe(true);
 
         SimpleCalendar.instance.currentYear.months[0].selected = false;
@@ -440,7 +440,7 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.currentYear.months[0].days = [SimpleCalendar.instance.currentYear.months[0].days[0],SimpleCalendar.instance.currentYear.months[0].days[1]];
         SimpleCalendar.instance.dayClick(event);
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(SimpleCalendar.instance.currentYear.months[0].days[1].selected).toBe(true);
+        expect(SimpleCalendar.instance.currentYear.months[0].days[1].selected).toBe(false);
         expect(SimpleCalendar.instance.currentYear.months[0].days[0].selected).toBe(false);
 
         SimpleCalendar.instance.currentYear.months[0].visible = false;
