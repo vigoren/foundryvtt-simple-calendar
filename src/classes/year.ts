@@ -1,5 +1,5 @@
 import Month from "./month";
-import {GeneralSettings, YearTemplate} from "../interfaces";
+import {DayTemplate, GeneralSettings, YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
@@ -107,6 +107,7 @@ export default class Year {
     toTemplate(): YearTemplate{
         const currentMonth = this.getMonth();
         const selectedMonth = this.getMonth('selected');
+        const visibleMonth = this.getMonth('visible');
 
         let sMonth = '', sDay = '';
         if(selectedMonth){
@@ -123,6 +124,12 @@ export default class Year {
             }
         }
         const currentSeason = this.getCurrentSeason();
+
+        let weeks: (boolean | DayTemplate)[][] = [];
+        if(visibleMonth){
+            weeks = this.daysIntoWeeks(visibleMonth, this.weekdays.length);
+        }
+
         return {
             display: this.getDisplayName(),
             selectedDisplayYear: this.getDisplayName(true),
@@ -131,16 +138,60 @@ export default class Year {
             numericRepresentation: this.numericRepresentation,
             weekdays: this.weekdays.map(w => w.toTemplate()),
             showWeekdayHeaders: this.showWeekdayHeadings,
-            visibleMonth: this.getMonth('visible')?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
-            visibleMonthWeekOffset:  Array(this.visibleMonthStartingDayOfWeek()).fill(0),
+            visibleMonth: visibleMonth?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
             showClock: this.generalSettings.showClock,
             clockClass: this.time.getClockClass(),
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             currentTime: this.time.getCurrentTime(),
             currentSeasonName: currentSeason.name,
-            currentSeasonColor: currentSeason.color
+            currentSeasonColor: currentSeason.color,
+            weeks: weeks
         }
+    }
+
+    /**
+     * Will take the days of the passed in month and break it into an array of weeks
+     * @param {Month} month The month to get the days from
+     * @param {number} weekLength How many days there are in a week
+     */
+    daysIntoWeeks(month: Month, weekLength: number): (boolean | DayTemplate)[][]{
+        const weeks = [];
+        const dayOfWeekOffset = this.visibleMonthStartingDayOfWeek();
+        const days = month.days.map(d => d.toTemplate());
+
+        if(days.length && weekLength > 0){
+            const startingWeek = [];
+            let dayOffset = 0;
+            for(let i = 0; i < weekLength; i++){
+                if(i<dayOfWeekOffset){
+                    startingWeek.push(false);
+                } else {
+                    const dayIndex = i - dayOfWeekOffset;
+                    if(dayIndex < days.length){
+                        startingWeek.push(days[dayIndex]);
+                        dayOffset++;
+                    } else {
+                        startingWeek.push(false);
+                    }
+                }
+            }
+            weeks.push(startingWeek);
+            const numWeeks = Math.ceil((days.length - dayOffset) / weekLength);
+            for(let i = 0; i < numWeeks; i++){
+                const w = [];
+                for(let d = 0; d < weekLength; d++){
+                    const dayIndex = dayOffset + (i * weekLength) + d;
+                    if(dayIndex < days.length){
+                        w.push(days[dayIndex]);
+                    } else {
+                        w.push(false);
+                    }
+                }
+                weeks.push(w);
+            }
+        }
+        return weeks;
     }
 
     /**

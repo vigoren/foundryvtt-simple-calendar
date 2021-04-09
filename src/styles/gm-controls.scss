@@ -33,7 +33,7 @@
   .time-controls{
     padding: 0.5rem;
     box-shadow: 2px 2px 5px #b9b9b9;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     background-color: #fff;
     .row{
       display: flex;
@@ -117,7 +117,16 @@
         font-weight: 600;
         line-height: 1.25rem;
         font-size: 1.25rem;
+        margin: 0 0.75rem;
       }
     }
+  }
+
+  .date-apply-wrapper{
+    padding: 0 .5rem .5rem;
+    box-shadow: 2px 5px 5px #b9b9b9;
+    margin-bottom: .5rem;
+    background-color: #fff;
+    margin-top: -0.5rem;
   }
 }

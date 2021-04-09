@@ -52,8 +52,6 @@ export interface YearTemplate {
     numericRepresentation: number;
     /** The months that make up the year */
     visibleMonth: MonthTemplate | undefined;
-    /** An array of 0's where the array length is the weekday the visible month starts on  */
-    visibleMonthWeekOffset: number[];
     /** If to show the weekday headers on the calendar view */
     showWeekdayHeaders: boolean;
     /** The days of the week */
@@ -72,6 +70,8 @@ export interface YearTemplate {
     currentSeasonName: string;
 
     currentSeasonColor: string;
+
+    weeks: (boolean | DayTemplate)[][];
 }
 
 /**

@@ -1,7 +1,7 @@
 <div id="simpleCalendar">
-    <div class="calendar-row" style="{{#calendar-row-width}}{{/calendar-row-width}}">
+    <div class="calendar-row">
         <div class="calendar-display">
-            <div class="calendar" style="{{#calendar-width}}{{/calendar-width}} {{#if currentYear.currentSeasonColor }}background-color:{{currentYear.currentSeasonColor}};{{/if}}">
+            <div class="calendar" style="{{#if currentYear.currentSeasonColor }}background-color:{{currentYear.currentSeasonColor}};{{/if}}">
                 <div class="current-date">
                     <a class="fa fa-chevron-left" title="{{localize 'FSC.ChangePreviousMonth'}}"></a>
                     <span>{{currentYear.visibleMonth.name}} {{currentYear.display}}</span>
@@ -18,16 +18,21 @@
                 </div>
                 {{/if}}
                 <div class="days">
-                    {{#each currentYear.visibleMonthWeekOffset}}
-                    <div class="empty-day"></div>
-                    {{/each}}
-                    {{#each currentYear.visibleMonth.days}}
-                    <div class="day {{#if ../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
-                        {{#day-has-note day=this}}{{/day-has-note}}
-                        {{this.name}}
-                        <div class="moons">
-                            {{#day-moon-phase day=this}}{{/day-moon-phase}}
+                    {{#each currentYear.weeks}}
+                    <div class="week">
+                        {{#each this}}
+                        {{#unless this}}
+                        <div class="empty-day"></div>
+                        {{else}}
+                        <div class="day {{#if ../../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
+                            {{#day-has-note day=this}}{{/day-has-note}}
+                            {{this.name}}
+                            <div class="moons">
+                                {{#day-moon-phase day=this}}{{/day-moon-phase}}
+                            </div>
                         </div>
+                        {{/unless}}
+                        {{/each}}
                     </div>
                     {{/each}}
                 </div>
@@ -105,7 +110,9 @@
                 </div>
             </div>
             {{/if}}
-            <button class="control save btn-apply fa fa-calendar-check"> {{localize 'FSC.SetCurrentDate'}}</button>
+            <div class="date-apply-wrapper">
+                <button class="control save btn-apply fa fa-calendar-check"> {{localize 'FSC.SetCurrentDate'}}</button>
+            </div>
             {{else}}
             <div class="date-controls">
                 <h2>{{localize 'FSC.DateControls'}}</h2>
@@ -116,11 +123,13 @@
         {{/if}}
     </div>
     <div class="date-notes">
-        <h2>{{localize 'FSC.Notes.For'}} {{currentYear.selectedDisplayMonth}} {{currentYear.selectedDisplayDay}}, {{currentYear.selectedDisplayYear}}
+        <div class="date-notes-header">
+            <h2>{{localize 'FSC.Notes.For'}} {{currentYear.selectedDisplayMonth}} {{currentYear.selectedDisplayDay}}, {{currentYear.selectedDisplayYear}}</h2>
             {{#if addNotes}}
             <button class="fa fa-plus control save add-note"> {{localize 'FSC.Notes.AddNew'}}</button>
             {{/if}}
-        </h2>
+        </div>
+
         {{#if notes.length}}
             {{#each notes}}
             <div class="note" data-index="{{id}}">

@@ -1,5 +1,14 @@
 # Change Log
 
+## v1.2.7 - Bug Fixes and QoL Improvements
+
+### Quality of Life Improvements
+
+- Cleaned up the styling of the calendar dialog. The calendar will now consistently open so that the calendar, date controls (if gm) and 2 rows of notes will be visible.
+- Resizing of the calendar dialog will now reset when you close and re-open the dialog.
+
+### Bug Fixes
+
 ## v1.2.5 - Bug Fixes and QoL Improvements
 
 ### Quality of Life Improvements

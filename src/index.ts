@@ -13,3 +13,4 @@ Hooks.on("updateWorldTime", SimpleCalendar.instance.worldTimeUpdate.bind(SimpleC
 Hooks.on("updateCombat", SimpleCalendar.instance.combatUpdate.bind(SimpleCalendar.instance));
 Hooks.on("deleteCombat", SimpleCalendar.instance.combatDelete.bind(SimpleCalendar.instance));
 Hooks.on("pauseGame", SimpleCalendar.instance.gamePaused.bind(SimpleCalendar.instance));
+Logger.debugMode = true;

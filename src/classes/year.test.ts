@@ -57,7 +57,7 @@ describe('Year Class Tests', () => {
         expect(t.selectedDisplayMonth).toBe("");
         expect(t.selectedDisplayDay).toBe("");
         expect(t.visibleMonth).toBeUndefined();
-        expect(t.visibleMonthWeekOffset).toStrictEqual([]);
+        expect(t.weeks).toStrictEqual([]);
         expect(t.showWeekdayHeaders).toBe(true);
         expect(t.showClock).toBe(false);
         expect(t.showDateControls).toBe(true);
@@ -96,6 +96,35 @@ describe('Year Class Tests', () => {
         expect(t.showDateControls).toBe(false);
         expect(t.showTimeControls).toBe(false);
 
+
+
+    });
+
+    test('Days Into Weeks', () => {
+        year.weekdays.push(new Weekday(1, "S"));
+        year.weekdays.push(new Weekday(2, "S"));
+        year.weekdays.push(new Weekday(3, "S"));
+        year.weekdays.push(new Weekday(4, "S"));
+        year.months.push(month);
+        let weeks = year.daysIntoWeeks(month, 0);
+        expect(weeks).toStrictEqual([]);
+
+        weeks = year.daysIntoWeeks(month, year.weekdays.length);
+        expect(weeks.length).toStrictEqual(8);
+
+        const m2 = new Month("M", 2, 15);
+        month.visible = false;
+        m2.visible = true;
+        year.months.push(m2);
+        weeks = year.daysIntoWeeks(m2, year.weekdays.length);
+        expect(weeks.length).toStrictEqual(5);
+
+        const m3 = new Month("3", 3, 1);
+        m2.visible = false;
+        m3.visible = true;
+        year.months.push(m3);
+        weeks = year.daysIntoWeeks(m3, year.weekdays.length);
+        expect(weeks.length).toStrictEqual(1);
     });
 
     test('Clone', () => {

@@ -67,7 +67,7 @@ describe('Simple Calendar Configuration Tests', () => {
         expect(opts.template).toBe('modules/foundryvtt-simple-calendar/templates/calendar-config.html');
         //@ts-ignore
         expect(opts.title).toBe('FSC.Configuration.Title');
-        expect(opts.classes).toStrictEqual(["simple-calendar"]);
+        expect(opts.classes).toStrictEqual(["simple-calendar-configuration"]);
         //@ts-ignore
         expect(opts.resizable).toBe(true);
         //@ts-ignore

@@ -3,7 +3,6 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  flex-wrap: wrap;
 }
 
 .calendar {
@@ -11,7 +10,6 @@
   border: 1px solid #c3c3c3;
   box-shadow: 2px 2px 2px #c3c3c3;
   padding: 5px;
-  width: 300px;
   margin: 0 0 1rem;
 
   .current-date{
@@ -22,11 +20,11 @@
     margin-bottom: 10px;
 
     a:first-child{
-      margin-left: 5px;
+      margin: 2px 5px 0;
     }
 
     a:last-child{
-      margin-right: 5px;
+      margin: 2px 5px 0;
     }
 
   }
@@ -44,6 +42,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    justify-content: center;
 
     .weekday{
       width: 40px;
@@ -52,14 +51,21 @@
     }
   }
 
-  .days{
+  .week{
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+  }
+  .days{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: nowrap;
 
     .empty-day{
       width: 40px;
       height: 40px;
+      text-align: center;
+      padding-top: 12px;
     }
 
     .day{
@@ -231,10 +237,38 @@
 
   .spacer{
     flex: 1;
+    margin: 0 0.25rem;
   }
 }
 
+.note{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0.25rem 0.5rem;
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;
+  border-bottom: 1px solid grey;
 
+  .note-title{
+    flex: 1;
+    margin: 0;
+  }
+
+  .note-author{
+    color: #464646;
+    margin: 0;
+  }
+
+  &:nth-child(2){
+    border-top: 1px solid gray;
+  }
+
+  &:hover {
+    background-color: #cad1f3;
+    cursor: pointer;
+  }
+}
 
 @keyframes dial {
   0%   {transform: rotate(0deg);}

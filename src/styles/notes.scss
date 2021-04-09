@@ -21,32 +21,3 @@
     justify-content: space-around;
   }
 }
-
-.note{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding: 0.25rem 0.5rem;
-  border-left: 1px solid gray;
-  border-right: 1px solid gray;
-  border-bottom: 1px solid grey;
-
-  .note-title{
-    flex: 1;
-    margin: 0;
-  }
-
-  .note-author{
-    color: #464646;
-    margin: 0;
-  }
-
-  &:first-of-type{
-    border-top: 1px solid gray;
-  }
-
-  &:hover {
-    background-color: #cad1f3;
-    cursor: pointer;
-  }
-}

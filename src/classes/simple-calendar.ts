@@ -57,6 +57,8 @@ export default class SimpleCalendar extends Application{
 
     private primaryCheckTimeout: number | undefined;
 
+    hasBeenResized: boolean = false;
+
     /**
      * Simple Calendar constructor
      */
@@ -66,12 +68,12 @@ export default class SimpleCalendar extends Application{
      * Returns the default options for this application
      */
     static get defaultOptions() {
+        Logger.debug('Simple Calendar -> defaultOptions()');
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/calendar.html";
         options.title = "FSC.Title";
         options.classes = ["simple-calendar"];
         options.resizable = true;
-        options.height = 475;
         return options;
     }
 
@@ -235,7 +237,8 @@ export default class SimpleCalendar extends Application{
      * Shows the application window
      */
     public showApp(){
-        this.render(true, {width: 500, height: 500});
+        this.hasBeenResized = false;
+        this.render(true, {});
     }
 
     /**
@@ -246,12 +249,73 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
+     * When the window is resized
+     * @param event
+     * @protected
+     */
+    protected _onResize(event: Event) {
+        super._onResize(event);
+        this.hasBeenResized = true;
+    }
+
+    /**
+     * Sets the width and height of the calendar window so that it is sized to show the calendar, the controls and space for 2 notes.
+     * @param {JQuery} html
+     */
+    setWidthHeight(html: JQuery){
+        if(this.hasBeenResized){
+            return;
+        }
+        const calendar = (<JQuery>html).find('.calendar-row .calendar-display');
+        const controls = (<JQuery>html).find('.calendar-row .controls');
+        const noteHeader = (<JQuery>html).find('.date-notes-header h2');
+        const addNote = (<JQuery>html).find('.date-notes-header .add-note');
+
+        let height = 0;
+        let width = 0;
+
+        if(calendar){
+            const h = calendar.outerHeight(true);
+            const w = calendar.outerWidth(true);
+            height += h? h : 0;
+            width += w? w : 0;
+        }
+
+        if(controls){
+            const h = controls.outerHeight(true);
+            const w = controls.outerWidth(true);
+            if(h && h > height){
+                height = h;
+            }
+            width += w? w : 0;
+        }
+
+        if(noteHeader && addNote){
+            const nh = noteHeader.outerHeight(true);
+            const nw = noteHeader.outerWidth(true);
+            const w = addNote.outerWidth(true);
+
+            const headerW = (nw? nw : 0) + (w?  w: 0);
+            if(headerW > width){
+                width = headerW;
+            }
+            height += (nh? nh : 0) + 24;
+        }
+
+        width += 16;
+        height += (30 * 2) + 46;
+        this.setPosition({width: width, height: height});
+    }
+
+    /**
      * Adds any event listeners to the application DOM
      * @param {JQuery<HTMLElement>} html The root HTML of the application window
      * @protected
      */
     public activateListeners(html: JQuery<HTMLElement>) {
+        Logger.debug('Simple-Calendar activateListeners()');
         if(html.hasOwnProperty("length")) {
+            this.setWidthHeight(html);
             // Change the month that is being viewed
             const nextPrev = (<JQuery>html).find(".current-date .fa");
             for (let i = 0; i < nextPrev.length; i++) {
@@ -543,7 +607,7 @@ export default class SimpleCalendar extends Application{
      */
     public updateApp(){
         if(this.rendered){
-            this.render(false, {width: 500, height: 500});
+            this.render(false);
         }
     }
 

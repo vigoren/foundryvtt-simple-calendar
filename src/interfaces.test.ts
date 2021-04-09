@@ -45,7 +45,6 @@ describe('Interface Tests', () => {
         selectedDisplayDay: '',
         numericRepresentation: 0,
         visibleMonth: mt,
-        visibleMonthWeekOffset: [],
         weekdays: [wt],
         showWeekdayHeaders: false,
         showClock: false,
@@ -54,7 +53,8 @@ describe('Interface Tests', () => {
         showTimeControls: false,
         currentTime: tt,
         currentSeasonColor: '',
-        currentSeasonName: ''
+        currentSeasonName: '',
+        weeks: []
     };
     const ct: CalendarTemplate = {
         isGM: false,
@@ -106,7 +106,7 @@ describe('Interface Tests', () => {
         expect(yt.selectedDisplayDay).toBe('');
         expect(yt.numericRepresentation).toBe(0);
         expect(yt.visibleMonth).toStrictEqual(mt);
-        expect(yt.visibleMonthWeekOffset).toStrictEqual([]);
+        expect(yt.weeks).toStrictEqual([]);
         expect(yt.weekdays).toStrictEqual([wt]);
         expect(yt.showWeekdayHeaders).toStrictEqual(false);
         expect(yt.showClock).toStrictEqual(false);

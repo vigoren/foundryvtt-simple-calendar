@@ -59,26 +59,24 @@ describe('Simple Calendar Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(SimpleCalendar.instance).length).toBe(7); //Make sure no new properties have been added
+        expect(Object.keys(SimpleCalendar.instance).length).toBe(8); //Make sure no new properties have been added
     });
 
     test('Default Options', () => {
         const spy = jest.spyOn(Application, 'defaultOptions', 'get');
         const opts = SimpleCalendar.defaultOptions;
-        expect(Object.keys(opts).length).toBe(5); //Make sure no new properties have been added
+        expect(Object.keys(opts).length).toBe(4); //Make sure no new properties have been added
         expect(opts.template).toBe('modules/foundryvtt-simple-calendar/templates/calendar.html');
         expect(opts.title).toBe('FSC.Title');
         expect(opts.classes).toStrictEqual(["simple-calendar"]);
         expect(opts.resizable).toBe(true);
-        //@ts-ignore
-        expect(opts.height).toBe(475);
         expect(spy).toHaveBeenCalled()
     });
 
     test('Init', async () => {
         expect(SimpleCalendar.instance.currentYear).toBeNull();
         await SimpleCalendar.instance.init();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(2);
         expect(game.settings.register).toHaveBeenCalledTimes(12);
         expect(game.settings.get).toHaveBeenCalledTimes(11);
         expect(SimpleCalendar.instance.currentYear?.numericRepresentation).toBe(0);
@@ -91,7 +89,7 @@ describe('Simple Calendar Class Tests', () => {
         // @ts-ignore
         game.user.isGM = true;
         await SimpleCalendar.instance.init();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(8);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
         // @ts-ignore
         expect(SimpleCalendar.instance.primaryCheckTimeout).toBeDefined();
         expect(game.socket.emit).toHaveBeenCalledTimes(1);
@@ -161,10 +159,10 @@ describe('Simple Calendar Class Tests', () => {
                 "showTimeControls": false,
                 "showWeekdayHeaders": true,
                 "visibleMonth": undefined,
-                "visibleMonthWeekOffset": [],
                 "weekdays": [],
                 "currentSeasonColor": "",
-                "currentSeasonName": ""
+                "currentSeasonName": "",
+                "weeks": []
             },
             "showCurrentDay": false,
             "showSelectedDay": false,
@@ -316,6 +314,46 @@ describe('Simple Calendar Class Tests', () => {
         //expect(console.error).toHaveBeenCalledTimes(1);
     });
 
+    test('On Resize', () => {
+        expect(SimpleCalendar.instance.hasBeenResized).toBe(false);
+        //@ts-ignore
+        SimpleCalendar.instance._onResize(new Event('click'));
+        expect(SimpleCalendar.instance.hasBeenResized).toBe(true);
+    });
+
+    test('Set Width Height', () => {
+        const setPosSpy = jest.spyOn(SimpleCalendar.instance, 'setPosition');
+        const fakeQuery = {
+            find: jest.fn().mockReturnValue(false)
+        };
+        //@ts-ignore
+        SimpleCalendar.instance.setWidthHeight(fakeQuery);
+        expect(setPosSpy).toHaveBeenCalledTimes(1);
+
+        fakeQuery.find = jest.fn()
+            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+        //@ts-ignore
+        SimpleCalendar.instance.setWidthHeight(fakeQuery);
+        expect(setPosSpy).toHaveBeenCalledTimes(2);
+
+        fakeQuery.find = jest.fn()
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(300), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(300)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(25), outerWidth: jest.fn().mockReturnValue(250)});
+        //@ts-ignore
+        SimpleCalendar.instance.setWidthHeight(fakeQuery);
+        expect(setPosSpy).toHaveBeenCalledTimes(3);
+
+        SimpleCalendar.instance.hasBeenResized = true;
+        //@ts-ignore
+        SimpleCalendar.instance.setWidthHeight(fakeQuery);
+        expect(setPosSpy).toHaveBeenCalledTimes(3);
+    });
+
     test('Activate Listeners', () => {
         const elm1 = document.createElement('a');
         elm1.classList.add('fa-chevron-left');
@@ -324,7 +362,13 @@ describe('Simple Calendar Class Tests', () => {
         const onFunc = jest.fn();
 
         const fakeQuery = {
-            find: jest.fn().mockReturnValueOnce([elm1, elm2, document.createElement('a')]).mockReturnValue({on: onFunc})
+            find: jest.fn()
+                .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+                .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+                .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+                .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+                .mockReturnValueOnce([elm1, elm2, document.createElement('a')])
+                .mockReturnValue({on: onFunc})
         };
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
@@ -334,8 +378,21 @@ describe('Simple Calendar Class Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(11);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(15);
         expect(onFunc).toHaveBeenCalledTimes(10);
+
+        fakeQuery.find = jest.fn()
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(25), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(25), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce([elm1, elm2, document.createElement('a')])
+            .mockReturnValue({on: onFunc});
+
+        //@ts-ignore
+        SimpleCalendar.instance.activateListeners(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(15);
+        expect(onFunc).toHaveBeenCalledTimes(20);
     });
 
     test('View Previous Month', () => {
