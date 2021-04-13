@@ -93,7 +93,14 @@ export default class SimpleCalendar extends Application{
         }
 
         if(GameSettings.IsGm()){
+            const socket = <SimpleCalendarSocket.Data>{
+                type: SocketTypes.primary,
+                data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
+                    primaryCheck: true
+                }
+            };
             this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
+            game.socket.emit(ModuleSocketName, socket);
         }
     }
 
@@ -103,7 +110,7 @@ export default class SimpleCalendar extends Application{
     primaryCheckTimeoutCall(){
         Logger.debug('No primary GM found, taking over as primary');
         this.primary = true;
-        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {}};
+        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: this.primary}};
         game.socket.emit(ModuleSocketName, socketData);
     }
 
@@ -124,8 +131,29 @@ export default class SimpleCalendar extends Application{
                 await GameSettings.SaveNotes((<SimpleCalendarSocket.SimpleCalendarSocketJournal>data.data).notes)
             }
         } else if (data.type === SocketTypes.primary){
-            Logger.debug('A primary GM is all ready present.');
-            window.clearTimeout(this.primaryCheckTimeout);
+            if(GameSettings.IsGm()){
+                // Another client is asking if anyone is the primary GM, respond accordingly
+                if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).primaryCheck){
+                    Logger.debug(`Checking if I am the primary`);
+                    game.socket.emit(ModuleSocketName, <SimpleCalendarSocket.Data>{
+                        type: SocketTypes.primary,
+                        data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
+                            amPrimary: this.primary
+                        }
+                    });
+                }
+                // Another client has emitted that they are the primary, stop my check and set myself to not being the primary
+                // This CAN lead to no primary if 2 GMs finish their primary check at the same time. This is best resolved by 1 gm reloading the page.
+                else if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary !== undefined){
+                    if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary){
+                        Logger.debug('A primary GM is all ready present.');
+                        window.clearTimeout(this.primaryCheckTimeout);
+                        this.primary = false;
+                    } else {
+                        Logger.debug('We are all ready waiting to take over as primary.');
+                    }
+                }
+            }
         }
     }
 
@@ -174,62 +202,6 @@ export default class SimpleCalendar extends Application{
                 button: true,
                 onClick: SimpleCalendar.instance.showApp.bind(SimpleCalendar.instance)
             });
-        }
-    }
-
-    /**
-     * A globally exposed function for macros to show the calendar. If a date is passed in, the calendar will open so that date is visible and selected
-     * @param {number | null} [year=null] The year to set as visible, it not passed in what ever the users current visible year will be used
-     * @param {number | null} [month=null] The month to set as visible, it not passed in what ever the users current visible month will be used
-     * @param {number | null} [day=null] The day to set as selected, it not passed in what ever the users current selected day will be used
-     */
-    public macroShow(year: number | null = null, month: number | null = null, day: number | null = null){
-        if(this.currentYear){
-            if(year !== null){
-                year = parseInt(year.toString());
-                if(!isNaN(year)){
-                    this.currentYear.visibleYear = year;
-                } else {
-                    Logger.error('Invalid year was passed in.');
-                }
-            }
-            const isLeapYear = this.currentYear.leapYearRule.isLeapYear(this.currentYear.visibleYear);
-            if(month !== null){
-                month = parseInt(month.toString());
-                if(!isNaN(month)){
-                    if(month === -1 || month > this.currentYear.months.length){
-                        month = this.currentYear.months.length - 1;
-                    }
-                    this.currentYear.resetMonths('visible');
-                    this.currentYear.months[month].visible = true;
-                } else {
-                    Logger.error('Invalid month was passed in.');
-                }
-            }
-            if(day !== null){
-                day = parseInt(day.toString());
-                if(!isNaN(day)){
-                    const visibleMonth = this.currentYear.getMonth('visible') || this.currentYear.getMonth('current');
-                    if(visibleMonth){
-                        const numberOfDays = isLeapYear? visibleMonth.numberOfDays : visibleMonth.numberOfLeapYearDays;
-                        if(day > 0){
-                            day = day - 1;
-                        }
-                        if(day == -1 || day > numberOfDays){
-                            day = numberOfDays - 1;
-                        }
-                        this.currentYear.resetMonths('selected');
-                        visibleMonth.days[day].selected = true;
-                        visibleMonth.selected = true;
-                        this.currentYear.selectedYear = this.currentYear.visibleYear;
-                    }
-                } else {
-                    Logger.error('Invalid day was passed in.');
-                }
-            }
-            this.showApp();
-        } else {
-            Logger.error('The current year is not defined, can not use macro');
         }
     }
 
@@ -483,7 +455,7 @@ export default class SimpleCalendar extends Application{
                     break;
                 case 'day':
                     Logger.debug(`${isNext? 'Forward' : 'Back'} Day Clicked`);
-                    this.currentYear.changeDay(isNext, 'current');
+                    this.currentYear.changeDay(isNext? 1 : -1, 'current');
                     this.updateApp();
                     break;
                 case 'month':

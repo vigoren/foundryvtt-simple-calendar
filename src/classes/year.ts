@@ -1,5 +1,5 @@
 import Month from "./month";
-import {DayTemplate, GeneralSettings, YearTemplate} from "../interfaces";
+import {DayTemplate, GeneralSettings, DateTimeParts, YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
@@ -8,6 +8,7 @@ import {GameWorldTimeIntegrations} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
+import SimpleCalendar from "./simple-calendar";
 
 /**
  * Class for representing a year
@@ -321,15 +322,24 @@ export default class Year {
     changeMonth(amount: number, setting: string = 'visible'): void{
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
         const next = amount > 0;
-
         for(let i = 0; i < this.months.length; i++){
             const month = this.months[i];
             if(month[verifiedSetting]){
-                if((next && i === (this.months.length - amount)) || (!next && i === Math.abs(amount) - 1)){
-                    Logger.debug(`On ${next? 'last' : 'first'} month of the year, changing to ${next? 'next' : 'previous'} year`);
-                    //We will never advance more than 1 year when changing months
-                    this.changeYear(next? 1 : -1, true, verifiedSetting);
-                } else {
+                if(next && (i + amount) >= this.months.length){
+                    Logger.debug(`Advancing the ${verifiedSetting} month (${i}) by more months (${amount}) than there are in the year (${this.months.length}), advancing the year by 1`);
+                    this.changeYear(1, true, verifiedSetting);
+                    const changeAmount = amount - (this.months.length - i);
+                    if(changeAmount > 0){
+                        this.changeMonth(changeAmount,verifiedSetting);
+                    }
+                } else if(!next && (i + amount) < 0){
+                    this.changeYear(-1, true, verifiedSetting);
+                    const changeAmount = amount + i + 1;
+                    if(changeAmount < 0){
+                        this.changeMonth(changeAmount,verifiedSetting);
+                    }
+                }
+                else {
                     this.updateMonth(i+amount, setting, next);
                 }
                 break;
@@ -339,23 +349,42 @@ export default class Year {
 
     /**
      * Changes the current or selected day forward or back one day
-     * @param {boolean} next If we are moving forward (true) or back (false) one day
+     * @param {number} amount The number of days to change, positive forward, negative backwards
      * @param {string} [setting='current'] The day property we are changing. Can be 'current' or 'selected'
      */
-    changeDay(next: boolean, setting: string = 'current'){
+    changeDay(amount: number, setting: string = 'current'){
         const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
+        const yearToUse = verifiedSetting === 'current' ? this.numericRepresentation : this.selectedYear;
+        const isLeapYear = this.leapYearRule.isLeapYear(yearToUse);
         const currentMonth = this.getMonth();
         if (currentMonth) {
-            const yearToUse = verifiedSetting === 'current' ? this.numericRepresentation : this.selectedYear;
-            const isLeapYear = this.leapYearRule.isLeapYear(yearToUse);
-            const res = currentMonth.changeDay(next, isLeapYear, verifiedSetting);
-            // If it is positive or negative we need to change the current month
-            if (res !== 0) {
-                this.changeMonth(res, verifiedSetting);
+            const next = amount > 0;
+            let currentDayNumber = 1;
+            const currentDay = currentMonth.getDay(verifiedSetting);
+            if(currentDay){
+                currentDayNumber = currentDay.numericRepresentation;
+            }
+            const lastDayOfCurrentMonth = isLeapYear? currentMonth.numberOfLeapYearDays : currentMonth.numberOfDays;
+            if(next && currentDayNumber + amount > lastDayOfCurrentMonth){
+                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayNumber}) by more days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by 1`);
+                this.changeMonth(1, verifiedSetting);
+                this.changeDay(amount - (lastDayOfCurrentMonth - currentDayNumber) - 1, verifiedSetting);
+            } else if(!next && currentDayNumber + amount < 1){
+                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayNumber}) by less days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by -1`);
+                this.changeMonth(-1, verifiedSetting);
+                this.changeDay(amount + currentDayNumber, verifiedSetting);
+            } else{
+               currentMonth.changeDay(amount, isLeapYear, verifiedSetting);
             }
         }
     }
 
+    /**
+     * Changes the passed in time type by the passed in amount
+     * @param {boolean} next If we are going forward or backwards
+     * @param {string} type The time type we are adjusting, can be hour, minute or second
+     * @param {number} [clickedAmount=1] The amount to change by
+     */
     changeTime(next: boolean, type: string, clickedAmount: number = 1){
         type = type.toLowerCase();
         const amount = next? clickedAmount : clickedAmount * -1;
@@ -370,7 +399,7 @@ export default class Year {
         }
 
         if(dayChange !== 0){
-            this.changeDay(dayChange > 0);
+            this.changeDay(dayChange);
         }
     }
 
@@ -485,7 +514,7 @@ export default class Year {
      * Convert a number of seconds to year, month, day, hour, minute, seconds
      * @param {number} seconds The seconds to convert
      */
-    secondsToDate(seconds: number){
+    secondsToDate(seconds: number): DateTimeParts{
         let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
         if(sec >= this.time.secondsInMinute){
             min = Math.floor(sec / this.time.secondsInMinute);
@@ -529,19 +558,20 @@ export default class Year {
             day: day,
             hour: hour,
             minute: min,
-            second: sec
+            seconds: sec
         }
     }
 
     /**
      * Updates the year's data with passed in date information
-     * @param parsedDate
+     * @param {DateTimeParts} parsedDate Interface that contains all of the individual parts of a date and time
      */
-    updateTime(parsedDate: any){
+    updateTime(parsedDate: DateTimeParts){
+        let isLeapYear = this.leapYearRule.isLeapYear(parsedDate.year);
         this.numericRepresentation = parsedDate.year;
         this.updateMonth(parsedDate.month, 'current', true);
-        this.months[parsedDate.month].updateDay(parsedDate.day-1, this.leapYearRule.isLeapYear(parsedDate.year));
-        this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.second);
+        this.months[parsedDate.month].updateDay(parsedDate.day-1, isLeapYear);
+        this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.seconds);
     }
 
     /**
@@ -562,7 +592,7 @@ export default class Year {
                 }
                 // If the current player is the GM then we need to save this new value to the database
                 // Since the current date is updated this will trigger an update on all players as well
-                if(GameSettings.IsGm()){
+                if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
                     GameSettings.SaveCurrentDate(this).catch(Logger.error);
                 }
             }
@@ -573,7 +603,7 @@ export default class Year {
                 const parsedDate = this.secondsToDate(newTime);
                 this.updateTime(parsedDate);
                 //We need to save the change so that when the game is reloaded simple calendar will display the correct time
-                if(GameSettings.IsGm()){
+                if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
                     GameSettings.SaveCurrentDate(this).catch(Logger.error);
                 }
             } else {

@@ -31,9 +31,11 @@ export default class Month {
      * @type {number}
      */
     numericRepresentation: number;
-
+    /**
+     * How much to offset the numeric representation of days by when generating them
+     * @type {number}
+     */
     numericRepresentationOffset: number = 0;
-
     /**
      * If this month should be treated an a intercalary month
      * @type {boolean}
@@ -41,21 +43,28 @@ export default class Month {
     intercalary: boolean = false;
     /**
      * If to include the intercalary days as part of the total year count/weekday positioning or not
+     * @type {boolean}
      */
     intercalaryInclude: boolean = false;
     /**
      * If this month is the current month
+     * @type {boolean}
      */
     current: boolean = false;
     /**
      * If this month is the current month that is visible
+     * @type {boolean}
      */
     visible: boolean = false;
     /**
      * If this month is the selected month
+     * @type {boolean}
      */
     selected: boolean = false;
-
+    /**
+     * Used to determine if the advanced options are should be shown or not. This is not saved.
+     * @type {boolean}
+     */
     showAdvanced: boolean = false;
 
     /**
@@ -178,23 +187,23 @@ export default class Month {
 
     /**
      * Changes the day to either the current or selected day
-     * @param {boolean} next If to change to the next day (true) or previous day (false)
+     * @param {number} amount The number of days to change, positive forward, negative backwards
      * @param {boolean} [isLeapYear=false] If the year this month is apart of is a leap year
      * @param {string} [setting='current'] What setting on the day object to change
      */
-    changeDay(next: boolean, isLeapYear: boolean = false, setting: string = 'current'){
+    changeDay(amount: number, isLeapYear: boolean = false, setting: string = 'current'){
         const targetDay = this.getDay(setting);
-        let changeAmount = next? 1 : -1;
+        let changeAmount = 0;
         const numberOfDays = isLeapYear? this.numberOfLeapYearDays : this.numberOfDays;
         if(targetDay){
-            let index = this.days.findIndex(d => d.numericRepresentation === (targetDay.numericRepresentation + changeAmount));
-            if((next && index === numberOfDays) || (!next && index < 0) || index < 0){
-                Logger.debug(`On ${next? 'last' : 'first'} day of the month, changing to ${next? 'next' : 'previous'} month`);
+            let index = this.days.findIndex(d => d.numericRepresentation === (targetDay.numericRepresentation + amount));
+            if((amount > 0 && index === numberOfDays) || (amount < 0 && index < 0) || index < 0){
+                Logger.debug(`On ${amount > 0? 'last' : 'first'} day of the month, changing to ${amount > 0? 'next' : 'previous'} month`);
                 this.resetDays(setting);
+                changeAmount = amount > 0? 1 : -1;
             } else {
                 Logger.debug(`New Day: ${this.days[index].numericRepresentation}`);
                 this.updateDay(index, isLeapYear, setting);
-                changeAmount = 0;
             }
         }
         return changeAmount;

@@ -1,6 +1,11 @@
 # Change Log
 
-## v1.2.10 - Bug Fixes and QoL Improvements
+## v1.2.13 - Macros, Bug Fixes and QoL Improvements
+
+### Macros
+
+- Added a new macro for setting a specific date/time for the calendar, check out the [documentation](./docs/Macros.md#set-date-and-time) for how to use it.
+- Added a new macro for changing the current date/time by a passed in amount. Check out the [documentation](./docs/Macros.md#change-date-time) for how to use it.
 
 ### Quality of Life Improvements
 
@@ -11,6 +16,8 @@
 - Added a new option to months advanced settings to offset the day numbers by an amount. This is to accommodate instances where a month may start on day 2. The best example is the Traveller calendar where days are numbered by what day of the year they are rather than which day of the month they are.
 
 ### Bug Fixes
+
+- Fixed a bug for games with multiple GMs. In some instances both GMs would get assigned as the primary GM and process changes, instead of only 1 processing the changes. This sometimes resulted in incorrect dates being set.
 
 ## v1.2.5 - Bug Fixes and QoL Improvements
 

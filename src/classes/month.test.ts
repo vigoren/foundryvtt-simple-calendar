@@ -118,65 +118,71 @@ describe('Month Class Tests', () => {
     test('Change Day', () => {
         month2.days[0].current = true;
         //Move Forward one day within month
-        let changeAmount = month2.changeDay(true);
+        let changeAmount = month2.changeDay(1);
         expect(month2.days[1].current).toBe(true);
         expect(changeAmount).toBe(0);
         //Move back one day within month
-        changeAmount = month2.changeDay(false);
+        changeAmount = month2.changeDay(-1);
         expect(month2.days[0].current).toBe(true);
         expect(changeAmount).toBe(0);
         //When at first day of month, move back 1 day into previous month
-        changeAmount = month2.changeDay(false);
+        changeAmount = month2.changeDay(-1);
         expect(month2.days[0].current).toBe(false);
         expect(changeAmount).toBe(-1);
         //When at the last day of month move forward 1 day and into next month
         month2.days[29].current = true;
-        changeAmount = month2.changeDay(true);
+        changeAmount = month2.changeDay(1);
         expect(month2.days[29].current).toBe(false);
         expect(changeAmount).toBe(1);
 
         month2.days[0].selected = true;
         //Move Forward one day within month
-        changeAmount = month2.changeDay(true, false, 'selected');
+        changeAmount = month2.changeDay(1, false, 'selected');
         expect(month2.days[1].selected).toBe(true);
         expect(changeAmount).toBe(0);
         //Move back one day within month
-        changeAmount = month2.changeDay(false, false, 'selected');
+        changeAmount = month2.changeDay(-1, false, 'selected');
         expect(month2.days[0].selected).toBe(true);
         expect(changeAmount).toBe(0);
         //When at first day of month, move back 1 day into previous month
-        changeAmount = month2.changeDay(false, false, 'selected');
+        changeAmount = month2.changeDay(-1, false, 'selected');
         expect(month2.days[0].selected).toBe(false);
         expect(changeAmount).toBe(-1);
         //When at the last day of month move forward 1 day and into next month
         month2.days[29].selected = true;
-        changeAmount = month2.changeDay(true, false, 'selected');
+        changeAmount = month2.changeDay(1, false, 'selected');
         expect(month2.days[29].selected).toBe(false);
         expect(changeAmount).toBe(1);
 
         //Leap Year
         monthLy.days[0].current = true;
-        changeAmount = monthLy.changeDay(true);
+        changeAmount = monthLy.changeDay(1);
         expect(monthLy.days[1].current).toBe(true);
         expect(changeAmount).toBe(0);
         monthLy.days[1].current = false;
         //Last day of the month normally
         monthLy.days[29].current = true;
-        changeAmount = monthLy.changeDay(true);
+        changeAmount = monthLy.changeDay(1);
         expect(monthLy.days[30].current).toBe(false);
         expect(changeAmount).toBe(1);
 
         //Last day of the month normally on leap year
         monthLy.days[29].current = true;
-        changeAmount = monthLy.changeDay(true, true);
+        changeAmount = monthLy.changeDay(1, true);
         expect(monthLy.days[29].current).toBe(false);
         expect(monthLy.days[30].current).toBe(true);
         expect(changeAmount).toBe(0);
 
+        //Multiple Days
+        changeAmount = monthLy.changeDay(-5, true);
+        expect(monthLy.days[30].current).toBe(false);
+        expect(monthLy.days[25].current).toBe(true);
+        expect(changeAmount).toBe(0);
+
         //No target day
         monthLy.resetDays();
-        changeAmount = monthLy.changeDay(true);
-        expect(changeAmount).toBe(1);
+        changeAmount = monthLy.changeDay(1);
+        expect(changeAmount).toBe(0);
     });
 
     test('Reset Days', () => {

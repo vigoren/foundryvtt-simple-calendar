@@ -15,6 +15,7 @@ import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
 import LeapYear from "./leap-year";
 import Season from "./season";
 import Moon from "./moon";
+import SimpleCalendar from "./simple-calendar";
 
 describe('Year Class Tests', () => {
     let year: Year;
@@ -364,44 +365,66 @@ describe('Year Class Tests', () => {
         year.changeMonth(1, 'current');
         expect(year.months[0].current).toBe(false);
         expect(year.months[1].current).toBe(false);
+
+        year.months[0].current = true;
+        year.changeMonth(13, 'current');
+        expect(year.months[0].current).toBe(false);
+        expect(year.months[1].current).toBe(true);
+
+        year.changeMonth(-13, 'current');
+        expect(year.months[0].current).toBe(true);
+        expect(year.months[1].current).toBe(false);
     });
 
     test('Change Day Current', () => {
         year.months.push(month);
         year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[0].days[0].current = true;
-        year.changeDay(true);
+        year.changeDay(1);
         expect(year.months[0].days[0].current).toBe(true);
         year.months[0].current = true
-        year.changeDay(true);
+        year.changeDay(1);
         expect(year.months[0].days[0].current).toBe(false);
         expect(year.months[0].days[1].current).toBe(true);
         year.months[0].days[0].current = true;
         year.months[0].days[1].current = false;
-        year.changeDay(false);
+        year.changeDay(-1);
         expect(year.months[0].current).toBe(false);
         expect(year.months[1].current).toBe(true);
         expect(year.months[1].days[21].current).toBe(true);
-        year.changeDay(true);
+        year.changeDay(1);
         expect(year.months[0].current).toBe(true);
         expect(year.months[1].current).toBe(false);
         expect(year.months[0].days[0].current).toBe(true);
+
+        year.months.push(new Month("Test 3", 3, 0, 28, 29));
+        year.leapYearRule.rule = LeapYearRules.Custom;
+        year.leapYearRule.customMod = 2;
+        year.numericRepresentation = 4;
+        year.months[0].current = false;
+        year.months[0].days[0].current = false;
+        year.months[2].current = true;
+        year.months[2].days[0].current = true;
+        year.changeDay(1);
+        expect(year.months[2].current).toBe(true);
+        expect(year.months[2].days[0].current).toBe(false);
+        expect(year.months[2].days[1].current).toBe(true);
     });
 
     test('Change Day Selected', () => {
         year.months.push(month);
         year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[0].days[0].selected = true;
-        year.changeDay(true, 'selected');
+        year.changeDay(1, 'selected');
         expect(year.months[0].days[0].selected).toBe(true);
         year.months[0].selected = true
         year.months[0].current = true
-        year.changeDay(true, 'selected');
+        year.changeDay(1, 'selected');
         expect(year.months[0].days[0].selected).toBe(false);
         expect(year.months[0].days[1].selected).toBe(true);
         year.months[0].days[0].selected = true;
         year.months[0].days[1].selected = false;
-        year.changeDay(false, 'selected');
+        year.changeDay(-1, 'selected');
         expect(year.months[0].selected).toBe(false);
         expect(year.months[1].selected).toBe(true);
         expect(year.months[1].days[21].selected).toBe(false);
@@ -525,21 +548,21 @@ describe('Year Class Tests', () => {
         year.months.push(month);
         year.months.push(new Month("Test 2", 2, 0, 22, 23));
         year.months[1].intercalary = true;
-        expect(year.secondsToDate(10)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 0, second: 10});
-        expect(year.secondsToDate(70)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 1, second: 10});
-        expect(year.secondsToDate(3670)).toStrictEqual({year: 0, month: 0, day: 1, hour: 1, minute: 1, second: 10});
-        expect(year.secondsToDate(90070)).toStrictEqual({year: 0, month: 0, day: 2, hour: 1, minute: 1, second: 10});
-        expect(year.secondsToDate(2682070)).toStrictEqual({year: 1, month: 0, day: 2, hour: 1, minute: 1, second: 10});
+        expect(year.secondsToDate(10)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 0, seconds: 10});
+        expect(year.secondsToDate(70)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 1, seconds: 10});
+        expect(year.secondsToDate(3670)).toStrictEqual({year: 0, month: 0, day: 1, hour: 1, minute: 1, seconds: 10});
+        expect(year.secondsToDate(90070)).toStrictEqual({year: 0, month: 0, day: 2, hour: 1, minute: 1, seconds: 10});
+        expect(year.secondsToDate(2682070)).toStrictEqual({year: 1, month: 0, day: 2, hour: 1, minute: 1, seconds: 10});
         year.months[1].intercalary = false;
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
-        expect(year.secondsToDate(20908800)).toStrictEqual({year: 4, month: 1, day: 4, hour: 0, minute: 0, second: 0});
+        expect(year.secondsToDate(20908800)).toStrictEqual({year: 4, month: 1, day: 4, hour: 0, minute: 0, seconds: 0});
     });
 
     test('Update Time', () => {
         year.months.push(month);
         year.months.push(new Month("Test 2", 2, 0, 22, 23));
-        year.updateTime({year: 1, month: 1, day: 3, hour: 4, minute: 5, second: 6});
+        year.updateTime({year: 1, month: 1, day: 3, hour: 4, minute: 5, seconds: 6});
         expect(year.numericRepresentation).toBe(1);
         expect(year.months[1].current).toBe(true);
         expect(year.months[1].days[2].current).toBe(true);
@@ -579,6 +602,8 @@ describe('Year Class Tests', () => {
         year.time.seconds = 60;
         //@ts-ignore
         game.user.isGM = true;
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.primary = true;
         year.setFromTime(120, 60);
         expect(year.time.seconds).toBe(120);
         expect(game.settings.set).toHaveBeenCalledTimes(1);

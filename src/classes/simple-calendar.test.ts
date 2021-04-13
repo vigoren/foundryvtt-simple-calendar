@@ -92,7 +92,7 @@ describe('Simple Calendar Class Tests', () => {
         expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
         // @ts-ignore
         expect(SimpleCalendar.instance.primaryCheckTimeout).toBeDefined();
-        expect(game.socket.emit).toHaveBeenCalledTimes(1);
+        expect(game.socket.emit).toHaveBeenCalledTimes(2);
         // @ts-ignore
         game.user.isGM = false;
     });
@@ -124,13 +124,33 @@ describe('Simple Calendar Class Tests', () => {
         await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
-        // @ts-ignore
-        game.user.isGM = false;
-
         d.type = SocketTypes.primary;
+        d.data = {
+            primaryCheck: true
+        };
         await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(game.socket.emit).toHaveBeenCalledTimes(1);
+        d.data = {
+            amPrimary: true
+        };
+        await SimpleCalendar.instance.processSocket(d);
+        expect(SimpleCalendar.instance.primary).toBe(false);
+        d.data = {
+            amPrimary: false
+        };
+        SimpleCalendar.instance.primary = true;
+        await SimpleCalendar.instance.processSocket(d);
+        expect(SimpleCalendar.instance.primary).toBe(true);
 
+        d.data = {};
+        await SimpleCalendar.instance.processSocket(d);
+        expect(SimpleCalendar.instance.primary).toBe(true);
+
+        // @ts-ignore
+        game.user.isGM = false;
+        await SimpleCalendar.instance.processSocket(d);
+        expect(SimpleCalendar.instance.primary).toBe(true);
         //@ts-ignore
         d.type = 'asd';
         await SimpleCalendar.instance.processSocket(d);
@@ -199,105 +219,6 @@ describe('Simple Calendar Class Tests', () => {
         expect(controls.length).toBe(2);
         expect(controls[0].tools.length).toBe(0);
         expect(controls[1].tools.length).toBe(1);
-    });
-
-    test('Macro Show', () => {
-        SimpleCalendar.instance.macroShow();
-        expect(renderSpy).toHaveBeenCalledTimes(0);
-        expect(console.error).toHaveBeenCalledTimes(1);
-
-        SimpleCalendar.instance.currentYear = y;
-        SimpleCalendar.instance.macroShow();
-        expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect(console.error).toHaveBeenCalledTimes(1);
-
-        //@ts-ignore
-        SimpleCalendar.instance.macroShow('abc');
-        expect(y.visibleYear).toBe(0);
-        expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect(console.error).toHaveBeenCalledTimes(2);
-
-        SimpleCalendar.instance.macroShow(1);
-        expect(y.visibleYear).toBe(1);
-        expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(console.error).toHaveBeenCalledTimes(2);
-
-        //@ts-ignore
-        SimpleCalendar.instance.macroShow(1, 'abc');
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(4);
-        expect(console.error).toHaveBeenCalledTimes(3);
-
-        SimpleCalendar.instance.macroShow(1, 1);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(false);
-        expect(y.months[1].visible).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(5);
-        expect(console.error).toHaveBeenCalledTimes(3);
-
-        y.months[0].visible = true;
-        y.months[1].visible = false;
-        SimpleCalendar.instance.macroShow(1, -1);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(false);
-        expect(y.months[1].visible).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(6);
-        expect(console.error).toHaveBeenCalledTimes(3);
-
-        //@ts-ignore
-        SimpleCalendar.instance.macroShow(1, 0, 'asd');
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[0].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(7);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        SimpleCalendar.instance.macroShow(1, 0, 0);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[0].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(8);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        SimpleCalendar.instance.macroShow(4, 0, 2);
-        expect(y.visibleYear).toBe(4);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[1].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(9);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        SimpleCalendar.instance.macroShow(1, 0, -1);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[4].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(10);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        y.months[0].visible = false;
-        SimpleCalendar.instance.macroShow(1, null, 1);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(false);
-        expect(y.months[0].days[0].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(11);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        y.months[0].current = false;
-        SimpleCalendar.instance.macroShow(1, null, 2);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(false);
-        expect(y.months[0].days[0].selected).toBe(true);
-        expect(y.months[0].days[1].selected).toBe(false);
-        expect(renderSpy).toHaveBeenCalledTimes(12);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        y.leapYearRule.rule = LeapYearRules.Gregorian;
-        SimpleCalendar.instance.macroShow(4, 0, 2);
-        expect(y.visibleYear).toBe(4);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[1].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(13);
-        expect(console.error).toHaveBeenCalledTimes(4);
     });
 
     test('Show App', () => {

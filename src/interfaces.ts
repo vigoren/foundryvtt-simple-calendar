@@ -283,6 +283,14 @@ export interface MoonTemplate {
     cycleDayAdjust: number;
     dayList: DayTemplate[];
 }
+export interface DateTimeParts {
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    minute: number;
+    seconds: number;
+}
 
 /**
  * Namespace for our own socket information
@@ -315,7 +323,8 @@ export namespace SimpleCalendarSocket{
      * Interface for a GM to take over being the primary source
      */
     export interface SimpleCalendarPrimary{
-
+        primaryCheck?: boolean;
+        amPrimary?: boolean;
     }
 }
 

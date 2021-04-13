@@ -38,12 +38,16 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 * Add notes to specific days on the calendar to remind yourself of events or other world related things.
   * These notes can either be visible to players as well as the GM or just the GM.
 
+![GM View of Calendar](./docs/images/gm-screenshot-1.png)
+
 ### For Players
 
 * Browse a calendar interface to see the years, months and day of the game world.
 * See the current day and time of the game world.
 * Select days to view any notes/events specific to that day.
 * If the GM allows it, the ability to add their own notes to the calendar.
+
+![Player View of Calendar](./docs/images/player.gif)
 
 ## Contents
 
