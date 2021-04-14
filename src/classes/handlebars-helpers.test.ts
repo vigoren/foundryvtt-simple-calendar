@@ -20,30 +20,12 @@ describe('Handlebars Helpers Tests', () => {
 
     test('Register', () => {
         HandlebarsHelpers.Register();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
-    });
-
-    test('Calendar Width', () => {
-        expect(HandlebarsHelpers.CalendarWidth()).toBe('');
-        SimpleCalendar.instance.settingUpdate();
-        expect(HandlebarsHelpers.CalendarWidth()).toBe('width:52px;');
-    });
-
-    test('Calendar Row Width', () => {
-        expect(HandlebarsHelpers.CalendarRowWidth()).toBe('');
-        SimpleCalendar.instance.settingUpdate();
-        expect(HandlebarsHelpers.CalendarRowWidth()).toBe('');
-        // @ts-ignore
-        game.user.isGM = true;
-        expect(HandlebarsHelpers.CalendarRowWidth()).toBe('width:352px;');
-        if(SimpleCalendar.instance.currentYear){
-            SimpleCalendar.instance.currentYear.generalSettings.showClock = true;
-            expect(HandlebarsHelpers.CalendarRowWidth()).toBe('width:550px;');
-        }
-
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(2);
     });
 
     test('Day Has Notes', () => {
+        // @ts-ignore
+        game.user.isGM = true;
         const options: any = {hash:{}};
         expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
         options.hash['day'] = {numericRepresentation: 1};

@@ -63,7 +63,7 @@ describe('Simple Calendar Notes Tests', () => {
         expect(opts.template).toBe('modules/foundryvtt-simple-calendar/templates/calendar-notes.html');
         //@ts-ignore
         expect(opts.title).toBe('FSC.Notes.DialogTitle');
-        expect(opts.classes).toStrictEqual(["form","simple-calendar"]);
+        expect(opts.classes).toStrictEqual(["form","simple-calendar-note"]);
         //@ts-ignore
         expect(opts.resizable).toBe(true);
         //@ts-ignore

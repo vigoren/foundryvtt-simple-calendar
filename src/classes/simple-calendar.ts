@@ -56,6 +56,11 @@ export default class SimpleCalendar extends Application{
     public primary: boolean = false;
 
     private primaryCheckTimeout: number | undefined;
+    /**
+     * If the dialog has been resized
+     * @type{boolean}
+     */
+    hasBeenResized: boolean = false;
 
     /**
      * Simple Calendar constructor
@@ -66,12 +71,12 @@ export default class SimpleCalendar extends Application{
      * Returns the default options for this application
      */
     static get defaultOptions() {
+        Logger.debug('Simple Calendar -> defaultOptions()');
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/calendar.html";
         options.title = "FSC.Title";
         options.classes = ["simple-calendar"];
         options.resizable = true;
-        options.height = 475;
         return options;
     }
 
@@ -91,7 +96,14 @@ export default class SimpleCalendar extends Application{
         }
 
         if(GameSettings.IsGm()){
+            const socket = <SimpleCalendarSocket.Data>{
+                type: SocketTypes.primary,
+                data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
+                    primaryCheck: true
+                }
+            };
             this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
+            game.socket.emit(ModuleSocketName, socket);
         }
     }
 
@@ -101,7 +113,7 @@ export default class SimpleCalendar extends Application{
     primaryCheckTimeoutCall(){
         Logger.debug('No primary GM found, taking over as primary');
         this.primary = true;
-        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {}};
+        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: this.primary}};
         game.socket.emit(ModuleSocketName, socketData);
     }
 
@@ -122,8 +134,29 @@ export default class SimpleCalendar extends Application{
                 await GameSettings.SaveNotes((<SimpleCalendarSocket.SimpleCalendarSocketJournal>data.data).notes)
             }
         } else if (data.type === SocketTypes.primary){
-            Logger.debug('A primary GM is all ready present.');
-            window.clearTimeout(this.primaryCheckTimeout);
+            if(GameSettings.IsGm()){
+                // Another client is asking if anyone is the primary GM, respond accordingly
+                if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).primaryCheck){
+                    Logger.debug(`Checking if I am the primary`);
+                    game.socket.emit(ModuleSocketName, <SimpleCalendarSocket.Data>{
+                        type: SocketTypes.primary,
+                        data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
+                            amPrimary: this.primary
+                        }
+                    });
+                }
+                // Another client has emitted that they are the primary, stop my check and set myself to not being the primary
+                // This CAN lead to no primary if 2 GMs finish their primary check at the same time. This is best resolved by 1 gm reloading the page.
+                else if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary !== undefined){
+                    if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary){
+                        Logger.debug('A primary GM is all ready present.');
+                        window.clearTimeout(this.primaryCheckTimeout);
+                        this.primary = false;
+                    } else {
+                        Logger.debug('We are all ready waiting to take over as primary.');
+                    }
+                }
+            }
         }
     }
 
@@ -176,66 +209,11 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
-     * A globally exposed function for macros to show the calendar. If a date is passed in, the calendar will open so that date is visible and selected
-     * @param {number | null} [year=null] The year to set as visible, it not passed in what ever the users current visible year will be used
-     * @param {number | null} [month=null] The month to set as visible, it not passed in what ever the users current visible month will be used
-     * @param {number | null} [day=null] The day to set as selected, it not passed in what ever the users current selected day will be used
-     */
-    public macroShow(year: number | null = null, month: number | null = null, day: number | null = null){
-        if(this.currentYear){
-            if(year !== null){
-                year = parseInt(year.toString());
-                if(!isNaN(year)){
-                    this.currentYear.visibleYear = year;
-                } else {
-                    Logger.error('Invalid year was passed in.');
-                }
-            }
-            const isLeapYear = this.currentYear.leapYearRule.isLeapYear(this.currentYear.visibleYear);
-            if(month !== null){
-                month = parseInt(month.toString());
-                if(!isNaN(month)){
-                    if(month === -1 || month > this.currentYear.months.length){
-                        month = this.currentYear.months.length - 1;
-                    }
-                    this.currentYear.resetMonths('visible');
-                    this.currentYear.months[month].visible = true;
-                } else {
-                    Logger.error('Invalid month was passed in.');
-                }
-            }
-            if(day !== null){
-                day = parseInt(day.toString());
-                if(!isNaN(day)){
-                    const visibleMonth = this.currentYear.getMonth('visible') || this.currentYear.getMonth('current');
-                    if(visibleMonth){
-                        const numberOfDays = isLeapYear? visibleMonth.numberOfDays : visibleMonth.numberOfLeapYearDays;
-                        if(day > 0){
-                            day = day - 1;
-                        }
-                        if(day == -1 || day > numberOfDays){
-                            day = numberOfDays - 1;
-                        }
-                        this.currentYear.resetMonths('selected');
-                        visibleMonth.days[day].selected = true;
-                        visibleMonth.selected = true;
-                        this.currentYear.selectedYear = this.currentYear.visibleYear;
-                    }
-                } else {
-                    Logger.error('Invalid day was passed in.');
-                }
-            }
-            this.showApp();
-        } else {
-            Logger.error('The current year is not defined, can not use macro');
-        }
-    }
-
-    /**
      * Shows the application window
      */
     public showApp(){
-        this.render(true, {width: 500, height: 500});
+        this.hasBeenResized = false;
+        this.render(true, {});
     }
 
     /**
@@ -246,12 +224,107 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
+     * When the window is resized
+     * @param event
+     * @protected
+     */
+    protected _onResize(event: Event) {
+        super._onResize(event);
+        this.hasBeenResized = true;
+    }
+
+    /**
+     * Sets the width and height of the calendar window so that it is sized to show the calendar, the controls and space for 2 notes.
+     * @param {JQuery} html
+     */
+    setWidthHeight(html: JQuery){
+        if(this.hasBeenResized){
+            return;
+        }
+        const calendar = (<JQuery>html).find('.calendar-row .calendar-display');
+        const controls = (<JQuery>html).find('.calendar-row .controls');
+        const noteHeader = (<JQuery>html).find('.date-notes-header h2');
+        const addNote = (<JQuery>html).find('.date-notes-header .add-note');
+
+        let height = 0;
+        let width = 0;
+
+        if(calendar){
+            const h = calendar.outerHeight(true);
+            const w = calendar.outerWidth(true);
+            height += h? h : 0;
+            width += w? w : 0;
+        }
+
+        if(controls){
+            const h = controls.outerHeight(true);
+            const w = controls.outerWidth(true);
+            if(h && h > height){
+                height = h;
+            }
+            width += w? w : 0;
+        }
+
+        if(noteHeader && addNote){
+            const nh = noteHeader.outerHeight(true);
+            const nw = noteHeader.outerWidth(true);
+            const w = addNote.outerWidth(true);
+
+            const headerW = (nw? nw : 0) + (w?  w: 0);
+            if(headerW > width){
+                width = headerW;
+            }
+            height += (nh? nh : 0) + 24;
+        }
+
+        width += 16;
+        height += (30 * 2) + 46;
+        this.setPosition({width: width, height: height});
+    }
+
+    /**
+     * Keeps the current/selected date centered in the list of days for a month on calendars that have very long day lists
+     * @param {JQuery} html
+     */
+    ensureCurrentDateIsVisible(html: JQuery){
+        const calendar = (<JQuery>html).find(".calendar");
+        const calendarHeight = calendar.outerHeight();
+
+        //This only needs to be processed if the calendar is more than 499px tall
+        if(calendarHeight && calendarHeight >= 500){
+            const currentDay = calendar.find('.day.current');
+            const selectedDay = calendar.find('.day.selected');
+
+            //Prefer to use the selected day as the main day to focus on rather than the current day
+            let elementToUse = null;
+            if(selectedDay.length){
+                elementToUse = selectedDay[0];
+            } else if(currentDay.length){
+                elementToUse = currentDay[0];
+            }
+
+            if(elementToUse !== null){
+                const calendarRect = calendar[0].getBoundingClientRect();
+                const rect = elementToUse.getBoundingClientRect();
+                const insideViewPort = rect.top >= calendarRect.top && rect.left >= calendarRect.left && rect.bottom <= calendarRect.bottom && rect.right <= calendarRect.right;
+                if(!insideViewPort){
+                    Logger.debug(`The Current/Selected day is not in the viewport, updating the day list scroll top position.`);
+                    calendar[0].scrollTop = rect.top - calendarRect.top - (calendarHeight/ 2);
+                }
+            }
+        }
+    }
+
+    /**
      * Adds any event listeners to the application DOM
      * @param {JQuery<HTMLElement>} html The root HTML of the application window
      * @protected
      */
     public activateListeners(html: JQuery<HTMLElement>) {
+        Logger.debug('Simple-Calendar activateListeners()');
         if(html.hasOwnProperty("length")) {
+            this.setWidthHeight(html);
+            this.ensureCurrentDateIsVisible(html);
             // Change the month that is being viewed
             const nextPrev = (<JQuery>html).find(".current-date .fa");
             for (let i = 0; i < nextPrev.length; i++) {
@@ -322,21 +395,20 @@ export default class SimpleCalendar extends Application{
         const target = <HTMLElement>e.target;
         const dataDate = target.getAttribute('data-day');
         if(dataDate){
-            const index = parseInt(dataDate) - 1;
-            if(this.currentYear && index > -1){
-                const currentSelectedMonth = this.currentYear.getMonth('selected');
-                const currentSelectedDay = currentSelectedMonth?.getDay('selected');
-                if(currentSelectedMonth){
-                    currentSelectedMonth.selected = false;
-                }
-                if(currentSelectedDay){
-                    currentSelectedDay.selected = false;
-                }
-                const visibleMonth = this.currentYear.getMonth('visible');
-                if(visibleMonth && visibleMonth.days.length > index){
-                    visibleMonth.selected = true;
-                    visibleMonth.days[index].selected = true;
-                    this.currentYear.selectedYear = this.currentYear.visibleYear;
+            const dayNumber = parseInt(dataDate);
+            const isSelected = target.classList.contains('selected');
+            if(this.currentYear && dayNumber > -1){
+                this.currentYear.resetMonths('selected');
+                if(!isSelected){
+                    const visibleMonth = this.currentYear.getMonth('visible');
+                    if(visibleMonth){
+                        const dayIndex = visibleMonth.days.findIndex(d => d.numericRepresentation === dayNumber);
+                        if(dayIndex > -1){
+                            visibleMonth.selected = true;
+                            visibleMonth.days[dayIndex].selected = true;
+                            this.currentYear.selectedYear = this.currentYear.visibleYear;
+                        }
+                    }
                 }
                 this.updateApp();
             } else {
@@ -423,7 +495,7 @@ export default class SimpleCalendar extends Application{
                     break;
                 case 'day':
                     Logger.debug(`${isNext? 'Forward' : 'Back'} Day Clicked`);
-                    this.currentYear.changeDay(isNext, 'current');
+                    this.currentYear.changeDay(isNext? 1 : -1, 'current');
                     this.updateApp();
                     break;
                 case 'month':
@@ -543,7 +615,7 @@ export default class SimpleCalendar extends Application{
      */
     public updateApp(){
         if(this.rendered){
-            this.render(false, {width: 500, height: 500});
+            this.render(false);
         }
     }
 
@@ -622,6 +694,9 @@ export default class SimpleCalendar extends Application{
             if(yearData.hasOwnProperty('showWeekdayHeadings')){
                 this.currentYear.showWeekdayHeadings = yearData.showWeekdayHeadings;
             }
+            if(yearData.hasOwnProperty('firstWeekday')){
+                this.currentYear.firstWeekday = yearData.firstWeekday;
+            }
         } else {
             Logger.debug('No year configuration found, setting default year data.');
             this.currentYear = new Year(new Date().getFullYear());
@@ -648,7 +723,7 @@ export default class SimpleCalendar extends Application{
                         if(isNaN(numLeapDays)){
                             numLeapDays = 1;
                         }
-                        const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, numDays, numLeapDays);
+                        const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numericRepresentationOffset, numDays, numLeapDays);
                         newMonth.intercalary = monthData[i].intercalary;
                         newMonth.intercalaryInclude = monthData[i].intercalaryInclude;
                         this.currentYear.months.push(newMonth);
@@ -658,18 +733,18 @@ export default class SimpleCalendar extends Application{
             if(this.currentYear.months.length === 0) {
                 Logger.debug('No month configuration found, setting default month data.');
                 this.currentYear.months = [
-                    new Month(GameSettings.Localize("FSC.Date.January"), 1, 31),
-                    new Month(GameSettings.Localize("FSC.Date.February"), 2, 28, 29),
-                    new Month(GameSettings.Localize("FSC.Date.March"),3, 31),
-                    new Month(GameSettings.Localize("FSC.Date.April"),4, 30),
-                    new Month(GameSettings.Localize("FSC.Date.May"),5, 31),
-                    new Month(GameSettings.Localize("FSC.Date.June"),6, 30),
-                    new Month(GameSettings.Localize("FSC.Date.July"),7, 31),
-                    new Month(GameSettings.Localize("FSC.Date.August"),8, 31),
-                    new Month(GameSettings.Localize("FSC.Date.September"),9, 30),
-                    new Month(GameSettings.Localize("FSC.Date.October"), 10, 31),
-                    new Month(GameSettings.Localize("FSC.Date.November"), 11, 30),
-                    new Month(GameSettings.Localize("FSC.Date.December"), 12, 31),
+                    new Month(GameSettings.Localize("FSC.Date.January"), 1, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.February"), 2, 0, 28, 29),
+                    new Month(GameSettings.Localize("FSC.Date.March"),3, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.April"),4, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.May"),5, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.June"),6, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.July"),7, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.August"),8, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.September"),9, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.October"), 10, 0, 31),
+                    new Month(GameSettings.Localize("FSC.Date.November"), 11, 0, 30),
+                    new Month(GameSettings.Localize("FSC.Date.December"), 12, 0, 31),
                 ];
             }
         } else {

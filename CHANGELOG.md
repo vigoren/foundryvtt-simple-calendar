@@ -1,5 +1,44 @@
 # Change Log
 
+## v1.2.20 - Macros, Hooks, Bug Fixes and QoL Improvements
+
+### Macros
+
+- Added a new macro for setting a specific date/time for the calendar, check out the [documentation](./docs/Macros.md#set-date-and-time) for how to use it.
+- Added a new macro for changing the current date/time by a passed in amount. Check out the [documentation](./docs/Macros.md#change-date-time) for how to use it.
+
+
+### Hooks
+
+Simple Calendar will now emit certain hooks that other modules/code can listen for.
+
+- Added a hook that is fired every time the current date is changed and contains the information for the new date. Check out the [documentation](./docs/Hooks.md#datetime-change) for more details.
+
+### Quality of Life Improvements
+
+- Cleaned up the styling of the calendar dialog. The calendar will now consistently open so that the calendar, date controls (if gm) and 2 rows of notes will be visible.
+- Resizing of the calendar dialog will now reset when you close and re-open the dialog.
+- Added the Traveller - Imperial Calendar as a predefined calendar.
+- Added a new section in month configuration called Advanced. Clicking on a months "Show Advanced" link will show the advanced options' area. This area will contain things that are probably not relevant to most calendars.
+- Added a new option to months advanced settings to offset the day numbers by an amount. This is to accommodate instances where a month may start on day 2. The best example is the Traveller calendar where days are numbered by what day of the year they are rather than which day of the month they are.
+- For calendars that have months with many days (example the traveller calendar) the calendar now has a maximum height of 500px. The list of days will become scrollable. For Current days or selected days the calendar will attempt to keep them in view when it makes sense (selecting a new day).
+- Added the ability to specify the starting day of the week for the first day of year 0. This helps align your calendar with official calendars.
+- Updated the pre-defined calendars to have their starting day of the week set so that they match with official calendars.
+- There was no way to unselect a day so now if a selected day is clicked again it will become unselected.
+
+### Bug Fixes
+
+- Fixed a bug for games with multiple GMs. In some instances both GMs would get assigned as the primary GM and process changes, instead of only 1 processing the changes. This sometimes resulted in incorrect dates being set.
+- Fixed an issue with the Exandrian pre defined calendar where I missed an entire weekday, big oops.
+
+
+### Foundry 0.8.1
+
+I have made a couple of small changes to Simple Calendar that allows it to work properly with Foundry version 0.8.1.
+
+That version of Foundry is still in alpha, so I do warn against updating your main games to that Foundry version yet. This step in testing will hopefully allow a very seamless transition into 0.8.x when it is released for everyone.
+
+
 ## v1.2.5 - Bug Fixes and QoL Improvements
 
 ### Quality of Life Improvements

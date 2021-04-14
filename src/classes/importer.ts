@@ -33,7 +33,7 @@ export default class Importer{
         let mICount = 1;
         for(let key in aboutTimeCalendar['month_len']){
             if(aboutTimeCalendar['month_len'].hasOwnProperty(key)){
-                const newM = new Month(key, mCount, aboutTimeCalendar['month_len'][key].days[0], aboutTimeCalendar['month_len'][key].days[1]);
+                const newM = new Month(key, mCount, 0, aboutTimeCalendar['month_len'][key].days[0], aboutTimeCalendar['month_len'][key].days[1]);
                 if(aboutTimeCalendar['month_len'][key].intercalary){
                     newM.numericRepresentation = mICount * -1;
                     newM.intercalary = true;
@@ -151,7 +151,7 @@ export default class Importer{
                 numLeapDays = 1;
             }
 
-            const nMonth = new Month(currentSettings.months[i].name, i+1, numDays, numLeapDays)
+            const nMonth = new Month(currentSettings.months[i].name, i+1, 0, numDays, numLeapDays)
             if(!currentSettings.months[i].isNumbered){
                 nMonth.numericRepresentation = mICount * -1;
                 nMonth.intercalary = true;

@@ -52,12 +52,12 @@ export interface YearTemplate {
     numericRepresentation: number;
     /** The months that make up the year */
     visibleMonth: MonthTemplate | undefined;
-    /** An array of 0's where the array length is the weekday the visible month starts on  */
-    visibleMonthWeekOffset: number[];
     /** If to show the weekday headers on the calendar view */
     showWeekdayHeaders: boolean;
     /** The days of the week */
     weekdays: WeekdayTemplate[];
+
+    firstWeekday: number;
 
     showClock: boolean;
 
@@ -72,6 +72,8 @@ export interface YearTemplate {
     currentSeasonName: string;
 
     currentSeasonColor: string;
+
+    weeks: (boolean | DayTemplate)[][];
 }
 
 /**
@@ -82,6 +84,7 @@ export interface YearConfig {
     prefix: string;
     postfix: string;
     showWeekdayHeadings: boolean;
+    firstWeekday: number;
 }
 
 /**
@@ -91,6 +94,7 @@ export interface  MonthTemplate {
     display: string;
     name: string;
     numericRepresentation: number;
+    numericRepresentationOffset: number;
     current: boolean;
     visible: boolean;
     selected: boolean;
@@ -99,6 +103,7 @@ export interface  MonthTemplate {
     numberOfLeapYearDays: number;
     intercalary: boolean;
     intercalaryInclude: boolean;
+    showAdvanced: boolean;
 }
 
 /**
@@ -107,6 +112,7 @@ export interface  MonthTemplate {
 export interface MonthConfig {
     name: string;
     numericRepresentation: number;
+    numericRepresentationOffset: number;
     numberOfDays: number;
     numberOfLeapYearDays: number;
     intercalary: boolean;
@@ -280,6 +286,14 @@ export interface MoonTemplate {
     cycleDayAdjust: number;
     dayList: DayTemplate[];
 }
+export interface DateTimeParts {
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    minute: number;
+    seconds: number;
+}
 
 /**
  * Namespace for our own socket information
@@ -312,7 +326,8 @@ export namespace SimpleCalendarSocket{
      * Interface for a GM to take over being the primary source
      */
     export interface SimpleCalendarPrimary{
-
+        primaryCheck?: boolean;
+        amPrimary?: boolean;
     }
 }
 

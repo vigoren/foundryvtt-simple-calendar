@@ -12,6 +12,10 @@ class Application {
     close(){return Promise.resolve();}
 
     activateListeners(data: any){}
+
+    setPosition(){}
+
+    _onResize(){}
 }
 
 

@@ -29,6 +29,7 @@ describe('Interface Tests', () => {
         display: '',
         name: '',
         numericRepresentation: 0,
+        numericRepresentationOffset: 0,
         current: false,
         visible: false,
         selected: false,
@@ -36,7 +37,8 @@ describe('Interface Tests', () => {
         numberOfDays: 0,
         numberOfLeapYearDays: 0,
         intercalary: false,
-        intercalaryInclude: false
+        intercalaryInclude: false,
+        showAdvanced: false
     };
     const yt: YearTemplate = {
         display: '',
@@ -45,16 +47,17 @@ describe('Interface Tests', () => {
         selectedDisplayDay: '',
         numericRepresentation: 0,
         visibleMonth: mt,
-        visibleMonthWeekOffset: [],
         weekdays: [wt],
         showWeekdayHeaders: false,
+        firstWeekday: 0,
         showClock: false,
         clockClass: '',
         showDateControls: false,
         showTimeControls: false,
         currentTime: tt,
         currentSeasonColor: '',
-        currentSeasonName: ''
+        currentSeasonName: '',
+        weeks: []
     };
     const ct: CalendarTemplate = {
         isGM: false,
@@ -78,10 +81,11 @@ describe('Interface Tests', () => {
     });
 
     test('Month Template', () => {
-        expect(Object.keys(mt).length).toBe(11); //Make sure no new properties have been added
+        expect(Object.keys(mt).length).toBe(13); //Make sure no new properties have been added
         expect(mt.display).toBe("");
         expect(mt.name).toBe("");
         expect(mt.numericRepresentation).toBe(0);
+        expect(mt.numericRepresentationOffset).toBe(0);
         expect(mt.selected).toBe(false);
         expect(mt.current).toBe(false);
         expect(mt.visible).toBe(false);
@@ -90,6 +94,7 @@ describe('Interface Tests', () => {
         expect(mt.numberOfLeapYearDays).toBe(0);
         expect(mt.intercalary).toBe(false);
         expect(mt.intercalaryInclude).toBe(false);
+        expect(mt.showAdvanced).toBe(false);
     });
 
     test('Weekday Template', () => {
@@ -99,16 +104,17 @@ describe('Interface Tests', () => {
     });
 
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(16); //Make sure no new properties have been added
+        expect(Object.keys(yt).length).toBe(17); //Make sure no new properties have been added
         expect(yt.display).toBe('');
         expect(yt.selectedDisplayYear).toBe('');
         expect(yt.selectedDisplayMonth).toBe('');
         expect(yt.selectedDisplayDay).toBe('');
         expect(yt.numericRepresentation).toBe(0);
         expect(yt.visibleMonth).toStrictEqual(mt);
-        expect(yt.visibleMonthWeekOffset).toStrictEqual([]);
+        expect(yt.weeks).toStrictEqual([]);
         expect(yt.weekdays).toStrictEqual([wt]);
         expect(yt.showWeekdayHeaders).toStrictEqual(false);
+        expect(yt.firstWeekday).toStrictEqual(0);
         expect(yt.showClock).toStrictEqual(false);
         expect(yt.showTimeControls).toStrictEqual(false);
         expect(yt.showDateControls).toStrictEqual(false);
@@ -132,21 +138,23 @@ describe('Interface Tests', () => {
     });
 
     test('Year Config', () => {
-        const yc: YearConfig = {postfix: '', prefix: '', numericRepresentation: 0, showWeekdayHeadings: false};
-        expect(Object.keys(yc).length).toBe(4); //Make sure no new properties have been added
+        const yc: YearConfig = {postfix: '', prefix: '', numericRepresentation: 0, showWeekdayHeadings: false, firstWeekday: 0};
+        expect(Object.keys(yc).length).toBe(5); //Make sure no new properties have been added
         expect(yc.postfix).toBe('');
         expect(yc.prefix).toBe('');
         expect(yc.numericRepresentation).toBe(0);
         expect(yc.showWeekdayHeadings).toBe(false);
+        expect(yc.firstWeekday).toBe(0);
     });
 
     test('Month Config', () => {
-        const yc: MonthConfig = {numberOfDays: 0, numericRepresentation: 0, name: '',intercalaryInclude: false, intercalary: false, numberOfLeapYearDays: 0};
-        expect(Object.keys(yc).length).toBe(6); //Make sure no new properties have been added
+        const yc: MonthConfig = {numberOfDays: 0, numericRepresentation: 0, numericRepresentationOffset: 0, name: '',intercalaryInclude: false, intercalary: false, numberOfLeapYearDays: 0};
+        expect(Object.keys(yc).length).toBe(7); //Make sure no new properties have been added
         expect(yc.name).toBe('');
         expect(yc.numberOfDays).toBe(0);
         expect(yc.numberOfLeapYearDays).toBe(0);
-        expect(yc.numericRepresentation).toBe(0)
+        expect(yc.numericRepresentation).toBe(0);
+        expect(yc.numericRepresentationOffset).toBe(0);
         expect(yc.intercalary).toBe(false);
         expect(yc.intercalaryInclude).toBe(false);
     });

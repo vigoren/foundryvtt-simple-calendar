@@ -65,7 +65,7 @@ export class SimpleCalendarNotes extends FormApplication {
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/calendar-notes.html";
         options.title = "FSC.Notes.DialogTitle";
-        options.classes = ["form","simple-calendar"];
+        options.classes = ["form","simple-calendar-note"];
         options.resizable = true;
         options.closeOnSubmit = false;
         options.width = 500;
@@ -109,7 +109,6 @@ export class SimpleCalendarNotes extends FormApplication {
                 data.authorName = user.name;
             }
         }
-        console.log(this.editors['content']);
         return data;
     }
 
@@ -201,7 +200,7 @@ export class SimpleCalendarNotes extends FormApplication {
      * Shows the application window
      */
     public showApp(){
-        this.render(true, {width: 500, height: 500});
+        this.render(true);
     }
 
     /**

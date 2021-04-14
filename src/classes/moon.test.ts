@@ -50,7 +50,7 @@ describe('Moon Tests', () => {
 
         c = m.toTemplate(y);
         expect(c.dayList.length).toStrictEqual(0);
-        y.months.push(new Month("Month 1", 1, 10));
+        y.months.push(new Month("Month 1", 1, 0, 10));
         c = m.toTemplate(y);
         expect(c.dayList.length).toStrictEqual(10);
     });
@@ -70,7 +70,7 @@ describe('Moon Tests', () => {
         m.phases.push({name: 'p2', icon: MoonIcons.NewMoon, length: 0, singleDay: false});
         m.updatePhaseLength();
         expect(m.getMoonPhase(y)).toStrictEqual(m.phases[0]);
-        y.months.push(new Month("Month 1", 1, 10));
+        y.months.push(new Month("Month 1", 1, 0, 10));
         y.months[0].current = true;
         expect(m.getMoonPhase(y)).toStrictEqual(m.phases[0]);
         y.months[0].days[2].current = true;

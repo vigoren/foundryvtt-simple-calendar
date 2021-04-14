@@ -1,5 +1,5 @@
 import Month from "./month";
-import {GeneralSettings, YearTemplate} from "../interfaces";
+import {DayTemplate, GeneralSettings, DateTimeParts, YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
@@ -8,6 +8,7 @@ import {GameWorldTimeIntegrations} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
+import SimpleCalendar from "./simple-calendar";
 
 /**
  * Class for representing a year
@@ -49,6 +50,11 @@ export default class Year {
      * @type {boolean}
      */
     showWeekdayHeadings: boolean = true;
+    /**
+     * The day of the week the first day of year 0 falls on
+     * @type {number}
+     */
+    firstWeekday: number = 0;
     /**
      * The leap year rules for the calendar
      * @type {LeapYear}
@@ -107,6 +113,7 @@ export default class Year {
     toTemplate(): YearTemplate{
         const currentMonth = this.getMonth();
         const selectedMonth = this.getMonth('selected');
+        const visibleMonth = this.getMonth('visible');
 
         let sMonth = '', sDay = '';
         if(selectedMonth){
@@ -123,6 +130,12 @@ export default class Year {
             }
         }
         const currentSeason = this.getCurrentSeason();
+
+        let weeks: (boolean | DayTemplate)[][] = [];
+        if(visibleMonth){
+            weeks = this.daysIntoWeeks(visibleMonth, this.visibleYear, this.weekdays.length);
+        }
+
         return {
             display: this.getDisplayName(),
             selectedDisplayYear: this.getDisplayName(true),
@@ -131,16 +144,63 @@ export default class Year {
             numericRepresentation: this.numericRepresentation,
             weekdays: this.weekdays.map(w => w.toTemplate()),
             showWeekdayHeaders: this.showWeekdayHeadings,
-            visibleMonth: this.getMonth('visible')?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
-            visibleMonthWeekOffset:  Array(this.visibleMonthStartingDayOfWeek()).fill(0),
+            firstWeekday: this.firstWeekday,
+            visibleMonth: visibleMonth?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
             showClock: this.generalSettings.showClock,
             clockClass: this.time.getClockClass(),
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             currentTime: this.time.getCurrentTime(),
             currentSeasonName: currentSeason.name,
-            currentSeasonColor: currentSeason.color
+            currentSeasonColor: currentSeason.color,
+            weeks: weeks
         }
+    }
+
+    /**
+     * Will take the days of the passed in month and break it into an array of weeks
+     * @param {Month} month The month to get the days from
+     * @param {number} year The year the month is in (for leap year calculation)
+     * @param {number} weekLength How many days there are in a week
+     */
+    daysIntoWeeks(month: Month, year: number, weekLength: number): (boolean | DayTemplate)[][]{
+        const weeks = [];
+        const dayOfWeekOffset = this.visibleMonthStartingDayOfWeek();
+        const isLeapYear = this.leapYearRule.isLeapYear(year);
+        const days = month.getDaysForTemplate(isLeapYear);
+
+        if(days.length && weekLength > 0){
+            const startingWeek = [];
+            let dayOffset = 0;
+            for(let i = 0; i < weekLength; i++){
+                if(i<dayOfWeekOffset){
+                    startingWeek.push(false);
+                } else {
+                    const dayIndex = i - dayOfWeekOffset;
+                    if(dayIndex < days.length){
+                        startingWeek.push(days[dayIndex]);
+                        dayOffset++;
+                    } else {
+                        startingWeek.push(false);
+                    }
+                }
+            }
+            weeks.push(startingWeek);
+            const numWeeks = Math.ceil((days.length - dayOffset) / weekLength);
+            for(let i = 0; i < numWeeks; i++){
+                const w = [];
+                for(let d = 0; d < weekLength; d++){
+                    const dayIndex = dayOffset + (i * weekLength) + d;
+                    if(dayIndex < days.length){
+                        w.push(days[dayIndex]);
+                    } else {
+                        w.push(false);
+                    }
+                }
+                weeks.push(w);
+            }
+        }
+        return weeks;
     }
 
     /**
@@ -158,6 +218,7 @@ export default class Year {
         y.leapYearRule.rule = this.leapYearRule.rule;
         y.leapYearRule.customMod = this.leapYearRule.customMod;
         y.showWeekdayHeadings = this.showWeekdayHeadings;
+        y.firstWeekday = this.firstWeekday;
         y.time = this.time.clone();
         y.generalSettings.gameWorldTimeIntegration = this.generalSettings.gameWorldTimeIntegration;
         y.generalSettings.showClock = this.generalSettings.showClock;
@@ -268,15 +329,24 @@ export default class Year {
     changeMonth(amount: number, setting: string = 'visible'): void{
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
         const next = amount > 0;
-
         for(let i = 0; i < this.months.length; i++){
             const month = this.months[i];
             if(month[verifiedSetting]){
-                if((next && i === (this.months.length - amount)) || (!next && i === Math.abs(amount) - 1)){
-                    Logger.debug(`On ${next? 'last' : 'first'} month of the year, changing to ${next? 'next' : 'previous'} year`);
-                    //We will never advance more than 1 year when changing months
-                    this.changeYear(next? 1 : -1, true, verifiedSetting);
-                } else {
+                if(next && (i + amount) >= this.months.length){
+                    Logger.debug(`Advancing the ${verifiedSetting} month (${i}) by more months (${amount}) than there are in the year (${this.months.length}), advancing the year by 1`);
+                    this.changeYear(1, true, verifiedSetting);
+                    const changeAmount = amount - (this.months.length - i);
+                    if(changeAmount > 0){
+                        this.changeMonth(changeAmount,verifiedSetting);
+                    }
+                } else if(!next && (i + amount) < 0){
+                    this.changeYear(-1, true, verifiedSetting);
+                    const changeAmount = amount + i + 1;
+                    if(changeAmount < 0){
+                        this.changeMonth(changeAmount,verifiedSetting);
+                    }
+                }
+                else {
                     this.updateMonth(i+amount, setting, next);
                 }
                 break;
@@ -286,23 +356,42 @@ export default class Year {
 
     /**
      * Changes the current or selected day forward or back one day
-     * @param {boolean} next If we are moving forward (true) or back (false) one day
+     * @param {number} amount The number of days to change, positive forward, negative backwards
      * @param {string} [setting='current'] The day property we are changing. Can be 'current' or 'selected'
      */
-    changeDay(next: boolean, setting: string = 'current'){
+    changeDay(amount: number, setting: string = 'current'){
         const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
+        const yearToUse = verifiedSetting === 'current' ? this.numericRepresentation : this.selectedYear;
+        const isLeapYear = this.leapYearRule.isLeapYear(yearToUse);
         const currentMonth = this.getMonth();
         if (currentMonth) {
-            const yearToUse = verifiedSetting === 'current' ? this.numericRepresentation : this.selectedYear;
-            const isLeapYear = this.leapYearRule.isLeapYear(yearToUse);
-            const res = currentMonth.changeDay(next, isLeapYear, verifiedSetting);
-            // If it is positive or negative we need to change the current month
-            if (res !== 0) {
-                this.changeMonth(res, verifiedSetting);
+            const next = amount > 0;
+            let currentDayNumber = 1;
+            const currentDay = currentMonth.getDay(verifiedSetting);
+            if(currentDay){
+                currentDayNumber = currentDay.numericRepresentation;
+            }
+            const lastDayOfCurrentMonth = isLeapYear? currentMonth.numberOfLeapYearDays : currentMonth.numberOfDays;
+            if(next && currentDayNumber + amount > lastDayOfCurrentMonth){
+                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayNumber}) by more days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by 1`);
+                this.changeMonth(1, verifiedSetting);
+                this.changeDay(amount - (lastDayOfCurrentMonth - currentDayNumber) - 1, verifiedSetting);
+            } else if(!next && currentDayNumber + amount < 1){
+                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayNumber}) by less days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by -1`);
+                this.changeMonth(-1, verifiedSetting);
+                this.changeDay(amount + currentDayNumber, verifiedSetting);
+            } else{
+               currentMonth.changeDay(amount, isLeapYear, verifiedSetting);
             }
         }
     }
 
+    /**
+     * Changes the passed in time type by the passed in amount
+     * @param {boolean} next If we are going forward or backwards
+     * @param {string} type The time type we are adjusting, can be hour, minute or second
+     * @param {number} [clickedAmount=1] The amount to change by
+     */
     changeTime(next: boolean, type: string, clickedAmount: number = 1){
         type = type.toLowerCase();
         const amount = next? clickedAmount : clickedAmount * -1;
@@ -317,7 +406,7 @@ export default class Year {
         }
 
         if(dayChange !== 0){
-            this.changeDay(dayChange > 0);
+            this.changeDay(dayChange);
         }
     }
 
@@ -363,7 +452,7 @@ export default class Year {
      */
     dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
-            const daysSoFar = this.dateToDays(year, targetMonth, targetDay) - 1;
+            const daysSoFar = this.dateToDays(year, targetMonth, targetDay) - 1 + this.firstWeekday;
             return (daysSoFar% this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
             return 0;
@@ -432,7 +521,7 @@ export default class Year {
      * Convert a number of seconds to year, month, day, hour, minute, seconds
      * @param {number} seconds The seconds to convert
      */
-    secondsToDate(seconds: number){
+    secondsToDate(seconds: number): DateTimeParts{
         let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
         if(sec >= this.time.secondsInMinute){
             min = Math.floor(sec / this.time.secondsInMinute);
@@ -476,19 +565,20 @@ export default class Year {
             day: day,
             hour: hour,
             minute: min,
-            second: sec
+            seconds: sec
         }
     }
 
     /**
      * Updates the year's data with passed in date information
-     * @param parsedDate
+     * @param {DateTimeParts} parsedDate Interface that contains all of the individual parts of a date and time
      */
-    updateTime(parsedDate: any){
+    updateTime(parsedDate: DateTimeParts){
+        let isLeapYear = this.leapYearRule.isLeapYear(parsedDate.year);
         this.numericRepresentation = parsedDate.year;
         this.updateMonth(parsedDate.month, 'current', true);
-        this.months[parsedDate.month].updateDay(parsedDate.day-1, this.leapYearRule.isLeapYear(parsedDate.year));
-        this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.second);
+        this.months[parsedDate.month].updateDay(parsedDate.day-1, isLeapYear);
+        this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.seconds);
     }
 
     /**
@@ -509,7 +599,7 @@ export default class Year {
                 }
                 // If the current player is the GM then we need to save this new value to the database
                 // Since the current date is updated this will trigger an update on all players as well
-                if(GameSettings.IsGm()){
+                if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
                     GameSettings.SaveCurrentDate(this).catch(Logger.error);
                 }
             }
@@ -520,7 +610,7 @@ export default class Year {
                 const parsedDate = this.secondsToDate(newTime);
                 this.updateTime(parsedDate);
                 //We need to save the change so that when the game is reloaded simple calendar will display the correct time
-                if(GameSettings.IsGm()){
+                if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
                     GameSettings.SaveCurrentDate(this).catch(Logger.error);
                 }
             } else {

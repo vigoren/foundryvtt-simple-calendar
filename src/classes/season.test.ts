@@ -49,7 +49,7 @@ describe('Season Tests', () => {
 
         c = s.toTemplate(y);
         expect(c.dayList.length).toStrictEqual(0);
-        y.months.push(new Month("Month 1", 1, 10));
+        y.months.push(new Month("Month 1", 1, 0, 10));
         c = s.toTemplate(y);
         expect(c.dayList.length).toStrictEqual(10);
     });

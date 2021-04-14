@@ -9,8 +9,8 @@ Control | Description
 ------- | -----------
 Previous/Next | Allow the user to change which month/year they are currently viewing.
 Today Button | Changes the calendar so that the current day (in the game world) is visible and selected.
-Blue Circle Day | This indicates the current day in the game world, can be changed by the GM
-Green Circle Day | This indicates the day the user currently has selected. This will show any notes on this day.
+Current Day | A blue circle indicates the current day in the game world, can be changed by the GM
+Selected Day | A green circle indicates the day the user currently has selected. This will show any notes on this day. Clicking on an all ready selected day will unselect the day.
 Red Indicator | This shows on any days that have notes that the user can see. It will show the number of notes on that day up to 99.
 Season Name | Appearing below the month and year if season are set up which season it current is will show.
 Calendar Background Color | If seasons are set up the background color of the calendar will change to match which season is being viewed.

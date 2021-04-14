@@ -200,7 +200,7 @@ export default class Time {
             const modifiedSeconds = 30 * this.gameTimeRatio;
             const dayChange = this.changeTime(0,0,modifiedSeconds);
             if(dayChange !== 0){
-                SimpleCalendar.instance.currentYear?.changeDay(dayChange > 0);
+                SimpleCalendar.instance.currentYear?.changeDay(dayChange);
             }
             SimpleCalendar.instance.currentYear?.syncTime();
 

@@ -46,8 +46,8 @@ describe('Simple Calendar Class Tests', () => {
 
 
         y = new Year(0);
-        y.months.push(new Month('M', 1, 5));
-        y.months.push(new Month('T', 2, 15));
+        y.months.push(new Month('M', 1, 0, 5));
+        y.months.push(new Month('T', 2, 0, 15));
 
         y.selectedYear = 0;
         y.visibleYear = 0;
@@ -59,26 +59,24 @@ describe('Simple Calendar Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(SimpleCalendar.instance).length).toBe(7); //Make sure no new properties have been added
+        expect(Object.keys(SimpleCalendar.instance).length).toBe(8); //Make sure no new properties have been added
     });
 
     test('Default Options', () => {
         const spy = jest.spyOn(Application, 'defaultOptions', 'get');
         const opts = SimpleCalendar.defaultOptions;
-        expect(Object.keys(opts).length).toBe(5); //Make sure no new properties have been added
+        expect(Object.keys(opts).length).toBe(4); //Make sure no new properties have been added
         expect(opts.template).toBe('modules/foundryvtt-simple-calendar/templates/calendar.html');
         expect(opts.title).toBe('FSC.Title');
         expect(opts.classes).toStrictEqual(["simple-calendar"]);
         expect(opts.resizable).toBe(true);
-        //@ts-ignore
-        expect(opts.height).toBe(475);
         expect(spy).toHaveBeenCalled()
     });
 
     test('Init', async () => {
         expect(SimpleCalendar.instance.currentYear).toBeNull();
         await SimpleCalendar.instance.init();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(2);
         expect(game.settings.register).toHaveBeenCalledTimes(12);
         expect(game.settings.get).toHaveBeenCalledTimes(11);
         expect(SimpleCalendar.instance.currentYear?.numericRepresentation).toBe(0);
@@ -91,10 +89,10 @@ describe('Simple Calendar Class Tests', () => {
         // @ts-ignore
         game.user.isGM = true;
         await SimpleCalendar.instance.init();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(8);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
         // @ts-ignore
         expect(SimpleCalendar.instance.primaryCheckTimeout).toBeDefined();
-        expect(game.socket.emit).toHaveBeenCalledTimes(1);
+        expect(game.socket.emit).toHaveBeenCalledTimes(2);
         // @ts-ignore
         game.user.isGM = false;
     });
@@ -126,13 +124,33 @@ describe('Simple Calendar Class Tests', () => {
         await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
-        // @ts-ignore
-        game.user.isGM = false;
-
         d.type = SocketTypes.primary;
+        d.data = {
+            primaryCheck: true
+        };
         await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(game.socket.emit).toHaveBeenCalledTimes(1);
+        d.data = {
+            amPrimary: true
+        };
+        await SimpleCalendar.instance.processSocket(d);
+        expect(SimpleCalendar.instance.primary).toBe(false);
+        d.data = {
+            amPrimary: false
+        };
+        SimpleCalendar.instance.primary = true;
+        await SimpleCalendar.instance.processSocket(d);
+        expect(SimpleCalendar.instance.primary).toBe(true);
 
+        d.data = {};
+        await SimpleCalendar.instance.processSocket(d);
+        expect(SimpleCalendar.instance.primary).toBe(true);
+
+        // @ts-ignore
+        game.user.isGM = false;
+        await SimpleCalendar.instance.processSocket(d);
+        expect(SimpleCalendar.instance.primary).toBe(true);
         //@ts-ignore
         d.type = 'asd';
         await SimpleCalendar.instance.processSocket(d);
@@ -152,6 +170,7 @@ describe('Simple Calendar Class Tests', () => {
                     "second": "00"
                 },
                 "display": "0",
+                "firstWeekday": 0,
                 "numericRepresentation": 0,
                 "selectedDisplayDay": "",
                 "selectedDisplayMonth": "",
@@ -161,10 +180,10 @@ describe('Simple Calendar Class Tests', () => {
                 "showTimeControls": false,
                 "showWeekdayHeaders": true,
                 "visibleMonth": undefined,
-                "visibleMonthWeekOffset": [],
                 "weekdays": [],
                 "currentSeasonColor": "",
-                "currentSeasonName": ""
+                "currentSeasonName": "",
+                "weeks": []
             },
             "showCurrentDay": false,
             "showSelectedDay": false,
@@ -203,105 +222,6 @@ describe('Simple Calendar Class Tests', () => {
         expect(controls[1].tools.length).toBe(1);
     });
 
-    test('Macro Show', () => {
-        SimpleCalendar.instance.macroShow();
-        expect(renderSpy).toHaveBeenCalledTimes(0);
-        expect(console.error).toHaveBeenCalledTimes(1);
-
-        SimpleCalendar.instance.currentYear = y;
-        SimpleCalendar.instance.macroShow();
-        expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect(console.error).toHaveBeenCalledTimes(1);
-
-        //@ts-ignore
-        SimpleCalendar.instance.macroShow('abc');
-        expect(y.visibleYear).toBe(0);
-        expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect(console.error).toHaveBeenCalledTimes(2);
-
-        SimpleCalendar.instance.macroShow(1);
-        expect(y.visibleYear).toBe(1);
-        expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(console.error).toHaveBeenCalledTimes(2);
-
-        //@ts-ignore
-        SimpleCalendar.instance.macroShow(1, 'abc');
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(4);
-        expect(console.error).toHaveBeenCalledTimes(3);
-
-        SimpleCalendar.instance.macroShow(1, 1);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(false);
-        expect(y.months[1].visible).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(5);
-        expect(console.error).toHaveBeenCalledTimes(3);
-
-        y.months[0].visible = true;
-        y.months[1].visible = false;
-        SimpleCalendar.instance.macroShow(1, -1);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(false);
-        expect(y.months[1].visible).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(6);
-        expect(console.error).toHaveBeenCalledTimes(3);
-
-        //@ts-ignore
-        SimpleCalendar.instance.macroShow(1, 0, 'asd');
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[0].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(7);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        SimpleCalendar.instance.macroShow(1, 0, 0);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[0].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(8);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        SimpleCalendar.instance.macroShow(4, 0, 2);
-        expect(y.visibleYear).toBe(4);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[1].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(9);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        SimpleCalendar.instance.macroShow(1, 0, -1);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[4].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(10);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        y.months[0].visible = false;
-        SimpleCalendar.instance.macroShow(1, null, 1);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(false);
-        expect(y.months[0].days[0].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(11);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        y.months[0].current = false;
-        SimpleCalendar.instance.macroShow(1, null, 2);
-        expect(y.visibleYear).toBe(1);
-        expect(y.months[0].visible).toBe(false);
-        expect(y.months[0].days[0].selected).toBe(true);
-        expect(y.months[0].days[1].selected).toBe(false);
-        expect(renderSpy).toHaveBeenCalledTimes(12);
-        expect(console.error).toHaveBeenCalledTimes(4);
-
-        y.leapYearRule.rule = LeapYearRules.Gregorian;
-        SimpleCalendar.instance.macroShow(4, 0, 2);
-        expect(y.visibleYear).toBe(4);
-        expect(y.months[0].visible).toBe(true);
-        expect(y.months[0].days[1].selected).toBe(true);
-        expect(renderSpy).toHaveBeenCalledTimes(13);
-        expect(console.error).toHaveBeenCalledTimes(4);
-    });
-
     test('Show App', () => {
         SimpleCalendar.instance.showApp();
         expect(renderSpy).toHaveBeenCalled();
@@ -316,6 +236,85 @@ describe('Simple Calendar Class Tests', () => {
         //expect(console.error).toHaveBeenCalledTimes(1);
     });
 
+    test('On Resize', () => {
+        expect(SimpleCalendar.instance.hasBeenResized).toBe(false);
+        //@ts-ignore
+        SimpleCalendar.instance._onResize(new Event('click'));
+        expect(SimpleCalendar.instance.hasBeenResized).toBe(true);
+    });
+
+    test('Set Width Height', () => {
+        const setPosSpy = jest.spyOn(SimpleCalendar.instance, 'setPosition');
+        const fakeQuery = {
+            find: jest.fn().mockReturnValue(false)
+        };
+        //@ts-ignore
+        SimpleCalendar.instance.setWidthHeight(fakeQuery);
+        expect(setPosSpy).toHaveBeenCalledTimes(1);
+
+        fakeQuery.find = jest.fn()
+            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+        //@ts-ignore
+        SimpleCalendar.instance.setWidthHeight(fakeQuery);
+        expect(setPosSpy).toHaveBeenCalledTimes(2);
+
+        fakeQuery.find = jest.fn()
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(300), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(300)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(25), outerWidth: jest.fn().mockReturnValue(250)});
+        //@ts-ignore
+        SimpleCalendar.instance.setWidthHeight(fakeQuery);
+        expect(setPosSpy).toHaveBeenCalledTimes(3);
+
+        SimpleCalendar.instance.hasBeenResized = true;
+        //@ts-ignore
+        SimpleCalendar.instance.setWidthHeight(fakeQuery);
+        expect(setPosSpy).toHaveBeenCalledTimes(3);
+    });
+
+    test('Ensure Current Date Is Visible', () => {
+        const fakeQuery = {
+            find: jest.fn().mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(false)}).mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(200)})
+        };
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(2);
+
+        fakeQuery.find = jest.fn()
+            .mockReturnValue({
+                outerHeight: jest.fn().mockReturnValue(550),
+                0: {
+                    getBoundingClientRect: jest.fn().mockReturnValue({top: 0, left: 0, bottom: 1000, right: 1000}),
+                    scrollTop: 0
+                },
+                find: jest.fn()
+                    .mockReturnValueOnce({length:0}).mockReturnValueOnce({length:0})
+                    .mockReturnValueOnce({length:0}).mockReturnValueOnce({length:1, 0: { getBoundingClientRect: jest.fn().mockReturnValue({top: 0, left: 0, bottom: 200, right: 200}) }})
+                    .mockReturnValueOnce({length:1, 0: { getBoundingClientRect: jest.fn().mockReturnValue({top: -50, left: 0, bottom: 200, right: 200}) }}).mockReturnValueOnce({length:0})
+            })
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(2);
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(3);
+    });
+
     test('Activate Listeners', () => {
         const elm1 = document.createElement('a');
         elm1.classList.add('fa-chevron-left');
@@ -324,7 +323,14 @@ describe('Simple Calendar Class Tests', () => {
         const onFunc = jest.fn();
 
         const fakeQuery = {
-            find: jest.fn().mockReturnValueOnce([elm1, elm2, document.createElement('a')]).mockReturnValue({on: onFunc})
+            find: jest.fn()
+                .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+                .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+                .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+                .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+                .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(false)})
+                .mockReturnValueOnce([elm1, elm2, document.createElement('a')])
+                .mockReturnValue({on: onFunc})
         };
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
@@ -334,8 +340,22 @@ describe('Simple Calendar Class Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(11);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(16);
         expect(onFunc).toHaveBeenCalledTimes(10);
+
+        fakeQuery.find = jest.fn()
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(25), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(25), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(false)})
+            .mockReturnValueOnce([elm1, elm2, document.createElement('a')])
+            .mockReturnValue({on: onFunc});
+
+        //@ts-ignore
+        SimpleCalendar.instance.activateListeners(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(16);
+        expect(onFunc).toHaveBeenCalledTimes(20);
     });
 
     test('View Previous Month', () => {
@@ -361,7 +381,7 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.dayClick(event);
         expect(console.error).toHaveBeenCalledTimes(1);
         expect(renderSpy).not.toHaveBeenCalled();
-        (<HTMLElement>event.target).setAttribute('data-day', '0');
+        (<HTMLElement>event.target).setAttribute('data-day', '-1');
         SimpleCalendar.instance.dayClick(event);
         expect(console.error).toHaveBeenCalledTimes(2);
         expect(renderSpy).not.toHaveBeenCalled();
@@ -374,7 +394,7 @@ describe('Simple Calendar Class Tests', () => {
         (<HTMLElement>event.target).setAttribute('data-day', '1');
         SimpleCalendar.instance.dayClick(event);
         expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect(SimpleCalendar.instance.currentYear.months[0].days[1].selected).toBe(true);
+        expect(SimpleCalendar.instance.currentYear.months[0].days[1].selected).toBe(false);
         expect(SimpleCalendar.instance.currentYear.months[0].days[0].selected).toBe(true);
 
         SimpleCalendar.instance.currentYear.months[0].selected = false;
@@ -383,12 +403,16 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.currentYear.months[0].days = [SimpleCalendar.instance.currentYear.months[0].days[0],SimpleCalendar.instance.currentYear.months[0].days[1]];
         SimpleCalendar.instance.dayClick(event);
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(SimpleCalendar.instance.currentYear.months[0].days[1].selected).toBe(true);
+        expect(SimpleCalendar.instance.currentYear.months[0].days[1].selected).toBe(false);
         expect(SimpleCalendar.instance.currentYear.months[0].days[0].selected).toBe(false);
 
         SimpleCalendar.instance.currentYear.months[0].visible = false;
         SimpleCalendar.instance.dayClick(event);
         expect(renderSpy).toHaveBeenCalledTimes(4);
+
+        (<HTMLElement>event.target).classList.add('selected');
+        SimpleCalendar.instance.dayClick(event);
+        expect(renderSpy).toHaveBeenCalledTimes(5);
     });
 
     test('Today Click', () => {

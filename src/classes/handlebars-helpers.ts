@@ -10,37 +10,8 @@ export default class HandlebarsHelpers{
      * Registers the helper functions with Handlebars
      */
     static Register(){
-        Handlebars.registerHelper("calendar-width", HandlebarsHelpers.CalendarWidth);
-        Handlebars.registerHelper("calendar-row-width", HandlebarsHelpers.CalendarRowWidth);
         Handlebars.registerHelper("day-has-note", HandlebarsHelpers.DayHasNotes);
         Handlebars.registerHelper("day-moon-phase", HandlebarsHelpers.DayMoonPhase);
-    }
-
-    /**
-     * Determines what the width of the calendar should be based on how many days in a week
-     * @return {string}
-     */
-    static CalendarWidth(){
-        if(SimpleCalendar.instance.currentYear){
-            let width = (SimpleCalendar.instance.currentYear.weekdays.length * 40) + 12;
-            return `width:${width}px;`;
-        }
-        return '';
-    }
-
-    /**
-     * For the GM sets the width of the row that contains the calendar and the date update tools
-     * @return {string}
-     */
-    static CalendarRowWidth(){
-        if(GameSettings.IsGm() && SimpleCalendar.instance.currentYear){
-            let width = (SimpleCalendar.instance.currentYear.weekdays.length * 40) + 12;
-            if(SimpleCalendar.instance.currentYear.generalSettings.showClock && width < 250){
-                width = 250;
-            }
-            return `width:${width+300}px;`;
-        }
-        return '';
     }
 
     /**
