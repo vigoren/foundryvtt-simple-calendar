@@ -7,6 +7,7 @@ import "../../__mocks__/application";
 import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/dialog";
+import "../../__mocks__/hooks";
 
 import Year from "./year";
 import Month from "./month";
@@ -16,11 +17,13 @@ import {Weekday} from "./weekday";
 import Mock = jest.Mock;
 import Season from "./season";
 import Moon from "./moon";
+import SimpleCalendar from "./simple-calendar";
 
 describe('Importer Class Tests', () => {
     let y: Year;
 
     beforeEach(() => {
+        SimpleCalendar.instance = new SimpleCalendar();
         y = new Year(0);
         y.months.push(new Month('M', 1, 0, 5));
         y.months.push(new Month('T', 2, 0, 15));
@@ -29,6 +32,7 @@ describe('Importer Class Tests', () => {
         y.weekdays.push(new Weekday(1, 'S'));
         y.seasons.push(new Season('S', 1, 1));
         y.moons.push(new Moon('M', 1));
+        SimpleCalendar.instance.currentYear = y;
         // @ts-ignore
         game.user.isGM = true;
     });

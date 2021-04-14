@@ -8,6 +8,7 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 import "../../__mocks__/dialog";
+import "../../__mocks__/hooks";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
@@ -605,6 +606,7 @@ describe('Year Class Tests', () => {
         //@ts-ignore
         game.user.isGM = true;
         SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.currentYear = year;
         SimpleCalendar.instance.primary = true;
         year.setFromTime(120, 60);
         expect(year.time.seconds).toBe(120);

@@ -396,15 +396,18 @@ export default class SimpleCalendar extends Application{
         const dataDate = target.getAttribute('data-day');
         if(dataDate){
             const dayNumber = parseInt(dataDate);
+            const isSelected = target.classList.contains('selected');
             if(this.currentYear && dayNumber > -1){
                 this.currentYear.resetMonths('selected');
-                const visibleMonth = this.currentYear.getMonth('visible');
-                if(visibleMonth){
-                    const dayIndex = visibleMonth.days.findIndex(d => d.numericRepresentation === dayNumber);
-                    if(dayIndex > -1){
-                        visibleMonth.selected = true;
-                        visibleMonth.days[dayIndex].selected = true;
-                        this.currentYear.selectedYear = this.currentYear.visibleYear;
+                if(!isSelected){
+                    const visibleMonth = this.currentYear.getMonth('visible');
+                    if(visibleMonth){
+                        const dayIndex = visibleMonth.days.findIndex(d => d.numericRepresentation === dayNumber);
+                        if(dayIndex > -1){
+                            visibleMonth.selected = true;
+                            visibleMonth.days[dayIndex].selected = true;
+                            this.currentYear.selectedYear = this.currentYear.visibleYear;
+                        }
                     }
                 }
                 this.updateApp();

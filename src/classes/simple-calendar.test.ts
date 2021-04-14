@@ -409,6 +409,10 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.currentYear.months[0].visible = false;
         SimpleCalendar.instance.dayClick(event);
         expect(renderSpy).toHaveBeenCalledTimes(4);
+
+        (<HTMLElement>event.target).classList.add('selected');
+        SimpleCalendar.instance.dayClick(event);
+        expect(renderSpy).toHaveBeenCalledTimes(5);
     });
 
     test('Today Click', () => {

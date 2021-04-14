@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.2.19 - Macros, Hooks, Bug Fixes and QoL Improvements
+## v1.2.20 - Macros, Hooks, Bug Fixes and QoL Improvements
 
 ### Macros
 
@@ -24,6 +24,7 @@ Simple Calendar will now emit certain hooks that other modules/code can listen f
 - For calendars that have months with many days (example the traveller calendar) the calendar now has a maximum height of 500px. The list of days will become scrollable. For Current days or selected days the calendar will attempt to keep them in view when it makes sense (selecting a new day).
 - Added the ability to specify the starting day of the week for the first day of year 0. This helps align your calendar with official calendars.
 - Updated the pre-defined calendars to have their starting day of the week set so that they match with official calendars.
+- There was no way to unselect a day so now if a selected day is clicked again it will become unselected.
 
 ### Bug Fixes
 

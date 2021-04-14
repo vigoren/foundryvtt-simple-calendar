@@ -102,7 +102,7 @@ describe('Game Settings Class Tests', () => {
         (<Mock>game.settings.get).mockReturnValueOnce([]);
         expect(GameSettings.LoadMonthData()).toStrictEqual([]);
         (<Mock>game.settings.get).mockReturnValueOnce([false]);
-        expect(GameSettings.LoadMonthData()).toStrictEqual([]);
+        expect(GameSettings.LoadMonthData()).toStrictEqual([false]);
     });
 
     test('Load Weekday Data', () => {
@@ -113,7 +113,7 @@ describe('Game Settings Class Tests', () => {
         (<Mock>game.settings.get).mockReturnValueOnce([]);
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
         (<Mock>game.settings.get).mockReturnValueOnce([false]);
-        expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
+        expect(GameSettings.LoadWeekdayData()).toStrictEqual([false]);
     });
 
     test('Load Season Data', () => {
@@ -124,7 +124,7 @@ describe('Game Settings Class Tests', () => {
         (<Mock>game.settings.get).mockReturnValueOnce([]);
         expect(GameSettings.LoadSeasonData()).toStrictEqual([]);
         (<Mock>game.settings.get).mockReturnValueOnce([false]);
-        expect(GameSettings.LoadSeasonData()).toStrictEqual([]);
+        expect(GameSettings.LoadSeasonData()).toStrictEqual([false]);
     });
 
     test('Load Moon Data', () => {
@@ -135,7 +135,7 @@ describe('Game Settings Class Tests', () => {
         (<Mock>game.settings.get).mockReturnValueOnce([]);
         expect(GameSettings.LoadMoonData()).toStrictEqual([]);
         (<Mock>game.settings.get).mockReturnValueOnce([false]);
-        expect(GameSettings.LoadMoonData()).toStrictEqual([]);
+        expect(GameSettings.LoadMoonData()).toStrictEqual([false]);
     });
 
     test('Load Leap Year Rule', () => {
@@ -156,7 +156,7 @@ describe('Game Settings Class Tests', () => {
         (<Mock>game.settings.get).mockReturnValueOnce([]);
         expect(GameSettings.LoadNotes()).toStrictEqual([]);
         (<Mock>game.settings.get).mockReturnValueOnce([false]);
-        expect(GameSettings.LoadNotes()).toStrictEqual([]);
+        expect(GameSettings.LoadNotes()).toStrictEqual([false]);
     });
 
     test('Set Import Ran', async () => {
