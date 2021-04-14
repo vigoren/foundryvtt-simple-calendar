@@ -1,4 +1,5 @@
-[![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/master/src/module.json&label=Foundry&query=$.compatibleCoreVersion&colorB=orange)](https://foundryvtt.com/releases/)
+[![Foundry Core Minimum Version](https://img.shields.io/badge/dynamic/json.svg?url=https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/master/src/module.json&label=Foundry%20Minimum%20Version&query=$.minimumCoreVersion&colorB=orange)](https://foundryvtt.com/releases/)
+[![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/master/src/module.json&label=Foundry%20Compatible%20Version&query=$.compatibleCoreVersion&colorB=orange)](https://foundryvtt.com/releases/)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/vigoren/foundryvtt-simple-calendar)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vigoren/foundryvtt-simple-calendar/Node.js%20CI)
@@ -38,7 +39,7 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 * Add notes to specific days on the calendar to remind yourself of events or other world related things.
   * These notes can either be visible to players as well as the GM or just the GM.
 
-![GM View of Calendar](./docs/images/gm-screenshot-1.png)
+![GM View of Calendar](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-1.png)
 
 ### For Players
 
@@ -47,7 +48,7 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 * Select days to view any notes/events specific to that day.
 * If the GM allows it, the ability to add their own notes to the calendar.
 
-![Player View of Calendar](./docs/images/player.gif)
+![Player View of Calendar](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player.gif)
 
 ## Contents
 
@@ -58,6 +59,7 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 - [Notes](./docs/Notes.md)
 - [Configuring your Calendar](./docs/Configuration.md)
 - [Macros](./docs/Macros.md)
+- [Hooks](./docs/Hooks.md)
 
 ## Installing The Module
 

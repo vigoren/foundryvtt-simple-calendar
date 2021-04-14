@@ -57,6 +57,8 @@ export interface YearTemplate {
     /** The days of the week */
     weekdays: WeekdayTemplate[];
 
+    firstWeekday: number;
+
     showClock: boolean;
 
     clockClass: string;
@@ -82,6 +84,7 @@ export interface YearConfig {
     prefix: string;
     postfix: string;
     showWeekdayHeadings: boolean;
+    firstWeekday: number;
 }
 
 /**

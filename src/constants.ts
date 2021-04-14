@@ -106,3 +106,7 @@ export enum MoonYearResetOptions {
     LeapYear = 'leap-year',
     XYears = 'x-years'
 }
+
+export enum SimpleCalendarHooks {
+    DateTimeChange = 'simple-calendar-date-time-change'
+}

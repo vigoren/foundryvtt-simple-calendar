@@ -51,6 +51,11 @@ export default class Year {
      */
     showWeekdayHeadings: boolean = true;
     /**
+     * The day of the week the first day of year 0 falls on
+     * @type {number}
+     */
+    firstWeekday: number = 0;
+    /**
      * The leap year rules for the calendar
      * @type {LeapYear}
      */
@@ -139,6 +144,7 @@ export default class Year {
             numericRepresentation: this.numericRepresentation,
             weekdays: this.weekdays.map(w => w.toTemplate()),
             showWeekdayHeaders: this.showWeekdayHeadings,
+            firstWeekday: this.firstWeekday,
             visibleMonth: visibleMonth?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
             showClock: this.generalSettings.showClock,
             clockClass: this.time.getClockClass(),
@@ -212,6 +218,7 @@ export default class Year {
         y.leapYearRule.rule = this.leapYearRule.rule;
         y.leapYearRule.customMod = this.leapYearRule.customMod;
         y.showWeekdayHeadings = this.showWeekdayHeadings;
+        y.firstWeekday = this.firstWeekday;
         y.time = this.time.clone();
         y.generalSettings.gameWorldTimeIntegration = this.generalSettings.gameWorldTimeIntegration;
         y.generalSettings.showClock = this.generalSettings.showClock;
@@ -445,7 +452,7 @@ export default class Year {
      */
     dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
-            const daysSoFar = this.dateToDays(year, targetMonth, targetDay) - 1;
+            const daysSoFar = this.dateToDays(year, targetMonth, targetDay) - 1 + this.firstWeekday;
             return (daysSoFar% this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
             return 0;

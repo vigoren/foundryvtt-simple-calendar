@@ -131,7 +131,7 @@ export default class Macros {
                 Logger.error('The current year is not defined, can not use macro');
             }
         } else {
-            GameSettings.UiNotification('Only the GM can update the calendar date!', 'warn');
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
         }
     }
 
@@ -182,7 +182,7 @@ export default class Macros {
                 Logger.error('The current year is not defined, can not use macro');
             }
         } else {
-            GameSettings.UiNotification('Only the GM can update the calendar date!', 'warn');
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
         }
     }
 }

@@ -241,6 +241,17 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Weekday.ShowHeadingsHelp'}}</p>
                 </div>
+                <div class="form-group">
+                    <label for="scWeekdayFirstDay">{{localize 'FSC.Configuration.Weekday.FirstWeekDay'}}</label>
+                    <div class="form-fields">
+                        <select class="moon-year-reset" id="scWeekdayFirstDay">
+                            {{#each weekdays}}
+                            <option value="{{@index}}" {{#if (eq @index ../currentYear.firstWeekday)}}selected="selected"{{/if}}>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Weekday.FirstWeekDayHelp'}}</p>
+                </div>
             </div>
             <div class="settings-group">
                 <h2>{{localize 'FSC.Configuration.Weekdays'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#weekday-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>

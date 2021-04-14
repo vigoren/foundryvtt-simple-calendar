@@ -49,7 +49,7 @@ const game = {
                 case SettingNames.ImportRan:
                     return false;
                 case SettingNames.YearConfiguration:
-                    return {numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true};
+                    return {numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0};
                 case SettingNames.MonthConfiguration:
                     return [[{name: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false}]];
                 case SettingNames.WeekdayConfiguration:

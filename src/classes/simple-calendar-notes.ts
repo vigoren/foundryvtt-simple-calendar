@@ -200,7 +200,7 @@ export class SimpleCalendarNotes extends FormApplication {
      * Shows the application window
      */
     public showApp(){
-        this.render(true, {width: 500, height: 500});
+        this.render(true);
     }
 
     /**

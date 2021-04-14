@@ -26,7 +26,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * If the year has changed
      * @private
      */
-    private yearChanged = false;
+    private yearChanged: boolean = false;
 
     private generalSettings = {
         defaultPlayerNoteVisibility: true
@@ -78,7 +78,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * @private
      */
     private updateApp(){
-        this.render(false, {width: 500, height: 500});
+        this.render(false);
     }
 
     /**
@@ -188,7 +188,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public activateListeners(html: JQuery<HTMLElement>) {
         super.activateListeners(html);
         if(html.hasOwnProperty("length")) {
-
             //Month advanced click
             (<JQuery>html).find(".month-show-advanced").on('click', SimpleCalendarConfiguration.instance.inputChange.bind(this));
 
@@ -224,6 +223,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".year-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".month-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".weekday-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+            (<JQuery>html).find(".weekday-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".leapyear-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".leapyear-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".time-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
@@ -424,6 +424,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Month(GameSettings.Localize("FSC.Date.December"), 12, 0, 31),
                 ];
                 (<Year>this.object).showWeekdayHeadings = true;
+                (<Year>this.object).firstWeekday = 0;
                 (<Year>this.object).weekdays = [
                     new Weekday(1, GameSettings.Localize('FSC.Date.Sunday')),
                     new Weekday(2, GameSettings.Localize('FSC.Date.Monday')),
@@ -490,6 +491,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Month('Vult', 12, 0, 28)
                 ];
                 (<Year>this.object).showWeekdayHeadings = true;
+                (<Year>this.object).firstWeekday = 0;
                 (<Year>this.object).weekdays = [
                     new Weekday(1, 'Sul'),
                     new Weekday(2, 'Mol'),
@@ -528,13 +530,15 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Month('Duscar', 11, 0, 32)
                 ];
                 (<Year>this.object).showWeekdayHeadings = true;
+                (<Year>this.object).firstWeekday = 3;
                 (<Year>this.object).weekdays = [
-                    new Weekday(1, 'Grissen'),
-                    new Weekday(2, 'Whelsen'),
-                    new Weekday(3, 'Conthsen'),
-                    new Weekday(4, 'Folsen'),
-                    new Weekday(5, 'Yulisen'),
-                    new Weekday(6, 'Da\'leysen')
+                    new Weekday(1, 'Miresen'),
+                    new Weekday(2, 'Grissen'),
+                    new Weekday(3, 'Whelsen'),
+                    new Weekday(4, 'Conthsen'),
+                    new Weekday(5, 'Folsen'),
+                    new Weekday(6, 'Yulisen'),
+                    new Weekday(7, 'Da\'leysen')
                 ];
                 (<Year>this.object).seasons = [
                     new Season('Spring', 3, 13),
@@ -609,6 +613,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Month('Kuthona', 12, 0, 31)
                 ];
                 (<Year>this.object).showWeekdayHeadings = true;
+                (<Year>this.object).firstWeekday = 6;
                 (<Year>this.object).weekdays = [
                     new Weekday(1, 'Moonday'),
                     new Weekday(2, 'Toilday'),
@@ -683,6 +688,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).months[8].intercalary = true;
                 (<Year>this.object).months[12].intercalary = true;
                 (<Year>this.object).showWeekdayHeadings = true;
+                (<Year>this.object).firstWeekday = 0;
                 (<Year>this.object).weekdays = [
                     new Weekday(1, 'Starday'),
                     new Weekday(2, 'Sunday'),
@@ -779,6 +785,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).months[13].intercalary = true;
                 (<Year>this.object).months[16].intercalary = true;
                 (<Year>this.object).showWeekdayHeadings = false;
+                (<Year>this.object).firstWeekday = 0;
                 (<Year>this.object).weekdays = [
                     new Weekday(1, '1st'),
                     new Weekday(2, '2nd'),
@@ -839,6 +846,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 ];
                 (<Year>this.object).months[0].intercalary = true;
                 (<Year>this.object).showWeekdayHeadings = true;
+                (<Year>this.object).firstWeekday = 0;
                 (<Year>this.object).weekdays = [
                     new Weekday(1, 'Wonday'),
                     new Weekday(2, 'Tuday'),
@@ -890,6 +898,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).months[12].intercalary = true;
                 (<Year>this.object).months[16].intercalary = true;
                 (<Year>this.object).showWeekdayHeadings = true;
+                (<Year>this.object).firstWeekday = 0;
                 (<Year>this.object).weekdays = [
                     new Weekday(1, 'Wellentag'),
                     new Weekday(2, 'Aubentag'),
@@ -985,6 +994,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
             //Weekday Setting Inputs
             else if(id === 'scShowWeekdayHeaders'){
                 (<Year>this.object).showWeekdayHeadings = checked;
+            }
+            else if(id === 'scWeekdayFirstDay'){
+                const weekdayIndex = parseInt(value);
+                if(!isNaN(weekdayIndex)){
+                    (<Year>this.object).firstWeekday = weekdayIndex;
+                }
             }
             //Leap Year Setting Inputs
             else if(id === 'scLeapYearRule'){

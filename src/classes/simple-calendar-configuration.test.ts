@@ -134,8 +134,8 @@ describe('Simple Calendar Configuration Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendarConfiguration.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(27);
-        expect(onFunc).toHaveBeenCalledTimes(27);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(28);
+        expect(onFunc).toHaveBeenCalledTimes(28);
     });
 
     test('Rebase Month Numbers', () => {
@@ -437,7 +437,7 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.predefinedApplyConfirm();
         expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(812);
         expect((<Year>SimpleCalendarConfiguration.instance.object).months.length).toBe(11);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(6);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(7);
         expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule).toBe(LeapYearRules.None);
 
         select.value = 'golarian';
@@ -690,6 +690,17 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLInputElement>event.currentTarget).checked = false;
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).showWeekdayHeadings).toBe(false);
+    });
+
+    test('Weekday First Day Change', () => {
+        const event = new Event('change');
+        (<HTMLInputElement>event.currentTarget).id = 'scWeekdayFirstDay';
+        (<HTMLInputElement>event.currentTarget).value = 'asd';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).firstWeekday).toBe(0);
+        (<HTMLInputElement>event.currentTarget).value = '1';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).firstWeekday).toBe(1);
     });
 
     test('Weekday Input Change', () => {

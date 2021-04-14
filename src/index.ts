@@ -1,6 +1,7 @@
 import SimpleCalendar from "./classes/simple-calendar";
 import Macros from "./classes/macros";
 import {Logger} from "./classes/logging";
+import {SimpleCalendarHooks} from "./constants";
 SimpleCalendar.instance = new SimpleCalendar();
 Hooks.on('ready', () => {
     //Initialize the Simple Calendar
@@ -10,7 +11,8 @@ Hooks.on('ready', () => {
     (window as any).SimpleCalendar = {
         show: Macros.show,
         setDateTime: Macros.setDateTime,
-        changeDateTime: Macros.changeDateTime
+        changeDateTime: Macros.changeDateTime,
+        Hooks: SimpleCalendarHooks
     };
 });
 Hooks.on('getSceneControlButtons', SimpleCalendar.instance.getSceneControlButtons);

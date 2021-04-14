@@ -170,6 +170,7 @@ describe('Simple Calendar Class Tests', () => {
                     "second": "00"
                 },
                 "display": "0",
+                "firstWeekday": 0,
                 "numericRepresentation": 0,
                 "selectedDisplayDay": "",
                 "selectedDisplayMonth": "",
@@ -275,6 +276,45 @@ describe('Simple Calendar Class Tests', () => {
         expect(setPosSpy).toHaveBeenCalledTimes(3);
     });
 
+    test('Ensure Current Date Is Visible', () => {
+        const fakeQuery = {
+            find: jest.fn().mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(false)}).mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(200)})
+        };
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(2);
+
+        fakeQuery.find = jest.fn()
+            .mockReturnValue({
+                outerHeight: jest.fn().mockReturnValue(550),
+                0: {
+                    getBoundingClientRect: jest.fn().mockReturnValue({top: 0, left: 0, bottom: 1000, right: 1000}),
+                    scrollTop: 0
+                },
+                find: jest.fn()
+                    .mockReturnValueOnce({length:0}).mockReturnValueOnce({length:0})
+                    .mockReturnValueOnce({length:0}).mockReturnValueOnce({length:1, 0: { getBoundingClientRect: jest.fn().mockReturnValue({top: 0, left: 0, bottom: 200, right: 200}) }})
+                    .mockReturnValueOnce({length:1, 0: { getBoundingClientRect: jest.fn().mockReturnValue({top: -50, left: 0, bottom: 200, right: 200}) }}).mockReturnValueOnce({length:0})
+            })
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(2);
+
+        //@ts-ignore
+        SimpleCalendar.instance.ensureCurrentDateIsVisible(fakeQuery);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(3);
+    });
+
     test('Activate Listeners', () => {
         const elm1 = document.createElement('a');
         elm1.classList.add('fa-chevron-left');
@@ -288,6 +328,7 @@ describe('Simple Calendar Class Tests', () => {
                 .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
                 .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
                 .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+                .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(false)})
                 .mockReturnValueOnce([elm1, elm2, document.createElement('a')])
                 .mockReturnValue({on: onFunc})
         };
@@ -299,7 +340,7 @@ describe('Simple Calendar Class Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(15);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(16);
         expect(onFunc).toHaveBeenCalledTimes(10);
 
         fakeQuery.find = jest.fn()
@@ -307,12 +348,13 @@ describe('Simple Calendar Class Tests', () => {
             .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(25), outerWidth: jest.fn().mockReturnValue(250)})
             .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
             .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(25), outerWidth: jest.fn().mockReturnValue(250)})
+            .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(false)})
             .mockReturnValueOnce([elm1, elm2, document.createElement('a')])
             .mockReturnValue({on: onFunc});
 
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(15);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(16);
         expect(onFunc).toHaveBeenCalledTimes(20);
     });
 

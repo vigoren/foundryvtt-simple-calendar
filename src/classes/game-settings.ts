@@ -2,14 +2,18 @@ import Year from "./year";
 import {Logger} from "./logging";
 import {
     CurrentDateConfig,
-    MonthConfig,
-    WeekdayConfig,
-    YearConfig,
-    NoteConfig,
+    GeneralSettings,
     LeapYearConfig,
-    TimeConfig, GeneralSettings, SimpleCalendarSocket, SeasonConfiguration, MoonConfiguration
+    MonthConfig,
+    MoonConfiguration,
+    NoteConfig,
+    SeasonConfiguration,
+    SimpleCalendarSocket,
+    TimeConfig,
+    WeekdayConfig,
+    YearConfig
 } from "../interfaces";
-import {ModuleName, ModuleSocketName, SettingNames, SocketTypes} from "../constants";
+import {ModuleName, ModuleSocketName, SettingNames, SimpleCalendarHooks, SocketTypes} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import {Weekday} from "./weekday";
@@ -18,6 +22,7 @@ import LeapYear from "./leap-year";
 import Time from "./time";
 import Season from "./season";
 import Moon from "./moon";
+import Hook from "./hook";
 
 export class GameSettings {
     /**
@@ -196,6 +201,8 @@ export class GameSettings {
         if(monthData && monthData.length) {
             if (Array.isArray(monthData[0])) {
                 returnData = <MonthConfig[]>monthData[0];
+            } else {
+                returnData = <MonthConfig[]>monthData;
             }
         }
         return returnData;
@@ -211,6 +218,8 @@ export class GameSettings {
         if(weekdayData && weekdayData.length) {
             if (Array.isArray(weekdayData[0])) {
                 returnData = <WeekdayConfig[]>weekdayData[0];
+            } else {
+                returnData = <WeekdayConfig[]>weekdayData;
             }
         }
         return returnData;
@@ -226,6 +235,8 @@ export class GameSettings {
         if(seasonData && seasonData.length) {
             if (Array.isArray(seasonData[0])) {
                 returnData = <SeasonConfiguration[]>seasonData[0];
+            } else {
+                returnData = <SeasonConfiguration[]>seasonData;
             }
         }
         return returnData;
@@ -241,6 +252,8 @@ export class GameSettings {
         if(moonData && moonData.length) {
             if (Array.isArray(moonData[0])) {
                 returnData = <MoonConfiguration[]>moonData[0];
+            } else {
+                returnData = <MoonConfiguration[]>moonData;
             }
         }
         return returnData;
@@ -271,6 +284,8 @@ export class GameSettings {
         if(notes && notes.length) {
             if (Array.isArray(notes[0])) {
                 returnData = <NoteConfig[]>notes[0];
+            } else {
+                returnData = <NoteConfig[]>notes;
             }
         }
         return returnData;
@@ -309,7 +324,7 @@ export class GameSettings {
      * Saves the current date to the world settings
      * @param {Year} year The year that has the current date
      */
-    static async SaveCurrentDate(year: Year){
+    static async SaveCurrentDate(year: Year): Promise<boolean>{
         if(game.user && game.user.isGM){
             Logger.debug(`Saving current date.`);
             const currentMonth = year.getMonth();
@@ -324,7 +339,9 @@ export class GameSettings {
                         seconds: year.time.seconds
                     };
                     if(currentDate.year !== newDate.year || currentDate.month !== newDate.month || currentDate.day !== newDate.day || currentDate.seconds !== newDate.seconds){
-                        return game.settings.set(ModuleName, SettingNames.CurrentDate, newDate);
+                        await game.settings.set(ModuleName, SettingNames.CurrentDate, newDate);
+                        Hook.emit(SimpleCalendarHooks.DateTimeChange);
+                        return true;
                     } else {
                         Logger.debug('Current Date data has not changed, not updating settings');
                     }
@@ -355,9 +372,10 @@ export class GameSettings {
                 numericRepresentation: year.numericRepresentation,
                 prefix: year.prefix,
                 postfix: year.postfix,
-                showWeekdayHeadings: year.showWeekdayHeadings
+                showWeekdayHeadings: year.showWeekdayHeadings,
+                firstWeekday: year.firstWeekday
             };
-            if(currentYearConfig.numericRepresentation !== yc.numericRepresentation || currentYearConfig.prefix !== yc.prefix || currentYearConfig.postfix !== yc.postfix || currentYearConfig.showWeekdayHeadings !== yc.showWeekdayHeadings){
+            if(currentYearConfig.numericRepresentation !== yc.numericRepresentation || currentYearConfig.prefix !== yc.prefix || currentYearConfig.postfix !== yc.postfix || currentYearConfig.showWeekdayHeadings !== yc.showWeekdayHeadings || currentYearConfig.firstWeekday !== yc.firstWeekday){
                 return game.settings.set(ModuleName, SettingNames.YearConfiguration, yc).then(() => { return true }); //Return true because if no error was thrown then the save was successful and we don't need the returned data.
             } else {
                 Logger.debug('Year configuration has not changed, not updating settings');

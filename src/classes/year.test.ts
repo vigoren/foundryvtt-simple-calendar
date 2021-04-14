@@ -29,7 +29,7 @@ describe('Year Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(year).length).toBe(15); //Make sure no new properties have been added
+        expect(Object.keys(year).length).toBe(16); //Make sure no new properties have been added
         expect(year.months).toStrictEqual([]);
         expect(year.weekdays).toStrictEqual([]);
         expect(year.prefix).toBe("");
@@ -40,6 +40,7 @@ describe('Year Class Tests', () => {
         expect(year.leapYearRule.customMod).toBe(0);
         expect(year.leapYearRule.rule).toBe(LeapYearRules.None);
         expect(year.showWeekdayHeadings).toBe(true);
+        expect(year.firstWeekday).toBe(0);
         expect(year.time).toBeDefined();
         expect(year.timeChangeTriggered).toBe(false);
         expect(year.combatChangeTriggered).toBe(false);
@@ -50,7 +51,7 @@ describe('Year Class Tests', () => {
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(16); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(17); //Make sure no new properties have been added
         expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
         expect(t.display).toBe("0");
         expect(t.numericRepresentation).toBe(0);
@@ -60,6 +61,7 @@ describe('Year Class Tests', () => {
         expect(t.visibleMonth).toBeUndefined();
         expect(t.weeks).toStrictEqual([]);
         expect(t.showWeekdayHeaders).toBe(true);
+        expect(t.firstWeekday).toBe(0);
         expect(t.showClock).toBe(false);
         expect(t.showDateControls).toBe(true);
         expect(t.showTimeControls).toBe(false);

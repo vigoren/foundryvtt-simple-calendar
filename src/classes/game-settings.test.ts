@@ -85,7 +85,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Year Data', () => {
-        expect(GameSettings.LoadYearData()).toStrictEqual({numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true});
+        expect(GameSettings.LoadYearData()).toStrictEqual({numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0});
         expect(game.settings.get).toHaveBeenCalled();
     });
 

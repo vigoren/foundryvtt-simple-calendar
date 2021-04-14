@@ -56,7 +56,10 @@ export default class SimpleCalendar extends Application{
     public primary: boolean = false;
 
     private primaryCheckTimeout: number | undefined;
-
+    /**
+     * If the dialog has been resized
+     * @type{boolean}
+     */
     hasBeenResized: boolean = false;
 
     /**
@@ -280,6 +283,39 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
+     * Keeps the current/selected date centered in the list of days for a month on calendars that have very long day lists
+     * @param {JQuery} html
+     */
+    ensureCurrentDateIsVisible(html: JQuery){
+        const calendar = (<JQuery>html).find(".calendar");
+        const calendarHeight = calendar.outerHeight();
+
+        //This only needs to be processed if the calendar is more than 499px tall
+        if(calendarHeight && calendarHeight >= 500){
+            const currentDay = calendar.find('.day.current');
+            const selectedDay = calendar.find('.day.selected');
+
+            //Prefer to use the selected day as the main day to focus on rather than the current day
+            let elementToUse = null;
+            if(selectedDay.length){
+                elementToUse = selectedDay[0];
+            } else if(currentDay.length){
+                elementToUse = currentDay[0];
+            }
+
+            if(elementToUse !== null){
+                const calendarRect = calendar[0].getBoundingClientRect();
+                const rect = elementToUse.getBoundingClientRect();
+                const insideViewPort = rect.top >= calendarRect.top && rect.left >= calendarRect.left && rect.bottom <= calendarRect.bottom && rect.right <= calendarRect.right;
+                if(!insideViewPort){
+                    Logger.debug(`The Current/Selected day is not in the viewport, updating the day list scroll top position.`);
+                    calendar[0].scrollTop = rect.top - calendarRect.top - (calendarHeight/ 2);
+                }
+            }
+        }
+    }
+
+    /**
      * Adds any event listeners to the application DOM
      * @param {JQuery<HTMLElement>} html The root HTML of the application window
      * @protected
@@ -288,6 +324,7 @@ export default class SimpleCalendar extends Application{
         Logger.debug('Simple-Calendar activateListeners()');
         if(html.hasOwnProperty("length")) {
             this.setWidthHeight(html);
+            this.ensureCurrentDateIsVisible(html);
             // Change the month that is being viewed
             const nextPrev = (<JQuery>html).find(".current-date .fa");
             for (let i = 0; i < nextPrev.length; i++) {
@@ -653,6 +690,9 @@ export default class SimpleCalendar extends Application{
 
             if(yearData.hasOwnProperty('showWeekdayHeadings')){
                 this.currentYear.showWeekdayHeadings = yearData.showWeekdayHeadings;
+            }
+            if(yearData.hasOwnProperty('firstWeekday')){
+                this.currentYear.firstWeekday = yearData.firstWeekday;
             }
         } else {
             Logger.debug('No year configuration found, setting default year data.');
