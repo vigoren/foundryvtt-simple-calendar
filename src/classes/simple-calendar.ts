@@ -52,15 +52,24 @@ export default class SimpleCalendar extends Application{
 
     /**
      * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
+     * @type {boolean}
      */
     public primary: boolean = false;
-
+    /**
+     * Timeout number associated with the check to see if this is the primary GM or not
+     * @type {number | undefined}
+     */
     private primaryCheckTimeout: number | undefined;
     /**
      * If the dialog has been resized
-     * @type{boolean}
+     * @type {boolean}
      */
     hasBeenResized: boolean = false;
+    /**
+     * The new note dialog
+     * @type {SimpleCalendarNotes | undefined}
+     */
+    newNote: SimpleCalendarNotes | undefined;
 
     /**
      * Simple Calendar constructor
@@ -577,8 +586,12 @@ export default class SimpleCalendar extends Application{
                         newNote.title = '';
                         newNote.author = GameSettings.UserID();
                         newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
-                        SimpleCalendarNotes.instance = new SimpleCalendarNotes(newNote);
-                        SimpleCalendarNotes.instance.showApp();
+                        if(this.newNote !== undefined){
+                            this.newNote.closeApp();
+                            this.newNote = undefined;
+                        }
+                        this.newNote = new SimpleCalendarNotes(newNote);
+                        this.newNote.showApp();
                     } else {
                         GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedDay"), 'warn');
                     }

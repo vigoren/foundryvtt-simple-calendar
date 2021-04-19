@@ -1,5 +1,5 @@
 <div id="simpleCalendarNotes">
-    <form autocomplete="off" onsubmit="event.preventDefault();">
+    <form autocomplete="off">
         {{#if viewMode}}
         <p>
             {{noteMonth}} {{object.day}}, {{noteYear}}
@@ -9,6 +9,13 @@
         </p>
         <h1>{{object.title}}</h1>
         <div class="note-author">{{localize 'FSC.Notes.Author'}}: {{authorName}}</div>
+        {{{object.content}}}
+        {{#if canEdit}}
+        <div class="edit-controls">
+            <a class="control fa fa-edit" id="scNoteEdit"> {{localize 'FSC.Edit'}}</a>
+            <a class="control delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</a>
+        </div>
+        {{/if}}
         {{else}}
         <h1>{{localize 'FSC.Notes.NewFor'}} {{object.monthDisplay}} {{object.day}}, {{object.year}}</h1>
         <div class="form-group">
@@ -35,17 +42,7 @@
             <p class="notes">{{localize 'FSC.Notes.RepeatingHelp'}}</p>
         </div>
         <h2>Details</h2>
-        {{/if}}
-        {{editor content=object.content target="content" owner=note.author button=richButton editable=richButton}}
-        {{#if viewMode}}
-        {{#if canEdit}}
-        <div class="edit-controls">
-            <a class="control fa fa-edit" id="scNoteEdit"> {{localize 'FSC.Edit'}}</a>
-            <a class="control delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</a>
-        </div>
-        {{/if}}
-        {{/if}}
-        {{#if richButton}}
+        {{editor content=object.content target="content" owner=note.author button=enableRichTextEditButton editable=enableRichTextEditButton }}
         <button id="scSubmit" class="control save" type="submit" name="submit" title="{{localize 'FSC.Notes.Save'}}">
             <i class="far fa-save"></i> {{localize 'FSC.Notes.Save'}}
         </button>

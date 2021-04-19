@@ -4,6 +4,14 @@
   "description": "A simple calendar module for keeping track of game days and events.",
   "version": "1.2.20",
   "author": "Dean Vigoren (Vigorator)",
+  "authors": [
+    {
+      "name": "Dean Vigoren (Vigorator)",
+      "url": "https://vig.vg",
+      "discord": "vigorator#8691",
+      "ko-fi": "vigorator"
+    }
+  ],
   "minimumCoreVersion": "0.7.9",
   "compatibleCoreVersion": "0.8.1",
   "url": "https://github.com/vigoren/foundryvtt-simple-calendar",

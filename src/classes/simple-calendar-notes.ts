@@ -1,9 +1,8 @@
 import {Note} from './note';
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
-import {ModuleName, ModuleSocketName, NoteRepeat, SettingNames, SocketTypes} from "../constants";
+import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
-import {SimpleCalendarSocket} from "../interfaces";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**
@@ -36,23 +35,6 @@ export class SimpleCalendarNotes extends FormApplication {
         super(data);
         this.viewMode = viewOnly;
         this.updateNote = false;
-        this.editors['content'] = {
-            target: 'content',
-            changed: false,
-            initial: (<Note>this.object).content,
-            //@ts-ignore
-            button: null,
-            hasButton: false,
-            active: false,
-            mce: null,
-            options: {
-                //@ts-ignore
-                target: null,
-                //@ts-ignore
-                height: 200,
-                save_onsavecallback: this.saveEditor.bind(this, 'content')
-            },
-        };
         if(!GameSettings.IsGm()){
             (<Note>this.object).playerVisible = true;
         }
@@ -72,6 +54,11 @@ export class SimpleCalendarNotes extends FormApplication {
         return options;
     }
 
+    checkForThirdPartyMarkdownEditors(){
+        const meme = game.modules.get('markdown-editor');
+        return meme !== undefined && meme.active;
+    }
+
     /**
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
@@ -80,8 +67,8 @@ export class SimpleCalendarNotes extends FormApplication {
             ... super.getData(options),
             isGM: GameSettings.IsGm(),
             viewMode: this.viewMode,
-            richButton: !this.viewMode,
             canEdit: GameSettings.IsGm() || GameSettings.UserID() === (<Note>this.object).author,
+            enableRichTextEditButton: this.checkForThirdPartyMarkdownEditors(),
             noteYear: 0,
             noteMonth: '',
             repeatOptions: {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
@@ -113,73 +100,18 @@ export class SimpleCalendarNotes extends FormApplication {
     }
 
     /**
-     * Sets up our rich text editor when the app is shown
-     * @param {JQuery<HTMLElement>} html The element that makes up the root of the application
-     * @private
-     */
-    private setUpTextEditor(html: JQuery<HTMLElement>){
-        if(this.editors['content']){
-            if(this.editors['content'].mce === null){
-                this.editors['content'].options.target = (<JQuery>html).find('.editor .editor-content')[0];
-            }
-            if(!this.viewMode && this.editors['content'].options.target && this.editors['content'].button === null){
-                this.editors['content'].button = <HTMLElement>this.editors['content'].options.target.nextElementSibling;
-                this.editors['content'].hasButton = this.editors['content'].button && this.editors['content'].button.classList.contains("editor-edit");
-                this.editors['content'].active = !this.viewMode;
-                if(this.editors['content'].hasButton){
-                    this.editors['content'].button.onclick = SimpleCalendarNotes.instance.textEditorButtonClick.bind(this)
-                }
-            }
-            if(this.editors['content'].mce === null && this.editors['content'].active){
-                this.activateEditor('content');
-            }
-        }
-    }
-
-    /**
-     * Activates a rich text editor, copied code from the main code file but with the editor focus removed
-     * @param name
-     * @param options
-     * @param initialContent
-     */
-    public activateEditor(name: string, options: any ={}, initialContent="") {
-        const editor = this.editors[name];
-        if ( !editor ) throw new Error(`${name} is not a registered editor name!`);
-        options = mergeObject(editor.options, options);
-        options.height = options.target.offsetHeight;
-        TextEditor.create(options, initialContent || editor.initial).then(mce => {
-            editor.mce = mce;
-            editor.changed = false;
-            editor.active = true;
-            mce.on('change', ev => editor.changed = true);
-        });
-    }
-
-    /**
-     * The button click for re-initializing the text editor
-     * @param {Event} e The click event
-     */
-    public textEditorButtonClick(e: Event){
-        if(this.editors['content']){
-            this.editors['content'].button.style.display = "none";
-        }
-        this.richEditorSaved = false;
-        this.activateEditor('content');
-    }
-
-    /**
      * Adds any event listeners to the application DOM
      * @param {JQuery<HTMLElement>} html The root HTML of the application window
      * @protected
      */
     public activateListeners(html: JQuery<HTMLElement>) {
+        super.activateListeners(html);
         if(html.hasOwnProperty("length")) {
-            this.setUpTextEditor(html);
             (<JQuery>this.element).find('#scNoteTitle').focus();
-            (<JQuery>html).find('#scSubmit').on('click', SimpleCalendarNotes.instance.saveButtonClick.bind(SimpleCalendarNotes.instance));
+            (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
 
-            (<JQuery>html).find('#scNoteEdit').on('click', SimpleCalendarNotes.instance.editButtonClick.bind(SimpleCalendarNotes.instance));
-            (<JQuery>html).find('#scNoteDelete').on('click', SimpleCalendarNotes.instance.deleteButtonClick.bind(SimpleCalendarNotes.instance));
+            (<JQuery>html).find('#scNoteEdit').on('click', this.editButtonClick.bind(this));
+            (<JQuery>html).find('#scNoteDelete').on('click', this.deleteButtonClick.bind(this));
         }
     }
 
@@ -241,7 +173,7 @@ export class SimpleCalendarNotes extends FormApplication {
                 yes: {
                     icon: '<i class="fas fa-trash"></i>',
                     label: GameSettings.Localize('FSC.Delete'),
-                    callback: SimpleCalendarNotes.instance.deleteConfirm.bind(this)
+                    callback: this.deleteConfirm.bind(this)
                 },
                 no: {
                     icon: '<i class="fas fa-times"></i>',
@@ -279,14 +211,12 @@ export class SimpleCalendarNotes extends FormApplication {
         e.preventDefault();
         let detailsEmpty = true;
         if(this.editors['content'] && this.editors['content'].mce){
-            if(this.editors['content'].mce.getContent().trim() !== '' && !this.editors['content'].mce.isNotDirty){
+            if(this.editors['content'].mce.getContent().trim() !== ''){
                 (<Note>this.object).content = this.editors['content'].mce.getContent().trim();
-                this.richEditorSaved = true;
+                detailsEmpty = false;
             }
-        } else {
-            detailsEmpty = false;
         }
-        if(this.richEditorSaved || detailsEmpty){
+        if(this.richEditorSaved || !detailsEmpty){
             const title = (<JQuery>this.element).find('#scNoteTitle').val();
             const playerVisible = (<JQuery>this.element).find('#scNoteVisibility').is(':checked');
             let repeats = (<JQuery>this.element).find('#scNoteRepeats').find(":selected").val();
