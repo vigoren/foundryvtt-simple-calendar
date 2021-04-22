@@ -1,4 +1,67 @@
 <div id="simpleCalendar">
+    {{#if compactView}}
+    <div class="compact-calendar">
+        <div class="season-moon-info" style="{{#if currentYear.currentSeasonColor }}background-color:{{currentYear.currentSeasonColor}};{{/if}}">
+            <div class="notes-wrapper">
+                <button class="control delete notes {{#unless currentYear.selectedDayNotes.length}}none{{/unless}} fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}"> {{currentYear.selectedDayNotes.length}}</button>
+                {{#if addNotes}}
+                <button class="fa fa-plus control save add-note" title="{{localize 'FSC.Notes.AddNew'}}"></button>
+                {{/if}}
+            </div>
+            {{#if currentYear.currentSeasonName }}
+            <div class="season">{{currentYear.currentSeasonName}}</div>
+            {{/if}}
+            <div class="moons">
+                {{#each currentYear.selectedDayMoons}}
+                <div class="moon-phase {{phase.icon}}" title="{{name}} - {{phase.name}}" style="background-color: {{color}};"></div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="current-date">
+            {{#if isGM}}
+            <a class="prev fa fa-angle-left" data-type="day"></a>
+            {{/if}}
+            <div class="date">
+                {{currentYear.selectedDayOfWeek}} {{currentYear.selectedDisplayMonth}} {{currentYear.selectedDisplayDay}}, {{currentYear.display}}
+            </div>
+            {{#if isGM}}
+            <a class="next fa fa-angle-right" data-type="day"></a>
+            {{/if}}
+        </div>
+        <div class="current-time">
+            <span class="clock {{clockClass}}"></span>
+            <div class="time">
+                {{currentYear.currentTime.hour}}:{{currentYear.currentTime.minute}}:{{currentYear.currentTime.second}}
+            </div>
+            {{#if isPrimary}}
+            <div class="time-controls">
+                <a class="time-start {{clockClass}} fa fa-play" title="{{localize 'FSC.Time.Start'}}"></a>
+                <a class="time-stop {{clockClass}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></a>
+            </div>
+            {{/if}}
+        </div>
+        {{#if isGM}}
+        <div class="time-controls">
+            <div class="selector" data-type="second" data-amount="1">{{localize 'FSC.One'}} {{localize 'FSC.SecondShorthand'}}</div>
+            <div class="selector" data-type="second" data-amount="30">{{localize 'FSC.Thirty'}} {{localize 'FSC.SecondShorthand'}}</div>
+            <div class="selector" data-type="minute" data-amount="1">{{localize 'FSC.One'}} {{localize 'FSC.MinuteShorthand'}}</div>
+            <div class="selector" data-type="minute" data-amount="5">{{localize 'FSC.Five'}} {{localize 'FSC.MinuteShorthand'}}</div>
+            <div class="selector" data-type="hour" data-amount="1">{{localize 'FSC.One'}} {{localize 'FSC.HourShorthand'}}</div>
+        </div>
+        {{/if}}
+        {{#if compactViewShowNotes}}
+        {{#if notes.length}}
+        <div class="note-list">
+            {{#each notes}}
+            <div class="note" data-index="{{id}}">
+                <h3 class="note-title">{{title}}</h3>
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+        {{/if}}
+    </div>
+    {{else}}
     <div class="calendar-row">
         <div class="calendar-display">
             <div class="calendar" style="{{#if currentYear.currentSeasonColor }}background-color:{{currentYear.currentSeasonColor}};{{/if}}">
@@ -56,65 +119,67 @@
         {{#if isGM}}
         <div class="controls">
             {{#if (or currentYear.showTimeControls currentYear.showDateControls)}}
-            {{#if currentYear.showTimeControls}}
-            <div class="time-controls">
-                <h2>{{localize 'FSC.Time.Controls'}}</h2>
-                <p>{{localize 'FSC.Time.ControlsHelp'}}</p>
-                <div class="row">
-                    <div class="time-unit">
-                        <div class="selector {{#if timeUnits.second}}selected{{/if}}" data-type="second">{{localize 'FSC.Second'}}</div>
-                        <div class="selector {{#if timeUnits.minute}}selected{{/if}}" data-type="minute">{{localize 'FSC.Minute'}}</div>
-                        <div class="selector {{#if timeUnits.hour}}selected{{/if}}" data-type="hour">{{localize 'FSC.Hour'}}</div>
+                {{#if currentYear.showTimeControls}}
+                <div class="time-controls">
+                    <h2>{{localize 'FSC.Time.Controls'}}</h2>
+                    <p>{{localize 'FSC.Time.ControlsHelp'}}</p>
+                    <div class="row">
+                        <div class="time-unit">
+                            <div class="selector {{#if timeUnits.second}}selected{{/if}}" data-type="second">{{localize 'FSC.Second'}}</div>
+                            <div class="selector {{#if timeUnits.minute}}selected{{/if}}" data-type="minute">{{localize 'FSC.Minute'}}</div>
+                            <div class="selector {{#if timeUnits.hour}}selected{{/if}}" data-type="hour">{{localize 'FSC.Hour'}}</div>
+                        </div>
+                        {{#if isPrimary}}
+                        <a class="time-start {{clockClass}} fa fa-play" title="{{localize 'FSC.Time.Start'}}"></a>
+                        <a class="time-stop {{clockClass}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></a>
+                        {{/if}}
                     </div>
-                    {{#if isPrimary}}
-                    <a class="time-start {{clockClass}} fa fa-play" title="{{localize 'FSC.Time.Start'}}"></a>
-                    <a class="time-stop {{clockClass}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></a>
-                    {{/if}}
+                    <div class="row time-amount">
+                        <a class="control previous" title="{{localize 'FSC.Time.Backward'}}" data-type="time" data-amount="5">
+                            <span class="fa fa-angle-double-left"></span>
+                            <div>{{localize 'FSC.Five'}}</div>
+                        </a>
+                        <a class="control previous" title="{{localize 'FSC.Time.Backward'}}" data-type="time" data-amount="1">
+                            <span class="fa fa-angle-left"></span>
+                            <div>{{localize 'FSC.One'}}</div>
+                        </a>
+                        <a class="control next" title="{{localize 'FSC.Time.Forward'}}" data-type="time" data-amount="1">
+                            <div>{{localize 'FSC.One'}}</div>
+                            <span class="fa fa-angle-right"></span>
+                        </a>
+                        <a class="control next" title="{{localize 'FSC.Time.Forward'}}" data-type="time" data-amount="5">
+                            <div>{{localize 'FSC.Five'}}</div>
+                            <span class="fa fa-angle-double-right"></span>
+                        </a>
+                    </div>
                 </div>
-                <div class="row time-amount">
-                    <a class="control previous" title="{{localize 'FSC.Time.Backward'}}" data-type="time" data-amount="5">
-                        <span class="fa fa-angle-double-left"></span>
-                        <div>{{localize 'FSC.Five'}}</div>
-                    </a>
-                    <a class="control previous" title="{{localize 'FSC.Time.Backward'}}" data-type="time" data-amount="1">
-                        <span class="fa fa-angle-left"></span>
-                        <div>{{localize 'FSC.One'}}</div>
-                    </a>
-                    <a class="control next" title="{{localize 'FSC.Time.Forward'}}" data-type="time" data-amount="1">
-                        <div>{{localize 'FSC.One'}}</div>
-                        <span class="fa fa-angle-right"></span>
-                    </a>
-                    <a class="control next" title="{{localize 'FSC.Time.Forward'}}" data-type="time" data-amount="5">
-                        <div>{{localize 'FSC.Five'}}</div>
-                        <span class="fa fa-angle-double-right"></span>
-                    </a>
+                {{/if}}
+                {{#if currentYear.showDateControls}}
+                <div class="date-controls">
+                    <h2>{{localize 'FSC.DateControls'}}</h2>
+                    <p>{{localize 'FSC.DateControlsHelp'}}</p>
+                    <div class="control-group">
+                        <a class="control previous" title="{{localize 'FSC.MoveDayBack'}}" data-type="day"><span class="fa fa-angle-left"></span>{{localize 'FSC.Back'}}</a>
+                        <span class="control-name">{{localize 'FSC.Day'}}</span>
+                        <a class="control next" title="{{localize 'FSC.MoveDayForward'}}" data-type="day">{{localize 'FSC.Forward'}}<span class="fa fa-angle-right"></span></a>
+                    </div>
+                    <div class="control-group">
+                        <a class="control previous" title="{{localize 'FSC.MoveMonthBack'}}" data-type="month"><span class="fa fa-angle-double-left"></span>{{localize 'FSC.Back'}}</a>
+                        <span class="control-name">{{localize 'FSC.Month'}}</span>
+                        <a class="control next" title="{{localize 'FSC.MoveMonthForward'}}" data-type="month">{{localize 'FSC.Forward'}}<span class="fa fa-angle-double-right"></span></a>
+                    </div>
+                    <div class="control-group">
+                        <a class="control previous" title="{{localize 'FSC.MoveYearBack'}}" data-type="year"><span class="fa fa-angle-left shift-back"></span><span class="fa fa-angle-double-left"></span>{{localize 'FSC.Back'}}</a>
+                        <span class="control-name">{{localize 'FSC.Year'}}</span>
+                        <a class="control next" title="{{localize 'FSC.MoveYearForward'}}" data-type="year">{{localize 'FSC.Forward'}}<span class="fa fa-angle-double-right"></span><span class="fa fa-angle-right shift-back"></span></a>
+                    </div>
                 </div>
-            </div>
-            {{/if}}
-            {{#if currentYear.showDateControls}}
-            <div class="date-controls">
-                <h2>{{localize 'FSC.DateControls'}}</h2>
-                <p>{{localize 'FSC.DateControlsHelp'}}</p>
-                <div class="control-group">
-                    <a class="control previous" title="{{localize 'FSC.MoveDayBack'}}" data-type="day"><span class="fa fa-angle-left"></span>{{localize 'FSC.Back'}}</a>
-                    <span class="control-name">{{localize 'FSC.Day'}}</span>
-                    <a class="control next" title="{{localize 'FSC.MoveDayForward'}}" data-type="day">{{localize 'FSC.Forward'}}<span class="fa fa-angle-right"></span></a>
+                {{/if}}
+                {{#if showSetCurrentDate}}
+                <div class="date-apply-wrapper">
+                    <button class="control save btn-apply fa fa-calendar-check"> {{localize 'FSC.SetCurrentDate'}}</button>
                 </div>
-                <div class="control-group">
-                    <a class="control previous" title="{{localize 'FSC.MoveMonthBack'}}" data-type="month"><span class="fa fa-angle-double-left"></span>{{localize 'FSC.Back'}}</a>
-                    <span class="control-name">{{localize 'FSC.Month'}}</span>
-                    <a class="control next" title="{{localize 'FSC.MoveMonthForward'}}" data-type="month">{{localize 'FSC.Forward'}}<span class="fa fa-angle-double-right"></span></a>
-                </div>
-                <div class="control-group">
-                    <a class="control previous" title="{{localize 'FSC.MoveYearBack'}}" data-type="year"><span class="fa fa-angle-left shift-back"></span><span class="fa fa-angle-double-left"></span>{{localize 'FSC.Back'}}</a>
-                    <span class="control-name">{{localize 'FSC.Year'}}</span>
-                    <a class="control next" title="{{localize 'FSC.MoveYearForward'}}" data-type="year">{{localize 'FSC.Forward'}}<span class="fa fa-angle-double-right"></span><span class="fa fa-angle-right shift-back"></span></a>
-                </div>
-            </div>
-            {{/if}}
-            <div class="date-apply-wrapper">
-                <button class="control save btn-apply fa fa-calendar-check"> {{localize 'FSC.SetCurrentDate'}}</button>
-            </div>
+                {{/if}}
             {{else}}
             <div class="date-controls">
                 <h2>{{localize 'FSC.DateControls'}}</h2>
@@ -142,4 +207,5 @@
         <em>{{localize 'FSC.Notes.Empty'}}</em>
         {{/if}}
     </div>
+    {{/if}}
 </div>
