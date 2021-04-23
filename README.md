@@ -46,6 +46,7 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 * See the current day and time of the game world.
 * Select days to view any notes/events specific to that day.
 * If the GM allows it, the ability to add their own notes to the calendar.
+* The Ability to switch between a full and compact view of the calendar.
 
 ![Player View of Calendar](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player.gif)
 
@@ -59,6 +60,7 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 - [Configuring your Calendar](./docs/Configuration.md)
 - [Macros](./docs/Macros.md)
 - [Hooks](./docs/Hooks.md)
+- [Translations](#translations)
 
 ## Installing The Module
 
@@ -81,6 +83,25 @@ These are other time keeping modules that Simple Calendar can work if they are i
 - [about-time](https://foundryvtt.com/packages/about-time): See the [about-time module configuration for Simple Calendar](./docs/Configuration.md#about-time) for more information.
 - [Calendar/Weather](https://foundryvtt.com/packages/calendar-weather): See the [Calendar/Weather module configuration for Simple Calendar](./docs/Configuration.md#calendarweather) for more information.
 
+## Translations
+
+Simple Calendar is available in languages other than English thanks to the following people:
+
+Language|Translator(s)
+--------|----------
+German (de)|[MasterZelgadis](https://github.com/MasterZelgadis)
+
+
+If your language is missing from the list, and you would like to help translate Simple Calendar please follow these steps:
+
+- Fork this repository.
+- Under the src/lang folder copy the en.json file.
+- Rename that file so that it matches your languages [2 letter ISO code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+- Go through that file and translate all the english values to your language.
+- Open the src/module.json and add your language to the list under "languages"
+- Update the ReadMe file to add your name to the table above.
+- Create a pull request back into this repository with your additions.
+- Know that your help is appreciated to bring this module to as many users as possible!
 
 ## Credits
 

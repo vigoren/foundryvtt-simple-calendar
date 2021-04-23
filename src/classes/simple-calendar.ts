@@ -12,6 +12,7 @@ import {GameWorldTimeIntegrations, ModuleSocketName, SocketTypes} from "../const
 import Importer from "./importer";
 import Season from "./season";
 import Moon from "./moon";
+import Day from "./day";
 
 
 /**
@@ -71,6 +72,9 @@ export default class SimpleCalendar extends Application{
      */
     newNote: SimpleCalendarNotes | undefined;
 
+    compactView: boolean = false;
+
+    compactViewShowNotes: boolean = false;
     /**
      * Simple Calendar constructor
      */
@@ -96,7 +100,6 @@ export default class SimpleCalendar extends Application{
         HandlebarsHelpers.Register();
         GameSettings.RegisterSettings();
         this.settingUpdate();
-        await this.timeKeepingCheck();
 
         //Set up the socket we use to forward data between players and the GM
         game.socket.on(ModuleSocketName, this.processSocket.bind(this));
@@ -119,11 +122,13 @@ export default class SimpleCalendar extends Application{
     /**
      * Called after the timeout delay set to see if another GM account has been set as the primary
      */
-    primaryCheckTimeoutCall(){
+    async primaryCheckTimeoutCall(){
         Logger.debug('No primary GM found, taking over as primary');
         this.primary = true;
         const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: this.primary}};
         game.socket.emit(ModuleSocketName, socketData);
+        await this.timeKeepingCheck();
+        this.updateApp();
     }
 
     /**
@@ -173,7 +178,15 @@ export default class SimpleCalendar extends Application{
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
     getData(options?: Application.RenderOptions): CalendarTemplate | Promise<CalendarTemplate> {
+        let showSetCurrentDate = false;
         if(this.currentYear){
+            const selectedMonth = this.currentYear.getMonth('selected');
+            if(selectedMonth){
+                const selectedDay = selectedMonth.getDay('selected');
+                if(selectedDay && !selectedDay.current){
+                    showSetCurrentDate = true;
+                }
+            }
             return {
                 isGM: GameSettings.IsGm(),
                 isPrimary: this.primary,
@@ -181,9 +194,12 @@ export default class SimpleCalendar extends Application{
                 currentYear: this.currentYear.toTemplate(),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
+                showSetCurrentDate: GameSettings.IsGm() && showSetCurrentDate,
                 notes: this.getNotesForDay(),
                 clockClass: this.clockClass,
-                timeUnits: this.timeUnits
+                timeUnits: this.timeUnits,
+                compactView: this.compactView,
+                compactViewShowNotes: this.compactViewShowNotes
             };
         } else {
             return {
@@ -193,9 +209,12 @@ export default class SimpleCalendar extends Application{
                 currentYear: new Year(0).toTemplate(),
                 showCurrentDay: false,
                 showSelectedDay: false,
+                showSetCurrentDate: showSetCurrentDate,
                 notes: [],
                 clockClass: this.clockClass,
-                timeUnits: this.timeUnits
+                timeUnits: this.timeUnits,
+                compactView: this.compactView,
+                compactViewShowNotes: this.compactViewShowNotes
             };
         }
     }
@@ -233,6 +252,25 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
+     * Overwrite the minimization function to reduce the calendar down to the compact form
+     * If the calendar is all ready in the compact form, restore to the full form
+     */
+    async minimize(){
+        this.compactViewShowNotes = false;
+        this.compactView = !this.compactView;
+        this.currentYear?.resetMonths('selected');
+        this.render(true);
+    }
+
+    /**
+     * Overwrite the maximize function to set the calendar to its full form
+     */
+    async maximize(){
+        this.compactView = false;
+        this.render(true);
+    }
+
+    /**
      * When the window is resized
      * @param event
      * @protected
@@ -250,44 +288,105 @@ export default class SimpleCalendar extends Application{
         if(this.hasBeenResized){
             return;
         }
-        const calendar = (<JQuery>html).find('.calendar-row .calendar-display');
-        const controls = (<JQuery>html).find('.calendar-row .controls');
-        const noteHeader = (<JQuery>html).find('.date-notes-header h2');
-        const addNote = (<JQuery>html).find('.date-notes-header .add-note');
-
         let height = 0;
         let width = 0;
+        if(this.compactView){
+            if(this.currentYear){
+                let weekDayNameLength = 0, monthNameLength = 0, yearNameLength;
+                if(this.currentYear.showWeekdayHeadings){
+                    for(let i = 0; i < this.currentYear.weekdays.length; i++){
+                        if(this.currentYear.weekdays[i].name.length > weekDayNameLength){
+                            weekDayNameLength = this.currentYear.weekdays[i].name.length;
+                        }
+                    }
+                }
+                for(let i = 0; i < this.currentYear.months.length; i++){
+                    if(this.currentYear.months[i].name.length > monthNameLength){
+                        monthNameLength = this.currentYear.months[i].name.length;
+                    }
+                }
+                yearNameLength = this.currentYear.getDisplayName().length + 1;
 
-        if(calendar){
-            const h = calendar.outerHeight(true);
-            const w = calendar.outerWidth(true);
-            height += h? h : 0;
-            width += w? w : 0;
-        }
-
-        if(controls){
-            const h = controls.outerHeight(true);
-            const w = controls.outerWidth(true);
-            if(h && h > height){
-                height = h;
+                const totalCharacterLength = weekDayNameLength + monthNameLength + yearNameLength + 7;
+                width = (totalCharacterLength * 7) + 62;
             }
-            width += w? w : 0;
-        }
+            const seasonMoon = (<JQuery>html).find('.compact-calendar .season-moon-info');
+            const currentDate = (<JQuery>html).find('.compact-calendar .current-date .date');
+            const currentTime = (<JQuery>html).find('.compact-calendar .current-time');
+            const timeControls = (<JQuery>html).find('.compact-calendar .time-controls');
+            const noteListNote = (<JQuery>html).find('.compact-calendar .note-list .note');
 
-        if(noteHeader && addNote){
-            const nh = noteHeader.outerHeight(true);
-            const nw = noteHeader.outerWidth(true);
-            const w = addNote.outerWidth(true);
-
-            const headerW = (nw? nw : 0) + (w?  w: 0);
-            if(headerW > width){
-                width = headerW;
+            if(seasonMoon){
+                const h = seasonMoon.outerHeight(true);
+                height += h? h : 0;
             }
-            height += (nh? nh : 0) + 24;
-        }
 
-        width += 16;
-        height += (30 * 2) + 46;
+            if(currentDate){
+                const h = currentDate.outerHeight(true);
+                let w = currentDate.outerWidth(false);
+                height += h? h : 0;
+                if(w){
+                    w += 16 + 16 // Prev & Next buttons
+                    w += 25 // Padding on left and right
+                    if(w > width){
+                        width = w;
+                    }
+                }
+            }
+            if(currentTime){
+                const h = currentTime.outerHeight(true);
+                height += h? h : 0;
+            }
+            if(timeControls){
+                const h = timeControls.outerHeight(true);
+                height += h? h : 0;
+            }
+
+            if(noteListNote){
+                const h = noteListNote.outerHeight(true);
+                height += h? h * 2 : 0;
+            }
+            if(width < 250){
+                width = 250;
+            }
+            height += 32; // For application header
+        } else {
+            const calendar = (<JQuery>html).find('.calendar-row .calendar-display');
+            const controls = (<JQuery>html).find('.calendar-row .controls');
+            const noteHeader = (<JQuery>html).find('.date-notes-header h2');
+            const addNote = (<JQuery>html).find('.date-notes-header .add-note');
+
+            if(calendar){
+                const h = calendar.outerHeight(true);
+                const w = calendar.outerWidth(true);
+                height += h? h : 0;
+                width += w? w : 0;
+            }
+
+            if(controls){
+                const h = controls.outerHeight(true);
+                const w = controls.outerWidth(true);
+                if(h && h > height){
+                    height = h;
+                }
+                width += w? w : 0;
+            }
+
+            if(noteHeader && addNote){
+                const nh = noteHeader.outerHeight(true);
+                const nw = noteHeader.outerWidth(true);
+                const w = addNote.outerWidth(true);
+
+                const headerW = (nw? nw : 0) + (w?  w: 0);
+                if(headerW > width){
+                    width = headerW;
+                }
+                height += (nh? nh : 0) + 24;
+            }
+
+            width += 16;
+            height += (30 * 2) + 46;
+        }
         this.setPosition({width: width, height: height});
     }
 
@@ -333,39 +432,70 @@ export default class SimpleCalendar extends Application{
         Logger.debug('Simple-Calendar activateListeners()');
         if(html.hasOwnProperty("length")) {
             this.setWidthHeight(html);
-            this.ensureCurrentDateIsVisible(html);
-            // Change the month that is being viewed
-            const nextPrev = (<JQuery>html).find(".current-date .fa");
-            for (let i = 0; i < nextPrev.length; i++) {
-                if (nextPrev[i].classList.contains('fa-chevron-left')) {
-                    nextPrev[i].addEventListener('click', SimpleCalendar.instance.viewPreviousMonth.bind(this));
-                } else if (nextPrev[i].classList.contains('fa-chevron-right')) {
-                    nextPrev[i].addEventListener('click', SimpleCalendar.instance.viewNextMonth.bind(this));
+            if(this.compactView){
+                this.element.find('.window-resizable-handle').hide();
+
+                // Add new note click
+                (<JQuery>html).find(".compact-calendar .season-moon-info .add-note").on('click', SimpleCalendar.instance.addNote.bind(this));
+
+                // Show Notes
+                (<JQuery>html).find(".compact-calendar .season-moon-info .notes").on('click', SimpleCalendar.instance.showCompactNotes.bind(this));
+
+                //Day Change
+                (<JQuery>html).find(".compact-calendar .current-date .fa").on('click', SimpleCalendar.instance.gmControlClick.bind(this));
+
+                //Time Change
+                (<JQuery>html).find(".compact-calendar .time-controls .selector").on('click', SimpleCalendar.instance.compactTimeControlClick.bind(this));
+
+                // Note Click
+                (<JQuery>html).find(".compact-calendar .note-list .note").on('click', SimpleCalendar.instance.viewNote.bind(this));
+
+            } else {
+                this.element.find('.window-resizable-handle').show();
+                this.ensureCurrentDateIsVisible(html);
+                // Change the month that is being viewed
+                const nextPrev = (<JQuery>html).find(".current-date .fa");
+                for (let i = 0; i < nextPrev.length; i++) {
+                    if (nextPrev[i].classList.contains('fa-chevron-left')) {
+                        nextPrev[i].addEventListener('click', SimpleCalendar.instance.viewPreviousMonth.bind(this));
+                    } else if (nextPrev[i].classList.contains('fa-chevron-right')) {
+                        nextPrev[i].addEventListener('click', SimpleCalendar.instance.viewNextMonth.bind(this));
+                    }
                 }
+                // Listener for when a day is clicked
+                (<JQuery>html).find(".calendar .days .day").on('click', SimpleCalendar.instance.dayClick.bind(this));
+
+                // Today button click
+                (<JQuery>html).find(".calendar-controls .today").on('click', SimpleCalendar.instance.todayClick.bind(this));
+
+                // When the GM Date controls are clicked
+                (<JQuery>html).find(".time-controls .time-unit .selector").on('click', SimpleCalendar.instance.timeUnitClick.bind(this));
+                (<JQuery>html).find(".controls .control").on('click', SimpleCalendar.instance.gmControlClick.bind(this));
+                (<JQuery>html).find(".controls .btn-apply").on('click', SimpleCalendar.instance.dateControlApply.bind(this));
+
+                //Configuration Button Click
+                (<JQuery>html).find(".calendar-controls .configure-button").on('click', SimpleCalendar.instance.configurationClick.bind(this));
+
+                // Add new note click
+                (<JQuery>html).find(".date-notes .add-note").on('click', SimpleCalendar.instance.addNote.bind(this));
+
+                // Note Click
+                (<JQuery>html).find(".date-notes .note").on('click', SimpleCalendar.instance.viewNote.bind(this));
             }
-            // Listener for when a day is clicked
-            (<JQuery>html).find(".calendar .days .day").on('click', SimpleCalendar.instance.dayClick.bind(this));
-
-            // Today button click
-            (<JQuery>html).find(".calendar-controls .today").on('click', SimpleCalendar.instance.todayClick.bind(this));
-
-            // When the GM Date controls are clicked
-            (<JQuery>html).find(".time-controls .time-unit .selector").on('click', SimpleCalendar.instance.timeUnitClick.bind(this));
-            (<JQuery>html).find(".controls .control").on('click', SimpleCalendar.instance.gmControlClick.bind(this));
-            (<JQuery>html).find(".controls .btn-apply").on('click', SimpleCalendar.instance.dateControlApply.bind(this));
-
-            //Configuration Button Click
-            (<JQuery>html).find(".calendar-controls .configure-button").on('click', SimpleCalendar.instance.configurationClick.bind(this));
-
-            // Add new note click
-            (<JQuery>html).find(".date-notes .add-note").on('click', SimpleCalendar.instance.addNote.bind(this));
-
-            // Note Click
-            (<JQuery>html).find(".date-notes .note").on('click', SimpleCalendar.instance.viewNote.bind(this));
-
             (<JQuery>html).find(".time-start").on('click', SimpleCalendar.instance.startTime.bind(this));
             (<JQuery>html).find(".time-stop").on('click', SimpleCalendar.instance.stopTime.bind(this));
+
         }
+    }
+
+    /**
+     * Toggles the showing of the notes for a day in the compact view
+     * @param {Event} e
+     */
+    public showCompactNotes(e: Event){
+        e.preventDefault();
+        this.compactViewShowNotes = !this.compactViewShowNotes;
+        this.updateApp();
     }
 
     /**
@@ -401,7 +531,14 @@ export default class SimpleCalendar extends Application{
     public dayClick(e: Event){
         Logger.debug('Day Clicked');
         e.stopPropagation();
-        const target = <HTMLElement>e.target;
+        let target = <HTMLElement>e.target;
+        if(target.parentElement){
+            if(target.classList.contains('note-count')){
+                target = target.parentElement;
+            } else if(target.classList.contains('moon-phase') && target.parentElement.parentElement){
+                target = target.parentElement.parentElement;
+            }
+        }
         const dataDate = target.getAttribute('data-day');
         if(dataDate){
             const dayNumber = parseInt(dataDate);
@@ -462,6 +599,24 @@ export default class SimpleCalendar extends Application{
         }
     }
 
+    public compactTimeControlClick(e: Event){
+        e.stopPropagation();
+        if(this.currentYear){
+            const target = <HTMLElement>e.currentTarget;
+            const dataType = target.getAttribute('data-type');
+            const dataAmount = target.getAttribute('data-amount');
+            if(dataType && dataAmount){
+                const amount = parseInt(dataAmount);
+                if(!isNaN(amount) && (dataType === 'second' || dataType === 'minute' || dataType === 'hour') ){
+                    this.currentYear.changeTime(true, dataType, amount);
+                    GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
+                    //Sync the current time on apply, this will propagate to other modules
+                    this.currentYear.syncTime().catch(Logger.error);
+                }
+            }
+        }
+    }
+
     /**
      * Click event when a user is changing the time unit to adjust
      * @param {Event} e The click event
@@ -489,6 +644,7 @@ export default class SimpleCalendar extends Application{
             const target = <HTMLElement>e.currentTarget;
             const dataType = target.getAttribute('data-type');
             const isNext = target.classList.contains('next');
+            let change = false;
             switch (dataType){
                 case 'time':
                     const dataAmount = target.getAttribute('data-amount');
@@ -498,25 +654,30 @@ export default class SimpleCalendar extends Application{
                             Logger.debug(`${isNext? 'Forward' : 'Back'} Time Clicked`);
                             const unit = this.timeUnits.second? 'second' : this.timeUnits.minute? 'minute' : 'hour';
                             this.currentYear.changeTime(isNext, unit, amount);
-                            this.updateApp();
+                            change = true;
                         }
                     }
                     break;
                 case 'day':
                     Logger.debug(`${isNext? 'Forward' : 'Back'} Day Clicked`);
                     this.currentYear.changeDay(isNext? 1 : -1, 'current');
-                    this.updateApp();
+                    change = true;
                     break;
                 case 'month':
                     Logger.debug(`${isNext? 'Forward' : 'Back'} Month Clicked`);
                     this.currentYear.changeMonth(isNext? 1 : -1, 'current');
-                    this.updateApp();
+                    change = true;
                     break;
                 case 'year':
                     Logger.debug(`${isNext? 'Forward' : 'Back'} Year Clicked`);
                     this.currentYear.changeYear(isNext? 1 : -1, false, "current");
-                    this.updateApp();
+                    change = true;
                     break;
+            }
+            if(change){
+                GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
+                //Sync the current time on apply, this will propagate to other modules
+                this.currentYear.syncTime().catch(Logger.error);
             }
         }
     }
@@ -530,12 +691,63 @@ export default class SimpleCalendar extends Application{
         e.stopPropagation();
         if(GameSettings.IsGm()){
             if(this.currentYear) {
-                GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
-                //Sync the current time on apply, this will propagate to other modules
-                this.currentYear.syncTime().catch(Logger.error);
+                let validSelection = false;
+                const selectedYear = this.currentYear.selectedYear;
+                const selectedMonth = this.currentYear.getMonth('selected');
+                if(selectedMonth){
+                    const selectedDay = selectedMonth.getDay('selected');
+                    if(selectedDay){
+                        Logger.debug(`Updating current date to selected day.`);
+                        validSelection = true;
+                        if(selectedYear !== this.currentYear.visibleYear || !selectedMonth.visible){
+                            const utsd = new Dialog({
+                                title: GameSettings.Localize('FSC.SetCurrentDateDialog.Title'),
+                                content: GameSettings.Localize('FSC.SetCurrentDateDialog.Content').replace('{DATE}', `${selectedMonth.name} ${selectedDay.numericRepresentation}, ${selectedYear}`),
+                                buttons:{
+                                    yes: {
+                                        label: GameSettings.Localize('Yes'),
+                                        callback: this.setCurrentDate.bind(this, selectedYear, selectedMonth, selectedDay)
+                                    },
+                                    no: {
+                                        label: GameSettings.Localize('No')
+                                    }
+                                },
+                                default: "no"
+                            });
+                            utsd.render(true);
+                        } else {
+                            this.setCurrentDate(selectedYear, selectedMonth, selectedDay);
+                        }
+                    }
+                }
+                if(!validSelection){
+                    GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
+                    //Sync the current time on apply, this will propagate to other modules
+                    this.currentYear.syncTime().catch(Logger.error);
+                }
             }
         } else {
             GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Calendar.GMCurrent"), 'warn');
+        }
+    }
+
+    /**
+     * Sets the current date for the calendar
+     * @param {number} year The year number to set the date to
+     * @param {Month} month The month object to set as current
+     * @param {Day} day They day object to set as current
+     */
+    public setCurrentDate(year: number, month: Month, day: Day){
+        if(this.currentYear){
+            this.currentYear.numericRepresentation = year;
+            this.currentYear.resetMonths();
+            month.current = true;
+            month.selected = false;
+            day.current = true;
+            day.selected = false;
+            GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
+            //Sync the current time on apply, this will propagate to other modules
+            this.currentYear.syncTime().catch(Logger.error);
         }
     }
 
@@ -974,7 +1186,8 @@ export default class SimpleCalendar extends Application{
      */
     combatUpdate(combat: Combat, round: Combat.CurrentTurn, time: any){
         Logger.debug('Combat Update');
-        if(this.currentYear && combat.started){
+        const activeScene = game.scenes? game.scenes.active.id : null;
+        if(this.currentYear && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
             this.currentYear.time.combatRunning = true;
             this.currentYear.time.updateUsers();
             if(time && time.hasOwnProperty('advanceTime')){
@@ -1010,7 +1223,8 @@ export default class SimpleCalendar extends Application{
      */
     startTime(){
         if(this.currentYear){
-            if(game.combats && game.combats.size > 0 && game.combats.find(g => g.started)){
+            const activeScene = game.scenes? game.scenes.active.id : null;
+            if(game.combats && game.combats.size > 0 && game.combats.find(g => g.started && ((activeScene !== null && g.scene && g.scene.id === activeScene) || activeScene === null))){
                 GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
             } else if(this.currentYear.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.currentYear.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
                 this.currentYear.time.startTimeKeeper();

@@ -2,7 +2,7 @@
   "name": "foundryvtt-simple-calendar",
   "title": "Simple Calendar",
   "description": "A simple calendar module for keeping track of game days and events.",
-  "version": "1.2.20",
+  "version": "1.2.30",
   "author": "Dean Vigoren (Vigorator)",
   "authors": [
     {
@@ -33,6 +33,11 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
+    },
+    {
+      "lang": "de",
+      "name": "German",
+      "path": "lang/de.json"
     }
   ],
   "socket": true,
@@ -55,6 +60,10 @@
     },
     {
       "type": "screenshot",
+      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/compact-view.gif"
+    },
+    {
+      "type": "screenshot",
       "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-1.png"
     },
     {
@@ -68,6 +77,10 @@
     {
       "type": "screenshot",
       "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-4.png"
+    },
+    {
+      "type": "screenshot",
+      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-compact-vew.png"
     }
   ]
 }

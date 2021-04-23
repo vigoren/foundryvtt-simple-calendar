@@ -31,9 +31,12 @@ export interface CalendarTemplate {
     currentYear: YearTemplate;
     showSelectedDay: boolean;
     showCurrentDay: boolean;
+    showSetCurrentDate: boolean;
     notes: NoteTemplate[];
     clockClass: string;
     timeUnits: any;
+    compactView: boolean;
+    compactViewShowNotes: boolean;
 }
 
 /**
@@ -48,6 +51,9 @@ export interface YearTemplate {
     selectedDisplayMonth: string;
     /** The display text for the selected, or current, day */
     selectedDisplayDay: string;
+    selectedDayOfWeek: string;
+    selectedDayMoons: any[];
+    selectedDayNotes: Note[];
     /** The numeric representation of the year */
     numericRepresentation: number;
     /** The months that make up the year */

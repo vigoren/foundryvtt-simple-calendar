@@ -45,6 +45,9 @@ describe('Interface Tests', () => {
         selectedDisplayYear: '',
         selectedDisplayMonth: '',
         selectedDisplayDay: '',
+        selectedDayOfWeek: '',
+        selectedDayMoons: [],
+        selectedDayNotes: [],
         numericRepresentation: 0,
         visibleMonth: mt,
         weekdays: [wt],
@@ -66,9 +69,12 @@ describe('Interface Tests', () => {
         currentYear: yt,
         showSelectedDay: false,
         showCurrentDay: false,
+        showSetCurrentDate: false,
         notes: [],
         clockClass: '',
-        timeUnits: {}
+        timeUnits: {},
+        compactView: false,
+        compactViewShowNotes: false
     };
 
 
@@ -104,11 +110,14 @@ describe('Interface Tests', () => {
     });
 
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(17); //Make sure no new properties have been added
+        expect(Object.keys(yt).length).toBe(20); //Make sure no new properties have been added
         expect(yt.display).toBe('');
         expect(yt.selectedDisplayYear).toBe('');
         expect(yt.selectedDisplayMonth).toBe('');
         expect(yt.selectedDisplayDay).toBe('');
+        expect(yt.selectedDayOfWeek).toBe('');
+        expect(yt.selectedDayMoons).toStrictEqual([]);
+        expect(yt.selectedDayNotes).toStrictEqual([]);
         expect(yt.numericRepresentation).toBe(0);
         expect(yt.visibleMonth).toStrictEqual(mt);
         expect(yt.weeks).toStrictEqual([]);
@@ -125,16 +134,19 @@ describe('Interface Tests', () => {
     });
 
     test('Calendar Template', () => {
-        expect(Object.keys(ct).length).toBe(9); //Make sure no new properties have been added
+        expect(Object.keys(ct).length).toBe(12); //Make sure no new properties have been added
         expect(ct.isGM).toBe(false);
         expect(ct.addNotes).toBe(false);
         expect(ct.isPrimary).toBe(false);
         expect(ct.currentYear).toStrictEqual(yt);
         expect(ct.showSelectedDay).toBe(false);
         expect(ct.showCurrentDay).toBe(false);
+        expect(ct.showSetCurrentDate).toBe(false);
         expect(ct.notes).toStrictEqual([]);
         expect(ct.clockClass).toStrictEqual('');
         expect(ct.timeUnits).toStrictEqual({});
+        expect(ct.compactView).toBe(false);
+        expect(ct.compactViewShowNotes).toBe(false);
     });
 
     test('Year Config', () => {

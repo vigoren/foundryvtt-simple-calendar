@@ -100,7 +100,8 @@ const game = {
         find: jest.fn((v)=>{
             return v.call(undefined, {isGM: false, active: true});
         })
-    }
+    },
+    scenes: null
 };
 
 // @ts-ignore

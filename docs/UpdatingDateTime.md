@@ -29,7 +29,7 @@ Control | Description
 Day Back/Forward | This moves the current day forward or back one day.
 Month Back/Forward | This moves the current month forward or back one month. The current day will be mapped to the same day as the old month, or the last day of the month if the old month has more days.
 Year Back/Forward | This moves the current year forward or back one year. The current month and day will stay the same in the new year.
-Set Current Date | This will apply the changes, saving the new current day in the settings and updating all of the players calendars to reflect the new current day.
+Set Current Date | If a day is selected the "Set Current Date" button will show. Clicking this button will set the current date to the selected day.
 
 
 
@@ -41,3 +41,16 @@ Control | Description
 ------- | -----------
 Configuration | This opens up the configuration dialog to allow the GM to fully customize the calendar.
 Add New Note Button | This will open the add notes dialog to add a new note for the selected day.
+
+
+## Compact View
+
+The compact view offers many of the same controls as the full view but not all.
+
+![GM Compact View](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-compact-view.png)
+
+Control | Description
+------- | -----------
+Day Back/Forward | This moves the current day forward or back one day.
+Start/Stop button| Used to start or stop the [Simple Calendars built in clock](./UsingTheCalendar.md#simple-calendars-clock).
+Time Amount Buttons|These buttons will advance the time by the amount listed on them.

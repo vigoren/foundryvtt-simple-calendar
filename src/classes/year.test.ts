@@ -17,6 +17,7 @@ import LeapYear from "./leap-year";
 import Season from "./season";
 import Moon from "./moon";
 import SimpleCalendar from "./simple-calendar";
+import {Note} from "./note";
 
 describe('Year Class Tests', () => {
     let year: Year;
@@ -52,13 +53,16 @@ describe('Year Class Tests', () => {
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(17); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(20); //Make sure no new properties have been added
         expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
         expect(t.display).toBe("0");
         expect(t.numericRepresentation).toBe(0);
         expect(t.selectedDisplayYear).toBe("0");
         expect(t.selectedDisplayMonth).toBe("");
         expect(t.selectedDisplayDay).toBe("");
+        expect(t.selectedDayOfWeek).toBe("");
+        expect(t.selectedDayNotes).toStrictEqual([]);
+        expect(t.selectedDayMoons).toStrictEqual([]);
         expect(t.visibleMonth).toBeUndefined();
         expect(t.weeks).toStrictEqual([]);
         expect(t.showWeekdayHeaders).toBe(true);
@@ -100,6 +104,26 @@ describe('Year Class Tests', () => {
         expect(t.showDateControls).toBe(false);
         expect(t.showTimeControls).toBe(false);
 
+        year.resetMonths('selected');
+        year.months[0].current = true;
+        year.months[0].days[0].current = true;
+        year.showWeekdayHeadings = false;
+        t = year.toTemplate();
+        expect(t.selectedDayOfWeek).toBe('');
+
+        year.moons.push(new Moon("Moon", 10));
+        t = year.toTemplate();
+        expect(t.selectedDayMoons.length).toBe(1);
+
+        SimpleCalendar.instance = new SimpleCalendar();
+        const n = new Note();
+        n.day = 1;
+        n.month = 1;
+        n.year = 0;
+        n.playerVisible = true;
+        SimpleCalendar.instance.notes.push(n);
+        t = year.toTemplate();
+        expect(t.selectedDayNotes.length).toBe(1);
 
 
     });
@@ -617,6 +641,13 @@ describe('Year Class Tests', () => {
         year.combatChangeTriggered = true;
         year.setFromTime(120, 60);
         expect(year.time.seconds).toBe(120);
+        expect(game.settings.set).toHaveBeenCalledTimes(2);
+
+        //@ts-ignore
+        game.user.isGM = false;
+        year.combatChangeTriggered = true;
+        year.setFromTime(240, 60);
+        expect(year.time.seconds).toBe(240);
         expect(game.settings.set).toHaveBeenCalledTimes(2);
     });
 
