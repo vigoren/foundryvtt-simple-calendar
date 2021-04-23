@@ -243,5 +243,10 @@
   "FSC.Module.AboutTime.Title": "About-Time Modul erkannt",
   "FSC.Module.AboutTime.Message": "Wir haben festgestellt, dass das About-Time-Modul für diese Welt aktiviert ist/wurde.<br/><br/>Wenn Sie die Einstellungen des About-Time-Kalenders in den Einfachen Kalender importieren möchten, wählen Sie \"In den Einfachen Kalender importieren\", damit der Einfache Kalender mit den About-Time-Einstellungen übereinstimmt. <br/><br/>Wenn Sie die About-Time-Einstellungen in den Simple Calendar importieren möchten, wählen Sie \"Exportieren in About-Time\", damit die About-Time-Einstellungen mit der Konfiguration des Simple Calendars übereinstimmen.<br/><br/>Ansonsten können Sie \"Keine Änderungen\" wählen und die Dinge bleiben so, wie sie sind. Sollten Sie später einen Import/Export durchführen wollen, ist die Option in den allgemeinen Einstellungen des Simple Calendars verfügbar.<br/>",
   "FSC.Module.AboutTime.Configuration.Message": "Wir haben festgestellt, dass das Modul \"About-Time\" für diese Welt aktiviert ist/wurde.<br/><br/>Wenn du die Einstellungen des Kalenders \"About-Time\" in Simple Calendar importieren möchtest, wähle \"In Simple Calendar importieren\", damit Simple Calendar mit den Einstellungen von \"About-Time\" übereinstimmt.<br/><br/>Wenn du \"About-Time\" mit Simple Calendar synchronisieren möchtest, wähle \"In About-Time exportieren\", damit die Einstellungen von \"About-Time\" mit der Konfiguration von Simple Calendar übereinstimmen.<br/>",
-  "FSC.Module.AboutTime.Export": "Export in About-Time"
+  "FSC.Module.AboutTime.Export": "Export in About-Time",
+  "FSC.HourShorthand": "Std",
+  "FSC.MinuteShorthand": "Min",
+  "FSC.SecondShorthand": "Sek",
+  "FSC.SetCurrentDateDialog.Title": "Bestätige Datumsänderung",
+  "FSC.SetCurrentDateDialog.Content": "Die Änderung des Datums erfolgt auf einen Tag, der nicht sichtbar ist!<br/>Bist du sicher, dass du das Datum auf <strong>{DATE}</strong> ändern willst?",
 }
