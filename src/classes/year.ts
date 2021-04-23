@@ -8,6 +8,7 @@ import {GameWorldTimeIntegrations} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
+import {Note} from "./note";
 import SimpleCalendar from "./simple-calendar";
 
 /**
@@ -115,7 +116,7 @@ export default class Year {
         const selectedMonth = this.getMonth('selected');
         const visibleMonth = this.getMonth('visible');
 
-        let sMonth = '', sDay = '';
+        let sMonth = '', sDay = '', sDayOfWeek = '', sMoonsPhase = [], sNotes: Note[] = [];
         if(selectedMonth){
             sMonth = selectedMonth.name;
             const d = selectedMonth.getDay('selected');
@@ -127,6 +128,22 @@ export default class Year {
             const d = currentMonth.getDay();
             if(d){
                 sDay = d.name;
+                if(this.showWeekdayHeadings && this.weekdays.length){
+                    const weekday = this.dayOfTheWeek(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation);
+                    sDayOfWeek = this.weekdays[weekday].name;
+                }
+                if(this.moons.length){
+                    for(let i = 0; i < this.moons.length; i++){
+                        sMoonsPhase.push({
+                            name: this.moons[i].name,
+                            color: this.moons[i].color,
+                            phase: this.moons[i].getMoonPhase(this, 'current')
+                        });
+                    }
+                }
+                if(SimpleCalendar.instance){
+                    sNotes = SimpleCalendar.instance.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
+                }
             }
         }
         const currentSeason = this.getCurrentSeason();
@@ -141,6 +158,9 @@ export default class Year {
             selectedDisplayYear: this.getDisplayName(true),
             selectedDisplayMonth: sMonth,
             selectedDisplayDay: sDay,
+            selectedDayOfWeek: sDayOfWeek,
+            selectedDayMoons: sMoonsPhase,
+            selectedDayNotes: sNotes,
             numericRepresentation: this.numericRepresentation,
             weekdays: this.weekdays.map(w => w.toTemplate()),
             showWeekdayHeaders: this.showWeekdayHeadings,
@@ -596,11 +616,11 @@ export default class Year {
                 if(!this.timeChangeTriggered){
                     const parsedDate = this.secondsToDate(newTime);
                     this.updateTime(parsedDate);
-                }
-                // If the current player is the GM then we need to save this new value to the database
-                // Since the current date is updated this will trigger an update on all players as well
-                if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
-                    GameSettings.SaveCurrentDate(this).catch(Logger.error);
+                    // If the current player is the GM then we need to save this new value to the database
+                    // Since the current date is updated this will trigger an update on all players as well
+                    if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
+                        GameSettings.SaveCurrentDate(this).catch(Logger.error);
+                    }
                 }
             }
             // If we didn't (locally) request this change then parse the new time into years, months, days and seconds and set those values

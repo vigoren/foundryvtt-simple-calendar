@@ -20,6 +20,14 @@ Clock Icon | Next to the current time is a clock icon, this icon is used to indi
 Notes List | Any notes that appear in this list can be clicked on to open the note details.
 Add New Note | If the GM allows players to add notes this button will appear in which a note can be added to the selected day.
 
+### Compact View
+
+Simple Calendar also has a compact view that shows just the current day and that days information.
+
+To switch between the full and compact view you just need to double-click on the dialog's header!
+
+![Compact View](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/compact-view.gif)
+
 ## Simple Calendars Clock
 
 Simple Calendar can now display a clock below the calendar. If the clock is not showing up, it is likely that the GM has turned off the clock for the current game as it will be not needed.

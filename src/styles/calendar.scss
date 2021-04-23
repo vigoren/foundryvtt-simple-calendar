@@ -135,37 +135,38 @@
             margin-right: 2px;
             margin-bottom: 2px;
             border-radius: 5px;
-
-            &.new{
-              background-image: url("../icons/new.svg") ;
-            }
-            &.waxing-crescent{
-              background-image: url("../icons/waxing-crescent.svg") ;
-            }
-            &.first-quarter{
-              background-image: url("../icons/first-quarter.svg") ;
-            }
-            &.waxing-gibbous{
-              background-image: url("../icons/waxing-gibbous.svg") ;
-            }
-            &.full{
-              background-image: url("../icons/full.svg") ;
-            }
-            &.waning-gibbous{
-              background-image: url("../icons/waning-gibbous.svg");
-            }
-            &.last-quarter{
-              background-image: url("../icons/last-quarter.svg") ;
-            }
-            &.waning-crescent{
-              background-image: url("../icons/waning-crescent.svg") ;
-            }
-
           }
         }
 
       }
     }
+  }
+}
+
+.moon-phase{
+  &.new{
+    background-image: url("../icons/new.svg") ;
+  }
+  &.waxing-crescent{
+    background-image: url("../icons/waxing-crescent.svg") ;
+  }
+  &.first-quarter{
+    background-image: url("../icons/first-quarter.svg") ;
+  }
+  &.waxing-gibbous{
+    background-image: url("../icons/waxing-gibbous.svg") ;
+  }
+  &.full{
+    background-image: url("../icons/full.svg") ;
+  }
+  &.waning-gibbous{
+    background-image: url("../icons/waning-gibbous.svg");
+  }
+  &.last-quarter{
+    background-image: url("../icons/last-quarter.svg") ;
+  }
+  &.waning-crescent{
+    background-image: url("../icons/waning-crescent.svg") ;
   }
 }
 
@@ -186,64 +187,64 @@
   flex-direction: row;
   justify-content: center;
 
-  .clock {
-    position:relative;
-    transform:scale(1.25);
-    border-radius:50%;
-    border:2px solid;
-    width:20px;
-    height:20px;
-    margin-top: 2px;
-    margin-right: 8px;
 
-    &:after {
-      position:absolute;
-      width:0px;
-      height:6px;
-      display:block;
-      border-left:1px solid #000;
-      content:'';
-      left: 8.25px;
-      top: 1.75px;
-      animation-duration: 1s;
-    }
+}
+.clock {
+  position:relative;
+  transform:scale(1.25);
+  border-radius:50%;
+  border:2px solid;
+  width:20px;
+  height:20px;
+  margin-top: 2px;
+  margin-right: 8px;
 
-    &:before {
-      position:absolute;
-      width:0px;
-      height:4px;
-      display:block;
-      border-left:1px solid #000;
-      content:'';
-      left: 8.25px;
-      top: 3.75px;
-      animation-duration: 60s;
-    }
-    &.stopped{
+  &:after {
+    position:absolute;
+    width:0px;
+    height:6px;
+    display:block;
+    border-left:1px solid #000;
+    content:'';
+    left: 8.25px;
+    top: 1.75px;
+    animation-duration: 1s;
+  }
+
+  &:before {
+    position:absolute;
+    width:0px;
+    height:4px;
+    display:block;
+    border-left:1px solid #000;
+    content:'';
+    left: 8.25px;
+    top: 3.75px;
+    animation-duration: 60s;
+  }
+  &.stopped{
+    border-color:#c12121;
+    &:before, &:after{
       border-color:#c12121;
-      &:before, &:after{
-        border-color:#c12121;
-      }
-    }
-    &.paused{
-      border-color:#de810d;
-      &:before, &:after{
-        border-color:#de810d;
-      }
-    }
-    &.go{
-      &:before, &:after{
-        border-color: green;
-        transform-origin: bottom;
-        animation-name: dial;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
-      }
-      border-color: green;
     }
   }
+  &.paused{
+    border-color:#de810d;
+    &:before, &:after{
+      border-color:#de810d;
+    }
+  }
+  &.go{
+    &:before, &:after{
+      border-color: green;
+      transform-origin: bottom;
+      animation-name: dial;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+    border-color: green;
+  }
 }
-
 .calendar-controls{
   display: flex;
   flex-direction: row;
@@ -281,6 +282,190 @@
   &:hover {
     background-color: #cad1f3;
     cursor: pointer;
+  }
+}
+
+.compact-calendar{
+  margin: -8px;
+
+  .season-moon-info{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-between;
+    padding: .15rem 0.25rem;
+    background-color: #fff;
+    border-bottom: 1px solid #717171;
+    margin-bottom: 0.15rem;
+
+    .notes-wrapper{
+      display: flex;
+      flex-direction: row;
+      z-index: 1;
+      .notes{
+        font-size: 0.75rem;
+        padding: 1px 5px;
+        white-space: nowrap;
+
+        &.none{
+          background-color: #6b6b6b;
+          border-color: #6b6b6b;
+          &:hover{
+            color: #ffffff;
+          }
+        }
+        &:before{
+          font-size: 0.6rem;
+        }
+      }
+      .add-note{
+        font-size: 0.6rem;
+        padding: 1px 5px;
+        margin-left: 5px;
+        &:before{
+          padding: 0;
+        }
+      }
+    }
+
+    .season{
+      font-size: 0.75rem;
+      font-style: italic;
+      font-weight: 600;
+      text-align: center;
+      position: absolute;
+      top: 4px;
+      left: 0;
+      right: 0;
+      z-index: 0;
+    }
+
+    .moons{
+      display: flex;
+      flex-direction: row;
+      margin-top: 4px;
+      z-index: 1;
+
+      .moon-phase{
+        width: 12px;
+        height: 12px;
+        background-size: contain;
+        border-radius: 6px;
+        margin-right: 2px;
+      }
+    }
+
+  }
+
+  .current-date{
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    flex-direction: row;
+    margin-bottom: 0.15rem;
+
+    .prev, .next{
+      font-size: 1rem;
+      margin: 1px 8px 0;
+    }
+
+    .date{
+      font-size: 1rem;
+      white-space: nowrap;
+      margin: 0 auto;
+    }
+  }
+
+  .current-time{
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-direction: row;
+    margin-bottom: 0.15rem;
+
+    .clock{
+      transform: scale(0.75);
+    }
+
+    .time{
+      margin-top: 3px;
+    }
+
+    .time-controls{
+      margin-left: 8px;
+      .time-start{
+        margin: 0 8px 0 0px;
+        line-height: 22px;
+        font-size: 0.75rem;
+
+        &.go{
+          color: green;
+        }
+        &.paused{
+          color: #de810d;
+        }
+      }
+      .time-stop{
+        line-height: 22px;
+        font-size: 0.75rem;
+        color: #c12121;
+        &.stopped{
+          color: #6e6c6c
+        }
+      }
+    }
+  }
+
+  .time-controls{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    margin-bottom: 0.15rem;
+
+    .selector{
+      font-size: 0.75rem;
+      border-top: 1px solid #384582;
+      border-bottom: 1px solid #384582;
+      border-right: 1px solid black;
+      padding: 0.1rem 0.5rem;
+      color: #ffffff;
+      background-color: #384582;
+      cursor: pointer;
+
+      &:first-child{
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        border-left: 1px solid #384582;
+      }
+      &:last-child{
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        border-right-color: #384582;
+      }
+
+      &:hover{
+        color: #000000;
+        background-color: #cad1f3;
+      }
+    }
+  }
+
+  .note-list{
+    border-top: 1px solid #999999;
+    margin-top: 2px;
+
+    .note{
+      border-left-width: 0;
+      border-right-width: 0;
+      font-size: 0.75rem;
+      padding: .15rem .3rem;
+
+      &:nth-child(2) {
+        border-top-width: 0;
+      }
+    }
   }
 }
 

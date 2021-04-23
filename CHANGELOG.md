@@ -1,5 +1,33 @@
 # Change Log
 
+## v1.2.30 - Compact View, Bug Fixes, QoL Improvements & Translations
+
+### Compact View
+
+I have added a compact view for the calendar that only shows the current day and relevant information for that day. Switching between the full  and compact views is done by double-clicking on the dialog's header.
+
+![Compact View](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/compact-view.gif)
+
+### Quality of Life Improvements
+
+- Updated the Simple Calendar clock so that it only checks for active combats on the currently active scene instead of all scenes. It was confusing when the clock would not start because of a combat in a non-active scene.
+- The Date and Time GM controls are feeling clunky and not intuitive, so I have changed them up in the following ways:
+  - Changed the Date Controls so that when a day/month/year is moved forward or backward that change is propagated out to the players immediately. This removed the need to click the "Set Current Date" button after setting the date.
+  - Changed the Time Controls so that when a second/minute/hour is incremented or decremented the change is propagated out to the players immediately. This removes the need to click the "Set Current Date" button after setting the time.
+  - The "Set Current Date" button now appears after a day has been selected. Clicking the button will set the current date to the selected date.
+    - If the selected day is not current visible, such as changing the visible month after selecting a day, and the "Set Current Date" button is clicked a dialog will appear to confirm changing the date to the day that is not visible.
+
+### Bug Fixes
+
+- Fixed an issue where when updating the time the new value would get saved twice.
+- Fixed a rare issue where when there was more than 1 GM in a game, initial loading could result in an unwanted time change.
+- Fixed an issue where clicking on a days note indicator, or a moon phase icon would not select the day and throw an error.
+- Fixed an issue with the moon phase icons where the first and last quarter icons were switched.
+
+### Translations
+
+I am happy to say that Simple Calendar has been translated into German by [MasterZelgadis](https://github.com/MasterZelgadis)
+
 ## v1.2.20 - Macros, Hooks, Bug Fixes and QoL Improvements
 
 ### Macros
