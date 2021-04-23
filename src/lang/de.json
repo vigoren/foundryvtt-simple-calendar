@@ -3,6 +3,7 @@
   "FSC.Help": "Hilfe",
   "FSC.One": "1",
   "FSC.Five": "5",
+  "FSC.Thirty": "30",
   "FSC.ButtonTitle": "Kalender",
   "FSC.Day": "Tag",
   "FSC.Days": "Tage",
@@ -248,5 +249,5 @@
   "FSC.MinuteShorthand": "Min",
   "FSC.SecondShorthand": "Sek",
   "FSC.SetCurrentDateDialog.Title": "Bestätige Datumsänderung",
-  "FSC.SetCurrentDateDialog.Content": "Die Änderung des Datums erfolgt auf einen Tag, der nicht sichtbar ist!<br/>Bist du sicher, dass du das Datum auf <strong>{DATE}</strong> ändern willst?",
+  "FSC.SetCurrentDateDialog.Content": "Die Änderung des Datums erfolgt auf einen Tag, der nicht sichtbar ist!<br/>Bist du sicher, dass du das Datum auf <strong>{DATE}</strong> ändern willst?"
 }

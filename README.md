@@ -85,7 +85,7 @@ These are other time keeping modules that Simple Calendar can work if they are i
 
 ## Translations
 
-Simple Calendar is available languages other than English thanks to the following people:
+Simple Calendar is available in languages other than English thanks to the following people:
 
 Language|Translator(s)
 --------|----------
