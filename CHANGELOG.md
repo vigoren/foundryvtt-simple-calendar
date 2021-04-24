@@ -1,5 +1,20 @@
 # Change Log
 
+## v1.3.0 - Notes
+
+### Notes
+
+This update is mainly around notes and improving the experience around adding, editing and viewing them. The notable improvements/changes to notes are:
+
+- Changed the dialog's behaviour so that it will attempt to size itself to fit the content of the note appropriately.
+
+### Bug Fixes
+
+- Fixed an issue where the clock would show in the calendar compact view when the Show Clock setting was unchecked.
+- Fixed an issue where GM date and time controls would show when they shouldn't.
+- Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
+
+
 ## v1.2.30 - Compact View, Bug Fixes, QoL Improvements & Translations
 
 ### Compact View

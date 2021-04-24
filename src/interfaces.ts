@@ -104,7 +104,7 @@ export interface  MonthTemplate {
     current: boolean;
     visible: boolean;
     selected: boolean;
-    days: any[];
+    days: DayTemplate[];
     numberOfDays: number;
     numberOfLeapYearDays: number;
     intercalary: boolean;
@@ -178,6 +178,9 @@ export interface NoteConfig {
     playerVisible: boolean;
     id: string;
     repeats: NoteRepeat;
+    allDay: boolean;
+    hour: number;
+    minute: number;
 }
 
 /**

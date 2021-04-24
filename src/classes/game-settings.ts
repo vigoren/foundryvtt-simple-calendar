@@ -533,7 +533,10 @@ export class GameSettings {
             monthDisplay: w.monthDisplay,
             playerVisible: w.playerVisible,
             id: w.id,
-            repeats: w.repeats
+            repeats: w.repeats,
+            allDay: w.allDay,
+            hour: w.hour,
+            minute: w.minute
         };});
         if(GameSettings.IsGm()){
             return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});

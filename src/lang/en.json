@@ -59,6 +59,8 @@
   "FSC.Notes.NewFor": "New Note For",
   "FSC.Notes.Title": "Note Title",
   "FSC.Notes.TitleHelp": "The title of this note.",
+  "FSC.Notes.Date": "Note Date",
+  "FSC.Notes.DateHelp": "The date the note is for.",
   "FSC.Notes.PlayerVisible": "Player Visible",
   "FSC.Notes.PlayerVisibleHelp": "If this note is visible by the players or not.",
   "FSC.Notes.Repeating": "Note Repeats",

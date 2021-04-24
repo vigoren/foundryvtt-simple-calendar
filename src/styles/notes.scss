@@ -1,8 +1,30 @@
 #simpleCalendarNotes{
   .editor{
-    min-width: 500px;
     .editor-content{
       min-height: 200px;
+    }
+    .EasyMDEContainer{
+      min-height: 200px;
+    }
+  }
+
+  form{
+    .date-time-select{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-content: center;
+      justify-content: space-between;
+
+      & > label{
+        flex: 1 1;
+      }
+      .fields{
+        flex: 2;
+      }
+      & > p{
+        flex: 1 1 100%;
+      }
     }
   }
 
@@ -19,5 +41,6 @@
   .edit-controls{
     display: flex;
     justify-content: space-around;
+    margin-top: 1rem;
   }
 }

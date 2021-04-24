@@ -1,5 +1,6 @@
 import SimpleCalendar from "./simple-calendar";
 import {GameSettings} from "./game-settings";
+import DateSelector from "./date-selector";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -10,8 +11,21 @@ export default class HandlebarsHelpers{
      * Registers the helper functions with Handlebars
      */
     static Register(){
+        Handlebars.registerHelper("sc-date-selector", HandlebarsHelpers.DateSelector);
         Handlebars.registerHelper("day-has-note", HandlebarsHelpers.DayHasNotes);
         Handlebars.registerHelper("day-moon-phase", HandlebarsHelpers.DayMoonPhase);
+    }
+
+    static DateSelector(options: any){
+        if(SimpleCalendar.instance.currentYear && options.hash.hasOwnProperty('id') ){
+            const id = options.hash['id'];
+            let placeHolderText = '';
+            if(options.hash.hasOwnProperty('placeholder')){
+                placeHolderText = GameSettings.Localize(options.hash['placeholder']);
+            }
+            return new Handlebars.SafeString(DateSelector.build(id, placeHolderText, SimpleCalendar.instance.currentYear));
+        }
+        return '';
     }
 
     /**
@@ -28,7 +42,7 @@ export default class HandlebarsHelpers{
                 const notes = SimpleCalendar.instance.notes.filter(n => n.isVisible(year, month.numericRepresentation, day));
                 if(notes.length){
                     const count = notes.length < 100? notes.length : 99;
-                    return `<span class="note-count" title="${count} ${GameSettings.Localize('FSC.Configuration.General.Notes')}">${count}</span>`;
+                    return new Handlebars.SafeString(`<span class="note-count" title="${count} ${GameSettings.Localize('FSC.Configuration.General.Notes')}">${count}</span>`);
                 }
             }
         }
@@ -50,7 +64,7 @@ export default class HandlebarsHelpers{
                     html += `<span class="moon-phase ${mp.icon}" title="${SimpleCalendar.instance.currentYear.moons[i].name} - ${mp.name}" style="background-color: ${SimpleCalendar.instance.currentYear.moons[i].color};"></span>`;
                 }
             }
-            return html;
+            return new Handlebars.SafeString(html);
         }
         return '';
     }

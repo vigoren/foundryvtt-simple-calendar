@@ -3,6 +3,7 @@ import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
+import {DayTemplate, MonthTemplate} from "../interfaces";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**
@@ -20,6 +21,10 @@ export class SimpleCalendarNotes extends FormApplication {
      * @type {boolean}
      */
     richEditorSaved: boolean = false;
+    /**
+     * If the note dialog has been resized at all
+     */
+    hasBeenResized: boolean = false;
 
     /**
      * Used to store a globally accessible copy of the Simple calendar Notes class for access from event functions.
@@ -54,6 +59,11 @@ export class SimpleCalendarNotes extends FormApplication {
         return options;
     }
 
+    /**
+     * Checks to see if any of the known markdown editor modules are loaded and active in the world
+     * Current Supported Editors:
+     *      - Moerills Expandable Markdown Editor (https://www.foundryvtt-hub.com/package/markdown-editor/)
+     */
     checkForThirdPartyMarkdownEditors(){
         const meme = game.modules.get('markdown-editor');
         return meme !== undefined && meme.active;
@@ -63,6 +73,8 @@ export class SimpleCalendarNotes extends FormApplication {
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
     getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
+        let h: number[] = [];
+        let m: number[] = [];
         let data = {
             ... super.getData(options),
             isGM: GameSettings.IsGm(),
@@ -74,7 +86,9 @@ export class SimpleCalendarNotes extends FormApplication {
             repeatOptions: {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             repeats: (<Note>this.object).repeats,
             repeatsText: '',
-            authorName: (<Note>this.object).author
+            authorName: (<Note>this.object).author,
+            hours: h,
+            minutes: m
         };
         if(SimpleCalendar.instance.currentYear && ((<Note>this.object).repeats === NoteRepeat.Yearly || (<Note>this.object).repeats === NoteRepeat.Monthly)){
             data.noteYear = SimpleCalendar.instance.currentYear.visibleYear;
@@ -96,7 +110,48 @@ export class SimpleCalendarNotes extends FormApplication {
                 data.authorName = user.name;
             }
         }
+        if(SimpleCalendar.instance.currentYear){
+            data.hours = Array.from(Array(SimpleCalendar.instance.currentYear.time.hoursInDay).keys());
+            data.minutes = Array.from(Array(SimpleCalendar.instance.currentYear.time.minutesInHour).keys());
+        }
         return data;
+    }
+
+    /**
+     * When the window is resized
+     * @param event
+     * @protected
+     */
+    protected _onResize(event: Event) {
+        super._onResize(event);
+        this.hasBeenResized = true;
+    }
+
+    /**
+     * Sets the width and height of the note window so that everything that needs to be visible is.
+     * @param {JQuery} html
+     */
+    setWidthHeight(html: JQuery){
+        if(this.hasBeenResized){
+            return;
+        }
+        let height = 0;
+        let width = 0;
+
+        const form = (<JQuery>html).find('form');
+        if(form){
+            const h = form.outerHeight(true);
+            const w = form.outerWidth(true);
+            height += h? h : 0;
+            width += w? w : 0;
+        }
+
+        if(width< 440){
+            width = 440;
+        }
+        height += 46;
+
+        this.setPosition({width: width, height: height});
     }
 
     /**
@@ -106,6 +161,7 @@ export class SimpleCalendarNotes extends FormApplication {
      */
     public activateListeners(html: JQuery<HTMLElement>) {
         super.activateListeners(html);
+        this.setWidthHeight(html);
         if(html.hasOwnProperty("length")) {
             (<JQuery>this.element).find('#scNoteTitle').focus();
             (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
@@ -132,6 +188,7 @@ export class SimpleCalendarNotes extends FormApplication {
      * Shows the application window
      */
     public showApp(){
+        this.hasBeenResized = false;
         this.render(true);
     }
 

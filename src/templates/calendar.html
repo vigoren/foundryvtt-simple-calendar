@@ -19,28 +19,37 @@
         </div>
         <div class="current-date">
             {{#if isGM}}
+            {{#if currentYear.showDateControls}}
             <a class="prev fa fa-angle-left" data-type="day"></a>
+            {{/if}}
             {{/if}}
             <div class="date">
                 {{currentYear.selectedDayOfWeek}} {{currentYear.selectedDisplayMonth}} {{currentYear.selectedDisplayDay}}, {{currentYear.display}}
             </div>
             {{#if isGM}}
+            {{#if currentYear.showDateControls}}
             <a class="next fa fa-angle-right" data-type="day"></a>
             {{/if}}
+            {{/if}}
         </div>
+        {{#if currentYear.showClock}}
         <div class="current-time">
             <span class="clock {{clockClass}}"></span>
             <div class="time">
                 {{currentYear.currentTime.hour}}:{{currentYear.currentTime.minute}}:{{currentYear.currentTime.second}}
             </div>
             {{#if isPrimary}}
+            {{#if currentYear.showTimeControls}}
             <div class="time-controls">
                 <a class="time-start {{clockClass}} fa fa-play" title="{{localize 'FSC.Time.Start'}}"></a>
                 <a class="time-stop {{clockClass}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></a>
             </div>
             {{/if}}
+            {{/if}}
         </div>
+        {{/if}}
         {{#if isGM}}
+        {{#if currentYear.showTimeControls}}
         <div class="time-controls">
             <div class="selector" data-type="second" data-amount="1">{{localize 'FSC.One'}} {{localize 'FSC.SecondShorthand'}}</div>
             <div class="selector" data-type="second" data-amount="30">{{localize 'FSC.Thirty'}} {{localize 'FSC.SecondShorthand'}}</div>
@@ -48,6 +57,7 @@
             <div class="selector" data-type="minute" data-amount="5">{{localize 'FSC.Five'}} {{localize 'FSC.MinuteShorthand'}}</div>
             <div class="selector" data-type="hour" data-amount="1">{{localize 'FSC.One'}} {{localize 'FSC.HourShorthand'}}</div>
         </div>
+        {{/if}}
         {{/if}}
         {{#if compactViewShowNotes}}
         {{#if notes.length}}
@@ -90,10 +100,10 @@
                         <div class="empty-day"></div>
                         {{else}}
                         <div class="day {{#if ../../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
-                            {{#day-has-note day=this}}{{/day-has-note}}
+                            {{day-has-note day=this}}
                             {{this.name}}
                             <div class="moons">
-                                {{#day-moon-phase day=this}}{{/day-moon-phase}}
+                                {{day-moon-phase day=this}}
                             </div>
                         </div>
                         {{/unless}}

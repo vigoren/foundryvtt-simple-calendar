@@ -84,7 +84,6 @@ export default class SimpleCalendar extends Application{
      * Returns the default options for this application
      */
     static get defaultOptions() {
-        Logger.debug('Simple Calendar -> defaultOptions()');
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/calendar.html";
         options.title = "FSC.Title";
@@ -798,12 +797,17 @@ export default class SimpleCalendar extends Application{
                         newNote.title = '';
                         newNote.author = GameSettings.UserID();
                         newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
-                        if(this.newNote !== undefined){
+                        if(this.newNote !== undefined && !this.newNote.rendered){
                             this.newNote.closeApp();
                             this.newNote = undefined;
                         }
-                        this.newNote = new SimpleCalendarNotes(newNote);
-                        this.newNote.showApp();
+                        if(this.newNote === undefined){
+                            this.newNote = new SimpleCalendarNotes(newNote);
+                            this.newNote.showApp();
+                        } else {
+                            this.newNote.bringToTop();
+                            this.newNote.maximize().catch(Logger.error);
+                        }
                     } else {
                         GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedDay"), 'warn');
                     }

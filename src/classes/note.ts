@@ -2,6 +2,7 @@ import {NoteConfig, NoteTemplate} from "../interfaces";
 import {GameSettings} from "./game-settings"
 import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
+import {triggerAsyncId} from "async_hooks";
 
 /**
  * All content around a calendar note
@@ -32,6 +33,10 @@ export class Note{
      * @type {number}
      */
     day: number = 0;
+
+    allDay: boolean = true;
+    hour: number = 0;
+    minute: number = 0;
     /**
      * The title of the note
      * @type {string}
@@ -94,6 +99,9 @@ export class Note{
         this.playerVisible = noteConfig.playerVisible;
         this.id = noteConfig.id;
         this.repeats = noteConfig.repeats;
+        this.allDay = noteConfig.allDay;
+        this.hour = noteConfig.hour;
+        this.minute = noteConfig.minute;
     }
 
     /**
@@ -105,6 +113,9 @@ export class Note{
         n.month = this.month;
         n.day = this.day;
         n.monthDisplay = this.monthDisplay;
+        n.allDay = this.allDay;
+        n.hour = this.hour;
+        n.minute = this.minute;
         n.title = this.title;
         n.content = this.content;
         n.author = this.author;
