@@ -562,7 +562,7 @@ export default class Year {
         while(dayCount > 0){
             let isLeapYear = this.leapYearRule.isLeapYear(year);
             for(let i = 0; i < this.months.length; i ++){
-                if(!this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude)){
+                //if(!this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude)){
                     const daysInMonth = isLeapYear? this.months[i].numberOfLeapYearDays : this.months[i].numberOfDays;
                     month = i;
                     if(dayCount < daysInMonth) {
@@ -573,7 +573,7 @@ export default class Year {
                     if(dayCount <= 0){
                         break;
                     }
-                }
+                //}
             }
             if(dayCount > 0){
                 year++;
