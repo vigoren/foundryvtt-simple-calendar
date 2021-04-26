@@ -579,7 +579,7 @@ describe('Year Class Tests', () => {
         expect(year.secondsToDate(70)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 1, seconds: 10});
         expect(year.secondsToDate(3670)).toStrictEqual({year: 0, month: 0, day: 1, hour: 1, minute: 1, seconds: 10});
         expect(year.secondsToDate(90070)).toStrictEqual({year: 0, month: 0, day: 2, hour: 1, minute: 1, seconds: 10});
-        expect(year.secondsToDate(2682070)).toStrictEqual({year: 1, month: 0, day: 2, hour: 1, minute: 1, seconds: 10});
+        expect(year.secondsToDate(2682070)).toStrictEqual({year: 0, month: 1, day: 2, hour: 1, minute: 1, seconds: 10});
         year.months[1].intercalary = false;
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
