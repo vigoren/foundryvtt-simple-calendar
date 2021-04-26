@@ -15,6 +15,13 @@ This update is mainly around notes and improving the experience around adding, e
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
 
 
+## v1.2.34 - Bug Fixing
+
+- Fixed a bug where removing all phases from a moon would cause the calendar to no longer open.
+- Fixed an issue where the compact view clock would show when the show clock setting was unchecked. 
+- Fixed an issue where GM date and time controls would show when they.
+- Fixed an issue when time was advanced by other means (combat tracker or third party module) on maps with intercalary days. Simple Calendar would calculate the new date incorrectly.
+
 ## v1.2.30 - Compact View, Bug Fixes, QoL Improvements & Translations
 
 ### Compact View
