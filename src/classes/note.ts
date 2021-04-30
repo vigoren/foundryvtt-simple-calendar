@@ -1,8 +1,8 @@
-import {NoteConfig, NoteTemplate} from "../interfaces";
+import {DateTimeParts, NoteConfig, NoteTemplate} from "../interfaces";
 import {GameSettings} from "./game-settings"
-import {NoteRepeat} from "../constants";
+import {DateRangeMatch, NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
-import {triggerAsyncId} from "async_hooks";
+import DateSelector from "./date-selector";
 
 /**
  * All content around a calendar note
@@ -33,10 +33,11 @@ export class Note{
      * @type {number}
      */
     day: number = 0;
-
-    allDay: boolean = true;
     hour: number = 0;
     minute: number = 0;
+    allDay: boolean = true;
+    endDate: DateTimeParts | null = null;
+
     /**
      * The title of the note
      * @type {string}
@@ -99,9 +100,25 @@ export class Note{
         this.playerVisible = noteConfig.playerVisible;
         this.id = noteConfig.id;
         this.repeats = noteConfig.repeats;
-        this.allDay = noteConfig.allDay;
-        this.hour = noteConfig.hour;
-        this.minute = noteConfig.minute;
+
+        if(noteConfig.hasOwnProperty('allDay')){
+            this.allDay = noteConfig.allDay;
+        }
+        if(noteConfig.hasOwnProperty('hour')){
+            this.hour = noteConfig.hour;
+        }
+        if(noteConfig.hasOwnProperty('minute')){
+            this.minute = noteConfig.minute;
+        }
+        if(noteConfig.hasOwnProperty('endDate') && noteConfig.endDate !== null){
+            this.endDate = {
+                year: noteConfig.endDate.year,
+                month: noteConfig.endDate.month,
+                day: noteConfig.endDate.day,
+                hour: noteConfig.endDate.hour,
+                minute: noteConfig.endDate.minute
+            };
+        }
     }
 
     /**
@@ -122,6 +139,15 @@ export class Note{
         n.playerVisible = this.playerVisible;
         n.id = this.id;
         n.repeats = this.repeats;
+        if(this.endDate !== null){
+            n.endDate = {
+                year: this.endDate.year,
+                month: this.endDate.month,
+                day: this.endDate.day,
+                hour: this.endDate.hour,
+                minute: this.endDate.minute
+            };
+        }
         return n;
     }
 
@@ -134,19 +160,39 @@ export class Note{
     isVisible(year: number, month: number ,day: number){
         const userVisible = (GameSettings.IsGm() || (!GameSettings.IsGm() && this.playerVisible));
         let dayVisible = false;
-        if(this.repeats === NoteRepeat.Weekly){
-            let noteDayOfWeek = 0, targetDayOfWeek = 1;
-            if(SimpleCalendar.instance.currentYear){
-                noteDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(this.year, this.month, this.day);
-                targetDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(year, month, day);
+        if(userVisible){
+            let inBetween = DateRangeMatch.None;
+            if(this.repeats === NoteRepeat.Weekly){
+                let noteStartDayOfWeek = 0, noteEndDayOfWeek = 0, targetDayOfWeek = 1;
+                if(SimpleCalendar.instance.currentYear){
+                    noteStartDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(this.year, this.month, this.day);
+                    targetDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(year, month, day);
+                    if(this.endDate){
+                        noteEndDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(this.endDate.year, this.endDate.month, this.endDate.day);
+                    }
+                }
+                if(noteStartDayOfWeek === targetDayOfWeek){
+                    inBetween = DateRangeMatch.Start;
+                } else if(noteEndDayOfWeek === targetDayOfWeek){
+                    inBetween = DateRangeMatch.End;
+                } else{
+                    // Start and end day of the week are within the same week
+                    if(noteStartDayOfWeek < noteEndDayOfWeek && noteStartDayOfWeek < targetDayOfWeek && noteEndDayOfWeek > targetDayOfWeek){
+                        inBetween = DateRangeMatch.Middle;
+                    }
+                    //Start and end day of the week are are different weeks but the start day is later in the week than the end day
+                    else if(noteStartDayOfWeek > noteEndDayOfWeek && ((noteStartDayOfWeek < targetDayOfWeek && noteEndDayOfWeek < targetDayOfWeek) || (noteStartDayOfWeek > targetDayOfWeek && noteEndDayOfWeek > targetDayOfWeek))){
+                        inBetween = DateRangeMatch.Middle;
+                    }
+                }
+            } else if(this.repeats === NoteRepeat.Monthly){
+                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day}, {year: year, month: month, day: this.day}, this.endDate? {year: year, month: month, day: this.endDate.day} : null);
+            } else if(this.repeats === NoteRepeat.Yearly){
+                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day}, {year: year, month: this.month, day: this.day}, this.endDate? {year: year, month: this.endDate.month, day: this.endDate.day} : null);
+            } else {
+                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day}, {year: this.year, month: this.month, day: this.day}, this.endDate);
             }
-            dayVisible = noteDayOfWeek === targetDayOfWeek;
-        } else if(this.repeats === NoteRepeat.Monthly){
-            dayVisible = this.day === day;
-        } else if(this.repeats === NoteRepeat.Yearly){
-            dayVisible = this.month === month && this.day === day;
-        } else {
-            dayVisible = this.year === year && this.month === month && this.day === day;
+            dayVisible = inBetween !== DateRangeMatch.None;
         }
         return userVisible && dayVisible;
     }

@@ -37,6 +37,14 @@ export enum NoteRepeat {
     Yearly
 }
 
+export enum DateRangeMatch {
+    None = 'none',
+    Start = 'start',
+    End = 'end',
+    Middle = 'mid',
+    Exact = 'exact'
+}
+
 /**
  * The different rules used for leap years
  */

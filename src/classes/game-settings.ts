@@ -536,7 +536,8 @@ export class GameSettings {
             repeats: w.repeats,
             allDay: w.allDay,
             hour: w.hour,
-            minute: w.minute
+            minute: w.minute,
+            endDate: w.endDate
         };});
         if(GameSettings.IsGm()){
             return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});

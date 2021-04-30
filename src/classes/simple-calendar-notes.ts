@@ -3,7 +3,8 @@ import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
-import {DayTemplate, MonthTemplate} from "../interfaces";
+import DateSelector from "./date-selector";
+import {DayTemplate, SCDateSelector} from "../interfaces";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**
@@ -25,6 +26,20 @@ export class SimpleCalendarNotes extends FormApplication {
      * If the note dialog has been resized at all
      */
     hasBeenResized: boolean = false;
+    /**
+     * The ID of the date selector input
+     * @type {string}
+     */
+    dateSelectorId: string = '';
+    /**
+     * The date selector object
+     * @type {DateSelector | null}
+     */
+    dateSelector: DateSelector | null = null;
+
+    initialLoad: boolean = true;
+
+    focusField: string = 'scNoteTitle';
 
     /**
      * Used to store a globally accessible copy of the Simple calendar Notes class for access from event functions.
@@ -43,6 +58,13 @@ export class SimpleCalendarNotes extends FormApplication {
         if(!GameSettings.IsGm()){
             (<Note>this.object).playerVisible = true;
         }
+        this.dateSelectorId = `scNoteDate_${data.id}`;
+        this.dateSelector = DateSelector.GetSelector(this.dateSelectorId, {
+            onDateSelect: this.dateSelectorClick.bind(this),
+            placeHolderText: '',
+            rangeSelect: true
+        });
+        this.dateSelector.updateSelectedDate(data);
     }
 
     /**
@@ -87,6 +109,7 @@ export class SimpleCalendarNotes extends FormApplication {
             repeats: (<Note>this.object).repeats,
             repeatsText: '',
             authorName: (<Note>this.object).author,
+            dateSelectorId: this.dateSelectorId,
             hours: h,
             minutes: m
         };
@@ -136,7 +159,7 @@ export class SimpleCalendarNotes extends FormApplication {
             return;
         }
         let height = 0;
-        let width = 0;
+        let width = 16;
 
         const form = (<JQuery>html).find('form');
         if(form){
@@ -163,12 +186,80 @@ export class SimpleCalendarNotes extends FormApplication {
         super.activateListeners(html);
         this.setWidthHeight(html);
         if(html.hasOwnProperty("length")) {
-            (<JQuery>this.element).find('#scNoteTitle').focus();
-            (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
+            this.dateSelector?.activateListeners(html);
+            (<JQuery>this.element).find('#scNoteTitle').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('#scNoteRepeats').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));
 
+            (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
             (<JQuery>html).find('#scNoteEdit').on('click', this.editButtonClick.bind(this));
             (<JQuery>html).find('#scNoteDelete').on('click', this.deleteButtonClick.bind(this));
+
+            if(this.focusField){
+                setTimeout(()=>{
+                    (<JQuery>this.element).find(`#${this.focusField}`).focus();
+                }, 255);
+            }
         }
+    }
+
+    /**
+     * Processes all input change requests and ensures data is properly saved between form update
+     * @param {Event} e The change event
+     */
+    public inputChanged(e: Event){
+        Logger.debug('Input has changed, updating note object');
+        const id = (<HTMLElement>e.currentTarget).id;
+        let value = (<HTMLInputElement>e.currentTarget).value;
+        const checked = (<HTMLInputElement>e.currentTarget).checked;
+
+        if(value){
+            value = value.trim();
+        }
+
+        if(id && id[0] !== '-'){
+            Logger.debug(`ID "${id}" change found`);
+            if(id === "scNoteTitle"){
+                (<Note>this.object).title = value;
+                this.focusField = 'scNoteTitle';
+            } else if(id === "scNoteRepeats"){
+                const r = parseInt(value);
+                if(!isNaN(r)){
+                    (<Note>this.object).repeats = r;
+                } else {
+                    (<Note>this.object).repeats = 0;
+                }
+                this.focusField = 'scNoteRepeats';
+            } else if(id === "scNoteVisibility"){
+                (<Note>this.object).playerVisible = checked;
+                this.focusField = 'scNoteVisibility';
+            }
+        }
+        this.updateApp();
+    }
+
+    /**
+     * Called when the date selector date has been selected
+     * @param selectedDate
+     */
+    dateSelectorClick(selectedDate: SCDateSelector.SelectedDate){
+        (<Note>this.object).year = selectedDate.startDate.year;
+        (<Note>this.object).month = selectedDate.startDate.month;
+        (<Note>this.object).day = selectedDate.startDate.day;
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            const monthObj = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === selectedDate.startDate.month);
+            if(monthObj){
+                (<Note>this.object).monthDisplay = monthObj.name;
+            }
+        }
+        if(selectedDate.endDate){
+            (<Note>this.object).endDate = {
+                year: selectedDate.endDate.year,
+                month: selectedDate.endDate.month,
+                day: selectedDate.endDate.day
+            };
+        }
+        this.updateApp();
     }
 
     /**
@@ -178,10 +269,21 @@ export class SimpleCalendarNotes extends FormApplication {
      * @protected
      */
     protected _updateObject(event: Event | JQuery.Event, formData: any): Promise<any> {
+        console.log(formData);
         (<Note>this.object).content = formData['content'];
         Logger.debug('Update Object Called');
         this.richEditorSaved = true;
+        this.updateApp();
         return Promise.resolve(false);
+    }
+
+    /**
+     * Override the base close function so that we can properly remove any instances of the date selector before closing the dialog
+     * @param options
+     */
+    close(options?: FormApplication.CloseOptions): Promise<void> {
+        DateSelector.RemoveSelector(this.dateSelectorId);
+        return super.close(options);
     }
 
     /**
@@ -274,18 +376,7 @@ export class SimpleCalendarNotes extends FormApplication {
             }
         }
         if(this.richEditorSaved || !detailsEmpty){
-            const title = (<JQuery>this.element).find('#scNoteTitle').val();
-            const playerVisible = (<JQuery>this.element).find('#scNoteVisibility').is(':checked');
-            let repeats = (<JQuery>this.element).find('#scNoteRepeats').find(":selected").val();
-            if(repeats){
-                repeats = parseInt(repeats.toString());
-            } else {
-                repeats = 0;
-            }
-            if(title){
-                (<Note>this.object).title = title.toString();
-                (<Note>this.object).playerVisible = playerVisible;
-                (<Note>this.object).repeats = repeats;
+            if((<Note>this.object).title){
                 const currentNotes = GameSettings.LoadNotes().map(n => {
                     const note = new Note();
                     note.loadFromConfig(n);
@@ -310,6 +401,5 @@ export class SimpleCalendarNotes extends FormApplication {
         } else {
             GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.RichText"), 'warn');
         }
-
     }
 }

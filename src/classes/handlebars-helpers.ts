@@ -1,6 +1,7 @@
 import SimpleCalendar from "./simple-calendar";
 import {GameSettings} from "./game-settings";
 import DateSelector from "./date-selector";
+import {DayTemplate} from "../interfaces";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -19,11 +20,8 @@ export default class HandlebarsHelpers{
     static DateSelector(options: any){
         if(SimpleCalendar.instance.currentYear && options.hash.hasOwnProperty('id') ){
             const id = options.hash['id'];
-            let placeHolderText = '';
-            if(options.hash.hasOwnProperty('placeholder')){
-                placeHolderText = GameSettings.Localize(options.hash['placeholder']);
-            }
-            return new Handlebars.SafeString(DateSelector.build(id, placeHolderText, SimpleCalendar.instance.currentYear));
+            const ds = DateSelector.GetSelector(id, {});
+            return new Handlebars.SafeString(ds.build());
         }
         return '';
     }

@@ -10,6 +10,7 @@ import {
     MoonYearResetOptions
 } from "./constants";
 import {Note} from "./classes/note";
+import DateSelector from "./classes/date-selector";
 
 /**
  * The general settings for the Simple calendar
@@ -181,6 +182,7 @@ export interface NoteConfig {
     allDay: boolean;
     hour: number;
     minute: number;
+    endDate: DateTimeParts | null;
 }
 
 /**
@@ -299,9 +301,9 @@ export interface DateTimeParts {
     year: number;
     month: number;
     day: number;
-    hour: number;
-    minute: number;
-    seconds: number;
+    hour?: number;
+    minute?: number;
+    seconds?: number;
 }
 
 /**
@@ -337,6 +339,30 @@ export namespace SimpleCalendarSocket{
     export interface SimpleCalendarPrimary{
         primaryCheck?: boolean;
         amPrimary?: boolean;
+    }
+}
+
+export namespace SCDateSelector {
+    export interface SelectorList {
+        [key: string]: DateSelector;
+    }
+
+    export interface Options {
+        placeHolderText?: string;
+        onDateSelect?: Function;
+        rangeSelect?: boolean;
+    }
+
+    export interface Date{
+        year: number;
+        month: number;
+        day: number;
+    }
+
+    export interface SelectedDate {
+        visibleDate: SCDateSelector.Date;
+        startDate: SCDateSelector.Date;
+        endDate?: SCDateSelector.Date;
     }
 }
 

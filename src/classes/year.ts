@@ -185,7 +185,7 @@ export default class Year {
      */
     daysIntoWeeks(month: Month, year: number, weekLength: number): (boolean | DayTemplate)[][]{
         const weeks = [];
-        const dayOfWeekOffset = this.visibleMonthStartingDayOfWeek();
+        const dayOfWeekOffset = this.monthStartingDayOfWeek(month, year);
         const isLeapYear = this.leapYearRule.isLeapYear(year);
         const days = month.getDaysForTemplate(isLeapYear);
 
@@ -448,15 +448,16 @@ export default class Year {
 
     /**
      * Calculates the day of the week the first day of the currently visible month lands on
+     * @param {Month} month The month to get the starting day of the week for
+     * @param {number} year The year the check
      * @return {number}
      */
-    visibleMonthStartingDayOfWeek(): number {
-        const visibleMonth = this.getMonth('visible');
-        if(visibleMonth){
-            if(visibleMonth.intercalary && !visibleMonth.intercalaryInclude){
+    monthStartingDayOfWeek(month: Month, year: number): number {
+        if(month){
+            if(month.intercalary && !month.intercalaryInclude){
                 return 0;
             } else {
-                return this.dayOfTheWeek(this.visibleYear, visibleMonth.numericRepresentation, 1);
+                return this.dayOfTheWeek(year, month.numericRepresentation, 1);
             }
         } else {
             return 0;
