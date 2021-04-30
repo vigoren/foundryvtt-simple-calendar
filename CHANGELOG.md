@@ -15,6 +15,10 @@ This update is mainly around notes and improving the experience around adding, e
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
 
 
+## v1.2.35 - Bug Fix
+
+- Fixed a bug where users were unable to set the custom leap year value.
+
 ## v1.2.34 - Bug Fixing
 
 - Fixed a bug where removing all phases from a moon would cause the calendar to no longer open.
