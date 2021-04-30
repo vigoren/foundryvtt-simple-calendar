@@ -737,6 +737,23 @@ describe('Simple Calendar Configuration Tests', () => {
         expect(renderSpy).toHaveBeenCalledTimes(1);
     });
 
+    test('Leap Year Custom Mod Change', () => {
+        const event = new Event('change');
+        (<HTMLInputElement>event.currentTarget).id = 'scLeapYearCustomMod';
+        (<HTMLInputElement>event.currentTarget).value = '';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.customMod).toBe(0);
+        (<HTMLInputElement>event.currentTarget).value = 'qwe';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect(renderSpy).toHaveBeenCalledTimes(2);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.customMod).toBe(0);
+        (<HTMLInputElement>event.currentTarget).value = '2';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect(renderSpy).toHaveBeenCalledTimes(3);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.customMod).toBe(2);
+    });
+
     test('Leap Year Month Change', () => {
         const event = new Event('change');
         (<HTMLElement>event.currentTarget).classList.remove('next');
