@@ -1004,6 +1004,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
             //Leap Year Setting Inputs
             else if(id === 'scLeapYearRule'){
                 (<Year>this.object).leapYearRule.rule = <LeapYearRules>value;
+            } else if(id === 'scLeapYearCustomMod'){
+                const lycm = parseInt(value);
+                if(!isNaN(lycm)){
+                    (<Year>this.object).leapYearRule.customMod = lycm;
+                }
             }
             //Time Setting Inputs
             else if(id === 'scHoursInDay'){

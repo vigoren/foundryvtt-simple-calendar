@@ -1,5 +1,9 @@
 # Change Log
 
+## v1.2.35 - Bug Fix
+
+- Fixed a bug where users were unable to set the custom leap year value.
+
 ## v1.2.34 - Bug Fixing
 
 - Fixed a bug where removing all phases from a moon would cause the calendar to no longer open.
