@@ -1,7 +1,6 @@
 import SimpleCalendar from "./simple-calendar";
 import {GameSettings} from "./game-settings";
 import DateSelector from "./date-selector";
-import {DayTemplate} from "../interfaces";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -20,7 +19,7 @@ export default class HandlebarsHelpers{
     static DateSelector(options: any){
         if(SimpleCalendar.instance.currentYear && options.hash.hasOwnProperty('id') ){
             const id = options.hash['id'];
-            const ds = DateSelector.GetSelector(id, {});
+            const ds = DateSelector.GetSelector(id, {showDate: true, showTime: false});
             return new Handlebars.SafeString(ds.build());
         }
         return '';

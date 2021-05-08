@@ -4,7 +4,7 @@ import {GameSettings} from "./game-settings";
 import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import DateSelector from "./date-selector";
-import {DayTemplate, SCDateSelector} from "../interfaces";
+import {DateTimeParts, SCDateSelector} from "../interfaces";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**
@@ -62,7 +62,9 @@ export class SimpleCalendarNotes extends FormApplication {
         this.dateSelector = DateSelector.GetSelector(this.dateSelectorId, {
             onDateSelect: this.dateSelectorClick.bind(this),
             placeHolderText: '',
-            rangeSelect: true
+            rangeSelect: true,
+            showDate: true,
+            showTime: true
         });
         this.dateSelector.updateSelectedDate(data);
     }
@@ -190,6 +192,8 @@ export class SimpleCalendarNotes extends FormApplication {
             (<JQuery>this.element).find('#scNoteTitle').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteRepeats').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('#scNoteDateAllDay').on('change', this.inputChanged.bind(this));
+
 
             (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
             (<JQuery>html).find('#scNoteEdit').on('click', this.editButtonClick.bind(this));
@@ -233,6 +237,8 @@ export class SimpleCalendarNotes extends FormApplication {
             } else if(id === "scNoteVisibility"){
                 (<Note>this.object).playerVisible = checked;
                 this.focusField = 'scNoteVisibility';
+            } else if(id === "scNoteDateAllDay"){
+                (<Note>this.object).allDay = !checked;
             }
         }
         this.updateApp();
@@ -246,6 +252,11 @@ export class SimpleCalendarNotes extends FormApplication {
         (<Note>this.object).year = selectedDate.startDate.year;
         (<Note>this.object).month = selectedDate.startDate.month;
         (<Note>this.object).day = selectedDate.startDate.day;
+        (<Note>this.object).allDay = selectedDate.startDate.allDay;
+        if(selectedDate.startDate.hour !== undefined && selectedDate.startDate.minute !== undefined){
+            (<Note>this.object).hour = selectedDate.startDate.hour;
+            (<Note>this.object).minute = selectedDate.startDate.minute;
+        }
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             const monthObj = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === selectedDate.startDate.month);
             if(monthObj){
@@ -253,11 +264,16 @@ export class SimpleCalendarNotes extends FormApplication {
             }
         }
         if(selectedDate.endDate){
-            (<Note>this.object).endDate = {
+            const eDate: DateTimeParts = {
                 year: selectedDate.endDate.year,
                 month: selectedDate.endDate.month,
                 day: selectedDate.endDate.day
             };
+            if(selectedDate.endDate.hour !== undefined && selectedDate.endDate.minute !== undefined){
+                eDate.hour = selectedDate.endDate.hour;
+                eDate.minute = selectedDate.endDate.minute;
+            }
+            (<Note>this.object).endDate = eDate;
         }
         this.updateApp();
     }

@@ -351,12 +351,17 @@ export namespace SCDateSelector {
         placeHolderText?: string;
         onDateSelect?: Function;
         rangeSelect?: boolean;
+        showDate: boolean;
+        showTime: boolean;
     }
 
     export interface Date{
         year: number;
         month: number;
         day: number;
+        hour?: number;
+        minute?: number;
+        allDay: boolean;
     }
 
     export interface SelectedDate {

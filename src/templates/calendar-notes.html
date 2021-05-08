@@ -26,39 +26,11 @@
             <p class="notes">{{localize 'FSC.Notes.TitleHelp'}}</p>
         </div>
         <div class="form-group">
-            <label for="{{dateSelectorId}}">{{localize 'FSC.Notes.Date'}}</label>
+            <label for="{{dateSelectorId}}">{{localize 'FSC.Notes.DateTime.Title'}}</label>
             <div class="form-fields">
                 {{sc-date-selector id=dateSelectorId }}
             </div>
-            <p class="notes">{{localize 'FSC.Notes.DateHelp'}}</p>
-        </div>
-        <div class="date-time-select">
-            <label>{{localize 'FSC.Notes.DateTime'}}</label>
-            <div class="fields">
-                <div class="time-fields">
-                    <label>
-                        {{localize 'FSC.AllDay'}}
-                        <input value="{{object.allDay}}" type="checkbox" id="scNoteDateAllDay" {{checked object.allDay}} />
-                    </label>
-                    <label>
-                        {{localize 'FSC.Hour'}}
-                        <select id="scNoteDateHour">
-                            {{#each hours}}
-                            <option value="{{this}}" {{#if (eq this ../object.hour)}}selected="selected"{{/if}}>{{this}}</option>
-                            {{/each}}
-                        </select>
-                    </label>
-                    <label>
-                        {{localize 'FSC.Minute'}}
-                        <select id="scNoteDateMinute">
-                            {{#each minutes}}
-                            <option value="{{numericRepresentation}}" {{#if (eq this ../object.minute)}}selected="selected"{{/if}}>{{this}}</option>
-                            {{/each}}
-                        </select>
-                    </label>
-                </div>
-            </div>
-            <p>{{localize 'FSC.Notes.DateTimeHelp'}}</p>
+            <p class="notes">{{localize 'FSC.Notes.DateTime.Help'}}</p>
         </div>
         <div class="form-group">
             <label for="scNoteRepeats">{{localize 'FSC.Notes.Repeating'}}</label>

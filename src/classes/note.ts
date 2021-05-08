@@ -186,11 +186,11 @@ export class Note{
                     }
                 }
             } else if(this.repeats === NoteRepeat.Monthly){
-                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day}, {year: year, month: month, day: this.day}, this.endDate? {year: year, month: month, day: this.endDate.day} : null);
+                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true}, {year: year, month: month, day: this.day, allDay: true}, this.endDate? {year: year, month: month, day: this.endDate.day, allDay: true} : null);
             } else if(this.repeats === NoteRepeat.Yearly){
-                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day}, {year: year, month: this.month, day: this.day}, this.endDate? {year: year, month: this.endDate.month, day: this.endDate.day} : null);
+                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true}, {year: year, month: this.month, day: this.day, allDay: true}, this.endDate? {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true} : null);
             } else {
-                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day}, {year: this.year, month: this.month, day: this.day}, this.endDate);
+                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true}, {year: this.year, month: this.month, day: this.day, allDay: true}, this.endDate? {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true} : null);
             }
             dayVisible = inBetween !== DateRangeMatch.None;
         }

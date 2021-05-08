@@ -9,6 +9,9 @@
   }
 
   form{
+    .hide {
+      display: none;
+    }
     .date-time-select{
       display: flex;
       flex-direction: row;
