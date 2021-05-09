@@ -123,7 +123,7 @@ export default class Month {
         return {
             display: this.getDisplayName(),
             name: this.name,
-            numericRepresentation: this.numericRepresentation < 0? 0 : this.numericRepresentation,
+            numericRepresentation: this.numericRepresentation,
             numericRepresentationOffset: this.numericRepresentationOffset,
             current: this.current,
             visible: this.visible,

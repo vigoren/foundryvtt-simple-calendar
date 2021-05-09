@@ -1,5 +1,18 @@
 # Change Log
 
+## v1.2.38 - Quality of Life Improvements and Bug Fixes
+
+### Quality of Live Improvements
+- Changed the tooltip for days with notes. If the day has 1 or 2 notes the tool tip will now show the title of the notes on that day instead of just the count. If there are 3 or more notes the tool tip will just show the number of notes on that day (like it does now).
+
+### Bug Fixes
+
+- Fixed an issue where about-time would be off by a day or more when changing the date in Simple Calendar.<br/>**IMPORTANT**: If you were impacted by this please follow these steps:
+  - Open the Simple Calendar configuration and click the save configuration button (This will fix part of the issue within Simple Calendar).
+  - Open the Simple Calendar configuration and under the General Settings tab click the "Export Into About-Time" button (This will update about-time with the fix).
+  - Change the day in Simple Calendar, move a day forward or backward. This will re-sync both modules.
+- Fixed an issue where Intercalary Days could not be set as the start of seasons or used for the moon's reference month.
+
 ## v1.2.35 - Bug Fix
 
 - Fixed a bug where users were unable to set the custom leap year value.

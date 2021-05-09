@@ -76,7 +76,7 @@ describe('Month Class Tests', () => {
 
         //Intercalary days are represented by negative numbers, the template spits them out as 0
         const t2 = monthIc.toTemplate();
-        expect(t2.numericRepresentation).toBe(0);
+        expect(t2.numericRepresentation).toBe(-1);
     });
 
     test('Clone', () => {

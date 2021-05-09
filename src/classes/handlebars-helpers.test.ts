@@ -37,9 +37,20 @@ describe('Handlebars Helpers Tests', () => {
             SimpleCalendar.instance.currentYear.months[0].visible = true;
             expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
             options.hash['day'].numericRepresentation = 2;
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBe(`<span class="note-count" title="1 ">1</span>`);
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBe(`<span class="note-count" title=":\n">1</span>`);
 
-            for(let i = 0; i < 99; i++){
+            SimpleCalendar.instance.notes = [];
+            for(let i = 0; i < 2; i++){
+                var n = new Note()
+                n.title = i.toString();
+                n.year = SimpleCalendar.instance.currentYear.numericRepresentation;
+                n.month = 1;
+                n.day = 2;
+                SimpleCalendar.instance.notes.push(n);
+            }
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBe(`<span class="note-count" title=":\n0\n1">2</span>`);
+            SimpleCalendar.instance.notes = [];
+            for(let i = 0; i < 100; i++){
                 var n = new Note()
                 n.year = SimpleCalendar.instance.currentYear.numericRepresentation;
                 n.month = 1;

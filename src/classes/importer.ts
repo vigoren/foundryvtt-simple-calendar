@@ -82,8 +82,12 @@ export default class Importer{
 
         const monthList: AboutTimeImport.MonthList = {};
         for(let i = 0; i < year.months.length; i++){
+            let leapYearDays = year.months[i].numberOfLeapYearDays;
+            if(year.leapYearRule.rule === LeapYearRules.None){
+                leapYearDays = year.months[i].numberOfDays;
+            }
             monthList[year.months[i].name] = {
-                days: [year.months[i].numberOfDays, year.months[i].numberOfLeapYearDays],
+                days: [year.months[i].numberOfDays, leapYearDays],
                 intercalary: year.months[i].intercalary
             };
         }
