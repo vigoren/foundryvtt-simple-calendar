@@ -650,7 +650,7 @@ export default class Year {
 
         const month = this.getMonth('visible');
         if(month){
-            currentMonth = month.numericRepresentation;
+            currentMonth = this.months.findIndex(m=> m.numericRepresentation === month.numericRepresentation);
             const day = month.getDay('selected') || month.getDay();
             if(day){
                 currentDay = day.numericRepresentation;
@@ -658,12 +658,13 @@ export default class Year {
                 currentDay = 1;
             }
         }
-        if(currentDay > 0 && currentMonth > 0){
+        if(currentDay > 0 && currentMonth >= 0){
             let currentSeason: Season | null = null;
             for(let i = 0; i < this.seasons.length; i++){
-                if(this.seasons[i].startingMonth === currentMonth && this.seasons[i].startingDay <= currentDay){
+                const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === this.seasons[i].startingMonth);
+                if(seasonMonthIndex === currentMonth && this.seasons[i].startingDay <= currentDay){
                     currentSeason = this.seasons[i];
-                } else if (this.seasons[i].startingMonth < currentMonth){
+                } else if (seasonMonthIndex < currentMonth){
                     currentSeason = this.seasons[i];
                 }
             }

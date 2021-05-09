@@ -194,7 +194,7 @@
                         <div style="text-align: center;">
                             <input class="month-intercalary" value="{{intercalary}}" type="checkbox" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}" {{#if intercalary}}checked="checked"{{/if}} />
                         </div>
-                        <div class="month-number">{{#if numericRepresentation}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
+                        <div class="month-number">{{#if (gt numericRepresentation 0)}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
                         <div>
                             {{#if showAdvanced}}
                             <a class="month-show-advanced" data-index="{{@index}}"><span class="fa fa-chevron-up"></span> {{localize 'FSC.HideAdvanced'}}</a>

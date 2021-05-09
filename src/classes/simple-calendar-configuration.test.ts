@@ -10,14 +10,14 @@ import "../../__mocks__/dialog";
 
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import Year from "./year";
-import SpyInstance = jest.SpyInstance;
-import Mock = jest.Mock;
 import Month from "./month";
 import {Weekday} from "./weekday";
 import {Logger} from "./logging";
 import {LeapYearRules, MoonIcons, MoonYearResetOptions} from "../constants";
 import Season from "./season";
 import Moon from "./moon";
+import SpyInstance = jest.SpyInstance;
+import Mock = jest.Mock;
 
 jest.mock('./importer');
 
@@ -641,6 +641,13 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLInputElement>event.currentTarget).value = '20';
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).months[0].numberOfDays).toBe(20);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).months[0].numberOfLeapYearDays).toBe(20);
+        //Test all attributes for month day change with leapyear rules set
+        (<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule = LeapYearRules.Gregorian;
+        (<HTMLInputElement>event.currentTarget).value = '19';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).months[0].numberOfDays).toBe(19);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).months[0].numberOfLeapYearDays).toBe(20);
 
         //Test intercalary change
         //@ts-ignore
@@ -676,7 +683,7 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLElement>event.currentTarget).classList.remove('month-intercalary-include');
         (<HTMLElement>event.currentTarget).classList.add('no');
         SimpleCalendarConfiguration.instance.inputChange(event);
-        expect(console.debug).toHaveBeenCalledTimes(47);
+        expect(console.debug).toHaveBeenCalledTimes(50);
 
     });
 
@@ -1006,6 +1013,11 @@ describe('Simple Calendar Configuration Tests', () => {
         expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(2);
         expect((<Year>SimpleCalendarConfiguration.instance.object).selectedYear).toBe(2);
         expect((<Year>SimpleCalendarConfiguration.instance.object).visibleYear).toBe(2);
+
+        (<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule = LeapYearRules.Gregorian;
+        await SimpleCalendarConfiguration.instance.saveClick(event);
+        expect(game.settings.set).toHaveBeenCalledTimes(16);
+        expect(closeSpy).toHaveBeenCalledTimes(2);
     });
 
     test('Overwrite Confirmation Yes', async () => {

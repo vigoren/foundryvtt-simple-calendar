@@ -1052,6 +1052,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                         const month = parseInt(value);
                         if(!isNaN(month)){
                             (<Year>this.object).seasons[index].startingMonth = month;
+                            (<Year>this.object).seasons[index].startingDay = 1;
                         }
                     } else if(cssClass === 'season-day' && (<Year>this.object).seasons.length > index){
                         const day = parseInt(value);
@@ -1071,6 +1072,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                         let days = parseInt(value);
                         if(!isNaN(days) && days !== (<Year>this.object).months[index].days.length){
                             (<Year>this.object).months[index].numberOfDays = days;
+                            if((<Year>this.object).leapYearRule.rule === LeapYearRules.None){
+                                (<Year>this.object).months[index].numberOfLeapYearDays = days;
+                            }
                             this.updateMonthDays((<Year>this.object).months[index]);
                         }
                     } else if (cssClass === 'month-intercalary' && (<Year>this.object).months.length > index){
@@ -1133,6 +1137,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                         const month = parseInt(value);
                         if(!isNaN(month)){
                             (<Year>this.object).moons[index].firstNewMoon.month = month;
+                            (<Year>this.object).moons[index].firstNewMoon.day = 1;
                         }
                     } else if(cssClass === 'moon-day' && (<Year>this.object).moons.length > index){
                         const day = parseInt(value);
@@ -1257,6 +1262,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public async saveClick(e: Event) {
         e.preventDefault();
         try{
+            //If there is no leap year rule set ensure months leap year and normal days match
+            if((<Year>this.object).leapYearRule.rule === LeapYearRules.None){
+                for(let i = 0; i < (<Year>this.object).months.length; i++){
+                    (<Year>this.object).months[i].numberOfLeapYearDays = (<Year>this.object).months[i].numberOfDays;
+                }
+            }
             // Update the general Settings
             (<Year>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>(<HTMLInputElement>document.getElementById("scGameWorldTime")).value;
             await GameSettings.SaveGeneralSettings((<Year>this.object).generalSettings);
