@@ -40,9 +40,9 @@
       "path": "lang/de.json"
     },
     {
-      "lang": "zh",
-      "name": "Chinese",
-      "path": "lang/zh.json"
+      "lang": "zh-tw",
+      "name": "正體中文",
+      "path": "lang/zh-tw.json"
     }
   ],
   "socket": true,
