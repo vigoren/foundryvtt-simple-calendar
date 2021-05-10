@@ -38,6 +38,11 @@
       "lang": "de",
       "name": "German",
       "path": "lang/de.json"
+    },
+    {
+      "lang": "zh",
+      "name": "Chinese",
+      "path": "lang/zh.json"
     }
   ],
   "socket": true,
