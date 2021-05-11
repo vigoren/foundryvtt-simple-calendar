@@ -18,7 +18,7 @@
       font-weight: 600;
       line-height: 1.25rem;
       padding: 0.5rem 0.25rem;
-      flex: 0 1 125px;
+      flex: 0 1 150px;
       &.active{
         border-top-color: #782e22;
         border-left-color: #782e22;
@@ -43,6 +43,10 @@
     background-color:#fafafa;
     color: #191813;
     padding-top: 1rem;
+
+    &.active{
+      display: block;
+    }
   }
 
   .center{

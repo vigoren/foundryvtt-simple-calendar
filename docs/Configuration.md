@@ -89,6 +89,7 @@ Setting | Description
 Current Year | The Current year your game world is in. This can be any positive number.
 Year Prefix | Text that will appear before the year number.
 Year Postfix | Text that will appear after the year number.
+Year Zero | This is the year that considered to be year zero for calculating how much time has passed.<br/>Generally this setting will not need to be adjusted but is present for calendars that require a different year zero.<br/>The best example of this is calculating real world timestamps, the year 1970 is used as year zero.
 
 ### Seasons
 

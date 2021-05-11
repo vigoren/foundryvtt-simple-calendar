@@ -373,9 +373,10 @@ export class GameSettings {
                 prefix: year.prefix,
                 postfix: year.postfix,
                 showWeekdayHeadings: year.showWeekdayHeadings,
-                firstWeekday: year.firstWeekday
+                firstWeekday: year.firstWeekday,
+                yearZero: year.yearZero
             };
-            if(currentYearConfig.numericRepresentation !== yc.numericRepresentation || currentYearConfig.prefix !== yc.prefix || currentYearConfig.postfix !== yc.postfix || currentYearConfig.showWeekdayHeadings !== yc.showWeekdayHeadings || currentYearConfig.firstWeekday !== yc.firstWeekday){
+            if(JSON.stringify(currentYearConfig) !== JSON.stringify(yc)){
                 return game.settings.set(ModuleName, SettingNames.YearConfiguration, yc).then(() => { return true }); //Return true because if no error was thrown then the save was successful and we don't need the returned data.
             } else {
                 Logger.debug('Year configuration has not changed, not updating settings');

@@ -54,6 +54,7 @@ export interface YearTemplate {
     selectedDayOfWeek: string;
     selectedDayMoons: any[];
     selectedDayNotes: Note[];
+    yearZero: number;
     /** The numeric representation of the year */
     numericRepresentation: number;
     /** The months that make up the year */
@@ -91,6 +92,7 @@ export interface YearConfig {
     postfix: string;
     showWeekdayHeadings: boolean;
     firstWeekday: number;
+    yearZero: number;
 }
 
 /**
@@ -232,7 +234,6 @@ export interface SeasonTemplate {
     startingMonth: number;
     startingDay: number;
     color: string;
-    customColor: string;
     dayList: DayTemplate[];
 }
 

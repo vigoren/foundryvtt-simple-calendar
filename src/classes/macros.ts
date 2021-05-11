@@ -121,7 +121,7 @@ export default class Macros {
                     year = SimpleCalendar.instance.currentYear.numericRepresentation;
                 }
 
-                const days = SimpleCalendar.instance.currentYear.dateToDays(year, month, day, true, true) - 1;
+                const days = SimpleCalendar.instance.currentYear.dateToDays(year, month, day, true, true);
                 totalSeconds += SimpleCalendar.instance.currentYear.time.getTotalSeconds(days, false);
                 SimpleCalendar.instance.currentYear.updateTime(SimpleCalendar.instance.currentYear.secondsToDate(totalSeconds));
                 GameSettings.SaveCurrentDate(SimpleCalendar.instance.currentYear).catch(Logger.error);

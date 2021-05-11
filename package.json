@@ -1,7 +1,7 @@
 {
   "name": "foundryvtt-simple-calendar",
   "description": "A simple calendar module for keeping track of game days and events.",
-  "version": "1.2.38",
+  "version": "1.2.45",
   "author": "Dean Vigoren (vigorator)",
   "keywords": [
     "foundryvtt",
@@ -24,24 +24,24 @@
   },
   "devDependencies": {
     "@league-of-foundry-developers/foundry-vtt-types": "^0.7.9-6",
-    "@types/copy-webpack-plugin": "^6.4.1",
-    "@types/jest": "^26.0.22",
-    "@types/node": "^14.14.37",
-    "clean-webpack-plugin": "^3.0.0",
+    "@types/copy-webpack-plugin": "^8.0.0",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.0.2",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
     "copy-webpack-plugin": "^8.1.1",
     "cross-env": "^7.0.3",
-    "css-loader": "^5.2.0",
+    "css-loader": "^5.2.4",
     "jest": "^26.6.3",
     "jest-ts-webcompat-resolver": "^1.0.0",
-    "mini-css-extract-plugin": "^1.4.1",
-    "sass": "^1.32.8",
-    "sass-loader": "^11.0.1",
-    "ts-jest": "^26.5.4",
-    "ts-loader": "^8.1.0",
+    "mini-css-extract-plugin": "^1.6.0",
+    "sass": "^1.32.12",
+    "sass-loader": "^11.1.0",
+    "ts-jest": "^26.5.6",
+    "ts-loader": "^9.1.2",
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.2.3",
-    "webpack": "^5.30.0",
-    "webpack-cli": "^4.6.0"
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.7.0"
   }
 }
