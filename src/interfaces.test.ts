@@ -38,7 +38,8 @@ describe('Interface Tests', () => {
         numberOfLeapYearDays: 0,
         intercalary: false,
         intercalaryInclude: false,
-        showAdvanced: false
+        showAdvanced: false,
+        startingWeekday: null
     };
     const yt: YearTemplate = {
         display: '',
@@ -60,7 +61,8 @@ describe('Interface Tests', () => {
         currentTime: tt,
         currentSeasonColor: '',
         currentSeasonName: '',
-        weeks: []
+        weeks: [],
+        yearZero: 0
     };
     const ct: CalendarTemplate = {
         isGM: false,
@@ -87,7 +89,7 @@ describe('Interface Tests', () => {
     });
 
     test('Month Template', () => {
-        expect(Object.keys(mt).length).toBe(13); //Make sure no new properties have been added
+        expect(Object.keys(mt).length).toBe(14); //Make sure no new properties have been added
         expect(mt.display).toBe("");
         expect(mt.name).toBe("");
         expect(mt.numericRepresentation).toBe(0);
@@ -101,6 +103,7 @@ describe('Interface Tests', () => {
         expect(mt.intercalary).toBe(false);
         expect(mt.intercalaryInclude).toBe(false);
         expect(mt.showAdvanced).toBe(false);
+        expect(mt.startingWeekday).toBeNull();
     });
 
     test('Weekday Template', () => {
@@ -110,7 +113,7 @@ describe('Interface Tests', () => {
     });
 
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(20); //Make sure no new properties have been added
+        expect(Object.keys(yt).length).toBe(21); //Make sure no new properties have been added
         expect(yt.display).toBe('');
         expect(yt.selectedDisplayYear).toBe('');
         expect(yt.selectedDisplayMonth).toBe('');
@@ -131,6 +134,7 @@ describe('Interface Tests', () => {
         expect(yt.currentTime).toStrictEqual(tt);
         expect(yt.currentSeasonName).toStrictEqual('');
         expect(yt.currentSeasonColor).toStrictEqual('');
+        expect(yt.yearZero).toBe(0);
     });
 
     test('Calendar Template', () => {
@@ -150,18 +154,19 @@ describe('Interface Tests', () => {
     });
 
     test('Year Config', () => {
-        const yc: YearConfig = {postfix: '', prefix: '', numericRepresentation: 0, showWeekdayHeadings: false, firstWeekday: 0};
-        expect(Object.keys(yc).length).toBe(5); //Make sure no new properties have been added
+        const yc: YearConfig = {postfix: '', prefix: '', numericRepresentation: 0, showWeekdayHeadings: false, firstWeekday: 0, yearZero: 0};
+        expect(Object.keys(yc).length).toBe(6); //Make sure no new properties have been added
         expect(yc.postfix).toBe('');
         expect(yc.prefix).toBe('');
         expect(yc.numericRepresentation).toBe(0);
         expect(yc.showWeekdayHeadings).toBe(false);
         expect(yc.firstWeekday).toBe(0);
+        expect(yc.yearZero).toBe(0);
     });
 
     test('Month Config', () => {
-        const yc: MonthConfig = {numberOfDays: 0, numericRepresentation: 0, numericRepresentationOffset: 0, name: '',intercalaryInclude: false, intercalary: false, numberOfLeapYearDays: 0};
-        expect(Object.keys(yc).length).toBe(7); //Make sure no new properties have been added
+        const yc: MonthConfig = {numberOfDays: 0, numericRepresentation: 0, numericRepresentationOffset: 0, name: '',intercalaryInclude: false, intercalary: false, numberOfLeapYearDays: 0, startingWeekday: null};
+        expect(Object.keys(yc).length).toBe(8); //Make sure no new properties have been added
         expect(yc.name).toBe('');
         expect(yc.numberOfDays).toBe(0);
         expect(yc.numberOfLeapYearDays).toBe(0);
@@ -169,6 +174,7 @@ describe('Interface Tests', () => {
         expect(yc.numericRepresentationOffset).toBe(0);
         expect(yc.intercalary).toBe(false);
         expect(yc.intercalaryInclude).toBe(false);
+        expect(yc.startingWeekday).toBeNull();
     });
 
     test('Weekday Config', () => {
@@ -235,10 +241,9 @@ describe('Interface Tests', () => {
     });
 
     test('Season Template', () => {
-        const st: SeasonTemplate = {name: '', startingMonth: 1, startingDay: 1, color: '', customColor: '', dayList: []};
+        const st: SeasonTemplate = {name: '', startingMonth: 1, startingDay: 1, color: '', dayList: []};
         expect(st.name).toBe('');
         expect(st.color).toBe('');
-        expect(st.customColor).toBe('');
         expect(st.startingMonth).toBe(1);
         expect(st.startingDay).toBe(1);
         expect(st.dayList).toStrictEqual([]);
