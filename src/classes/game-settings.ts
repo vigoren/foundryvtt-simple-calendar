@@ -400,7 +400,8 @@ export class GameSettings {
                 numberOfDays: m.numberOfDays,
                 numberOfLeapYearDays: m.numberOfLeapYearDays,
                 intercalary: m.intercalary,
-                intercalaryInclude: m.intercalaryInclude
+                intercalaryInclude: m.intercalaryInclude,
+                startingWeekday: m.startingWeekday
             }; });
             if(currentMonthConfig !== JSON.stringify(newConfig)){
                 return game.settings.set(ModuleName, SettingNames.MonthConfiguration, newConfig).then(() => {return true;});

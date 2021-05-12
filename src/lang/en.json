@@ -159,6 +159,8 @@
   "FSC.Configuration.Month.DayOffsetHelp": "The amount to offset the day's number by. Used if you want to start a month at 2 instead of 1",
   "FSC.Configuration.Month.Number": "Month Number",
   "FSC.Configuration.Month.NumberHelp": "The numeric representation of this month.",
+  "FSC.Configuration.Month.StartingWeekDay": "Starts On Weekday",
+  "FSC.Configuration.Month.StartingWeekDayHelp": "Choose which day of the week this month will always start on, or leave as default to let the calendar figure out the appropriate weekday.",
   "FSC.Configuration.Month.Remove": "Remove",
   "FSC.Configuration.Month.RemoveAll": "Remove All Months",
   "FSC.Configuration.Month.Add": "Add New Month",

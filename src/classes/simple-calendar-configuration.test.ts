@@ -134,8 +134,8 @@ describe('Simple Calendar Configuration Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendarConfiguration.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(28);
-        expect(onFunc).toHaveBeenCalledTimes(28);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(29);
+        expect(onFunc).toHaveBeenCalledTimes(29);
     });
 
     test('Rebase Month Numbers', () => {
@@ -697,11 +697,21 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).months[0].numericRepresentationOffset).toBe(1);
 
+        //Test Month Starting Weekday
+        (<HTMLElement>event.currentTarget).classList.remove('month-numeric-representation-offset');
+        (<HTMLElement>event.currentTarget).classList.add('month-starting-weekday');
+        (<HTMLInputElement>event.currentTarget).value = '1';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).months[0].startingWeekday).toBe(1);
+        (<HTMLInputElement>event.currentTarget).value = 'asd';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).months[0].startingWeekday).toBeNull();
+
         //Test invalid class name
-        (<HTMLElement>event.currentTarget).classList.remove('month-intercalary-include');
+        (<HTMLElement>event.currentTarget).classList.remove('month-starting-weekday');
         (<HTMLElement>event.currentTarget).classList.add('no');
         SimpleCalendarConfiguration.instance.inputChange(event);
-        expect(console.debug).toHaveBeenCalledTimes(50);
+        expect(console.debug).toHaveBeenCalledTimes(56);
 
     });
 

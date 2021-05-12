@@ -479,8 +479,14 @@ export default class Year {
      */
     dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
-            const daysSoFar = this.dateToDays(year, targetMonth, targetDay) + this.firstWeekday;
-            return (daysSoFar% this.weekdays.length + this.weekdays.length) % this.weekdays.length;
+            const month = this.months.find(m => m.numericRepresentation === targetMonth);
+            let daysSoFar;
+            if(month && month.startingWeekday !== null){
+                daysSoFar = targetDay + month.startingWeekday - 2;
+            } else {
+                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + this.firstWeekday;
+            }
+            return (daysSoFar % this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
             return 0;
         }

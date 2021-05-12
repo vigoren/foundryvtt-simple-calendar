@@ -222,6 +222,15 @@
                                 </div>
                                 <p class="notes">{{localize 'FSC.Configuration.Month.DayOffsetHelp'}}</p>
                             </div>
+                            <div class="form-group {{#unless showAdvanced}}hidden{{/unless}}">
+                                <label for="-mswd{{@index}}">{{localize 'FSC.Configuration.Month.StartingWeekDay'}}</label>
+                                <div class="form-fields">
+                                    <select class="month-starting-weekday" id="-mswd{{@index}}" data-index="{{@index}}">
+                                        {{selectOptions ../monthStartingWeekdays selected=startingWeekday }}
+                                    </select>
+                                </div>
+                                <p class="notes">{{localize 'FSC.Configuration.Month.StartingWeekDayHelp'}}</p>
+                            </div>
                         </div>
                     </div>
                     {{/each}}

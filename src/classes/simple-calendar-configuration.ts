@@ -116,6 +116,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 showAboutTime: false,
                 showCalendarWeather:false
             },
+            monthStartingWeekdays: <{[key: string]: string}>{},
             seasons: (<Year>this.object).seasons.map(s => s.toTemplate(<Year>this.object)),
             seasonColors: [
                 {
@@ -163,6 +164,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
         data.moonIcons[MoonIcons.WaningGibbous] = GameSettings.Localize('FSC.Moon.Phase.WaningGibbous');
         data.moonIcons[MoonIcons.LastQuarter] = GameSettings.Localize('FSC.Moon.Phase.LastQuarter');
         data.moonIcons[MoonIcons.WaningCrescent] = GameSettings.Localize('FSC.Moon.Phase.WaningCrescent');
+
+        data.monthStartingWeekdays['null'] = GameSettings.Localize('Default');
+        for(let i = 0; i < (<Year>this.object).weekdays.length; i++){
+            data.monthStartingWeekdays[(<Year>this.object).weekdays[i].numericRepresentation.toString()] = (<Year>this.object).weekdays[i].name;
+        }
 
         return data;
     }
@@ -219,6 +225,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".year-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".year-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".month-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+            (<JQuery>html).find(".month-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".weekday-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".weekday-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".leapyear-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
@@ -1191,6 +1198,13 @@ export class SimpleCalendarConfiguration extends FormApplication {
                         let v = parseInt(value);
                         if(!isNaN(v)){
                             (<Year>this.object).months[index].numericRepresentationOffset = v;
+                        }
+                    } else if(cssClass === 'month-starting-weekday' && (<Year>this.object).months.length > index){
+                        let v = parseInt(value);
+                        if(!isNaN(v)){
+                            (<Year>this.object).months[index].startingWeekday = v;
+                        } else {
+                            (<Year>this.object).months[index].startingWeekday = null;
                         }
                     }
                     //Weekday Setting Inputs

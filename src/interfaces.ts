@@ -112,6 +112,7 @@ export interface  MonthTemplate {
     intercalary: boolean;
     intercalaryInclude: boolean;
     showAdvanced: boolean;
+    startingWeekday: number | null;
 }
 
 /**
@@ -125,6 +126,7 @@ export interface MonthConfig {
     numberOfLeapYearDays: number;
     intercalary: boolean;
     intercalaryInclude: boolean;
+    startingWeekday: number | null;
 }
 
 /**

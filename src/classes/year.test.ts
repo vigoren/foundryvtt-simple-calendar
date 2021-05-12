@@ -535,6 +535,9 @@ describe('Year Class Tests', () => {
         year.leapYearRule.rule = LeapYearRules.Gregorian;
         year.numericRepresentation = 4;
         expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(1);
+
+        year.months[0].startingWeekday = 3;
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, 1)).toBe(2);
     });
 
     test('Date to Days', () => {

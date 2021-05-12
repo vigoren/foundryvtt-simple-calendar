@@ -942,6 +942,9 @@ export default class SimpleCalendar extends Application{
                         const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numericRepresentationOffset, numDays, numLeapDays);
                         newMonth.intercalary = monthData[i].intercalary;
                         newMonth.intercalaryInclude = monthData[i].intercalaryInclude;
+                        if(monthData[i].hasOwnProperty('startingWeekday')){
+                            newMonth.startingWeekday = monthData[i].startingWeekday;
+                        }
                         this.currentYear.months.push(newMonth);
                     }
                 }
