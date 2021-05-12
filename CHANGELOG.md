@@ -15,6 +15,42 @@ This update is mainly around notes and improving the experience around adding, e
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
 
 
+## v1.2.47 - New Features, Translations, QoL Improvements & Bug Fixes 
+
+### New Features
+
+- Added the ability to set the "Year Zero" for a calendar. This year is then the reference point for calculating how many days have passed and other similar calculations. It is unlikely this value will need to be changed but adjusting this value can allow Simple Calendar to work better with other modules.
+- Added the ability to specify the day of the week a month will start on. This will make that month always start on that day of the week regardless of other months. Useful for fixe day calendars with months who's days don't fall evenly into full weeks.
+- Added a default calendar for Dark Sun. Note the eras and year names are not currently populating this will be added in a future release.
+
+### Quality of Live Improvements
+
+- Ensured that Simple Calendar works in Foundry version 0.8.3
+- Moved the Note settings to its own tab in the configuration dialog.
+- Updated the season and moon color selector to use an actual color selector instead of just text.
+
+### Bug Fixes
+
+- Fixed a bug where the day of the "Starting Week Day" setting would be off by 1 day.
+- Fixed some styling issues with the configuration dialog.
+
+### Translations
+
+I am happy to say that Simple Calendar has been translated into Traditional Chinese by [benwater12](https://github.com/benwater12)
+
+## v1.2.38 - Quality of Life Improvements and Bug Fixes
+
+### Quality of Live Improvements
+- Changed the tooltip for days with notes. If the day has 1 or 2 notes the tool tip will now show the title of the notes on that day instead of just the count. If there are 3 or more notes the tool tip will just show the number of notes on that day (like it does now).
+
+### Bug Fixes
+
+- Fixed an issue where about-time would be off by a day or more when changing the date in Simple Calendar.<br/>**IMPORTANT**: If you were impacted by this please follow these steps:
+  - Open the Simple Calendar configuration and click the save configuration button (This will fix part of the issue within Simple Calendar).
+  - Open the Simple Calendar configuration and under the General Settings tab click the "Export Into About-Time" button (This will update about-time with the fix).
+  - Change the day in Simple Calendar, move a day forward or backward. This will re-sync both modules.
+- Fixed an issue where Intercalary Days could not be set as the start of seasons or used for the moon's reference month.
+
 ## v1.2.35 - Bug Fix
 
 - Fixed a bug where users were unable to set the custom leap year value.

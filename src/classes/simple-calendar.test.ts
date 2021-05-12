@@ -186,7 +186,8 @@ describe('Simple Calendar Class Tests', () => {
                 "weekdays": [],
                 "currentSeasonColor": "",
                 "currentSeasonName": "",
-                "weeks": []
+                "weeks": [],
+                "yearZero": 0
             },
             "showCurrentDay": false,
             "showSelectedDay": false,

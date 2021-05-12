@@ -57,6 +57,11 @@ export default class Year {
      */
     firstWeekday: number = 0;
     /**
+     * The year to use that is considered year 0
+     * @type {number}
+     */
+    yearZero: number = 0;
+    /**
      * The leap year rules for the calendar
      * @type {LeapYear}
      */
@@ -161,6 +166,7 @@ export default class Year {
             selectedDayOfWeek: sDayOfWeek,
             selectedDayMoons: sMoonsPhase,
             selectedDayNotes: sNotes,
+            yearZero: this.yearZero,
             numericRepresentation: this.numericRepresentation,
             weekdays: this.weekdays.map(w => w.toTemplate()),
             showWeekdayHeaders: this.showWeekdayHeadings,
@@ -231,6 +237,7 @@ export default class Year {
         const y = new Year(this.numericRepresentation);
         y.postfix = this.postfix;
         y.prefix = this.prefix;
+        y.yearZero = this.yearZero;
         y.selectedYear = this.selectedYear;
         y.visibleYear = this.visibleYear;
         y.months = this.months.map(m => m.clone());
@@ -473,8 +480,14 @@ export default class Year {
      */
     dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
-            const daysSoFar = this.dateToDays(year, targetMonth, targetDay) - 1 + this.firstWeekday;
-            return (daysSoFar% this.weekdays.length + this.weekdays.length) % this.weekdays.length;
+            const month = this.months.find(m => m.numericRepresentation === targetMonth);
+            let daysSoFar;
+            if(month && month.startingWeekday !== null){
+                daysSoFar = targetDay + month.startingWeekday - 2;
+            } else {
+                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + this.firstWeekday;
+            }
+            return (daysSoFar % this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
             return 0;
         }
@@ -513,6 +526,13 @@ export default class Year {
         if(addLeapYearDiff){
             daysSoFar += leapYearDayDifference;
         }
+        if(this.yearZero !== 0){
+            const yearZeroNumberOfLeapYears = this.leapYearRule.howManyLeapYears(this.yearZero );
+            const yearZeroDays = (daysPerYear * this.yearZero) + (yearZeroNumberOfLeapYears * leapYearDayDifference) + 1;
+            daysSoFar = daysSoFar - yearZeroDays;
+        } else {
+            daysSoFar = daysSoFar - 1;
+        }
         return daysSoFar;
     }
 
@@ -528,8 +548,12 @@ export default class Year {
             if(month){
                 const day = month.getDay();
                 //Get the days so for and add one to include the current day - Subtract one day to keep it in time with how about-time keeps track
-                const daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, true) - 1;
-                const totalSeconds = this.time.getTotalSeconds(daysSoFar);
+                let daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, true);
+                if(this.yearZero !== 0){
+                    daysSoFar -= 1;
+                }
+                let totalSeconds = this.time.getTotalSeconds(daysSoFar);
+
                 //Let the local functions know that we all ready updated this time
                 this.timeChangeTriggered = true;
                 //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
@@ -543,6 +567,8 @@ export default class Year {
      * @param {number} seconds The seconds to convert
      */
     secondsToDate(seconds: number): DateTimeParts{
+        const beforeYearZero = seconds < 0;
+        seconds = Math.abs(seconds);
         let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
         if(sec >= this.time.secondsInMinute){
             min = Math.floor(sec / this.time.secondsInMinute);
@@ -579,6 +605,11 @@ export default class Year {
             if(dayCount > 0){
                 year++;
             }
+        }
+        if(beforeYearZero){
+            year = this.yearZero - year;
+        } else {
+            year += this.yearZero;
         }
         return {
             year: year,
@@ -651,7 +682,7 @@ export default class Year {
 
         const month = this.getMonth('visible');
         if(month){
-            currentMonth = month.numericRepresentation;
+            currentMonth = this.months.findIndex(m=> m.numericRepresentation === month.numericRepresentation);
             const day = month.getDay('selected') || month.getDay();
             if(day){
                 currentDay = day.numericRepresentation;
@@ -659,12 +690,13 @@ export default class Year {
                 currentDay = 1;
             }
         }
-        if(currentDay > 0 && currentMonth > 0){
+        if(currentDay > 0 && currentMonth >= 0){
             let currentSeason: Season | null = null;
             for(let i = 0; i < this.seasons.length; i++){
-                if(this.seasons[i].startingMonth === currentMonth && this.seasons[i].startingDay <= currentDay){
+                const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === this.seasons[i].startingMonth);
+                if(seasonMonthIndex === currentMonth && this.seasons[i].startingDay <= currentDay){
                     currentSeason = this.seasons[i];
-                } else if (this.seasons[i].startingMonth < currentMonth){
+                } else if (seasonMonthIndex < currentMonth){
                     currentSeason = this.seasons[i];
                 }
             }

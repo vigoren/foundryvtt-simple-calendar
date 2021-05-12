@@ -65,9 +65,12 @@ export default class Season {
             startingMonth: this.startingMonth,
             startingDay: this.startingDay,
             color: this.color,
-            customColor: this.customColor,
             dayList: []
         };
+
+        if(this.color === 'custom'){
+            data.color = this.customColor;
+        }
 
         const month = year.months.find(m => m.numericRepresentation === data.startingMonth);
         if(month){

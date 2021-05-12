@@ -66,6 +66,10 @@ export default class Month {
      * @type {boolean}
      */
     showAdvanced: boolean = false;
+    /**
+     * The day of the week this month starts on (ignores the day of the week calculation
+     */
+    startingWeekday: number | null = null;
 
     /**
      * Month class constructor
@@ -123,7 +127,7 @@ export default class Month {
         return {
             display: this.getDisplayName(),
             name: this.name,
-            numericRepresentation: this.numericRepresentation < 0? 0 : this.numericRepresentation,
+            numericRepresentation: this.numericRepresentation,
             numericRepresentationOffset: this.numericRepresentationOffset,
             current: this.current,
             visible: this.visible,
@@ -133,7 +137,8 @@ export default class Month {
             numberOfLeapYearDays: this.numberOfLeapYearDays,
             intercalary: this.intercalary,
             intercalaryInclude: this.intercalaryInclude,
-            showAdvanced: this.showAdvanced
+            showAdvanced: this.showAdvanced,
+            startingWeekday: this.startingWeekday
         };
     }
 
@@ -152,6 +157,7 @@ export default class Month {
         m.intercalary = this.intercalary;
         m.intercalaryInclude = this.intercalaryInclude;
         m.showAdvanced = this.showAdvanced;
+        m.startingWeekday = this.startingWeekday;
         return m;
     }
 
