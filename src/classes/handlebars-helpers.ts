@@ -50,8 +50,7 @@ export default class HandlebarsHelpers{
                             title += `${nTitle}`;
                         }
                     }
-                    return `<span class="note-count" title="${title}">${count}</span>`;
-                    return new Handlebars.SafeString(`<span class="note-count" title="${count} ${GameSettings.Localize('FSC.Configuration.General.Notes')}">${count}</span>`);
+                    return new Handlebars.SafeString(`<span class="note-count" title="${title}">${count}</span>`);
                 }
             }
         }
