@@ -36,7 +36,7 @@ export class Note{
     hour: number = 0;
     minute: number = 0;
     allDay: boolean = true;
-    endDate: DateTimeParts | null = null;
+    endDate: DateTimeParts = {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0};
 
     /**
      * The title of the note
@@ -69,6 +69,25 @@ export class Note{
      */
     constructor() {
         this.id = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16)
+    }
+
+    /**
+     * Initializes the note with the passed in values as well as sets the current user as the author
+     * @param {number} year
+     * @param {number} month
+     * @param {number} day
+     * @param {string} monthName
+     */
+    initialize(year: number, month: number, day: number, monthName: string){
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.endDate.year = year;
+        this.endDate.month = month;
+        this.endDate.day = day;
+        this.monthDisplay = monthName;
+        this.author = GameSettings.UserID();
+        this.playerVisible = GameSettings.GetDefaultNoteVisibility();
     }
 
     /**
@@ -110,7 +129,7 @@ export class Note{
         if(noteConfig.hasOwnProperty('minute')){
             this.minute = noteConfig.minute;
         }
-        if(noteConfig.hasOwnProperty('endDate') && noteConfig.endDate !== null){
+        if(noteConfig.hasOwnProperty('endDate')){
             this.endDate = {
                 year: noteConfig.endDate.year,
                 month: noteConfig.endDate.month,
@@ -186,11 +205,11 @@ export class Note{
                     }
                 }
             } else if(this.repeats === NoteRepeat.Monthly){
-                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true}, {year: year, month: month, day: this.day, allDay: true}, this.endDate? {year: year, month: month, day: this.endDate.day, allDay: true} : null);
+                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
             } else if(this.repeats === NoteRepeat.Yearly){
-                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true}, {year: year, month: this.month, day: this.day, allDay: true}, this.endDate? {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true} : null);
+                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
             } else {
-                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true}, {year: this.year, month: this.month, day: this.day, allDay: true}, this.endDate? {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true} : null);
+                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: this.year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
             }
             dayVisible = inBetween !== DateRangeMatch.None;
         }

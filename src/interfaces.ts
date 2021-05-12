@@ -186,7 +186,7 @@ export interface NoteConfig {
     allDay: boolean;
     hour: number;
     minute: number;
-    endDate: DateTimeParts | null;
+    endDate: DateTimeParts;
 }
 
 /**
@@ -362,15 +362,15 @@ export namespace SCDateSelector {
         year: number;
         month: number;
         day: number;
-        hour?: number;
-        minute?: number;
+        hour: number;
+        minute: number;
         allDay: boolean;
     }
 
     export interface SelectedDate {
         visibleDate: SCDateSelector.Date;
         startDate: SCDateSelector.Date;
-        endDate?: SCDateSelector.Date;
+        endDate: SCDateSelector.Date;
     }
 }
 

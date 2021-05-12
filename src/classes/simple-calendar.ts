@@ -787,16 +787,8 @@ export default class SimpleCalendar extends Application{
                     const currentDay = currentMonth.getDay('selected') || currentMonth.getDay();
                     if(currentDay){
                         const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
-                        const month = currentMonth.numericRepresentation;
-                        const day = currentDay.numericRepresentation;
                         const newNote = new Note();
-                        newNote.year = year;
-                        newNote.month = month;
-                        newNote.day = day;
-                        newNote.monthDisplay = currentMonth.name;
-                        newNote.title = '';
-                        newNote.author = GameSettings.UserID();
-                        newNote.playerVisible = GameSettings.GetDefaultNoteVisibility();
+                        newNote.initialize(year, currentMonth.numericRepresentation, currentDay.numericRepresentation, currentMonth.name);
                         if(this.newNote !== undefined && !this.newNote.rendered){
                             this.newNote.closeApp();
                             this.newNote = undefined;

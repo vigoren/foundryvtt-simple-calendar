@@ -47,7 +47,14 @@ export default class DateSelector {
         return startDate.year === endDate.year && startDate.month == endDate.month && startDate.day === endDate.day;
     }
 
-    static IsDayBetweenDates(checkDate: SCDateSelector.Date, startDate: SCDateSelector.Date, endDate: SCDateSelector.Date | null = null){
+    /**
+     * Checks if a passed in date is between 2 other dates. Will return a DateRangeMatch which indicates where it falls (Exact, Start, End, Between or None)
+     * @param {SCDateSelector.Date} checkDate The date to check
+     * @param {SCDateSelector.Date} startDate The starting date to use
+     * @param {SCDateSelector.Date} endDate The ending date to use
+     * @constructor
+     */
+    static IsDayBetweenDates(checkDate: SCDateSelector.Date, startDate: SCDateSelector.Date, endDate: SCDateSelector.Date){
         let between = DateRangeMatch.None;
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             let checkMonthIndex = checkDate.month;
@@ -63,50 +70,46 @@ export default class DateSelector {
                 checkMonthIndex = cMonth;
             }
 
-            if(endDate !== null){
-                const eMonth = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === endDate.month);
-                if(eMonth > -1){
-                    endMonthIndex = eMonth;
-                } else {
-                    endMonthIndex = endDate.month;
-                }
-                // If the start and end date are the same
-                if(checkDate.day === startDate.day && checkMonthIndex === startMonthIndex && checkDate.year === startDate.year && checkDate.day === endDate.day && checkMonthIndex === endMonthIndex && checkDate.year === endDate.year){
-                    between = DateRangeMatch.Exact;
-                } else if(checkDate.day === startDate.day && checkMonthIndex === startMonthIndex && checkDate.year === startDate.year){
-                    between = DateRangeMatch.Start;
-                } else if(checkDate.day === endDate.day && checkMonthIndex === endMonthIndex && checkDate.year === endDate.year){
-                    between = DateRangeMatch.End;
-                } else {
-                    // Start and end are the same month and year
-                    if(startMonthIndex === endMonthIndex && startMonthIndex === checkMonthIndex && startDate.year === endDate.year){
-                        if(checkDate.day > startDate.day && checkDate.day < endDate.day){
-                            between = DateRangeMatch.Middle;
-                        }
-                    }
-                    // Start and end are different month but year is the same
-                    else if(startMonthIndex !== endMonthIndex){
-                        // Start month go until the end of the month
-                        if(checkMonthIndex === startMonthIndex && checkDate.day > startDate.day && checkDate.year === startDate.year){
-                            between = DateRangeMatch.Middle;
-                        }
-                        //End month go from the first of the month until the end
-                        else if(checkMonthIndex === endMonthIndex && checkDate.day < endDate.day && checkDate.year === endDate.year){
-                            between = DateRangeMatch.Middle;
-                        }
-                        //In-between month go from first until end of the month
-                        else if(
-                            (checkMonthIndex > startMonthIndex && checkMonthIndex < endMonthIndex) ||
-                            (checkDate.year > startDate.year && checkDate.year < endDate.year) //||
-                            //(checkMonthIndex > startMonthIndex && checkDate.year === startDate.year) ||
-                            //(checkMonthIndex < endMonthIndex && checkDate.year === endDate.year)
-                        ){
-                            between = DateRangeMatch.Middle;
-                        }
+            const eMonth = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === endDate.month);
+            if(eMonth > -1){
+                endMonthIndex = eMonth;
+            } else {
+                endMonthIndex = endDate.month;
+            }
+            // If the start and end date are the same
+            if(checkDate.day === startDate.day && checkMonthIndex === startMonthIndex && checkDate.year === startDate.year && checkDate.day === endDate.day && checkMonthIndex === endMonthIndex && checkDate.year === endDate.year){
+                between = DateRangeMatch.Exact;
+            } else if(checkDate.day === startDate.day && checkMonthIndex === startMonthIndex && checkDate.year === startDate.year){
+                between = DateRangeMatch.Start;
+            } else if(checkDate.day === endDate.day && checkMonthIndex === endMonthIndex && checkDate.year === endDate.year){
+                between = DateRangeMatch.End;
+            } else {
+                // Start and end are the same month and year
+                if(startMonthIndex === endMonthIndex && startMonthIndex === checkMonthIndex && startDate.year === endDate.year){
+                    if(checkDate.day > startDate.day && checkDate.day < endDate.day){
+                        between = DateRangeMatch.Middle;
                     }
                 }
-            } else if(checkMonthIndex === startMonthIndex && checkDate.year === startDate.year) {
-                between = checkDate.day === startDate.day? DateRangeMatch.Exact : DateRangeMatch.None;
+                // Start and end are different month but year is the same
+                else if(startMonthIndex !== endMonthIndex){
+                    // Start month go until the end of the month
+                    if(checkMonthIndex === startMonthIndex && checkDate.day > startDate.day && checkDate.year === startDate.year){
+                        between = DateRangeMatch.Middle;
+                    }
+                    //End month go from the first of the month until the end
+                    else if(checkMonthIndex === endMonthIndex && checkDate.day < endDate.day && checkDate.year === endDate.year){
+                        between = DateRangeMatch.Middle;
+                    }
+                    //In-between month go from first until end of the month
+                    else if(
+                        (checkMonthIndex > startMonthIndex && checkMonthIndex < endMonthIndex) ||
+                        (checkDate.year > startDate.year && checkDate.year < endDate.year) //||
+                        //(checkMonthIndex > startMonthIndex && checkDate.year === startDate.year) ||
+                        //(checkMonthIndex < endMonthIndex && checkDate.year === endDate.year)
+                    ){
+                        between = DateRangeMatch.Middle;
+                    }
+                }
             }
         }
         return between;
@@ -116,7 +119,15 @@ export default class DateSelector {
      * @type {string}
      */
     id: string;
+    /**
+     * If to show the calendar portion of the picker
+     * @type{boolean}
+     */
     showDate: boolean;
+    /**
+     * If to show the time portion of the picker
+     * @type{boolean}
+     */
     showTime: boolean;
     /**
      * If the add time controls should be shown or not
@@ -162,13 +173,25 @@ export default class DateSelector {
                 year: 0,
                 month: 0,
                 day: 0,
-                allDay: true
+                allDay: true,
+                hour: 0,
+                minute: 0
             },
-            startDate:{
+            startDate: {
                 year: 0,
                 month: 0,
                 day: 0,
-                allDay: true
+                allDay: true,
+                hour: 0,
+                minute: 0
+            },
+            endDate: {
+                year: 0,
+                month: 0,
+                day: 0,
+                allDay: true,
+                hour: 0,
+                minute: 0
             }
         };
         if(options.placeHolderText){
@@ -193,13 +216,17 @@ export default class DateSelector {
             year: note.year,
             month: note.month,
             day: note.day,
-            allDay: true
+            allDay: true,
+            hour: 0,
+            minute: 0
         };
         this.selectedDate.visibleDate = {
             year: note.year,
             month: note.month,
             day: note.day,
-            allDay: true
+            allDay: true,
+            hour: 0,
+            minute: 0
         };
         if(note.allDay){
             this.selectedDate.startDate.allDay = true;
@@ -210,19 +237,19 @@ export default class DateSelector {
             this.selectedDate.visibleDate.hour = note.hour;
             this.selectedDate.visibleDate.minute = note.minute;
         }
-        if(note.endDate !== null){
-            this.selectedDate.endDate = {
-                year: note.endDate.year,
-                month: note.endDate.month,
-                day: note.endDate.day,
-                allDay: note.allDay
-            };
-            if(note.allDay){
-                this.selectedDate.endDate.allDay = true;
-            } else {
-                this.selectedDate.endDate.hour = note.hour;
-                this.selectedDate.endDate.minute = note.minute;
-            }
+        this.selectedDate.endDate = {
+            year: note.endDate.year,
+            month: note.endDate.month,
+            day: note.endDate.day,
+            allDay: note.allDay,
+            hour: 0,
+            minute: 0
+        };
+        if(note.allDay){
+            this.selectedDate.endDate.allDay = true;
+        } else {
+            this.selectedDate.endDate.hour = note.hour;
+            this.selectedDate.endDate.minute = note.minute;
         }
 
         if(!this.selectedDate.startDate.allDay){
@@ -254,11 +281,9 @@ export default class DateSelector {
                 if(startingMonth){
                     startingMonthName = startingMonth.name;
                 }
-                if(this.selectedDate.endDate){
-                    const endingMonth = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === this.selectedDate.endDate?.month);
-                    if(endingMonth){
-                        endingMonthName = endingMonth.name;
-                    }
+                const endingMonth = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === this.selectedDate.endDate?.month);
+                if(endingMonth){
+                    endingMonthName = endingMonth.name;
                 }
 
                 if(!weeks.length){
@@ -267,7 +292,7 @@ export default class DateSelector {
                 calendarWidth = (10 + (weeks[0].length * 40));
                 startDateTimeText += `${startingMonthName} ${this.selectedDate.startDate.day}, ${this.selectedDate.startDate.year}`;
                 hiddenValue += `${this.selectedDate.startDate.year}/${this.selectedDate.startDate.month}/${this.selectedDate.startDate.day}`;
-                if(this.range && this.selectedDate.endDate && !DateSelector.DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
+                if(this.range && !DateSelector.DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
                     endDateTimeText += `${endingMonthName} ${this.selectedDate.endDate.day}, ${this.selectedDate.endDate.year}`;
                     hiddenValue += ` ~ ${this.selectedDate.endDate.year}/${this.selectedDate.endDate.month}/${this.selectedDate.endDate.day}`;
                 }
@@ -296,7 +321,9 @@ export default class DateSelector {
                                 year: this.selectedDate.visibleDate.year,
                                 month: this.selectedDate.visibleDate.month,
                                 day: (<DayTemplate>weeks[i][d]).numericRepresentation,
-                                allDay: true
+                                allDay: true,
+                                hour: 0,
+                                minute: 0
                             };
                             const inBetween = DateSelector.IsDayBetweenDates(checkDate, this.selectedDate.startDate, this.selectedDate.endDate);
                             switch (inBetween){
@@ -325,8 +352,8 @@ export default class DateSelector {
                     let startTimeText = `00:00`;
                     let endTimeText = `00:00`;
                     if(!this.selectedDate.startDate.allDay){
-                        let sHour: string | number = this.selectedDate.startDate.hour? this.selectedDate.startDate.hour : 0;
-                        let sMinute: string | number = this.selectedDate.startDate.minute? this.selectedDate.startDate.minute : 0;
+                        let sHour: string | number = this.selectedDate.startDate.hour;
+                        let sMinute: string | number = this.selectedDate.startDate.minute;
                         if(sHour < 10){
                             sHour = `0${sHour}`;
                         }
@@ -337,9 +364,9 @@ export default class DateSelector {
                         startDateTimeText += ` ${sHour}:${sMinute}`;
                         hiddenValue += ` | ${sHour}:${sMinute}`;
                     }
-                    if(this.selectedDate.endDate && !this.selectedDate.endDate.allDay){
-                        let eHour: string | number = this.selectedDate.endDate.hour? this.selectedDate.endDate.hour : 0;
-                        let eMinute: string | number = this.selectedDate.endDate.minute? this.selectedDate.endDate.minute : 0;
+                    if(!this.selectedDate.endDate.allDay){
+                        let eHour: string | number = this.selectedDate.endDate.hour;
+                        let eMinute: string | number = this.selectedDate.endDate.minute;
                         if(eHour < 10){
                             eHour = `0${eHour}`;
                         }
@@ -369,9 +396,7 @@ export default class DateSelector {
                         timePicker.find(`.time-option[data-hour='${this.selectedDate.startDate.hour}'][data-minute='${this.selectedDate.startDate.minute}']`).addClass('selected');
                         startTime.append(`<div class="time-dropdown hide">${timePicker.html()}</div>`);
                         timePicker.find('.time-option').removeClass('selected');
-                        if(this.selectedDate.endDate && this.selectedDate.endDate.hour !== undefined && this.selectedDate.endDate.minute !== undefined){
-                            timePicker.find(`.time-option[data-hour='${this.selectedDate.endDate.hour}'][data-minute='${this.selectedDate.endDate.minute}']`).addClass('selected');
-                        }
+                        timePicker.find(`.time-option[data-hour='${this.selectedDate.endDate.hour}'][data-minute='${this.selectedDate.endDate.minute}']`).addClass('selected');
                         endTime.append(timePicker);
 
                         timeSelectors.append(startTime);
@@ -458,12 +483,19 @@ export default class DateSelector {
      */
     hideCalendar(html: JQuery){
         this.secondDaySelect = false;
-        html.find('.sc-date-selector-calendar').hide();
-        if(this.onDateSelect){
-            this.onDateSelect(this.selectedDate);
+        const cal = html.find('.sc-date-selector-calendar');
+        if(cal.is(':visible')){
+            cal.hide();
+            if(this.onDateSelect){
+                this.onDateSelect(this.selectedDate);
+            }
         }
     }
 
+    /**
+     * If the calendar container div is clicked
+     * @param {Event} event
+     */
     calendarClick(event: Event){
         event.stopPropagation();
 
@@ -502,11 +534,9 @@ export default class DateSelector {
                                 this.selectedDate.startDate.year = yearNumber;
                                 this.selectedDate.startDate.month = monthNumber;
                                 this.selectedDate.startDate.day = dayNumber;
-                                if(this.selectedDate.endDate){
-                                    this.selectedDate.endDate.year = yearNumber;
-                                    this.selectedDate.endDate.month = monthNumber;
-                                    this.selectedDate.endDate.day = dayNumber;
-                                }
+                                this.selectedDate.endDate.year = yearNumber;
+                                this.selectedDate.endDate.month = monthNumber;
+                                this.selectedDate.endDate.day = dayNumber;
                                 this.secondDaySelect = true;
                                 hideCalendar = false;
                             } else {
@@ -532,9 +562,9 @@ export default class DateSelector {
                                         year: yearNumber,
                                         month: monthNumber,
                                         day: dayNumber,
-                                        allDay: this.selectedDate.endDate? this.selectedDate.endDate.allDay : true,
-                                        hour: this.selectedDate.endDate? this.selectedDate.endDate.hour : 0,
-                                        minute: this.selectedDate.endDate? this.selectedDate.endDate.minute : 0
+                                        allDay: this.selectedDate.endDate.allDay,
+                                        hour: this.selectedDate.endDate.hour,
+                                        minute: this.selectedDate.endDate.minute
                                     };
                                     this.selectedDate.endDate = {
                                         year: this.selectedDate.startDate.year,
@@ -547,27 +577,19 @@ export default class DateSelector {
                                     this.selectedDate.startDate = newSDate;
                                 }
                                 else {
-                                    if(this.selectedDate.endDate){
-                                        this.selectedDate.endDate.year = yearNumber;
-                                        this.selectedDate.endDate.month = monthNumber;
-                                        this.selectedDate.endDate.day = dayNumber;
-                                    } else {
-                                        this.selectedDate.endDate = {
-                                            year: yearNumber,
-                                            month: monthNumber,
-                                            day: dayNumber,
-                                            allDay: this.selectedDate.startDate.allDay
-                                        };
-                                    }
-
+                                    this.selectedDate.endDate.year = yearNumber;
+                                    this.selectedDate.endDate.month = monthNumber;
+                                    this.selectedDate.endDate.day = dayNumber;
                                 }
-
                                 this.secondDaySelect = false;
                             }
                         } else {
                             this.selectedDate.startDate.year = yearNumber;
                             this.selectedDate.startDate.month = monthNumber;
                             this.selectedDate.startDate.day = dayNumber;
+                            this.selectedDate.endDate.year = yearNumber;
+                            this.selectedDate.endDate.month = monthNumber;
+                            this.selectedDate.endDate.day = dayNumber;
                         }
                         if(hideCalendar){
                             this.update();
@@ -654,11 +676,9 @@ export default class DateSelector {
         this.selectedDate.startDate.allDay = false;
         this.selectedDate.startDate.hour = 0;
         this.selectedDate.startDate.minute = 0;
-        if(this.selectedDate.endDate){
-            this.selectedDate.endDate.allDay = false;
-            this.selectedDate.endDate.hour = 0;
-            this.selectedDate.endDate.minute = 0;
-        }
+        this.selectedDate.endDate.allDay = false;
+        this.selectedDate.endDate.hour = 0;
+        this.selectedDate.endDate.minute = 0;
         this.update();
 
     }
@@ -671,16 +691,18 @@ export default class DateSelector {
         event.stopPropagation();
         this.addTime = false;
         this.selectedDate.startDate.allDay = true;
-        this.selectedDate.startDate.hour = undefined;
-        this.selectedDate.startDate.minute = undefined;
-        if(this.selectedDate.endDate){
-            this.selectedDate.endDate.allDay = true;
-            this.selectedDate.endDate.hour = undefined;
-            this.selectedDate.endDate.minute = undefined;
-        }
+        this.selectedDate.startDate.hour = 0;
+        this.selectedDate.startDate.minute = 0;
+        this.selectedDate.endDate.allDay = true;
+        this.selectedDate.endDate.hour = 0;
+        this.selectedDate.endDate.minute = 0;
         this.update();
     }
 
+    /**
+     * When a time input is clicked, show the selector list
+     * @param event
+     */
     timeClick(event: Event){
         event.stopPropagation();
         this.calendarClick(event);
@@ -693,6 +715,10 @@ export default class DateSelector {
         }
     }
 
+    /**
+     * When an option of the time dropdown is clicked
+     * @param event
+     */
     timeDropdownClick(event: Event){
         event.stopPropagation();
         const clickedHour = (<HTMLElement>event.currentTarget).getAttribute('data-hour');
@@ -762,45 +788,22 @@ export default class DateSelector {
                 this.selectedDate.startDate.hour = hour;
                 this.selectedDate.startDate.minute = minute;
 
-                if(this.selectedDate.endDate === undefined){
-                    this.selectedDate.endDate = {
-                        year: this.selectedDate.startDate.year,
-                        month: this.selectedDate.startDate.month,
-                        day: this.selectedDate.startDate.day,
-                        allDay: this.selectedDate.startDate.allDay,
-                        hour: 0,
-                        minute: 0
-                    };
-                }
-
-                if(this.selectedDate.endDate && (this.selectedDate.endDate.hour === undefined || this.selectedDate.endDate.hour === 0)){
+                if(this.selectedDate.endDate.hour === 0){
                     this.selectedDate.endDate.hour = hour + 1;
                     if(this.selectedDate.endDate.hour > SimpleCalendar.instance.currentYear.time.hoursInDay - 1){
                         this.selectedDate.endDate.hour = SimpleCalendar.instance.currentYear.time.hoursInDay - 1;
                     }
                 }
             } else if(cssClass === 'end-time'){
-                if(this.selectedDate.startDate.hour !== undefined && hour <= this.selectedDate.startDate.hour){
+                if(hour <= this.selectedDate.startDate.hour){
                     hour = this.selectedDate.startDate.hour;
 
-                    if(this.selectedDate.startDate.minute !== undefined && minute < this.selectedDate.startDate.minute){
+                    if(minute < this.selectedDate.startDate.minute){
                         minute = this.selectedDate.startDate.minute;
                     }
                 }
-
-                if(this.selectedDate.endDate){
-                    this.selectedDate.endDate.hour = hour;
-                    this.selectedDate.endDate.minute = minute;
-                } else {
-                    this.selectedDate.endDate = {
-                        year: this.selectedDate.startDate.year,
-                        month: this.selectedDate.startDate.month,
-                        day: this.selectedDate.startDate.day,
-                        allDay: false,
-                        hour: hour,
-                        minute: minute
-                    };
-                }
+                this.selectedDate.endDate.hour = hour;
+                this.selectedDate.endDate.minute = minute;
             }
             this.update();
         }

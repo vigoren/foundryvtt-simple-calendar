@@ -39,8 +39,6 @@ export class SimpleCalendarNotes extends FormApplication {
 
     initialLoad: boolean = true;
 
-    focusField: string = 'scNoteTitle';
-
     /**
      * Used to store a globally accessible copy of the Simple calendar Notes class for access from event functions.
      */
@@ -198,12 +196,6 @@ export class SimpleCalendarNotes extends FormApplication {
             (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
             (<JQuery>html).find('#scNoteEdit').on('click', this.editButtonClick.bind(this));
             (<JQuery>html).find('#scNoteDelete').on('click', this.deleteButtonClick.bind(this));
-
-            if(this.focusField){
-                setTimeout(()=>{
-                    (<JQuery>this.element).find(`#${this.focusField}`).focus();
-                }, 255);
-            }
         }
     }
 
@@ -225,7 +217,6 @@ export class SimpleCalendarNotes extends FormApplication {
             Logger.debug(`ID "${id}" change found`);
             if(id === "scNoteTitle"){
                 (<Note>this.object).title = value;
-                this.focusField = 'scNoteTitle';
             } else if(id === "scNoteRepeats"){
                 const r = parseInt(value);
                 if(!isNaN(r)){
@@ -233,10 +224,8 @@ export class SimpleCalendarNotes extends FormApplication {
                 } else {
                     (<Note>this.object).repeats = 0;
                 }
-                this.focusField = 'scNoteRepeats';
             } else if(id === "scNoteVisibility"){
                 (<Note>this.object).playerVisible = checked;
-                this.focusField = 'scNoteVisibility';
             } else if(id === "scNoteDateAllDay"){
                 (<Note>this.object).allDay = !checked;
             }
