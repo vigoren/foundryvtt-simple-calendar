@@ -254,5 +254,10 @@
   "FSC.MinuteShorthand": "Min",
   "FSC.SecondShorthand": "Sek",
   "FSC.SetCurrentDateDialog.Title": "Bestätige Datumsänderung",
-  "FSC.SetCurrentDateDialog.Content": "Die Änderung des Datums erfolgt auf einen Tag, der nicht sichtbar ist!<br/>Bist du sicher, dass du das Datum auf <strong>{DATE}</strong> ändern willst?"
+  "FSC.SetCurrentDateDialog.Content": "Die Änderung des Datums erfolgt auf einen Tag, der nicht sichtbar ist!<br/>Bist du sicher, dass du das Datum auf <strong>{DATE}</strong> ändern willst?",
+  "FSC.Configuration.Notes.Title": "Notizeinstellungen",
+  "FSC.Configuration.Year.YearZero": "Jahr Null",
+  "FSC.Configuration.Year.YearZeroHelp": "Dies ist das Jahr, das für die Berechnung, wie viel Zeit vergangen ist, als Jahr Null gilt. Dies muss im Allgemeinen nicht geändert werden.",
+  "FSC.Configuration.Month.StartingWeekDay": "Start an Wochentag",
+  "FSC.Configuration.Month.StartingWeekDayHelp": "Wähle, an welchem Wochentag dieser Monat immer beginnen soll, oder belasse es bei der Standardeinstellung, damit der Kalender den passenden Wochentag ermitteln kann.",
 }
