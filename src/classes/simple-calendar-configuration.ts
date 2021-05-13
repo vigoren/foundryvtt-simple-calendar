@@ -222,6 +222,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
             //Input Change
             (<JQuery>html).find(".general-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+            (<JQuery>html).find(".note-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".year-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".year-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".month-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
