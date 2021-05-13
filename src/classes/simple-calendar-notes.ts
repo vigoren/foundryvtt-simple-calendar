@@ -238,32 +238,28 @@ export class SimpleCalendarNotes extends FormApplication {
      * @param selectedDate
      */
     dateSelectorClick(selectedDate: SCDateSelector.SelectedDate){
+        console.log(selectedDate);
         (<Note>this.object).year = selectedDate.startDate.year;
         (<Note>this.object).month = selectedDate.startDate.month;
         (<Note>this.object).day = selectedDate.startDate.day;
         (<Note>this.object).allDay = selectedDate.startDate.allDay;
-        if(selectedDate.startDate.hour !== undefined && selectedDate.startDate.minute !== undefined){
-            (<Note>this.object).hour = selectedDate.startDate.hour;
-            (<Note>this.object).minute = selectedDate.startDate.minute;
-        }
+        (<Note>this.object).hour = selectedDate.startDate.hour;
+        (<Note>this.object).minute = selectedDate.startDate.minute;
+        (<Note>this.object).endDate = {
+            year: selectedDate.endDate.year,
+            month: selectedDate.endDate.month,
+            day: selectedDate.endDate.day,
+            hour: selectedDate.endDate.hour,
+            minute: selectedDate.endDate.minute
+        };
+
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             const monthObj = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === selectedDate.startDate.month);
             if(monthObj){
                 (<Note>this.object).monthDisplay = monthObj.name;
             }
         }
-        if(selectedDate.endDate){
-            const eDate: DateTimeParts = {
-                year: selectedDate.endDate.year,
-                month: selectedDate.endDate.month,
-                day: selectedDate.endDate.day
-            };
-            if(selectedDate.endDate.hour !== undefined && selectedDate.endDate.minute !== undefined){
-                eDate.hour = selectedDate.endDate.hour;
-                eDate.minute = selectedDate.endDate.minute;
-            }
-            (<Note>this.object).endDate = eDate;
-        }
+
         this.updateApp();
     }
 
@@ -382,19 +378,13 @@ export class SimpleCalendarNotes extends FormApplication {
         }
         if(this.richEditorSaved || !detailsEmpty){
             if((<Note>this.object).title){
-                const currentNotes = GameSettings.LoadNotes().map(n => {
+                let currentNotes = GameSettings.LoadNotes().map(n => {
                     const note = new Note();
                     note.loadFromConfig(n);
                     return note;
                 });
                 if(this.updateNote){
-                    const updateNote = currentNotes.find(n => n.id === (<Note>this.object).id);
-                    if(updateNote){
-                        updateNote.title = (<Note>this.object).title;
-                        updateNote.content = (<Note>this.object).content;
-                        updateNote.playerVisible = (<Note>this.object).playerVisible;
-                        updateNote.repeats = (<Note>this.object).repeats;
-                    }
+                    currentNotes = currentNotes.map(n => n.id === (<Note>this.object).id? (<Note>this.object) : n);
                 } else {
                     currentNotes.push(<Note>this.object);
                 }

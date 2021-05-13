@@ -539,7 +539,9 @@ export class GameSettings {
             allDay: w.allDay,
             hour: w.hour,
             minute: w.minute,
-            endDate: w.endDate
+            endDate: w.endDate,
+            order: w.order,
+            categories: w.categories
         };});
         if(GameSettings.IsGm()){
             return game.settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});

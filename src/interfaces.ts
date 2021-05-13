@@ -165,8 +165,16 @@ export interface NoteTemplate {
     title: string;
     content: string;
     author: string;
+    authorDisplay: User | null;
     monthDisplay: string;
     id: string;
+    displayDate: string;
+    allDay: boolean;
+    hour: number;
+    minute: number;
+    endDate: DateTimeParts;
+    order: number;
+    categories: NoteCategory[];
 }
 
 /**
@@ -187,6 +195,17 @@ export interface NoteConfig {
     hour: number;
     minute: number;
     endDate: DateTimeParts;
+    order: number;
+    categories: NoteCategory[];
+}
+
+/**
+ * Categories used for notes
+ */
+export interface NoteCategory {
+    name: string;
+    color: string;
+    textColor: string;
 }
 
 /**

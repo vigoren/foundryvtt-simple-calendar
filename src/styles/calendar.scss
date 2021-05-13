@@ -257,9 +257,6 @@
 }
 
 .note{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
   padding: 0.25rem 0.5rem;
   border-left: 1px solid gray;
   border-right: 1px solid gray;
@@ -267,12 +264,28 @@
 
   .note-title{
     flex: 1;
-    margin: 0;
+    margin: 0 0 0.15rem;
+    font-size: 1rem;
   }
 
-  .note-author{
-    color: #464646;
-    margin: 0;
+  .note-details{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .note-time{
+      font-size: 0.75rem;
+      border-radius: 5px;
+      background-color: #444141;
+      color: #ffffff;
+      padding: 0.15rem 0.25rem;
+    }
+
+    .note-category{
+      font-size: 0.75rem;
+      border-radius: 5px;
+      padding: 0.15rem 0.25rem;
+    }
   }
 
   &:nth-child(2){

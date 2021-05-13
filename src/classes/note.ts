@@ -1,4 +1,4 @@
-import {DateTimeParts, NoteConfig, NoteTemplate} from "../interfaces";
+import {DateTimeParts, NoteCategory, NoteConfig, NoteTemplate} from "../interfaces";
 import {GameSettings} from "./game-settings"
 import {DateRangeMatch, NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
@@ -33,11 +33,26 @@ export class Note{
      * @type {number}
      */
     day: number = 0;
+    /**
+     * The hours the note starts
+     * @type {number}
+     */
     hour: number = 0;
+    /**
+     * The minute the note starts
+     * @type {number}
+     */
     minute: number = 0;
+    /**
+     * If the note runs all day or starts at a specific time
+     * @type {boolean}
+     */
     allDay: boolean = true;
+    /**
+     * The end date and time for a note
+     * @type {DateTimeParts}
+     */
     endDate: DateTimeParts = {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0};
-
     /**
      * The title of the note
      * @type {string}
@@ -63,6 +78,16 @@ export class Note{
      * @type {NoteRepeat}
      */
     repeats: NoteRepeat = NoteRepeat.Never;
+    /**
+     * The order in which the not displays in the day list
+     * @type {number}
+     */
+    order: number = 0;
+    /**
+     * The categories that this note is associated with
+     * @type {NoteCategory[]}
+     */
+    categories: NoteCategory[] = [];
 
     /**
      * The note constructor
@@ -99,8 +124,16 @@ export class Note{
             title: this.title,
             content: this.content,
             author: this.author,
+            authorDisplay: game.users? game.users.find(u => u.id === this.author) : null,
             monthDisplay: this.monthDisplay,
-            id: this.id
+            id: this.id,
+            allDay: this.allDay,
+            displayDate: DateSelector.GetDisplayDate({year: this.year, month: this.month, day: this.day, hour: this.hour, minute: this.minute, allDay: this.allDay}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, hour: this.endDate.hour? this.endDate.hour : 0, minute: this.endDate.minute? this.endDate.minute : 0, allDay: this.allDay}, true),
+            hour: this.hour,
+            minute: this.minute,
+            endDate: this.endDate,
+            order: this.order,
+            categories: this.categories
         };
     }
 
@@ -138,6 +171,12 @@ export class Note{
                 minute: noteConfig.endDate.minute
             };
         }
+        if(noteConfig.hasOwnProperty('order')){
+            this.order = noteConfig.order;
+        }
+        if(noteConfig.hasOwnProperty('categories')){
+            this.categories = noteConfig.categories;
+        }
     }
 
     /**
@@ -167,6 +206,8 @@ export class Note{
                 minute: this.endDate.minute
             };
         }
+        n.order = this.order;
+        n.categories = this.categories.map(c => {return {name: c.name, color: c.color, textColor: c.textColor};});
         return n;
     }
 

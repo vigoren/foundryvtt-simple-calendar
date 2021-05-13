@@ -1166,7 +1166,18 @@ export default class SimpleCalendar extends Application{
                 }
             }
         }
+        dayNotes.sort(SimpleCalendar.dayNoteSort);
         return dayNotes;
+    }
+
+    /**
+     * Sort function for the list of notes on a day. Sorts by order, then hour then minute
+     * @param {NoteTemplate} a The first note to compare
+     * @param {NoteTemplate} b The second noe to compare
+     * @private
+     */
+    private static dayNoteSort(a: NoteTemplate, b: NoteTemplate): number {
+        return a.order - b.order || a.hour - b.hour || a.minute - b.minute;
     }
 
     /**

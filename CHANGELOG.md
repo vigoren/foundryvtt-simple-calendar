@@ -6,7 +6,12 @@
 
 This update is mainly around notes and improving the experience around adding, editing and viewing them. The notable improvements/changes to notes are:
 
+- Notes can now span more than 1 day.
+- Notes can now have a start and end time associated with them.
+- A built-in Date/Time selector. This is a new input type that will show a calendar where you can choose a day, or range of days for the note a well as add a start/end time for the note.
 - Changed the dialog's behaviour so that it will attempt to size itself to fit the content of the note appropriately.
+- Added the ability to order notes. By default, notes are ordered by starting time but can be adjusted on the day for a custom order.
+
 
 ### Bug Fixes
 

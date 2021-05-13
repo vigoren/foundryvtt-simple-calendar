@@ -65,6 +65,16 @@
             {{#each notes}}
             <div class="note" data-index="{{id}}">
                 <h3 class="note-title">{{title}}</h3>
+                <div class="note-details">
+                    <div class="note-time">
+                        {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+                    </div>
+                    {{#each categories}}
+                    <div class="note-category" style="background-color:{{color}};color:{{textColor}};">
+                        {{name}}
+                    </div>
+                    {{/each}}
+                </div>
             </div>
             {{/each}}
         </div>
@@ -211,6 +221,21 @@
             {{#each notes}}
             <div class="note" data-index="{{id}}">
                 <h3 class="note-title">{{title}}</h3>
+                <div class="note-details">
+                    <div class="note-time">
+                        {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+                    </div>
+                    {{#if authorDisplay}}
+                    <div class="note-category" style="background-color:{{authorDisplay.color}};">
+                        {{authorDisplay.name}}
+                    </div>
+                    {{/if}}
+                    {{#each categories}}
+                    <div class="note-category" style="background-color:{{color}};color:{{textColor}};">
+                        {{name}}
+                    </div>
+                    {{/each}}
+                </div>
             </div>
             {{/each}}
         {{else}}

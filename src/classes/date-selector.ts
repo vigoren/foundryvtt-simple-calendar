@@ -114,6 +114,73 @@ export default class DateSelector {
         }
         return between;
     }
+
+    /**
+     * Formats an hour and minute to include pre padded 0's
+     * @param date
+     * @constructor
+     */
+    static FormatTime(date: SCDateSelector.Date){
+        let text = '';
+        if(!date.allDay){
+            let sHour: string | number = date.hour;
+            let sMinute: string | number = date.minute;
+            if(sHour < 10){
+                sHour = `0${sHour}`;
+            }
+            if(sMinute < 10){
+                sMinute = `0${sMinute}`;
+            }
+            text = `${sHour}:${sMinute}`;
+        }
+        return text;
+    }
+
+    /**
+     * Gets the formatted display date for the passed in start and end date.
+     * @param {SCDateSelector.Date} startDate The starting datetime
+     * @param {SCDateSelector.Date} endDate The ending datetime
+     * @param {boolean} [dontIncludeSameDate=false] If to include the date if it is the same in the result (useful for just getting the time)
+     */
+    static GetDisplayDate(startDate: SCDateSelector.Date, endDate: SCDateSelector.Date, dontIncludeSameDate: boolean = false){
+        let startDateTimeText = '', endDateTimeText = '', startingMonthName = '', endingMonthName = '';
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            const startingMonth = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === startDate.month);
+            const endingMonth = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === endDate.month);
+            if(startingMonth){
+                startingMonthName = startingMonth.name;
+            }
+            if(endingMonth){
+                endingMonthName = endingMonth.name;
+            }
+
+            if(!DateSelector.DateTheSame(startDate, endDate)){
+                startDateTimeText += `${startingMonthName} ${startDate.day}`;
+                endDateTimeText += `${endingMonthName} ${endDate.day}`;
+                if(!dontIncludeSameDate || (dontIncludeSameDate && startDate.year !== endDate.year)){
+                    startDateTimeText += `, ${startDate.year}`;
+                    endDateTimeText += `, ${endDate.year}`;
+                }
+            } else if(!dontIncludeSameDate){
+                startDateTimeText += `${startingMonthName} ${startDate.day}, ${startDate.year}`;
+            }
+
+            let startTimeText = `00:00`;
+            let endTimeText = `00:00`;
+            if(!startDate.allDay){
+                startTimeText = ' ' + DateSelector.FormatTime(startDate);
+                startDateTimeText += startTimeText;
+            }
+            if(!endDate.allDay){
+                endTimeText = ' ' + DateSelector.FormatTime(endDate);
+                if(endDateTimeText !== '' || (endDateTimeText === '' && startTimeText !== endTimeText)){
+                    endDateTimeText += endTimeText;
+                }
+            }
+        }
+        return `${startDateTimeText}${endDateTimeText? ' - ' + endDateTimeText: ''}`;
+    }
+
     /**
      * The unique ID of the date selector object
      * @type {string}
@@ -216,44 +283,28 @@ export default class DateSelector {
             year: note.year,
             month: note.month,
             day: note.day,
-            allDay: true,
-            hour: 0,
-            minute: 0
+            allDay: note.allDay,
+            hour: note.hour,
+            minute: note.minute
         };
         this.selectedDate.visibleDate = {
             year: note.year,
             month: note.month,
             day: note.day,
-            allDay: true,
-            hour: 0,
-            minute: 0
+            allDay: note.allDay,
+            hour: note.hour,
+            minute: note.minute
         };
-        if(note.allDay){
-            this.selectedDate.startDate.allDay = true;
-            this.selectedDate.visibleDate.allDay = true;
-        } else {
-            this.selectedDate.startDate.hour = note.hour;
-            this.selectedDate.startDate.minute = note.minute;
-            this.selectedDate.visibleDate.hour = note.hour;
-            this.selectedDate.visibleDate.minute = note.minute;
-        }
         this.selectedDate.endDate = {
             year: note.endDate.year,
             month: note.endDate.month,
             day: note.endDate.day,
             allDay: note.allDay,
-            hour: 0,
-            minute: 0
+            hour: note.endDate.hour? note.endDate.hour : 0,
+            minute: note.endDate.minute? note.endDate.minute : 0
         };
-        if(note.allDay){
-            this.selectedDate.endDate.allDay = true;
-        } else {
-            this.selectedDate.endDate.hour = note.hour;
-            this.selectedDate.endDate.minute = note.minute;
-        }
-
         if(!this.selectedDate.startDate.allDay){
-            this.addTime = false;
+            this.addTime = true;
         }
     }
 
@@ -265,39 +316,21 @@ export default class DateSelector {
         let returnHtml = '';
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             const wrapper = jQuery(`<div id="${this.id}" class="sc-date-selector"></div>`);
-            let startDateTimeText = '', endDateTimeText = '', hiddenValue = '', calendarWidth = 0;
+            let calendarWidth = 0;
             if(this.showDate){
                 let weeks: (boolean | DayTemplate)[][] = [[false]],
                     visibleMonthName: string = '',
-                    startingMonthName: string = '',
-                    endingMonthName: string = '',
                     weekdays = SimpleCalendar.instance.currentYear.showWeekdayHeadings? SimpleCalendar.instance.currentYear.weekdays : [];
                 const visibleMonth = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === this.selectedDate.visibleDate.month);
                 if(visibleMonth){
                     weeks = SimpleCalendar.instance.currentYear.daysIntoWeeks(visibleMonth, this.selectedDate.startDate.year, SimpleCalendar.instance.currentYear.weekdays.length);
                     visibleMonthName = visibleMonth.name;
                 }
-                const startingMonth = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === this.selectedDate.startDate.month);
-                if(startingMonth){
-                    startingMonthName = startingMonth.name;
-                }
-                const endingMonth = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === this.selectedDate.endDate?.month);
-                if(endingMonth){
-                    endingMonthName = endingMonth.name;
-                }
 
                 if(!weeks.length){
                     return '';
                 }
                 calendarWidth = (10 + (weeks[0].length * 40));
-                startDateTimeText += `${startingMonthName} ${this.selectedDate.startDate.day}, ${this.selectedDate.startDate.year}`;
-                hiddenValue += `${this.selectedDate.startDate.year}/${this.selectedDate.startDate.month}/${this.selectedDate.startDate.day}`;
-                if(this.range && !DateSelector.DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
-                    endDateTimeText += `${endingMonthName} ${this.selectedDate.endDate.day}, ${this.selectedDate.endDate.year}`;
-                    hiddenValue += ` ~ ${this.selectedDate.endDate.year}/${this.selectedDate.endDate.month}/${this.selectedDate.endDate.day}`;
-                }
-
-
                 const calendar = jQuery(`<div class="sc-date-selector-calendar" style="display: none;width: ${calendarWidth}px;"></div>`);
                 calendar.append(`<div class="header"><div class="current"><a class="prev fa fa-chevron-left"></a><span class="month-year" data-visible="${this.selectedDate.visibleDate.month}/${this.selectedDate.visibleDate.year}">${visibleMonthName} ${this.selectedDate.visibleDate.year}</span><a class="next fa fa-chevron-right"></a></div></div>`);
                 if(weekdays.length){
@@ -352,32 +385,10 @@ export default class DateSelector {
                     let startTimeText = `00:00`;
                     let endTimeText = `00:00`;
                     if(!this.selectedDate.startDate.allDay){
-                        let sHour: string | number = this.selectedDate.startDate.hour;
-                        let sMinute: string | number = this.selectedDate.startDate.minute;
-                        if(sHour < 10){
-                            sHour = `0${sHour}`;
-                        }
-                        if(sMinute < 10){
-                            sMinute = `0${sMinute}`;
-                        }
-                        startTimeText = ` ${sHour}:${sMinute}`;
-                        startDateTimeText += ` ${sHour}:${sMinute}`;
-                        hiddenValue += ` | ${sHour}:${sMinute}`;
+                        startTimeText = ' ' + DateSelector.FormatTime(this.selectedDate.startDate);
                     }
                     if(!this.selectedDate.endDate.allDay){
-                        let eHour: string | number = this.selectedDate.endDate.hour;
-                        let eMinute: string | number = this.selectedDate.endDate.minute;
-                        if(eHour < 10){
-                            eHour = `0${eHour}`;
-                        }
-                        if(eMinute < 10){
-                            eMinute = `0${eMinute}`;
-                        }
-                        endTimeText = ` ${eHour}:${eMinute}`;
-                        if(endDateTimeText !== '' || (endDateTimeText === '' && startTimeText !== endTimeText)){
-                            endDateTimeText += ` ${eHour}:${eMinute}`;
-                        }
-                        hiddenValue += ` - ${eHour}:${eMinute}`;
+                        endTimeText = ' ' + DateSelector.FormatTime(this.selectedDate.endDate);
                     }
 
                     const timeWrapper = jQuery(`<div class='time-container'></div>`);
@@ -418,12 +429,13 @@ export default class DateSelector {
                 }
 
             }
+            const displayDate = DateSelector.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate);
             if(!justCalendar){
-                wrapper.append(`<input type="hidden" value="${hiddenValue}" class="sc-selected-value" /><input class="display-input" style="width: ${calendarWidth}px;" value="${startDateTimeText}${endDateTimeText? ' - ' + endDateTimeText: ''}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly">`);
+                wrapper.append(`<input class="display-input" style="width: ${calendarWidth}px;" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly">`);
                 wrapper.append(returnHtml);
                 returnHtml = jQuery('<div></div>').append(wrapper).html();
             } else {
-                jQuery(`#${this.id} .display-input`).val(`${startDateTimeText}${endDateTimeText? ' - ' + endDateTimeText: ''}`);
+                jQuery(`#${this.id} .display-input`).val(`${displayDate}`);
             }
         }
         return returnHtml;
