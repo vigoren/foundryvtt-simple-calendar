@@ -64,16 +64,23 @@
         <div class="note-list">
             {{#each notes}}
             <div class="note" data-index="{{id}}">
-                <h3 class="note-title">{{title}}</h3>
-                <div class="note-details">
-                    <div class="note-time">
-                        {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+                <div class="note-details-wrapper">
+                    <h3 class="note-title">{{title}}</h3>
+                    <div class="note-details">
+                        <div class="note-time note-category">
+                            {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+                        </div>
+                        {{#if authorDisplay}}
+                        <div class="note-category" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
+                            {{authorDisplay.name}}
+                        </div>
+                        {{/if}}
+                        {{#each categories}}
+                        <div class="note-category" style="background-color:{{color}};color:{{textColor}};">
+                            {{name}}
+                        </div>
+                        {{/each}}
                     </div>
-                    {{#each categories}}
-                    <div class="note-category" style="background-color:{{color}};color:{{textColor}};">
-                        {{name}}
-                    </div>
-                    {{/each}}
                 </div>
             </div>
             {{/each}}
@@ -218,26 +225,33 @@
         </div>
 
         {{#if notes.length}}
+        <div class="note-list">
             {{#each notes}}
-            <div class="note" data-index="{{id}}">
-                <h3 class="note-title">{{title}}</h3>
-                <div class="note-details">
-                    <div class="note-time note-category">
-                        {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+            <div class="note" data-index="{{id}}" {{#if ../reorderNotes}}draggable="true"{{/if}}>
+                <div class="note-details-wrapper">
+                    <h3 class="note-title">{{title}}</h3>
+                    <div class="note-details">
+                        <div class="note-time note-category">
+                            {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+                        </div>
+                        {{#if authorDisplay}}
+                        <div class="note-category" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
+                            {{authorDisplay.name}}
+                        </div>
+                        {{/if}}
+                        {{#each categories}}
+                        <div class="note-category" style="background-color:{{color}};color:{{textColor}};">
+                            {{name}}
+                        </div>
+                        {{/each}}
                     </div>
-                    {{#if authorDisplay}}
-                    <div class="note-category" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
-                        {{authorDisplay.name}}
-                    </div>
-                    {{/if}}
-                    {{#each categories}}
-                    <div class="note-category" style="background-color:{{color}};color:{{textColor}};">
-                        {{name}}
-                    </div>
-                    {{/each}}
                 </div>
+                {{#if ../reorderNotes}}
+                <div class="sorting-dragger"><span class="fa fa-arrows-alt-v"></span></div>
+                {{/if}}
             </div>
             {{/each}}
+        </div>
         {{else}}
         <em>{{localize 'FSC.Notes.Empty'}}</em>
         {{/if}}

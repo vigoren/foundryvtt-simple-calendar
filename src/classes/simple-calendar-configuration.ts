@@ -1079,6 +1079,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).generalSettings.showClock = checked;
             } else if(id === 'scPlayersAddNotes'){
                 (<Year>this.object).generalSettings.playersAddNotes = checked;
+            } else if(id === 'scPlayersReorderNotes'){
+                (<Year>this.object).generalSettings.playersReorderNotes = checked;
             }
             //Year Setting Inputs
             else if(id === "scCurrentYear"){

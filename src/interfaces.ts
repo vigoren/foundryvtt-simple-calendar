@@ -23,12 +23,15 @@ export interface GeneralSettings {
     showClock: boolean;
     /** If players can add their own notes */
     playersAddNotes: boolean;
+    /** If players can re-order the notes on a day */
+    playersReorderNotes: boolean;
 }
 
 export interface CalendarTemplate {
     isGM: boolean;
     isPrimary: boolean;
     addNotes: boolean;
+    reorderNotes: boolean;
     currentYear: YearTemplate;
     showSelectedDay: boolean;
     showCurrentDay: boolean;

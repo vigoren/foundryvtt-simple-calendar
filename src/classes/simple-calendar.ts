@@ -190,11 +190,12 @@ export default class SimpleCalendar extends Application{
                 isGM: GameSettings.IsGm(),
                 isPrimary: this.primary,
                 addNotes: GameSettings.IsGm() || this.currentYear.generalSettings.playersAddNotes,
+                reorderNotes: GameSettings.IsGm() || this.currentYear.generalSettings.playersReorderNotes,
                 currentYear: this.currentYear.toTemplate(),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
                 showSetCurrentDate: GameSettings.IsGm() && showSetCurrentDate,
-                notes: this.getNotesForDay(),
+                notes: this.getNotesForDay().map(n => n.toTemplate()),
                 clockClass: this.clockClass,
                 timeUnits: this.timeUnits,
                 compactView: this.compactView,
@@ -205,6 +206,7 @@ export default class SimpleCalendar extends Application{
                 isGM: false,
                 isPrimary: this.primary,
                 addNotes: false,
+                reorderNotes: false,
                 currentYear: new Year(0).toTemplate(),
                 showCurrentDay: false,
                 showSelectedDay: false,
@@ -384,7 +386,7 @@ export default class SimpleCalendar extends Application{
             }
 
             width += 16;
-            height += (30 * 2) + 46;
+            height += (60 * 2) + 46;
         }
         this.setPosition({width: width, height: height});
     }
@@ -480,6 +482,10 @@ export default class SimpleCalendar extends Application{
 
                 // Note Click
                 (<JQuery>html).find(".date-notes .note").on('click', SimpleCalendar.instance.viewNote.bind(this));
+
+                //Note Drag
+                (<JQuery>html).find(".date-notes .note").on('drag', SimpleCalendar.instance.noteDrag.bind(this));
+                (<JQuery>html).find(".date-notes .note").on('dragend', SimpleCalendar.instance.noteDragEnd.bind(this));
             }
             (<JQuery>html).find(".time-start").on('click', SimpleCalendar.instance.startTime.bind(this));
             (<JQuery>html).find(".time-stop").on('click', SimpleCalendar.instance.stopTime.bind(this));
@@ -888,7 +894,12 @@ export default class SimpleCalendar extends Application{
         const gSettings = GameSettings.LoadGeneralSettings();
         if(gSettings && Object.keys(gSettings).length){
             if(this.currentYear){
-                this.currentYear.generalSettings = gSettings;
+                this.currentYear.generalSettings.gameWorldTimeIntegration = gSettings.gameWorldTimeIntegration;
+                this.currentYear.generalSettings.showClock = gSettings.showClock;
+                this.currentYear.generalSettings.playersAddNotes = gSettings.playersAddNotes;
+                if(gSettings.hasOwnProperty('playersReorderNotes')){
+                    this.currentYear.generalSettings.playersReorderNotes = gSettings.playersReorderNotes;
+                }
             } else {
                 Logger.error('No Current year configured, can not load general settings.');
             }
@@ -1150,8 +1161,8 @@ export default class SimpleCalendar extends Application{
      * @private
      * @return NoteTemplate[]
      */
-    private getNotesForDay(): NoteTemplate[] {
-        const dayNotes: NoteTemplate[] = [];
+    private getNotesForDay(): Note[] {
+        const dayNotes: Note[] = [];
         if(this.currentYear){
             const year = this.currentYear.selectedYear || this.currentYear.numericRepresentation;
             const month = this.currentYear.getMonth('selected') || this.currentYear.getMonth();
@@ -1160,7 +1171,7 @@ export default class SimpleCalendar extends Application{
                 if(day){
                     this.notes.forEach((note) => {
                         if(note.isVisible(year, month.numericRepresentation, day.numericRepresentation)){
-                            dayNotes.push(note.toTemplate());
+                            dayNotes.push(note);
                         }
                     });
                 }
@@ -1172,11 +1183,11 @@ export default class SimpleCalendar extends Application{
 
     /**
      * Sort function for the list of notes on a day. Sorts by order, then hour then minute
-     * @param {NoteTemplate} a The first note to compare
-     * @param {NoteTemplate} b The second noe to compare
+     * @param {Note} a The first note to compare
+     * @param {Note} b The second noe to compare
      * @private
      */
-    private static dayNoteSort(a: NoteTemplate, b: NoteTemplate): number {
+    private static dayNoteSort(a: Note, b: Note): number {
         return a.order - b.order || a.hour - b.hour || a.minute - b.minute;
     }
 
@@ -1360,6 +1371,54 @@ export default class SimpleCalendar extends Application{
      */
     async moduleDialogNoChangeClick(){
         await GameSettings.SetImportRan(true);
+    }
+
+    /**
+     * While a note is being dragged
+     * @param {Event} event
+     */
+    noteDrag(event: Event){
+        const selectedItem = <HTMLElement>event.target,
+            list = selectedItem.parentNode,
+            x = (<DragEvent>event).clientX,
+            y = (<DragEvent>event).clientY;
+        selectedItem.classList.add('drag-active');
+        let swapItem: Element | ChildNode | null = document.elementFromPoint(x, y) === null ? selectedItem : document.elementFromPoint(x, y);
+        if (list !== null && swapItem !== null && list === swapItem.parentNode) {
+            swapItem = swapItem !== selectedItem.nextSibling ? swapItem : swapItem.nextSibling;
+            list.insertBefore(selectedItem, swapItem);
+        }
+    }
+
+    /**
+     * When the dragging has ended, re-order all events on this day and save their new order
+     * @param {Event} event
+     */
+    noteDragEnd(event: Event){
+        const selectedItem = <HTMLElement>event.target,
+            list = selectedItem.parentNode,
+            id = selectedItem.getAttribute('data-index');
+        selectedItem.classList.remove('drag-active');
+        if(id && list){
+            const dayNotes = this.getNotesForDay();
+            for(let i = 0; i < list.children.length; i++){
+                const cid = list.children[i].getAttribute('data-index');
+                const n = dayNotes.find(n => n.id === cid);
+                if(n){
+                    n.order = i;
+                }
+            }
+            let currentNotes = GameSettings.LoadNotes().map(n => {
+                const note = new Note();
+                note.loadFromConfig(n);
+                return note;
+            });
+            currentNotes = currentNotes.map(n => {
+                const dayNote = dayNotes.find(dn => dn.id === n.id);
+                return dayNote? dayNote : n;
+            });
+            GameSettings.SaveNotes(currentNotes).catch(Logger.error);
+        }
     }
 
 }

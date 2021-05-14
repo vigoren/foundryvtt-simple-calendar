@@ -88,7 +88,8 @@ export default class Year {
     generalSettings: GeneralSettings = {
         gameWorldTimeIntegration: GameWorldTimeIntegrations.None,
         showClock: false,
-        playersAddNotes: false
+        playersAddNotes: false,
+        playersReorderNotes: false
     };
     /**
      * All of the seasons for this calendar
@@ -250,6 +251,7 @@ export default class Year {
         y.generalSettings.gameWorldTimeIntegration = this.generalSettings.gameWorldTimeIntegration;
         y.generalSettings.showClock = this.generalSettings.showClock;
         y.generalSettings.playersAddNotes = this.generalSettings.playersAddNotes;
+        y.generalSettings.playersReorderNotes = this.generalSettings.playersReorderNotes;
         y.seasons = this.seasons.map(s => s.clone());
         y.moons = this.moons.map(m => m.clone());
         return y;

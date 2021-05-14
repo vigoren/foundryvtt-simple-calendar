@@ -89,6 +89,13 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.PlayerAddNotesHelp'}}</p>
                 </div>
+                <div class="form-group">
+                    <label for="scPlayersReorderNotes">{{localize 'FSC.Configuration.General.PlayerReorderNotes'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.generalSettings.playersReorderNotes}}" type="checkbox" id="scPlayersReorderNotes" {{#if currentYear.generalSettings.playersReorderNotes}}checked="checked"{{/if}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.PlayerReorderNotesHelp'}}</p>
+                </div>
             </div>
         </div>
         <div class="tab year-settings" data-tab="yearSettings">
