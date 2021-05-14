@@ -89,6 +89,24 @@ export class Note{
      */
     categories: NoteCategory[] = [];
 
+    static GetContrastColor(color: string){
+        let contrastColor = "#000000";
+        if (color.indexOf('#') === 0) {
+            color = color.slice(1);
+        }
+        if(color.length === 3 || color.length === 6){
+            // convert 3-digit hex to 6-digits.
+            if (color.length === 3) {
+                color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+            }
+            var r = parseInt(color.slice(0, 2), 16),
+                g = parseInt(color.slice(2, 4), 16),
+                b = parseInt(color.slice(4, 6), 16);
+            contrastColor = (r * 0.299 + g * 0.587 + b * 0.114) > 186? '#000000' : '#FFFFFF'
+        }
+        return contrastColor;
+    }
+
     /**
      * The note constructor
      */
@@ -120,11 +138,23 @@ export class Note{
      * @return {NoteTemplate}
      */
     toTemplate(): NoteTemplate {
+        const author = GameSettings.GetUser(this.author);
+        let authDisplay;
+        if(author){
+            authDisplay = {
+                name: author.name,
+                color: author.color || author.data.color,
+                textColor: Note.GetContrastColor(author.color || author.data.color)
+            };
+        } else {
+            authDisplay = null;
+        }
+
         return {
             title: this.title,
             content: this.content,
             author: this.author,
-            authorDisplay: game.users? game.users.find(u => u.id === this.author) : null,
+            authorDisplay: authDisplay,
             monthDisplay: this.monthDisplay,
             id: this.id,
             allDay: this.allDay,

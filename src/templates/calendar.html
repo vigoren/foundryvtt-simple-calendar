@@ -222,11 +222,11 @@
             <div class="note" data-index="{{id}}">
                 <h3 class="note-title">{{title}}</h3>
                 <div class="note-details">
-                    <div class="note-time">
+                    <div class="note-time note-category">
                         {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
                     </div>
                     {{#if authorDisplay}}
-                    <div class="note-category" style="background-color:{{authorDisplay.color}};">
+                    <div class="note-category" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
                         {{authorDisplay.name}}
                     </div>
                     {{/if}}

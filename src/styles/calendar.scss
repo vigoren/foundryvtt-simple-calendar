@@ -274,17 +274,17 @@
     flex-wrap: wrap;
 
     .note-time{
-      font-size: 0.75rem;
-      border-radius: 5px;
       background-color: #444141;
       color: #ffffff;
-      padding: 0.15rem 0.25rem;
     }
 
     .note-category{
       font-size: 0.75rem;
-      border-radius: 5px;
-      padding: 0.15rem 0.25rem;
+      border-radius: 7px;
+      padding: .2rem .4rem;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      box-shadow: 1px 2px 5px #6b6b6b;
     }
   }
 

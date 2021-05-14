@@ -49,6 +49,13 @@ export class GameSettings {
         return game.user? game.user.id : '';
     }
 
+    static GetUser(userId: string): User | null {
+        if(game.users){
+            return game.users.find(u => u.id === userId)
+        }
+        return null;
+    }
+
     /**
      * Returns the localized string based on the key
      * @param {string} key The localization string key

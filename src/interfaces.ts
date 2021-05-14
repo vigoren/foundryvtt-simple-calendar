@@ -165,7 +165,7 @@ export interface NoteTemplate {
     title: string;
     content: string;
     author: string;
-    authorDisplay: User | null;
+    authorDisplay: any | null;
     monthDisplay: string;
     id: string;
     displayDate: string;
