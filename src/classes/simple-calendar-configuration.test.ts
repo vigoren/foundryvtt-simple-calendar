@@ -134,8 +134,8 @@ describe('Simple Calendar Configuration Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendarConfiguration.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(29);
-        expect(onFunc).toHaveBeenCalledTimes(29);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(30);
+        expect(onFunc).toHaveBeenCalledTimes(30);
     });
 
     test('Rebase Month Numbers', () => {
