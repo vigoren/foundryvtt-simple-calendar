@@ -55,7 +55,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
         options.resizable = true;
         options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
         options.height = 700;
-        options.width = 900;
+        options.width = 1005;
         return options;
     }
 
@@ -97,6 +97,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             showLeapYearMonths: (<Year>this.object).leapYearRule.rule !== LeapYearRules.None,
             predefined: {
                 gregorian: 'FSC.Configuration.LeapYear.Rules.Gregorian',
+                darksun: 'Dark Sun',
                 eberron: 'Eberron',
                 exandrian: 'Exandrian',
                 golarian : 'Golarian',
@@ -115,6 +116,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 showAboutTime: false,
                 showCalendarWeather:false
             },
+            monthStartingWeekdays: <{[key: string]: string}>{},
             seasons: (<Year>this.object).seasons.map(s => s.toTemplate(<Year>this.object)),
             seasonColors: [
                 {
@@ -136,10 +138,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 {
                     value: '#f2f8ff',
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorWinter")
-                },
-                {
-                    value: 'custom',
-                    display: GameSettings.Localize("FSC.Configuration.Season.ColorCustom")
                 }
             ],
             moons: (<Year>this.object).moons.map(m => m.toTemplate(<Year>this.object)),
@@ -166,6 +164,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
         data.moonIcons[MoonIcons.WaningGibbous] = GameSettings.Localize('FSC.Moon.Phase.WaningGibbous');
         data.moonIcons[MoonIcons.LastQuarter] = GameSettings.Localize('FSC.Moon.Phase.LastQuarter');
         data.moonIcons[MoonIcons.WaningCrescent] = GameSettings.Localize('FSC.Moon.Phase.WaningCrescent');
+
+        data.monthStartingWeekdays['null'] = GameSettings.Localize('Default');
+        for(let i = 0; i < (<Year>this.object).weekdays.length; i++){
+            data.monthStartingWeekdays[(<Year>this.object).weekdays[i].numericRepresentation.toString()] = (<Year>this.object).weekdays[i].name;
+        }
 
         return data;
     }
@@ -219,9 +222,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
             //Input Change
             (<JQuery>html).find(".general-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+            (<JQuery>html).find(".note-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".year-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".year-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".month-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+            (<JQuery>html).find(".month-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".weekday-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".weekday-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
             (<JQuery>html).find(".leapyear-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
@@ -409,6 +414,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).numericRepresentation = currentDate.getFullYear();
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = '';
+                (<Year>this.object).yearZero = 1970;
                 (<Year>this.object).months = [
                     new Month(GameSettings.Localize("FSC.Date.January"), 1, 0, 31),
                     new Month(GameSettings.Localize("FSC.Date.February"), 2, 0, 28, 29),
@@ -424,7 +430,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     new Month(GameSettings.Localize("FSC.Date.December"), 12, 0, 31),
                 ];
                 (<Year>this.object).showWeekdayHeadings = true;
-                (<Year>this.object).firstWeekday = 0;
+                (<Year>this.object).firstWeekday = 4;
                 (<Year>this.object).weekdays = [
                     new Weekday(1, GameSettings.Localize('FSC.Date.Sunday')),
                     new Weekday(2, GameSettings.Localize('FSC.Date.Monday')),
@@ -472,10 +478,99 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
                 break;
+            case 'darksun':
+                (<Year>this.object).numericRepresentation = 1;
+                (<Year>this.object).prefix = '';
+                (<Year>this.object).postfix = '';
+                (<Year>this.object).yearZero = 0;
+                (<Year>this.object).months = [
+                    new Month('Scorch', 1, 0, 30),
+                    new Month('Morrow', 2, 0, 30),
+                    new Month('Rest', 3, 0, 30),
+                    new Month('Gather', 4, 0, 30),
+                    new Month('Cooling Sun', -1, 0, 5),
+                    new Month('Breeze', 5, 0, 30),
+                    new Month('Mist', 6, 0, 30),
+                    new Month('Bloom', 7, 0, 30),
+                    new Month('Haze', 8, 0, 30),
+                    new Month('Soaring Sun', -2, 0, 5),
+                    new Month('Hoard', 9, 0, 30),
+                    new Month('Wind', 10, 0, 30),
+                    new Month('Sorrow', 11, 0, 30),
+                    new Month('Smolder', 12, 0, 30),
+                    new Month('Highest Sun', -3, 0, 5)
+                ];
+                (<Year>this.object).months[4].intercalary = true;
+                (<Year>this.object).months[9].intercalary = true;
+                (<Year>this.object).months[14].intercalary = true;
+                (<Year>this.object).showWeekdayHeadings = false;
+                (<Year>this.object).firstWeekday = 0;
+                (<Year>this.object).weekdays = [
+                    new Weekday(1, '1 Day'),
+                    new Weekday(2, '2 Day'),
+                    new Weekday(3, '3 Day'),
+                    new Weekday(4, '4 Day'),
+                    new Weekday(5, '5 Day'),
+                    new Weekday(6, '6 Day')
+                ];
+                (<Year>this.object).seasons = [
+                    new Season("Sun Descending", 3, 1),
+                    new Season("Sun Ascending", 7, 1),
+                    new Season("High Sun", 9, 1)
+                ];
+                (<Year>this.object).seasons[2].color = '#fff2da';
+                (<Year>this.object).seasons[0].color = '#dececc';
+                (<Year>this.object).seasons[1].color = '#fff1e7';
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
+                (<Year>this.object).leapYearRule.rule = LeapYearRules.None;
+                (<Year>this.object).leapYearRule.customMod = 0;
+                (<Year>this.object).months[0].current = true;
+                (<Year>this.object).months[0].days[0].current = true;
+                (<Year>this.object).moons = [
+                    new Moon('Ral', 34),
+                    new Moon('Guthay', 125)
+                ];
+                (<Year>this.object).moons[0].color = "#7ace57";
+                (<Year>this.object).moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                (<Year>this.object).moons[0].firstNewMoon.year = 1;
+                (<Year>this.object).moons[0].firstNewMoon.month = 1;
+                (<Year>this.object).moons[0].firstNewMoon.day = 14;
+                phaseLength = Number((((<Year>this.object).moons[0].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[0].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
+                (<Year>this.object).moons[1].color = "#ffd920";
+                (<Year>this.object).moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                (<Year>this.object).moons[1].firstNewMoon.year = 1;
+                (<Year>this.object).moons[1].firstNewMoon.month = 3;
+                (<Year>this.object).moons[1].firstNewMoon.day = 3;
+                phaseLength = Number((((<Year>this.object).moons[1].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[1].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
+                break;
             case 'eberron':
                 (<Year>this.object).numericRepresentation = 998;
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' YK';
+                (<Year>this.object).yearZero = 0;
                 (<Year>this.object).months = [
                     new Month('Zarantyr', 1, 0, 28),
                     new Month('Olarune', 2, 0, 28),
@@ -516,6 +611,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).numericRepresentation = 812;
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' P.D.';
+                (<Year>this.object).yearZero = 0;
                 (<Year>this.object).months = [
                     new Month('Horisal', 1, 0, 29),
                     new Month('Misuthar', 2, 0, 30),
@@ -598,6 +694,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).numericRepresentation = 4710;
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' AR';
+                (<Year>this.object).yearZero = 0;
                 (<Year>this.object).months = [
                     new Month('Abadius', 1, 0, 31),
                     new Month('Calistril', 2, 0, 28, 29),
@@ -665,6 +762,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).numericRepresentation = 591 ;
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' cy';
+                (<Year>this.object).yearZero = 0;
                 (<Year>this.object).months = [
                     new Month('Needfest', -1, 0, 7),
                     new Month('Fireseek', 1, 0, 28),
@@ -758,6 +856,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).numericRepresentation = 1495;
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' DR';
+                (<Year>this.object).yearZero = 0;
                 (<Year>this.object).months = [
                     new Month('Hammer', 1, 0, 30),
                     new Month('Midwinter', -1, 0, 1),
@@ -840,6 +939,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).numericRepresentation = 1000;
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = '';
+                (<Year>this.object).yearZero = 0;
                 (<Year>this.object).months = [
                     new Month('Holiday', -1, 0, 1),
                     new Month('Year', 1,1, 364)
@@ -871,6 +971,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).numericRepresentation = 2522;
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = '';
+                (<Year>this.object).yearZero = 0;
                 (<Year>this.object).months = [
                     new Month('Hexenstag', -1, 0, 1),
                     new Month('Nachexen', 1, 0, 32),
@@ -990,6 +1091,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).prefix = value;
             } else if(id === 'scYearPostFix'){
                 (<Year>this.object).postfix = value;
+            } else if(id === 'scYearZero'){
+                const year = parseInt(value);
+                if(!isNaN(year)){
+                    (<Year>this.object).yearZero = year;
+                }
             }
             //Weekday Setting Inputs
             else if(id === 'scShowWeekdayHeaders'){
@@ -1093,6 +1199,13 @@ export class SimpleCalendarConfiguration extends FormApplication {
                         let v = parseInt(value);
                         if(!isNaN(v)){
                             (<Year>this.object).months[index].numericRepresentationOffset = v;
+                        }
+                    } else if(cssClass === 'month-starting-weekday' && (<Year>this.object).months.length > index){
+                        let v = parseInt(value);
+                        if(!isNaN(v)){
+                            (<Year>this.object).months[index].startingWeekday = v;
+                        } else {
+                            (<Year>this.object).months[index].startingWeekday = null;
                         }
                     }
                     //Weekday Setting Inputs

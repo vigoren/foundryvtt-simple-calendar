@@ -1,5 +1,28 @@
 # Change Log
 
+## v1.2.47 - New Features, Translations, QoL Improvements & Bug Fixes 
+
+### New Features
+
+- Added the ability to set the "Year Zero" for a calendar. This year is then the reference point for calculating how many days have passed and other similar calculations. It is unlikely this value will need to be changed but adjusting this value can allow Simple Calendar to work better with other modules.
+- Added the ability to specify the day of the week a month will start on. This will make that month always start on that day of the week regardless of other months. Useful for fixe day calendars with months who's days don't fall evenly into full weeks.
+- Added a default calendar for Dark Sun. Note the eras and year names are not currently populating this will be added in a future release.
+
+### Quality of Live Improvements
+
+- Ensured that Simple Calendar works in Foundry version 0.8.3
+- Moved the Note settings to its own tab in the configuration dialog.
+- Updated the season and moon color selector to use an actual color selector instead of just text.
+
+### Bug Fixes
+
+- Fixed a bug where the day of the "Starting Week Day" setting would be off by 1 day.
+- Fixed some styling issues with the configuration dialog.
+
+### Translations
+
+I am happy to say that Simple Calendar has been translated into Traditional Chinese by [benwater12](https://github.com/benwater12)
+
 ## v1.2.38 - Quality of Life Improvements and Bug Fixes
 
 ### Quality of Live Improvements

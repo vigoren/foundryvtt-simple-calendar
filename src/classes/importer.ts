@@ -94,8 +94,8 @@ export default class Importer{
 
         const newAboutTimeConfig: AboutTimeImport.Calendar = {
             "first_day": 0,
-            "clock_start_year": 0,
-            "has_year_0": true,
+            "clock_start_year": year.yearZero,
+            "has_year_0": year.yearZero === 0,
             "notes": {},
             "hours_per_day": year.time.hoursInDay,
             "minutes_per_hour": year.time.minutesInHour,
@@ -249,7 +249,7 @@ export default class Importer{
                 lunarEclipseChange: 0,
                 solarEclipseChange: 0,
                 referencePercent: 0,
-                referenceTime: year.time.getTotalSeconds(year.dateToDays(year.moons[i].firstNewMoon.year, year.moons[i].firstNewMoon.month, year.moons[i].firstNewMoon.day, true, true) - 1)
+                referenceTime: year.time.getTotalSeconds(year.dateToDays(year.moons[i].firstNewMoon.year, year.moons[i].firstNewMoon.month, year.moons[i].firstNewMoon.day, true, true))
             });
         }
 

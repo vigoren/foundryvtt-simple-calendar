@@ -85,7 +85,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Year Data', () => {
-        expect(GameSettings.LoadYearData()).toStrictEqual({numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0});
+        expect(GameSettings.LoadYearData()).toStrictEqual({numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0, yearZero: 0});
         expect(game.settings.get).toHaveBeenCalled();
     });
 
@@ -95,7 +95,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Month Data', () => {
-        expect(GameSettings.LoadMonthData()).toStrictEqual([{name: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false}]);
+        expect(GameSettings.LoadMonthData()).toStrictEqual([{name: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]);
         expect(game.settings.get).toHaveBeenCalled();
         (<Mock>game.settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadMonthData()).toStrictEqual([]);

@@ -89,7 +89,6 @@ export enum GameWorldTimeIntegrations {
     Mixed = 'mixed'
 }
 
-
 export enum MoonIcons {
     NewMoon = 'new',
     WaxingCrescent = 'waxing-crescent',

@@ -37,12 +37,11 @@ describe('Season Tests', () => {
     test('To Template', () => {
         const y = new Year(0);
         let c = s.toTemplate(y);
-        expect(Object.keys(c).length).toBe(6); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(5); //Make sure no new properties have been added
         expect(c.name).toBe('Spring');
         expect(c.startingMonth).toBe(1);
         expect(c.startingDay).toBe(1);
         expect(c.color).toBe('#ffffff');
-        expect(c.customColor).toBe('');
         expect(c.dayList).toStrictEqual([]);
 
         SimpleCalendar.instance = new SimpleCalendar();
@@ -52,6 +51,11 @@ describe('Season Tests', () => {
         y.months.push(new Month("Month 1", 1, 0, 10));
         c = s.toTemplate(y);
         expect(c.dayList.length).toStrictEqual(10);
+
+        s.color = 'custom';
+        s.customColor = '#FF0000';
+        c = s.toTemplate(y);
+        expect(c.color).toBe('#FF0000');
     });
 
 });

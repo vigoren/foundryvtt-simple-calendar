@@ -89,6 +89,7 @@ Setting | Description
 Current Year | The Current year your game world is in. This can be any positive number.
 Year Prefix | Text that will appear before the year number.
 Year Postfix | Text that will appear after the year number.
+Year Zero | This is the year that considered to be year zero for calculating how much time has passed.<br/>Generally this setting will not need to be adjusted but is present for calendars that require a different year zero.<br/>The best example of this is calculating real world timestamps, the year 1970 is used as year zero.
 
 ### Seasons
 
@@ -117,6 +118,8 @@ Month Name | These text boxes for each month allow you to change the name of an 
 Number of Days | These text boxes for each month allow you to change the number of days in each month. A month can have a minimum of 0 days.
 Intercalary Month | An intercalary month is one that does not follow the standard month numbering and is skipped.<br/>Example: If we were to add an intercalary month between January and February, January would still be considered the first month and February would be considered the second month. The new month does not get a number.<br/>Intercalary months also do not count towards the years total days nor do they affect the day of the week subsequent months start on.
 Include Intercalary Month In Total Day Count | When you select a month to be intercalary, an option will show to include these days as part of the years total days and have its days afect the day of the week subsequent months start on. The month though still is not numbered.
+Day Offset | The number of days to offset the day's number by. Example: Setting to 1 will have the month start on day 2 instead of day 1.
+Starts On Weekday | Choose which day of the week that this month starts on. Leave on Default to have the calendar figure out the appropriate weekday to start the month on.
 Remove Button | These buttons for each month allow you to remove the month from the list.
 Add New Month Button | This button will add a new month to the bottom of the list with a default name and number of days that you can then configure to your liking.
 Remove All Months Button | This button will remove all of the months from the list.

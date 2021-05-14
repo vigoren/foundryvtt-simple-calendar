@@ -14,7 +14,7 @@ describe('Month Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(month).length).toBe(12); //Make sure no new properties have been added
+        expect(Object.keys(month).length).toBe(13); //Make sure no new properties have been added
         expect(month.days).toStrictEqual([]);
         expect(month.numberOfDays).toBe(0);
         expect(month.numberOfLeapYearDays).toBe(0);
@@ -27,6 +27,7 @@ describe('Month Class Tests', () => {
         expect(month.selected).toBe(false);
         expect(month.visible).toBe(false);
         expect(month.showAdvanced).toBe(false);
+        expect(month.startingWeekday).toBeNull();
 
         expect(month2.name).toBe('0');
         expect(month2.days.length).toBe(30);
@@ -59,7 +60,7 @@ describe('Month Class Tests', () => {
 
     test('To Template', () => {
         const t = month.toTemplate();
-        expect(Object.keys(t).length).toBe(13); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(14); //Make sure no new properties have been added
         expect(t.display).toBe('Test (0)');
         expect(t.name).toBe('Test');
         expect(t.numericRepresentation).toBe(0);
@@ -73,6 +74,7 @@ describe('Month Class Tests', () => {
         expect(t.intercalary).toBe(false);
         expect(t.intercalaryInclude).toBe(false);
         expect(t.showAdvanced).toBe(false);
+        expect(t.startingWeekday).toBe(null);
 
         //Intercalary days are represented by negative numbers, the template spits them out as 0
         const t2 = monthIc.toTemplate();

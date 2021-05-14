@@ -153,7 +153,7 @@ export default class Moon{
     getMoonPhase(year: Year, property = 'current', dayToUse: DayTemplate | null = null): MoonPhase{
         property = property.toLowerCase() as 'current' | 'selected' | 'visible';
         let yearNum = property === 'current'? year.numericRepresentation : property === 'selected'? year.selectedYear : year.visibleYear;
-        let firstNewMoonDays = year.dateToDays(this.firstNewMoon.year, this.firstNewMoon.month, this.firstNewMoon.day, true, true) - 1;
+        let firstNewMoonDays = year.dateToDays(this.firstNewMoon.year, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
 
         const month = year.getMonth(property);
         if(month){
@@ -166,7 +166,7 @@ export default class Moon{
                 let lyYear = year.leapYearRule.previousLeapYear(yearNum);
                 if(lyYear !== null){
                     Logger.debug(`Resetting moon calculation first day to year: ${lyYear}`);
-                    firstNewMoonDays = year.dateToDays(lyYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true) - 1;
+                    firstNewMoonDays = year.dateToDays(lyYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
                     if(yearNum !== lyYear){
                         resetYearAdjustment += year.leapYearRule.fraction(yearNum);
                     }
@@ -175,12 +175,12 @@ export default class Moon{
                 const resetMod = yearNum % this.firstNewMoon.yearX;
                 if(resetMod !== 0){
                     let resetYear = yearNum - resetMod;
-                    firstNewMoonDays = year.dateToDays(resetYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true) - 1;
+                    firstNewMoonDays = year.dateToDays(resetYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
                     resetYearAdjustment += resetMod / this.firstNewMoon.yearX;
                 }
             }
 
-            const daysSoFar = year.dateToDays(yearNum, monthNum, dayNum, true, true) - 1;
+            const daysSoFar = year.dateToDays(yearNum, monthNum, dayNum, true, true);
             const daysSinceReferenceMoon = daysSoFar - firstNewMoonDays + resetYearAdjustment;
             const moonCycles = daysSinceReferenceMoon / this.cycleLength;
             let daysIntoCycle = ((moonCycles - Math.floor(moonCycles)) * this.cycleLength) + this.cycleDayAdjust;

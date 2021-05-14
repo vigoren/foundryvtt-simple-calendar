@@ -31,11 +31,12 @@ describe('Year Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(year).length).toBe(16); //Make sure no new properties have been added
+        expect(Object.keys(year).length).toBe(17); //Make sure no new properties have been added
         expect(year.months).toStrictEqual([]);
         expect(year.weekdays).toStrictEqual([]);
         expect(year.prefix).toBe("");
         expect(year.postfix).toBe("");
+        expect(year.yearZero).toBe(0);
         expect(year.numericRepresentation).toBe(0);
         expect(year.selectedYear).toBe(0);
         expect(year.visibleYear).toBe(0);
@@ -53,10 +54,11 @@ describe('Year Class Tests', () => {
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(20); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(21); //Make sure no new properties have been added
         expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
         expect(t.display).toBe("0");
         expect(t.numericRepresentation).toBe(0);
+        expect(t.yearZero).toBe(0);
         expect(t.selectedDisplayYear).toBe("0");
         expect(t.selectedDisplayMonth).toBe("");
         expect(t.selectedDisplayDay).toBe("");
@@ -533,20 +535,26 @@ describe('Year Class Tests', () => {
         year.leapYearRule.rule = LeapYearRules.Gregorian;
         year.numericRepresentation = 4;
         expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(1);
+
+        year.months[0].startingWeekday = 3;
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, 1)).toBe(2);
     });
 
     test('Date to Days', () => {
         year.months.push(month);
         year.months.push(new Month("Test 2", 2, 0, 22, 23));
-        expect(year.dateToDays(0,0,1)).toBe(1);
-        expect(year.dateToDays(5,0,1)).toBe(261);
+        expect(year.dateToDays(0,0,1)).toBe(0);
+        expect(year.dateToDays(5,0,1)).toBe(260);
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
-        expect(year.dateToDays(5,0,1, true)).toBe(263);
+        expect(year.dateToDays(5,0,1, true)).toBe(262);
         year.months[0].intercalary = true;
-        expect(year.dateToDays(5,0,1, true)).toBe(113);
+        expect(year.dateToDays(5,0,1, true)).toBe(112);
         year.months[0].intercalaryInclude = true;
-        expect(year.dateToDays(5,2,1, true)).toBe(293);
+        expect(year.dateToDays(5,2,1, true)).toBe(292);
+
+        year.yearZero = 1;
+        expect(year.dateToDays(0,0,1)).toBe(-52);
     });
 
     test('Sync Time', () => {
@@ -569,6 +577,10 @@ describe('Year Class Tests', () => {
         month.days[0].current = true;
         year.syncTime()
         expect(game.time.advance).toHaveBeenCalledTimes(2);
+
+        year.yearZero = 1;
+        year.syncTime()
+        expect(game.time.advance).toHaveBeenCalledTimes(3);
     });
 
     test('Seconds To Date', () => {
@@ -584,6 +596,9 @@ describe('Year Class Tests', () => {
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
         expect(year.secondsToDate(20908800)).toStrictEqual({year: 4, month: 1, day: 4, hour: 0, minute: 0, seconds: 0});
+
+        year.yearZero = 1;
+        expect(year.secondsToDate(-10)).toStrictEqual({year: 1, month: 0, day: 1, hour: 0, minute: 0, seconds: 10});
     });
 
     test('Update Time', () => {
