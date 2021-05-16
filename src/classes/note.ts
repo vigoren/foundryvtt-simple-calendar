@@ -233,7 +233,8 @@ export class Note{
                 month: this.endDate.month,
                 day: this.endDate.day,
                 hour: this.endDate.hour,
-                minute: this.endDate.minute
+                minute: this.endDate.minute,
+                seconds: this.endDate.seconds
             };
         }
         n.order = this.order;

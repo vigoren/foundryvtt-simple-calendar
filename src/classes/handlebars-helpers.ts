@@ -16,6 +16,10 @@ export default class HandlebarsHelpers{
         Handlebars.registerHelper("day-moon-phase", HandlebarsHelpers.DayMoonPhase);
     }
 
+    /**
+     * Handlebar Helper for rendering a DateSelector
+     * @param options
+     */
     static DateSelector(options: any){
         if(SimpleCalendar.instance.currentYear && options.hash.hasOwnProperty('id') ){
             const id = options.hash['id'];

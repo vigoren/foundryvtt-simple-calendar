@@ -209,6 +209,7 @@
   "FSC.Configuration.Time.GameTimeRatio": "Game Seconds Per Real Life Seconds",
   "FSC.Configuration.Time.GameTimeRatioHelp": "How many seconds pass in game for every second that passes in real time.",
   "FSC.Configuration.Time.Options": "Time Options",
+  "FSC.Configuration.Time.ClockSettings": "Clock Settings",
   "FSC.Configuration.Moon.Title": "Moon Settings",
   "FSC.Configuration.Moon.Name": "Moon Name",
   "FSC.Configuration.Moon.NameHelp": "The name of this moon.",

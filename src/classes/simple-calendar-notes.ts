@@ -4,7 +4,7 @@ import {GameSettings} from "./game-settings";
 import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import DateSelector from "./date-selector";
-import {DateTimeParts, SCDateSelector} from "../interfaces";
+import {SCDateSelector} from "../interfaces";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**

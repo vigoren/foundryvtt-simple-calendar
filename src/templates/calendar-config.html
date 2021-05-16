@@ -39,13 +39,6 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.GameWorldTimeHelp'}}</p>
                 </div>
-                <div class="form-group">
-                    <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
-                    <div class="form-fields">
-                        <input value="{{currentYear.generalSettings.showClock}}" type="checkbox" id="scShowClock" {{checked currentYear.generalSettings.showClock}} />
-                    </div>
-                    <p class="notes">{{localize 'FSC.Configuration.General.ShowClockHelp'}}</p>
-                </div>
             </div>
             {{#if (or importing.showCalendarWeather importing.showAboutTime)}}
             <div class="settings-group">
@@ -74,7 +67,7 @@
         </div>
         <div class="tab note-settings" data-tab="noteSettings">
             <div class="settings-group">
-                <h2>{{localize 'FSC.Configuration.General.Notes'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#notes" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.General.Notes'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#note-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group">
                     <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
                     <div class="form-fields">
@@ -363,6 +356,16 @@
                         <input value="{{currentYear.time.secondsInMinute}}" type="number" id="scSecondsInMinute" />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInMinuteHelp'}}</p>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h2>{{localize 'FSC.Configuration.Time.ClockSettings'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#clock-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.generalSettings.showClock}}" type="checkbox" id="scShowClock" {{checked currentYear.generalSettings.showClock}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.ShowClockHelp'}}</p>
                 </div>
                 <div class="form-group">
                     <label for="scGameTimeRatio">{{localize 'FSC.Configuration.Time.GameTimeRatio'}}</label>

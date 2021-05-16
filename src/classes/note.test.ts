@@ -25,6 +25,14 @@ describe('Note Tests', () => {
         n.year = 0;
         n.month = 1;
         n.day = 2;
+        n.endDate = {
+            year: 0,
+            month: 1,
+            day: 2,
+            hour: 0,
+            minute: 0,
+            seconds: 0
+        };
         n.monthDisplay = '';
         n.title = '';
         n.content = '';
@@ -34,7 +42,7 @@ describe('Note Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(n).length).toBe(10); //Make sure no new properties have been added
+        expect(Object.keys(n).length).toBe(16); //Make sure no new properties have been added
         expect(n.year).toBe(0);
         expect(n.month).toBe(1);
         expect(n.day).toBe(2);
@@ -49,7 +57,7 @@ describe('Note Tests', () => {
 
     test('To Template', () => {
         const c = n.toTemplate();
-        expect(Object.keys(c).length).toBe(5); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(13); //Make sure no new properties have been added
         expect(c.monthDisplay).toBe('');
         expect(c.title).toBe('');
         expect(c.content).toBe('');
@@ -68,7 +76,18 @@ describe('Note Tests', () => {
             title: 't',
             content: 'c',
             id: 'i',
-            repeats: 1
+            repeats: 1,
+            allDay: true,
+            hour: 0,
+            minute: 0,
+            endDate: {
+                year: 1,
+                month: 2,
+                day: 3,
+                seconds: 0
+            },
+            order: 0,
+            categories: []
         };
         n.loadFromConfig(config);
         expect(n.year).toBe(1);
@@ -88,6 +107,11 @@ describe('Note Tests', () => {
     });
 
     test('Is Visible', () => {
+        SimpleCalendar.instance = new SimpleCalendar()
+        SimpleCalendar.instance.currentYear = new Year(0);
+        SimpleCalendar.instance.currentYear.months.push(new Month('M', 1, 0, 20));
+        SimpleCalendar.instance.currentYear.months.push(new Month('T', 2, 0, 20));
+        SimpleCalendar.instance.currentYear.months.push(new Month('W', 3, 0, 20));
         expect(n.isVisible(0,0,0)).toBe(false);
         expect(n.isVisible(0,1,2)).toBe(false);
         n.playerVisible = true;

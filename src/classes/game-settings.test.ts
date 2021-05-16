@@ -13,8 +13,8 @@ import Month from "./month";
 import {Weekday} from "./weekday";
 import {Note} from "./note";
 import LeapYear from "./leap-year";
-import {GameWorldTimeIntegrations, LeapYearRules, MoonIcons, MoonYearResetOptions} from "../constants";
-import {GeneralSettings, TimeConfig} from "../interfaces";
+import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
+import {GeneralSettings} from "../interfaces";
 import Mock = jest.Mock;
 import Time from "./time";
 import Season from "./season";
@@ -62,6 +62,16 @@ describe('Game Settings Class Tests', () => {
         game.user = origGameUser;
     });
 
+    test('Get User', () => {
+        const origGameUser = game.users;
+        expect(GameSettings.GetUser('')).toBe(false);
+        //@ts-ignore
+        game.users = undefined;
+        expect(GameSettings.GetUser('')).toBeNull();
+        //@ts-ignore
+        game.users = origGameUser;
+    });
+
     test('Register Settings', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
@@ -80,7 +90,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load General Settings', () => {
-        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false});
+        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false, playersReorderNotes: false});
         expect(game.settings.get).toHaveBeenCalled();
     });
 
@@ -172,7 +182,7 @@ describe('Game Settings Class Tests', () => {
     test('Save General Settings', async () => {
         // @ts-ignore
         game.user.isGM = false;
-        let gs: GeneralSettings = {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false};
+        let gs: GeneralSettings = {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false, playersReorderNotes: false};
         await expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;

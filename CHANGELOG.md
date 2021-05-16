@@ -22,6 +22,10 @@ This update is mainly around notes and improving the experience around adding, e
 - Refreshed the look of the note list.
 - Changed the dialog's behaviour so that it will attempt to size itself to fit the content of the note appropriately.
   
+### Quality of Life Changes
+
+- Moved the "Show Clock" configuration setting from the general settings tab to the time settings tab.
+
 ### Bug Fixes
 
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.

@@ -523,6 +523,12 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         //@ts-ignore
         expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.playersAddNotes ).toBe(true);
+
+        (<HTMLInputElement>event.currentTarget).id = "scPlayersReorderNotes";
+        (<HTMLInputElement>event.currentTarget).checked = true;
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        //@ts-ignore
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.playersReorderNotes ).toBe(true);
     });
 
     test('Year Input Change', () => {
