@@ -111,6 +111,8 @@
   "FSC.Configuration.General.Self": "Self: Control the game world time ignoring updates from other modules.",
   "FSC.Configuration.General.ThirdParty": "Third Party Module: Only follows game world time updates from other modules.",
   "FSC.Configuration.General.Mixed": "Mixed: Update the game world time and follow updates made from other modules.",
+  "FSC.Configuration.General.PF2ESync": "Pathfinder 2E: World Time Sync",
+  "FSC.Configuration.General.PF2ESyncHelp": "This will force Simple Calendar to stay in sync with the built in Pathfinder 2E world time.",
   "FSC.Configuration.General.ShowClock": "Show Clock",
   "FSC.Configuration.General.ShowClockHelp": "If to show the time clock below the calendar, if checked the controls for changing hours, minutes and seconds will also show.",
   "FSC.Configuration.General.PlayerAddNotes": "Players Can Add Notes",

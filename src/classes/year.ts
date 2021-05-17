@@ -1,10 +1,10 @@
 import Month from "./month";
-import {DayTemplate, GeneralSettings, DateTimeParts, YearTemplate} from "../interfaces";
+import {DateTimeParts, DayTemplate, GeneralSettings, YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
 import Time from "./time";
-import {GameWorldTimeIntegrations} from "../constants";
+import {GameSystems, GameWorldTimeIntegrations} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
@@ -16,19 +16,28 @@ import SimpleCalendar from "./simple-calendar";
  */
 export default class Year {
     /**
+     * The currently running game system
+     * @type {GameSystems}
+     */
+    gameSystem: GameSystems;
+    /**
      * The numeric representation of this year
+     * @type {string}
      */
     numericRepresentation: number;
     /**
      * Any prefix to use for this year to display before its name
+     * @type {string}
      */
     prefix: string = '';
     /**
      * Any postfix to use for this year to display after its name
+     * @type {string}
      */
     postfix: string = '';
     /**
      * A list of all the months in this year
+     * @type {Month[]}
      */
     months: Month[] = [];
     /**
@@ -88,7 +97,8 @@ export default class Year {
     generalSettings: GeneralSettings = {
         gameWorldTimeIntegration: GameWorldTimeIntegrations.None,
         showClock: false,
-        playersAddNotes: false
+        playersAddNotes: false,
+        pf2eSync: true
     };
     /**
      * All of the seasons for this calendar
@@ -110,6 +120,24 @@ export default class Year {
         this.visibleYear = numericRepresentation;
         this.leapYearRule = new LeapYear();
         this.time = new Time();
+
+        switch (game.system.id){
+            case GameSystems.DnD5E:
+                this.gameSystem = GameSystems.DnD5E;
+                break;
+            case GameSystems.PF1E:
+                this.gameSystem = GameSystems.PF1E;
+                break;
+            case GameSystems.PF2E:
+                this.gameSystem = GameSystems.PF2E;
+                break;
+            case GameSystems.WarhammerFantasy4E:
+                this.gameSystem = GameSystems.WarhammerFantasy4E;
+                break;
+            default:
+                this.gameSystem = GameSystems.Other;
+                break;
+        }
     }
 
     /**
@@ -159,6 +187,7 @@ export default class Year {
         }
 
         return {
+            gameSystem: this.gameSystem,
             display: this.getDisplayName(),
             selectedDisplayYear: this.getDisplayName(true),
             selectedDisplayMonth: sMonth,
@@ -250,6 +279,7 @@ export default class Year {
         y.generalSettings.gameWorldTimeIntegration = this.generalSettings.gameWorldTimeIntegration;
         y.generalSettings.showClock = this.generalSettings.showClock;
         y.generalSettings.playersAddNotes = this.generalSettings.playersAddNotes;
+        y.generalSettings.pf2eSync = this.generalSettings.pf2eSync;
         y.seasons = this.seasons.map(s => s.clone());
         y.moons = this.moons.map(m => m.clone());
         return y;
@@ -484,7 +514,7 @@ export default class Year {
             if(month && month.startingWeekday !== null){
                 daysSoFar = targetDay + month.startingWeekday - 2;
             } else {
-                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + this.firstWeekday;
+                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + (this.yearZero !== 0? 1 : 0) + this.firstWeekday;
             }
             return (daysSoFar % this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
@@ -529,10 +559,8 @@ export default class Year {
             const yearZeroNumberOfLeapYears = this.leapYearRule.howManyLeapYears(this.yearZero );
             const yearZeroDays = (daysPerYear * this.yearZero) + (yearZeroNumberOfLeapYears * leapYearDayDifference) + 1;
             daysSoFar = daysSoFar - yearZeroDays;
-        } else {
-            daysSoFar = daysSoFar - 1;
         }
-        return daysSoFar;
+        return daysSoFar - 1;
     }
 
     /**
@@ -548,10 +576,28 @@ export default class Year {
                 const day = month.getDay();
                 //Get the days so for and add one to include the current day - Subtract one day to keep it in time with how about-time keeps track
                 let daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, true);
-                if(this.yearZero !== 0){
-                    daysSoFar -= 1;
+                let totalSeconds = this.time.getTotalSeconds(daysSoFar)
+
+                // If this is a Pathfinder 2E game, when setting the world time from Simple Calendar we need too subtract:
+                //  - The World Create Time Stamp Offset (Used by PF2E to calculate the current world time) - This is a timestamp in Real world time
+                //  - The offset from year 0 to Jan 1 1970 (This is because the World Create Time Stamp is based on a timestamp from 1970 so need to make up that difference)
+                if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync && game.hasOwnProperty('pf2e')){
+                    //If we are using the Gregorian Calendar that ties into the pathfinder world we need to set the year 0 to 1875
+                    // @ts-ignore
+                    if(game.pf2e.worldClock.dateTheme === 'AD'){
+                        this.yearZero = 1875;
+                        daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, true);
+                    }
+                    daysSoFar++;
+                    // @ts-ignore
+                    let worldCreateTimeStamp = Math.floor(game.pf2e.worldClock.worldCreatedOn/1000);
+                    // @ts-ignore
+                    if(game.pf2e.worldClock.dateTheme === 'AR' || game.pf2e.worldClock.dateTheme === 'IC') {
+                        worldCreateTimeStamp += 62167219200;
+                    }
+
+                    totalSeconds =  this.time.getTotalSeconds(daysSoFar) - worldCreateTimeStamp;
                 }
-                let totalSeconds = this.time.getTotalSeconds(daysSoFar);
 
                 //Let the local functions know that we all ready updated this time
                 this.timeChangeTriggered = true;
@@ -639,6 +685,20 @@ export default class Year {
      */
     setFromTime(newTime: number, changeAmount: number){
         Logger.debug('Year.setFromTime()');
+
+        // If this is a Pathfinder 2E game, when setting Simple Calendar from the world time we need to add:
+        //  - The World Create Time Stamp Offset (Used by PF2E to calculate the current world time) - This is a timestamp in Real world time
+        //  - The offset from year 0 to Jan 1 1970 (This is because the World Create Time Stamp is based on a timestamp from 1970 so need to make up that difference)
+        if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync && game.hasOwnProperty('pf2e')){
+            // @ts-ignore
+            let worldCreateTimeStamp = Math.floor(game.pf2e.worldClock.worldCreatedOn/1000);
+            // @ts-ignore
+            if(game.pf2e.worldClock.dateTheme === 'AR' || game.pf2e.worldClock.dateTheme === 'IC') {
+                worldCreateTimeStamp += 62167219200;
+            }
+            newTime += worldCreateTimeStamp;
+        }
+
         if(changeAmount !== 0){
             // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
             if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.timeChangeTriggered || this.combatChangeTriggered)){

@@ -106,6 +106,8 @@
   "FSC.Configuration.General.Self": "Selbst: Kontrolliert die Spielzeit und ignoriert Updates von anderen Modulen.",
   "FSC.Configuration.General.ThirdParty": "Drittanbietermodule: Folgt nur den Spielzeit-Updates anderer Module.",
   "FSC.Configuration.General.Mixed": "Gemischt: Aktualisiert die Spielzeit und folgt Spielzeit-Updates anderer Module.",
+  "FSC.Configuration.General.PF2ESync": "Pathfinder 2E: World Time Sync",
+  "FSC.Configuration.General.PF2ESyncHelp": "This will force Simple Calendar to stay in sync with the built in Pathfinder 2E world time.",
   "FSC.Configuration.General.ShowClock": "Uhr anzeigen",
   "FSC.Configuration.General.ShowClockHelp": "Steuert, ob die Uhr unter dem Kalender angezeigt werden soll. Wenn aktiviert werden die Steuerelemente für Stunden, Minuten und Sekunden ebenfalls angezeigt.",
   "FSC.Configuration.General.PlayerAddNotes": "Spieler können Notizen hinzufügen",

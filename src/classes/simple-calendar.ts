@@ -879,7 +879,12 @@ export default class SimpleCalendar extends Application{
         const gSettings = GameSettings.LoadGeneralSettings();
         if(gSettings && Object.keys(gSettings).length){
             if(this.currentYear){
-                this.currentYear.generalSettings = gSettings;
+                this.currentYear.generalSettings.gameWorldTimeIntegration = gSettings.gameWorldTimeIntegration;
+                this.currentYear.generalSettings.showClock = gSettings.showClock;
+                this.currentYear.generalSettings.playersAddNotes = gSettings.playersAddNotes;
+                if(gSettings.hasOwnProperty('pf2eSync')){
+                    this.currentYear.generalSettings.pf2eSync = gSettings.pf2eSync;
+                }
             } else {
                 Logger.error('No Current year configured, can not load general settings.');
             }

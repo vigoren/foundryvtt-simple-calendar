@@ -7,7 +7,7 @@ import {
     GameWorldTimeIntegrations,
     SocketTypes,
     MoonIcons,
-    MoonYearResetOptions
+    MoonYearResetOptions, GameSystems
 } from "./constants";
 import {Note} from "./classes/note";
 
@@ -22,6 +22,8 @@ export interface GeneralSettings {
     showClock: boolean;
     /** If players can add their own notes */
     playersAddNotes: boolean;
+    /** If the Pathfinder 2e world clock sync is turned on */
+    pf2eSync: boolean;
 }
 
 export interface CalendarTemplate {
@@ -43,6 +45,7 @@ export interface CalendarTemplate {
  * Interface for the year template that is passed to the HTML for rendering
  */
 export interface YearTemplate {
+    gameSystem: GameSystems;
     /** The display text of the year */
     display: string;
     /** The display text for the selected, or current, year */

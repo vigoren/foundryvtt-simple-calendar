@@ -111,6 +111,8 @@
   "FSC.Configuration.General.Self": "自身：無視其他模組的遊戲世界時間更新，自己更新遊戲世界時間",
   "FSC.Configuration.General.ThirdParty": "第三方模組：只看其他模組對遊戲世界時間的更新.",
   "FSC.Configuration.General.Mixed": "混合：可以自己更新遊戲世界時間，同時也會跟著其他模組對於遊戲世界時間的更新",
+  "FSC.Configuration.General.PF2ESync": "Pathfinder 2E: World Time Sync",
+  "FSC.Configuration.General.PF2ESyncHelp": "This will force Simple Calendar to stay in sync with the built in Pathfinder 2E world time.",
   "FSC.Configuration.General.ShowClock": "顯示時鐘",
   "FSC.Configuration.General.ShowClockHelp": "如果要在日曆下方顯示時鐘，則如果有選擇，用於更改小時，分鐘和秒的元件也會顯示。",
   "FSC.Configuration.General.PlayerAddNotes": "玩家可以加入記事",

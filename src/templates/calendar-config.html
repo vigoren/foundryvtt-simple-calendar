@@ -39,6 +39,15 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.GameWorldTimeHelp'}}</p>
                 </div>
+                {{#if (eq currentYear.gameSystem 'pf2e')}}
+                <div class="form-group">
+                    <label for="scPF2ESync">{{localize 'FSC.Configuration.General.PF2ESync'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.generalSettings.pf2eSync}}" type="checkbox" id="scPF2ESync" {{#if currentYear.generalSettings.pf2eSync}}checked="checked"{{/if}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.PF2ESyncHelp'}}</p>
+                </div>
+                {{/if}}
                 <div class="form-group">
                     <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
                     <div class="form-fields">

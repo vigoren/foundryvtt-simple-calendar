@@ -17,7 +17,8 @@ Calendar|Description|Initial Date
 Gregorian|This the standard real life calendar|The current date will be used
 Eberron| This is the calendar from the Eberron setting for Dungeons and Dragons | Zarantyr 1, 998 YK
 Exandrian |This is the calendar from the Exandria setting for Dungeons and Dragons | Horisal 1, 812 P.D.
-Golarian | This is the calendar from the Pathfinder game | Abadius 1, 4710 AR
+Golarian: Pathfinder 1E | This is the calendar from the Pathfinder 1E game | Abadius 1, 4710 AR
+Golarian: Pathfinder 2E | This is the calendar from the Pathfinder 2E game | Abadius 1, 4710 AR
 Greyhawk | This is the calendar from the Greyhawk setting for Dungeons and Dragons | Needfest 1, 591 cy
 Harptos | This is the calendar used across Faerun in the Forgotten Realms | Hammer 1, 1495 DR
 Warhammer | This is the calendar used by the Imperium in the Fantasy Warhammer game | Hexenstag 1, 2522
@@ -36,6 +37,14 @@ Third Party Module|This will instruct Simple Calendar to just display the Time i
 Mixed|This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.|Will update the game world time|Will update it's own time based on changes to the game world time, following what other modules say the time is.
 
 The most common interaction with another module is likely to be with Calendar/Weather. For this module I recommend using the "Self" or "Mixed" setting. With self weather effects will still trigger from Calendar/Weather as you advance time in Simple Calendar. Only use mixed if you also want to be able to use the Calendar/Weather controls to advance time to certain points (like dawn or dusk).
+
+### Pathfinder 2E: World Clock Sync
+For games running the Pathfinder 2E system, this setting will attempt to keep Simple Calendars date and time in sync with the Pathfinder 2E's World Clock.
+- The setting only appears if you are using the Pathfinder 2E system.
+- The Setting is enabled by default.
+- For the Golarion (Absalom Reckoning) Date Theme in PF2E's world clock use Simple Calendars Golarian: Pathfinder 2E predefined calendar.
+- For the Earth (Gregorian) or Unthemed (Gregorian) Date Theme in PF2E's world clock use Simple Calendars Gregorian predefined calendar
+
 
 #### Show Clock
 
