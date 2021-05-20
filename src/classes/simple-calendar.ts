@@ -209,7 +209,27 @@ export default class SimpleCalendar extends Application{
             };
         }
     }
-    
+
+    protected _getHeaderButtons(): Application.HeaderButton[] {
+        const buttons: Application.HeaderButton[] = [];
+        if(!this.compactView){
+            buttons.push({
+                label: 'FSC.Compact',
+                class: 'compact-view',
+                icon: 'fa fa-compress',
+                onclick: this.minimize.bind(this)
+            });
+        } else {
+            buttons.push({
+                label: 'FSC.Full',
+                class: 'compact-view',
+                icon: 'fa fa-expand',
+                onclick: this.minimize.bind(this)
+            });
+        }
+        return buttons.concat(super._getHeaderButtons());
+    }
+
     /**
      * Adds the calendar button to the token button list
      * @param controls
@@ -425,6 +445,7 @@ export default class SimpleCalendar extends Application{
             this.setWidthHeight(html);
             if(this.compactView){
                 this.element.find('.window-resizable-handle').hide();
+                this.element.find('.compact-view').empty().append(`<i class='fa fa-expand'></i> ` + GameSettings.Localize('FSC.Full'));
 
                 // Add new note click
                 (<JQuery>html).find(".compact-calendar .season-moon-info .add-note").on('click', SimpleCalendar.instance.addNote.bind(this));
@@ -443,6 +464,7 @@ export default class SimpleCalendar extends Application{
 
             } else {
                 this.element.find('.window-resizable-handle').show();
+                this.element.find('.compact-view').empty().append(`<i class='fa fa-compress'></i> ` + GameSettings.Localize('FSC.Compact'));
                 this.ensureCurrentDateIsVisible(html);
                 // Change the month that is being viewed
                 const nextPrev = (<JQuery>html).find(".current-date .fa");

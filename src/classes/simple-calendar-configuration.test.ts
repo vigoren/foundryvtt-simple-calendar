@@ -448,13 +448,21 @@ describe('Simple Calendar Configuration Tests', () => {
         expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(7);
         expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule).toBe(LeapYearRules.None);
 
-        select.value = 'golarian';
+        select.value = 'golarianpf1e';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
         SimpleCalendarConfiguration.instance.predefinedApplyConfirm();
         expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(4710);
         expect((<Year>SimpleCalendarConfiguration.instance.object).months.length).toBe(12);
         expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(7);
         expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule).toBe(LeapYearRules.Custom);
+
+        select.value = 'golarianpf2e';
+        jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
+        SimpleCalendarConfiguration.instance.predefinedApplyConfirm();
+        expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(4710);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).months.length).toBe(12);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(7);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule).toBe(LeapYearRules.Gregorian);
 
         select.value = 'greyhawk';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
@@ -523,6 +531,12 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         //@ts-ignore
         expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.playersAddNotes ).toBe(true);
+
+        (<HTMLInputElement>event.currentTarget).id = "scPF2ESync";
+        (<HTMLInputElement>event.currentTarget).checked = true;
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        //@ts-ignore
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.pf2eSync ).toBe(true);
     });
 
     test('Year Input Change', () => {

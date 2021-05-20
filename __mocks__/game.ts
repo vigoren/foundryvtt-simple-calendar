@@ -61,7 +61,7 @@ const game = {
                 case SettingNames.Notes:
                     return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false, id: 'abc123'}]];
                 case SettingNames.GeneralConfiguration:
-                    return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false}
+                    return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false, pf2eSync: true}
                 case SettingNames.TimeConfiguration:
                     return {hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3};
                 case SettingNames.SeasonConfiguration:
@@ -101,7 +101,10 @@ const game = {
             return v.call(undefined, {isGM: false, active: true});
         })
     },
-    scenes: null
+    scenes: null,
+    system: {
+        id: ''
+    }
 };
 
 // @ts-ignore

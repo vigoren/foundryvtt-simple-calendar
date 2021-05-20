@@ -3,7 +3,13 @@
 class Application {
     constructor() {
         this.element = {
-            find: jest.fn().mockReturnValue({show: jest.fn(), hide: jest.fn()})
+            find: jest.fn().mockReturnValue({
+                show: jest.fn(),
+                hide: jest.fn(),
+                empty: jest.fn().mockReturnValue({
+                    append: jest.fn()
+                })
+            })
         };
     }
 
@@ -23,6 +29,8 @@ class Application {
     setPosition(){}
 
     _onResize(){}
+
+    _getHeaderButtons(){return [];}
 }
 
 

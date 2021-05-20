@@ -171,6 +171,7 @@ describe('Simple Calendar Class Tests', () => {
                 },
                 "display": "0",
                 "firstWeekday": 0,
+                "gameSystem": "other",
                 "numericRepresentation": 0,
                 "selectedDisplayDay": "",
                 "selectedDisplayMonth": "",
@@ -225,6 +226,19 @@ describe('Simple Calendar Class Tests', () => {
 
         // @ts-ignore
         game.user.isGM = false;
+    });
+
+    test('Get Header Buttons', () => {
+        //@ts-ignore
+        let r = SimpleCalendar.instance._getHeaderButtons();
+        expect(r.length).toBe(1);
+        expect(r[0].label).toBe('FSC.Compact');
+
+        SimpleCalendar.instance.compactView = true;
+        //@ts-ignore
+        r = SimpleCalendar.instance._getHeaderButtons();
+        expect(r.length).toBe(1);
+        expect(r[0].label).toBe('FSC.Full');
     });
 
     test('Get Scene Control Buttons', () => {
@@ -886,6 +900,13 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.currentYear = y;
         //@ts-ignore
         SimpleCalendar.instance.loadGeneralSettings();
+
+        const orig = game.settings.get;
+        game.settings.get =(moduleName: string, settingName: string) => { return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false};};
+        //@ts-ignore
+        SimpleCalendar.instance.loadGeneralSettings();
+        expect(y.generalSettings.pf2eSync).toBe(true);
+        game.settings.get = orig;
     });
 
     test('Load Year Configuration', () => {

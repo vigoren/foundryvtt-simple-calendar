@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.2.50 - Improved PF2E Support, Bug Fixes
+## v1.2.51 - Improved PF2E Support, Bug Fixes
 
 ### Improved Pathfinder 2E Support
 
@@ -13,6 +13,10 @@ Simple Calendar and Pathfinder 2E's world clock did not play together nicely, th
   - The Setting is enabled by default.
   - For the Golarion (Absalom Reckoning) Date Theme in PF2E's world clock use Simple Calendars Golarian: Pathfinder 2E predefined calendar.
   - For the Earth (Gregorian) or Unthemed (Gregorian) Date Theme in PF2E's world clock use Simple Calendars Gregorian predefined calendar
+
+### Quality of Life Improvements
+
+- Added a button in the calendar dialogs title bar to switch between compact and full view.
 
 ### Bug Fixes
 

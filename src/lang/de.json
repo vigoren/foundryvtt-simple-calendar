@@ -1,5 +1,7 @@
 {
   "FSC.Title": "Simple Calendar",
+  "FSC.Compact": "Compact",
+  "FSC.Full": "Full",
   "FSC.Help": "Hilfe",
   "FSC.One": "1",
   "FSC.Five": "5",

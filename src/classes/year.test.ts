@@ -12,7 +12,7 @@ import "../../__mocks__/hooks";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
+import {GameSystems, GameWorldTimeIntegrations, LeapYearRules} from "../constants";
 import LeapYear from "./leap-year";
 import Season from "./season";
 import Moon from "./moon";
@@ -30,8 +30,25 @@ describe('Year Class Tests', () => {
         year2 = new Year(2020);
     });
 
+    test('Game System Setting', () => {
+        game.system.id = GameSystems.DnD5E;
+        year = new Year(0);
+        expect(year.gameSystem).toBe(GameSystems.DnD5E);
+        game.system.id = GameSystems.PF1E;
+        year = new Year(0);
+        expect(year.gameSystem).toBe(GameSystems.PF1E);
+        game.system.id = GameSystems.PF2E;
+        year = new Year(0);
+        expect(year.gameSystem).toBe(GameSystems.PF2E);
+        game.system.id = GameSystems.WarhammerFantasy4E;
+        year = new Year(0);
+        expect(year.gameSystem).toBe(GameSystems.WarhammerFantasy4E);
+
+        game.system.id = GameSystems.Other;
+    });
+
     test('Properties', () => {
-        expect(Object.keys(year).length).toBe(17); //Make sure no new properties have been added
+        expect(Object.keys(year).length).toBe(18); //Make sure no new properties have been added
         expect(year.months).toStrictEqual([]);
         expect(year.weekdays).toStrictEqual([]);
         expect(year.prefix).toBe("");
@@ -47,14 +64,15 @@ describe('Year Class Tests', () => {
         expect(year.time).toBeDefined();
         expect(year.timeChangeTriggered).toBe(false);
         expect(year.combatChangeTriggered).toBe(false);
-        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false });
+        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false, pf2eSync: true });
         expect(year.seasons).toStrictEqual([]);
+        expect(year.gameSystem).toBe(GameSystems.Other);
     });
 
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(21); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(22); //Make sure no new properties have been added
         expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
         expect(t.display).toBe("0");
         expect(t.numericRepresentation).toBe(0);
@@ -76,6 +94,7 @@ describe('Year Class Tests', () => {
         expect(t.currentTime).toStrictEqual({hour:"00", minute:"00", second: "00"});
         expect(t.currentSeasonColor).toBe("");
         expect(t.currentSeasonName).toBe("");
+        expect(t.gameSystem).toBe(GameSystems.Other);
 
         year.months.push(month);
         year.months[0].current = true;
@@ -536,6 +555,9 @@ describe('Year Class Tests', () => {
         year.numericRepresentation = 4;
         expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(1);
 
+        year.yearZero = 10;
+        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(6);
+
         year.months[0].startingWeekday = 3;
         expect(year.dayOfTheWeek(year.numericRepresentation, 1, 1)).toBe(2);
     });
@@ -554,7 +576,7 @@ describe('Year Class Tests', () => {
         expect(year.dateToDays(5,2,1, true)).toBe(292);
 
         year.yearZero = 1;
-        expect(year.dateToDays(0,0,1)).toBe(-52);
+        expect(year.dateToDays(0,0,1)).toBe(-53);
     });
 
     test('Sync Time', () => {
@@ -581,6 +603,21 @@ describe('Year Class Tests', () => {
         year.yearZero = 1;
         year.syncTime()
         expect(game.time.advance).toHaveBeenCalledTimes(3);
+
+        year.gameSystem = GameSystems.PF2E;
+        year.syncTime();
+        expect(game.time.advance).toHaveBeenCalledTimes(4);
+        //@ts-ignore
+        game.pf2e = {worldClock:{dateTheme: "AD", worldCreatedOn: 0}};
+        year.syncTime();
+        expect(game.time.advance).toHaveBeenCalledTimes(5);
+        month.days[0].current = false;
+        year.syncTime();
+        expect(game.time.advance).toHaveBeenCalledTimes(6);
+        //@ts-ignore
+        game.pf2e.worldClock.dateTheme = "AR";
+        year.syncTime();
+        expect(game.time.advance).toHaveBeenCalledTimes(7);
     });
 
     test('Seconds To Date', () => {
@@ -664,6 +701,21 @@ describe('Year Class Tests', () => {
         year.setFromTime(240, 60);
         expect(year.time.seconds).toBe(240);
         expect(game.settings.set).toHaveBeenCalledTimes(2);
+
+        //@ts-ignore
+        game.user.isGM = true;
+        year.gameSystem = GameSystems.PF2E;
+        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Mixed;
+        year.setFromTime(240, 60);
+        expect(year.time.seconds).toBe(240);
+
+        //@ts-ignore
+        game.pf2e = {worldClock: {dateTheme: "AD", worldCreatedOn: 0}};
+        year.setFromTime(240, 60);
+        expect(year.time.seconds).toBe(240);
+
+        //@ts-ignore
+        game.user.isGM = false;
     });
 
     test('Get Current Season', () => {
