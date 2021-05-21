@@ -5,9 +5,11 @@ import {SimpleCalendarHooks} from "./constants";
 SimpleCalendar.instance = new SimpleCalendar();
 Hooks.on('init', () => {
     //Initialize the Simple Calendar
-    SimpleCalendar.instance.init().catch(Logger.error);
+    SimpleCalendar.instance.init();
 });
 Hooks.on('ready', () => {
+    //Initialize the Simple Calendar Sockets
+    SimpleCalendar.instance.initializeSockets();
     //Expose the macro show function
     (window as any).SimpleCalendar = {
         show: Macros.show,

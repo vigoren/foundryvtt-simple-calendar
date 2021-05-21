@@ -64,7 +64,7 @@ describe('Year Class Tests', () => {
         expect(year.time).toBeDefined();
         expect(year.timeChangeTriggered).toBe(false);
         expect(year.combatChangeTriggered).toBe(false);
-        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false, pf2eSync: true });
+        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}  });
         expect(year.seasons).toStrictEqual([]);
         expect(year.gameSystem).toBe(GameSystems.Other);
     });
@@ -183,6 +183,19 @@ describe('Year Class Tests', () => {
         year2.seasons.push(new Season('S', 1, 1));
         year2.moons.push(new Moon('M',1))
         expect(year2.clone()).toStrictEqual(year2);
+    });
+
+    test('Can User', () => {
+        expect(year.canUser(null, year.generalSettings.permissions.addNotes)).toBe(false);
+        expect(year.canUser(game.user, year.generalSettings.permissions.addNotes)).toBe(false);
+        expect(year.canUser(game.user, year.generalSettings.permissions.viewCalendar)).toBe(true);
+        year.generalSettings.permissions.viewCalendar.player = false;
+        expect(year.canUser(game.user, year.generalSettings.permissions.viewCalendar)).toBe(true);
+        year.generalSettings.permissions.viewCalendar.trustedPlayer = false;
+        expect(year.canUser(game.user, year.generalSettings.permissions.viewCalendar)).toBe(true);
+        year.generalSettings.permissions.viewCalendar.assistantGameMaster = false;
+        year.generalSettings.permissions.viewCalendar.users = [''];
+        expect(year.canUser(game.user, year.generalSettings.permissions.viewCalendar)).toBe(true);
     });
 
     test('Get Display Name', () => {

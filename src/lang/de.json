@@ -244,6 +244,7 @@
   "FSC.Warn.Time.ActiveCombats": "Es läuft ein aktiver Kampf. Bitte beende den Kampf vor dem Start der Echtzeituhr.",
   "FSC.Warn.Notes.NotGM": "Es ist keine SL im Spiel. Eine SL muss eingeloggt sein, damit Spieler Notizen hinzufügen können.",
   "FSC.Warn.Macros.GMUpdate": "Nur die SL kann das Kalenderdatum aktualisieren!",
+  "FSC.Warn.Calendar.NotGM": "There is no GM present in the game, a GM needs to be logged in for players to change the date/time.",
   "FSC.Error.Note.NoTitle": "Die Notiz muss einen Titel enthalten!",
   "FSC.Error.Note.RichText": "Bitte speichere den Editorinhalt.",
   "FSC.Error.Note.NoSelectedDay": "Kann Notiz nicht hinzufügen, es ist kein Tag ausgewählt.",

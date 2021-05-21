@@ -52,7 +52,9 @@ export enum LeapYearRules {
 export enum SocketTypes {
     primary = 'primary',
     time = 'time',
-    journal = 'journal'
+    journal = 'journal',
+    dateTime = 'date-time',
+    date = 'date'
 }
 
 /**

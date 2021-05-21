@@ -5,8 +5,10 @@ import {
     FirstNewMoonDate,
     LeapYearConfig,
     MonthConfig,
-    MonthTemplate, MoonConfiguration,
-    MoonPhase, MoonTemplate,
+    MonthTemplate,
+    MoonConfiguration,
+    MoonPhase,
+    MoonTemplate,
     NoteConfig,
     NoteTemplate,
     SeasonConfiguration,
@@ -19,7 +21,7 @@ import {
     YearConfig,
     YearTemplate
 } from "./interfaces";
-import {LeapYearRules, MoonIcons, MoonYearResetOptions, SocketTypes} from "./constants";
+import {GameSystems, LeapYearRules, MoonIcons, MoonYearResetOptions, SocketTypes} from "./constants";
 
 describe('Interface Tests', () => {
     const tt: TimeTemplate = {hour: '', minute: '', second: ''};
@@ -62,10 +64,12 @@ describe('Interface Tests', () => {
         currentSeasonColor: '',
         currentSeasonName: '',
         weeks: [],
-        yearZero: 0
+        yearZero: 0,
+        gameSystem: GameSystems.Other
     };
     const ct: CalendarTemplate = {
         isGM: false,
+        changeDateTime: false,
         addNotes: false,
         isPrimary: false,
         currentYear: yt,
@@ -113,7 +117,7 @@ describe('Interface Tests', () => {
     });
 
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(21); //Make sure no new properties have been added
+        expect(Object.keys(yt).length).toBe(22); //Make sure no new properties have been added
         expect(yt.display).toBe('');
         expect(yt.selectedDisplayYear).toBe('');
         expect(yt.selectedDisplayMonth).toBe('');
@@ -135,11 +139,13 @@ describe('Interface Tests', () => {
         expect(yt.currentSeasonName).toStrictEqual('');
         expect(yt.currentSeasonColor).toStrictEqual('');
         expect(yt.yearZero).toBe(0);
+        expect(yt.gameSystem).toBe(GameSystems.Other);
     });
 
     test('Calendar Template', () => {
-        expect(Object.keys(ct).length).toBe(12); //Make sure no new properties have been added
+        expect(Object.keys(ct).length).toBe(13); //Make sure no new properties have been added
         expect(ct.isGM).toBe(false);
+        expect(ct.changeDateTime).toBe(false);
         expect(ct.addNotes).toBe(false);
         expect(ct.isPrimary).toBe(false);
         expect(ct.currentYear).toStrictEqual(yt);

@@ -99,9 +99,9 @@ export default class Year {
         showClock: false,
         pf2eSync: true,
         permissions: {
-            viewCalendar: {player: true, trustedPlayer: true, assistantGameMaster: true},
-            addNotes: {player: false, trustedPlayer: false, assistantGameMaster: false},
-            changeDateTime: {player: false, trustedPlayer: false, assistantGameMaster: false}
+            viewCalendar: {player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined},
+            addNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},
+            changeDateTime: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}
         }
     };
     /**

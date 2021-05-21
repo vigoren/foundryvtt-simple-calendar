@@ -31,6 +31,7 @@ export interface GeneralSettings {
         /** Who can change the date and time */
         changeDateTime: PermissionMatrix
     };
+    playersAddNotes?: boolean;
 }
 
 export interface PermissionMatrix {
@@ -42,6 +43,7 @@ export interface PermissionMatrix {
 
 export interface CalendarTemplate {
     isGM: boolean;
+    changeDateTime: boolean;
     isPrimary: boolean;
     addNotes: boolean;
     currentYear: YearTemplate;
@@ -331,7 +333,20 @@ export namespace SimpleCalendarSocket{
      */
     export interface Data {
         type: SocketTypes;
-        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary;
+        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate;
+    }
+
+    export interface SimpleCalendarSocketDateTime{
+        dataType: String;
+        isNext: boolean;
+        amount: number;
+        unit: string;
+    }
+
+    export interface SimpleCalendarSocketDate{
+        year: number;
+        month: number;
+        day: number;
     }
 
     /**

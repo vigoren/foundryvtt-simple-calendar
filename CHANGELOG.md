@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.2.53 - Improved PF2E Support, Permissions, Bug Fixes
+## v1.2.55 - Improved PF2E Support, Permissions, Bug Fixes
 
 ### Improved Pathfinder 2E Support
 

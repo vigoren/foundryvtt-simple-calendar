@@ -114,6 +114,19 @@ describe('Simple Calendar Configuration Tests', () => {
         expect(data.importing.showCalendarWeather).toBe(true);
         //@ts-ignore
         expect(data.importing.showAboutTime).toBe(true);
+
+        const orig = game.users;
+        //@ts-ignore
+        game.user.isGM = true;
+        data = SimpleCalendarConfiguration.instance.getData();
+        //@ts-ignore
+        expect(data.users).toStrictEqual({});
+        //@ts-ignore
+        game.users = false;
+        data = SimpleCalendarConfiguration.instance.getData();
+        //@ts-ignore
+        expect(data.users).toStrictEqual({});
+        game.users = orig;
     });
 
     test('Update Object', () => {
@@ -526,17 +539,47 @@ describe('Simple Calendar Configuration Tests', () => {
         //@ts-ignore
         expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.showClock ).toBe(true);
 
-        (<HTMLInputElement>event.currentTarget).id = "scPlayersAddNotes";
-        (<HTMLInputElement>event.currentTarget).checked = true;
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        //@ts-ignore
-        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.playersAddNotes ).toBe(true);
-
         (<HTMLInputElement>event.currentTarget).id = "scPF2ESync";
         (<HTMLInputElement>event.currentTarget).checked = true;
         SimpleCalendarConfiguration.instance.inputChange(event);
         //@ts-ignore
         expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.pf2eSync ).toBe(true);
+    });
+
+    test('Permission Input Change', () => {
+        const event = new Event('change');
+        (<HTMLInputElement>event.currentTarget).id = "scCalendarVisibleP";
+        (<HTMLInputElement>event.currentTarget).checked = true;
+        (<HTMLInputElement>event.currentTarget).value = '';
+
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.viewCalendar.player ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scCalendarVisibleTP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.viewCalendar.trustedPlayer ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scCalendarVisibleAGM";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.viewCalendar.assistantGameMaster ).toBe(true);
+
+        (<HTMLInputElement>event.currentTarget).id = "scAddNotesP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.addNotes.player ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scAddNotesTP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.addNotes.trustedPlayer ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scAddNotesAGM";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.addNotes.assistantGameMaster ).toBe(true);
+
+        (<HTMLInputElement>event.currentTarget).id = "scChangeDateTimeP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.changeDateTime.player ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scChangeDateTimeTP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.changeDateTime.trustedPlayer ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scChangeDateTimeAGM";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.changeDateTime.assistantGameMaster ).toBe(true);
     });
 
     test('Year Input Change', () => {
