@@ -12,12 +12,12 @@ import "../../__mocks__/hooks";
 import Year from "./year";
 import Month from "./month";
 import Importer from "./importer";
-import {LeapYearRules} from "../constants";
+import {GameSystems, LeapYearRules} from "../constants";
 import {Weekday} from "./weekday";
-import Mock = jest.Mock;
 import Season from "./season";
 import Moon from "./moon";
 import SimpleCalendar from "./simple-calendar";
+import Mock = jest.Mock;
 
 describe('Importer Class Tests', () => {
     let y: Year;
@@ -114,6 +114,7 @@ describe('Importer Class Tests', () => {
 
         y.leapYearRule.rule = LeapYearRules.Custom;
         y.leapYearRule.customMod = 8;
+        y.gameSystem = GameSystems.PF2E;
         await Importer.exportToAboutTime(y);
         //@ts-ignore
         expect(game.Gametime.DTC.saveUserCalendar).toHaveBeenCalledTimes(3);

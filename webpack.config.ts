@@ -1,7 +1,6 @@
 import * as webpack from 'webpack';
 import * as path from 'path'
 const CopyPlugin = require('copy-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 
@@ -15,7 +14,6 @@ const config: webpack.Configuration = {
         removeEmptyChunks: true
     },
     plugins: [
-        new CleanWebpackPlugin(),
         new CopyPlugin({
             patterns: [
                 { context: './src/', from : '**/*.json', to : './' },
@@ -52,7 +50,7 @@ const config: webpack.Configuration = {
             {
                 test: /\.svg$/,
                 type: 'asset/inline'
-            }
+            },
         ]
     },
     resolve: {
@@ -61,6 +59,7 @@ const config: webpack.Configuration = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
+        clean: true
     },
 };
 

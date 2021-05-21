@@ -15,11 +15,14 @@ This setting lets you choose from a list of predefined calendars to get your cal
 Calendar|Description|Initial Date
 --------|-----------|-------------
 Gregorian|This the standard real life calendar|The current date will be used
+Dark Sun |This is the calendar from the Sark Sun setting for Dungeons and Dragons|Scorch 1,1
 Eberron| This is the calendar from the Eberron setting for Dungeons and Dragons | Zarantyr 1, 998 YK
 Exandrian |This is the calendar from the Exandria setting for Dungeons and Dragons | Horisal 1, 812 P.D.
-Golarian | This is the calendar from the Pathfinder game | Abadius 1, 4710 AR
+Golarian: Pathfinder 1E | This is the calendar from the Pathfinder 1E game | Abadius 1, 4710 AR
+Golarian: Pathfinder 2E | This is the calendar from the Pathfinder 2E game | Abadius 1, 4710 AR
 Greyhawk | This is the calendar from the Greyhawk setting for Dungeons and Dragons | Needfest 1, 591 cy
 Harptos | This is the calendar used across Faerun in the Forgotten Realms | Hammer 1, 1495 DR
+Traveller: Imperial Calendar|This is the Imperial calendar used for the Traveller game system|1, 1000
 Warhammer | This is the calendar used by the Imperium in the Fantasy Warhammer game | Hexenstag 1, 2522
 
 All of these calendars can be further customized after they are loaded. They are here to provide a simple starting point for your game.
@@ -37,18 +40,22 @@ Mixed|This option is a blend of the self and third party options. Simple calenda
 
 The most common interaction with another module is likely to be with Calendar/Weather. For this module I recommend using the "Self" or "Mixed" setting. With self weather effects will still trigger from Calendar/Weather as you advance time in Simple Calendar. Only use mixed if you also want to be able to use the Calendar/Weather controls to advance time to certain points (like dawn or dusk).
 
-#### Show Clock
+### Pathfinder 2E: World Clock Sync
+For games running the Pathfinder 2E system, this setting will attempt to keep Simple Calendars date and time in sync with the Pathfinder 2E's World Clock.
+- The setting only appears if you are using the Pathfinder 2E system.
+- The Setting is enabled by default.
+- For the Golarion (Absalom Reckoning) Date Theme in PF2E's world clock use Simple Calendars Golarian: Pathfinder 2E predefined calendar.
+- For the Earth (Gregorian) or Unthemed (Gregorian) Date Theme in PF2E's world clock use Simple Calendars Gregorian predefined calendar
 
-This setting is used to show the time clock below the calendar or to hide it. Not all games care about keeping track of the specific time of day so this is a great option to disable that part. Hiding the clock also hides the controls for changing hours, minutes, seconds.
+### Permissions
 
-### Notes
+Permissions are role based so players in certain Foundry roles can be given extra permissions within Simple Calendar. These settings allow a GM to customize how and what players are allowed to interact with and change.
 
-These are the settings pertaining to notes.
-
-Setting | Description
--------- | ----------
-Note Default Player Visibility | For new notes, if by default the player visibility option is checked or not.
-Players Can Add Notes | If checked players will be allowed to add their own notes to the calendar.
+Permission|Description|Roles
+----------|------------|----
+View Calendar | If users in this role can view the calendar interface or not.|Player, Trusted Player, Assistant GM
+Add Notes | If users in these roles are able to add notes to the calendar.|Player, Trusted Player, Assistant GM
+Change Date and Time| If users in these roles are able to change the calendars date and time.|Player, Trusted Player, Assistant GM
 
 ### Third Party Module Import/Export
 
@@ -74,6 +81,15 @@ Most settings can be imported and exported between these two modules with these 
 - Calendar/Weather's season month is not properly stored:
     - When Importing from Calendar/Weather every season will have its month set to be the first month.
     - When Exporting to Calendar/Weather every season will have no month set.
+
+## Note Settings
+
+This tab contains the settings for creating and interacting with notes.
+
+Setting | Description
+-------- | ----------
+Note Default Player Visibility | For new notes, if by default the player visibility option is checked or not.
+
 
 
 ## Year Settings
@@ -167,8 +183,16 @@ Setting | Description
 Hours in a Day | This defines how many hours make up a single day.
 Minutes in a Hour | This defines how many minutes make up a single hour.
 Seconds in a Minute | This defines how many seconds make up a single minute.
-Game Seconds Per Real Life Seconds | This is used to determine how quickly game time advances when running the Simple Calendar clock. With a value of 1, for every real life seconds 1 second passes in the game. With a value of 2 for every 1 real life seconds 2 seconds pass in game. This does support decimals for more specific control.
 
+
+### Clock Settings
+
+Settings specific to the clock portion of the calendar.
+
+Setting | Description
+-------- | ----------
+Show Clock | 	This setting is used to show the time clock below the calendar or to hide it. Not all games care about keeping track of the specific time of day so this is a great option to disable that part. Hiding the clock also hides the controls for changing hours, minutes, seconds.
+Game Seconds Per Real Life Seconds | This is used to determine how quickly game time advances when running the Simple Calendar clock. With a value of 1, for every real life seconds 1 second passes in the game. With a value of 2 for every 1 real life seconds 2 seconds pass in game. This does support decimals for more specific control.
 
 ## Moon Settings
 

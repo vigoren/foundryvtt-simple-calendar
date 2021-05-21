@@ -1,5 +1,43 @@
 # Change Log
 
+## v1.2.55 - Improved PF2E Support, Permissions, Bug Fixes
+
+### Improved Pathfinder 2E Support
+
+Simple Calendar and Pathfinder 2E's world clock did not play together nicely, this update allows them to be in sync with their times so users don't have to choose between using one or the other.
+
+- Removed the Golarian pre-defined calendar and added 2 new pre-defined Golarian Calendars, one for Pathfinder 1E and one for Pathfinder 2E. This is because of a change in the leap year rules between the two editions. 
+- Added a new configuration setting for games running the Pathfinder 2E system, World Clock Sync:
+  - This setting will attempt to keep Simple Calendars date and time in sync with the Pathfinder 2E's World Clock.
+  - The setting only appears if you are using the Pathfinder 2E system.
+  - The Setting is enabled by default.
+  - For the Golarion (Absalom Reckoning) Date Theme in PF2E's world clock use Simple Calendars Golarian: Pathfinder 2E predefined calendar.
+  - For the Earth (Gregorian) or Unthemed (Gregorian) Date Theme in PF2E's world clock use Simple Calendars Gregorian predefined calendar
+
+### Permissions
+
+This update changes how permissions work within Simple Calendar. There is now a section under the general settings tab called permissions where all user permissions can be adjusted. Permissions are now role based so players in certain foundry roles can be given extra permissions within Simple Calendar.
+
+**Important**: The existing Allow Players to Add Notes setting will be properly converted over to these new permissions.
+
+These are the current available permissions:
+
+Permission|Description
+----------|------------
+View Calendar | If users in this role can view the calendar interface or not.
+Add Notes | If users in these roles are able to add notes to the calendar.
+Change Date and Time| If users in these roles are able to change the calendars date and time.
+
+### Quality of Life Improvements
+
+- Added a button in the calendar dialogs title bar to switch between compact and full view.
+- Moved the "Show Clock" configuration setting from the general settings tab to the time settings tab.
+
+### Bug Fixes
+
+- Fixed a discrepancy with the newest version of about-time (v0.8.3+) that would cause the day set in Simple Calendar to be off in about-time.
+  - If you are running about-time version 0.8.3 or later and running into this issue please re-export Simple Calendars settings into about-time.
+
 ## v1.2.47 - New Features, Translations, QoL Improvements & Bug Fixes 
 
 ### New Features

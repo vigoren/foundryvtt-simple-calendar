@@ -39,13 +39,58 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.GameWorldTimeHelp'}}</p>
                 </div>
+                {{#if (eq currentYear.gameSystem 'pf2e')}}
                 <div class="form-group">
-                    <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
+                    <label for="scPF2ESync">{{localize 'FSC.Configuration.General.PF2ESync'}}</label>
                     <div class="form-fields">
-                        <input value="{{currentYear.generalSettings.showClock}}" type="checkbox" id="scShowClock" {{#if currentYear.generalSettings.showClock}}checked="checked"{{/if}} />
+                        <input value="{{currentYear.generalSettings.pf2eSync}}" type="checkbox" id="scPF2ESync" {{checkedcurrentYear.generalSettings.pf2eSync}} />
                     </div>
-                    <p class="notes">{{localize 'FSC.Configuration.General.ShowClockHelp'}}</p>
+                    <p class="notes">{{localize 'FSC.Configuration.General.PF2ESyncHelp'}}</p>
                 </div>
+                {{/if}}
+            </div>
+            <div class="settings-group">
+                <h2>{{localize 'Permissions'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#permissions" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <p class="notes">{{localize 'FSC.Configuration.General.Permissions.Note'}}</p>
+                <header class="table-header flexrow">
+                    <label class="index">{{localize 'PERMISSION.Permission'}}</label>
+                    <label>{{localize 'USER.RolePlayer'}}</label>
+                    <label>{{localize 'USER.RoleTrusted'}}</label>
+                    <label>{{localize 'USER.RoleAssistant'}}</label>
+                    <label>{{localize 'USER.RoleGamemaster'}}</label>
+                </header>
+                <ul class="permissions-list">
+                    <li class="permission form-group">
+                        <label class="index">{{localize 'FSC.Configuration.General.CalendarPlayerVisible'}}</label>
+                        <div class="form-fields">
+                            <input type="checkbox" name="CalendarVisible.P" id="scCalendarVisibleP" {{checked currentYear.generalSettings.permissions.viewCalendar.player}} />
+                            <input type="checkbox" name="CalendarVisible.TP" id="scCalendarVisibleTP" {{checked currentYear.generalSettings.permissions.viewCalendar.trustedPlayer}} />
+                            <input type="checkbox" name="CalendarVisible.AGM" id="scCalendarVisibleAGM" {{checked currentYear.generalSettings.permissions.viewCalendar.assistantGameMaster}} />
+                            <input type="checkbox" name="CalendarVisible.GM" checked disabled />
+                        </div>
+                        <p class="hint">{{localize 'FSC.Configuration.General.CalendarPlayerVisibleHelp'}}</p>
+                    </li>
+                    <li class="permission form-group">
+                        <label class="index">{{localize 'FSC.Configuration.General.PlayerAddNotes'}}</label>
+                        <div class="form-fields">
+                            <input type="checkbox" name="AddNotes.P" id="scAddNotesP" {{checked currentYear.generalSettings.permissions.addNotes.player}} />
+                            <input type="checkbox" name="AddNotes.TP" id="scAddNotesTP" {{checked currentYear.generalSettings.permissions.addNotes.trustedPlayer}} />
+                            <input type="checkbox" name="AddNotes.AGM" id="scAddNotesAGM" {{checked currentYear.generalSettings.permissions.addNotes.assistantGameMaster}} />
+                            <input type="checkbox" name="AddNotes.GM" checked disabled />
+                        </div>
+                        <p class="hint">{{localize 'FSC.Configuration.General.PlayerAddNotesHelp'}}</p>
+                    </li>
+                    <li class="permission form-group">
+                        <label class="index">{{localize 'FSC.Configuration.General.PlayersChangeDateTime'}}</label>
+                        <div class="form-fields">
+                            <input type="checkbox" name="AddNotes.P" id="scChangeDateTimeP" {{checked currentYear.generalSettings.permissions.changeDateTime.player}} />
+                            <input type="checkbox" name="AddNotes.TP" id="scChangeDateTimeTP" {{checked currentYear.generalSettings.permissions.changeDateTime.trustedPlayer}} />
+                            <input type="checkbox" name="AddNotes.AGM" id="scChangeDateTimeAGM" {{checked currentYear.generalSettings.permissions.changeDateTime.assistantGameMaster}} />
+                            <input type="checkbox" name="AddNotes.GM" checked disabled />
+                        </div>
+                        <p class="hint">{{localize 'FSC.Configuration.General.PlayersChangeDateTimeHelp'}}</p>
+                    </li>
+                </ul>
             </div>
             {{#if (or importing.showCalendarWeather importing.showAboutTime)}}
             <div class="settings-group">
@@ -78,16 +123,9 @@
                 <div class="form-group">
                     <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
                     <div class="form-fields">
-                        <input value="{{defaultPlayerNoteVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{#if defaultPlayerNoteVisibility}}checked="checked"{{/if}} />
+                        <input value="{{defaultPlayerNoteVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{checked defaultPlayerNoteVisibility}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
-                </div>
-                <div class="form-group">
-                    <label for="scPlayersAddNotes">{{localize 'FSC.Configuration.General.PlayerAddNotes'}}</label>
-                    <div class="form-fields">
-                        <input value="{{currentYear.generalSettings.playersAddNotes}}" type="checkbox" id="scPlayersAddNotes" {{#if currentYear.generalSettings.playersAddNotes}}checked="checked"{{/if}} />
-                    </div>
-                    <p class="notes">{{localize 'FSC.Configuration.General.PlayerAddNotesHelp'}}</p>
                 </div>
             </div>
         </div>
@@ -211,7 +249,7 @@
                             <div class="form-group {{#unless intercalary}}hidden{{/unless}}">
                                 <label for="-scii{{@index}}">{{localize 'FSC.Configuration.Month.IntercalaryInclude'}}</label>
                                 <div class="form-fields">
-                                    <input class="month-intercalary-include" value="{{intercalaryInclude}}" id="-scii{{@index}}" type="checkbox" data-index="{{@index}}" {{#if intercalaryInclude}}checked="checked"{{/if}} />
+                                    <input class="month-intercalary-include" value="{{intercalaryInclude}}" id="-scii{{@index}}" type="checkbox" data-index="{{@index}}" {{checked intercalaryInclude}} />
                                 </div>
                                 <p class="notes">{{localize 'FSC.Configuration.Month.IntercalaryIncludeHelp'}}</p>
                             </div>
@@ -248,7 +286,7 @@
                 <div class="form-group">
                     <label for="scShowWeekdayHeaders">{{localize 'FSC.Configuration.Weekday.ShowHeadings'}}</label>
                     <div class="form-fields">
-                        <input value="{{currentYear.showWeekdayHeadings}}" type="checkbox" id="scShowWeekdayHeaders" {{#if currentYear.showWeekdayHeadings}}checked="checked"{{/if}} />
+                        <input value="{{currentYear.showWeekdayHeadings}}" type="checkbox" id="scShowWeekdayHeaders" {{checked currentYear.showWeekdayHeadings}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Weekday.ShowHeadingsHelp'}}</p>
                 </div>
@@ -357,6 +395,16 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInMinuteHelp'}}</p>
                 </div>
+            </div>
+            <div class="settings-group">
+                <h2>{{localize 'FSC.Configuration.Time.ClockSettings'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#clock-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.generalSettings.showClock}}" type="checkbox" id="scShowClock" {{checked currentYear.generalSettings.showClock}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.ShowClockHelp'}}</p>
+                </div>
                 <div class="form-group">
                     <label for="scGameTimeRatio">{{localize 'FSC.Configuration.Time.GameTimeRatio'}}</label>
                     <div class="form-fields">
@@ -457,7 +505,7 @@
                                     </div>
                                     <div style="min-width: 15%;">{{length}} {{localize 'FSC.Days'}}</div>
                                     <div style="min-width: 15%;">
-                                        <input class="moon-phase-single-day" value="{{singleDay}}" type="checkbox" data-moon-index="{{@../index}}" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.PhaseSingleDayHelp'}}" {{#if singleDay}} checked="checked" {{/if}} />
+                                        <input class="moon-phase-single-day" value="{{singleDay}}" type="checkbox" data-moon-index="{{@../index}}" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.PhaseSingleDayHelp'}}" {{checked singleDay}} />
                                     </div>
                                     <div style="min-width: 15%;">
                                         <select class="moon-phase-icon" data-moon-index="{{@../index}}" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.PhaseIcon'}}">
