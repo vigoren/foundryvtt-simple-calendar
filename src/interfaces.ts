@@ -20,10 +20,24 @@ export interface GeneralSettings {
     gameWorldTimeIntegration: GameWorldTimeIntegrations;
     /** If to show the clock below the calendar */
     showClock: boolean;
-    /** If players can add their own notes */
-    playersAddNotes: boolean;
     /** If the Pathfinder 2e world clock sync is turned on */
     pf2eSync: boolean;
+    /** What roles/players are allows to do certain actions */
+    permissions: {
+        /** Who can view the calendar */
+        viewCalendar: PermissionMatrix,
+        /** Who can add notes */
+        addNotes: PermissionMatrix,
+        /** Who can change the date and time */
+        changeDateTime: PermissionMatrix
+    };
+}
+
+export interface PermissionMatrix {
+    player: boolean;
+    trustedPlayer: boolean;
+    assistantGameMaster: boolean;
+    users?: string[]
 }
 
 export interface CalendarTemplate {

@@ -1,5 +1,5 @@
 import Month from "./month";
-import {DateTimeParts, DayTemplate, GeneralSettings, YearTemplate} from "../interfaces";
+import {DateTimeParts, DayTemplate, GeneralSettings, PermissionMatrix, YearTemplate} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
@@ -97,8 +97,12 @@ export default class Year {
     generalSettings: GeneralSettings = {
         gameWorldTimeIntegration: GameWorldTimeIntegrations.None,
         showClock: false,
-        playersAddNotes: false,
-        pf2eSync: true
+        pf2eSync: true,
+        permissions: {
+            viewCalendar: {player: true, trustedPlayer: true, assistantGameMaster: true},
+            addNotes: {player: false, trustedPlayer: false, assistantGameMaster: false},
+            changeDateTime: {player: false, trustedPlayer: false, assistantGameMaster: false}
+        }
     };
     /**
      * All of the seasons for this calendar
@@ -278,11 +282,39 @@ export default class Year {
         y.time = this.time.clone();
         y.generalSettings.gameWorldTimeIntegration = this.generalSettings.gameWorldTimeIntegration;
         y.generalSettings.showClock = this.generalSettings.showClock;
-        y.generalSettings.playersAddNotes = this.generalSettings.playersAddNotes;
         y.generalSettings.pf2eSync = this.generalSettings.pf2eSync;
+        y.generalSettings.permissions.viewCalendar = Year.clonePermissions(this.generalSettings.permissions.viewCalendar);
+        y.generalSettings.permissions.addNotes = Year.clonePermissions(this.generalSettings.permissions.addNotes);
+        y.generalSettings.permissions.changeDateTime = Year.clonePermissions(this.generalSettings.permissions.changeDateTime);
         y.seasons = this.seasons.map(s => s.clone());
         y.moons = this.moons.map(m => m.clone());
         return y;
+    }
+
+    /**
+     * Makes a copy of a Permission Matrix
+     * @param {PermissionMatrix} p The permission matric to copy
+     * @private
+     */
+    private static clonePermissions(p: PermissionMatrix): PermissionMatrix{
+        return {
+            player: p.player,
+            trustedPlayer: p.trustedPlayer,
+            assistantGameMaster: p.assistantGameMaster,
+            users: p.users
+        };
+    }
+
+    /**
+     * Checks if a user can do an action based on a passed in permission matrix
+     * @param user
+     * @param permissions
+     */
+    canUser(user: User | null, permissions: PermissionMatrix): boolean{
+        if(user === null){
+            return false;
+        }
+        return !!(user.isGM || (permissions.player && user.hasRole(1)) || (permissions.trustedPlayer && user.hasRole(2)) || (permissions.assistantGameMaster && user.hasRole(3)) || (permissions.users && permissions.users.includes(user.id)));
     }
 
     /**

@@ -55,16 +55,26 @@ export default class SimpleCalendar extends Application{
      * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
      */
     public primary: boolean = false;
-
+    /**
+     * The primary check timeout number used when checking if this user is the GM
+     * @type{number|undefined}
+     * @private
+     */
     private primaryCheckTimeout: number | undefined;
     /**
      * If the dialog has been resized
      * @type{boolean}
      */
     hasBeenResized: boolean = false;
-
+    /**
+     * If to show the compact view of the calendar
+     * @type {boolean}
+     */
     compactView: boolean = false;
-
+    /**
+     * If to show the notes section of the compact view
+     * @type {boolean}
+     */
     compactViewShowNotes: boolean = false;
     /**
      * Simple Calendar constructor
@@ -167,6 +177,7 @@ export default class SimpleCalendar extends Application{
 
     /**
      * Gets the data object to be used by Handlebars when rending the HTML template
+     * @param {Application.RenderOptions | undefined} options The data options
      */
     getData(options?: Application.RenderOptions): CalendarTemplate | Promise<CalendarTemplate> {
         let showSetCurrentDate = false;
@@ -181,7 +192,7 @@ export default class SimpleCalendar extends Application{
             return {
                 isGM: GameSettings.IsGm(),
                 isPrimary: this.primary,
-                addNotes: GameSettings.IsGm() || this.currentYear.generalSettings.playersAddNotes,
+                addNotes: this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.addNotes),
                 currentYear: this.currentYear.toTemplate(),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
@@ -210,6 +221,10 @@ export default class SimpleCalendar extends Application{
         }
     }
 
+    /**
+     * Adding to the get header buttons
+     * @protected
+     */
     protected _getHeaderButtons(): Application.HeaderButton[] {
         const buttons: Application.HeaderButton[] = [];
         if(!this.compactView){
@@ -235,15 +250,17 @@ export default class SimpleCalendar extends Application{
      * @param controls
      */
     public getSceneControlButtons(controls: any[]){
-        let tokenControls = controls.find(c => c.name === "token" );
-        if(tokenControls && tokenControls.hasOwnProperty('tools')){
-            tokenControls.tools.push({
-                name: "calendar",
-                title: "FSC.ButtonTitle",
-                icon: "fas fa-calendar",
-                button: true,
-                onClick: SimpleCalendar.instance.showApp.bind(SimpleCalendar.instance)
-            });
+        if(this.currentYear && this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.viewCalendar)){
+            let tokenControls = controls.find(c => c.name === "token" );
+            if(tokenControls && tokenControls.hasOwnProperty('tools')){
+                tokenControls.tools.push({
+                    name: "calendar",
+                    title: "FSC.ButtonTitle",
+                    icon: "fas fa-calendar",
+                    button: true,
+                    onClick: SimpleCalendar.instance.showApp.bind(SimpleCalendar.instance)
+                });
+            }
         }
     }
 
@@ -251,8 +268,10 @@ export default class SimpleCalendar extends Application{
      * Shows the application window
      */
     public showApp(){
-        this.hasBeenResized = false;
-        this.render(true, {});
+        if(this.currentYear && this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.viewCalendar)){
+            this.hasBeenResized = false;
+            this.render(true, {});
+        }
     }
 
     /**
@@ -903,9 +922,15 @@ export default class SimpleCalendar extends Application{
             if(this.currentYear){
                 this.currentYear.generalSettings.gameWorldTimeIntegration = gSettings.gameWorldTimeIntegration;
                 this.currentYear.generalSettings.showClock = gSettings.showClock;
-                this.currentYear.generalSettings.playersAddNotes = gSettings.playersAddNotes;
                 if(gSettings.hasOwnProperty('pf2eSync')){
                     this.currentYear.generalSettings.pf2eSync = gSettings.pf2eSync;
+                }
+                if(gSettings.hasOwnProperty('permissions')){
+                    this.currentYear.generalSettings.permissions = gSettings.permissions;
+                } else if(gSettings.hasOwnProperty('playersAddNotes')){
+                    this.currentYear.generalSettings.permissions.addNotes.player = true;
+                    this.currentYear.generalSettings.permissions.addNotes.trustedPlayer = true;
+                    this.currentYear.generalSettings.permissions.addNotes.assistantGameMaster = true;
                 }
             } else {
                 Logger.error('No Current year configured, can not load general settings.');

@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.2.51 - Improved PF2E Support, Bug Fixes
+## v1.2.53 - Improved PF2E Support, Permissions, Bug Fixes
 
 ### Improved Pathfinder 2E Support
 
@@ -14,9 +14,24 @@ Simple Calendar and Pathfinder 2E's world clock did not play together nicely, th
   - For the Golarion (Absalom Reckoning) Date Theme in PF2E's world clock use Simple Calendars Golarian: Pathfinder 2E predefined calendar.
   - For the Earth (Gregorian) or Unthemed (Gregorian) Date Theme in PF2E's world clock use Simple Calendars Gregorian predefined calendar
 
+### Permissions
+
+This update changes how permissions work within Simple Calendar. There is now a section under the general settings tab called permissions where all user permissions can be adjusted. Permissions are now role based so players in certain foundry roles can be given extra permissions within Simple Calendar.
+
+**Important**: The existing Allow Players to Add Notes setting will be properly converted over to these new permissions.
+
+These are the current available permissions:
+
+Permission|Description
+----------|------------
+View Calendar | If users in this role can view the calendar interface or not.
+Add Notes | If users in these roles are able to add notes to the calendar.
+Change Date and Time| If users in these roles are able to change the calendars date and time.
+
 ### Quality of Life Improvements
 
 - Added a button in the calendar dialogs title bar to switch between compact and full view.
+- Moved the "Show Clock" configuration setting from the general settings tab to the time settings tab.
 
 ### Bug Fixes
 

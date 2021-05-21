@@ -147,7 +147,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 none: 'FSC.Configuration.Moon.YearResetNo',
                 'leap-year': 'FSC.Configuration.Moon.YearResetLeap',
                 'x-years': 'FSC.Configuration.Moon.YearResetX'
-            }
+            },
+            users: <{[key: string]: string}>{},
         };
 
         const calendarWeather = game.modules.get('calendar-weather');
@@ -169,6 +170,14 @@ export class SimpleCalendarConfiguration extends FormApplication {
         data.monthStartingWeekdays['null'] = GameSettings.Localize('Default');
         for(let i = 0; i < (<Year>this.object).weekdays.length; i++){
             data.monthStartingWeekdays[(<Year>this.object).weekdays[i].numericRepresentation.toString()] = (<Year>this.object).weekdays[i].name;
+        }
+
+        if(game.users){
+            game.users.forEach(u => {
+                if(!u.isGM){
+                    data.users[u.id] = u.name;
+                }
+            });
         }
 
         return data;
@@ -1146,10 +1155,28 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>value;
             } else if(id === 'scShowClock'){
                 (<Year>this.object).generalSettings.showClock = checked;
-            } else if(id === 'scPlayersAddNotes'){
-                (<Year>this.object).generalSettings.playersAddNotes = checked;
             } else if(id === 'scPF2ESync'){
                 (<Year>this.object).generalSettings.pf2eSync = checked;
+            }
+            //Permission Settings
+            else if(id === 'scCalendarVisibleP'){
+                (<Year>this.object).generalSettings.permissions.viewCalendar.player = checked;
+            } else if(id === 'scCalendarVisibleTP'){
+                (<Year>this.object).generalSettings.permissions.viewCalendar.trustedPlayer = checked;
+            } else if(id === 'scCalendarVisibleAGM'){
+                (<Year>this.object).generalSettings.permissions.viewCalendar.assistantGameMaster = checked;
+            } else if(id === 'scAddNotesP'){
+                (<Year>this.object).generalSettings.permissions.addNotes.player = checked;
+            } else if(id === 'scAddNotesTP'){
+                (<Year>this.object).generalSettings.permissions.addNotes.trustedPlayer = checked;
+            } else if(id === 'scAddNotesAGM'){
+                (<Year>this.object).generalSettings.permissions.addNotes.assistantGameMaster = checked;
+            } else if(id === 'scChangeDateTimeP'){
+                (<Year>this.object).generalSettings.permissions.changeDateTime.player = checked;
+            } else if(id === 'scChangeDateTimeTP'){
+                (<Year>this.object).generalSettings.permissions.changeDateTime.trustedPlayer = checked;
+            } else if(id === 'scChangeDateTimeAGM'){
+                (<Year>this.object).generalSettings.permissions.changeDateTime.assistantGameMaster = checked;
             }
             //Year Setting Inputs
             else if(id === "scCurrentYear"){
