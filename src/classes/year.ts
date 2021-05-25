@@ -101,9 +101,9 @@ export default class Year {
         permissions: {
             viewCalendar: {player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined},
             addNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},
+            reorderNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},
             changeDateTime: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}
-        },
-        playersReorderNotes: false
+        }
     };
     /**
      * All of the seasons for this calendar
@@ -287,7 +287,7 @@ export default class Year {
         y.generalSettings.permissions.viewCalendar = Year.clonePermissions(this.generalSettings.permissions.viewCalendar);
         y.generalSettings.permissions.addNotes = Year.clonePermissions(this.generalSettings.permissions.addNotes);
         y.generalSettings.permissions.changeDateTime = Year.clonePermissions(this.generalSettings.permissions.changeDateTime);
-        y.generalSettings.playersReorderNotes = this.generalSettings.playersReorderNotes;
+        y.generalSettings.permissions.reorderNotes = Year.clonePermissions(this.generalSettings.permissions.reorderNotes);
         y.seasons = this.seasons.map(s => s.clone());
         y.moons = this.moons.map(m => m.clone());
         return y;

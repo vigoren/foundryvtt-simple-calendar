@@ -21,8 +21,6 @@ export interface GeneralSettings {
     gameWorldTimeIntegration: GameWorldTimeIntegrations;
     /** If to show the clock below the calendar */
     showClock: boolean;
-    /** If players can re-order the notes on a day */
-    playersReorderNotes: boolean;
     /** If the Pathfinder 2e world clock sync is turned on */
     pf2eSync: boolean;
     /** What roles/players are allows to do certain actions */
@@ -31,6 +29,8 @@ export interface GeneralSettings {
         viewCalendar: PermissionMatrix,
         /** Who can add notes */
         addNotes: PermissionMatrix,
+        /** Who can reorder notes */
+        reorderNotes: PermissionMatrix,
         /** Who can change the date and time */
         changeDateTime: PermissionMatrix
     };

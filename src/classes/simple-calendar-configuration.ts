@@ -1177,6 +1177,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).generalSettings.permissions.changeDateTime.trustedPlayer = checked;
             } else if(id === 'scChangeDateTimeAGM'){
                 (<Year>this.object).generalSettings.permissions.changeDateTime.assistantGameMaster = checked;
+            } else if(id === 'scReorderNotesP'){
+                (<Year>this.object).generalSettings.permissions.reorderNotes.player = checked;
+            } else if(id === 'scReorderNotesTP'){
+                (<Year>this.object).generalSettings.permissions.reorderNotes.trustedPlayer = checked;
+            } else if(id === 'scReorderNotesAGM'){
+                (<Year>this.object).generalSettings.permissions.reorderNotes.assistantGameMaster = checked;
             }
             //Year Setting Inputs
             else if(id === "scCurrentYear"){

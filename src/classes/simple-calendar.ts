@@ -240,7 +240,7 @@ export default class SimpleCalendar extends Application{
                 changeDateTime: this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.changeDateTime),
                 isPrimary: this.primary,
                 addNotes: this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.addNotes),
-                reorderNotes: GameSettings.IsGm() || this.currentYear.generalSettings.playersReorderNotes,
+                reorderNotes: this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.reorderNotes),
                 currentYear: this.currentYear.toTemplate(),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
@@ -1021,6 +1021,9 @@ export default class SimpleCalendar extends Application{
                 }
                 if(gSettings.hasOwnProperty('permissions')){
                     this.currentYear.generalSettings.permissions = gSettings.permissions;
+                    if(!gSettings.permissions.hasOwnProperty('reorderNotes')){
+                        this.currentYear.generalSettings.permissions.reorderNotes = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
+                    }
                 } else if(gSettings.hasOwnProperty('playersAddNotes')){
                     this.currentYear.generalSettings.permissions.addNotes.player = <boolean>gSettings['playersAddNotes'];
                     this.currentYear.generalSettings.permissions.addNotes.trustedPlayer = <boolean>gSettings['playersAddNotes'];
