@@ -390,6 +390,8 @@ describe('Simple Calendar Class Tests', () => {
         const fakeQuery = {
             find: jest.fn().mockReturnValue(false)
         };
+        const origElementFind = SimpleCalendar.instance.element.find;
+        SimpleCalendar.instance.element.find = jest.fn().mockReturnValue(false);
         //@ts-ignore
         SimpleCalendar.instance.setWidthHeight(fakeQuery);
         expect(setPosSpy).toHaveBeenCalledTimes(1);
@@ -398,7 +400,14 @@ describe('Simple Calendar Class Tests', () => {
             .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
             .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
             .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
-            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()})
+            .mockReturnValueOnce({outerHeight: jest.fn(), outerWidth: jest.fn()});
+
+        SimpleCalendar.instance.element.find = jest.fn().mockReturnValue({
+            height: jest.fn().mockReturnValue(1),
+            width: jest.fn().mockReturnValue(1),
+            outerHeight: jest.fn().mockReturnValue(2),
+            outerWidth: jest.fn().mockReturnValue(2),
+        })
         //@ts-ignore
         SimpleCalendar.instance.setWidthHeight(fakeQuery);
         expect(setPosSpy).toHaveBeenCalledTimes(2);
@@ -408,6 +417,7 @@ describe('Simple Calendar Class Tests', () => {
             .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(300), outerWidth: jest.fn().mockReturnValue(250)})
             .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(300)})
             .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(25), outerWidth: jest.fn().mockReturnValue(250)});
+        SimpleCalendar.instance.element.find = origElementFind;
         //@ts-ignore
         SimpleCalendar.instance.setWidthHeight(fakeQuery);
         expect(setPosSpy).toHaveBeenCalledTimes(3);

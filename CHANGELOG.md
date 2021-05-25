@@ -1,5 +1,13 @@
 # Change Log
 
+## v1.2.60 - Bug Fixing & Foundry 0.8.5 Support
+
+- Adjusted the calendar's auto height and width calculations to work better for more systems.
+- Added some specific styles to better support the Warhammer Fantasy Roleplay 4th Edition system.
+- Updated the styling of the configuration dialog so that it is more consistent across different systems.
+- Changed the "Include Intercalary Month In Total Day Count" month setting so that it is hidden under the advanced setting area for months instead of always showing if the "Intercalary Month" setting was checked. It will still only appear if the "Intercalary Month" setting is checked.
+- Ensured that Simple Calendar works with foundry 0.8.5
+
 ## v1.2.55 - Improved PF2E Support, Permissions, Bug Fixes
 
 ### Improved Pathfinder 2E Support
