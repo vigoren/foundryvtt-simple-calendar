@@ -100,7 +100,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 darksun: 'Dark Sun',
                 eberron: 'Eberron',
                 exandrian: 'Exandrian',
-                golarian : 'Golarian',
+                golarianpf1e : 'Golarian: Pathfinder 1E',
+                golarianpf2e : 'Golarian: Pathfinder 2E',
                 greyhawk: 'Greyhawk',
                 harptos: 'Harptos',
                 'traveller-ic': 'Traveller: Imperial Calendar',
@@ -146,7 +147,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 none: 'FSC.Configuration.Moon.YearResetNo',
                 'leap-year': 'FSC.Configuration.Moon.YearResetLeap',
                 'x-years': 'FSC.Configuration.Moon.YearResetX'
-            }
+            },
+            users: <{[key: string]: string}>{},
         };
 
         const calendarWeather = game.modules.get('calendar-weather');
@@ -168,6 +170,14 @@ export class SimpleCalendarConfiguration extends FormApplication {
         data.monthStartingWeekdays['null'] = GameSettings.Localize('Default');
         for(let i = 0; i < (<Year>this.object).weekdays.length; i++){
             data.monthStartingWeekdays[(<Year>this.object).weekdays[i].numericRepresentation.toString()] = (<Year>this.object).weekdays[i].name;
+        }
+
+        if(game.users){
+            game.users.forEach(u => {
+                if(!u.isGM){
+                    data.users[u.id] = u.name;
+                }
+            });
         }
 
         return data;
@@ -690,7 +700,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
                 break;
-            case 'golarian':
+            case 'golarianpf1e':
                 (<Year>this.object).numericRepresentation = 4710;
                 (<Year>this.object).prefix = '';
                 (<Year>this.object).postfix = ' AR';
@@ -732,6 +742,74 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).time.gameTimeRatio = 1;
                 (<Year>this.object).leapYearRule.rule = LeapYearRules.Custom;
                 (<Year>this.object).leapYearRule.customMod = 8;
+                (<Year>this.object).months[0].current = true;
+                (<Year>this.object).months[0].days[0].current = true;
+                (<Year>this.object).seasons[0].color = "#fffce8";
+                (<Year>this.object).seasons[1].color = "#f3fff3";
+                (<Year>this.object).seasons[2].color = "#fff7f2";
+                (<Year>this.object).seasons[3].color = "#f2f8ff";
+                (<Year>this.object).moons = [
+                    new Moon('Somal', 29.5)
+                ];
+                (<Year>this.object).moons[0].firstNewMoon.yearReset = MoonYearResetOptions.XYears;
+                (<Year>this.object).moons[0].firstNewMoon.yearX = 4;
+                (<Year>this.object).moons[0].firstNewMoon.year = 4700;
+                (<Year>this.object).moons[0].firstNewMoon.month = 1;
+                (<Year>this.object).moons[0].firstNewMoon.day = 8;
+                phaseLength = Number((((<Year>this.object).moons[0].cycleLength - 4) / 4).toPrecision(5));
+                (<Year>this.object).moons[0].phases = [
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                ];
+                break;
+            case 'golarianpf2e':
+                (<Year>this.object).numericRepresentation = 4710;
+                (<Year>this.object).prefix = '';
+                (<Year>this.object).postfix = ' AR';
+                (<Year>this.object).yearZero = 2700;
+                (<Year>this.object).months = [
+                    new Month('Abadius', 1, 0, 31),
+                    new Month('Calistril', 2, 0, 28, 29),
+                    new Month('Pharast', 3, 0, 31),
+                    new Month('Gozran', 4, 0, 30),
+                    new Month('Desnus', 5, 0, 31),
+                    new Month('Sarenith', 6, 0, 30),
+                    new Month('Erastus', 7, 0, 31),
+                    new Month('Arodus', 8, 0, 31),
+                    new Month('Rova', 9, 0, 30),
+                    new Month('Lamashan', 10, 0, 31),
+                    new Month('Neth', 11, 0, 30),
+                    new Month('Kuthona', 12, 0, 31)
+                ];
+                (<Year>this.object).showWeekdayHeadings = true;
+                (<Year>this.object).firstWeekday = 6;
+                (<Year>this.object).weekdays = [
+                    new Weekday(1, 'Moonday'),
+                    new Weekday(2, 'Toilday'),
+                    new Weekday(3, 'Wealday'),
+                    new Weekday(4, 'Oathday'),
+                    new Weekday(5, 'Fireday'),
+                    new Weekday(6, 'Starday'),
+                    new Weekday(7, 'Sunday')
+                ];
+                (<Year>this.object).seasons = [
+                    new Season('Spring', 3, 1),
+                    new Season('Summer', 6, 1),
+                    new Season('Fall', 9, 1),
+                    new Season('Winter', 12, 1)
+                ];
+                (<Year>this.object).time.hoursInDay = 24;
+                (<Year>this.object).time.minutesInHour = 60;
+                (<Year>this.object).time.secondsInMinute = 60;
+                (<Year>this.object).time.gameTimeRatio = 1;
+                (<Year>this.object).leapYearRule.rule = LeapYearRules.Gregorian;
+                (<Year>this.object).leapYearRule.customMod = 0;
                 (<Year>this.object).months[0].current = true;
                 (<Year>this.object).months[0].days[0].current = true;
                 (<Year>this.object).seasons[0].color = "#fffce8";
@@ -1077,10 +1155,28 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>value;
             } else if(id === 'scShowClock'){
                 (<Year>this.object).generalSettings.showClock = checked;
-            } else if(id === 'scPlayersAddNotes'){
-                (<Year>this.object).generalSettings.playersAddNotes = checked;
-            } else if(id === 'scPlayersReorderNotes'){
-                (<Year>this.object).generalSettings.playersReorderNotes = checked;
+            } else if(id === 'scPF2ESync'){
+                (<Year>this.object).generalSettings.pf2eSync = checked;
+            }
+            //Permission Settings
+            else if(id === 'scCalendarVisibleP'){
+                (<Year>this.object).generalSettings.permissions.viewCalendar.player = checked;
+            } else if(id === 'scCalendarVisibleTP'){
+                (<Year>this.object).generalSettings.permissions.viewCalendar.trustedPlayer = checked;
+            } else if(id === 'scCalendarVisibleAGM'){
+                (<Year>this.object).generalSettings.permissions.viewCalendar.assistantGameMaster = checked;
+            } else if(id === 'scAddNotesP'){
+                (<Year>this.object).generalSettings.permissions.addNotes.player = checked;
+            } else if(id === 'scAddNotesTP'){
+                (<Year>this.object).generalSettings.permissions.addNotes.trustedPlayer = checked;
+            } else if(id === 'scAddNotesAGM'){
+                (<Year>this.object).generalSettings.permissions.addNotes.assistantGameMaster = checked;
+            } else if(id === 'scChangeDateTimeP'){
+                (<Year>this.object).generalSettings.permissions.changeDateTime.player = checked;
+            } else if(id === 'scChangeDateTimeTP'){
+                (<Year>this.object).generalSettings.permissions.changeDateTime.trustedPlayer = checked;
+            } else if(id === 'scChangeDateTimeAGM'){
+                (<Year>this.object).generalSettings.permissions.changeDateTime.assistantGameMaster = checked;
             }
             //Year Setting Inputs
             else if(id === "scCurrentYear"){

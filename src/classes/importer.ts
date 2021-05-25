@@ -2,7 +2,7 @@ import Year from "./year";
 import {AboutTimeImport, CalendarWeatherImport} from "../interfaces";
 import {Weekday} from "./weekday";
 import Month from "./month";
-import {LeapYearRules} from "../constants";
+import {GameSystems, LeapYearRules} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
@@ -114,6 +114,10 @@ export default class Importer{
         }
         //@ts-ignore
         game.Gametime.DTC.saveUserCalendar(newAboutTimeConfig);
+        // Set the about-time timeZeroOffset to an empty string as it doesn't need to be set to anything, unless this is a PF2E game then don't set
+        if(year.gameSystem !== GameSystems.PF2E){
+            await game.settings.set("about-time", "timeZeroOffset", '');
+        }
 
         // Ensure about time uses the new calendar on startup
         if (game.settings.get("about-time", "calendar") !== 0){

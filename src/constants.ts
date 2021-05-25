@@ -60,7 +60,9 @@ export enum LeapYearRules {
 export enum SocketTypes {
     primary = 'primary',
     time = 'time',
-    journal = 'journal'
+    journal = 'journal',
+    dateTime = 'date-time',
+    date = 'date'
 }
 
 /**
@@ -112,6 +114,17 @@ export enum MoonYearResetOptions {
     None = 'none',
     LeapYear = 'leap-year',
     XYears = 'x-years'
+}
+
+/**
+ * Common Game Systems that can be used for system specific integrations
+ */
+export enum GameSystems {
+    DnD5E ='dnd5e',
+    PF1E = 'pf1',
+    PF2E = 'pf2e',
+    WarhammerFantasy4E = 'wfrp4e',
+    Other = 'other'
 }
 
 export enum SimpleCalendarHooks {

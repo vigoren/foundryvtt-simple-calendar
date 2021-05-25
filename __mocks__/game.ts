@@ -61,7 +61,7 @@ const game = {
                 case SettingNames.Notes:
                     return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false, id: 'abc123'}]];
                 case SettingNames.GeneralConfiguration:
-                    return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, playersAddNotes: false, playersReorderNotes: false}
+                    return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}
                 case SettingNames.TimeConfiguration:
                     return {hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3};
                 case SettingNames.SeasonConfiguration:
@@ -99,9 +99,15 @@ const game = {
         get: jest.fn(),
         find: jest.fn((v)=>{
             return v.call(undefined, {isGM: false, active: true});
+        }),
+        forEach: jest.fn((v)=>{
+            return v.call(undefined, user)
         })
     },
-    scenes: null
+    scenes: null,
+    system: {
+        id: ''
+    }
 };
 
 // @ts-ignore

@@ -39,6 +39,58 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.GameWorldTimeHelp'}}</p>
                 </div>
+                {{#if (eq currentYear.gameSystem 'pf2e')}}
+                <div class="form-group">
+                    <label for="scPF2ESync">{{localize 'FSC.Configuration.General.PF2ESync'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.generalSettings.pf2eSync}}" type="checkbox" id="scPF2ESync" {{checkedcurrentYear.generalSettings.pf2eSync}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.PF2ESyncHelp'}}</p>
+                </div>
+                {{/if}}
+            </div>
+            <div class="settings-group">
+                <h2>{{localize 'Permissions'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#permissions" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <p class="notes">{{localize 'FSC.Configuration.General.Permissions.Note'}}</p>
+                <header class="table-header flexrow">
+                    <label class="index">{{localize 'PERMISSION.Permission'}}</label>
+                    <label>{{localize 'USER.RolePlayer'}}</label>
+                    <label>{{localize 'USER.RoleTrusted'}}</label>
+                    <label>{{localize 'USER.RoleAssistant'}}</label>
+                    <label>{{localize 'USER.RoleGamemaster'}}</label>
+                </header>
+                <ul class="permissions-list">
+                    <li class="permission form-group">
+                        <label class="index">{{localize 'FSC.Configuration.General.CalendarPlayerVisible'}}</label>
+                        <div class="form-fields">
+                            <input type="checkbox" name="CalendarVisible.P" id="scCalendarVisibleP" {{checked currentYear.generalSettings.permissions.viewCalendar.player}} />
+                            <input type="checkbox" name="CalendarVisible.TP" id="scCalendarVisibleTP" {{checked currentYear.generalSettings.permissions.viewCalendar.trustedPlayer}} />
+                            <input type="checkbox" name="CalendarVisible.AGM" id="scCalendarVisibleAGM" {{checked currentYear.generalSettings.permissions.viewCalendar.assistantGameMaster}} />
+                            <input type="checkbox" name="CalendarVisible.GM" checked disabled />
+                        </div>
+                        <p class="hint">{{localize 'FSC.Configuration.General.CalendarPlayerVisibleHelp'}}</p>
+                    </li>
+                    <li class="permission form-group">
+                        <label class="index">{{localize 'FSC.Configuration.General.PlayerAddNotes'}}</label>
+                        <div class="form-fields">
+                            <input type="checkbox" name="AddNotes.P" id="scAddNotesP" {{checked currentYear.generalSettings.permissions.addNotes.player}} />
+                            <input type="checkbox" name="AddNotes.TP" id="scAddNotesTP" {{checked currentYear.generalSettings.permissions.addNotes.trustedPlayer}} />
+                            <input type="checkbox" name="AddNotes.AGM" id="scAddNotesAGM" {{checked currentYear.generalSettings.permissions.addNotes.assistantGameMaster}} />
+                            <input type="checkbox" name="AddNotes.GM" checked disabled />
+                        </div>
+                        <p class="hint">{{localize 'FSC.Configuration.General.PlayerAddNotesHelp'}}</p>
+                    </li>
+                    <li class="permission form-group">
+                        <label class="index">{{localize 'FSC.Configuration.General.PlayersChangeDateTime'}}</label>
+                        <div class="form-fields">
+                            <input type="checkbox" name="AddNotes.P" id="scChangeDateTimeP" {{checked currentYear.generalSettings.permissions.changeDateTime.player}} />
+                            <input type="checkbox" name="AddNotes.TP" id="scChangeDateTimeTP" {{checked currentYear.generalSettings.permissions.changeDateTime.trustedPlayer}} />
+                            <input type="checkbox" name="AddNotes.AGM" id="scChangeDateTimeAGM" {{checked currentYear.generalSettings.permissions.changeDateTime.assistantGameMaster}} />
+                            <input type="checkbox" name="AddNotes.GM" checked disabled />
+                        </div>
+                        <p class="hint">{{localize 'FSC.Configuration.General.PlayersChangeDateTimeHelp'}}</p>
+                    </li>
+                </ul>
             </div>
             {{#if (or importing.showCalendarWeather importing.showAboutTime)}}
             <div class="settings-group">
@@ -71,7 +123,7 @@
                 <div class="form-group">
                     <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
                     <div class="form-fields">
-                        <input value="{{defaultPlayerNoteVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{#if defaultPlayerNoteVisibility}}checked="checked"{{/if}} />
+                        <input value="{{defaultPlayerNoteVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{checked defaultPlayerNoteVisibility}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
                 </div>

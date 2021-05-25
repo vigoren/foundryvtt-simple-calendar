@@ -114,6 +114,19 @@ describe('Simple Calendar Configuration Tests', () => {
         expect(data.importing.showCalendarWeather).toBe(true);
         //@ts-ignore
         expect(data.importing.showAboutTime).toBe(true);
+
+        const orig = game.users;
+        //@ts-ignore
+        game.user.isGM = true;
+        data = SimpleCalendarConfiguration.instance.getData();
+        //@ts-ignore
+        expect(data.users).toStrictEqual({});
+        //@ts-ignore
+        game.users = false;
+        data = SimpleCalendarConfiguration.instance.getData();
+        //@ts-ignore
+        expect(data.users).toStrictEqual({});
+        game.users = orig;
     });
 
     test('Update Object', () => {
@@ -448,13 +461,21 @@ describe('Simple Calendar Configuration Tests', () => {
         expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(7);
         expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule).toBe(LeapYearRules.None);
 
-        select.value = 'golarian';
+        select.value = 'golarianpf1e';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
         SimpleCalendarConfiguration.instance.predefinedApplyConfirm();
         expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(4710);
         expect((<Year>SimpleCalendarConfiguration.instance.object).months.length).toBe(12);
         expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(7);
         expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule).toBe(LeapYearRules.Custom);
+
+        select.value = 'golarianpf2e';
+        jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
+        SimpleCalendarConfiguration.instance.predefinedApplyConfirm();
+        expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(4710);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).months.length).toBe(12);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(7);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule).toBe(LeapYearRules.Gregorian);
 
         select.value = 'greyhawk';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
@@ -518,17 +539,47 @@ describe('Simple Calendar Configuration Tests', () => {
         //@ts-ignore
         expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.showClock ).toBe(true);
 
-        (<HTMLInputElement>event.currentTarget).id = "scPlayersAddNotes";
+        (<HTMLInputElement>event.currentTarget).id = "scPF2ESync";
         (<HTMLInputElement>event.currentTarget).checked = true;
         SimpleCalendarConfiguration.instance.inputChange(event);
         //@ts-ignore
-        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.playersAddNotes ).toBe(true);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.pf2eSync ).toBe(true);
+    });
 
-        (<HTMLInputElement>event.currentTarget).id = "scPlayersReorderNotes";
+    test('Permission Input Change', () => {
+        const event = new Event('change');
+        (<HTMLInputElement>event.currentTarget).id = "scCalendarVisibleP";
         (<HTMLInputElement>event.currentTarget).checked = true;
+        (<HTMLInputElement>event.currentTarget).value = '';
+
         SimpleCalendarConfiguration.instance.inputChange(event);
-        //@ts-ignore
-        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.playersReorderNotes ).toBe(true);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.viewCalendar.player ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scCalendarVisibleTP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.viewCalendar.trustedPlayer ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scCalendarVisibleAGM";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.viewCalendar.assistantGameMaster ).toBe(true);
+
+        (<HTMLInputElement>event.currentTarget).id = "scAddNotesP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.addNotes.player ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scAddNotesTP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.addNotes.trustedPlayer ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scAddNotesAGM";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.addNotes.assistantGameMaster ).toBe(true);
+
+        (<HTMLInputElement>event.currentTarget).id = "scChangeDateTimeP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.changeDateTime.player ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scChangeDateTimeTP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.changeDateTime.trustedPlayer ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scChangeDateTimeAGM";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.changeDateTime.assistantGameMaster ).toBe(true);
     });
 
     test('Year Input Change', () => {

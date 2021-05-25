@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="current-date">
-            {{#if isGM}}
+            {{#if changeDateTime}}
             {{#if currentYear.showDateControls}}
             <a class="prev fa fa-angle-left" data-type="day"></a>
             {{/if}}
@@ -26,7 +26,7 @@
             <div class="date">
                 {{currentYear.selectedDayOfWeek}} {{currentYear.selectedDisplayMonth}} {{currentYear.selectedDisplayDay}}, {{currentYear.display}}
             </div>
-            {{#if isGM}}
+            {{#if changeDateTime}}
             {{#if currentYear.showDateControls}}
             <a class="next fa fa-angle-right" data-type="day"></a>
             {{/if}}
@@ -48,7 +48,7 @@
             {{/if}}
         </div>
         {{/if}}
-        {{#if isGM}}
+        {{#if changeDateTime}}
         {{#if currentYear.showTimeControls}}
         <div class="time-controls">
             <div class="selector" data-type="second" data-amount="1">{{localize 'FSC.One'}} {{localize 'FSC.SecondShorthand'}}</div>
@@ -143,7 +143,7 @@
                 {{/if}}
             </div>
         </div>
-        {{#if isGM}}
+        {{#if changeDateTime}}
         <div class="controls">
             {{#if (or currentYear.showTimeControls currentYear.showDateControls)}}
                 {{#if currentYear.showTimeControls}}
