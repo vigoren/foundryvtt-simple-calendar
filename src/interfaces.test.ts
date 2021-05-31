@@ -21,7 +21,7 @@ import {
     YearConfig,
     YearTemplate
 } from "./interfaces";
-import {GameSystems, LeapYearRules, MoonIcons, MoonYearResetOptions, SocketTypes} from "./constants";
+import {GameSystems, LeapYearRules, MoonIcons, MoonYearResetOptions, SocketTypes, YearNamingRules} from "./constants";
 
 describe('Interface Tests', () => {
     const tt: TimeTemplate = {hour: '', minute: '', second: ''};
@@ -65,7 +65,10 @@ describe('Interface Tests', () => {
         currentSeasonName: '',
         weeks: [],
         yearZero: 0,
-        gameSystem: GameSystems.Other
+        gameSystem: GameSystems.Other,
+        yearNames: [],
+        yearNamingRule: YearNamingRules.Default,
+        yearNamesStart: 0
     };
     const ct: CalendarTemplate = {
         isGM: false,
@@ -117,7 +120,7 @@ describe('Interface Tests', () => {
     });
 
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(22); //Make sure no new properties have been added
+        expect(Object.keys(yt).length).toBe(25); //Make sure no new properties have been added
         expect(yt.display).toBe('');
         expect(yt.selectedDisplayYear).toBe('');
         expect(yt.selectedDisplayMonth).toBe('');
@@ -140,6 +143,9 @@ describe('Interface Tests', () => {
         expect(yt.currentSeasonColor).toStrictEqual('');
         expect(yt.yearZero).toBe(0);
         expect(yt.gameSystem).toBe(GameSystems.Other);
+        expect(yt.yearNames).toStrictEqual([]);
+        expect(yt.yearNamingRule).toBe(YearNamingRules.Default);
+        expect(yt.yearNamesStart).toBe(0);
     });
 
     test('Calendar Template', () => {
@@ -160,14 +166,17 @@ describe('Interface Tests', () => {
     });
 
     test('Year Config', () => {
-        const yc: YearConfig = {postfix: '', prefix: '', numericRepresentation: 0, showWeekdayHeadings: false, firstWeekday: 0, yearZero: 0};
-        expect(Object.keys(yc).length).toBe(6); //Make sure no new properties have been added
+        const yc: YearConfig = {postfix: '', prefix: '', numericRepresentation: 0, showWeekdayHeadings: false, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: YearNamingRules.Default, yearNamesStart: 0};
+        expect(Object.keys(yc).length).toBe(9); //Make sure no new properties have been added
         expect(yc.postfix).toBe('');
         expect(yc.prefix).toBe('');
         expect(yc.numericRepresentation).toBe(0);
         expect(yc.showWeekdayHeadings).toBe(false);
         expect(yc.firstWeekday).toBe(0);
         expect(yc.yearZero).toBe(0);
+        expect(yc.yearNames).toStrictEqual([]);
+        expect(yc.yearNamingRule).toBe(YearNamingRules.Default);
+        expect(yc.yearNamesStart).toBe(0);
     });
 
     test('Month Config', () => {

@@ -43,7 +43,7 @@
                 <div class="form-group">
                     <label for="scPF2ESync">{{localize 'FSC.Configuration.General.PF2ESync'}}</label>
                     <div class="form-fields">
-                        <input value="{{currentYear.generalSettings.pf2eSync}}" type="checkbox" id="scPF2ESync" {{checkedcurrentYear.generalSettings.pf2eSync}} />
+                        <input value="{{currentYear.generalSettings.pf2eSync}}" type="checkbox" id="scPF2ESync" {{checked currentYear.generalSettings.pf2eSync}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.PF2ESyncHelp'}}</p>
                 </div>
@@ -159,6 +159,48 @@
                         <input value="{{currentYear.yearZero}}" type="number" id="scYearZero" />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Year.YearZeroHelp'}}</p>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h2>{{localize 'FSC.Configuration.Year.YearNames'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label for="scYearNameBehaviour">{{localize 'FSC.Configuration.Year.YearNameBehaviour'}}</label>
+                    <div class="form-fields">
+                        <select id="scYearNameBehaviour">
+                            {{selectOptions yearNameBehaviourOptions selected=currentYear.yearNamingRule localize=true }}
+                        </select>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Year.YearNameBehaviourHelp'}}</p>
+                </div>
+                {{#if (or (eq currentYear.yearNamingRule 'default') (eq currentYear.yearNamingRule 'repeat' ))}}
+                <div class="form-group">
+                    <label for="scYearNamesStart">{{localize 'FSC.Configuration.Year.YearNamesStart'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.yearNamesStart}}" type="number" id="scYearNamesStart" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Year.YearNamesStartHelp'}}</p>
+                </div>
+                {{/if}}
+                <div class="f-table">
+                    <div class="row head">
+                        <div title="{{localize 'FSC.Configuration.Year.YearNameHelp'}}" style="min-width: 25%;">{{localize 'FSC.Configuration.Year.YearName'}}</div>
+                        <div style="min-width: 15%;"></div>
+                    </div>
+                    {{#each currentYear.yearNames}}
+                    <div class="row">
+                        <div style="min-width: 25%;">
+                            <input class="year-name" value="{{this}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Year.YearNameHelp'}}" />
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <button class="remove-year-name control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                <div class="table-actions">
+                    <button class="year-name-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Year.YearNameAdd'}}</button>
+                    <span class="spacer"></span>
+                    <button class="remove-year-name control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Year.YearNameRemove'}}</button>
                 </div>
             </div>
             <div class="settings-group">

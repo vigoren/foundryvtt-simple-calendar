@@ -270,6 +270,9 @@ describe('Simple Calendar Class Tests', () => {
                 "currentSeasonColor": "",
                 "currentSeasonName": "",
                 "weeks": [],
+                "yearNames": [],
+                "yearNamesStart": 0,
+                "yearNamingRule": "default",
                 "yearZero": 0
             },
             "showCurrentDay": false,

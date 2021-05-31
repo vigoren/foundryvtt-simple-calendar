@@ -1066,6 +1066,16 @@ export default class SimpleCalendar extends Application{
             if(yearData.hasOwnProperty('yearZero')){
                 this.currentYear.yearZero = yearData.yearZero;
             }
+
+            if(yearData.hasOwnProperty('yearNames')){
+                this.currentYear.yearNames = yearData.yearNames;
+            }
+            if(yearData.hasOwnProperty('yearNamingRule')){
+                this.currentYear.yearNamingRule = yearData.yearNamingRule;
+            }
+            if(yearData.hasOwnProperty('yearNamesStart')){
+                this.currentYear.yearNamesStart = yearData.yearNamesStart;
+            }
         } else {
             Logger.debug('No year configuration found, setting default year data.');
             this.currentYear = new Year(new Date().getFullYear());

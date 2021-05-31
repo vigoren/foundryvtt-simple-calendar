@@ -13,7 +13,7 @@ import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
 import {Logger} from "./logging";
-import {LeapYearRules, MoonIcons, MoonYearResetOptions} from "../constants";
+import {LeapYearRules, MoonIcons, MoonYearResetOptions, YearNamingRules} from "../constants";
 import Season from "./season";
 import Moon from "./moon";
 import SpyInstance = jest.SpyInstance;
@@ -147,8 +147,8 @@ describe('Simple Calendar Configuration Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendarConfiguration.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(30);
-        expect(onFunc).toHaveBeenCalledTimes(30);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(32);
+        expect(onFunc).toHaveBeenCalledTimes(32);
     });
 
     test('Rebase Month Numbers', () => {
@@ -250,6 +250,51 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.removeFromTable('weekday',event);
         expect(renderSpy).toHaveBeenCalledTimes(3);
         expect((<Year>SimpleCalendarConfiguration.instance.object).weekdays.length).toBe(0);
+    });
+
+    test('Add Year Name', () => {
+        const event = new Event('click');
+        const currentLength = (<Year>SimpleCalendarConfiguration.instance.object).yearNames.length;
+        SimpleCalendarConfiguration.instance.addToTable('year-name', event);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNames.length).toBe(currentLength + 1);
+    });
+
+    test('Remove Year Name', () => {
+        const event = new Event('click');
+        (<Year>SimpleCalendarConfiguration.instance.object).yearNames.push('Year Name 1');
+        (<Year>SimpleCalendarConfiguration.instance.object).yearNames.push('Year Name 2');
+        let currentLength = (<Year>SimpleCalendarConfiguration.instance.object).yearNames.length;
+        SimpleCalendarConfiguration.instance.removeFromTable('year-name',event);
+        expect(renderSpy).not.toHaveBeenCalled();
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNames.length).toBe(currentLength);
+
+        //Check for invalid index
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', 'a');
+        currentLength = (<Year>SimpleCalendarConfiguration.instance.object).yearNames.length;
+        SimpleCalendarConfiguration.instance.removeFromTable('year-name',event);
+        expect(renderSpy).not.toHaveBeenCalled();
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNames.length).toBe(currentLength);
+
+        //Check for index outside of season length
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', '12');
+        currentLength = (<Year>SimpleCalendarConfiguration.instance.object).yearNames.length;
+        SimpleCalendarConfiguration.instance.removeFromTable('year-name',event);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNames.length).toBe(currentLength);
+
+        //Check for valid index
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', '0');
+        currentLength = (<Year>SimpleCalendarConfiguration.instance.object).yearNames.length;
+        SimpleCalendarConfiguration.instance.removeFromTable('year-name',event);
+        expect(renderSpy).toHaveBeenCalledTimes(2);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNames.length).toBe(currentLength - 1);
+
+        //Check for removing all seasons
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', 'all');
+        SimpleCalendarConfiguration.instance.removeFromTable('year-name',event);
+        expect(renderSpy).toHaveBeenCalledTimes(3);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNames.length).toBe(0);
     });
 
     test('Add Season', () => {
@@ -616,6 +661,32 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLInputElement>event.currentTarget).value = '1970';
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).yearZero).toBe(1970);
+
+        //Year Name Behaviour
+        (<HTMLInputElement>event.currentTarget).id = "scYearNameBehaviour";
+        (<HTMLInputElement>event.currentTarget).value = 'random';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNamingRule).toBe(YearNamingRules.Random);
+
+        //Year Name Start - Invalid value
+        (<HTMLInputElement>event.currentTarget).id = "scYearNamesStart";
+        (<HTMLInputElement>event.currentTarget).value = 'asd';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNamesStart).toBe(0);
+        //Year Name Start - Valid value
+        (<HTMLInputElement>event.currentTarget).value = '1970';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNamesStart).toBe(1970);
+
+        // Year Name
+        (<Year>SimpleCalendarConfiguration.instance.object).yearNames.push('Name');
+        (<HTMLInputElement>event.currentTarget).id = "-asd";
+        (<HTMLInputElement>event.currentTarget).setAttribute('data-index', '0');
+        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'year-name');
+        (<HTMLInputElement>event.currentTarget).value = 'New Name';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).yearNames[0]).toBe('New Name');
+
 
         //Invalid ID
         (<HTMLInputElement>event.currentTarget).id = "asd";
