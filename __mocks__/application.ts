@@ -8,7 +8,11 @@ class Application {
                 hide: jest.fn(),
                 empty: jest.fn().mockReturnValue({
                     append: jest.fn()
-                })
+                }),
+                height: jest.fn().mockReturnValue(0),
+                width: jest.fn().mockReturnValue(0),
+                outerHeight: jest.fn().mockReturnValue(0),
+                outerWidth: jest.fn().mockReturnValue(0),
             })
         };
     }

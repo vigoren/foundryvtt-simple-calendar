@@ -12,7 +12,7 @@ import "../../__mocks__/hooks";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {GameSystems, GameWorldTimeIntegrations, LeapYearRules} from "../constants";
+import {GameSystems, GameWorldTimeIntegrations, LeapYearRules, YearNamingRules} from "../constants";
 import LeapYear from "./leap-year";
 import Season from "./season";
 import Moon from "./moon";
@@ -48,7 +48,7 @@ describe('Year Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(year).length).toBe(18); //Make sure no new properties have been added
+        expect(Object.keys(year).length).toBe(21); //Make sure no new properties have been added
         expect(year.months).toStrictEqual([]);
         expect(year.weekdays).toStrictEqual([]);
         expect(year.prefix).toBe("");
@@ -67,12 +67,15 @@ describe('Year Class Tests', () => {
         expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}  });
         expect(year.seasons).toStrictEqual([]);
         expect(year.gameSystem).toBe(GameSystems.Other);
+        expect(year.yearNames).toStrictEqual([]);
+        expect(year.yearNamesStart).toBe(0);
+        expect(year.yearNamingRule).toBe(YearNamingRules.Default);
     });
 
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(22); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(25); //Make sure no new properties have been added
         expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
         expect(t.display).toBe("0");
         expect(t.numericRepresentation).toBe(0);
@@ -95,6 +98,9 @@ describe('Year Class Tests', () => {
         expect(t.currentSeasonColor).toBe("");
         expect(t.currentSeasonName).toBe("");
         expect(t.gameSystem).toBe(GameSystems.Other);
+        expect(t.yearNames).toStrictEqual([]);
+        expect(t.yearNamesStart).toBe(0);
+        expect(t.yearNamingRule).toBe(YearNamingRules.Default);
 
         year.months.push(month);
         year.months[0].current = true;
@@ -182,6 +188,7 @@ describe('Year Class Tests', () => {
         year2.weekdays.push(new Weekday(1, 'S'));
         year2.seasons.push(new Season('S', 1, 1));
         year2.moons.push(new Moon('M',1))
+        year2.yearNames.push('Asd');
         expect(year2.clone()).toStrictEqual(year2);
     });
 
@@ -200,9 +207,13 @@ describe('Year Class Tests', () => {
 
     test('Get Display Name', () => {
         expect(year.getDisplayName()).toBe('0');
-        year.prefix = 'Pre ';
-        year.postfix = ' Post';
+        year.prefix = 'Pre';
+        year.postfix = 'Post';
         expect(year.getDisplayName()).toBe('Pre 0 Post');
+
+        year.yearNames.push('Name');
+        expect(year.getDisplayName()).toBe('Pre Name (0) Post');
+        expect(year.getDisplayName(true)).toBe('Pre Name (0) Post');
     });
 
     test('Get Current Month', () => {
@@ -770,6 +781,35 @@ describe('Year Class Tests', () => {
         data = year.getCurrentSeason();
         expect(data.name).toBe('Spring');
         expect(data.color).toBe('#ffffff');
+    });
+
+    test('Get Year Name', () => {
+
+        expect(year.getYearName()).toBe('');
+
+        year.visibleYear = 1;
+        year.selectedYear = 2;
+        year.yearNames.push('First Year');
+        year.yearNames.push('Second Year');
+        year.yearNames.push('Third Year');
+        year.yearNamesStart = 0;
+        expect(year.getYearName()).toBe('First Year');
+        expect(year.getYearName('visible')).toBe('Second Year');
+        expect(year.getYearName('selected')).toBe('Third Year');
+        year.selectedYear = 3;
+        expect(year.getYearName('selected')).toBe('Third Year');
+
+        year.yearNamingRule = YearNamingRules.Repeat;
+        expect(year.getYearName('selected')).toBe('First Year');
+
+        year.yearNamingRule = YearNamingRules.Random;
+        expect(year.getYearName('selected')).not.toBe('');
+
+    });
+
+    test('Random Hash', () => {
+        expect(year.randomHash('')).toBe(0);
+        expect(year.randomHash('asd')).not.toBe(0);
     });
 
 });

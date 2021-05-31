@@ -42,7 +42,12 @@ const config: webpack.Configuration = {
                 use: [
                     MiniCssExtractPlugin.loader,
                     // Translates CSS into CommonJS
-                    "css-loader",
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            url: (url: string, resourcePath: string) => {return url.indexOf('/systems') !== 0; }
+                        }
+                    },
                     // Compiles Sass to CSS
                     'sass-loader'
                 ],

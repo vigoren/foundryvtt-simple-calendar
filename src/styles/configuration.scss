@@ -27,6 +27,7 @@
         margin-bottom: -1px;
 
         background-color: #fafafa;
+        color: #292929;
       }
       &:hover{
         border-top-color: #782e22;
@@ -107,7 +108,7 @@
     }
 
     .form-group{
-      margin: 0.75rem 0;
+      margin: .75rem 0 0.5rem;
       border-bottom: 1px solid #9e9c9c;
       &:last-child{
         border-width: 0;
@@ -115,6 +116,11 @@
 
       label{
         font-weight: 600;
+        text-align: unset;
+        border-width: 0;
+        background-color: unset;
+        color: #191813;
+        padding-left: 0;
       }
 
       .form-fields{

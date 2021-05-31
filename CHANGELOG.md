@@ -1,5 +1,29 @@
 # Change Log
 
+## v1.2.63 - Year Names, Bug Fixing & Foundry 0.8.6 Support
+
+### Year Names
+
+You can now have named years in Simple Calendar! This update adds several options for adding and configuring how named years work.
+
+Setting|Description
+-------|-----------
+Year Names | This is a list of different names that can be used for the years.
+Year Name Behaviour|This drop down is used to determine how the year names are applied to years. The options are:<br/><strong>Default:</strong> The year list starts at the specified starting year and goes down the list for each subsequent year. If the year is past the number of names in the list it will continue to use the last name from the list.<br/><br/><strong>Repeat</strong>: The year list starts at the specified starting year and goes down the list for each subsequent year. When the current year is past the name list length it will start again at the top of the list and repeat it forever.<br/><br/><strong>Random</strong>: For every year a random name from the list will be chosen. The calendar will do its best to keep the same name for a year.
+Starting Year For Names | This is the year that the first name in the list of Year Names is associated with.<br/>This option only appears if the Year Name Behaviour setting is set to None or Repeat.
+
+The Dark Sun predefined calendar has been updated to include named years that match the Merchant Calendar for that game system.
+
+### Bug Fixing
+
+- Adjusted the calendar's auto height and width calculations to work better for more systems.
+- Added some specific styles to better support the Warhammer Fantasy Roleplay 4th Edition system.
+- Updated the styling of the configuration dialog so that it is more consistent across different systems.
+- Changed the "Include Intercalary Month In Total Day Count" month setting so that it is hidden under the advanced setting area for months instead of always showing if the "Intercalary Month" setting was checked. It will still only appear if the "Intercalary Month" setting is checked.
+- Fixed a bug where the Pathfinder 2E Sync option wouldn't stay checked (even though it was checked)
+- Fixed a bug where the year Postfix/Prefix would not include a space between them and the year number.
+- Ensured that Simple Calendar works with Foundry 0.8.6 and Foundry 0.7.10
+
 ## v1.2.55 - Improved PF2E Support, Permissions, Bug Fixes
 
 ### Improved Pathfinder 2E Support
