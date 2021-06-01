@@ -381,7 +381,10 @@ export class GameSettings {
                 postfix: year.postfix,
                 showWeekdayHeadings: year.showWeekdayHeadings,
                 firstWeekday: year.firstWeekday,
-                yearZero: year.yearZero
+                yearZero: year.yearZero,
+                yearNames: year.yearNames,
+                yearNamingRule: year.yearNamingRule,
+                yearNamesStart: year.yearNamesStart
             };
             if(JSON.stringify(currentYearConfig) !== JSON.stringify(yc)){
                 return game.settings.set(ModuleName, SettingNames.YearConfiguration, yc).then(() => { return true }); //Return true because if no error was thrown then the save was successful and we don't need the returned data.

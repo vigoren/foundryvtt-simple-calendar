@@ -3,7 +3,7 @@ import Year from "./year";
 import {GameSettings} from "./game-settings";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {GameWorldTimeIntegrations, LeapYearRules, MoonIcons, MoonYearResetOptions} from "../constants";
+import {GameWorldTimeIntegrations, LeapYearRules, MoonIcons, MoonYearResetOptions, YearNamingRules} from "../constants";
 import Importer from "./importer";
 import Season from "./season";
 import Moon from "./moon";
@@ -148,6 +148,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 'leap-year': 'FSC.Configuration.Moon.YearResetLeap',
                 'x-years': 'FSC.Configuration.Moon.YearResetX'
             },
+            yearNameBehaviourOptions: {
+                'default': 'Default',
+                'repeat': 'PLAYLIST.SoundRepeat',
+                'random': 'FSC.Random'
+            },
             users: <{[key: string]: string}>{},
         };
 
@@ -216,6 +221,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".remove-season").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'season'));
             (<JQuery>html).find(".remove-moon").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'moon'));
             (<JQuery>html).find(".remove-moon-phase").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'moon-phase'));
+            (<JQuery>html).find(".remove-year-name").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'year-name'));
 
             //Table Adds
             (<JQuery>html).find(".month-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'month'));
@@ -223,6 +229,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".season-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'season'));
             (<JQuery>html).find(".moon-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'moon'));
             (<JQuery>html).find(".moon-phase-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'moon-phase'));
+            (<JQuery>html).find(".year-name-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'year-name'));
 
             //Import Buttons
             (<JQuery>html).find("#scAboutTimeImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'about-time'));
@@ -272,7 +279,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public addToTable(setting: string, e: Event){
         e.preventDefault();
-        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase';
+        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name';
         switch (filteredSetting){
             case "month":
                 const newMonthNumber = (<Year>this.object).months.length + 1;
@@ -323,6 +330,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     }
                 }
                 break;
+            case "year-name":
+                (<Year>this.object).yearNames.push('New Named Year');
+                break;
         }
         this.updateApp();
     }
@@ -334,7 +344,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public removeFromTable(setting: string, e: Event){
         e.preventDefault();
-        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase';
+        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name';
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
         if(dataIndex && dataIndex !== 'all'){
             const index = parseInt(dataIndex);
@@ -379,6 +389,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                             }
                         }
                         break;
+                    case "year-name":
+                        if(index < (<Year>this.object).yearNames.length){
+                            (<Year>this.object).yearNames.splice(index, 1);
+                        }
+                        break;
                 }
                 this.updateApp();
             }
@@ -404,6 +419,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                             (<Year>this.object).moons[moonIndex].phases = [];
                         }
                     }
+                    break;
+                case "year-name":
+                    (<Year>this.object).yearNames = [];
                     break;
             }
             this.updateApp();
@@ -487,6 +505,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
+                (<Year>this.object).yearNamesStart = 0;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Default;
+                (<Year>this.object).yearNames = [];
                 break;
             case 'darksun':
                 (<Year>this.object).numericRepresentation = 1;
@@ -575,6 +596,87 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
+                (<Year>this.object).yearNamesStart = -101;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Repeat;
+                (<Year>this.object).yearNames = [
+                    "Ral's Fury",
+                    "Friend's Contemplation",
+                    "Desert's Vengeance",
+                    "Priest's Slumber",
+                    "Wind's Defiance",
+                    "Dragon's Reverance",
+                    "Mountain's Agitation",
+                    "King's Fury",
+                    "Silt's Contemplation",
+                    "Enemy's Vengeance",
+                    "Guthay's Slumber",
+                    "Ral's Defiance",
+                    "Friend's Reverance",
+                    "Desert's Agitation",
+                    "Priest's Fury",
+                    "Wind's Contemplation",
+                    "Dragon's Vengeance",
+                    "Mountain's Slumber",
+                    "King's Defiance",
+                    "Silt's Reverance",
+                    "Enemy's Agitation",
+                    "Guthay's Fury",
+                    "Ral's Contemplation",
+                    "Friend's Vengeance",
+                    "Desert's Slumber",
+                    "Priest's Defiance",
+                    "Wind's Reverance",
+                    "Dragon's Agitation",
+                    "Mountain's Fury",
+                    "King's Contemplation",
+                    "Silt's Vengeance",
+                    "Enemy's Slumber",
+                    "Guthay's Defiance",
+                    "Ral's Reverance",
+                    "Friend's Agitation",
+                    "Desert's Fury",
+                    "Priest's Contemplation",
+                    "Wind's Vengeance",
+                    "Dragon's Slumber",
+                    "Mountain's Defiance",
+                    "King's Reverance",
+                    "Silt's Agitation",
+                    "Enemy's Fury",
+                    "Guthay's Contemplation",
+                    "Ral's Vengeance",
+                    "Friend's Slumber",
+                    "Desert's Defiance",
+                    "Priest's Reverance",
+                    "Wind's Agitation",
+                    "Dragon's Fury",
+                    "Mountain's Contemplation",
+                    "King's Vengeance",
+                    "Silt's Slumber",
+                    "Enemy's Defiance",
+                    "Guthay's Reverance",
+                    "Ral's Agitation",
+                    "Friend's Fury",
+                    "Desert's Contemplation",
+                    "Priest's Vengeance",
+                    "Wind's Slumber",
+                    "Dragon's Defiance",
+                    "Mountain's Reverance",
+                    "King's Agitation",
+                    "Silt's Fury",
+                    "Enemy's Contemplation",
+                    "Guthay's Vengeance",
+                    "Ral's Slumber",
+                    "Friend's Defiance",
+                    "Desert's Reverance",
+                    "Priest's Agitation",
+                    "Wind's Fury",
+                    "Dragon's Contemplation",
+                    "Mountain's Vengeance",
+                    "King's Slumber",
+                    "Silt's Defiance",
+                    "Enemy's Reverance",
+                    "Guthay's Agitation"
+                ];
                 break;
             case 'eberron':
                 (<Year>this.object).numericRepresentation = 998;
@@ -616,6 +718,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).months[0].current = true;
                 (<Year>this.object).months[0].days[0].current = true;
                 (<Year>this.object).moons = []; //TODO: Maybe add all 12 moons?
+                (<Year>this.object).yearNamesStart = 0;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Default;
+                (<Year>this.object).yearNames = [];
                 break;
             case 'exandrian':
                 (<Year>this.object).numericRepresentation = 812;
@@ -699,6 +804,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
+                (<Year>this.object).yearNamesStart = 0;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Default;
+                (<Year>this.object).yearNames = [];
                 break;
             case 'golarianpf1e':
                 (<Year>this.object).numericRepresentation = 4710;
@@ -767,6 +875,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
+                (<Year>this.object).yearNamesStart = 0;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Default;
+                (<Year>this.object).yearNames = [];
                 break;
             case 'golarianpf2e':
                 (<Year>this.object).numericRepresentation = 4710;
@@ -835,6 +946,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
+                (<Year>this.object).yearNamesStart = 0;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Default;
+                (<Year>this.object).yearNames = [];
                 break;
             case 'greyhawk':
                 (<Year>this.object).numericRepresentation = 591 ;
@@ -929,6 +1043,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
+                (<Year>this.object).yearNamesStart = 0;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Default;
+                (<Year>this.object).yearNames = [];
                 break;
             case 'harptos':
                 (<Year>this.object).numericRepresentation = 1495;
@@ -1012,6 +1129,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
+                (<Year>this.object).yearNamesStart = 0;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Default;
+                (<Year>this.object).yearNames = [];
                 break;
             case 'traveller-ic':
                 (<Year>this.object).numericRepresentation = 1000;
@@ -1044,6 +1164,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).months[0].current = true;
                 (<Year>this.object).months[0].days[0].current = true;
                 (<Year>this.object).moons = [];
+                (<Year>this.object).yearNamesStart = 0;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Default;
+                (<Year>this.object).yearNames = [];
                 break;
             case 'warhammer':
                 (<Year>this.object).numericRepresentation = 2522;
@@ -1124,6 +1247,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
+                (<Year>this.object).yearNamesStart = 0;
+                (<Year>this.object).yearNamingRule = YearNamingRules.Default;
+                (<Year>this.object).yearNames = [];
                 break;
         }
         this.yearChanged = true;
@@ -1200,6 +1326,13 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 if(!isNaN(year)){
                     (<Year>this.object).yearZero = year;
                 }
+            } else if(id === 'scYearNameBehaviour'){
+                (<Year>this.object).yearNamingRule =  <YearNamingRules>value;
+            } else if(id === 'scYearNamesStart'){
+                const year = parseInt(value);
+                if(!isNaN(year)){
+                    (<Year>this.object).yearNamesStart = year;
+                }
             }
             //Weekday Setting Inputs
             else if(id === 'scShowWeekdayHeaders'){
@@ -1250,8 +1383,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 const index = parseInt(dataIndex);
                 Logger.debug(`Indexed item (${index}) changed.`);
                 if(!isNaN(index)){
+                    //Year Name Inputs
+                    if(cssClass === 'year-name' && (<Year>this.object).yearNames.length > index){
+                        (<Year>this.object).yearNames[index] = value;
+                    }
                     //Season Setting Inputs
-                    if(cssClass === 'season-name' && (<Year>this.object).seasons.length > index){
+                    else if(cssClass === 'season-name' && (<Year>this.object).seasons.length > index){
                         (<Year>this.object).seasons[index].name = value;
                     } else if(cssClass === 'season-custom' && (<Year>this.object).seasons.length > index){
                         if(value[0] !== "#"){

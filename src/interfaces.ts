@@ -7,7 +7,7 @@ import {
     GameWorldTimeIntegrations,
     SocketTypes,
     MoonIcons,
-    MoonYearResetOptions, GameSystems
+    MoonYearResetOptions, GameSystems, YearNamingRules
 } from "./constants";
 import {Note} from "./classes/note";
 import DateSelector from "./classes/date-selector";
@@ -104,6 +104,10 @@ export interface YearTemplate {
     currentSeasonColor: string;
 
     weeks: (boolean | DayTemplate)[][];
+
+    yearNames: string[];
+    yearNamesStart: number;
+    yearNamingRule: YearNamingRules;
 }
 
 /**
@@ -116,6 +120,9 @@ export interface YearConfig {
     showWeekdayHeadings: boolean;
     firstWeekday: number;
     yearZero: number;
+    yearNames: string[];
+    yearNamesStart: number;
+    yearNamingRule: YearNamingRules
 }
 
 /**

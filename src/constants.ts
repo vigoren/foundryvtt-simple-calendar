@@ -55,6 +55,15 @@ export enum LeapYearRules {
 }
 
 /**
+ * The different rules used for determening how to name years
+ */
+export enum YearNamingRules{
+    Default = 'default',
+    Repeat = 'repeat',
+    Random = 'random'
+}
+
+/**
  * The different types of information we send over our socket
  */
 export enum SocketTypes {

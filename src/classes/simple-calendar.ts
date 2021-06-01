@@ -368,8 +368,29 @@ export default class SimpleCalendar extends Application{
         if(this.hasBeenResized){
             return;
         }
-        let height = 0;
-        let width = 0;
+        let height = 1;
+        let width = 1;
+
+        // Get the height of the header and adjust by that amount
+        const header = (<JQuery>this.element).find('.window-header');
+        if(header){
+            const h = header.outerHeight(true);
+            height += h? h : 32;
+        } else {
+            height += 32;
+        }
+
+        // Get the width and height of the border, margins and padding of the content area to be added
+        const contentArea = (<JQuery>this.element).find('.window-content');
+        if(contentArea){
+            const h = contentArea.height();
+            const oh = contentArea.outerHeight(true);
+            height += (h && oh)? oh - h : 0;
+            const w = contentArea.width();
+            const ow = contentArea.outerWidth(true);
+            width += (w && ow)? ow - w : 0;
+        }
+
         if(this.compactView){
             if(this.currentYear){
                 let weekDayNameLength = 0, monthNameLength = 0, yearNameLength;
@@ -429,7 +450,6 @@ export default class SimpleCalendar extends Application{
             if(width < 250){
                 width = 250;
             }
-            height += 32; // For application header
         } else {
             const calendar = (<JQuery>html).find('.calendar-row .calendar-display');
             const controls = (<JQuery>html).find('.calendar-row .controls');
@@ -1061,6 +1081,16 @@ export default class SimpleCalendar extends Application{
             // Check to see if a year 0 has been set in the settings and use that
             if(yearData.hasOwnProperty('yearZero')){
                 this.currentYear.yearZero = yearData.yearZero;
+            }
+
+            if(yearData.hasOwnProperty('yearNames')){
+                this.currentYear.yearNames = yearData.yearNames;
+            }
+            if(yearData.hasOwnProperty('yearNamingRule')){
+                this.currentYear.yearNamingRule = yearData.yearNamingRule;
+            }
+            if(yearData.hasOwnProperty('yearNamesStart')){
+                this.currentYear.yearNamesStart = yearData.yearNamesStart;
             }
         } else {
             Logger.debug('No year configuration found, setting default year data.');

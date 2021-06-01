@@ -4,7 +4,7 @@ import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
 import Time from "./time";
-import {GameSystems, GameWorldTimeIntegrations} from "../constants";
+import {GameSystems, GameWorldTimeIntegrations, YearNamingRules} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
@@ -115,6 +115,12 @@ export default class Year {
      */
     moons: Moon[] =[];
 
+    yearNames: string[] = [];
+
+    yearNamesStart: number = 0;
+
+    yearNamingRule: YearNamingRules = YearNamingRules.Default;
+
     /**
      * The Year constructor
      * @param {number} numericRepresentation The numeric representation of this year
@@ -190,7 +196,6 @@ export default class Year {
         if(visibleMonth){
             weeks = this.daysIntoWeeks(visibleMonth, this.visibleYear, this.weekdays.length);
         }
-
         return {
             gameSystem: this.gameSystem,
             display: this.getDisplayName(),
@@ -213,7 +218,10 @@ export default class Year {
             currentTime: this.time.getCurrentTime(),
             currentSeasonName: currentSeason.name,
             currentSeasonColor: currentSeason.color,
-            weeks: weeks
+            weeks: weeks,
+            yearNames: this.yearNames,
+            yearNamesStart: this.yearNamesStart,
+            yearNamingRule: this.yearNamingRule
         }
     }
 
@@ -290,6 +298,9 @@ export default class Year {
         y.generalSettings.permissions.reorderNotes = Year.clonePermissions(this.generalSettings.permissions.reorderNotes);
         y.seasons = this.seasons.map(s => s.clone());
         y.moons = this.moons.map(m => m.clone());
+        y.yearNames = this.yearNames.map(n => n);
+        y.yearNamesStart = this.yearNamesStart;
+        y.yearNamingRule = this.yearNamingRule;
         return y;
     }
 
@@ -325,11 +336,14 @@ export default class Year {
      * @returns {string}
      */
     getDisplayName(selected: boolean = false): string {
-        if(selected){
-            return `${this.prefix}${this.selectedYear.toString()}${this.postfix}`;
+        let dispName;
+        const yearName = this.getYearName(selected? 'selected' : 'visible');
+        if(yearName){
+            dispName = `${this.prefix} ${yearName} (${selected?this.selectedYear.toString():this.visibleYear.toString()}) ${this.postfix}`;
         } else {
-            return `${this.prefix}${this.visibleYear.toString()}${this.postfix}`;
+            dispName = `${this.prefix !== '' ?this.prefix + ' ' : ''}${selected?this.selectedYear.toString():this.visibleYear.toString()}${this.postfix !== '' ? ' ' + this.postfix : ''}`;
         }
+        return dispName;
     }
 
     /**
@@ -809,5 +823,50 @@ export default class Year {
             name: '',
             color: ''
         };
+    }
+
+    /**
+     * Get the name of the current year
+     * @param {string} setting The setting of the year to get, defaults to the current year
+     */
+    getYearName(setting: string = 'current'): string{
+        setting = setting.toLowerCase() as 'current' | 'selected' | 'visible';
+        const yearToUse = setting === 'current'? this.numericRepresentation : setting === 'selected'? this.selectedYear : this.visibleYear;
+        let name = '';
+        if(this.yearNames.length){
+            let nameIndex = 0;
+            if(this.yearNamingRule === YearNamingRules.Repeat){
+                nameIndex = (((yearToUse - this.yearNamesStart) % this.yearNames.length) + this.yearNames.length) % this.yearNames.length;
+            } else if(this.yearNamingRule === YearNamingRules.Random){
+                const yearHash = this.randomHash(`${yearToUse}-AbCxYz`);
+                nameIndex = (((yearHash - this.yearNamesStart) % this.yearNames.length) + this.yearNames.length) % this.yearNames.length;
+            } else {
+                nameIndex = Math.abs(this.yearNamesStart - yearToUse);
+                if(nameIndex >= this.yearNames.length){
+                    nameIndex = this.yearNames.length - 1;
+                }
+            }
+            name = this.yearNames[nameIndex];
+        }
+
+        return name;
+    }
+
+    /**
+     * Generates a random numeric value based on the passed in string.
+     * @param {string} value The string to hash
+     * @return {number} The number representing the hash value
+     */
+    randomHash(value: string) {
+        var hash = 0;
+        if (value.length == 0) {
+            return hash;
+        }
+        for (var i = 0; i < value.length; i++) {
+            var char = value.charCodeAt(i);
+            hash = ((hash<<5)-hash)+char;
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        return hash;
     }
 }
