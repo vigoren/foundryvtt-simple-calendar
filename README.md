@@ -52,15 +52,17 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 
 ## Contents
 
-- [Installation](#installing-the-module)
-- [Compatible Modules](#compatible-modules)
-- [Accessing and using the calendar](./docs/UsingTheCalendar.md)
-- [Changing the date and time](./docs/UpdatingDateTime.md)
-- [Notes](./docs/Notes.md)
-- [Configuring your Calendar](./docs/Configuration.md)
-- [Macros](./docs/Macros.md)
-- [Hooks](./docs/Hooks.md)
-- [Translations](#translations)
+- [Simple Calendar](#simple-calendar)
+  - [Features](#features)
+    - [For GMs](#for-gms)
+    - [For Players](#for-players)
+  - [Contents](#contents)
+  - [Installing The Module](#installing-the-module)
+    - [module.json](#modulejson)
+    - [Zip File](#zip-file)
+  - [Compatible Modules](#compatible-modules)
+  - [Translations](#translations)
+  - [Credits](#credits)
 
 ## Installing The Module
 
@@ -91,7 +93,7 @@ Language|Translator(s)
 --------|----------
 German (de)|[MasterZelgadis](https://github.com/MasterZelgadis)
 Traditional Chinese (zh)|[benwater12](https://github.com/benwater12)
-
+Spanish (es)|[areymoreno](https://github.com/areymoreno)
 
 If your language is missing from the list, and you would like to help translate Simple Calendar please follow these steps:
 

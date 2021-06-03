@@ -43,6 +43,11 @@
       "lang": "zh-tw",
       "name": "正體中文",
       "path": "lang/zh-tw.json"
+    },
+    {
+      "lang": "es",
+      "name": "Spanish",
+      "path": "lang/es.json"
     }
   ],
   "socket": true,
