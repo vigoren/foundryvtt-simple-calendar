@@ -153,6 +153,7 @@ export class Note{
         return {
             title: this.title,
             content: this.content,
+            playerVisible: this.playerVisible,
             author: this.author,
             authorDisplay: authDisplay,
             monthDisplay: this.monthDisplay,

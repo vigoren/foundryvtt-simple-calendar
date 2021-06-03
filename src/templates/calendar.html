@@ -67,12 +67,23 @@
                 <div class="note-details-wrapper">
                     <h3 class="note-title">{{title}}</h3>
                     <div class="note-details">
-                        <div class="note-time note-category">
-                            {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+                        {{#if ../isGM}}
+                        {{#if playerVisible}}
+                        <div class="note-category" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.PlayerVisible'}}">
+                            <span class="fa fa-eye"></span>
+                        </div>
+                        {{else}}
+                        <div class="note-category" style="color:#ffffff;background-color:#922121" title="{{localize 'FSC.Notes.NotPlayerVisible'}}">
+                            <span class="fa fa-eye-slash"></span>
+                        </div>
+                        {{/if}}
+                        {{/if}}
+                        <div class="note-time note-category" title="{{localize 'FSC.Notes.Time'}}">
+                            <span class="fa fa-clock"></span>  {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
                         </div>
                         {{#if authorDisplay}}
-                        <div class="note-category" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
-                            {{authorDisplay.name}}
+                        <div class="note-category" title="{{localize 'FSC.Notes.Author'}}" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
+                            <span class="fa fa-pencil-alt"></span> {{authorDisplay.name}}
                         </div>
                         {{/if}}
                         {{#each categories}}
@@ -231,12 +242,23 @@
                 <div class="note-details-wrapper">
                     <h3 class="note-title">{{title}}</h3>
                     <div class="note-details">
-                        <div class="note-time note-category">
-                            {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+                        {{#if ../isGM}}
+                        {{#if playerVisible}}
+                        <div class="note-category" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.PlayerVisible'}}">
+                            <span class="fa fa-eye"></span>
+                        </div>
+                        {{else}}
+                        <div class="note-category" style="color:#ffffff;background-color:#922121" title="{{localize 'FSC.Notes.NotPlayerVisible'}}">
+                            <span class="fa fa-eye-slash"></span>
+                        </div>
+                        {{/if}}
+                        {{/if}}
+                        <div class="note-time note-category" title="{{localize 'FSC.Notes.Time'}}">
+                            <span class="fa fa-clock"></span>  {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
                         </div>
                         {{#if authorDisplay}}
-                        <div class="note-category" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
-                            {{authorDisplay.name}}
+                        <div class="note-category" title="{{localize 'FSC.Notes.Author'}}" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
+                            <span class="fa fa-pencil-alt"></span> {{authorDisplay.name}}
                         </div>
                         {{/if}}
                         {{#each categories}}

@@ -193,6 +193,7 @@ export interface CurrentDateConfig {
 export interface NoteTemplate {
     title: string;
     content: string;
+    playerVisible: boolean;
     author: string;
     authorDisplay: any | null;
     monthDisplay: string;
