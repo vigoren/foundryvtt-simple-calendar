@@ -278,7 +278,7 @@
     display: block;
     .note-title{
       margin: 0 0 0.5rem;
-      font-size: 1.15rem;
+      font-size: 1.25rem;
     }
 
     .note-details{
@@ -298,6 +298,16 @@
         margin-right: 5px;
         margin-bottom: 5px;
         box-shadow: 1px 2px 5px #6b6b6b;
+
+        span{
+          margin-right: 0.15rem;
+        }
+      }
+
+      .note-icon{
+        span{
+          margin-right: 0;
+        }
       }
     }
 

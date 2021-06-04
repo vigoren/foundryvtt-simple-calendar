@@ -154,7 +154,7 @@ export default class DateSelector {
                 endingMonthName = endingMonth.name;
             }
 
-            if(!DateSelector.DateTheSame(startDate, endDate)){
+            if(!DateSelector.DateTheSame(startDate, endDate) && endDate.month !== 0 && endDate.day !== 0){
                 startDateTimeText += `${startingMonthName} ${startDate.day}`;
                 endDateTimeText += `${endingMonthName} ${endDate.day}`;
                 if(!dontIncludeSameDate || (dontIncludeSameDate && startDate.year !== endDate.year)){

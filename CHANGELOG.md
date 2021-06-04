@@ -20,11 +20,13 @@ This update is mainly around notes and improving the experience around adding, e
 #### Visual Changes
 
 - Refreshed the look of the note list.
+  - Added an indicator to the note list for GMs if the note is visible to the players or not.
+  - Added a label to the note list for the time the note takes place at.
+  - Added a label to the note list for who wrote the note.
 - Changed the dialog's behaviour so that it will attempt to size itself to fit the content of the note appropriately.
   
 ### Quality of Life Changes
 
-- Moved the "Show Clock" configuration setting from the general settings tab to the time settings tab.
 
 ### Bug Fixes
 
