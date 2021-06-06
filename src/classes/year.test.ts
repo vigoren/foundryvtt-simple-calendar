@@ -430,7 +430,7 @@ describe('Year Class Tests', () => {
         expect(year.months[0].current).toBe(false);
         expect(year.months[1].current).toBe(true);
         expect(year.months[1].visible).toBe(true);
-        expect(year.months[1].days[21].current).toBe(false);
+        expect(year.months[1].days[21].current).toBe(true);
 
         year.months[0].current = false;
         year.months[1].current = false;
@@ -603,6 +603,28 @@ describe('Year Class Tests', () => {
         expect(year.dateToDays(0,0,1)).toBe(-53);
     });
 
+    test('To Seconds', () => {
+
+        expect(year.toSeconds()).toBe(0);
+        year.months.push(month);
+        year.numericRepresentation = 1;
+        year.months[0].current = true;
+        year.months[0].days[0].current = true;
+        expect(year.toSeconds()).toBe(2592000);
+
+        year.gameSystem = GameSystems.PF2E;
+        expect(year.toSeconds()).toBe(2592000);
+        //@ts-ignore
+        game.pf2e = {worldClock:{dateTheme: "AD", worldCreatedOn: 0}};
+        expect(year.toSeconds()).toBe(-4857408000);
+        month.days[0].current = false;
+        expect(year.toSeconds()).toBe(-4857408000);
+        //@ts-ignore
+        game.pf2e.worldClock.dateTheme = "AR";
+        expect(year.toSeconds()).toBe(-67024627200);
+
+    });
+
     test('Sync Time', () => {
         //@ts-ignore
         game.time.advance.mockClear();
@@ -615,33 +637,18 @@ describe('Year Class Tests', () => {
         year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
         year.months.push(month);
         year.syncTime()
-        expect(game.time.advance).not.toHaveBeenCalled();
+        expect(game.time.advance).toHaveBeenCalledTimes(1);
 
         month.current = true;
         year.syncTime()
-        expect(game.time.advance).toHaveBeenCalledTimes(1);
-        month.days[0].current = true;
-        year.syncTime()
         expect(game.time.advance).toHaveBeenCalledTimes(2);
-
-        year.yearZero = 1;
+        month.days[0].current = true;
         year.syncTime()
         expect(game.time.advance).toHaveBeenCalledTimes(3);
 
-        year.gameSystem = GameSystems.PF2E;
-        year.syncTime();
+        year.yearZero = 1;
+        year.syncTime()
         expect(game.time.advance).toHaveBeenCalledTimes(4);
-        //@ts-ignore
-        game.pf2e = {worldClock:{dateTheme: "AD", worldCreatedOn: 0}};
-        year.syncTime();
-        expect(game.time.advance).toHaveBeenCalledTimes(5);
-        month.days[0].current = false;
-        year.syncTime();
-        expect(game.time.advance).toHaveBeenCalledTimes(6);
-        //@ts-ignore
-        game.pf2e.worldClock.dateTheme = "AR";
-        year.syncTime();
-        expect(game.time.advance).toHaveBeenCalledTimes(7);
     });
 
     test('Seconds To Date', () => {
@@ -660,6 +667,22 @@ describe('Year Class Tests', () => {
 
         year.yearZero = 1;
         expect(year.secondsToDate(-10)).toStrictEqual({year: 1, month: 0, day: 1, hour: 0, minute: 0, seconds: 10});
+    });
+
+    test('Seconds To Interval', () => {
+        year.months.push(month);
+        year.months.push(new Month("Test 2", 2, 0, 30, 30));
+        year.months.push(new Month("Test 3", 3, 0, 30, 30));
+        expect(year.secondsToInterval(6)).toStrictEqual({years: 0, months: 0, days: 0, hours: 0, minutes: 0, seconds: 6});
+        expect(year.secondsToInterval(66)).toStrictEqual({years: 0, months: 0, days: 0, hours: 0, minutes: 1, seconds: 6});
+        expect(year.secondsToInterval(3666)).toStrictEqual({years: 0, months: 0, days: 0, hours: 1, minutes: 1, seconds: 6});
+        expect(year.secondsToInterval(86400)).toStrictEqual({years: 0, months: 0, days: 1, hours: 0, minutes: 0, seconds: 0});
+        expect(year.secondsToInterval(2592000)).toStrictEqual({years: 0, months: 1, days: 0, hours: 0, minutes: 0, seconds: 0});
+        expect(year.secondsToInterval(7776000)).toStrictEqual({years: 1, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0});
+
+        expect(year.secondsToInterval(2505600)).toStrictEqual({years: 0, months: 0, days: 29, hours: 0, minutes: 0, seconds: 0});
+        expect(year.secondsToInterval(2591999)).toStrictEqual({years: 0, months: 0, days: 29, hours: 23, minutes: 59, seconds: 59});
+        expect(year.secondsToInterval(5184000)).toStrictEqual({years: 0, months: 2, days: 0, hours: 0, minutes: 0, seconds: 0});
     });
 
     test('Update Time', () => {
@@ -785,25 +808,21 @@ describe('Year Class Tests', () => {
 
     test('Get Year Name', () => {
 
-        expect(year.getYearName()).toBe('');
-
-        year.visibleYear = 1;
-        year.selectedYear = 2;
+        expect(year.getYearName(0)).toBe('');
         year.yearNames.push('First Year');
         year.yearNames.push('Second Year');
         year.yearNames.push('Third Year');
         year.yearNamesStart = 0;
-        expect(year.getYearName()).toBe('First Year');
-        expect(year.getYearName('visible')).toBe('Second Year');
-        expect(year.getYearName('selected')).toBe('Third Year');
-        year.selectedYear = 3;
-        expect(year.getYearName('selected')).toBe('Third Year');
+        expect(year.getYearName(0)).toBe('First Year');
+        expect(year.getYearName(1)).toBe('Second Year');
+        expect(year.getYearName(2)).toBe('Third Year');
+        expect(year.getYearName(3)).toBe('Third Year');
 
         year.yearNamingRule = YearNamingRules.Repeat;
-        expect(year.getYearName('selected')).toBe('First Year');
+        expect(year.getYearName(3)).toBe('First Year');
 
         year.yearNamingRule = YearNamingRules.Random;
-        expect(year.getYearName('selected')).not.toBe('');
+        expect(year.getYearName(4)).not.toBe('');
 
     });
 

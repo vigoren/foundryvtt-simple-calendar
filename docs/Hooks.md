@@ -16,6 +16,7 @@ The current hooks that are emitted are:
 Hook Name|Value|Description
 ---------|------|----------
 DateTimeChange|`"simple-calendar-date-time-change"`|This hook is emitted any time the current date is updated.
+ClockStartStop|`"simple-calendar-clock-start-stop"`|This hook is emitted any time the clock is started/stopped or paused.
 
 ## Date/Time Change
 
@@ -120,7 +121,7 @@ Hooks.on(SimpleCalendar.Hooks.DateTimeChange, (data) => {
 
 This is an example of the data that is passed with this hook:
 
-```javascript
+```json
 {
     "year": {
         "number": 2021,
@@ -161,5 +162,50 @@ This is an example of the data that is passed with this hook:
             }
         }
     ]
+}
+```
+## Clock Start/Stop
+
+### When it is emitted
+
+This event is emitted in the followin cases:
+
+- When the clock is started.
+- When the clock is stopped.
+- When the game is paused or unpaused.
+- When a combat is started or ended in the active scene
+- When a combat round is advanced.
+
+### What is passed
+
+When this hook is emitted it will pass a data object that contains the following properties:
+
+Property Name|Value Type|Description
+-------------|-------------|------------
+started|boolean|If the clock is started and running.
+stopped|boolean|If the clock is stopped and not running.
+paused|boolean|If the clock is paused. The clock is paused when the game is paused or there is an active combat running in the active scene.
+
+### Examples
+
+#### Hooking to
+
+This is an example of how to listen for the hook:
+
+```javascript
+Hooks.on(SimpleCalendar.Hooks.ClockStartStop, (data) => {
+    console.log(data);
+});
+```
+
+#### Response Data
+
+This is an example of the data that is passed with this hook:
+
+```json
+{
+  "started": false,
+  "stopped": true,
+  "paused": false
 }
 ```

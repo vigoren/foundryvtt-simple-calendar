@@ -41,24 +41,31 @@ describe('Hook Tests', () => {
         Hook.emit(SimpleCalendarHooks.DateTimeChange);
         expect(console.error).toHaveBeenCalledTimes(1);
 
+        Hook.emit(SimpleCalendarHooks.ClockStartStop);
+        expect(console.error).toHaveBeenCalledTimes(2);
+
         SimpleCalendar.instance.currentYear = y;
         Hook.emit(SimpleCalendarHooks.DateTimeChange);
-        expect(console.error).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(2);
         expect(Hooks.callAll).toHaveBeenCalledTimes(1);
 
         y.months[0].days[0].current = false;
         Hook.emit(SimpleCalendarHooks.DateTimeChange);
-        expect(console.error).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(2);
         expect(Hooks.callAll).toHaveBeenCalledTimes(2);
 
         y.months[0].current = false;
         Hook.emit(SimpleCalendarHooks.DateTimeChange);
-        expect(console.error).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(2);
         expect(Hooks.callAll).toHaveBeenCalledTimes(3);
+
+        Hook.emit(SimpleCalendarHooks.ClockStartStop);
+        expect(console.error).toHaveBeenCalledTimes(2);
+        expect(Hooks.callAll).toHaveBeenCalledTimes(4);
 
         //@ts-ignore
         Hook.emit('asd');
-        expect(console.error).toHaveBeenCalledTimes(1);
-        expect(Hooks.callAll).toHaveBeenCalledTimes(4);
+        expect(console.error).toHaveBeenCalledTimes(2);
+        expect(Hooks.callAll).toHaveBeenCalledTimes(5);
     });
 });

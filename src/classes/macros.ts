@@ -2,6 +2,7 @@ import {Logger} from "./logging";
 import SimpleCalendar from "./simple-calendar";
 import {GameSettings} from "./game-settings";
 import {SimpleCalendarSocket} from "../interfaces";
+import API from "./api";
 
 export default class Macros {
     /**
@@ -11,52 +12,11 @@ export default class Macros {
      * @param {number | null} [day=null] The day to set as selected, it not passed in what ever the users current selected day will be used
      */
     public static show(year: number | null = null, month: number | null = null, day: number | null = null){
-        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            if(year !== null){
-                year = parseInt(year.toString());
-                if(!isNaN(year)){
-                    SimpleCalendar.instance.currentYear.visibleYear = year;
-                } else {
-                    Logger.error('Invalid year was passed in.');
-                }
-            }
-            const isLeapYear = SimpleCalendar.instance.currentYear.leapYearRule.isLeapYear(SimpleCalendar.instance.currentYear.visibleYear);
-            if(month !== null){
-                month = parseInt(month.toString());
-                if(!isNaN(month)){
-                    if(month === -1 || month > SimpleCalendar.instance.currentYear.months.length){
-                        month = SimpleCalendar.instance.currentYear.months.length - 1;
-                    }
-                    SimpleCalendar.instance.currentYear.resetMonths('visible');
-                    SimpleCalendar.instance.currentYear.months[month].visible = true;
-                } else {
-                    Logger.error('Invalid month was passed in.');
-                }
-            }
-            if(day !== null){
-                day = parseInt(day.toString());
-                if(!isNaN(day)){
-                    const visibleMonth = SimpleCalendar.instance.currentYear.getMonth('visible') || SimpleCalendar.instance.currentYear.getMonth('current');
-                    if(visibleMonth){
-                        const numberOfDays = isLeapYear? visibleMonth.numberOfDays : visibleMonth.numberOfLeapYearDays;
-                        if(day > 0){
-                            day = day - 1;
-                        }
-                        if(day == -1 || day > numberOfDays){
-                            day = numberOfDays - 1;
-                        }
-                        SimpleCalendar.instance.currentYear.resetMonths('selected');
-                        visibleMonth.days[day].selected = true;
-                        visibleMonth.selected = true;
-                        SimpleCalendar.instance.currentYear.selectedYear = SimpleCalendar.instance.currentYear.visibleYear;
-                    }
-                } else {
-                    Logger.error('Invalid day was passed in.');
-                }
-            }
-            SimpleCalendar.instance.showApp();
+        Logger.warn(`The SimpleCalendar.show function has been depreciated. Please update to use the SimpleCalendar.api.showCalendar() function.`);
+        if(year !== null && month !== null && day !== null){
+            API.showCalendar({year: year, month: month, day: day});
         } else {
-            Logger.error('The current year is not defined, can not use macro');
+            API.showCalendar();
         }
     }
 

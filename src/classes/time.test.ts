@@ -6,6 +6,7 @@ import "../../__mocks__/form-application";
 import "../../__mocks__/application";
 import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
+import "../../__mocks__/hooks";
 import Time from "./time";
 import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
@@ -78,7 +79,7 @@ describe('Time Tests', () => {
         expect(t.getClockClass()).toBe('paused');
         //@ts-ignore
         game.paused = false;
-        expect(t.getClockClass()).toBe('go');
+        expect(t.getClockClass()).toBe('started');
         t.combatRunning = true;
         expect(t.getClockClass()).toBe('paused');
     });
@@ -90,6 +91,7 @@ describe('Time Tests', () => {
 
     test('Start Time Keeper', () => {
         SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.currentYear = new Year(0);
         window.setInterval = jest.fn().mockReturnValue(2);
         t.startTimeKeeper();
         expect(window.setInterval).toHaveBeenCalledTimes(1);
