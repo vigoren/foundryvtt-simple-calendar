@@ -1,8 +1,9 @@
 import {Logger} from "./logging";
 import {SimpleCalendarSocket, TimeTemplate} from "../interfaces";
 import SimpleCalendar from "./simple-calendar";
-import {ModuleSocketName, SocketTypes} from "../constants";
+import {ModuleSocketName, SimpleCalendarHooks, SocketTypes} from "../constants";
 import {GameSettings} from "./game-settings";
+import Hook from "./hook";
 
 /**
  * Class representing the time of day
@@ -148,7 +149,7 @@ export default class Time {
     getClockClass(): string{
         if(this.keeper !== undefined){
             if(!game.paused && !this.combatRunning){
-                return 'go';
+                return 'started';
             } else {
                 return 'paused';
             }
@@ -175,6 +176,7 @@ export default class Time {
             Logger.debug('Starting the built in Time Keeper');
             this.keeper = window.setInterval(this.timeKeeper.bind(this), 30000);
             this.timeKeeper();
+            Hook.emit(SimpleCalendarHooks.ClockStartStop);
         }
     }
 
@@ -187,6 +189,7 @@ export default class Time {
             clearInterval(this.keeper);
             this.keeper = undefined;
             this.updateUsers();
+            Hook.emit(SimpleCalendarHooks.ClockStartStop);
         }
     }
 

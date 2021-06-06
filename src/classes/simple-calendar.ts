@@ -8,11 +8,12 @@ import {GameSettings} from "./game-settings";
 import {Weekday} from "./weekday";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
-import {GameWorldTimeIntegrations, ModuleSocketName, SocketTypes} from "../constants";
+import {GameWorldTimeIntegrations, ModuleSocketName, SimpleCalendarHooks, SocketTypes} from "../constants";
 import Importer from "./importer";
 import Season from "./season";
 import Moon from "./moon";
 import Day from "./day";
+import Hook from "./hook";
 
 
 /**
@@ -1347,6 +1348,7 @@ export default class SimpleCalendar extends Application{
         if(this.currentYear && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
             this.currentYear.time.combatRunning = true;
             this.currentYear.time.updateUsers();
+            Hook.emit(SimpleCalendarHooks.ClockStartStop);
             if(time && time.hasOwnProperty('advanceTime')){
                 Logger.debug('Combat Change Triggered');
                 this.currentYear.combatChangeTriggered = true;
@@ -1362,6 +1364,7 @@ export default class SimpleCalendar extends Application{
         if(this.currentYear){
             this.currentYear.time.combatRunning = false;
             this.currentYear.time.updateUsers();
+            Hook.emit(SimpleCalendarHooks.ClockStartStop);
         }
     }
 
@@ -1372,6 +1375,7 @@ export default class SimpleCalendar extends Application{
     gamePaused(paused: boolean){
         if(this.currentYear){
             this.currentYear.time.updateUsers();
+            Hook.emit(SimpleCalendarHooks.ClockStartStop);
         }
     }
 

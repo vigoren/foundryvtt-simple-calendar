@@ -53,8 +53,12 @@ export default class Hook{
                         currentPhase: phase
                     });
                 }
+            } else if(hook === SimpleCalendarHooks.ClockStartStop){
+                const status = SimpleCalendar.instance.currentYear.time.getClockClass();
+                data['started'] = status === 'started';
+                data['stopped'] = status === 'stopped';
+                data['paused'] = status === 'paused';
             }
-
             Hooks.callAll(hook, data);
         } else {
             Logger.error(`Unable to emit hook as current year is not set up.`);
