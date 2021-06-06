@@ -52,17 +52,15 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 
 ## Contents
 
-- [Simple Calendar](#simple-calendar)
-  - [Features](#features)
-    - [For GMs](#for-gms)
-    - [For Players](#for-players)
-  - [Contents](#contents)
-  - [Installing The Module](#installing-the-module)
-    - [module.json](#modulejson)
-    - [Zip File](#zip-file)
-  - [Compatible Modules](#compatible-modules)
-  - [Translations](#translations)
-  - [Credits](#credits)
+- [Installation](#installing-the-module)
+- [Compatible Modules](#compatible-modules)
+- [Accessing and using the calendar](./docs/UsingTheCalendar.md)
+- [Changing the date and time](./docs/UpdatingDateTime.md)
+- [Notes](./docs/Notes.md)
+- [Configuring your Calendar](./docs/Configuration.md)
+- [Macros](./docs/Macros.md)
+- [Hooks](./docs/Hooks.md)
+- [Translations](#translations)
 
 ## Installing The Module
 
