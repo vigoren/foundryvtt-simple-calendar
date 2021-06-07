@@ -1,10 +1,17 @@
 import Month from "./month";
-import {DateTimeParts, DayTemplate, GeneralSettings, PermissionMatrix, YearTemplate} from "../interfaces";
+import {
+    DateTimeIntervals,
+    DateTimeParts,
+    DayTemplate,
+    GeneralSettings,
+    PermissionMatrix,
+    YearTemplate
+} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
 import Time from "./time";
-import {GameSystems, GameWorldTimeIntegrations, YearNamingRules} from "../constants";
+import {GameSystems, GameWorldTimeIntegrations, LeapYearRules, YearNamingRules} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
@@ -618,7 +625,7 @@ export default class Year {
             day = 1;
         }
         daysSoFar += day;
-        if(addLeapYearDiff){
+        if(addLeapYearDiff && (year > this.leapYearRule.customMod || (this.leapYearRule.rule === LeapYearRules.Gregorian && year > 4))){
             daysSoFar += leapYearDayDifference;
         }
         if(this.yearZero !== 0){
@@ -632,13 +639,13 @@ export default class Year {
     /**
      * Converts the years current date into seconds
      */
-    toSeconds(){
+    toSeconds(addLeapYearDiff: boolean = true){
         let totalSeconds = 0;
         const month = this.getMonth();
         if(month){
             const day = month.getDay();
             //Get the days so for and add one to include the current day
-            let daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, true);
+            let daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
             totalSeconds = this.time.getTotalSeconds(daysSoFar)
 
             // If this is a Pathfinder 2E game, when setting the world time from Simple Calendar we need too subtract:
@@ -649,7 +656,7 @@ export default class Year {
                 // @ts-ignore
                 if(game.pf2e.worldClock.dateTheme === 'AD'){
                     this.yearZero = 1875;
-                    daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, true);
+                    daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
                 }
                 daysSoFar++;
                 // @ts-ignore
@@ -744,7 +751,7 @@ export default class Year {
      * Convert the passed in seconds into an interval of larger time
      * @param seconds
      */
-    secondsToInterval(seconds: number){
+    secondsToInterval(seconds: number): DateTimeIntervals {
         let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
         if(sec >= this.time.secondsInMinute){
             min = Math.floor(sec / this.time.secondsInMinute);
@@ -770,12 +777,12 @@ export default class Year {
         month = month - Math.round(year * this.months.length);
 
         return {
-            seconds: sec,
-            minutes: min,
-            hours: hour,
-            days: day,
-            months: month,
-            years: year
+            second: sec,
+            minute: min,
+            hour: hour,
+            day: day,
+            month: month,
+            year: year
         };
     }
 

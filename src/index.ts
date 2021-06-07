@@ -17,6 +17,7 @@ Hooks.on('ready', () => {
         setDateTime: Macros.setDateTime,
         changeDateTime: Macros.changeDateTime,
         api:{
+            changeDate: API.changeDate,
             clockStatus: API.clockStatus,
             secondsToInterval: API.secondsToInterval,
             showCalendar: API.showCalendar,

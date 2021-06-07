@@ -673,16 +673,16 @@ describe('Year Class Tests', () => {
         year.months.push(month);
         year.months.push(new Month("Test 2", 2, 0, 30, 30));
         year.months.push(new Month("Test 3", 3, 0, 30, 30));
-        expect(year.secondsToInterval(6)).toStrictEqual({years: 0, months: 0, days: 0, hours: 0, minutes: 0, seconds: 6});
-        expect(year.secondsToInterval(66)).toStrictEqual({years: 0, months: 0, days: 0, hours: 0, minutes: 1, seconds: 6});
-        expect(year.secondsToInterval(3666)).toStrictEqual({years: 0, months: 0, days: 0, hours: 1, minutes: 1, seconds: 6});
-        expect(year.secondsToInterval(86400)).toStrictEqual({years: 0, months: 0, days: 1, hours: 0, minutes: 0, seconds: 0});
-        expect(year.secondsToInterval(2592000)).toStrictEqual({years: 0, months: 1, days: 0, hours: 0, minutes: 0, seconds: 0});
-        expect(year.secondsToInterval(7776000)).toStrictEqual({years: 1, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0});
+        expect(year.secondsToInterval(6)).toStrictEqual({year: 0, month: 0, day: 0, hour: 0, minute: 0, second: 6});
+        expect(year.secondsToInterval(66)).toStrictEqual({year: 0, month: 0, day: 0, hour: 0, minute: 1, second: 6});
+        expect(year.secondsToInterval(3666)).toStrictEqual({year: 0, month: 0, day: 0, hour: 1, minute: 1, second: 6});
+        expect(year.secondsToInterval(86400)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 0, second: 0});
+        expect(year.secondsToInterval(2592000)).toStrictEqual({year: 0, month: 1, day: 0, hour: 0, minute: 0, second: 0});
+        expect(year.secondsToInterval(7776000)).toStrictEqual({year: 1, month: 0, day: 0, hour: 0, minute: 0, second: 0});
 
-        expect(year.secondsToInterval(2505600)).toStrictEqual({years: 0, months: 0, days: 29, hours: 0, minutes: 0, seconds: 0});
-        expect(year.secondsToInterval(2591999)).toStrictEqual({years: 0, months: 0, days: 29, hours: 23, minutes: 59, seconds: 59});
-        expect(year.secondsToInterval(5184000)).toStrictEqual({years: 0, months: 2, days: 0, hours: 0, minutes: 0, seconds: 0});
+        expect(year.secondsToInterval(2505600)).toStrictEqual({year: 0, month: 0, day: 29, hour: 0, minute: 0, second: 0});
+        expect(year.secondsToInterval(2591999)).toStrictEqual({year: 0, month: 0, day: 29, hour: 23, minute: 59, second: 59});
+        expect(year.secondsToInterval(5184000)).toStrictEqual({year: 0, month: 2, day: 0, hour: 0, minute: 0, second: 0});
     });
 
     test('Update Time', () => {

@@ -1,6 +1,7 @@
 import SimpleCalendar from "./simple-calendar";
 import {DateParts, DateTimeIntervals} from "../interfaces";
 import {Logger} from "./logging";
+import {GameSettings} from "./game-settings";
 
 export default class API{
     /**
@@ -23,17 +24,20 @@ export default class API{
             const clone = SimpleCalendar.instance.currentYear.clone();
             const dateTime = clone.secondsToDate(currentSeconds);
             clone.updateTime(dateTime);
-            if(interval.years){
-                clone.changeYear(interval.years, true, 'current');
+            if(interval.year){
+                clone.changeYear(interval.year, true, 'current');
             }
-            if(interval.months){
-                clone.changeMonth(interval.months, 'current');
+            if(interval.month){
+                clone.changeMonth(interval.month, 'current');
             }
-            if(interval.days){
-                clone.changeDay(interval.days);
+            if(interval.day){
+                clone.changeDay(interval.day);
             }
-            clone.time.changeTime(interval.hours, interval.minutes, interval.seconds);
-            return clone.toSeconds();
+            const dayChange = clone.time.changeTime(interval.hour, interval.minute, interval.second);
+            if(dayChange !== 0){
+                clone.changeDay(dayChange);
+            }
+            return clone.toSeconds(true);
         }
         return 0;
     }
@@ -48,9 +52,9 @@ export default class API{
             month: 0,
             day: 0,
             dayOfTheWeek: 0,
-            hours: 0,
-            minutes: 0,
-            seconds: 0,
+            hour: 0,
+            minute: 0,
+            second: 0,
             monthName: "",
             yearName: "",
             yearZero: 0,
@@ -61,15 +65,15 @@ export default class API{
             result.year = dateTime.year;
             result.month = dateTime.month;
             result.day = dateTime.day;
-            result.hours = dateTime.hour;
-            result.minutes = dateTime.minute;
-            result.seconds = dateTime.seconds;
+            result.hour = dateTime.hour;
+            result.minute = dateTime.minute;
+            result.second = dateTime.seconds;
 
             const month = SimpleCalendar.instance.currentYear.months[dateTime.month];
             result.monthName = month.name;
             result.yearZero = SimpleCalendar.instance.currentYear.yearZero;
             result.yearName = SimpleCalendar.instance.currentYear.getYearName(result.year);
-            result.dayOfTheWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(result.year, result.month, result.day);
+            result.dayOfTheWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(result.year, month.numericRepresentation, result.day);
             result.weekdays = SimpleCalendar.instance.currentYear.weekdays.map(w => w.name);
         }
         return result;
@@ -80,13 +84,13 @@ export default class API{
      * @param seconds
      */
     public static secondsToInterval(seconds: number){
-        let results = {
-            years: 0,
-            months: 0,
-            days: 0,
-            hours: 0,
-            minutes: 0,
-            seconds: 0
+        let results: DateTimeIntervals = {
+            year: 0,
+            month: 0,
+            day: 0,
+            hour: 0,
+            minute: 0,
+            second: 0
         };
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear) {
             results = SimpleCalendar.instance.currentYear.secondsToInterval(seconds);
@@ -146,6 +150,39 @@ export default class API{
             SimpleCalendar.instance.showApp();
         } else {
             Logger.error('The current year is not defined.');
+        }
+    }
+
+    public static changeDate(interval: DateTimeIntervals){
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser(game.user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
+            let change = false;
+            if(interval.year){
+                SimpleCalendar.instance.currentYear.changeYear(interval.year, true, 'current');
+                change = true;
+            }
+            if(interval.month){
+                SimpleCalendar.instance.currentYear.changeMonth(interval.month, 'current');
+                change = true;
+            }
+            if(interval.day){
+                SimpleCalendar.instance.currentYear.changeDay(interval.day);
+                change = true;
+            }
+            if(interval.hour || interval.minute || interval.second){
+                const dayChange = SimpleCalendar.instance.currentYear.time.changeTime(interval.hour, interval.minute, interval.second);
+                if(dayChange !== 0){
+                    SimpleCalendar.instance.currentYear.changeDay(dayChange);
+                }
+                change = true;
+            }
+
+            if(change){
+                GameSettings.SaveCurrentDate(SimpleCalendar.instance.currentYear).catch(Logger.error);
+                SimpleCalendar.instance.currentYear.syncTime().catch(Logger.error);
+                SimpleCalendar.instance.updateApp();
+            }
+        } else {
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
         }
     }
 }
