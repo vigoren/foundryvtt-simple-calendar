@@ -1,5 +1,12 @@
 # Change Log
 
+## v1.2.71 - API Bug Fixing
+
+- Fixed a bug with the new API timestampPlusInterval function that would incorrectly add a day when it shouldn't.
+- Fixed a bug with the new API timestampPlusInterval function where if the time variables added up to be more seconds than in a day, the day would not advance.
+- Fixed a bug with the new API timestampToDate function where the day of the week would be incorrectly calculated.
+- Standardized the naming of the parameters and variables of the different API functions so results can be directly passed from one into another.
+
 ## v1.2.67 - Translations, Macro/API Changes, Bug Fixes
 
 ### Macro/API Changes

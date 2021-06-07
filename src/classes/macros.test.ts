@@ -102,30 +102,11 @@ describe('Macros Tests', () => {
     test('Change Date Time', () => {
         Macros.changeDateTime();
         expect(renderSpy).toHaveBeenCalledTimes(0);
-
         //@ts-ignore
         game.user.isGM = true;
-        Macros.changeDateTime();
-        expect(renderSpy).toHaveBeenCalledTimes(0);
-        expect(console.error).toHaveBeenCalledTimes(1);
-
         SimpleCalendar.instance.currentYear = y;
-        Macros.changeDateTime();
-        expect(renderSpy).toHaveBeenCalledTimes(0);
-        expect(console.error).toHaveBeenCalledTimes(1);
-        expect(y.numericRepresentation).toBe(0);
-        expect(y.months[0].current).toBe(true);
-        expect(y.months[0].days[0].current).toBe(true);
-        expect(y.time.seconds).toBe(0);
-
-        Macros.changeDateTime(1,1,1,1,1,1);
+        Macros.changeDateTime(10);
         expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect(console.error).toHaveBeenCalledTimes(1);
-        expect(y.numericRepresentation).toBe(1);
-        expect(y.months[1].current).toBe(true);
-        expect(y.months[1].days[1].current).toBe(true);
-        expect(y.time.seconds).toBe(3661);
-
         //@ts-ignore
         game.user.isGM = false;
     });

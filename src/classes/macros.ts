@@ -1,7 +1,6 @@
 import {Logger} from "./logging";
 import SimpleCalendar from "./simple-calendar";
 import {GameSettings} from "./game-settings";
-import {SimpleCalendarSocket} from "../interfaces";
 import API from "./api";
 
 export default class Macros {
@@ -105,44 +104,7 @@ export default class Macros {
      * @param {number} [years=0] The number of years to change the time by, can be any amount negative or positive.
      */
     public static changeDateTime(seconds: number = 0, minutes: number = 0, hours: number = 0, days: number = 0, months: number = 0, years: number = 0){
-        if(GameSettings.IsGm()){
-            if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-                let timeChange = false;
-                let dateChange = false;
-                if(seconds !== 0){
-                    SimpleCalendar.instance.currentYear.changeTime(true, 'second', seconds);
-                    timeChange = true;
-                }
-                if(minutes !== 0){
-                    SimpleCalendar.instance.currentYear.changeTime(true, 'minute', minutes);
-                    timeChange = true;
-                }
-                if(hours !== 0){
-                    SimpleCalendar.instance.currentYear.changeTime(true, 'hour', hours);
-                    timeChange = true;
-                }
-                if(months !== 0){
-                    SimpleCalendar.instance.currentYear.changeMonth(months, 'current');
-                    dateChange = true;
-                }
-                if(days !== 0){
-                    SimpleCalendar.instance.currentYear.changeDay(days, 'current');
-                    dateChange = true;
-                }
-                if(years !== 0){
-                    SimpleCalendar.instance.currentYear.changeYear(years, !dateChange, 'current');
-                    dateChange = true;
-                }
-                if(dateChange || timeChange){
-                    GameSettings.SaveCurrentDate(SimpleCalendar.instance.currentYear).catch(Logger.error);
-                    SimpleCalendar.instance.currentYear.syncTime().catch(Logger.error);
-                    SimpleCalendar.instance.updateApp();
-                }
-            } else {
-                Logger.error('The current year is not defined, can not use macro');
-            }
-        } else {
-            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
-        }
+        Logger.warn(`The SimpleCalendar.changeDateTime function has been depreciated. Please update to use the SimpleCalendar.api.changeDate() function.`);
+        API.changeDate({year: years, month: months, day: days, hour: hours, minute: minutes, second: seconds});
     }
 }

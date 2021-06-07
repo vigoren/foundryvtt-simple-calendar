@@ -338,12 +338,12 @@ export interface DateTimeParts {
 }
 
 export interface DateTimeIntervals {
-    years?: number;
-    months?: number;
-    days?: number;
-    hours?: number;
-    minutes?: number;
-    seconds?: number;
+    year?: number;
+    month?: number;
+    day?: number;
+    hour?: number;
+    minute?: number;
+    second?: number;
 }
 
 /**
