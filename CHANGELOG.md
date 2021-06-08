@@ -1,11 +1,18 @@
 # Change Log
 
-## v1.2.71 - API Bug Fixing
+## v1.2.73 - API Bug Fixing
+
+### Bug Fixes
 
 - Fixed a bug with the new API timestampPlusInterval function that would incorrectly add a day when it shouldn't.
 - Fixed a bug with the new API timestampPlusInterval function where if the time variables added up to be more seconds than in a day, the day would not advance.
 - Fixed a bug with the new API timestampToDate function where the day of the week would be incorrectly calculated.
+- Changed the API timestampToDate function so that days are also 0 indexed.
 - Standardized the naming of the parameters and variables of the different API functions so results can be directly passed from one into another.
+
+### New API
+
+- Added a new API function [chooseRandomDate](./docs/API.md#simplecalendarapichooserandomdatestartdate-enddate) that will choose a random date on the calendar or between a passed in start and end date.
 
 ## v1.2.67 - Translations, Macro/API Changes, Bug Fixes
 

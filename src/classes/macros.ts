@@ -29,69 +29,27 @@ export default class Macros {
      * @param {number | null} [minute=null] The minute to set as current, if not passed in what ever the current minute is will be used.
      * @param {number | null} [seconds=null] The seconds to set as current, if not passed in what ever the current seconds is will be used.
      */
-    public static setDateTime(year: number | null = null, month: number | null = null, day: number | null = null, hour: number | null = null, minute: number | null = null, seconds: number | null = null){
-        if(GameSettings.IsGm()){
-            if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-                const currentMonth = SimpleCalendar.instance.currentYear.getMonth();
-                const currentTime = SimpleCalendar.instance.currentYear.time.getCurrentTime();
-                let totalSeconds = 0;
-
-                if(seconds !== null){
-                    totalSeconds += seconds;
-                } else {
-                    totalSeconds += parseInt(currentTime.second);
-                }
-                if(minute !== null){
-                    totalSeconds += (minute * SimpleCalendar.instance.currentYear.time.secondsInMinute);
-                } else {
-                    totalSeconds += parseInt(currentTime.minute);
-                }
-                if(hour !== null){
-                    totalSeconds += (hour * SimpleCalendar.instance.currentYear.time.minutesInHour * SimpleCalendar.instance.currentYear.time.secondsInMinute);
-                } else {
-                    totalSeconds += parseInt(currentTime.hour);
-                }
-                if(day === null){
-                    if(currentMonth){
-                        const currentDay = currentMonth.getDay();
-                        if(currentDay){
-                            day = currentDay.numericRepresentation;
-                        } else {
-                            day = 1;
-                        }
-                    } else {
-                        day = 1;
-                    }
-                }
-
-                if(month !== null){
-                    if(month > -1 && month < SimpleCalendar.instance.currentYear.months.length){
-                        month = SimpleCalendar.instance.currentYear.months[month].numericRepresentation;
-                    } else {
-                        month = SimpleCalendar.instance.currentYear.months[SimpleCalendar.instance.currentYear.months.length - 1].numericRepresentation;
-                    }
-                } else if(currentMonth) {
-                    month = currentMonth.numericRepresentation;
-                } else {
-                    month = 1;
-                }
-
-                if(year === null){
-                    year = SimpleCalendar.instance.currentYear.numericRepresentation;
-                }
-
-                const days = SimpleCalendar.instance.currentYear.dateToDays(year, month, day, true, true);
-                totalSeconds += SimpleCalendar.instance.currentYear.time.getTotalSeconds(days, false);
-                SimpleCalendar.instance.currentYear.updateTime(SimpleCalendar.instance.currentYear.secondsToDate(totalSeconds));
-                GameSettings.SaveCurrentDate(SimpleCalendar.instance.currentYear).catch(Logger.error);
-                SimpleCalendar.instance.currentYear.syncTime().catch(Logger.error);
-                SimpleCalendar.instance.updateApp();
-            } else {
-                Logger.error('The current year is not defined, can not use macro');
-            }
-        } else {
-            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
+    public static setDateTime(year: number | null | undefined = null, month: number | null | undefined = null, day: number | null | undefined = null, hour: number | null | undefined = null, minute: number | null | undefined = null, seconds: number | null | undefined = null){
+        Logger.warn(`The SimpleCalendar.setDateTime function has been depreciated. Please update to use the SimpleCalendar.api.setDate() function.`);
+        if(year === null){
+            year = undefined;
         }
+        if(month === null){
+            month = undefined;
+        }
+        if(day === null){
+            day = undefined;
+        }
+        if(hour === null){
+            hour = undefined;
+        }
+        if(minute === null){
+            minute = undefined;
+        }
+        if(seconds === null){
+            seconds = undefined;
+        }
+        API.setDate({year: year, month: month, day: day, hour: hour, minute: minute, second: seconds});
     }
 
     /**
