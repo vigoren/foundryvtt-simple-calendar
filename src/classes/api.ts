@@ -1,8 +1,11 @@
 import SimpleCalendar from "./simple-calendar";
-import {DateParts, DateTimeIntervals} from "../interfaces";
+import {DateParts, DateTimeIntervals, DateTimeParts} from "../interfaces";
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 
+/**
+ * All external facing functions for other systems, modules or macros to consume
+ */
 export default class API{
     /**
      * Get the timestamp for the current year
@@ -64,7 +67,7 @@ export default class API{
             const dateTime = SimpleCalendar.instance.currentYear.secondsToDate(seconds);
             result.year = dateTime.year;
             result.month = dateTime.month;
-            result.day = dateTime.day;
+            result.day = dateTime.day - 1;
             result.hour = dateTime.hour;
             result.minute = dateTime.minute;
             result.second = dateTime.seconds;
@@ -153,7 +156,11 @@ export default class API{
         }
     }
 
-    public static changeDate(interval: DateTimeIntervals){
+    /**
+     * Changes the date of the calendar by the passed in interval. Checks to make sure only users who have permission can change the date.
+     * @param interval
+     */
+    public static changeDate(interval: DateTimeIntervals): boolean{
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser(game.user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
             let change = false;
             if(interval.year){
@@ -181,8 +188,171 @@ export default class API{
                 SimpleCalendar.instance.currentYear.syncTime().catch(Logger.error);
                 SimpleCalendar.instance.updateApp();
             }
+            return true;
         } else {
             GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
         }
+        return false;
+    }
+
+    /**
+     * Sets the current date to the passed in date object
+     * @param date
+     */
+    public static setDate(date: DateTimeIntervals): boolean{
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser(game.user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
+            let totalSeconds = 0;
+            if(date.second){
+                totalSeconds += date.second;
+            }
+            if(date.minute){
+                totalSeconds += (date.minute * SimpleCalendar.instance.currentYear.time.secondsInMinute);
+            }
+            if(date.hour){
+                totalSeconds += (date.hour * SimpleCalendar.instance.currentYear.time.minutesInHour * SimpleCalendar.instance.currentYear.time.secondsInMinute);
+            }
+            // If not year is passed in, set to year 0
+            if(date.year === undefined){
+                date.year = 0;
+            }
+
+            let month = SimpleCalendar.instance.currentYear.months[0];
+            if(date.month !== undefined){
+                if(date.month > -1 && date.month < SimpleCalendar.instance.currentYear.months.length){
+                    month = SimpleCalendar.instance.currentYear.months[date.month];
+                } else {
+                    month = SimpleCalendar.instance.currentYear.months[SimpleCalendar.instance.currentYear.months.length - 1];
+                }
+            }
+            date.month = month.numericRepresentation;
+            if(date.day !== undefined){
+                if(date.day < 0 || date.day >= month.days.length){
+                    date.day = month.days[month.days.length - 1].numericRepresentation;
+                } else {
+                    date.day = month.days[date.day].numericRepresentation;
+                }
+            } else {
+                date.day = month.days[0].numericRepresentation;
+            }
+            let days = SimpleCalendar.instance.currentYear.dateToDays(date.year, date.month, date.day, true, true);
+            if(SimpleCalendar.instance.currentYear.yearZero !== 0){
+                days += 1;
+            }
+            totalSeconds += SimpleCalendar.instance.currentYear.time.getTotalSeconds(days, false);
+            SimpleCalendar.instance.currentYear.updateTime(SimpleCalendar.instance.currentYear.secondsToDate(totalSeconds));
+            GameSettings.SaveCurrentDate(SimpleCalendar.instance.currentYear).catch(Logger.error);
+            SimpleCalendar.instance.currentYear.syncTime().catch(Logger.error);
+            SimpleCalendar.instance.updateApp();
+            return true;
+        } else {
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
+        }
+        return false;
+    }
+
+    /**
+     * Randomly chooses a date between the two passed in dates, or if no dates passed in chooses a random date.
+     * @param startingDate
+     * @param endingDate
+     */
+    public static chooseRandomDate(startingDate: DateTimeIntervals = {}, endingDate: DateTimeIntervals = {}): DateTimeIntervals {
+        let year = 0, month = 0, day = 0, hour = 0, minute = 0, second = 0;
+
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            /**
+             * Choose a random year
+             *      If the starting and ending year are the same, use that year
+             *      If they are different random choose a year between them (they are included)
+             *      If no years are provided, random choose a year between 0 and 10,000
+             */
+            if(startingDate.year !== undefined && endingDate.year !== undefined){
+                if(startingDate.year === endingDate.year){
+                    year = startingDate.year;
+                } else {
+                    year = Math.floor(Math.random() * (endingDate.year - startingDate.year + 1)) + startingDate.year;
+                }
+            } else {
+                year = Math.floor(Math.random() * 10000);
+            }
+
+            /**
+             * Choose a random month
+             *      If the starting and ending month are the same use that month
+             *      If they are different randomly choose a month between them (they are included)
+             *      If no months are provided randomly choose a month between 0 and the number of months in a year
+             */
+            if(startingDate.month !== undefined && endingDate.month !== undefined){
+                if(startingDate.month === endingDate.month){
+                    month = startingDate.month;
+                } else {
+                    month = Math.floor(Math.random() * (endingDate.month - startingDate.month + 1)) + startingDate.month;
+                }
+            } else {
+                month = Math.floor(Math.random() * SimpleCalendar.instance.currentYear.months.length);
+            }
+
+            if(month < 0 || month >= SimpleCalendar.instance.currentYear.months.length){
+                month = SimpleCalendar.instance.currentYear.months.length - 1;
+            }
+
+            let monthObject = SimpleCalendar.instance.currentYear.months[month];
+            /**
+             * Chose a random day
+             *      If the starting and ending day are the same use that day
+             *      If they are different randomly choose a day between them (they are included)
+             *      If no days are provided randomly choose a day between 0 and the number of days in the month selected above
+             */
+            if(startingDate.day !== undefined && endingDate.day !== undefined){
+                if(startingDate.day === endingDate.day){
+                    day = startingDate.day;
+                } else {
+                    day = Math.floor(Math.random() * (endingDate.day - startingDate.day + 1)) + startingDate.day;
+                }
+            } else {
+                day = Math.floor(Math.random() * monthObject.days.length);
+            }
+
+            if(day < 0 || day >= monthObject.days.length){
+                day = monthObject.days.length - 1;
+            }
+
+            if(startingDate.hour !== undefined && endingDate.hour !== undefined){
+                if(startingDate.hour === endingDate.hour){
+                    hour = startingDate.hour;
+                } else {
+                    hour = Math.floor(Math.random() * (endingDate.hour - startingDate.hour + 1)) + startingDate.hour;
+                }
+            } else {
+                hour = Math.floor(Math.random() * SimpleCalendar.instance.currentYear.time.hoursInDay);
+            }
+
+            if(startingDate.minute !== undefined && endingDate.minute !== undefined){
+                if(startingDate.minute === endingDate.minute){
+                    minute = startingDate.minute;
+                } else {
+                    minute = Math.floor(Math.random() * (endingDate.minute - startingDate.minute + 1)) + startingDate.minute;
+                }
+            } else {
+                minute = Math.floor(Math.random() * SimpleCalendar.instance.currentYear.time.minutesInHour);
+            }
+
+            if(startingDate.second !== undefined && endingDate.second !== undefined){
+                if(startingDate.second === endingDate.second){
+                    second = startingDate.second;
+                } else {
+                    second = Math.floor(Math.random() * (endingDate.second - startingDate.second + 1)) + startingDate.second;
+                }
+            } else {
+                second = Math.floor(Math.random() * SimpleCalendar.instance.currentYear.time.secondsInMinute);
+            }
+        }
+        return {
+          year: year,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          second: second
+        };
     }
 }

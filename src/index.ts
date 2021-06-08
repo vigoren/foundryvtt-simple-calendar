@@ -18,8 +18,10 @@ Hooks.on('ready', () => {
         changeDateTime: Macros.changeDateTime,
         api:{
             changeDate: API.changeDate,
+            chooseRandomDate: API.chooseRandomDate,
             clockStatus: API.clockStatus,
             secondsToInterval: API.secondsToInterval,
+            setDate: API.setDate,
             showCalendar: API.showCalendar,
             timestamp: API.timestamp,
             timestampPlusInterval: API.timestampPlusInterval,
