@@ -1,19 +1,37 @@
 <div id="simpleCalendarNotes">
     <form autocomplete="off">
         {{#if viewMode}}
-        <p>
-            {{noteMonth}} {{object.day}}, {{noteYear}}
-            {{#if repeats}}
-            <span class="note-repeat">{{repeatsText}}</span>
-            {{/if}}
-        </p>
         <h1>{{object.title}}</h1>
-        <div class="note-author">{{localize 'FSC.Notes.Author'}}: {{authorName}}</div>
+        <div class="note-details">
+            {{#if isGM}}
+            {{#if object.playerVisible}}
+            <div class="note-category note-icon" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.PlayerVisible'}}">
+                <span class="fa fa-eye"></span>
+            </div>
+            {{else}}
+            <div class="note-category note-icon" style="color:#ffffff;background-color:#922121" title="{{localize 'FSC.Notes.NotPlayerVisible'}}">
+                <span class="fa fa-eye-slash"></span>
+            </div>
+            {{/if}}
+            {{/if}}
+            <div class="note-time note-category" title="{{localize 'FSC.Notes.Time'}}">
+                <span class="fa fa-clock"></span> {{displayDate}}
+            </div>
+            <div class="note-category" title="{{localize 'FSC.Notes.Author'}}" style="background-color:{{authDisplay.color}};color:{{authDisplay.textColor}};">
+                <span class="fa fa-pencil-alt"></span> {{authDisplay.name}}
+            </div>
+            {{#if repeats}}
+            <div class="note-repeats note-category note-icon" title="{{repeatsText}}"><span class="fa fa-retweet"></span></div>
+            {{/if}}
+        </div>
+        <div class="note-details">
+
+        </div>
         {{{object.content}}}
         {{#if canEdit}}
         <div class="edit-controls">
-            <a class="control fa fa-edit" id="scNoteEdit"> {{localize 'FSC.Edit'}}</a>
-            <a class="control delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</a>
+            <button class="control fa fa-edit" id="scNoteEdit"> {{localize 'FSC.Edit'}}</button>
+            <button class="control delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</button>
         </div>
         {{/if}}
         {{else}}
@@ -56,9 +74,11 @@
         </div>
         <h2>Details</h2>
         {{editor content=object.content target="content" owner=note.author button=enableRichTextEditButton editable=enableRichTextEditButton }}
-        <button id="scSubmit" class="control save" type="submit" name="submit" title="{{localize 'FSC.Notes.Save'}}">
-            <i class="far fa-save"></i> {{localize 'FSC.Notes.Save'}}
-        </button>
+        <div class="edit-controls">
+            <button id="scSubmit" class="control save" type="submit" name="submit" title="{{localize 'FSC.Notes.Save'}}">
+                <i class="far fa-save"></i> {{localize 'FSC.Notes.Save'}}
+            </button>
+        </div>
         {{/if}}
     </form>
 </div>

@@ -360,9 +360,9 @@ export interface DateTimeParts {
     year: number;
     month: number;
     day: number;
-    hour?: number;
-    minute?: number;
-    seconds?: number;
+    hour: number;
+    minute: number;
+    seconds: number;
 }
 
 export interface DateTimeIntervals {

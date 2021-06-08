@@ -85,7 +85,7 @@ export default class DateSelector {
                 between = DateRangeMatch.End;
             } else {
                 // Start and end are the same month and year
-                if(startMonthIndex === endMonthIndex && startMonthIndex === checkMonthIndex && startDate.year === endDate.year){
+                if(startMonthIndex === endMonthIndex && startMonthIndex === checkMonthIndex && startDate.year === endDate.year && startDate.year === checkDate.year){
                     if(checkDate.day > startDate.day && checkDate.day < endDate.day){
                         between = DateRangeMatch.Middle;
                     }

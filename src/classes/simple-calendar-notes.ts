@@ -95,47 +95,37 @@ export class SimpleCalendarNotes extends FormApplication {
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
     getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
-        let h: number[] = [];
-        let m: number[] = [];
         let data = {
             ... super.getData(options),
             isGM: GameSettings.IsGm(),
             viewMode: this.viewMode,
             canEdit: GameSettings.IsGm() || GameSettings.UserID() === (<Note>this.object).author,
             enableRichTextEditButton: this.checkForThirdPartyMarkdownEditors(),
-            noteYear: 0,
-            noteMonth: '',
+            displayDate: '',
             repeatOptions: {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             repeats: (<Note>this.object).repeats,
             repeatsText: '',
-            authorName: (<Note>this.object).author,
-            dateSelectorId: this.dateSelectorId,
-            hours: h,
-            minutes: m
+            authDisplay: {
+                name: '',
+                color: '',
+                textColor: ''
+            },
+            dateSelectorId: this.dateSelectorId
         };
-        if(SimpleCalendar.instance.currentYear && ((<Note>this.object).repeats === NoteRepeat.Yearly || (<Note>this.object).repeats === NoteRepeat.Monthly)){
-            data.noteYear = SimpleCalendar.instance.currentYear.visibleYear;
-        } else {
-            data.noteYear = (<Note>this.object).year;
-        }
-        if(SimpleCalendar.instance.currentYear && (<Note>this.object).repeats === NoteRepeat.Monthly){
-            const visibleMonth = SimpleCalendar.instance.currentYear.getMonth('visible');
-            data.noteMonth = visibleMonth? visibleMonth.name : (<Note>this.object).monthDisplay;
-        } else {
-            data.noteMonth = (<Note>this.object).monthDisplay;
-        }
+
+        data.displayDate = DateSelector.GetDisplayDate({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: (<Note>this.object).hour, minute: (<Note>this.object).minute, allDay: (<Note>this.object).allDay},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: (<Note>this.object).endDate.hour, minute: (<Note>this.object).endDate.minute, allDay: (<Note>this.object).allDay} )
         data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(data.repeatOptions[data.repeats])}`;
 
         if(game.users){
             Logger.debug(`Looking for users with the id "${(<Note>this.object).author}"`);
             const user = game.users.get((<Note>this.object).author);
             if(user){
-                data.authorName = user.name;
+                data.authDisplay = {
+                    name: user.name,
+                    color: user.color || user.data.color,
+                    textColor: Note.GetContrastColor(user.color || user.data.color)
+                }
             }
-        }
-        if(SimpleCalendar.instance.currentYear){
-            data.hours = Array.from(Array(SimpleCalendar.instance.currentYear.time.hoursInDay).keys());
-            data.minutes = Array.from(Array(SimpleCalendar.instance.currentYear.time.minutesInHour).keys());
         }
         return data;
     }
@@ -250,7 +240,8 @@ export class SimpleCalendarNotes extends FormApplication {
             month: selectedDate.endDate.month,
             day: selectedDate.endDate.day,
             hour: selectedDate.endDate.hour,
-            minute: selectedDate.endDate.minute
+            minute: selectedDate.endDate.minute,
+            seconds: 0
         };
 
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){

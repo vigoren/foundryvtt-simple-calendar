@@ -199,7 +199,8 @@ export class Note{
                 month: noteConfig.endDate.month,
                 day: noteConfig.endDate.day,
                 hour: noteConfig.endDate.hour,
-                minute: noteConfig.endDate.minute
+                minute: noteConfig.endDate.minute,
+                seconds: 0
             };
         } else {
             this.endDate = {
@@ -207,7 +208,8 @@ export class Note{
                 month: noteConfig.month,
                 day: noteConfig.day,
                 hour: noteConfig.hour,
-                minute: noteConfig.minute
+                minute: noteConfig.minute,
+                 seconds: 0
             };
         }
         if(noteConfig.hasOwnProperty('order')){
@@ -292,7 +294,6 @@ export class Note{
             } else {
                 inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: this.year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
             }
-            //TODO: Dates that span multiple days, the start and end day are visible no matter the year.
             dayVisible = inBetween !== DateRangeMatch.None;
         }
         return userVisible && dayVisible;
