@@ -1,5 +1,6 @@
 import SimpleCalendar from "./classes/simple-calendar";
 import Macros from "./classes/macros";
+import API from "./classes/api";
 import {Logger} from "./classes/logging";
 import {SimpleCalendarHooks} from "./constants";
 SimpleCalendar.instance = new SimpleCalendar();
@@ -15,6 +16,15 @@ Hooks.on('ready', () => {
         show: Macros.show,
         setDateTime: Macros.setDateTime,
         changeDateTime: Macros.changeDateTime,
+        api:{
+            changeDate: API.changeDate,
+            clockStatus: API.clockStatus,
+            secondsToInterval: API.secondsToInterval,
+            showCalendar: API.showCalendar,
+            timestamp: API.timestamp,
+            timestampPlusInterval: API.timestampPlusInterval,
+            timestampToDate: API.timestampToDate
+        },
         Hooks: SimpleCalendarHooks
     };
 });

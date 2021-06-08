@@ -8,6 +8,7 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 import "../../__mocks__/dialog";
+import "../../__mocks__/hooks";
 
 
 import SimpleCalendar from "./simple-calendar";

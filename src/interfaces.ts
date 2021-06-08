@@ -349,6 +349,13 @@ export interface MoonTemplate {
     cycleDayAdjust: number;
     dayList: DayTemplate[];
 }
+
+export interface DateParts{
+    year: number;
+    month: number;
+    day: number;
+}
+
 export interface DateTimeParts {
     year: number;
     month: number;
@@ -356,6 +363,15 @@ export interface DateTimeParts {
     hour?: number;
     minute?: number;
     seconds?: number;
+}
+
+export interface DateTimeIntervals {
+    year?: number;
+    month?: number;
+    day?: number;
+    hour?: number;
+    minute?: number;
+    second?: number;
 }
 
 /**

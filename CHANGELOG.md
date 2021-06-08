@@ -33,6 +33,32 @@ This update is mainly around notes and improving the experience around adding, e
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
 
 
+## v1.2.71 - API Bug Fixing
+
+- Fixed a bug with the new API timestampPlusInterval function that would incorrectly add a day when it shouldn't.
+- Fixed a bug with the new API timestampPlusInterval function where if the time variables added up to be more seconds than in a day, the day would not advance.
+- Fixed a bug with the new API timestampToDate function where the day of the week would be incorrectly calculated.
+- Standardized the naming of the parameters and variables of the different API functions so results can be directly passed from one into another.
+
+## v1.2.67 - Translations, Macro/API Changes, Bug Fixes
+
+### Macro/API Changes
+
+An API interface to Simple Calendar has been added so that other modules can have an easier time talking to Simple Calendar. These are going to be primarily used by about-time to ensure the syncing of time between them is accurate.
+
+All the existing macro functions have been moved into this new API interface. The existing functions remain with a depreciation warning, and they will be removed in a later update.
+
+Check out the new [API documentation](./docs/API.md) for all the additions and changes.
+
+
+### Bug Fixes
+
+- Fixed a bug where advancing the calendar by 1 month would reset the dat to the start of the month instead of keeping the day the same between month advancements.
+
+### Translations
+  - Updates to the existing translations for Traditional Chinese some new content.
+  - The addition of a Spanish translation thanks to areymoreno!
+
 ## v1.2.63 - Year Names, Bug Fixing & Foundry 0.8.6 Support
 
 ### Year Names

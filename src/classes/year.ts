@@ -1,10 +1,17 @@
 import Month from "./month";
-import {DateTimeParts, DayTemplate, GeneralSettings, PermissionMatrix, YearTemplate} from "../interfaces";
+import {
+    DateTimeIntervals,
+    DateTimeParts,
+    DayTemplate,
+    GeneralSettings,
+    PermissionMatrix,
+    YearTemplate
+} from "../interfaces";
 import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
 import Time from "./time";
-import {GameSystems, GameWorldTimeIntegrations, YearNamingRules} from "../constants";
+import {GameSystems, GameWorldTimeIntegrations, LeapYearRules, YearNamingRules} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
@@ -337,7 +344,7 @@ export default class Year {
      */
     getDisplayName(selected: boolean = false): string {
         let dispName;
-        const yearName = this.getYearName(selected? 'selected' : 'visible');
+        const yearName = this.getYearName(selected? this.selectedYear : this.visibleYear);
         if(yearName){
             dispName = `${this.prefix} ${yearName} (${selected?this.selectedYear.toString():this.visibleYear.toString()}) ${this.postfix}`;
         } else {
@@ -369,20 +376,38 @@ export default class Year {
      * @param {number} month The index of the new month, -1 will be the last month
      * @param {string} setting The setting to update, can be 'visible', 'current' or 'selected'
      * @param {boolean} next If the change moved the calendar forward(true) or back(false) this is used to determine the direction to go if the new month has 0 days
+     * @param {null|number} [setDay=null] If to set the months day to a specific one
      */
-    updateMonth(month: number, setting: string, next: boolean){
+    updateMonth(month: number, setting: string, next: boolean, setDay: null | number = null){
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
         const yearToUse = verifiedSetting === 'current'? this.numericRepresentation : verifiedSetting === 'visible'? this.visibleYear : this.selectedYear;
         const isLeapYear = this.leapYearRule.isLeapYear(yearToUse);
-        this.resetMonths(setting);
         if(month === -1 || month >= this.months.length){
             month = this.months.length - 1;
         }
+        //Get the current months current day
+        let currentDay = next? 0 : -1;
+
+        if(setDay !== null){
+            currentDay = setDay;
+        } else {
+            const curMonth = this.getMonth();
+
+            if(curMonth){
+                const curDay = curMonth.getDay();
+                if(curDay){
+                    currentDay = curDay.numericRepresentation - 1;
+                }
+            }
+        }
+
+        //Reset all of the months settings
+        this.resetMonths(setting);
         //If the month we are going to show has no days, skip it
         if((isLeapYear && this.months[month].numberOfLeapYearDays === 0) || (!isLeapYear && this.months[month].numberOfDays === 0)){
             Logger.debug(`The month "${this.months[month].name}" has no days skipping to ${next? 'next' : 'previous'} month.`);
             this.months[month][verifiedSetting] = true;
-            return this.changeMonth((next? 1 : -1), setting);
+            return this.changeMonth((next? 1 : -1), setting, setDay);
         } else {
             this.months[month][verifiedSetting] = true;
         }
@@ -394,7 +419,7 @@ export default class Year {
             this.resetMonths('visible');
             Logger.debug(`New Month: ${this.months[month].name}`);
             this.months[month].visible = true;
-            this.months[month].updateDay(next? 0 : -1, isLeapYear);
+            this.months[month].updateDay(currentDay, isLeapYear);
         }
     }
 
@@ -403,8 +428,9 @@ export default class Year {
      * @param {number} amount The amount to change the year by
      * @param {boolean} updateMonth If to also update month
      * @param {string} [setting='visible'] The month property we are changing. Can be 'visible', 'current' or 'selected'
+     * @param {null|number} [setDay=null] If to set the months day to a specific one
      */
-    changeYear(amount: number, updateMonth: boolean = true, setting: string = 'visible'){
+    changeYear(amount: number, updateMonth: boolean = true, setting: string = 'visible', setDay: null | number = null){
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
         if(verifiedSetting === 'visible'){
             this.visibleYear = this.visibleYear + amount;
@@ -421,7 +447,7 @@ export default class Year {
                 if(amount === -1){
                     mIndex = this.months.length - 1;
                 }
-                this.updateMonth(mIndex, setting, (amount > 0));
+                this.updateMonth(mIndex, setting, (amount > 0), setDay);
             }
         }
     }
@@ -430,8 +456,9 @@ export default class Year {
      * Changes the current, visible or selected month forward or back one month
      * @param {boolean} amount If we are moving forward (true) or back (false) one month
      * @param {string} [setting='visible'] The month property we are changing. Can be 'visible', 'current' or 'selected'
+     * @param {null|number} [setDay=null] If to set the months day to a specific one
      */
-    changeMonth(amount: number, setting: string = 'visible'): void{
+    changeMonth(amount: number, setting: string = 'visible', setDay: null | number = null): void{
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
         const next = amount > 0;
         for(let i = 0; i < this.months.length; i++){
@@ -439,20 +466,20 @@ export default class Year {
             if(month[verifiedSetting]){
                 if(next && (i + amount) >= this.months.length){
                     Logger.debug(`Advancing the ${verifiedSetting} month (${i}) by more months (${amount}) than there are in the year (${this.months.length}), advancing the year by 1`);
-                    this.changeYear(1, true, verifiedSetting);
+                    this.changeYear(1, true, verifiedSetting, setDay);
                     const changeAmount = amount - (this.months.length - i);
                     if(changeAmount > 0){
-                        this.changeMonth(changeAmount,verifiedSetting);
+                        this.changeMonth(changeAmount,verifiedSetting, setDay);
                     }
                 } else if(!next && (i + amount) < 0){
-                    this.changeYear(-1, true, verifiedSetting);
+                    this.changeYear(-1, true, verifiedSetting, setDay);
                     const changeAmount = amount + i + 1;
                     if(changeAmount < 0){
-                        this.changeMonth(changeAmount,verifiedSetting);
+                        this.changeMonth(changeAmount,verifiedSetting, setDay);
                     }
                 }
                 else {
-                    this.updateMonth(i+amount, setting, next);
+                    this.updateMonth(i+amount, setting, next, setDay);
                 }
                 break;
             }
@@ -479,11 +506,11 @@ export default class Year {
             const lastDayOfCurrentMonth = isLeapYear? currentMonth.numberOfLeapYearDays : currentMonth.numberOfDays;
             if(next && currentDayNumber + amount > lastDayOfCurrentMonth){
                 Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayNumber}) by more days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by 1`);
-                this.changeMonth(1, verifiedSetting);
+                this.changeMonth(1, verifiedSetting, 0);
                 this.changeDay(amount - (lastDayOfCurrentMonth - currentDayNumber) - 1, verifiedSetting);
             } else if(!next && currentDayNumber + amount < 1){
                 Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayNumber}) by less days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by -1`);
-                this.changeMonth(-1, verifiedSetting);
+                this.changeMonth(-1, verifiedSetting, -1);
                 this.changeDay(amount + currentDayNumber, verifiedSetting);
             } else{
                currentMonth.changeDay(amount, isLeapYear, verifiedSetting);
@@ -601,7 +628,7 @@ export default class Year {
             day = 1;
         }
         daysSoFar += day;
-        if(addLeapYearDiff){
+        if(addLeapYearDiff && (year > this.leapYearRule.customMod || (this.leapYearRule.rule === LeapYearRules.Gregorian && year > 4))){
             daysSoFar += leapYearDayDifference;
         }
         if(this.yearZero !== 0){
@@ -613,6 +640,42 @@ export default class Year {
     }
 
     /**
+     * Converts the years current date into seconds
+     */
+    toSeconds(addLeapYearDiff: boolean = true){
+        let totalSeconds = 0;
+        const month = this.getMonth();
+        if(month){
+            const day = month.getDay();
+            //Get the days so for and add one to include the current day
+            let daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
+            totalSeconds = this.time.getTotalSeconds(daysSoFar)
+
+            // If this is a Pathfinder 2E game, when setting the world time from Simple Calendar we need too subtract:
+            //  - The World Create Time Stamp Offset (Used by PF2E to calculate the current world time) - This is a timestamp in Real world time
+            //  - The offset from year 0 to Jan 1 1970 (This is because the World Create Time Stamp is based on a timestamp from 1970 so need to make up that difference)
+            if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync && game.hasOwnProperty('pf2e')){
+                //If we are using the Gregorian Calendar that ties into the pathfinder world we need to set the year 0 to 1875
+                // @ts-ignore
+                if(game.pf2e.worldClock.dateTheme === 'AD'){
+                    this.yearZero = 1875;
+                    daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
+                }
+                daysSoFar++;
+                // @ts-ignore
+                let worldCreateTimeStamp = Math.floor(game.pf2e.worldClock.worldCreatedOn/1000);
+                // @ts-ignore
+                if(game.pf2e.worldClock.dateTheme === 'AR' || game.pf2e.worldClock.dateTheme === 'IC') {
+                    worldCreateTimeStamp += 62167219200;
+                }
+
+                totalSeconds =  this.time.getTotalSeconds(daysSoFar) - worldCreateTimeStamp;
+            }
+        }
+        return totalSeconds;
+    }
+
+    /**
      * Sets the current game world time to match what our current time is
      */
     async syncTime(){
@@ -620,39 +683,11 @@ export default class Year {
         // Only if the time tracking rules are set to self or mixed
         if(GameSettings.IsGm() && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
             Logger.debug(`Year.syncTime()`);
-            const month = this.getMonth();
-            if(month){
-                const day = month.getDay();
-                //Get the days so for and add one to include the current day - Subtract one day to keep it in time with how about-time keeps track
-                let daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, true);
-                let totalSeconds = this.time.getTotalSeconds(daysSoFar)
-
-                // If this is a Pathfinder 2E game, when setting the world time from Simple Calendar we need too subtract:
-                //  - The World Create Time Stamp Offset (Used by PF2E to calculate the current world time) - This is a timestamp in Real world time
-                //  - The offset from year 0 to Jan 1 1970 (This is because the World Create Time Stamp is based on a timestamp from 1970 so need to make up that difference)
-                if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync && game.hasOwnProperty('pf2e')){
-                    //If we are using the Gregorian Calendar that ties into the pathfinder world we need to set the year 0 to 1875
-                    // @ts-ignore
-                    if(game.pf2e.worldClock.dateTheme === 'AD'){
-                        this.yearZero = 1875;
-                        daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, true);
-                    }
-                    daysSoFar++;
-                    // @ts-ignore
-                    let worldCreateTimeStamp = Math.floor(game.pf2e.worldClock.worldCreatedOn/1000);
-                    // @ts-ignore
-                    if(game.pf2e.worldClock.dateTheme === 'AR' || game.pf2e.worldClock.dateTheme === 'IC') {
-                        worldCreateTimeStamp += 62167219200;
-                    }
-
-                    totalSeconds =  this.time.getTotalSeconds(daysSoFar) - worldCreateTimeStamp;
-                }
-
-                //Let the local functions know that we all ready updated this time
-                this.timeChangeTriggered = true;
-                //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
-                await this.time.setWorldTime(totalSeconds);
-            }
+            const totalSeconds = this.toSeconds();
+            //Let the local functions know that we all ready updated this time
+            this.timeChangeTriggered = true;
+            //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
+            await this.time.setWorldTime(totalSeconds);
         }
     }
 
@@ -716,6 +751,45 @@ export default class Year {
     }
 
     /**
+     * Convert the passed in seconds into an interval of larger time
+     * @param seconds
+     */
+    secondsToInterval(seconds: number): DateTimeIntervals {
+        let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
+        if(sec >= this.time.secondsInMinute){
+            min = Math.floor(sec / this.time.secondsInMinute);
+            sec = sec - (min * this.time.secondsInMinute);
+        }
+        if(min >= this.time.minutesInHour){
+            hour = Math.floor(min / this.time.minutesInHour);
+            min = min - (hour * this.time.minutesInHour);
+        }
+        let dayCount = 0;
+        if(hour >= this.time.hoursInDay){
+            dayCount = Math.floor(hour / this.time.hoursInDay);
+            hour = hour - (dayCount * this.time.hoursInDay);
+        }
+
+        const daysInYear = this.totalNumberOfDays(false, false);
+        const averageDaysInMonth = daysInYear / this.months.map(m => !m.intercalary).length;
+
+        month = Math.floor(dayCount / averageDaysInMonth);
+        day = dayCount - Math.round(month * averageDaysInMonth);
+
+        year = Math.floor(month / this.months.length);
+        month = month - Math.round(year * this.months.length);
+
+        return {
+            second: sec,
+            minute: min,
+            hour: hour,
+            day: day,
+            month: month,
+            year: year
+        };
+    }
+
+    /**
      * Updates the year's data with passed in date information
      * @param {DateTimeParts} parsedDate Interface that contains all of the individual parts of a date and time
      */
@@ -723,7 +797,7 @@ export default class Year {
         let isLeapYear = this.leapYearRule.isLeapYear(parsedDate.year);
         this.numericRepresentation = parsedDate.year;
         this.updateMonth(parsedDate.month, 'current', true);
-        this.months[parsedDate.month].updateDay(parsedDate.day-1, isLeapYear);
+        this.months[parsedDate.month].updateDay(parsedDate.day - 1, isLeapYear);
         this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.seconds);
     }
 
@@ -827,11 +901,9 @@ export default class Year {
 
     /**
      * Get the name of the current year
-     * @param {string} setting The setting of the year to get, defaults to the current year
+     * @param {number} yearToUse The year to use to get the current date
      */
-    getYearName(setting: string = 'current'): string{
-        setting = setting.toLowerCase() as 'current' | 'selected' | 'visible';
-        const yearToUse = setting === 'current'? this.numericRepresentation : setting === 'selected'? this.selectedYear : this.visibleYear;
+    getYearName(yearToUse: number): string{
         let name = '';
         if(this.yearNames.length){
             let nameIndex = 0;
@@ -858,12 +930,12 @@ export default class Year {
      * @return {number} The number representing the hash value
      */
     randomHash(value: string) {
-        var hash = 0;
+        let hash = 0;
         if (value.length == 0) {
             return hash;
         }
-        for (var i = 0; i < value.length; i++) {
-            var char = value.charCodeAt(i);
+        for (let i = 0; i < value.length; i++) {
+            let char = value.charCodeAt(i);
             hash = ((hash<<5)-hash)+char;
             hash = hash & hash; // Convert to 32bit integer
         }
