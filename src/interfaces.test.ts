@@ -21,7 +21,15 @@ import {
     YearConfig,
     YearTemplate
 } from "./interfaces";
-import {GameSystems, LeapYearRules, MoonIcons, MoonYearResetOptions, SocketTypes, YearNamingRules} from "./constants";
+import {
+    GameSystems,
+    LeapYearRules,
+    MoonIcons,
+    MoonYearResetOptions,
+    SocketTypes,
+    TimeKeeperStatus,
+    YearNamingRules
+} from "./constants";
 
 describe('Interface Tests', () => {
     const tt: TimeTemplate = {hour: '', minute: '', second: ''};
@@ -321,9 +329,9 @@ describe('Interface Tests', () => {
         });
 
         test('Simple Calendar Socket Time', () => {
-            const scst: SimpleCalendarSocket.SimpleCalendarSocketTime = {clockClass: ''};
+            const scst: SimpleCalendarSocket.SimpleCalendarSocketTime = {timeKeeperStatus: TimeKeeperStatus.Stopped};
             expect(Object.keys(scst).length).toBe(1); //Make sure no new properties have been added
-            expect(scst.clockClass).toBe('');
+            expect(scst.timeKeeperStatus).toBe(TimeKeeperStatus.Stopped);
         });
 
         test('Simple Calendar Socket Journal', () => {

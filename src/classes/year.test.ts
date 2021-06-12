@@ -12,12 +12,13 @@ import "../../__mocks__/hooks";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {GameSystems, GameWorldTimeIntegrations, LeapYearRules, YearNamingRules} from "../constants";
+import {GameSystems, GameWorldTimeIntegrations, LeapYearRules, TimeKeeperStatus, YearNamingRules} from "../constants";
 import LeapYear from "./leap-year";
 import Season from "./season";
 import Moon from "./moon";
 import SimpleCalendar from "./simple-calendar";
 import {Note} from "./note";
+import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 
 describe('Year Class Tests', () => {
     let year: Year;
@@ -172,7 +173,7 @@ describe('Year Class Tests', () => {
         m2.visible = true;
         year.months.push(m2);
         weeks = year.daysIntoWeeks(m2, year.numericRepresentation, year.weekdays.length);
-        expect(weeks.length).toStrictEqual(5);
+        expect(weeks.length).toStrictEqual(4);
 
         const m3 = new Month("3", 3, 0, 1);
         m2.visible = false;
@@ -257,6 +258,29 @@ describe('Year Class Tests', () => {
         expect(month.current).toBe(false);
         expect(month.selected).toBe(false);
         expect(month.visible).toBe(false);
+
+    });
+
+    test('Set Current To Visible', () => {
+        year.months.push(month);
+        month.current = false;
+        month.visible = false;
+
+        //@ts-ignore
+        year.time.timeKeeper.status = TimeKeeperStatus.Started;
+
+        year.setCurrentToVisible();
+        expect(month.visible).toBe(false);
+
+        //@ts-ignore
+        year.time.timeKeeper.status = TimeKeeperStatus.Stopped;
+
+        year.setCurrentToVisible();
+        expect(month.visible).toBe(false);
+        month.current = true;
+
+        year.setCurrentToVisible();
+        expect(month.visible).toBe(true);
 
     });
 
@@ -399,19 +423,15 @@ describe('Year Class Tests', () => {
         year.changeMonth(1, 'current');
         expect(year.months[0].current).toBe(false);
         expect(year.months[1].current).toBe(true);
-        expect(year.months[1].visible).toBe(true);
         year.changeMonth(-1, 'current');
         expect(year.months[0].current).toBe(true);
-        expect(year.months[0].visible).toBe(true);
         expect(year.months[1].current).toBe(false);
         year.changeMonth(-1, 'current');
         expect(year.months[0].current).toBe(false);
         expect(year.months[1].current).toBe(true);
-        expect(year.months[1].visible).toBe(true);
         expect(year.numericRepresentation).toBe(-1);
         year.changeMonth(1, 'current');
         expect(year.months[0].current).toBe(true);
-        expect(year.months[0].visible).toBe(true);
         expect(year.months[1].current).toBe(false);
         expect(year.numericRepresentation).toBe(0);
 
@@ -419,7 +439,6 @@ describe('Year Class Tests', () => {
         year.changeMonth(1, 'current');
         expect(year.months[0].current).toBe(false);
         expect(year.months[1].current).toBe(true);
-        expect(year.months[1].visible).toBe(true);
         expect(year.months[1].days[0].current).toBe(true);
 
         year.months[1].days[0].current = false;
@@ -429,7 +448,6 @@ describe('Year Class Tests', () => {
         year.changeMonth(1, 'current');
         expect(year.months[0].current).toBe(false);
         expect(year.months[1].current).toBe(true);
-        expect(year.months[1].visible).toBe(true);
         expect(year.months[1].days[21].current).toBe(true);
 
         year.months[0].current = false;
@@ -541,11 +559,11 @@ describe('Year Class Tests', () => {
         year.weekdays.push(new Weekday(5, 'T'));
         year.weekdays.push(new Weekday(6, 'F'));
         year.weekdays.push(new Weekday(7, 'S'));
-        expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
+        expect(year.visibleMonthStartingDayOfWeek()).toBe(6);
         month.visible = false;
         year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].visible = true;
-        expect(year.visibleMonthStartingDayOfWeek()).toBe(2);
+        expect(year.visibleMonthStartingDayOfWeek()).toBe(1);
 
         year.months[1].visible = false;
         expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
@@ -566,13 +584,13 @@ describe('Year Class Tests', () => {
         year.weekdays.push(new Weekday(5, 'T'));
         year.weekdays.push(new Weekday(6, 'F'));
         year.weekdays.push(new Weekday(7, 'S'));
-        expect(year.dayOfTheWeek(year.numericRepresentation, 1, 2)).toBe(1);
-        expect(year.dayOfTheWeek(year.numericRepresentation, 1, -1)).toBe(0);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, 2)).toBe(0);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, -1)).toBe(6);
 
         year.months.push(new Month("Test 3", 3, 0, 2));
         year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].intercalary = true;
-        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(3);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(2);
 
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
@@ -580,7 +598,7 @@ describe('Year Class Tests', () => {
         expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(1);
 
         year.yearZero = 10;
-        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(6);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(4);
 
         year.months[0].startingWeekday = 3;
         expect(year.dayOfTheWeek(year.numericRepresentation, 1, 1)).toBe(2);
@@ -588,19 +606,26 @@ describe('Year Class Tests', () => {
 
     test('Date to Days', () => {
         year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 0, 22, 23));
-        expect(year.dateToDays(0,0,1)).toBe(0);
-        expect(year.dateToDays(5,0,1)).toBe(260);
+        year.months.push(new Month("Test 2", 2, 0, 30, 31));
+        year.months.push(new Month("Test 3", 3, 0, 30));
+        expect(year.dateToDays(0,1,-1)).toBe(0);
+        expect(year.dateToDays(5,1,1)).toBe(451);
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
-        expect(year.dateToDays(5,0,1, true)).toBe(262);
+        expect(year.dateToDays(5,1,1, true)).toBe(452);
+        expect(year.dateToDays(4,3,1, true)).toBe(422);
         year.months[0].intercalary = true;
-        expect(year.dateToDays(5,0,1, true)).toBe(112);
+        expect(year.dateToDays(5,1,1, true)).toBe(302);
         year.months[0].intercalaryInclude = true;
-        expect(year.dateToDays(5,2,1, true)).toBe(292);
+        expect(year.dateToDays(5,2,1, true)).toBe(482);
 
-        year.yearZero = 1;
-        expect(year.dateToDays(0,0,1)).toBe(-53);
+        year.yearZero = 5;
+        expect(year.dateToDays(4,1,1, true)).toBe(-91);
+        expect(year.dateToDays(3,1,1, true)).toBe(-181);
+        expect(year.dateToDays(-1,1,1, true)).toBe(-542);
+
+        year.months[2].intercalary = true;
+        expect(year.dateToDays(4,1,1, true)).toBe(-61);
     });
 
     test('To Seconds', () => {
@@ -610,18 +635,18 @@ describe('Year Class Tests', () => {
         year.numericRepresentation = 1;
         year.months[0].current = true;
         year.months[0].days[0].current = true;
-        expect(year.toSeconds()).toBe(2592000);
+        expect(year.toSeconds()).toBe(2678400);
 
         year.gameSystem = GameSystems.PF2E;
-        expect(year.toSeconds()).toBe(2592000);
+        expect(year.toSeconds()).toBe(2764800);
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AD", worldCreatedOn: 0}};
-        expect(year.toSeconds()).toBe(-4857408000);
+        expect(year.toSeconds()).toBe(-4857321600);
         month.days[0].current = false;
-        expect(year.toSeconds()).toBe(-4857408000);
+        expect(year.toSeconds()).toBe(-4857321600);
         //@ts-ignore
         game.pf2e.worldClock.dateTheme = "AR";
-        expect(year.toSeconds()).toBe(-67024627200);
+        expect(year.toSeconds()).toBe(-67024540800);
 
     });
 
@@ -652,21 +677,171 @@ describe('Year Class Tests', () => {
     });
 
     test('Seconds To Date', () => {
-        year.months.push(month);
-        year.months.push(new Month("Test 2", 2, 0, 22, 23));
-        year.months[1].intercalary = true;
-        expect(year.secondsToDate(10)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 0, seconds: 10});
-        expect(year.secondsToDate(70)).toStrictEqual({year: 0, month: 0, day: 1, hour: 0, minute: 1, seconds: 10});
-        expect(year.secondsToDate(3670)).toStrictEqual({year: 0, month: 0, day: 1, hour: 1, minute: 1, seconds: 10});
-        expect(year.secondsToDate(90070)).toStrictEqual({year: 0, month: 0, day: 2, hour: 1, minute: 1, seconds: 10});
-        expect(year.secondsToDate(2682070)).toStrictEqual({year: 0, month: 1, day: 2, hour: 1, minute: 1, seconds: 10});
-        year.months[1].intercalary = false;
-        year.leapYearRule = new LeapYear();
-        year.leapYearRule.rule = LeapYearRules.Gregorian;
-        expect(year.secondsToDate(20908800)).toStrictEqual({year: 4, month: 1, day: 4, hour: 0, minute: 0, seconds: 0});
+        const select = document.createElement('input');
+        select.value = 'gregorian';
+        jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
+        const sc = new SimpleCalendarConfiguration(year);
+        sc.predefinedApplyConfirm();
+        year.resetMonths();
+        year.months[3].current = true;
+        year.months[3].days[11].current = true;
 
-        year.yearZero = 1;
-        expect(year.secondsToDate(-10)).toStrictEqual({year: 1, month: 0, day: 1, hour: 0, minute: 0, seconds: 10});
+        //After Year Zero Tests
+        year.yearZero = 0;
+        year.numericRepresentation = 1950;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 0}); //+year, 0yearZero, year>yearZero
+        year.yearZero = 1000;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 0}); //+year, +yearZero, year>yearZero
+        year.yearZero = -1000;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 0}); //+year, -yearZero, year>yearZero
+        year.numericRepresentation = -1950
+        year.yearZero = -2000;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 0}); //-year, -yearZero, year>yearZero
+
+        // After Year Time Tests
+        year.yearZero = 0;
+        year.numericRepresentation = 1950;
+        year.time.seconds = 1;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 1});
+        year.time.seconds = 60;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 0});
+        year.time.seconds = 61;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 1});
+        year.time.seconds = 3600;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 0});
+        year.time.seconds = 3660;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 0});
+        year.time.seconds = 3601;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 1});
+        year.time.seconds = 3661;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 1});
+        year.yearZero = 1000;
+        year.time.seconds = 1;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 1});
+        year.time.seconds = 60;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 0});
+        year.time.seconds = 61;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 1});
+        year.time.seconds = 3600;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 0});
+        year.time.seconds = 3660;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 0});
+        year.time.seconds = 3601;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 1});
+        year.time.seconds = 3661;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 1});
+        year.yearZero = -1000;
+        year.time.seconds = 1;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 1});
+        year.time.seconds = 60;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 0});
+        year.time.seconds = 61;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 1});
+        year.time.seconds = 3600;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 0});
+        year.time.seconds = 3660;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 0});
+        year.time.seconds = 3601;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 1});
+        year.time.seconds = 3661;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 1});
+        year.numericRepresentation = -1950;
+        year.yearZero = -2000;
+        year.time.seconds = 1;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 1});
+        year.time.seconds = 60;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 0});
+        year.time.seconds = 61;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 1});
+        year.time.seconds = 3600;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 0});
+        year.time.seconds = 3660;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 0});
+        year.time.seconds = 3601;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 1});
+        year.time.seconds = 3661;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 1});
+
+        //Before Year Zero Tests
+        year.time.seconds = 0;
+        year.yearZero = 1970;
+        year.numericRepresentation = 1950;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 0}); //+year, +yearZero, year<yearZero
+        year.numericRepresentation = -1950
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 0});//-year, +yearZero, year<yearZero
+        year.yearZero = 0;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 0});//-year, 0yearZero, year<yearZero
+        year.yearZero = -1000;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 0});//-year, -yearZero, year<yearZero
+        year.numericRepresentation = 1968;
+        year.yearZero = 1970;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1968, month: 3, day: 11, hour: 0, minute: 0, seconds: 0});
+        year.yearZero = 1969;
+        year.numericRepresentation = 1963;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1963, month: 3, day: 11, hour: 0, minute: 0, seconds: 0});
+
+        // Before Year Time Tests
+        year.yearZero = 1970;
+        year.numericRepresentation = 1950;
+        year.time.seconds = 1;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 1});
+        year.time.seconds = 60;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 0});
+        year.time.seconds = 61;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 1});
+        year.time.seconds = 3600;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 0});
+        year.time.seconds = 3660;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 0});
+        year.time.seconds = 3601;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 1});
+        year.time.seconds = 3661;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 1});
+        year.numericRepresentation = -1950;
+        year.time.seconds = 1;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 1});
+        year.time.seconds = 60;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 0});
+        year.time.seconds = 61;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 1});
+        year.time.seconds = 3600;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 0});
+        year.time.seconds = 3660;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 0});
+        year.time.seconds = 3601;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 1});
+        year.time.seconds = 3661;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 1});
+        year.yearZero = 0;
+        year.time.seconds = 1;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 1});
+        year.time.seconds = 60;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 0});
+        year.time.seconds = 61;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 1});
+        year.time.seconds = 3600;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 0});
+        year.time.seconds = 3660;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 0});
+        year.time.seconds = 3601;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 1});
+        year.time.seconds = 3661;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 1});
+        year.yearZero = -1000;
+        year.time.seconds = 1;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 0, seconds: 1});
+        year.time.seconds = 60;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 0});
+        year.time.seconds = 61;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 0, minute: 1, seconds: 1});
+        year.time.seconds = 3600;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 0});
+        year.time.seconds = 3660;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 0});
+        year.time.seconds = 3601;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 1});
+        year.time.seconds = 3661;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 1});
     });
 
     test('Seconds To Interval', () => {
@@ -691,7 +866,7 @@ describe('Year Class Tests', () => {
         year.updateTime({year: 1, month: 1, day: 3, hour: 4, minute: 5, seconds: 6});
         expect(year.numericRepresentation).toBe(1);
         expect(year.months[1].current).toBe(true);
-        expect(year.months[1].days[2].current).toBe(true);
+        expect(year.months[1].days[3].current).toBe(true);
         expect(year.time.seconds).toBe(14706);
     });
 
@@ -760,6 +935,24 @@ describe('Year Class Tests', () => {
         game.pf2e = {worldClock: {dateTheme: "AD", worldCreatedOn: 0}};
         year.setFromTime(240, 60);
         expect(year.time.seconds).toBe(240);
+
+        const o = SimpleCalendar.instance.element;
+        //@ts-ignore
+        SimpleCalendar.instance.element = {
+            find: jest.fn().mockReturnValue({
+                removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
+                text: jest.fn()
+            })
+        };
+
+        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
+        //@ts-ignore
+        year.time.timeKeeper.status = TimeKeeperStatus.Started;
+        year.setFromTime(240, 60);
+        expect(year.time.seconds).toBe(240);
+
+        //@ts-ignore
+        SimpleCalendar.instance.element = o;
 
         //@ts-ignore
         game.user.isGM = false;

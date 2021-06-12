@@ -115,7 +115,8 @@
             {{#if currentYear.showClock}}
             <div class="time-display">
                 <span class="clock {{clockClass}}"></span>
-                {{localize 'FSC.Time.Current'}}: {{currentYear.currentTime.hour}}:{{currentYear.currentTime.minute}}:{{currentYear.currentTime.second}}
+                <span class="text">{{localize 'FSC.Time.Current'}}:</span>
+                <span class="time">{{currentYear.currentTime.hour}}:{{currentYear.currentTime.minute}}:{{currentYear.currentTime.second}}</span>
             </div>
             {{/if}}
             <div class="calendar-controls">
