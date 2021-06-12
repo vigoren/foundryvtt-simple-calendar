@@ -1,6 +1,4 @@
 import {Logger} from "./logging";
-import SimpleCalendar from "./simple-calendar";
-import {GameSettings} from "./game-settings";
 import API from "./api";
 
 export default class Macros {

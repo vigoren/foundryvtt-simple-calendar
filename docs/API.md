@@ -119,6 +119,42 @@ const status = SimpleCalendar.api.clockStatus();
 console.log(status); // {started: false, stopped: true, paused: false}
 ```
 
+## `SimpleCalendar.api.dateToTimestamp(date)`
+
+Will convert that passed in date object to a timestamp.
+
+### Parameters
+
+Parameter|Type|Default Value|Description
+---------|-----|-------------|-----------
+date|object or null|null|A date object (eg `{year:2021, month: 4, day: 12, hour: 0, mintue: 0, second: 0}`) with the parameters set to the date that should be converted to a timestamp. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+
+### Returns
+
+Returns the timestamp for that date.
+
+
+### Examples
+
+```javascript
+SimpleCalendar.api.dateToTimestamp({}); //Returns the timestamp for the current date
+
+SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, second: 0}); //Returns 1609462860
+```
+
+## `SimpleCalendar.api.isPrimaryGM()`
+
+Returns if the current user is considered the primary GM or not.
+
+### Examples
+
+```javascript
+
+SimpleCalendar.api.isPrimaryGM(); //True or Flase depending on if the current user is primary gm
+
+```
+
+
 ## `SimpleCalendar.api.secondsToInterval(seconds)`
 
 Will attempt to parse the passed in seconds into larger time intervals that make it up.
@@ -164,7 +200,7 @@ Will set the current date to the passed in date.
 
 Parameter|Type|Default Value|Description
 ---------|-----|-------------|-----------
-date|object or null|null|A date object (eg `{year:2021, month: 4, day: 12, hour: 0, mintue: 0, second: 0}`) with the parameters set to the date that the calendar should be set to. Any missing parameters will default to 0.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+date|object or null|null|A date object (eg `{year:2021, month: 4, day: 12, hour: 0, mintue: 0, second: 0}`) with the parameters set to the date that the calendar should be set to. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
 
 ### Returns
 
@@ -180,7 +216,7 @@ SimpleCalendar.setDateTime(1999, 11, 24);
 SimpleCalendar.setDateTime(1999, 11, 30, 23, 59, 59);
 ```
 
-## `SimpleCalendar.api.showCalendar(date)`
+## `SimpleCalendar.api.showCalendar(date, compact)`
 
 Will open up Simple Calendar to the current date, or the passed in date.
 
@@ -189,12 +225,14 @@ Will open up Simple Calendar to the current date, or the passed in date.
 Parameter|Type|Default Value|Description
 ---------|-----|-------------|-----------
 date|object or null|null|A date object (eg `{year:2021, month: 4, day: 12}`) with the year, month and day set to the date to be visible when the calendar is opened.<br>**Important**: The month is index based so January would be 0.
+compact|boolean|false|If to open the calendar in compact mode or not.
 
 ### Examples
 ```javascript
 //Assuming a Gregorian Calendar
 SimpleCalendar.api.showCalendar(); // Will open the calendar to the current date.
 SimpleCalendar.api.showCalendar({year: 1999, month: 11, day: 25}); // Will open the calendar to the date December 25th, 1999
+SimpleCalendar.api.showCalendar(null, true); // Will opent the calendar to the current date in compact mode.
 ```
 
 ## `SimpleCalendar.api.timestamp()`
@@ -207,6 +245,33 @@ const timestamp = SimpleCalendar.api.timestamp();
 console.log(timestamp); // This will be a number representing the current number of seconds passed in the calendar.
 ```
 
+## `SimpleCalendar.api.startClock()`
+
+Starts the real time clock of Simple Calendar. Only the primary GM can start a clock.
+
+### Returns
+
+Will return true if the clock started, false if it did not.
+
+### Examples
+
+```javascript
+SimpleCalendar.api.startClock();
+```
+
+## `SimpleCalendar.api.stopClock()`
+
+Stops the real time clock of Simple Calendar.
+
+### Returns
+
+Will return true if the clock stopped, false if it did not.
+
+### Examples
+
+```javascript
+SimpleCalendar.api.stopClock();
+```
 
 ## `SimpleCalendar.api.timestampPlusInterval(timestamp, interval)`
 

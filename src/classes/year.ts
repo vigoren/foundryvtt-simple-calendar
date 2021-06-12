@@ -11,12 +11,13 @@ import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
 import Time from "./time";
-import {GameSystems, GameWorldTimeIntegrations, LeapYearRules, YearNamingRules} from "../constants";
+import {GameSystems, GameWorldTimeIntegrations, LeapYearRules, TimeKeeperStatus, YearNamingRules} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
 import {Note} from "./note";
 import SimpleCalendar from "./simple-calendar";
+import PF2E from "./systems/pf2e";
 
 /**
  * Class for representing a year
@@ -218,7 +219,7 @@ export default class Year {
             firstWeekday: this.firstWeekday,
             visibleMonth: visibleMonth?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
             showClock: this.generalSettings.showClock,
-            clockClass: this.time.getClockClass(),
+            clockClass: 'stopped',
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             currentTime: this.time.getCurrentTime(),
@@ -369,6 +370,17 @@ export default class Year {
         this.months.forEach(m => {if(setting!=='visible'){m.resetDays(setting);} m[verifiedSetting] = false;});
     }
 
+    setCurrentToVisible(){
+        if(this.time.timeKeeper.getStatus() !== TimeKeeperStatus.Started){
+            this.visibleYear = this.numericRepresentation;
+            this.resetMonths('visible');
+            const curMonth = this.getMonth();
+            if(curMonth){
+                curMonth.visible = true;
+            }
+        }
+    }
+
     /**
      * Updates the specified setting for the specified month, also handles instances if the new month has 0 days
      * @param {number} month The index of the new month, -1 will be the last month
@@ -413,10 +425,7 @@ export default class Year {
         // If we are adjusting the current date we need to propagate that down to the days of the new month as well
         // We also need to set the visibility of the new month to true
         if(verifiedSetting === 'current'){
-            //this.months[month].visible = false;
-            this.resetMonths('visible');
             Logger.debug(`New Month: ${this.months[month].name}`);
-            this.months[month].visible = true;
             this.months[month].updateDay(currentDay, isLeapYear);
         }
     }
@@ -436,7 +445,6 @@ export default class Year {
             this.selectedYear = this.selectedYear + amount;
         } else {
             this.numericRepresentation = this.numericRepresentation + amount;
-            this.visibleYear = this.numericRepresentation;
             Logger.debug(`New Year: ${this.numericRepresentation}`);
         }
         if(this.months.length){
@@ -587,7 +595,8 @@ export default class Year {
             if(month && month.startingWeekday !== null){
                 daysSoFar = targetDay + month.startingWeekday - 2;
             } else {
-                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + (this.yearZero !== 0? 1 : 0) + this.firstWeekday;
+                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + (this.yearZero === 0? -1 : 0) + this.firstWeekday;
+                //daysSoFar = this.dateToDays(year, targetMonth, targetDay) + this.firstWeekday;
             }
             return (daysSoFar % this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
@@ -604,36 +613,69 @@ export default class Year {
      * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
      */
     dateToDays(year: number, month: number, day: number, addLeapYearDiff: boolean = false, ignoreIntercalaryRules: boolean = false){
+        const beforeYearZero = year < this.yearZero;
         const daysPerYear = this.totalNumberOfDays(false, ignoreIntercalaryRules);
         const daysPerLeapYear = this.totalNumberOfDays(true, ignoreIntercalaryRules);
         const leapYearDayDifference = daysPerLeapYear - daysPerYear;
-        const numberOfLeapYears = this.leapYearRule.howManyLeapYears(year);
-        const isLeapYear = this.leapYearRule.isLeapYear(year);
-        let daysSoFar = (daysPerYear * year) + (numberOfLeapYears * leapYearDayDifference);
         const monthIndex = this.months.findIndex(m => m.numericRepresentation === month);
-        for(let i = 0; i < this.months.length; i++){
-            //Only look at the month preceding the month we want and is not intercalary or is intercalary if the include setting is set otherwise skip
-            if(i < monthIndex && (ignoreIntercalaryRules || !this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
-                if(isLeapYear){
-                    daysSoFar = daysSoFar + this.months[i].numberOfLeapYearDays;
-                } else {
-                    daysSoFar = daysSoFar + this.months[i].numberOfDays;
-                }
-            }
+        const isLeapYear = this.leapYearRule.isLeapYear(year);
+        const numberOfLeapYears = this.leapYearRule.howManyLeapYears(year);
+        const numberOfYZLeapYears = this.leapYearRule.howManyLeapYears(this.yearZero);
+        let leapYearDays;
+        let procYear = Math.abs(year - this.yearZero);
+
+        if(beforeYearZero){
+            procYear = procYear - 1;
         }
+        let daysSoFar = (daysPerYear * procYear);
         if(day < 1){
             day = 1;
         }
-        daysSoFar += day;
-        if(addLeapYearDiff && (year > this.leapYearRule.customMod || (this.leapYearRule.rule === LeapYearRules.Gregorian && year > 4))){
-            daysSoFar += leapYearDayDifference;
+        if(beforeYearZero){
+            if(isLeapYear){
+                leapYearDays = (numberOfYZLeapYears - (numberOfLeapYears + 1)) * leapYearDayDifference;
+            } else {
+                leapYearDays = (numberOfYZLeapYears - numberOfLeapYears) * leapYearDayDifference;
+            }
+            daysSoFar += leapYearDays;
+            for(let i = this.months.length - 1; i >= 0; i--){
+                if(i > monthIndex && (ignoreIntercalaryRules || !this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
+                    if(isLeapYear){
+                        daysSoFar = daysSoFar + this.months[i].numberOfLeapYearDays;
+                    } else {
+                        daysSoFar = daysSoFar + this.months[i].numberOfDays;
+                    }
+                }
+            }
+            daysSoFar += (isLeapYear? this.months[monthIndex].numberOfLeapYearDays : this.months[monthIndex].numberOfDays) - day;
+        } else {
+            leapYearDays = Math.abs(numberOfLeapYears - numberOfYZLeapYears) * leapYearDayDifference;
+            daysSoFar += leapYearDays;
+            for(let i = 0; i < this.months.length; i++){
+                //Only look at the month preceding the month we want and is not intercalary or is intercalary if the include setting is set otherwise skip
+                if(i < monthIndex && (ignoreIntercalaryRules || !this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
+                    if(isLeapYear){
+                        daysSoFar = daysSoFar + this.months[i].numberOfLeapYearDays;
+                    } else {
+                        daysSoFar = daysSoFar + this.months[i].numberOfDays;
+                    }
+                }
+            }
+            daysSoFar += day;
         }
-        if(this.yearZero !== 0){
-            const yearZeroNumberOfLeapYears = this.leapYearRule.howManyLeapYears(this.yearZero );
-            const yearZeroDays = (daysPerYear * this.yearZero) + (yearZeroNumberOfLeapYears * leapYearDayDifference) + 1;
-            daysSoFar = daysSoFar - yearZeroDays;
+        if(beforeYearZero){
+            daysSoFar = daysSoFar + 1;
+            if(year < 0 && this.yearZero === 0){
+                //daysSoFar = daysSoFar + 1;
+                daysSoFar--;
+            }
+        } else {
+            daysSoFar = daysSoFar - 1;
         }
-        return daysSoFar - 1;
+        if(year > 0 && this.yearZero === 0){
+            daysSoFar++;
+        }
+        return beforeYearZero? daysSoFar * -1 : daysSoFar;
     }
 
     /**
@@ -646,27 +688,17 @@ export default class Year {
             const day = month.getDay();
             //Get the days so for and add one to include the current day
             let daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
-            totalSeconds = this.time.getTotalSeconds(daysSoFar)
+            totalSeconds = this.time.getTotalSeconds(daysSoFar);
 
-            // If this is a Pathfinder 2E game, when setting the world time from Simple Calendar we need too subtract:
-            //  - The World Create Time Stamp Offset (Used by PF2E to calculate the current world time) - This is a timestamp in Real world time
-            //  - The offset from year 0 to Jan 1 1970 (This is because the World Create Time Stamp is based on a timestamp from 1970 so need to make up that difference)
-            if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync && game.hasOwnProperty('pf2e')){
-                //If we are using the Gregorian Calendar that ties into the pathfinder world we need to set the year 0 to 1875
-                // @ts-ignore
-                if(game.pf2e.worldClock.dateTheme === 'AD'){
+            // If this is a Pathfinder 2E game, subtract the world creation seconds
+            if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
+                const newYZ = PF2E.newYearZero();
+                if(newYZ !== undefined){
                     this.yearZero = 1875;
                     daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
                 }
                 daysSoFar++;
-                // @ts-ignore
-                let worldCreateTimeStamp = Math.floor(game.pf2e.worldClock.worldCreatedOn/1000);
-                // @ts-ignore
-                if(game.pf2e.worldClock.dateTheme === 'AR' || game.pf2e.worldClock.dateTheme === 'IC') {
-                    worldCreateTimeStamp += 62167219200;
-                }
-
-                totalSeconds =  this.time.getTotalSeconds(daysSoFar) - worldCreateTimeStamp;
+                totalSeconds =  this.time.getTotalSeconds(daysSoFar) - PF2E.getWorldCreateSeconds();
             }
         }
         return totalSeconds;
@@ -676,9 +708,8 @@ export default class Year {
      * Sets the current game world time to match what our current time is
      */
     async syncTime(){
-        // Only GMs can sync the time
         // Only if the time tracking rules are set to self or mixed
-        if(GameSettings.IsGm() && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
+        if(this.canUser(game.user, this.generalSettings.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
             Logger.debug(`Year.syncTime()`);
             const totalSeconds = this.toSeconds();
             //Let the local functions know that we all ready updated this time
@@ -695,47 +726,77 @@ export default class Year {
     secondsToDate(seconds: number): DateTimeParts{
         const beforeYearZero = seconds < 0;
         seconds = Math.abs(seconds);
-        let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
-        if(sec >= this.time.secondsInMinute){
-            min = Math.floor(sec / this.time.secondsInMinute);
-            sec = sec - (min * this.time.secondsInMinute);
-        }
-        if(min >= this.time.minutesInHour){
-            hour = Math.floor(min / this.time.minutesInHour);
-            min = min - (hour * this.time.minutesInHour);
-        }
-        let dayCount = 0;
-        if(hour >= this.time.hoursInDay){
-            dayCount = Math.floor(hour / this.time.hoursInDay);
-            hour = hour - (dayCount * this.time.hoursInDay);
-        }
-        // Add one day to keep the time in sync with how about-time does it
-        dayCount++;
-        let daysProcessed = 0;
-        while(dayCount > 0){
-            let isLeapYear = this.leapYearRule.isLeapYear(year);
-            for(let i = 0; i < this.months.length; i ++){
-                //if(!this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude)){
-                    const daysInMonth = isLeapYear? this.months[i].numberOfLeapYearDays : this.months[i].numberOfDays;
-                    month = i;
-                    if(dayCount < daysInMonth) {
-                        day = dayCount;
-                    }
-                    daysProcessed += daysInMonth;
-                    dayCount -= daysInMonth;
-                    if(dayCount <= 0){
-                        break;
-                    }
-                //}
-            }
-            if(dayCount > 0){
-                year++;
-            }
-        }
+        let sec, min, hour, day = 0, dayCount, month = 0, year = 0;
+
+        dayCount = Math.floor(seconds / this.time.secondsPerDay);
+        seconds -= dayCount * this.time.secondsPerDay;
+
+        hour = Math.floor(seconds / (this.time.secondsInMinute * this.time.minutesInHour) ) % this.time.hoursInDay;
+        seconds -= hour * (this.time.secondsInMinute * this.time.minutesInHour);
+
+        min = Math.floor(seconds / this.time.secondsInMinute) % this.time.secondsInMinute;
+        seconds -= min * this.time.secondsInMinute;
+
+        sec = seconds % 60
+
         if(beforeYearZero){
-            year = this.yearZero - year;
+            if(hour > 0){
+                hour = this.time.hoursInDay - hour - (sec > 0 || min > 0? 1 : 0);
+            }
+            if(min > 0){
+                min = this.time.minutesInHour - min - (sec > 0? 1 : 0);
+            }
+            if(sec > 0){
+                sec = this.time.secondsInMinute - sec;
+            }
+
+            year = this.yearZero - 1;
+            let isLeapYear = this.leapYearRule.isLeapYear(year);
+            month = this.months.length - 1;
+            day = isLeapYear? this.months[month].numberOfLeapYearDays - 1 : this.months[month].numberOfDays - 1;
+
+            if(sec === 0 && min === 0 && hour === 0){
+                dayCount--;
+            }
+            while(dayCount > 0){
+                const yearTotalDays = this.totalNumberOfDays(isLeapYear, true);
+                const monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
+                if(dayCount >= yearTotalDays){
+                    year = year - 1;
+                    isLeapYear = this.leapYearRule.isLeapYear(year);
+                    dayCount = dayCount - yearTotalDays;
+                } else if(dayCount >= monthDays){
+                    month = month - 1;
+                    day = isLeapYear? this.months[month].numberOfLeapYearDays - 1 : this.months[month].numberOfDays - 1;
+                    dayCount = dayCount - monthDays;
+                } else {
+                    day = day - 1;
+                    dayCount = dayCount - 1;
+                }
+            }
         } else {
-            year += this.yearZero;
+            year = this.yearZero;
+            let isLeapYear = this.leapYearRule.isLeapYear(year);
+            month = 0;
+            day = 0;
+            while(dayCount > 0){
+                const yearTotalDays = this.totalNumberOfDays(isLeapYear, true);
+                const monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
+                if(dayCount >= yearTotalDays){
+                    year = year + 1;
+                    isLeapYear = this.leapYearRule.isLeapYear(year);
+                    dayCount = dayCount - yearTotalDays;
+                } else if(dayCount >= monthDays){
+                    month = month + 1;
+                    dayCount = dayCount - monthDays;
+                } else {
+                    day = day + 1;
+                    dayCount = dayCount - 1;
+                }
+            }
+            if(year < 0){
+                day++;
+            }
         }
         return {
             year: year,
@@ -794,7 +855,7 @@ export default class Year {
         let isLeapYear = this.leapYearRule.isLeapYear(parsedDate.year);
         this.numericRepresentation = parsedDate.year;
         this.updateMonth(parsedDate.month, 'current', true);
-        this.months[parsedDate.month].updateDay(parsedDate.day - 1, isLeapYear);
+        this.months[parsedDate.month].updateDay(parsedDate.day, isLeapYear);
         this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.seconds);
     }
 
@@ -806,22 +867,21 @@ export default class Year {
     setFromTime(newTime: number, changeAmount: number){
         Logger.debug('Year.setFromTime()');
 
-        // If this is a Pathfinder 2E game, when setting Simple Calendar from the world time we need to add:
-        //  - The World Create Time Stamp Offset (Used by PF2E to calculate the current world time) - This is a timestamp in Real world time
-        //  - The offset from year 0 to Jan 1 1970 (This is because the World Create Time Stamp is based on a timestamp from 1970 so need to make up that difference)
-        if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync && game.hasOwnProperty('pf2e')){
-            // @ts-ignore
-            let worldCreateTimeStamp = Math.floor(game.pf2e.worldClock.worldCreatedOn/1000);
-            // @ts-ignore
-            if(game.pf2e.worldClock.dateTheme === 'AR' || game.pf2e.worldClock.dateTheme === 'IC') {
-                worldCreateTimeStamp += 62167219200;
-            }
-            newTime += worldCreateTimeStamp;
+        // If this is a Pathfinder 2E game, add the world creation seconds
+        if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
+            newTime += PF2E.getWorldCreateSeconds();
         }
 
         if(changeAmount !== 0){
+
+            // If the tracking rules are for self or mixed and the clock is running then we make the change.
+            if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.time.timeKeeper.getStatus() === TimeKeeperStatus.Started){
+                const parsedDate = this.secondsToDate(newTime);
+                this.updateTime(parsedDate);
+                this.time.timeKeeper.setClockTime(this.time.toString());
+            }
             // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
-            if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.timeChangeTriggered || this.combatChangeTriggered)){
+            else if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.timeChangeTriggered || this.combatChangeTriggered)){
                 Logger.debug(`Tracking Rule: Self.\nTriggered Change: Simple Calendar/Combat Turn. Applying Change!`);
                 //If we didn't request the change (from a combat change) we need to update the internal time to match the new world time
                 if(!this.timeChangeTriggered){

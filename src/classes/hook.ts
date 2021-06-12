@@ -1,4 +1,4 @@
-import {SimpleCalendarHooks} from "../constants";
+import {SimpleCalendarHooks, TimeKeeperStatus} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import {Logger} from "./logging";
 
@@ -54,10 +54,12 @@ export default class Hook{
                     });
                 }
             } else if(hook === SimpleCalendarHooks.ClockStartStop){
-                const status = SimpleCalendar.instance.currentYear.time.getClockClass();
-                data['started'] = status === 'started';
-                data['stopped'] = status === 'stopped';
-                data['paused'] = status === 'paused';
+                const status = SimpleCalendar.instance.currentYear.time.timeKeeper.getStatus();
+                data['started'] = status === TimeKeeperStatus.Started;
+                data['stopped'] = status === TimeKeeperStatus.Stopped;
+                data['paused'] = status === TimeKeeperStatus.Paused;
+            } else if(hook === SimpleCalendarHooks.PrimaryGM){
+                data['isPrimaryGM'] = SimpleCalendar.instance.primary;
             }
             Hooks.callAll(hook, data);
         } else {

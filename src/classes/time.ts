@@ -4,6 +4,7 @@ import SimpleCalendar from "./simple-calendar";
 import {ModuleSocketName, SimpleCalendarHooks, SocketTypes} from "../constants";
 import {GameSettings} from "./game-settings";
 import Hook from "./hook";
+import TimeKeeper from "./time-keeper";
 
 /**
  * Class representing the time of day
@@ -40,9 +41,9 @@ export default class Time {
      */
     secondsPerDay: number;
     /**
-     * The build in time keeper interval
+     * The Time Keeper class used for the in game clock
      */
-    keeper: number | undefined;
+    timeKeeper: TimeKeeper;
     /**
      * If a combat is currently running or not
      */
@@ -61,6 +62,8 @@ export default class Time {
         this.gameTimeRatio = 1;
 
         this.secondsPerDay = this.hoursInDay * this.minutesInHour * this.secondsInMinute;
+
+        this.timeKeeper = new TimeKeeper();
     }
 
     /**
@@ -93,6 +96,14 @@ export default class Time {
             minute: m < 10? `0${m}` : m.toString(),
             second: s < 10? `0${s}` : s.toString()
         };
+    }
+
+    /**
+     * Returns the current time as a string
+     */
+    toString(): string{
+        const t = this.getCurrentTime();
+        return `${t.hour}:${t.minute}:${t.second}`;
     }
 
     /**
@@ -143,21 +154,6 @@ export default class Time {
     }
 
     /**
-     * Gets the clock CSS class
-     * @return {string} The css class to apply to the animated clock
-     */
-    getClockClass(): string{
-        if(this.keeper !== undefined){
-            if(!game.paused && !this.combatRunning){
-                return 'started';
-            } else {
-                return 'paused';
-            }
-        }
-        return 'stopped';
-    }
-
-    /**
      * Sets the world time to the passed in number of seconds
      * @param {number} seconds The number of seconds to set the world time too
      */
@@ -167,61 +163,4 @@ export default class Time {
         const newTime = await game.time.advance(diff);
         Logger.debug(`Set New Game World Time: ${newTime}`);
     }
-
-    /**
-     * Starts the build in time keeper
-     */
-    startTimeKeeper(){
-        if(this.keeper === undefined){
-            Logger.debug('Starting the built in Time Keeper');
-            this.keeper = window.setInterval(this.timeKeeper.bind(this), 30000);
-            this.timeKeeper();
-            Hook.emit(SimpleCalendarHooks.ClockStartStop);
-        }
-    }
-
-    /**
-     * Stops the built in time keeper
-     */
-    stopTimeKeeper(){
-        if(this.keeper !== undefined){
-            Logger.debug('Stopping the built in Time Keeper');
-            clearInterval(this.keeper);
-            this.keeper = undefined;
-            this.updateUsers();
-            Hook.emit(SimpleCalendarHooks.ClockStartStop);
-        }
-    }
-
-    /**
-     * Updates the current time based on the time keepers running time
-     */
-    timeKeeper(){
-        this.updateUsers();
-        if(!game.paused && !this.combatRunning){
-            Logger.debug('Updating Time...');
-            const modifiedSeconds = 30 * this.gameTimeRatio;
-            const dayChange = this.changeTime(0,0,modifiedSeconds);
-            if(dayChange !== 0){
-                SimpleCalendar.instance.currentYear?.changeDay(dayChange);
-            }
-            SimpleCalendar.instance.currentYear?.syncTime();
-
-        } else {
-            Logger.debug('Game Paused or combat started, not updating time.');
-        }
-    }
-
-    /**
-     * Sends an update to all connected users over our socket
-     */
-    updateUsers(){
-        if(GameSettings.IsGm()){
-            const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.time, data: {clockClass: this.getClockClass()}};
-            Logger.debug(`Update Users Clock Class: ${(<SimpleCalendarSocket.SimpleCalendarSocketTime>socketData.data).clockClass}`);
-            game.socket.emit(ModuleSocketName, socketData);
-            SimpleCalendar.instance.processSocket(socketData);
-        }
-    }
-
 }

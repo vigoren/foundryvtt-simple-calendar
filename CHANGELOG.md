@@ -1,5 +1,37 @@
 # Change Log
 
+## v1.2.85 - New Clock, API Changes and as always more Bug Fixing
+
+### New Clock
+
+The old clock in Simple Calendar was very basic and not very good. I have removed that clock and re-written the entire thing which should provide a much nicer experience.
+The clock now functions as follows:
+
+- The time will now update every second for all players.
+- Every 10 seconds all players time will sync with the primary GM's time. This is to mitigate any time "wandering" that may happen.
+- The time can still be manually updated by those with permission while the clock is running.
+- For every second that passes, the time updates by the amount in the configuration setting [Game Seconds Per Real Life Seconds](./docs/Configuration.md#time-settings) under the time seconds.
+- If the GM disconnects while the clock is running, when they reconnect all the players clocks will stop running and be updated to the time when the GM disconnected.
+
+It is important to note that while the clock does its best to keep everyone on the same time if a player or GM has a high latency to the server (greater than one to two seconds) then the time may be visually off between the GM and the players. The Primary GM's time is considered correct and all other players will use that time.
+
+### API Changes
+
+- Changed the API showCalendar function to accept an additional parameter compact. Which, if set to true will open the calendar in compact mode.
+- Changed the API setDate function so that any time options that were not specified in passed in parameter will default to the current value. Eg If no year is specified the current year will be used.
+- Added a new API function, dateToTimestamp. This function will take in a date object and convert it to a timestamp.
+- Added a new API function, isPrimaryGM. This function will return if the current user is the primary GM. There is a 5-second delay from when a user joins to when they can be assigned the primary GM, this is to check for other primary GMs before taking over.
+- Added a hook that fires when the user is selected as the primary GM.
+- Added new API functions, startClock and stopClock. These functions will start/stop the built-in clock. Only the Primary GM can run the clock.
+
+### Bug Fixes
+
+- Fixed a bug when dealing with negative timestamps and negative years.
+- Fixed a bug where if the time updated while you were viewing another month, the calendar would update to view the month of the current date.
+- Fixed an issue with the API timestampToDate function that didn't account for the PF2E system.
+- Fixed an issue with the API timestampPlusInterval function that didn't account for the PF2E system.
+- Fixed a bug where occasionally the last day of the month would have a value of -1.
+
 ## v1.2.73 - API Bug Fixing
 
 ### Bug Fixes
