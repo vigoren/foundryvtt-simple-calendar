@@ -8,7 +8,12 @@ import {GameSettings} from "./game-settings";
 import {Weekday} from "./weekday";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
-import {GameWorldTimeIntegrations, ModuleSocketName, SimpleCalendarHooks, SocketTypes} from "../constants";
+import {
+    GameWorldTimeIntegrations,
+    ModuleSocketName, SimpleCalendarHooks,
+    SocketTypes,
+    TimeKeeperStatus
+} from "../constants";
 import Importer from "./importer";
 import Season from "./season";
 import Moon from "./moon";
@@ -116,9 +121,6 @@ export default class SimpleCalendar extends Application{
     public initializeSockets(){
         //Set up the socket we use to forward data between players and the GM
         game.socket.on(ModuleSocketName, this.processSocket.bind(this));
-        if(this.currentYear){
-            this.currentYear.time.updateUsers();
-        }
 
         if(GameSettings.IsGm()){
             const socket = <SimpleCalendarSocket.Data>{
@@ -140,8 +142,11 @@ export default class SimpleCalendar extends Application{
         this.primary = true;
         const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: this.primary}};
         game.socket.emit(ModuleSocketName, socketData);
+        const timeKeeperSocketData = <SimpleCalendarSocket.Data>{type: SocketTypes.time, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}}
+        game.socket.emit(ModuleSocketName, timeKeeperSocketData);
         await this.timeKeepingCheck();
         this.updateApp();
+        Hook.emit(SimpleCalendarHooks.PrimaryGM);
     }
 
     /**
@@ -152,8 +157,11 @@ export default class SimpleCalendar extends Application{
         Logger.debug(`Processing ${data.type} socket emit`);
         if(data.type === SocketTypes.time){
             // This is processed by all players to update the animated clock
-            this.clockClass = (<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).clockClass;
-            this.updateApp();
+            if(this.currentYear){
+                this.currentYear.time.timeKeeper.setStatus((<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);
+                this.clockClass = this.currentYear.time.timeKeeper.getStatus();
+                this.currentYear.time.timeKeeper.setClockTime(this.currentYear.time.toString());
+            }
         } else if (data.type === SocketTypes.journal){
             // If user is a GM and the primary GM then save the journal requests, otherwise do nothing
             if(GameSettings.IsGm() && this.primary){
@@ -321,6 +329,7 @@ export default class SimpleCalendar extends Application{
     public showApp(){
         if(this.currentYear && this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.viewCalendar)){
             this.hasBeenResized = false;
+            this.currentYear.setCurrentToVisible();
             this.render(true, {});
         }
     }
@@ -1021,7 +1030,7 @@ export default class SimpleCalendar extends Application{
             this.loadGeneralSettings();
         }
         this.loadCurrentDate();
-        if(update) {
+        if(update && this.currentYear?.time.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
             this.updateApp();
         }
     }
@@ -1262,8 +1271,8 @@ export default class SimpleCalendar extends Application{
         const currentDate = GameSettings.LoadCurrentDate();
         if(this.currentYear && currentDate && Object.keys(currentDate).length){
             this.currentYear.numericRepresentation = currentDate.year;
-            this.currentYear.visibleYear = currentDate.year;
             this.currentYear.selectedYear = currentDate.year;
+            this.currentYear.visibleYear = currentDate.year;
 
             this.currentYear.resetMonths('current');
             this.currentYear.resetMonths('visible');
@@ -1374,8 +1383,6 @@ export default class SimpleCalendar extends Application{
         const activeScene = game.scenes? game.scenes.active.id : null;
         if(this.currentYear && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
             this.currentYear.time.combatRunning = true;
-            this.currentYear.time.updateUsers();
-            Hook.emit(SimpleCalendarHooks.ClockStartStop);
             if(time && time.hasOwnProperty('advanceTime')){
                 Logger.debug('Combat Change Triggered');
                 this.currentYear.combatChangeTriggered = true;
@@ -1390,19 +1397,6 @@ export default class SimpleCalendar extends Application{
         Logger.debug('Combat Ended');
         if(this.currentYear){
             this.currentYear.time.combatRunning = false;
-            this.currentYear.time.updateUsers();
-            Hook.emit(SimpleCalendarHooks.ClockStartStop);
-        }
-    }
-
-    /**
-     * Triggered when the game is paused/un-paused
-     * @param {boolean} paused If the game is now paused or not
-     */
-    gamePaused(paused: boolean){
-        if(this.currentYear){
-            this.currentYear.time.updateUsers();
-            Hook.emit(SimpleCalendarHooks.ClockStartStop);
         }
     }
 
@@ -1415,7 +1409,7 @@ export default class SimpleCalendar extends Application{
             if(game.combats && game.combats.size > 0 && game.combats.find(g => g.started && ((activeScene !== null && g.scene && g.scene.id === activeScene) || activeScene === null))){
                 GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
             } else if(this.currentYear.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.currentYear.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
-                this.currentYear.time.startTimeKeeper();
+                this.currentYear.time.timeKeeper.start();
             }
         }
     }
@@ -1425,7 +1419,7 @@ export default class SimpleCalendar extends Application{
      */
     stopTime(){
         if(this.currentYear){
-            this.currentYear.time.stopTimeKeeper();
+            this.currentYear.time.timeKeeper.stop();
         }
     }
 

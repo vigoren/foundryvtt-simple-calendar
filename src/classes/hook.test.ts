@@ -63,9 +63,13 @@ describe('Hook Tests', () => {
         expect(console.error).toHaveBeenCalledTimes(2);
         expect(Hooks.callAll).toHaveBeenCalledTimes(4);
 
+        Hook.emit(SimpleCalendarHooks.PrimaryGM);
+        expect(console.error).toHaveBeenCalledTimes(2);
+        expect(Hooks.callAll).toHaveBeenCalledTimes(5);
+
         //@ts-ignore
         Hook.emit('asd');
         expect(console.error).toHaveBeenCalledTimes(2);
-        expect(Hooks.callAll).toHaveBeenCalledTimes(5);
+        expect(Hooks.callAll).toHaveBeenCalledTimes(6);
     });
 });

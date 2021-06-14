@@ -15,7 +15,7 @@ import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";
 import {Note} from "./note";
-import {GameWorldTimeIntegrations, SettingNames, SocketTypes} from "../constants";
+import {GameWorldTimeIntegrations, SettingNames, SocketTypes, TimeKeeperStatus} from "../constants";
 import {SimpleCalendarSocket} from "../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {Weekday} from "./weekday";
@@ -109,7 +109,7 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.initializeSockets();
         // @ts-ignore
         expect(SimpleCalendar.instance.primaryCheckTimeout).toBeDefined();
-        expect(game.socket.emit).toHaveBeenCalledTimes(2);
+        expect(game.socket.emit).toHaveBeenCalledTimes(1);
         // @ts-ignore
         game.user.isGM = false;
     });
@@ -117,36 +117,51 @@ describe('Simple Calendar Class Tests', () => {
     test('Primary Check Timeout Call', () => {
         SimpleCalendar.instance.primaryCheckTimeoutCall();
         expect(SimpleCalendar.instance.primary).toBe(true);
-        expect(game.socket.emit).toHaveBeenCalledTimes(1);
+        expect(game.socket.emit).toHaveBeenCalledTimes(2);
     })
 
     test('Process Socket', async () => {
         const d: SimpleCalendarSocket.Data = {
             type: SocketTypes.time,
             data: {
-                clockClass: ''
+                timeKeeperStatus: TimeKeeperStatus.Stopped
             }
         };
         await SimpleCalendar.instance.processSocket(d);
-        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(renderSpy).toHaveBeenCalledTimes(0);
+
+        SimpleCalendar.instance.currentYear = y;
+        const orig = SimpleCalendar.instance.element;
+        //@ts-ignore
+        SimpleCalendar.instance.element = {
+            find: jest.fn().mockReturnValue({
+                removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
+                text: jest.fn()
+            })
+        }
+        await SimpleCalendar.instance.processSocket(d);
+        expect(renderSpy).toHaveBeenCalledTimes(0);
+        //@ts-ignore
+        SimpleCalendar.instance.element = orig;
+        SimpleCalendar.instance.currentYear = null;
 
         d.type = SocketTypes.journal;
         d.data = {notes: []};
         await SimpleCalendar.instance.processSocket(d);
-        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(renderSpy).toHaveBeenCalledTimes(0);
 
         // @ts-ignore
         game.user.isGM = true;
         SimpleCalendar.instance.primary = true;
         await SimpleCalendar.instance.processSocket(d);
-        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(renderSpy).toHaveBeenCalledTimes(0);
 
         d.type = SocketTypes.primary;
         d.data = {
             primaryCheck: true
         };
         await SimpleCalendar.instance.processSocket(d);
-        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(renderSpy).toHaveBeenCalledTimes(0);
         expect(game.socket.emit).toHaveBeenCalledTimes(1);
         d.data = {
             amPrimary: true
@@ -236,7 +251,7 @@ describe('Simple Calendar Class Tests', () => {
         //@ts-ignore
         d.type = 'asd';
         await SimpleCalendar.instance.processSocket(d);
-        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(renderSpy).toHaveBeenCalledTimes(0);
     });
 
     test('Get Data', async () => {
@@ -1267,6 +1282,7 @@ describe('Simple Calendar Class Tests', () => {
                 default:
                     return null;
             }};
+        //@ts-ignore
         SimpleCalendar.instance.settingUpdate();
         expect(SimpleCalendar.instance.currentYear?.numericRepresentation).toBe(0);
         expect(SimpleCalendar.instance.currentYear?.months[0].current).toBe(true);
@@ -1357,25 +1373,27 @@ describe('Simple Calendar Class Tests', () => {
         expect(y.time.combatRunning).toBe(false);
     });
 
-    test('Game Paused', () => {
-        SimpleCalendar.instance.gamePaused(false);
-        SimpleCalendar.instance.currentYear = y;
-        SimpleCalendar.instance.gamePaused(false);
-    });
-
     test('Start Time', () => {
+
+        const orig = SimpleCalendar.instance.element.find;
+
+        SimpleCalendar.instance.element.find = jest.fn().mockReturnValue({
+            removeClass: jest.fn().mockReturnValue({
+                addClass: jest.fn()
+            })
+        });
+
         SimpleCalendar.instance.startTime();
         SimpleCalendar.instance.currentYear = y;
         SimpleCalendar.instance.startTime();
-        expect(y.time.keeper).toBeUndefined();
+        expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Stopped);
         y.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
         SimpleCalendar.instance.startTime();
-        expect(y.time.keeper).toBeDefined();
+        expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Paused);
         //@ts-ignore
         game.combats.size = 1;
         SimpleCalendar.instance.startTime();
 
-        y.time.keeper = undefined;
         //@ts-ignore
         game.scenes = {active: {id: '123'}};
         //@ts-ignore
@@ -1384,16 +1402,18 @@ describe('Simple Calendar Class Tests', () => {
             return v.call(undefined, {started: true, scene: {id: "123"}});
         });
         SimpleCalendar.instance.startTime();
-        expect(y.time.keeper).toBeUndefined();
+        expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Paused);
+
+        SimpleCalendar.instance.element.find = orig;
     });
 
     test('Stop Time', () => {
-        y.time.keeper = 1;
+        //y.time.keeper = 1;
         SimpleCalendar.instance.stopTime();
-        expect(y.time.keeper).toBe(1);
+        //expect(y.time.keeper).toBe(1);
         SimpleCalendar.instance.currentYear = y;
         SimpleCalendar.instance.stopTime();
-        expect(y.time.keeper).toBeUndefined();
+        expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Stopped);
     });
 
     test('Time Keeping Check', async () => {

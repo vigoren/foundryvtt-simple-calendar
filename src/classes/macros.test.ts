@@ -55,45 +55,12 @@ describe('Macros Tests', () => {
 
         //@ts-ignore
         game.user.isGM = true;
-        Macros.setDateTime();
-        expect(renderSpy).toHaveBeenCalledTimes(0);
-        expect(console.error).toHaveBeenCalledTimes(1);
-
         SimpleCalendar.instance.currentYear = y;
         Macros.setDateTime();
         expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect(console.error).toHaveBeenCalledTimes(1);
-        expect(y.numericRepresentation).toBe(0);
-        expect(y.months[0].current).toBe(true);
-        expect(y.months[0].days[0].current).toBe(true);
-        expect(y.time.seconds).toBe(0);
 
-        Macros.setDateTime(1,2,3,4,5,6);
+        Macros.setDateTime(1, 1, 1, 1, 1, 1);
         expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect(console.error).toHaveBeenCalledTimes(1);
-        expect(y.numericRepresentation).toBe(1);
-        expect(y.months[1].current).toBe(true);
-        expect(y.months[1].days[2].current).toBe(true);
-        expect(y.time.seconds).toBe(14706);
-
-        y.months[1].current = false;
-        y.months[1].days[2].current = false;
-        Macros.setDateTime(1,null,null,4,5,6);
-        expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(console.error).toHaveBeenCalledTimes(1);
-        expect(y.numericRepresentation).toBe(1);
-        expect(y.months[0].current).toBe(true);
-        expect(y.months[0].days[0].current).toBe(true);
-        expect(y.time.seconds).toBe(14706);
-
-        y.months[0].days[0].current = false;
-        Macros.setDateTime(1,1,null,4,5,6);
-        expect(renderSpy).toHaveBeenCalledTimes(4);
-        expect(console.error).toHaveBeenCalledTimes(1);
-        expect(y.numericRepresentation).toBe(1);
-        expect(y.months[1].current).toBe(true);
-        expect(y.months[1].days[0].current).toBe(true);
-        expect(y.time.seconds).toBe(14706);
 
         //@ts-ignore
         game.user.isGM = false;

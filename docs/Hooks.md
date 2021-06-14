@@ -209,3 +209,40 @@ This is an example of the data that is passed with this hook:
   "paused": false
 }
 ```
+
+
+## Is Primary GM
+
+### When it is emitted
+
+This eventn is emitted when the current users is promoted to the primary GM role. 
+
+This will happen 5 seconds after loading the game if no other GM is currently in the primary role.
+
+### What is passed
+
+Property Name|Value Type|Description
+-------------|-------------|------------
+isPrimaryGM|boolean|If the user is the primary gm (true).
+
+### Examples
+
+#### Hooking to
+
+This is an example of how to listen for the hook:
+
+```javascript
+Hooks.on(SimpleCalendar.Hooks.PrimaryGM, (data) => {
+    console.log(data);
+});
+```
+
+#### Response Data
+
+This is an example of the data that is passed with this hook:
+
+```json
+{
+  "isPrimaryGM": true
+}
+```

@@ -7,7 +7,7 @@ import {
     GameWorldTimeIntegrations,
     SocketTypes,
     MoonIcons,
-    MoonYearResetOptions, GameSystems, YearNamingRules
+    MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus
 } from "./constants";
 import {Note} from "./classes/note";
 import DateSelector from "./classes/date-selector";
@@ -404,7 +404,7 @@ export namespace SimpleCalendarSocket{
      * Interface for socket data that has to do with the time
      */
     export interface SimpleCalendarSocketTime{
-        clockClass: string;
+        timeKeeperStatus: TimeKeeperStatus;
     }
 
     /**

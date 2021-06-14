@@ -191,8 +191,13 @@
   flex-direction: row;
   justify-content: center;
 
+  .text{
+    margin-right: 6px;
+  }
+
 
 }
+
 .clock {
   position:relative;
   transform:scale(1.25);
@@ -224,7 +229,7 @@
     content:'';
     left: 8.25px;
     top: 3.75px;
-    animation-duration: 60s;
+    animation-duration: 10s;
   }
   &.stopped{
     border-color:#c12121;
@@ -454,7 +459,7 @@
         line-height: 22px;
         font-size: 0.75rem;
 
-        &.go{
+        &.started{
           color: green;
         }
         &.paused{
