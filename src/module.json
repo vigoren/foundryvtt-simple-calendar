@@ -36,7 +36,7 @@
     },
     {
       "lang": "de",
-      "name": "German",
+      "name": "Deutsch",
       "path": "lang/de.json"
     },
     {
@@ -46,8 +46,13 @@
     },
     {
       "lang": "es",
-      "name": "Spanish",
+      "name": "Español",
       "path": "lang/es.json"
+    },
+    {
+      "lang": "ko",
+      "name": "한국어",
+      "path": "lang/ko.json"
     }
   ],
   "socket": true,
