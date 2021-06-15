@@ -454,6 +454,20 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Time.GameTimeRatioHelp'}}</p>
                 </div>
+                <div class="form-group">
+                    <label for="scTimeUpdateFrequency">{{localize 'FSC.Configuration.Time.UpdateFrequency'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.time.updateFrequency}}" type="number" id="scTimeUpdateFrequency" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Time.UpdateFrequencyHelp'}}</p>
+                </div>
+                <div class="form-group">
+                    <label for="scUnifyClockWithFoundryPause">{{localize 'FSC.Configuration.Time.UnifyGameAndClock'}}</label>
+                    <div class="form-fields">
+                        <input value="{{currentYear.time.gameTimeRatio}}" type="checkbox" id="scUnifyClockWithFoundryPause" {{checked currentYear.time.unifyGameAndClockPause}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Time.UnifyGameAndClockHelp'}}</p>
+                </div>
             </div>
         </div>
         <div class="tab moon-settings" data-tab="moonSettings">

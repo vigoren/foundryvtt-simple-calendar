@@ -19,12 +19,14 @@ describe('Time Keeper Class Tests', () => {
     let tk: TimeKeeper
 
     beforeEach(() => {
-        tk = new TimeKeeper();
+        tk = new TimeKeeper(1);
         SimpleCalendar.instance = new SimpleCalendar();
     });
 
 
     test('Start/Stop', () => {
+        //@ts-ignore
+        game.paused = false;
         tk.start();
         //@ts-ignore
         expect(tk.intervalNumber).toBeDefined();
@@ -65,6 +67,26 @@ describe('Time Keeper Class Tests', () => {
         expect(tk.intervalNumber).toBeUndefined();
         //@ts-ignore
         expect(tk.saveIntervalNumber).toBeUndefined();
+
+        SimpleCalendar.instance.currentYear = new Year(0);
+        SimpleCalendar.instance.currentYear.time.unifyGameAndClockPause = true;
+        tk.start();
+        //@ts-ignore
+        expect(tk.intervalNumber).toBeDefined();
+        tk.start();
+        //@ts-ignore
+        expect(tk.intervalNumber).toBeDefined();
+        //@ts-ignore
+        tk.status = TimeKeeperStatus.Paused;
+        //@ts-ignore
+        game.paused = true;
+        tk.start();
+
+        tk.stop();
+        //@ts-ignore
+        expect(tk.intervalNumber).toBeUndefined();
+        //@ts-ignore
+        expect(tk.saveIntervalNumber).toBeUndefined();
     });
 
     test('Get Status', () => {
@@ -82,6 +104,9 @@ describe('Time Keeper Class Tests', () => {
 
         tk.setStatus(TimeKeeperStatus.Paused);
         expect(tk.getStatus()).toBe(TimeKeeperStatus.Paused);
+
+        tk.setStatus(TimeKeeperStatus.Started);
+        expect(tk.getStatus()).toBe(TimeKeeperStatus.Started);
 
         //@ts-ignore
         SimpleCalendar.instance.element = o;

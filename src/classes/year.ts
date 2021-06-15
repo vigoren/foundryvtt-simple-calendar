@@ -595,7 +595,7 @@ export default class Year {
             if(month && month.startingWeekday !== null){
                 daysSoFar = targetDay + month.startingWeekday - 2;
             } else {
-                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + (this.yearZero === 0? -1 : 0) + this.firstWeekday;
+                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + (this.yearZero === 0 && this.leapYearRule.rule !== LeapYearRules.None? -1 : 0) + this.firstWeekday;
                 //daysSoFar = this.dateToDays(year, targetMonth, targetDay) + this.firstWeekday;
             }
             return (daysSoFar % this.weekdays.length + this.weekdays.length) % this.weekdays.length;
@@ -651,6 +651,7 @@ export default class Year {
         } else {
             leapYearDays = Math.abs(numberOfLeapYears - numberOfYZLeapYears) * leapYearDayDifference;
             daysSoFar += leapYearDays;
+
             for(let i = 0; i < this.months.length; i++){
                 //Only look at the month preceding the month we want and is not intercalary or is intercalary if the include setting is set otherwise skip
                 if(i < monthIndex && (ignoreIntercalaryRules || !this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
@@ -665,14 +666,13 @@ export default class Year {
         }
         if(beforeYearZero){
             daysSoFar = daysSoFar + 1;
-            if(year < 0 && this.yearZero === 0){
-                //daysSoFar = daysSoFar + 1;
+            if(year < 0 && this.yearZero === 0 && this.leapYearRule.rule !== LeapYearRules.None){
                 daysSoFar--;
             }
         } else {
             daysSoFar = daysSoFar - 1;
         }
-        if(year > 0 && this.yearZero === 0){
+        if(year > 0 && this.yearZero === 0 && this.leapYearRule.rule !== LeapYearRules.None){
             daysSoFar++;
         }
         return beforeYearZero? daysSoFar * -1 : daysSoFar;
@@ -707,15 +707,18 @@ export default class Year {
     /**
      * Sets the current game world time to match what our current time is
      */
-    async syncTime(){
+    async syncTime(force: boolean = false){
         // Only if the time tracking rules are set to self or mixed
         if(this.canUser(game.user, this.generalSettings.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
             Logger.debug(`Year.syncTime()`);
             const totalSeconds = this.toSeconds();
-            //Let the local functions know that we all ready updated this time
-            this.timeChangeTriggered = true;
-            //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
-            await this.time.setWorldTime(totalSeconds);
+            // If the calculated seconds are different from what is set in the game world time, update the game world time to match sc's time
+            if(totalSeconds !== game.time.worldTime || force){
+                //Let the local functions know that we all ready updated this time
+                this.timeChangeTriggered = true;
+                //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
+                await this.time.setWorldTime(totalSeconds);
+            }
         }
     }
 
@@ -870,15 +873,18 @@ export default class Year {
         // If this is a Pathfinder 2E game, add the world creation seconds
         if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
             newTime += PF2E.getWorldCreateSeconds();
+            newTime -= this.time.secondsPerDay;
         }
-
         if(changeAmount !== 0){
-
             // If the tracking rules are for self or mixed and the clock is running then we make the change.
-            if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.time.timeKeeper.getStatus() === TimeKeeperStatus.Started){
+            if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.time.timeKeeper.getStatus() === TimeKeeperStatus.Started){
+                Logger.debug(`Tracking Rule: Self/Mixed\nClock Is Running, no need to update the date.`)
                 const parsedDate = this.secondsToDate(newTime);
                 this.updateTime(parsedDate);
                 this.time.timeKeeper.setClockTime(this.time.toString());
+                if((this.time.updateFrequency * this.time.gameTimeRatio) !== changeAmount){
+                    SimpleCalendar.instance.updateApp();
+                }
             }
             // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
             else if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.timeChangeTriggered || this.combatChangeTriggered)){

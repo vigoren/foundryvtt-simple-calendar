@@ -36,7 +36,7 @@ describe('API Class Tests', () => {
     test('Timestamp', () => {
         expect(API.timestamp()).toBe(0);
         SimpleCalendar.instance.currentYear = year;
-        expect(API.timestamp()).toBe(5270400);
+        expect(API.timestamp()).toBe(5184000);
     });
 
     test('Timestamp Plus Interval', () => {
@@ -49,7 +49,7 @@ describe('API Class Tests', () => {
         expect(API.timestampPlusInterval(0, {hour: 1, minute: 1, second: 6})).toBe(3666);
         expect(API.timestampPlusInterval(0, {day: 1})).toBe(86400);
         expect(API.timestampPlusInterval(0, {month: 1})).toBe(2592000);
-        expect(API.timestampPlusInterval(0, {year: 1})).toBe(5270400);
+        expect(API.timestampPlusInterval(0, {year: 1})).toBe(5184000);
 
         year.leapYearRule.rule = LeapYearRules.Gregorian;
         expect(API.timestampPlusInterval(0, {day: 0})).toBe(0);
@@ -77,9 +77,9 @@ describe('API Class Tests', () => {
 
         year.gameSystem = GameSystems.PF2E;
         year.generalSettings.pf2eSync = true;
-        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"]});
-        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"]});
-        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"]});
+        expect(API.timestampToDate(3600)).toStrictEqual({year: -1, month: 1, day: 29, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"]});
+        expect(API.timestampToDate(5184000)).toStrictEqual({year: 0, month: 1, day: 29, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"]});
+        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"]});
     });
 
     test('Date to Timestamp', () => {
@@ -87,12 +87,12 @@ describe('API Class Tests', () => {
         SimpleCalendar.instance.currentYear = year;
 
         expect(API.dateToTimestamp({})).toBe(API.timestamp());
-        expect(API.dateToTimestamp({year: 2021, month: 5, day: 10, hour: 15, minute: 54, second: 29})).toBe(10480463669);
+        expect(API.dateToTimestamp({year: 2021, month: 5, day: 10, hour: 15, minute: 54, second: 29})).toBe(10480377269);
 
         year.months[0].days[0].current = false;
-        expect(API.dateToTimestamp({year: 2021, hour: 15, minute: 54, second: 29})).toBe(10477007669);
+        expect(API.dateToTimestamp({year: 2021, hour: 15, minute: 54, second: 29})).toBe(10476921269);
         year.months[0].current = false;
-        expect(API.dateToTimestamp({year: 2021, hour: 15, minute: 54, second: 29})).toBe(10477007669);
+        expect(API.dateToTimestamp({year: 2021, hour: 15, minute: 54, second: 29})).toBe(10476921269);
     });
 
     test('Seconds To Interval', () => {
@@ -180,7 +180,7 @@ describe('API Class Tests', () => {
         API.setDate({month: 1, day: 1, hour: 1, minute: 1, second: 1});
         expect(year.numericRepresentation).toBe(2021);
         expect(year.months[1].current).toBe(true);
-        expect(year.months[1].days[2].current).toBe(true); //This doesn't fail in the browser, day should be 1
+        expect(year.months[1].days[1].current).toBe(true);
         expect(year.time.seconds).toBe(3661);
 
         year.yearZero = 1;

@@ -27,21 +27,44 @@ export default class TimeKeeper{
      * @private
      */
     private status: TimeKeeperStatus = TimeKeeperStatus.Stopped;
+    /**
+     * If the pause button was clicked or not
+     * @type {Boolean}
+     * @private
+     */
+    private pauseClicked: boolean = false;
 
-    constructor() {
+    public updateFrequency: number;
+
+    constructor(updateFrequency: number) {
+        this.updateFrequency = updateFrequency;
     }
 
     /**
      * Starts the time keeper interval and save interval
      */
-    public start(){
-        if(this.intervalNumber === undefined){
-            Logger.debug(`TimeKeeper Starting`);
-            this.intervalNumber = window.setInterval(this.interval.bind(this), 1000);
-            this.updateStatus();
-            if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
-                this.saveInterval();
-                this.saveIntervalNumber = window.setInterval(this.saveInterval.bind(this), 10000);
+    public start(fromPause: boolean = false){
+        if(this.status !== TimeKeeperStatus.Started ){
+            this.pauseClicked = false;
+            if(SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.unifyGameAndClockPause && !fromPause){
+                game.togglePause(false, true);
+            }
+            if(this.intervalNumber === undefined) {
+                Logger.debug(`TimeKeeper Starting`);
+                this.intervalNumber = window.setInterval(this.interval.bind(this), 1000 * this.updateFrequency);
+                this.updateStatus();
+                if (GameSettings.IsGm() && SimpleCalendar.instance.primary) {
+                    this.saveInterval();
+                    this.saveIntervalNumber = window.setInterval(this.saveInterval.bind(this), 10000);
+                }
+            } else {
+                this.updateStatus();
+            }
+        } else {
+            this.pauseClicked = true;
+            this.updateStatus(TimeKeeperStatus.Paused);
+            if(SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.unifyGameAndClockPause){
+                game.togglePause(true, true);
             }
         }
     }
@@ -54,6 +77,9 @@ export default class TimeKeeper{
             Logger.debug(`TimeKeeper Stopping`);
             window.clearInterval(this.intervalNumber);
             window.clearInterval(this.saveIntervalNumber);
+            if(SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.unifyGameAndClockPause){
+                game.togglePause(true, true);
+            }
             this.intervalNumber = undefined;
             this.saveIntervalNumber = undefined;
             this.updateStatus();
@@ -77,6 +103,11 @@ export default class TimeKeeper{
     public setStatus(newStatus: TimeKeeperStatus){
         this.status = newStatus;
         SimpleCalendar.instance.element.find('.time-display .clock, .time-controls .time-start, .time-controls .time-stop, .current-time .clock').removeClass('stopped started paused').addClass(this.status);
+        if(this.status === TimeKeeperStatus.Started){
+            SimpleCalendar.instance.element.find('.time-controls .time-start').removeClass('fa-play').addClass('fa-pause');
+        } else {
+            SimpleCalendar.instance.element.find('.time-controls .time-start').removeClass('fa-pause').addClass('fa-play');
+        }
     }
 
     public setClockTime(time: string){
@@ -93,12 +124,11 @@ export default class TimeKeeper{
         this.updateStatus();
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             if(this.status === TimeKeeperStatus.Started){
-                const dayChange = SimpleCalendar.instance.currentYear.time.changeTime(0, 0, SimpleCalendar.instance.currentYear.time.gameTimeRatio);
+                const dayChange = SimpleCalendar.instance.currentYear.time.changeTime(0, 0, SimpleCalendar.instance.currentYear.time.gameTimeRatio * this.updateFrequency);
                 if(dayChange !== 0){
                     SimpleCalendar.instance.currentYear.changeDay(dayChange);
                     SimpleCalendar.instance.updateApp();
                 }
-                //SimpleCalendar.instance.element.find('.time-display .time, .current-time .time').text(SimpleCalendar.instance.currentYear.time.toString());
                 if (GameSettings.IsGm() && SimpleCalendar.instance.primary) {
                     SimpleCalendar.instance.currentYear.syncTime().catch(Logger.error);
                 }
@@ -124,10 +154,12 @@ export default class TimeKeeper{
      * If the status has changed, emits the socket and hook calls to update all players, modules, systems and macros
      * @private
      */
-    private updateStatus(){
+    private updateStatus(newStatus: TimeKeeperStatus | null = null){
         const oldStatus = this.status;
-        if(this.intervalNumber !== undefined){
-            if(game.paused || (SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.combatRunning)){
+        if(newStatus !== null){
+            this.status = newStatus;
+        } else if(this.intervalNumber !== undefined){
+            if(this.pauseClicked || game.paused || (SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.combatRunning)){
                 this.status = TimeKeeperStatus.Paused;
             } else {
                 this.status = TimeKeeperStatus.Started;
