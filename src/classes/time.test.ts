@@ -17,7 +17,7 @@ describe('Time Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(t).length).toBe(8); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(10); //Make sure no new properties have been added
         expect(t.hoursInDay).toBe(24);
         expect(t.minutesInHour).toBe(60);
         expect(t.secondsInMinute).toBe(60);
@@ -26,6 +26,8 @@ describe('Time Tests', () => {
         expect(t.secondsPerDay).toBe(86400);
         expect(t.timeKeeper).toBeDefined();
         expect(t.combatRunning).toBe(false);
+        expect(t.updateFrequency).toBe(1);
+        expect(t.unifyGameAndClockPause).toBe(false)
     });
 
     test('Clone', () => {

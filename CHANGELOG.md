@@ -1,5 +1,21 @@
 # Change Log
 
+## v1.2.93 - Clock Changes & Bug Fixing
+
+### Clock Changes
+
+- Added the ability to pause the clock once it has started running. The start (play) button will change into a pause button when the clock has been started. Clicking the pause button will pause the clock and change the button back into the start (play) button. Clicking play will start the clock again.
+- Added a new clock setting called "Update Frequency" under the Time Settings. This setting allows you to configure how often (in seconds) the clock is updated when running. The default is 1 second.
+- Added a new clock setting called "Unify Clock Start/Pause with Game Pause" under the Time Settings. When checked this setting will start the game when the start clock button is pressed and pause the game when the pause/stop button are pressed. The clock is still paused as normal when a combat is started in the currently active scene.
+
+### Bug Fixing
+
+- Fixed a bug where saving the calendars configuration would not update the current timestamp to match any changes.
+- Addressed a rounding issue if the clocks "Game seconds per real life seconds" setting was a decimal.
+- Fixed a bug where calendars with a year zero of 0 a leap year rule of none would end up being behind by a day.
+- Fixed a bug with the PF2E system where advancing the time with the system clock would set the day in Simple Calendar ahead by one day.
+- Fixed a bug where after page load the first third party module date/time change would not be reflected in Simple Calendar. Subsequent changes were properly shown.
+
 ## v1.2.85 - New Clock, API Changes and as always more Bug Fixing
 
 ### New Clock

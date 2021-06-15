@@ -511,7 +511,9 @@ export class GameSettings {
                 hoursInDay: time.hoursInDay,
                 minutesInHour: time.minutesInHour,
                 secondsInMinute: time.secondsInMinute,
-                gameTimeRatio: time.gameTimeRatio
+                gameTimeRatio: time.gameTimeRatio,
+                unifyGameAndClockPause: time.unifyGameAndClockPause,
+                updateFrequency: time.updateFrequency
             };
             if(JSON.stringify(current) !== JSON.stringify(newtc)){
                 return game.settings.set(ModuleName, SettingNames.TimeConfiguration, newtc).then(() => { return true });

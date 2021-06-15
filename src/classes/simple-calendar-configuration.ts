@@ -7,6 +7,7 @@ import {GameWorldTimeIntegrations, LeapYearRules, MoonIcons, MoonYearResetOption
 import Importer from "./importer";
 import Season from "./season";
 import Moon from "./moon";
+import SimpleCalendar from "./simple-calendar";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -1368,6 +1369,13 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 if(!isNaN(min)){
                     (<Year>this.object).time.gameTimeRatio = min;
                 }
+            } else if(id === 'scUnifyClockWithFoundryPause'){
+                (<Year>this.object).time.unifyGameAndClockPause = checked;
+            } else if(id === 'scTimeUpdateFrequency'){
+                const min = parseInt(value);
+                if(!isNaN(min)){
+                    (<Year>this.object).time.updateFrequency = min;
+                }
             }
 
             this.updateApp();
@@ -1647,6 +1655,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
             const noteDefaultPlayerVisibility = (<HTMLInputElement>document.getElementById('scDefaultPlayerVisibility')).checked;
             await GameSettings.SetDefaultNoteVisibility(noteDefaultPlayerVisibility);
+
+            if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+                await SimpleCalendar.instance.currentYear.syncTime(true);
+            }
 
             this.closeApp();
         } catch (error){

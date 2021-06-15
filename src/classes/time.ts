@@ -48,6 +48,14 @@ export default class Time {
      * If a combat is currently running or not
      */
     combatRunning: boolean = false;
+    /**
+     * If to keep the game start/pause unified with the clock start/pause
+     */
+    unifyGameAndClockPause: boolean = false;
+    /**
+     * How often the clock updates the time in seconds.
+     */
+    updateFrequency: number = 1;
 
     /**
      * A new Time constructor
@@ -63,7 +71,7 @@ export default class Time {
 
         this.secondsPerDay = this.hoursInDay * this.minutesInHour * this.secondsInMinute;
 
-        this.timeKeeper = new TimeKeeper();
+        this.timeKeeper = new TimeKeeper(this.updateFrequency);
     }
 
     /**
@@ -74,6 +82,8 @@ export default class Time {
         t.seconds = this.seconds;
         t.gameTimeRatio = this.gameTimeRatio;
         t.combatRunning = this.combatRunning;
+        t.unifyGameAndClockPause = this.unifyGameAndClockPause;
+        t.updateFrequency = this.updateFrequency;
         return t;
     }
 
@@ -91,6 +101,7 @@ export default class Time {
             h = Math.floor(m / this.minutesInHour);
             m = m - (h * this.minutesInHour);
         }
+        s = Math.floor(s);
         return {
             hour: h < 10? `0${h}` : h.toString(),
             minute: m < 10? `0${m}` : m.toString(),
@@ -124,6 +135,7 @@ export default class Time {
      * @return {number} The number of days that have changed as a result of the time change
      */
     changeTime(hour: number = 0, minute: number = 0, second: number = 0): number{
+        second = +second.toFixed(3);
         const changeAmount  = (hour * this.minutesInHour * this.secondsInMinute) + (minute * this.secondsInMinute) + second;
         const newAmount = this.seconds + changeAmount;
         Logger.debug(`Checking if ${newAmount} seconds is valid`);

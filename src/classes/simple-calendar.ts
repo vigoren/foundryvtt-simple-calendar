@@ -10,7 +10,8 @@ import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
 import {
     GameWorldTimeIntegrations,
-    ModuleSocketName, SimpleCalendarHooks,
+    ModuleSocketName,
+    SimpleCalendarHooks,
     SocketTypes,
     TimeKeeperStatus
 } from "../constants";
@@ -138,6 +139,9 @@ export default class SimpleCalendar extends Application{
         game.socket.emit(ModuleSocketName, socketData);
         const timeKeeperSocketData = <SimpleCalendarSocket.Data>{type: SocketTypes.time, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}}
         game.socket.emit(ModuleSocketName, timeKeeperSocketData);
+        if(this.currentYear && this.currentYear.time.unifyGameAndClockPause){
+            game.togglePause(true, true);
+        }
         await this.timeKeepingCheck();
         this.updateApp();
         Hook.emit(SimpleCalendarHooks.PrimaryGM);
@@ -812,7 +816,7 @@ export default class SimpleCalendar extends Application{
             if(change){
                 GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
                 //Sync the current time on apply, this will propagate to other modules
-                this.currentYear.syncTime().catch(Logger.error);
+                this.currentYear.syncTime(true).catch(Logger.error);
             }
         }
     }
@@ -1017,7 +1021,7 @@ export default class SimpleCalendar extends Application{
             this.loadGeneralSettings();
         }
         this.loadCurrentDate();
-        if(update && this.currentYear?.time.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
+        if(update && this.currentYear?.time.timeKeeper.getStatus() !== TimeKeeperStatus.Started ) {
             this.updateApp();
         }
     }
@@ -1241,6 +1245,15 @@ export default class SimpleCalendar extends Application{
                 this.currentYear.time.minutesInHour = timeData.minutesInHour;
                 this.currentYear.time.secondsInMinute = timeData.secondsInMinute;
                 this.currentYear.time.gameTimeRatio = timeData.gameTimeRatio;
+
+                if(timeData.hasOwnProperty('unifyGameAndClockPause')){
+                    this.currentYear.time.unifyGameAndClockPause = timeData.unifyGameAndClockPause;
+                }
+
+                if(timeData.hasOwnProperty('updateFrequency')){
+                    this.currentYear.time.updateFrequency = timeData.updateFrequency;
+                    this.currentYear.time.timeKeeper.updateFrequency = timeData.updateFrequency;
+                }
             }
         } else {
             Logger.error('No Current year configured, can not load time data.');
@@ -1331,6 +1344,20 @@ export default class SimpleCalendar extends Application{
             }
         }
         return dayNotes;
+    }
+
+    /**
+     * Triggered when the games pause state is changed.
+     * @param paused
+     */
+    gamePaused(paused: boolean){
+        if(this.currentYear && this.currentYear.time.unifyGameAndClockPause){
+            if(!game.paused){
+                this.currentYear.time.timeKeeper.start(true);
+            } else {
+                this.currentYear.time.timeKeeper.setStatus(TimeKeeperStatus.Paused);
+            }
+        }
     }
 
     /**

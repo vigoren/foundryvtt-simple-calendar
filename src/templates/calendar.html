@@ -41,7 +41,7 @@
             {{#if isPrimary}}
             {{#if currentYear.showTimeControls}}
             <div class="time-controls">
-                <a class="time-start {{clockClass}} fa fa-play" title="{{localize 'FSC.Time.Start'}}"></a>
+                <a class="time-start {{clockClass}} fa {{#if (eq clockClass 'started')}}fa-pause{{else}}fa-play{{/if}}" title="{{localize 'FSC.Time.Start'}}"></a>
                 <a class="time-stop {{clockClass}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></a>
             </div>
             {{/if}}
@@ -141,7 +141,7 @@
                             <div class="selector {{#if timeUnits.hour}}selected{{/if}}" data-type="hour">{{localize 'FSC.Hour'}}</div>
                         </div>
                         {{#if isPrimary}}
-                        <a class="time-start {{clockClass}} fa fa-play" title="{{localize 'FSC.Time.Start'}}"></a>
+                        <a class="time-start {{clockClass}} fa {{#if (eq clockClass 'started')}}fa-pause{{else}}fa-play{{/if}}" title="{{localize 'FSC.Time.Start'}}"></a>
                         <a class="time-stop {{clockClass}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></a>
                         {{/if}}
                     </div>
