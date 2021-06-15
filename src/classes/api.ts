@@ -75,6 +75,7 @@ export default class API{
             // If this is a Pathfinder 2E game, add the world creation seconds
             if(SimpleCalendar.instance.currentYear.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.currentYear.generalSettings.pf2eSync){
                 seconds += PF2E.getWorldCreateSeconds();
+                seconds -= SimpleCalendar.instance.currentYear.time.secondsPerDay;
             }
 
             const dateTime = SimpleCalendar.instance.currentYear.secondsToDate(seconds);

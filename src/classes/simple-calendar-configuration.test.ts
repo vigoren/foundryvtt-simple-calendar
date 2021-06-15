@@ -7,6 +7,7 @@ import "../../__mocks__/application";
 import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/dialog";
+import "../../__mocks__/hooks";
 
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import Year from "./year";
@@ -18,6 +19,7 @@ import Season from "./season";
 import Moon from "./moon";
 import SpyInstance = jest.SpyInstance;
 import Mock = jest.Mock;
+import SimpleCalendar from "./simple-calendar";
 
 jest.mock('./importer');
 
@@ -993,6 +995,22 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLInputElement>event.currentTarget).value = '10';
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).time.gameTimeRatio).toBe(10);
+
+        //Unified Clock With Foundry Pause
+        (<HTMLInputElement>event.currentTarget).id = "scUnifyClockWithFoundryPause";
+        (<HTMLInputElement>event.currentTarget).checked = true;
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).time.unifyGameAndClockPause).toBe(true);
+
+        //Invalid update frequency
+        (<HTMLInputElement>event.currentTarget).id = "scTimeUpdateFrequency";
+        (<HTMLInputElement>event.currentTarget).value = 'asd';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).time.updateFrequency).toBe(1);
+        //Valid update frequency
+        (<HTMLInputElement>event.currentTarget).value = '10';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).time.updateFrequency).toBe(10);
     });
 
     test('Moon Input Change', () => {
@@ -1174,6 +1192,11 @@ describe('Simple Calendar Configuration Tests', () => {
         await SimpleCalendarConfiguration.instance.saveClick(event);
         expect(game.settings.set).toHaveBeenCalledTimes(16);
         expect(closeSpy).toHaveBeenCalledTimes(2);
+
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.currentYear = <Year>SimpleCalendarConfiguration.instance.object;
+        jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(validYear).mockReturnValueOnce(showWeekday);
+        await SimpleCalendarConfiguration.instance.saveClick(event);
     });
 
     test('Overwrite Confirmation Yes', async () => {

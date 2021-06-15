@@ -58,6 +58,10 @@ describe('Simple Calendar Class Tests', () => {
         y.months[0].days[0].current = true;
         y.months[0].days[0].selected = true;
     });
+    afterEach(() => {
+        //@ts-ignore
+        y = null;
+    });
 
     test('Properties', () => {
         expect(Object.keys(SimpleCalendar.instance).length).toBe(11); //Make sure no new properties have been added
@@ -115,10 +119,17 @@ describe('Simple Calendar Class Tests', () => {
     });
 
     test('Primary Check Timeout Call', () => {
+        SimpleCalendar.instance.currentYear = y;
+        y.time.unifyGameAndClockPause = false;
         SimpleCalendar.instance.primaryCheckTimeoutCall();
         expect(SimpleCalendar.instance.primary).toBe(true);
         expect(game.socket.emit).toHaveBeenCalledTimes(2);
-    })
+
+        y.time.unifyGameAndClockPause = true;
+        SimpleCalendar.instance.primaryCheckTimeoutCall();
+        expect(SimpleCalendar.instance.primary).toBe(true);
+        expect(game.socket.emit).toHaveBeenCalledTimes(4);
+    });
 
     test('Process Socket', async () => {
         const d: SimpleCalendarSocket.Data = {
@@ -1302,6 +1313,38 @@ describe('Simple Calendar Class Tests', () => {
         game.settings.get = orig;
     });
 
+    test('Load  Time Configuration', () => {
+        const orig = game.settings.get;
+        //@ts-ignore
+        SimpleCalendar.instance.loadTimeConfiguration();
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        SimpleCalendar.instance.currentYear = y;
+        game.settings.get = () => {return null;}
+        //@ts-ignore
+        SimpleCalendar.instance.loadTimeConfiguration();
+        game.settings.get = () => {return {};}
+        //@ts-ignore
+        SimpleCalendar.instance.loadTimeConfiguration();
+
+        game.settings.get = () => {return {hoursInDay: 1, minutesInHour: 1, secondsInMinute: 1, gameTimeRatio: 1};}
+        //@ts-ignore
+        SimpleCalendar.instance.loadTimeConfiguration();
+        expect(y.time.hoursInDay).toBe(1);
+        expect(y.time.minutesInHour).toBe(1);
+        expect(y.time.secondsInMinute).toBe(1);
+        expect(y.time.gameTimeRatio).toBe(1);
+
+        game.settings.get = orig;
+
+        //@ts-ignore
+        SimpleCalendar.instance.loadTimeConfiguration();
+        expect(y.time.unifyGameAndClockPause).toBe(false);
+        expect(y.time.updateFrequency).toBe(1);
+        expect(y.time.timeKeeper.updateFrequency).toBe(1);
+
+    });
+
     test('Load Notes', () => {
         SimpleCalendar.instance.loadNotes();
         expect(SimpleCalendar.instance.notes.length).toBe(1);
@@ -1336,6 +1379,27 @@ describe('Simple Calendar Class Tests', () => {
     test('Day Note Sort', () => {
         //@ts-ignore
         expect(SimpleCalendar.dayNoteSort(new Note(), new Note())).toBe(0);
+    });
+
+    test('Game Paused', () => {
+        const o = SimpleCalendar.instance.element;
+        //@ts-ignore
+        SimpleCalendar.instance.element = {
+            find: jest.fn().mockReturnValue({
+                removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
+                text: jest.fn()
+            })
+        };
+        SimpleCalendar.instance.gamePaused(true);
+        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.gamePaused(true);
+        y.time.unifyGameAndClockPause = true;
+        SimpleCalendar.instance.gamePaused(true);
+        //@ts-ignore
+        game.paused = false;
+        SimpleCalendar.instance.gamePaused(true);
+        //@ts-ignore
+        SimpleCalendar.instance.element = o;
     });
 
     test('World Time Update', () => {
@@ -1389,7 +1453,7 @@ describe('Simple Calendar Class Tests', () => {
         expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Stopped);
         y.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
         SimpleCalendar.instance.startTime();
-        expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Paused);
+        expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Started);
         //@ts-ignore
         game.combats.size = 1;
         SimpleCalendar.instance.startTime();
@@ -1402,7 +1466,7 @@ describe('Simple Calendar Class Tests', () => {
             return v.call(undefined, {started: true, scene: {id: "123"}});
         });
         SimpleCalendar.instance.startTime();
-        expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Paused);
+        expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Started);
 
         SimpleCalendar.instance.element.find = orig;
     });

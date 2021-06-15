@@ -460,10 +460,10 @@
         font-size: 0.75rem;
 
         &.started{
-          color: green;
+          color: #de810d;
         }
         &.paused{
-          color: #de810d;
+          color: green;
         }
       }
       .time-stop{

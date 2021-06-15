@@ -173,7 +173,7 @@ describe('Year Class Tests', () => {
         m2.visible = true;
         year.months.push(m2);
         weeks = year.daysIntoWeeks(m2, year.numericRepresentation, year.weekdays.length);
-        expect(weeks.length).toStrictEqual(4);
+        expect(weeks.length).toStrictEqual(5);
 
         const m3 = new Month("3", 3, 0, 1);
         m2.visible = false;
@@ -559,11 +559,11 @@ describe('Year Class Tests', () => {
         year.weekdays.push(new Weekday(5, 'T'));
         year.weekdays.push(new Weekday(6, 'F'));
         year.weekdays.push(new Weekday(7, 'S'));
-        expect(year.visibleMonthStartingDayOfWeek()).toBe(6);
+        expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
         month.visible = false;
         year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].visible = true;
-        expect(year.visibleMonthStartingDayOfWeek()).toBe(1);
+        expect(year.visibleMonthStartingDayOfWeek()).toBe(2);
 
         year.months[1].visible = false;
         expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
@@ -584,13 +584,13 @@ describe('Year Class Tests', () => {
         year.weekdays.push(new Weekday(5, 'T'));
         year.weekdays.push(new Weekday(6, 'F'));
         year.weekdays.push(new Weekday(7, 'S'));
-        expect(year.dayOfTheWeek(year.numericRepresentation, 1, 2)).toBe(0);
-        expect(year.dayOfTheWeek(year.numericRepresentation, 1, -1)).toBe(6);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, 2)).toBe(1);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, -1)).toBe(0);
 
         year.months.push(new Month("Test 3", 3, 0, 2));
         year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].intercalary = true;
-        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(2);
+        expect(year.dayOfTheWeek(year.numericRepresentation, 3, 2)).toBe(3);
 
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
@@ -609,7 +609,7 @@ describe('Year Class Tests', () => {
         year.months.push(new Month("Test 2", 2, 0, 30, 31));
         year.months.push(new Month("Test 3", 3, 0, 30));
         expect(year.dateToDays(0,1,-1)).toBe(0);
-        expect(year.dateToDays(5,1,1)).toBe(451);
+        expect(year.dateToDays(5,1,1)).toBe(450);
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
         expect(year.dateToDays(5,1,1, true)).toBe(452);
@@ -635,10 +635,10 @@ describe('Year Class Tests', () => {
         year.numericRepresentation = 1;
         year.months[0].current = true;
         year.months[0].days[0].current = true;
-        expect(year.toSeconds()).toBe(2678400);
+        expect(year.toSeconds()).toBe(2592000);
 
         year.gameSystem = GameSystems.PF2E;
-        expect(year.toSeconds()).toBe(2764800);
+        expect(year.toSeconds()).toBe(2678400);
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AD", worldCreatedOn: 0}};
         expect(year.toSeconds()).toBe(-4857321600);
@@ -674,6 +674,15 @@ describe('Year Class Tests', () => {
         year.yearZero = 1;
         year.syncTime()
         expect(game.time.advance).toHaveBeenCalledTimes(4);
+
+        expect(year.toSeconds()).toBe(-2592000);
+        //@ts-ignore
+        game.time.worldTime = -2592000;
+        year.syncTime();
+        expect(game.time.advance).toHaveBeenCalledTimes(4);
+
+        year.syncTime(true);
+        expect(game.time.advance).toHaveBeenCalledTimes(5);
     });
 
     test('Seconds To Date', () => {
@@ -949,6 +958,11 @@ describe('Year Class Tests', () => {
         //@ts-ignore
         year.time.timeKeeper.status = TimeKeeperStatus.Started;
         year.setFromTime(240, 60);
+        expect(year.time.seconds).toBe(240);
+
+        //@ts-ignore
+        year.time.timeKeeper.status = TimeKeeperStatus.Started
+        year.setFromTime(240, 1);
         expect(year.time.seconds).toBe(240);
 
         //@ts-ignore

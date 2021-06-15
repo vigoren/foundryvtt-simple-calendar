@@ -248,12 +248,14 @@ describe('Interface Tests', () => {
     });
 
     test('Time Configuration', () => {
-        const tc: TimeConfig = {gameTimeRatio:1, secondsInMinute: 0, minutesInHour: 0, hoursInDay: 0};
-        expect(Object.keys(tc).length).toBe(4); //Make sure no new properties have been added
+        const tc: TimeConfig = {gameTimeRatio:1, secondsInMinute: 0, minutesInHour: 0, hoursInDay: 0, unifyGameAndClockPause: false, updateFrequency: 1};
+        expect(Object.keys(tc).length).toBe(6); //Make sure no new properties have been added
         expect(tc.gameTimeRatio).toBe(1);
         expect(tc.secondsInMinute).toBe(0);
         expect(tc.minutesInHour).toBe(0);
         expect(tc.hoursInDay).toBe(0);
+        expect(tc.updateFrequency).toBe(1);
+        expect(tc.unifyGameAndClockPause).toBe(false);
     });
 
     test('Time Template', () => {
