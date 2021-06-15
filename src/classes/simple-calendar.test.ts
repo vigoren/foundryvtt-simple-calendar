@@ -323,7 +323,7 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.notes[0].year = 0;
         SimpleCalendar.instance.notes[0].month = 1;
         SimpleCalendar.instance.notes[0].day = 1;
-        SimpleCalendar.instance.notes[0].endDate = {year: 0, month: 1, day: 1};
+        SimpleCalendar.instance.notes[0].endDate = {year: 0, month: 1, day: 1, hour: 0, minute: 0, seconds: 0};
         //Nothing Undefined
         data = await SimpleCalendar.instance.getData();
         expect(data.isGM).toBe(false);
@@ -1581,7 +1581,7 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.notes[0].month = 1;
         SimpleCalendar.instance.notes[0].day = 1;
         SimpleCalendar.instance.notes[0].playerVisible = true;
-        SimpleCalendar.instance.notes[0].endDate = {year: 0, month: 1, day: 1};
+        SimpleCalendar.instance.notes[0].endDate = {year: 0, month: 1, day: 1, hour: 0, minute: 0, seconds: 0};
         SimpleCalendar.instance.noteDragEnd(e);
 
         (<HTMLElement>e.target).setAttribute('data-index', 'asd');
