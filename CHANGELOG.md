@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.2.95 - Translations & Foundry 0.8.7
+
+- Ensured that Simple Calendar works in foundry version 0.8.7.
+- The addition of a Korean translation thanks to drdwing!
+
 ## v1.2.93 - Clock Changes & Bug Fixing
 
 ### Clock Changes

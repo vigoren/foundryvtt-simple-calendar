@@ -92,6 +92,7 @@ Language|Translator(s)
 German (de)|[MasterZelgadis](https://github.com/MasterZelgadis)
 Traditional Chinese (zh)|[benwater12](https://github.com/benwater12)
 Spanish (es)|[areymoreno](https://github.com/areymoreno)
+Korean (ko)|[drdwing](https://github.com/drdwing)
 
 If your language is missing from the list, and you would like to help translate Simple Calendar please follow these steps:
 
