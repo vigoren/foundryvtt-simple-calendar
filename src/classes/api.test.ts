@@ -60,6 +60,12 @@ describe('API Class Tests', () => {
 
         expect(API.timestampPlusInterval(0, {second: 86401})).toBe(86401);
 
+        expect(API.timestampPlusInterval(0, {month: 3})).toBe(7862400);
+        expect(API.timestampPlusInterval(0, {hour: 2184})).toBe(7862400);
+        expect(API.timestampPlusInterval(0, {minute: 131040})).toBe(7862400);
+        expect(API.timestampPlusInterval(0, {second: 7862400})).toBe(7862400);
+        expect(API.timestampPlusInterval(86399, {second: 1})).toBe(86400);
+
         year.gameSystem = GameSystems.PF2E;
         year.generalSettings.pf2eSync = true;
         expect(API.timestampPlusInterval(0, {day: 0})).toBe(0);

@@ -4,6 +4,7 @@ import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {GameSystems, TimeKeeperStatus} from "../constants";
 import PF2E from "./systems/pf2e";
+import Year from "./year";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
@@ -36,13 +37,34 @@ export default class API{
             const dateTime = clone.secondsToDate(currentSeconds);
             clone.updateTime(dateTime);
             if(interval.year){
-                clone.changeYear(interval.year, true, 'current');
+                clone.changeYear(interval.year, false, 'current');
             }
             if(interval.month){
+                //If a large number of months are passed in then
+                if(interval.month > clone.months.length){
+                    let years = Math.floor(interval.month/clone.months.length);
+                    interval.month = interval.month - (years * clone.months.length);
+                    clone.changeYear(years, false, 'current');
+                }
                 clone.changeMonth(interval.month, 'current');
             }
             if(interval.day){
-                clone.changeDay(interval.day);
+                clone.changeDayBulk(interval.day);
+            }
+            if(interval.hour && interval.hour > clone.time.hoursInDay){
+                const days = Math.floor(interval.hour / clone.time.hoursInDay);
+                interval.hour = interval.hour - (days * clone.time.hoursInDay);
+                clone.changeDayBulk(days);
+            }
+            if(interval.minute && interval.minute > (clone.time.hoursInDay * clone.time.minutesInHour)){
+                const days = Math.floor(interval.minute / (clone.time.hoursInDay * clone.time.minutesInHour));
+                interval.minute = interval.minute - (days * (clone.time.hoursInDay * clone.time.minutesInHour));
+                clone.changeDayBulk(days);
+            }
+            if(interval.second && interval.second > clone.time.secondsPerDay){
+                const days = Math.floor(interval.second / clone.time.secondsPerDay);
+                interval.second = interval.second - (days * clone.time.secondsPerDay);
+                clone.changeDayBulk(days);
             }
             const dayChange = clone.time.changeTime(interval.hour, interval.minute, interval.second);
             if(dayChange !== 0){

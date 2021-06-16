@@ -525,6 +525,23 @@ export default class Year {
     }
 
     /**
+     * Changes the current or selected day by the passed in amount. Adjusting for number of years first
+     * @param amount
+     * @param setting
+     */
+    changeDayBulk(amount: number, setting: string = 'current'){
+        let isLeapYear = this.leapYearRule.isLeapYear(this.numericRepresentation);
+        let numberOfDays = this.totalNumberOfDays(isLeapYear, true);
+        while(amount > numberOfDays){
+            this.changeYear(1, false, setting);
+            amount -= numberOfDays;
+            isLeapYear = this.leapYearRule.isLeapYear(this.numericRepresentation);
+            numberOfDays = this.totalNumberOfDays(isLeapYear, true);
+        }
+        this.changeDay(amount, setting);
+    }
+
+    /**
      * Changes the passed in time type by the passed in amount
      * @param {boolean} next If we are going forward or backwards
      * @param {string} type The time type we are adjusting, can be hour, minute or second
