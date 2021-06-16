@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.2.97 - API Bug Fixes
+
+- Fixed a bug with the API function timestampPlusInterval where adding just a year would increment to the first day of the year not by the number of years.
+- Fixed a bug with the API function timestampPlusInterval where if very large values for the different intervals were passed in an error would be thrown
+
 ## v1.2.95 - Translations & Foundry 0.8.7
 
 - Ensured that Simple Calendar works in foundry version 0.8.7.
