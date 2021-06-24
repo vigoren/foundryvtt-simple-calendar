@@ -110,7 +110,9 @@
                     <p>{{{localize 'FSC.Module.AboutTime.Configuration.Message'}}}</p>
                     <div class="import-options">
                         <button class="control fa fa-file-import" id="scAboutTimeImport">{{localize 'FSC.Module.Import'}}</button>
+                        {{#unless importing.aboutTimeV1}}
                         <button class="control fa fa-file-export" id="scAboutTimeExport">{{localize 'FSC.Module.AboutTime.Export'}}</button>
+                        {{/unless}}
                     </div>
                 </div>
                 {{/if}}

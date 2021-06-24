@@ -202,8 +202,8 @@ export default class Month {
         let changeAmount = 0;
         const numberOfDays = isLeapYear? this.numberOfLeapYearDays : this.numberOfDays;
         if(targetDay){
-            let index = this.days.findIndex(d => d.numericRepresentation === (targetDay.numericRepresentation + amount));
-            if((amount > 0 && index === numberOfDays) || (amount < 0 && index < 0) || index < 0){
+            let index = this.days.findIndex(d => d.numericRepresentation === (targetDay.numericRepresentation)) + amount;
+            if((amount > 0 && index >= numberOfDays) || (amount < 0 && index < 0) || index < 0){
                 Logger.debug(`On ${amount > 0? 'last' : 'first'} day of the month, changing to ${amount > 0? 'next' : 'previous'} month`);
                 this.resetDays(setting);
                 changeAmount = amount > 0? 1 : -1;

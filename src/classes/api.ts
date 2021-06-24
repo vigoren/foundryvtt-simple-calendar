@@ -4,7 +4,7 @@ import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {GameSystems, TimeKeeperStatus} from "../constants";
 import PF2E from "./systems/pf2e";
-import Year from "./year";
+import Importer from "./importer";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
@@ -91,7 +91,11 @@ export default class API{
             monthName: "",
             yearName: "",
             yearZero: 0,
-            weekdays: <string[]>[]
+            weekdays: <string[]>[],
+            showWeekdayHeadings: true,
+            yearPrefix: '',
+            yearPostfix: '',
+            currentSeason: {}
         };
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             // If this is a Pathfinder 2E game, add the world creation seconds
@@ -112,8 +116,11 @@ export default class API{
             result.monthName = month.name;
             result.yearZero = SimpleCalendar.instance.currentYear.yearZero;
             result.yearName = SimpleCalendar.instance.currentYear.getYearName(result.year);
+            result.yearPrefix = SimpleCalendar.instance.currentYear.prefix;
+            result.yearPostfix = SimpleCalendar.instance.currentYear.postfix;
             result.dayOfTheWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(result.year, month.numericRepresentation, dateTime.day + 1);
             result.weekdays = SimpleCalendar.instance.currentYear.weekdays.map(w => w.name);
+            result.currentSeason = SimpleCalendar.instance.currentYear.getSeason(dateTime.month, dateTime.day + 1);
         }
         return result;
     }
@@ -434,6 +441,19 @@ export default class API{
     public static stopClock(){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             SimpleCalendar.instance.currentYear.time.timeKeeper.stop();
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * This is only here until Calendar Weather has finished their migration from about-time functions to Simple Calendar functions. At which point it will be removed.
+     * Runs the import calendar weather settings into Simple Calendar
+     */
+    public static async calendarWeatherImport(): Promise<boolean>{
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            await Importer.importCalendarWeather(SimpleCalendar.instance.currentYear);
             return true;
         }
         return false;

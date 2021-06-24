@@ -35,6 +35,17 @@ describe('Importer Class Tests', () => {
         SimpleCalendar.instance.currentYear = y;
         // @ts-ignore
         game.user.isGM = true;
+        (<Mock>game.settings.set).mockClear();
+    });
+
+    test('About Time v1', () => {
+        expect(Importer.aboutTimeV1()).toBe(false);
+        (<Mock>game.modules.get).mockReturnValueOnce({active: true, data: {version: 'a'}});
+        expect(Importer.aboutTimeV1()).toBe(false);
+        (<Mock>game.modules.get).mockReturnValueOnce({active: true, data: {version: '0'}});
+        expect(Importer.aboutTimeV1()).toBe(false);
+        (<Mock>game.modules.get).mockReturnValueOnce({active: true, data: {version: '1'}});
+        expect(Importer.aboutTimeV1()).toBe(true);
     });
 
     test('Import About Time', () => {
@@ -102,22 +113,26 @@ describe('Importer Class Tests', () => {
     });
 
     test('Export About Time', async () => {
+
+        (<Mock>game.modules.get).mockReturnValueOnce({active: true, data: {version: '1'}});
+        await Importer.exportToAboutTime(y);
+
         await Importer.exportToAboutTime(y);
         //@ts-ignore
-        expect(game.Gametime.DTC.saveUserCalendar).toHaveBeenCalledTimes(1);
+        expect(game.settings.set).toHaveBeenCalledTimes(3);
 
         y.leapYearRule.rule = LeapYearRules.Gregorian;
         (<Mock>game.settings.get).mockReturnValueOnce(0);
         await Importer.exportToAboutTime(y);
         //@ts-ignore
-        expect(game.Gametime.DTC.saveUserCalendar).toHaveBeenCalledTimes(2);
+        expect(game.settings.set).toHaveBeenCalledTimes(5);
 
         y.leapYearRule.rule = LeapYearRules.Custom;
         y.leapYearRule.customMod = 8;
         y.gameSystem = GameSystems.PF2E;
         await Importer.exportToAboutTime(y);
         //@ts-ignore
-        expect(game.Gametime.DTC.saveUserCalendar).toHaveBeenCalledTimes(3);
+        expect(game.settings.set).toHaveBeenCalledTimes(7);
     });
 
     test('Import Calendar Weather', () => {
@@ -190,6 +205,7 @@ describe('Importer Class Tests', () => {
                 solarEclipseChange:  0,
                 referenceTime:  0,
                 referencePercent:  0,
+                isWaxing: false
             }],
             events: [],
             reEvents: []
@@ -223,6 +239,30 @@ describe('Importer Class Tests', () => {
         expect(y.months[3].numberOfLeapYearDays).toBe(1);
         expect(y.months[3].intercalary).toBe(false);
         expect(y.leapYearRule.rule).toBe(LeapYearRules.None);
+
+        mockCalendarWeather.seasons[0].date.month = '1';
+        mockCalendarWeather.seasons[0].color = 'orange';
+        mockCalendarWeather.moons[0].isWaxing = true;
+
+        (<Mock>game.settings.get).mockReturnValueOnce(mockCalendarWeather);
+        Importer.importCalendarWeather(y);
+        expect(y.seasons[0].startingMonth).toBe(1);
+        expect(y.seasons[0].color).toBe('#b1692e');
+
+        mockCalendarWeather.seasons[0].color = 'yellow';
+        (<Mock>game.settings.get).mockReturnValueOnce(mockCalendarWeather);
+        Importer.importCalendarWeather(y);
+        expect(y.seasons[0].color).toBe('#b99946');
+
+        mockCalendarWeather.seasons[0].color = 'green';
+        (<Mock>game.settings.get).mockReturnValueOnce(mockCalendarWeather);
+        Importer.importCalendarWeather(y);
+        expect(y.seasons[0].color).toBe('#258e25');
+
+        mockCalendarWeather.seasons[0].color = 'blue';
+        (<Mock>game.settings.get).mockReturnValueOnce(mockCalendarWeather);
+        Importer.importCalendarWeather(y);
+        expect(y.seasons[0].color).toBe('#5b80a5');
     });
 
     test('Export Calendar Weather', async () => {
