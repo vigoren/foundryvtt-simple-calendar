@@ -116,6 +116,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             },
             importing: {
                 showAboutTime: false,
+                aboutTimeV1: Importer.aboutTimeV1(),
                 showCalendarWeather:false
             },
             monthStartingWeekdays: <{[key: string]: string}>{},

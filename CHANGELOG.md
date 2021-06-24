@@ -1,5 +1,23 @@
 # Change Log
 
+## v1.2.103 - API Changes, Module Import/Export Changes and Bug Fixes
+
+### API Changes
+
+- The timestampToDate function now returns additional information about the date: year prefix, year postfix, the current season and if to show the weekday headings.
+- The calendar/weather import function has been temporarily exposed in the API to assist in the transition for calendar/weather from using about-time to using Simple Calendar. Once this transition has taken place, this functionality will be removed from the API.
+
+### Module Import/Export Changes
+
+- The calendar/weather export now saves the custom calendar setting directly rather than using about-times save function. This is to support the upcoming changes to about-time.
+- Fixed up the calendar/weather import so that it works better with the most recent version of Calendar/weather.
+  - **Important**: Calendar/Weather and Simple Calendar calculate moon phases differently so imported moons will not match cycles exactly.
+- If the about time version is 1.0.0 or greater the "Export To about-time" option will not be available. This is because about-time will be using Simple Calendar as its calendar source so the export will not be needed. 
+
+### Bug Fixes
+
+- Fixed a bug where months with day offsets would not advance the days correctly.
+
 ## v1.2.97 - API Bug Fixes
 
 - Fixed a bug with the API function timestampPlusInterval where adding just a year would increment to the first day of the year not by the number of years.

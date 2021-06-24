@@ -504,20 +504,20 @@ export default class Year {
         const currentMonth = this.getMonth();
         if (currentMonth) {
             const next = amount > 0;
-            let currentDayNumber = 1;
+            let currentDayIndex = 0;
             const currentDay = currentMonth.getDay(verifiedSetting);
             if(currentDay){
-                currentDayNumber = currentDay.numericRepresentation;
+                currentDayIndex = currentMonth.days.findIndex(d => d.numericRepresentation === (currentDay.numericRepresentation));
             }
             const lastDayOfCurrentMonth = isLeapYear? currentMonth.numberOfLeapYearDays : currentMonth.numberOfDays;
-            if(next && currentDayNumber + amount > lastDayOfCurrentMonth){
-                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayNumber}) by more days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by 1`);
+            if(next && currentDayIndex + amount >= lastDayOfCurrentMonth){
+                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayIndex}) by more days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by 1`);
                 this.changeMonth(1, verifiedSetting, 0);
-                this.changeDay(amount - (lastDayOfCurrentMonth - currentDayNumber) - 1, verifiedSetting);
-            } else if(!next && currentDayNumber + amount < 1){
-                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayNumber}) by less days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by -1`);
+                this.changeDay(amount - (lastDayOfCurrentMonth - currentDayIndex), verifiedSetting);
+            } else if(!next && currentDayIndex + amount < 0){
+                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayIndex}) by less days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by -1`);
                 this.changeMonth(-1, verifiedSetting, -1);
-                this.changeDay(amount + currentDayNumber, verifiedSetting);
+                this.changeDay(amount + currentDayIndex + 1, verifiedSetting);
             } else{
                currentMonth.changeDay(amount, isLeapYear, verifiedSetting);
             }
@@ -952,13 +952,23 @@ export default class Year {
                 currentDay = 1;
             }
         }
-        if(currentDay > 0 && currentMonth >= 0){
+
+        return this.getSeason(currentMonth, currentDay);
+    }
+
+    /**
+     * Gets the season for the passed in month and day
+     * @param {number} monthIndex The index of the month
+     * @param {number} day The day number
+     */
+    getSeason(monthIndex: number, day: number) {
+        if(day > 0 && monthIndex >= 0){
             let currentSeason: Season | null = null;
             for(let i = 0; i < this.seasons.length; i++){
                 const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === this.seasons[i].startingMonth);
-                if(seasonMonthIndex === currentMonth && this.seasons[i].startingDay <= currentDay){
+                if(seasonMonthIndex === monthIndex && this.seasons[i].startingDay <= day){
                     currentSeason = this.seasons[i];
-                } else if (seasonMonthIndex < currentMonth){
+                } else if (seasonMonthIndex < monthIndex){
                     currentSeason = this.seasons[i];
                 }
             }

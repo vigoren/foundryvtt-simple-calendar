@@ -514,6 +514,7 @@ export namespace CalendarWeatherImport{
         solarEclipseChange: number;
         referenceTime: number;
         referencePercent: number;
+        isWaxing: boolean;
     }
 
     /**

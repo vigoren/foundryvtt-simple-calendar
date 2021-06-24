@@ -2,12 +2,29 @@ import Year from "./year";
 import {AboutTimeImport, CalendarWeatherImport} from "../interfaces";
 import {Weekday} from "./weekday";
 import Month from "./month";
-import {GameSystems, LeapYearRules} from "../constants";
+import {GameSystems, LeapYearRules, MoonIcons} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
 
 export default class Importer{
+
+    /**
+     * Checks to see if about-time v1.0.0 or greater is installed and active
+     */
+    static aboutTimeV1(){
+        let abv1 = false;
+        const aboutTime = game.modules.get('about-time');
+        if(aboutTime && aboutTime.active){
+            //@ts-ignore
+            const versionParts = aboutTime.data.version.split('.');
+            const p1 = parseInt(versionParts[0]);
+            if(!isNaN(p1) && p1 >= 1){
+                abv1 = true;
+            }
+        }
+        return abv1;
+    }
 
     /**
      * Loads the about time calendar configuration into Simple Calendars configuration
@@ -74,12 +91,16 @@ export default class Importer{
     /**
      * Sets up about time to match Simple Calendars configuration
      * @param {Year} year The year to use
+     * @param {boolean} [force=false] If to force the export
      *
      * Known Issues:
      *      - Intercalary days seem to be calculated differently so calendars with them do not match up perfectly with Simple Calendar
      */
-    static async exportToAboutTime(year: Year){
-
+    static async exportToAboutTime(year: Year, force: boolean = false){
+        let run = !Importer.aboutTimeV1();
+        if(!run && !force){
+            return;
+        }
         const monthList: AboutTimeImport.MonthList = {};
         for(let i = 0; i < year.months.length; i++){
             let leapYearDays = year.months[i].numberOfLeapYearDays;
@@ -112,8 +133,8 @@ export default class Importer{
             //Gross but might be all we can do
             newAboutTimeConfig.leap_year_rule = `(year) => Math.floor(year / ${year.leapYearRule.customMod} ) + 1`;
         }
-        //@ts-ignore
-        game.Gametime.DTC.saveUserCalendar(newAboutTimeConfig);
+        game.settings.set("about-time", "savedCalendar", newAboutTimeConfig);
+
         // Set the about-time timeZeroOffset to an empty string as it doesn't need to be set to anything, unless this is a PF2E game then don't set
         if(year.gameSystem !== GameSystems.PF2E){
             await game.settings.set("about-time", "timeZeroOffset", '');
@@ -159,7 +180,7 @@ export default class Importer{
                 numLeapDays = 1;
             }
 
-            const nMonth = new Month(currentSettings.months[i].name, i+1, 0, numDays, numLeapDays)
+            const nMonth = new Month(currentSettings.months[i].name, mCount, 0, numDays, numLeapDays)
             if(!currentSettings.months[i].isNumbered){
                 nMonth.numericRepresentation = mICount * -1;
                 nMonth.intercalary = true;
@@ -173,25 +194,70 @@ export default class Importer{
 
         year.leapYearRule.rule = LeapYearRules.None;
 
+        //Set the current year
+        year.numericRepresentation = parseInt(currentSettings.year.toString());
+        year.postfix = currentSettings.era;
+        year.yearZero = 0;
+
+        //Set the current time
+        const currentTime = year.secondsToDate(game.time.worldTime);
+        year.updateTime(currentTime);
+
         //Set up the seasons
         year.seasons = [];
         for(let i = 0; i < currentSettings.seasons.length; i++){
-            const nSeason = new Season(currentSettings.seasons[i].name, 1, currentSettings.seasons[i].date.day + 1);
+            let seasonMonth = parseInt(currentSettings.seasons[i].date.month.toString());
+            if(isNaN(seasonMonth)){
+                seasonMonth = 1;
+            }
+            const nSeason = new Season(currentSettings.seasons[i].name, seasonMonth, currentSettings.seasons[i].date.day);
+            switch (currentSettings.seasons[i].color){
+                case 'red':
+                    nSeason.color = "#b12e2e";
+                    break;
+                case 'orange':
+                    nSeason.color = "#b1692e";
+                    break;
+                case 'yellow':
+                    nSeason.color = "#b99946";
+                    break;
+                case 'green':
+                    nSeason.color = "#258e25";
+                    break;
+                case 'blue':
+                    nSeason.color = "#5b80a5";
+                    break;
+            }
             year.seasons.push(nSeason);
         }
 
         year.moons = [];
         for(let i = 0; i< currentSettings.moons.length; i++){
             const newMoon = new Moon(currentSettings.moons[i].name, currentSettings.moons[i].cycleLength);
-            const currentTime = year.secondsToDate(currentSettings.moons[i].referenceTime);
-            newMoon.firstNewMoon.year = currentTime.year;
-            newMoon.firstNewMoon.month = currentTime.month;
-            newMoon.firstNewMoon.day = currentTime.day;
-        }
 
-        //Set the current time
-        const currentTime = year.secondsToDate(game.time.worldTime);
-        year.updateTime(currentTime);
+            let referencePercent = currentSettings.moons[i].cyclePercent / 100;
+            if(!currentSettings.moons[i].isWaxing){
+                referencePercent = 0.5;
+            }
+            const dayAdjust = year.time.secondsPerDay * (newMoon.cycleLength * referencePercent);
+
+            const currentTime = year.secondsToDate(currentSettings.moons[i].referenceTime + dayAdjust);
+            newMoon.firstNewMoon.year = currentTime.year;
+            newMoon.firstNewMoon.month = year.months[currentTime.month].numericRepresentation;
+            newMoon.firstNewMoon.day = year.months[currentTime.month].days[currentTime.day].numericRepresentation;
+            const phaseLength = Number(((newMoon.cycleLength - 4) / 4).toPrecision(5));
+            newMoon.phases = [
+                {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
+                {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
+                {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
+                {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
+                {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
+                {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
+                {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
+                {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+            ]
+            year.moons.push(newMoon);
+        }
 
         //Save everything
         await GameSettings.SaveYearConfiguration(year);
@@ -199,6 +265,7 @@ export default class Importer{
         await GameSettings.SaveWeekdayConfiguration(year.weekdays);
         await GameSettings.SaveLeapYearRules(year.leapYearRule);
         await GameSettings.SaveTimeConfiguration(year.time);
+        await GameSettings.SaveSeasonConfiguration(year.seasons);
         await GameSettings.SaveMoonConfiguration(year.moons);
         await GameSettings.SaveCurrentDate(year);
     }
@@ -247,6 +314,7 @@ export default class Importer{
         const moonList: CalendarWeatherImport.Moons[] = [];
         for(let i = 0; i < year.moons.length; i++){
             moonList.push({
+                isWaxing: false,
                 name: year.moons[i].name,
                 cycleLength: year.moons[i].cycleLength,
                 cyclePercent: 0,
