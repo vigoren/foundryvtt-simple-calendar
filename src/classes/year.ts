@@ -634,16 +634,23 @@ export default class Year {
         const daysPerYear = this.totalNumberOfDays(false, ignoreIntercalaryRules);
         const daysPerLeapYear = this.totalNumberOfDays(true, ignoreIntercalaryRules);
         const leapYearDayDifference = daysPerLeapYear - daysPerYear;
-        const monthIndex = this.months.findIndex(m => m.numericRepresentation === month);
+        let monthIndex = this.months.findIndex(m => m.numericRepresentation === month);
         const isLeapYear = this.leapYearRule.isLeapYear(year);
         const numberOfLeapYears = this.leapYearRule.howManyLeapYears(year);
         const numberOfYZLeapYears = this.leapYearRule.howManyLeapYears(this.yearZero);
         let leapYearDays;
         let procYear = Math.abs(year - this.yearZero);
 
+        if(monthIndex < 0){
+            monthIndex = 0;
+        }
+
         if(beforeYearZero){
             procYear = procYear - 1;
         }
+        //If the month has a day offset set we need to remove that from the days numeric representation or too many days are calculated.
+        day = day - this.months[monthIndex].numericRepresentationOffset;
+
         let daysSoFar = (daysPerYear * procYear);
         if(day < 1){
             day = 1;

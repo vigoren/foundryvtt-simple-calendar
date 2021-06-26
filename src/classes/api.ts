@@ -83,12 +83,14 @@ export default class API{
         const result = {
             year: 0,
             month: 0,
+            monthName: "",
+            dayOffset: 0,
             day: 0,
+            dayDisplay: '',
             dayOfTheWeek: 0,
             hour: 0,
             minute: 0,
             second: 0,
-            monthName: "",
             yearName: "",
             yearZero: 0,
             weekdays: <string[]>[],
@@ -114,10 +116,12 @@ export default class API{
 
             const month = SimpleCalendar.instance.currentYear.months[dateTime.month];
             result.monthName = month.name;
+            result.dayOffset = month.numericRepresentationOffset;
             result.yearZero = SimpleCalendar.instance.currentYear.yearZero;
             result.yearName = SimpleCalendar.instance.currentYear.getYearName(result.year);
             result.yearPrefix = SimpleCalendar.instance.currentYear.prefix;
             result.yearPostfix = SimpleCalendar.instance.currentYear.postfix;
+            result.dayDisplay = SimpleCalendar.instance.currentYear.months[dateTime.month].days[dateTime.day].numericRepresentation.toString();
             result.dayOfTheWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(result.year, month.numericRepresentation, dateTime.day + 1);
             result.weekdays = SimpleCalendar.instance.currentYear.weekdays.map(w => w.name);
             result.currentSeason = SimpleCalendar.instance.currentYear.getSeason(dateTime.month, dateTime.day + 1);

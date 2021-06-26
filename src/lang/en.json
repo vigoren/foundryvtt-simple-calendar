@@ -32,6 +32,8 @@
   "FSC.AdvancedOptions": "Advanced Options",
   "FSC.Today": "Today",
   "FSC.Configure": "Configure",
+  "FSC.Import": "Import",
+  "FSC.Export": "Export",
   "FSC.By": "By",
   "FSC.Cancel": "Cancel",
   "FSC.Edit": "Edit",
@@ -122,6 +124,9 @@
   "FSC.Configuration.General.PlayerAddNotesHelp": "The checked roles will be able to add notes to the calendar.",
   "FSC.Configuration.General.QuickSetup": "Quick Setup",
   "FSC.Configuration.General.Notes": "Notes",
+  "FSC.Configuration.General.ImportExport.Title": "Import/Export",
+  "FSC.Configuration.General.ImportExport.SCConfig": "Import/Export Calendar Configuration",
+  "FSC.Configuration.General.ImportExport.SCConfigHelp": "For importing or exporting Simple Calendars current calendar configuration to share or load replicate in another world.",
   "FSC.Configuration.General.ThirdPartyModule": "Third Party Module Import/Export",
   "FSC.Configuration.General.Permissions.Note": "Here the permissions for various interactions with Simple Calendar can be adjusted based on Foundry roles. Game masters will always have these permissions.",
   "FSC.Configuration.General.CalendarPlayerVisible": "View Calendar",
@@ -171,8 +176,8 @@
   "FSC.Configuration.Month.DaysHelp": "The number of days that make up this month.",
   "FSC.Configuration.Month.Intercalary": "Intercalary Month",
   "FSC.Configuration.Month.IntercalaryHelp": "If this month is to be considered an intercalary month or not.",
-  "FSC.Configuration.Month.IntercalaryInclude": "Include Intercalary Month In Total Day Count",
-  "FSC.Configuration.Month.IntercalaryIncludeHelp": "If checked the days that make up the intercalary month will be included in the total number of days in a year.",
+  "FSC.Configuration.Month.IntercalaryInclude": "Include Intercalary Month in Day Calculations",
+  "FSC.Configuration.Month.IntercalaryIncludeHelp": "If checked the intercalary month will be treated like a normal month for calculating the day of the week days fall on and the total days in a year but still be listed as an intercalary month.",
   "FSC.Configuration.Month.DayOffset": "Day Offset",
   "FSC.Configuration.Month.DayOffsetHelp": "The amount to offset the day's number by. Used if you want to start a month at 2 instead of 1",
   "FSC.Configuration.Month.Number": "Month Number",
@@ -278,5 +283,7 @@
   "FSC.Module.AboutTime.Title": "About-Time Module Detected",
   "FSC.Module.AboutTime.Message": "We have detected that the about-time module is/has been enabled for this world.<br/><br/>If you would like to import the about-time calendar settings into Simple Calendar choose \"Import Into Simple Calendar\", this will make the Simple Calendar match the about-time settings.<br/><br/>If you would like to make about-time match Simple Calendar choose \"Export Into About-Time\", this will make the about-time settings match the Simple Calendars configuration.<br/><br/>Otherwise you can choose \"No Changes\" and things will be left as is. Should you want to do an import/export later the option will be available in the Simple Calendar general settings.<br/>",
   "FSC.Module.AboutTime.Configuration.Message": "We have detected that the about-time module is/has been enabled for this world.<br/><br/>If you would like to import the about-time calendar settings into Simple Calendar choose \"Import Into Simple Calendar\", this will make the Simple Calendar match the about-time settings.<br/><br/>If you would like to make about-time match Simple Calendar choose \"Export Into About-Time\", this will make the about-time settings match the Simple Calendars configuration.<br/>",
-  "FSC.Module.AboutTime.Export": "Export Into About-Time"
+  "FSC.Module.AboutTime.Export": "Export Into About-Time",
+  "FSC.Importer.NoFile": "Please Select a file to import.",
+  "FSC.Importer.InvalidSCConfig": "Invalid file uploaded, please upload a Simple Calendar exported JSON file."
 }

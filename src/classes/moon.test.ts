@@ -67,6 +67,7 @@ describe('Moon Tests', () => {
 
     test('Get Moon Phase', () => {
         const y = new Year(0);
+        y.months.push(new Month("M", 1, 0, 10));
         m.phases.push({name: 'p2', icon: MoonIcons.NewMoon, length: 0, singleDay: false});
         m.updatePhaseLength();
         expect(m.getMoonPhase(y)).toStrictEqual(m.phases[0]);

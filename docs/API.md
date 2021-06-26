@@ -315,13 +315,19 @@ year|Number|0|The year represented in the timestamp.
 yearName|String|""|The name of the year, if year names have been set up.
 month|Number|0|The index of the month represented in the timestamp.
 monthName|String|""|The name of the month.
+dayOffset|Number|0|The number of days that the months days are offset by.
 day|Number|0|The index of the day of the month represented in the timestamp.
+dayDisplay|String|""|How the day is displayed, generally its number on the calendar.
 dayOfTheWeek|Number|0|The day of the week the day falls on.
 hour|Number|0|The hour represented in the timestamp.
 minute|Number|0|The minute represented in the timestamp.
 second|Number|0|The seconds represented in the timestamp.
 yearZero|Number|0|What is considered as year zero when doing timestamp calculations.
+yearPrefix|String|""|The prefix value for the year
+yearPostfix|String|""|The postfix value for the year
 weekdays|String Array|[]|A list of weekday names.
+showWeekdayHeadings|Boolean|true|If to show the weekday headings for the month.
+currentSeason|Season|{}|The information for the season of the date, properties include "name" for the seasons name and "color" for the color associated with the season.
 
 ### Examples
 
@@ -331,16 +337,22 @@ let scDate = SimpleCalendar.api.timestampToDate(1622505600);
 console.log(scDate);
 /* This is what the returned object will look like
 {
-    day: 0,
-    dayOfTheWeek: 6,
-    hour: 0,
-    minute: 0,
-    month: 5,
-    monthName: "June",
-    second: 0,
-    weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-    year: 2021,
-    yearName: "",
+    currentSeason: {name: "Spring", color: "#fffce8"}
+    day: 0
+    dayDisplay: 1
+    dayOfTheWeek: 2
+    dayOffset: 0
+    hour: 0
+    minute: 0
+    month: 5
+    monthName: "June"
+    second: 0
+    showWeekdayHeadings: true
+    weekdays: (7) ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    year: 2021
+    yearName: ""
+    yearPostfix: ""
+    yearPrefix: ""
     yearZero: 1970
 }
 */
