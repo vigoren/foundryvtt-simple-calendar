@@ -57,6 +57,13 @@ View Calendar | If users in this role can view the calendar interface or not.|Pl
 Add Notes | If users in these roles are able to add notes to the calendar.|Player, Trusted Player, Assistant GM
 Change Date and Time| If users in these roles are able to change the calendars date and time.|Player, Trusted Player, Assistant GM
 
+### Import/Export
+
+- Export Button: when clicked you will be prompted to download a json file that contains all of the configuration data.
+- Import Button/ File Selector: Next to the import button is a file selected where you choose the exported json file to import then click the import button for the contents to be set for the current calendar.
+
+**Important**: This import and export is just for the calendar configuration, notes are not exported or imported through this process! Note exporting is planned, just not ready yet.
+
 ### Third Party Module Import/Export
 
 If you have certain other modules installed and active in your game, options will appear here to either import their settings into Simple Calendar or to export Simple Calendars settings into that module.
@@ -144,7 +151,7 @@ Setting | Description
 Month Name | These text boxes for each month allow you to change the name of an existing month.
 Number of Days | These text boxes for each month allow you to change the number of days in each month. A month can have a minimum of 0 days.
 Intercalary Month | An intercalary month is one that does not follow the standard month numbering and is skipped.<br/>Example: If we were to add an intercalary month between January and February, January would still be considered the first month and February would be considered the second month. The new month does not get a number.<br/>Intercalary months also do not count towards the years total days nor do they affect the day of the week subsequent months start on.
-Include Intercalary Month In Total Day Count | When you select a month to be intercalary, an option will show to include these days as part of the years total days and have its days afect the day of the week subsequent months start on. The month though still is not numbered.
+Include Intercalary Month in Day Calculations | When you select a month to be intercalary this option will appear. When checked the intercalary month will be treated like a normal month for calculating the day of the week days fall on and the total days in a year but still be listed as an intercalary month.
 Day Offset | The number of days to offset the day's number by. Example: Setting to 1 will have the month start on day 2 instead of day 1.
 Starts On Weekday | Choose which day of the week that this month starts on. Leave on Default to have the calendar figure out the appropriate weekday to start the month on.
 Remove Button | These buttons for each month allow you to remove the month from the list.

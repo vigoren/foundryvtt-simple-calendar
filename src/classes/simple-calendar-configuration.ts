@@ -3,11 +3,19 @@ import Year from "./year";
 import {GameSettings} from "./game-settings";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {GameWorldTimeIntegrations, LeapYearRules, MoonIcons, MoonYearResetOptions, YearNamingRules} from "../constants";
+import {
+    GameWorldTimeIntegrations,
+    LeapYearRules,
+    ModuleName,
+    MoonIcons,
+    MoonYearResetOptions, SettingNames,
+    YearNamingRules
+} from "../constants";
 import Importer from "./importer";
 import Season from "./season";
 import Moon from "./moon";
 import SimpleCalendar from "./simple-calendar";
+import {saveAs} from "file-saver";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -238,6 +246,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find("#scAboutTimeExport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-export','about-time'));
             (<JQuery>html).find("#scCalendarWeatherImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'calendar-weather'));
             (<JQuery>html).find("#scCalendarWeatherExport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-export','calendar-weather'));
+
+            (<JQuery>html).find("#exportCalendar").on('click', SimpleCalendarConfiguration.instance.exportCalendar.bind(this));
+            (<JQuery>html).find("#importCalendar").on('click', SimpleCalendarConfiguration.instance.importCalendar.bind(this));
 
             //Input Change
             (<JQuery>html).find(".general-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
@@ -1664,6 +1675,86 @@ export class SimpleCalendarConfiguration extends FormApplication {
             this.closeApp();
         } catch (error){
             Logger.error(error);
+        }
+    }
+
+    /**
+     * Exports the current calendar configuration to a JSON file. Users should be prompted with a save as dialog.
+     * @param event
+     */
+    public exportCalendar(event: Event){
+        event.preventDefault();
+        const ex = {
+            currentDate: GameSettings.LoadCurrentDate(),
+            generalSettings: GameSettings.LoadGeneralSettings(),
+            leapYearSettings: GameSettings.LoadLeapYearRules(),
+            monthSettings: GameSettings.LoadMonthData(),
+            moonSettings: GameSettings.LoadMoonData(),
+            seasonSettings: GameSettings.LoadSeasonData(),
+            timeSettings: GameSettings.LoadTimeData(),
+            weekdaySettings: GameSettings.LoadWeekdayData(),
+            yearSettings: GameSettings.LoadYearData()
+        };
+        saveAs(new Blob([JSON.stringify(ex)], {type: 'application/json'}), 'simple-calendar-export.json');
+    }
+
+    /**
+     * Imports a Simple Calendar configuration JSON file into the current calendar. Does its best to detect incorrect file format.
+     * @param event
+     */
+    public importCalendar(event: Event){
+        event.preventDefault();
+        const fileInput = <HTMLInputElement>document.getElementById('-scImportCalendarPicker');
+        if(fileInput && fileInput.files && fileInput.files.length){
+            const reader = new FileReader();
+            reader.onload = this.importOnLoad.bind(this, reader);
+            reader.readAsText(fileInput.files[0]);
+        } else {
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Importer.NoFile'), 'warn');
+        }
+    }
+
+    /**
+     * Processes the response once the file has been loaded.
+     * @param reader
+     * @param e
+     * @private
+     */
+    private async importOnLoad(reader: FileReader, e: Event){
+        try{
+            if(reader.result){
+                const res = JSON.parse(reader.result.toString());
+                if(res.hasOwnProperty('yearSettings')){
+                    await game.settings.set(ModuleName, SettingNames.YearConfiguration, res.yearSettings);
+                }
+                if(res.hasOwnProperty('monthSettings')){
+                    await game.settings.set(ModuleName, SettingNames.MonthConfiguration, res.monthSettings);
+                }
+                if(res.hasOwnProperty('weekdaySettings')){
+                    await game.settings.set(ModuleName, SettingNames.WeekdayConfiguration, res.weekdaySettings);
+                }
+                if(res.hasOwnProperty('leapYearSettings')){
+                    await game.settings.set(ModuleName, SettingNames.LeapYearRule, res.leapYearSettings);
+                }
+                if(res.hasOwnProperty('timeSettings')){
+                    await game.settings.set(ModuleName, SettingNames.TimeConfiguration, res.timeSettings);
+                }
+                if(res.hasOwnProperty('seasonSettings')){
+                    await game.settings.set(ModuleName, SettingNames.SeasonConfiguration, res.seasonSettings);
+                }
+                if(res.hasOwnProperty('moonSettings')){
+                    await game.settings.set(ModuleName, SettingNames.MoonConfiguration, res.moonSettings);
+                }
+                if(res.hasOwnProperty('generalSettings')){
+                    await game.settings.set(ModuleName, SettingNames.GeneralConfiguration, res.generalSettings);
+                }
+                if(res.hasOwnProperty('currentDate')){
+                    await game.settings.set(ModuleName, SettingNames.CurrentDate, res.currentDate);
+                }
+                this.closeApp();
+            }
+        } catch (ex){
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Importer.InvalidSCConfig'), 'error');
         }
     }
 }

@@ -75,18 +75,18 @@ describe('API Class Tests', () => {
     });
 
     test('Timestamp to Date', () => {
-        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "", yearName: "", yearZero: 0, weekdays: [], currentSeason: {}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: ''});
+        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "", yearName: "", yearZero: 0, weekdays: [], currentSeason: {}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: ''});
         SimpleCalendar.instance.currentYear = year;
         year.weekdays.push(new Weekday(1, 'W1'));
-        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: ''});
-        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: ''});
-        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: ''});
+        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1'});
+        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1'});
+        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '2'});
 
         year.gameSystem = GameSystems.PF2E;
         year.generalSettings.pf2eSync = true;
-        expect(API.timestampToDate(3600)).toStrictEqual({year: -1, month: 1, day: 29, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: ''});
-        expect(API.timestampToDate(5184000)).toStrictEqual({year: 0, month: 1, day: 29, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: ''});
-        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: ''});
+        expect(API.timestampToDate(3600)).toStrictEqual({year: -1, month: 1, day: 29, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '30'});
+        expect(API.timestampToDate(5184000)).toStrictEqual({year: 0, month: 1, day: 29, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '30'});
+        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1'});
     });
 
     test('Date to Timestamp', () => {

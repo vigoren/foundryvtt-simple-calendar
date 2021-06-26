@@ -1,5 +1,27 @@
 # Change Log
 
+## v1.2.107 - Calendar Configuration Import/Export, API Changes, Bug Fixes
+
+### Import/Export
+
+You can now export and import calendar configurations for Simple Calendar. Under the general settings tab in the configuration window there is an Import/Export section with these options: 
+- Export Button: when clicked you will be prompted to download a json file that contains all of the configuration data. 
+- Import Button/ File Selector: Next to the import button is a file selected where you choose the exported json file to import then click the import button for the contents to be set for the current calendar.
+
+**Important**: This import and export is just for the calendar configuration, notes are not exported or imported through this process! Note exporting is planned, just not ready yet.
+
+### API Changes
+
+- Updated the timestampToDate function to return some additional information:
+  - dayOffset: The number of days the months days are offset by.
+  - dayDisplay: How the day is displayed, generally its number on the calendar.
+
+### Bug Fixes
+
+- Fixed a bug where months with day offsets set, the calculated timestamp would include the skipped days.
+  - If you use calendars that have months with day offsets, you will need to "toggle" (move the day forward 1 then back) the date to update the timestamp properly.
+- Renamed the "Include Intercalary Month in Total Day Count" to "Include Intercalary Month in Day Calculations" to better explain what the setting actually does.
+
 ## v1.2.103 - API Changes, Module Import/Export Changes and Bug Fixes
 
 ### API Changes
