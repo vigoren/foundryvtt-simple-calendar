@@ -22,6 +22,7 @@ import Mock = jest.Mock;
 import SimpleCalendar from "./simple-calendar";
 
 jest.mock('./importer');
+jest.mock('file-saver');
 
 
 describe('Simple Calendar Configuration Tests', () => {
@@ -149,8 +150,8 @@ describe('Simple Calendar Configuration Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendarConfiguration.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(32);
-        expect(onFunc).toHaveBeenCalledTimes(32);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(34);
+        expect(onFunc).toHaveBeenCalledTimes(34);
     });
 
     test('Rebase Month Numbers', () => {
@@ -1238,5 +1239,62 @@ describe('Simple Calendar Configuration Tests', () => {
         expect(game.settings.set).toHaveBeenCalledTimes(6);
 
         (<Mock>game.settings.set).mockClear();
+    });
+
+    test('Export Calendar', () => {
+        SimpleCalendarConfiguration.instance.exportCalendar(new Event('click'));
+    });
+
+    test('Import Calendar', () => {
+        const event = new Event('click');
+        SimpleCalendarConfiguration.instance.importCalendar(event);
+        //@ts-ignore
+        expect(ui.notifications.warn).toHaveBeenCalledTimes(1);
+
+        const fileInput = {
+            files: []
+        };
+        (<Mock>document.getElementById).mockReturnValueOnce(fileInput);
+
+        SimpleCalendarConfiguration.instance.importCalendar(event);
+        //@ts-ignore
+        expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
+        //@ts-ignore
+        fileInput.files.push(new Blob(['invalid'], {type:'application/json'}));
+        (<Mock>document.getElementById).mockReturnValueOnce(fileInput);
+
+        SimpleCalendarConfiguration.instance.importCalendar(event);
+        //@ts-ignore
+        expect(ui.notifications.warn).toHaveBeenCalledTimes(2);
+    });
+
+    test('Import Calendar On Load', () => {
+        const reader = {
+            result: ""
+        };
+        const event = new Event('click');
+
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.importOnLoad(reader, event);
+        //@ts-ignore
+        expect(ui.notifications.error).toHaveBeenCalledTimes(0);
+
+        reader.result = "{{asd";
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.importOnLoad(reader, event);
+        //@ts-ignore
+        expect(ui.notifications.error).toHaveBeenCalledTimes(1);
+
+        reader.result = "{}";
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.importOnLoad(reader, event);
+        //@ts-ignore
+        expect(ui.notifications.error).toHaveBeenCalledTimes(1);
+
+        reader.result = "{\"currentDate\":{\"year\":1999,\"month\":3,\"day\":35,\"seconds\":72014},\"generalSettings\":{\"gameWorldTimeIntegration\":\"mixed\",\"showClock\":true,\"pf2eSync\":true,\"permissions\":{\"viewCalendar\":{\"player\":true,\"trustedPlayer\":true,\"assistantGameMaster\":true},\"addNotes\":{\"player\":false,\"trustedPlayer\":false,\"assistantGameMaster\":false},\"changeDateTime\":{\"player\":false,\"trustedPlayer\":false,\"assistantGameMaster\":false}}},\"leapYearSettings\":{\"rule\":\"gregorian\",\"customMod\":0},\"monthSettings\":[{\"name\":\"New Month1\",\"numericRepresentation\":1,\"numericRepresentationOffset\":0,\"numberOfDays\":30,\"numberOfLeapYearDays\":30,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New Month2\",\"numericRepresentation\":2,\"numericRepresentationOffset\":0,\"numberOfDays\":17,\"numberOfLeapYearDays\":17,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New 3\",\"numericRepresentation\":-1,\"numericRepresentationOffset\":0,\"numberOfDays\":1,\"numberOfLeapYearDays\":1,\"intercalary\":true,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New Month4\",\"numericRepresentation\":3,\"numericRepresentationOffset\":17,\"numberOfDays\":18,\"numberOfLeapYearDays\":19,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New Month5\",\"numericRepresentation\":4,\"numericRepresentationOffset\":0,\"numberOfDays\":30,\"numberOfLeapYearDays\":30,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null}],\"moonSettings\":[{\"name\":\"Moon\",\"cycleLength\":29.53059,\"firstNewMoon\":{\"yearReset\":\"none\",\"yearX\":0,\"year\":2000,\"month\":1,\"day\":6},\"phases\":[{\"name\":\"New Moon\",\"length\":1,\"icon\":\"new\",\"singleDay\":true},{\"name\":\"Waxing Crescent\",\"length\":6.3826,\"icon\":\"waxing-crescent\",\"singleDay\":false},{\"name\":\"First Quarter\",\"length\":1,\"icon\":\"first-quarter\",\"singleDay\":true},{\"name\":\"Waxing Gibbous\",\"length\":6.3826,\"icon\":\"waxing-gibbous\",\"singleDay\":false},{\"name\":\"Full Moon\",\"length\":1,\"icon\":\"full\",\"singleDay\":true},{\"name\":\"Waning Gibbous\",\"length\":6.3826,\"icon\":\"waning-gibbous\",\"singleDay\":false},{\"name\":\"Last Quarter\",\"length\":1,\"icon\":\"last-quarter\",\"singleDay\":true},{\"name\":\"Waning Crescent\",\"length\":6.3826,\"icon\":\"waning-crescent\",\"singleDay\":false}],\"color\":\"#ffffff\",\"cycleDayAdjust\":0.5}],\"seasonSettings\":[{\"name\":\"Spring\",\"startingMonth\":3,\"startingDay\":20,\"color\":\"#fffce8\",\"customColor\":\"\"},{\"name\":\"Summer\",\"startingMonth\":6,\"startingDay\":20,\"color\":\"#f3fff3\",\"customColor\":\"\"},{\"name\":\"Fall\",\"startingMonth\":9,\"startingDay\":22,\"color\":\"#fff7f2\",\"customColor\":\"\"},{\"name\":\"Winter\",\"startingMonth\":12,\"startingDay\":21,\"color\":\"#f2f8ff\",\"customColor\":\"\"}],\"timeSettings\":{\"hoursInDay\":24,\"minutesInHour\":60,\"secondsInMinute\":60,\"gameTimeRatio\":1,\"unifyGameAndClockPause\":false,\"updateFrequency\":1},\"weekdaySettings\":[{\"name\":\"Sunday\",\"numericRepresentation\":1},{\"name\":\"Monday\",\"numericRepresentation\":2},{\"name\":\"Tuesday\",\"numericRepresentation\":3},{\"name\":\"Wednesday\",\"numericRepresentation\":4},{\"name\":\"Thursday\",\"numericRepresentation\":5},{\"name\":\"Friday\",\"numericRepresentation\":6},{\"name\":\"Saturday\",\"numericRepresentation\":7}],\"yearSettings\":{\"numericRepresentation\":2021,\"prefix\":\"\",\"postfix\":\"\",\"showWeekdayHeadings\":true,\"firstWeekday\":4,\"yearZero\":1970,\"yearNames\":[],\"yearNamingRule\":\"default\",\"yearNamesStart\":0}}";
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.importOnLoad(reader, event);
+        //@ts-ignore
+        expect(ui.notifications.error).toHaveBeenCalledTimes(1);
     });
 });

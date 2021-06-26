@@ -13,7 +13,7 @@
     }
   ],
   "minimumCoreVersion": "0.7.9",
-  "compatibleCoreVersion": "0.8.7",
+  "compatibleCoreVersion": "0.8.8",
   "url": "https://github.com/vigoren/foundryvtt-simple-calendar",
   "bugs": "https://github.com/vigoren/foundryvtt-simple-calendar/issues",
   "allowBugReporter": true,

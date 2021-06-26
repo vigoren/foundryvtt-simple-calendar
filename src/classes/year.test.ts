@@ -520,6 +520,16 @@ describe('Year Class Tests', () => {
         expect(year.months[1].days[21].selected).toBe(false);
     });
 
+    test('Change Day Bulk', () => {
+        year.months.push(month);
+        month.current = true;
+        month.days[0].current = true;
+        year.changeDayBulk(1);
+        expect(year.months[0].days[1].current).toBe(true);
+        year.changeDayBulk(31);
+        expect(year.numericRepresentation).toBe(1);
+    });
+
     test('Change Time', () => {
         year.changeTime(true, 'hour');
         expect(year.time.seconds).toBe(3600);

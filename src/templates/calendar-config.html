@@ -102,6 +102,20 @@
                     </li>
                 </ul>
             </div>
+            <div class="settings-group">
+                <h2>{{localize 'FSC.Configuration.General.ImportExport.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#importexport" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group">
+                    <label>{{localize 'FSC.Configuration.General.ImportExport.SCConfig'}}</label>
+                    <div class="form-btn-group">
+                        <div class="file-import-group">
+                            <input type="file" id="-scImportCalendarPicker" />
+                            <button class="control save" id="importCalendar"><i class="fa fa-file-import"></i> {{localize 'FSC.Import'}}</button>
+                        </div>
+                        <button class="control" id="exportCalendar"><i class="fa fa-file-export"></i> {{localize 'FSC.Export'}}</button>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.ImportExport.SCConfigHelp'}}</p>
+                </div>
+            </div>
             {{#if (or importing.showCalendarWeather importing.showAboutTime)}}
             <div class="settings-group">
                 <h2>{{localize 'FSC.Configuration.General.ThirdPartyModule'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#third-party-importexport" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
@@ -120,7 +134,9 @@
                     <p>{{{localize 'FSC.Module.AboutTime.Configuration.Message'}}}</p>
                     <div class="import-options">
                         <button class="control fa fa-file-import" id="scAboutTimeImport">{{localize 'FSC.Module.Import'}}</button>
+                        {{#unless importing.aboutTimeV1}}
                         <button class="control fa fa-file-export" id="scAboutTimeExport">{{localize 'FSC.Module.AboutTime.Export'}}</button>
+                        {{/unless}}
                     </div>
                 </div>
                 {{/if}}

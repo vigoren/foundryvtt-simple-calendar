@@ -33,6 +33,51 @@ This update is mainly around notes and improving the experience around adding, e
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
 
 
+## v1.2.107 - Calendar Configuration Import/Export, API Changes, Bug Fixes
+
+### Import/Export
+
+You can now export and import calendar configurations for Simple Calendar. Under the general settings tab in the configuration window there is an Import/Export section with these options: 
+- Export Button: when clicked you will be prompted to download a json file that contains all of the configuration data. 
+- Import Button/ File Selector: Next to the import button is a file selected where you choose the exported json file to import then click the import button for the contents to be set for the current calendar.
+
+**Important**: This import and export is just for the calendar configuration, notes are not exported or imported through this process! Note exporting is planned, just not ready yet.
+
+### API Changes
+
+- Updated the timestampToDate function to return some additional information:
+  - dayOffset: The number of days the months days are offset by.
+  - dayDisplay: How the day is displayed, generally its number on the calendar.
+
+### Bug Fixes
+
+- Fixed a bug where months with day offsets set, the calculated timestamp would include the skipped days.
+  - If you use calendars that have months with day offsets, you will need to "toggle" (move the day forward 1 then back) the date to update the timestamp properly.
+- Renamed the "Include Intercalary Month in Total Day Count" to "Include Intercalary Month in Day Calculations" to better explain what the setting actually does.
+
+## v1.2.103 - API Changes, Module Import/Export Changes and Bug Fixes
+
+### API Changes
+
+- The timestampToDate function now returns additional information about the date: year prefix, year postfix, the current season and if to show the weekday headings.
+- The calendar/weather import function has been temporarily exposed in the API to assist in the transition for calendar/weather from using about-time to using Simple Calendar. Once this transition has taken place, this functionality will be removed from the API.
+
+### Module Import/Export Changes
+
+- The calendar/weather export now saves the custom calendar setting directly rather than using about-times save function. This is to support the upcoming changes to about-time.
+- Fixed up the calendar/weather import so that it works better with the most recent version of Calendar/weather.
+  - **Important**: Calendar/Weather and Simple Calendar calculate moon phases differently so imported moons will not match cycles exactly.
+- If the about time version is 1.0.0 or greater the "Export To about-time" option will not be available. This is because about-time will be using Simple Calendar as its calendar source so the export will not be needed. 
+
+### Bug Fixes
+
+- Fixed a bug where months with day offsets would not advance the days correctly.
+
+## v1.2.97 - API Bug Fixes
+
+- Fixed a bug with the API function timestampPlusInterval where adding just a year would increment to the first day of the year not by the number of years.
+- Fixed a bug with the API function timestampPlusInterval where if very large values for the different intervals were passed in an error would be thrown
+
 ## v1.2.95 - Translations & Foundry 0.8.7
 
 - Ensured that Simple Calendar works in foundry version 0.8.7.

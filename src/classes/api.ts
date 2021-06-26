@@ -4,6 +4,7 @@ import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {GameSystems, TimeKeeperStatus} from "../constants";
 import PF2E from "./systems/pf2e";
+import Importer from "./importer";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
@@ -36,13 +37,34 @@ export default class API{
             const dateTime = clone.secondsToDate(currentSeconds);
             clone.updateTime(dateTime);
             if(interval.year){
-                clone.changeYear(interval.year, true, 'current');
+                clone.changeYear(interval.year, false, 'current');
             }
             if(interval.month){
+                //If a large number of months are passed in then
+                if(interval.month > clone.months.length){
+                    let years = Math.floor(interval.month/clone.months.length);
+                    interval.month = interval.month - (years * clone.months.length);
+                    clone.changeYear(years, false, 'current');
+                }
                 clone.changeMonth(interval.month, 'current');
             }
             if(interval.day){
-                clone.changeDay(interval.day);
+                clone.changeDayBulk(interval.day);
+            }
+            if(interval.hour && interval.hour > clone.time.hoursInDay){
+                const days = Math.floor(interval.hour / clone.time.hoursInDay);
+                interval.hour = interval.hour - (days * clone.time.hoursInDay);
+                clone.changeDayBulk(days);
+            }
+            if(interval.minute && interval.minute > (clone.time.hoursInDay * clone.time.minutesInHour)){
+                const days = Math.floor(interval.minute / (clone.time.hoursInDay * clone.time.minutesInHour));
+                interval.minute = interval.minute - (days * (clone.time.hoursInDay * clone.time.minutesInHour));
+                clone.changeDayBulk(days);
+            }
+            if(interval.second && interval.second > clone.time.secondsPerDay){
+                const days = Math.floor(interval.second / clone.time.secondsPerDay);
+                interval.second = interval.second - (days * clone.time.secondsPerDay);
+                clone.changeDayBulk(days);
             }
             const dayChange = clone.time.changeTime(interval.hour, interval.minute, interval.second);
             if(dayChange !== 0){
@@ -61,15 +83,21 @@ export default class API{
         const result = {
             year: 0,
             month: 0,
+            monthName: "",
+            dayOffset: 0,
             day: 0,
+            dayDisplay: '',
             dayOfTheWeek: 0,
             hour: 0,
             minute: 0,
             second: 0,
-            monthName: "",
             yearName: "",
             yearZero: 0,
-            weekdays: <string[]>[]
+            weekdays: <string[]>[],
+            showWeekdayHeadings: true,
+            yearPrefix: '',
+            yearPostfix: '',
+            currentSeason: {}
         };
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             // If this is a Pathfinder 2E game, add the world creation seconds
@@ -88,10 +116,15 @@ export default class API{
 
             const month = SimpleCalendar.instance.currentYear.months[dateTime.month];
             result.monthName = month.name;
+            result.dayOffset = month.numericRepresentationOffset;
             result.yearZero = SimpleCalendar.instance.currentYear.yearZero;
             result.yearName = SimpleCalendar.instance.currentYear.getYearName(result.year);
+            result.yearPrefix = SimpleCalendar.instance.currentYear.prefix;
+            result.yearPostfix = SimpleCalendar.instance.currentYear.postfix;
+            result.dayDisplay = SimpleCalendar.instance.currentYear.months[dateTime.month].days[dateTime.day].numericRepresentation.toString();
             result.dayOfTheWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(result.year, month.numericRepresentation, dateTime.day + 1);
             result.weekdays = SimpleCalendar.instance.currentYear.weekdays.map(w => w.name);
+            result.currentSeason = SimpleCalendar.instance.currentYear.getSeason(dateTime.month, dateTime.day + 1);
         }
         return result;
     }
@@ -412,6 +445,19 @@ export default class API{
     public static stopClock(){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             SimpleCalendar.instance.currentYear.time.timeKeeper.stop();
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * This is only here until Calendar Weather has finished their migration from about-time functions to Simple Calendar functions. At which point it will be removed.
+     * Runs the import calendar weather settings into Simple Calendar
+     */
+    public static async calendarWeatherImport(): Promise<boolean>{
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            await Importer.importCalendarWeather(SimpleCalendar.instance.currentYear);
             return true;
         }
         return false;

@@ -76,7 +76,7 @@ describe('Game Settings Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect(game.settings.register).toHaveBeenCalled();
-        expect(game.settings.register).toHaveBeenCalledTimes(12);
+        expect(game.settings.register).toHaveBeenCalledTimes(13);
     });
 
     test('Get Import Ran', () => {

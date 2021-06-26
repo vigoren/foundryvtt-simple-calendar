@@ -82,7 +82,7 @@ describe('Simple Calendar Class Tests', () => {
         expect(SimpleCalendar.instance.currentYear).toBeNull();
         await SimpleCalendar.instance.init();
         expect(Handlebars.registerHelper).toHaveBeenCalledTimes(3);
-        expect(game.settings.register).toHaveBeenCalledTimes(12);
+        expect(game.settings.register).toHaveBeenCalledTimes(13);
         expect(game.settings.get).toHaveBeenCalledTimes(11);
         expect(SimpleCalendar.instance.currentYear?.numericRepresentation).toBe(0);
         expect(SimpleCalendar.instance.currentYear?.months.length).toBe(1);

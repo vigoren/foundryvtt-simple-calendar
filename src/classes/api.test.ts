@@ -17,6 +17,7 @@ import Month from "./month";
 import {Weekday} from "./weekday";
 import {GameSystems, LeapYearRules} from "../constants";
 import SpyInstance = jest.SpyInstance;
+import Mock = jest.Mock;
 
 
 describe('API Class Tests', () => {
@@ -60,6 +61,12 @@ describe('API Class Tests', () => {
 
         expect(API.timestampPlusInterval(0, {second: 86401})).toBe(86401);
 
+        expect(API.timestampPlusInterval(0, {month: 3})).toBe(7862400);
+        expect(API.timestampPlusInterval(0, {hour: 2184})).toBe(7862400);
+        expect(API.timestampPlusInterval(0, {minute: 131040})).toBe(7862400);
+        expect(API.timestampPlusInterval(0, {second: 7862400})).toBe(7862400);
+        expect(API.timestampPlusInterval(86399, {second: 1})).toBe(86400);
+
         year.gameSystem = GameSystems.PF2E;
         year.generalSettings.pf2eSync = true;
         expect(API.timestampPlusInterval(0, {day: 0})).toBe(0);
@@ -68,18 +75,18 @@ describe('API Class Tests', () => {
     });
 
     test('Timestamp to Date', () => {
-        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "", yearName: "", yearZero: 0, weekdays: []});
+        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "", yearName: "", yearZero: 0, weekdays: [], currentSeason: {}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: ''});
         SimpleCalendar.instance.currentYear = year;
         year.weekdays.push(new Weekday(1, 'W1'));
-        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"]});
-        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"]});
-        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"]});
+        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1'});
+        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1'});
+        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '2'});
 
         year.gameSystem = GameSystems.PF2E;
         year.generalSettings.pf2eSync = true;
-        expect(API.timestampToDate(3600)).toStrictEqual({year: -1, month: 1, day: 29, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"]});
-        expect(API.timestampToDate(5184000)).toStrictEqual({year: 0, month: 1, day: 29, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"]});
-        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"]});
+        expect(API.timestampToDate(3600)).toStrictEqual({year: -1, month: 1, day: 29, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '30'});
+        expect(API.timestampToDate(5184000)).toStrictEqual({year: 0, month: 1, day: 29, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M2", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '30'});
+        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: {color: '', name: ''}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1'});
     });
 
     test('Date to Timestamp', () => {
@@ -221,6 +228,41 @@ describe('API Class Tests', () => {
         expect(API.stopClock()).toBe(false);
         SimpleCalendar.instance.currentYear = year;
         expect(API.stopClock()).toBe(true);
+    });
+
+    test('Calendar Weather Import', async () => {
+        let r = await API.calendarWeatherImport();
+        expect(r).toBe(false);
+
+        (<Mock>game.settings.get).mockReturnValueOnce({
+            months: [{
+                name: 'Month 1',
+                length: 10,
+                leapLength: 10,
+                isNumbered: true,
+                abbrev: ''
+            }],
+            daysOfTheWeek: ["S","M","T"],
+            year: 12,
+            day: 5,
+            numDayOfTheWeek: 2,
+            first_day: 0,
+            currentMonth: 2,
+            currentWeekday: 'M',
+            dateWordy: "",
+            era: "",
+            dayLength: 12,
+            timeDisp: '',
+            dateNum: '',
+            weather: {},
+            seasons: [],
+            moons: [],
+            events: [],
+            reEvents: []
+        });
+        SimpleCalendar.instance.currentYear = year;
+        r = await API.calendarWeatherImport();
+        expect(r).toBe(true);
     });
 
 });

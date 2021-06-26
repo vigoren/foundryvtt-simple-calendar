@@ -23,6 +23,8 @@ import Time from "./time";
 import Season from "./season";
 import Moon from "./moon";
 import Hook from "./hook";
+import {triggerAsyncId} from "async_hooks";
+import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 
 export class GameSettings {
     /**
@@ -68,6 +70,12 @@ export class GameSettings {
      * Register the settings this module needs to use with the game
      */
     static RegisterSettings(){
+        // game.settings.register(ModuleName, 'test', {
+        //     name: "Configuration",
+        //     scope: "client",
+        //     config: true,
+        //     type: SimpleCalendarConfiguration
+        // });
         game.settings.register(ModuleName, SettingNames.GeneralConfiguration, {
             name: "General Configuration",
             scope: "world",
@@ -158,6 +166,16 @@ export class GameSettings {
             default: [],
             onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'moon')
         });
+
+        game.settings.register("about-time", "savedCalendar", {
+            name: "Hidden",
+            hint: "Don't touch this",
+            default: {},
+            type: Object,
+            scope: 'world',
+            config: false
+        });
+
     }
 
     /**
