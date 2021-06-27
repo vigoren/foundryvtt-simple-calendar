@@ -315,8 +315,9 @@ export default class DateSelector {
     build(justCalendar = false){
         let returnHtml = '';
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            const wrapper = jQuery(`<div id="${this.id}" class="sc-date-selector"></div>`);
+            let wrapper = `<div id="${this.id}" class="sc-date-selector">`;
             let calendarWidth = 0;
+            let calendar = '';
             if(this.showDate){
                 let weeks: (boolean | DayTemplate)[][] = [[false]],
                     visibleMonthName: string = '',
@@ -331,8 +332,10 @@ export default class DateSelector {
                     return '';
                 }
                 calendarWidth = (10 + (weeks[0].length * 40));
-                const calendar = jQuery(`<div class="sc-date-selector-calendar" style="display: none;width: ${calendarWidth}px;"></div>`);
-                calendar.append(`<div class="header"><div class="current"><a class="prev fa fa-chevron-left"></a><span class="month-year" data-visible="${this.selectedDate.visibleDate.month}/${this.selectedDate.visibleDate.year}">${visibleMonthName} ${this.selectedDate.visibleDate.year}</span><a class="next fa fa-chevron-right"></a></div></div>`);
+
+                calendar = `<div class="header"><div class="current"><a class="prev fa fa-chevron-left"></a><span class="month-year" data-visible="${this.selectedDate.visibleDate.month}/${this.selectedDate.visibleDate.year}">${visibleMonthName} ${this.selectedDate.visibleDate.year}</span><a class="next fa fa-chevron-right"></a></div>`;
+
+
                 if(weekdays.length){
                     let weekdayRow = '<div class="weekdays">';
                     for(let i = 0; i < weekdays.length; i++){
@@ -340,8 +343,10 @@ export default class DateSelector {
                         weekdayRow += `<div class="weekday" title="${wd.name}">${wd.firstCharacter}</div>`;
                     }
                     weekdayRow += '</div>';
-                    calendar.find('.header').append(weekdayRow);
+                    calendar += weekdayRow;
                 }
+                calendar += `</div>`;
+
                 let dayContainer = '<div class="days">';
                 for(let i = 0; i < weeks.length; i++){
                     dayContainer += `<div class="week">`;
@@ -379,63 +384,62 @@ export default class DateSelector {
                     dayContainer += '</div>';
                 }
                 dayContainer += '</div>';
-                calendar.append(dayContainer);
+                calendar += `${dayContainer}`;
+            }
+            if(this.showTime){
+                let startTimeText = `00:00`;
+                let endTimeText = `00:00`;
+                if(!this.selectedDate.startDate.allDay){
+                    startTimeText = ' ' + DateSelector.FormatTime(this.selectedDate.startDate);
+                }
+                if(!this.selectedDate.endDate.allDay){
+                    endTimeText = ' ' + DateSelector.FormatTime(this.selectedDate.endDate);
+                }
 
-                if(this.showTime){
-                    let startTimeText = `00:00`;
-                    let endTimeText = `00:00`;
-                    if(!this.selectedDate.startDate.allDay){
-                        startTimeText = ' ' + DateSelector.FormatTime(this.selectedDate.startDate);
-                    }
-                    if(!this.selectedDate.endDate.allDay){
-                        endTimeText = ' ' + DateSelector.FormatTime(this.selectedDate.endDate);
-                    }
+                let timeWrapper = `<div class='time-container'>`;
 
-                    const timeWrapper = jQuery(`<div class='time-container'></div>`);
+                if(this.addTime){
 
-                    if(this.addTime){
-                        const timeSelectors = jQuery(`<div class="time-selectors"></div>`);
-                        const startTime = jQuery(`<div class="time-selector"><input class="start-time" type="text" value="${startTimeText}" /></div>`);
-                        const endTime = jQuery(`<div class="time-selector"><input class="end-time" type="text" value="${endTimeText}" /></div>`);
 
-                        const timePicker = jQuery(`<div class="time-dropdown hide"></div>`);
-                        const halfHour = Math.floor(SimpleCalendar.instance.currentYear.time.minutesInHour / 2);
-                        for(let i = 0; i < SimpleCalendar.instance.currentYear.time.hoursInDay; i++){
-                            timePicker.append(`<div class="time-option" data-hour="${i}" data-minute="0">${i < 10? '0'+i : i}:00</div>`);
-                            timePicker.append(`<div class="time-option" data-hour="${i}" data-minute="${halfHour}">${i < 10? '0'+i : i}:${halfHour}</div>`);
+                    let startTimePicker = ``;
+                    let endTimePicker = ``;
+                    const halfHour = Math.floor(SimpleCalendar.instance.currentYear.time.minutesInHour / 2);
+                    for(let i = 0; i < SimpleCalendar.instance.currentYear.time.hoursInDay; i++){
+                        let startSelected = '', startHalfSelected = '', endSelected = '', endHalfSelected = '';
+                        if(this.selectedDate.startDate.hour === i || this.selectedDate.endDate.hour === i){
+                            if(this.selectedDate.startDate.minute === 0){
+                                startSelected = 'selected';
+                            } else if(this.selectedDate.startDate.minute === halfHour){
+                                startHalfSelected = 'selected';
+                            } else if(this.selectedDate.endDate.minute === 0){
+                                endSelected = 'selected';
+                            } else if(this.selectedDate.endDate.minute === halfHour){
+                                endHalfSelected = 'selected';
+                            }
                         }
-                        timePicker.find(`.time-option[data-hour='${this.selectedDate.startDate.hour}'][data-minute='${this.selectedDate.startDate.minute}']`).addClass('selected');
-                        startTime.append(`<div class="time-dropdown hide">${timePicker.html()}</div>`);
-                        timePicker.find('.time-option').removeClass('selected');
-                        timePicker.find(`.time-option[data-hour='${this.selectedDate.endDate.hour}'][data-minute='${this.selectedDate.endDate.minute}']`).addClass('selected');
-                        endTime.append(timePicker);
+                        startTimePicker += `<div class="time-option ${startSelected}" data-hour="${i}" data-minute="0">${i < 10? '0'+i : i}:00</div>`;
+                        startTimePicker += `<div class="time-option ${startHalfSelected}" data-hour="${i}" data-minute="${halfHour}">${i < 10? '0'+i : i}:${halfHour}</div>`;
+                        endTimePicker += `<div class="time-option ${endSelected}" data-hour="${i}" data-minute="0">${i < 10? '0'+i : i}:00</div>`;
+                        endTimePicker += `<div class="time-option ${endHalfSelected}" data-hour="${i}" data-minute="${halfHour}">${i < 10? '0'+i : i}:${halfHour}</div>`;
 
-                        timeSelectors.append(startTime);
-                        timeSelectors.append(`<span>-</span>`);
-                        timeSelectors.append(endTime);
-                        timeWrapper.append(`<h3>${GameSettings.Localize('FSC.Notes.Time')}</h3>`);
-                        timeWrapper.append(timeSelectors);
-                        timeWrapper.append(`<button class="control delete"><i class="fa fa-times"></i> ${GameSettings.Localize('FSC.Clear')}</button>`);
-                    } else {
-                        timeWrapper.append(`<div class="add-time"><button class="control"><i class="fa fa-clock"></i> ${GameSettings.Localize('FSC.Notes.DateTime.AllDay')}</button></div>`)
                     }
-                    calendar.append(timeWrapper);
+                    const startTime = `<div class="time-selector"><input class="start-time" type="text" value="${startTimeText}" /><div class="time-dropdown hide">${startTimePicker}</div></div>`;
+                    const endTime = `<div class="time-selector"><input class="end-time" type="text" value="${endTimeText}" /><div class="time-dropdown hide">${endTimePicker}</div></div>`;
+                    timeWrapper += `<h3>${GameSettings.Localize('FSC.Notes.Time')}</h3><div class="time-selectors">${startTime}<span>-</span>${endTime}</div><button class="control delete"><i class="fa fa-times"></i> ${GameSettings.Localize('FSC.Clear')}</button>`;
+                } else {
+                    timeWrapper += `<div class="add-time"><button class="control"><i class="fa fa-clock"></i> ${GameSettings.Localize('FSC.Notes.DateTime.AllDay')}</button></div>`;
                 }
-
-                if(justCalendar){
-                    returnHtml = calendar.html();
-                }else{
-                    returnHtml = jQuery('<div></div>').append(calendar).html();
-                }
-
+                calendar += `${timeWrapper}</div>`;
             }
             const displayDate = DateSelector.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate);
             if(!justCalendar){
-                wrapper.append(`<input class="display-input" style="width: ${calendarWidth}px;" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly">`);
-                wrapper.append(returnHtml);
-                returnHtml = jQuery('<div></div>').append(wrapper).html();
+                returnHtml = `${wrapper}<input class="display-input" style="${calendarWidth? "width:"+calendarWidth+"px;" : ''}" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar" style="display:none;${calendarWidth? "width:"+calendarWidth+"px;" : ''}">${calendar}</div></div>`;
             } else {
-                jQuery(`#${this.id} .display-input`).val(`${displayDate}`);
+                returnHtml = calendar;
+                const displayInput = (<HTMLInputElement>document.querySelector(`#${this.id} .display-input`));
+                if(displayInput){
+                    displayInput.value = displayDate;
+                }
             }
         }
         return returnHtml;
@@ -446,58 +450,98 @@ export default class DateSelector {
      */
     update(){
         const newData = this.build(true);
-        const ds = jQuery(`#${this.id} .sc-date-selector-calendar`);
-        ds.html(newData);
-        this.activateListeners(ds.parent().parent(), true);
-        ds.show();
+        const ds = document.querySelector(`#${this.id} .sc-date-selector-calendar`);
+        if(ds){
+            ds.innerHTML = newData;
+            this.activateListeners(ds.parentElement, true);
+            (<HTMLElement>ds).style.display = "block";
+        }
     }
 
     /**
      * Adds all of the click events needed to the calendars HTML for proper interaction
-     * @param {JQuery} html The JQuery object of the HTML for the input
+     * @param {HTMLElement | null} html The HTML element for the calendar
      * @param {boolean} justCalendar If we should just update the listeners for the calendar
      */
-    activateListeners(html: JQuery, justCalendar = false){
-        const dateSelector = html.find(`#${this.id}`);
-        if(this.showDate){
-            if(!justCalendar){
-                html.on('click', this.hideCalendar.bind(this, html));
-                dateSelector.find('.display-input').on('click', this.toggleCalendar.bind(this, dateSelector));
-            }
-            dateSelector.find('.sc-date-selector-calendar').on('click', this.calendarClick.bind(this));
-            dateSelector.find('.days .day').on('click', this.dayClick.bind(this, dateSelector));
-            dateSelector.find('.header .current .prev').on('click', this.prevClick.bind(this));
-            dateSelector.find('.header .current .next').on('click', this.nextClick.bind(this));
+    activateListeners(html: HTMLElement | null = null, justCalendar: boolean = false){
+        if(!html){
+            html = document.querySelector(`#${this.id}`);
         }
+        if(html){
+            const dateSelector = html;
+            if(this.showDate){
+                if(!justCalendar){
+                    document.addEventListener('click', this.hideCalendar.bind(this,html));
+                    const di = <HTMLElement>html.querySelector('.display-input');
+                    if(di){
+                        di.addEventListener('click', this.toggleCalendar.bind(this, dateSelector));
+                    }
+                }
+                const cal = <HTMLElement>html.querySelector('.sc-date-selector-calendar');
+                if(cal){
+                    cal.addEventListener('click', this.calendarClick.bind(this));
+                }
+                const prev = <HTMLElement>html.querySelector('.header .current .prev');
+                if(prev){
+                    prev.addEventListener('click', this.prevClick.bind(this));
+                }
+                const next = <HTMLElement>html.querySelector('.header .current .next');
+                if(next){
+                    next.addEventListener('click', this.nextClick.bind(this));
+                }
+                html.querySelectorAll('.days .day').forEach(el => {
+                    el.addEventListener('click', this.dayClick.bind(this, dateSelector));
+                });
+            }
 
-        if(this.showTime){
-            dateSelector.find('.add-time button').on('click', this.addTimeClick.bind(this));
-            dateSelector.find('.time-container button.control.delete').on('click', this.removeTimeClick.bind(this));
-            dateSelector.find('.time-container .time-selectors input').on('click', this.timeClick.bind(this));
-            dateSelector.find('.time-container .time-selectors .time-dropdown .time-option').on('click', this.timeDropdownClick.bind(this));
-            dateSelector.find('.time-container .time-selectors input').on('change', this.timeUpdate.bind(this));
+            if(this.showTime){
+                const atb = html.querySelector('.add-time button');
+                if(atb){
+                    atb.addEventListener('click', this.addTimeClick.bind(this));
+                }
+                const cb = html.querySelector('.time-container button.control.delete');
+                if(cb){
+                    cb.addEventListener('click', this.removeTimeClick.bind(this));
+                }
+                html.querySelectorAll('.time-container .time-selectors input').forEach(el => {
+                    el.addEventListener('click', this.timeClick.bind(this));
+                });
+                html.querySelectorAll('.time-container .time-selectors .time-dropdown .time-option').forEach(el => {
+                    el.addEventListener('click', this.timeDropdownClick.bind(this));
+                });
+                html.querySelectorAll('.time-container .time-selectors input').forEach(el => {
+                    el.addEventListener('change', this.timeUpdate.bind(this));
+                });
+            }
         }
     }
 
     /**
      * Toggles if the calendar portion of the input should be shown or not
-     * @param {JQuery} html The JQuery object of the HTML for the input
+     * @param {HTMLElement} html The HTMLElement for the calendar input wrapper
      * @param {Event} event The click event that triggered this call
      */
-    toggleCalendar(html: JQuery, event: Event){
+    toggleCalendar(html: HTMLElement, event: Event){
         event.stopPropagation();
-        html.find('.sc-date-selector-calendar').toggle();
+        const cal = <HTMLElement> html.querySelector('.sc-date-selector-calendar');
+        if(cal){
+            if(cal.style.display === 'none'){
+                cal.style.display = 'block';
+            } else {
+                cal.style.display = 'none';
+            }
+        }
     }
 
     /**
      * Hides the calendar portion of the input
-     * @param {JQuery} html The JQuery object of the HTML for the input
+     * @param {HTMLElement} html The HTMLElement for the calendar
      */
-    hideCalendar(html: JQuery){
+    hideCalendar(html: HTMLElement){
         this.secondDaySelect = false;
-        const cal = html.find('.sc-date-selector-calendar');
-        if(cal.is(':visible')){
-            cal.hide();
+        const cal = <HTMLElement>html.querySelector('.sc-date-selector-calendar');
+        if(cal && !!( cal.offsetWidth || cal.offsetHeight || cal.getClientRects().length )){
+            cal.style.display = 'none';
             if(this.onDateSelect){
                 this.onDateSelect(this.selectedDate);
             }
@@ -523,16 +567,16 @@ export default class DateSelector {
 
     /**
      * Processes the selecting of a day on the calendar
-     * @param {JQuery} html The JQuery object of the HTML for the input
+     * @param {HTMLElement} html The HTMLElement for the date selector
      * @param {Event} event The click event that triggered this call
      */
-    dayClick(html: JQuery, event: Event){
+    dayClick(html: HTMLElement, event: Event){
         event.stopPropagation();
         let target = <HTMLElement>event.target;
         const dataDate = target.getAttribute('data-day');
-        const currentMonthYear = html.find('.month-year');
+        const currentMonthYear = <HTMLElement>html.querySelector('.month-year');
         if(currentMonthYear && dataDate){
-            const dataVis = currentMonthYear.attr('data-visible');
+            const dataVis = currentMonthYear.getAttribute('data-visible');
             if(dataVis){
                 const my = dataVis.split('/');
                 if(my.length === 2){

@@ -23,8 +23,6 @@ import Time from "./time";
 import Season from "./season";
 import Moon from "./moon";
 import Hook from "./hook";
-import {triggerAsyncId} from "async_hooks";
-import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 
 export class GameSettings {
     /**

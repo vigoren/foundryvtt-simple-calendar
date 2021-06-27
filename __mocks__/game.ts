@@ -27,7 +27,7 @@ const user: User = {
     isSelf: true,
     can: jest.fn((permission: string) => {return false;}),
     hasPermission: jest.fn((permission: string) => {return false;}),
-    hasRole: jest.fn((role: string) => {return false;}),
+    hasRole: jest.fn((role: string) => {return true;}),
     isRole: jest.fn((role: string) => {return false;}),
     setPermission: jest.fn((premission: string, allowed: boolean) => {}),
     assignHotbarMacro: jest.fn((macro: Macro | null, slot: number, {fromSlot}: { fromSlot?: number }): Promise<User> => { return Promise.resolve(user);}),

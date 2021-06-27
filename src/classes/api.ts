@@ -5,6 +5,7 @@ import {GameSettings} from "./game-settings";
 import {GameSystems, TimeKeeperStatus} from "../constants";
 import PF2E from "./systems/pf2e";
 import Importer from "./importer";
+import Utilities from "./utilities";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
@@ -83,21 +84,32 @@ export default class API{
         const result = {
             year: 0,
             month: 0,
-            monthName: "",
             dayOffset: 0,
             day: 0,
-            dayDisplay: '',
             dayOfTheWeek: 0,
             hour: 0,
             minute: 0,
             second: 0,
-            yearName: "",
             yearZero: 0,
             weekdays: <string[]>[],
             showWeekdayHeadings: true,
+            currentSeason: {},
+            monthName: "",
+            dayDisplay: '',
+            yearName: "",
             yearPrefix: '',
             yearPostfix: '',
-            currentSeason: {}
+            display: {
+                day: '',
+                daySuffix: '',
+                weekDay: '',
+                monthName: '',
+                month: '',
+                year: '',
+                yearName: '',
+                yearPrefix: '',
+                yearPostfix: ''
+            }
         };
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             // If this is a Pathfinder 2E game, add the world creation seconds
@@ -115,16 +127,30 @@ export default class API{
             result.second = dateTime.seconds;
 
             const month = SimpleCalendar.instance.currentYear.months[dateTime.month];
-            result.monthName = month.name;
+            const day = month.days[dateTime.day];
             result.dayOffset = month.numericRepresentationOffset;
             result.yearZero = SimpleCalendar.instance.currentYear.yearZero;
+            result.dayOfTheWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(result.year, month.numericRepresentation, day.numericRepresentation);
+            result.currentSeason = SimpleCalendar.instance.currentYear.getSeason(dateTime.month, dateTime.day + 1);
+            result.weekdays = SimpleCalendar.instance.currentYear.weekdays.map(w => w.name);
+
+            // Display Stuff
+            // Legacy - Depreciated first stable release of Foundry 9
+            result.monthName = month.name;
             result.yearName = SimpleCalendar.instance.currentYear.getYearName(result.year);
             result.yearPrefix = SimpleCalendar.instance.currentYear.prefix;
             result.yearPostfix = SimpleCalendar.instance.currentYear.postfix;
-            result.dayDisplay = SimpleCalendar.instance.currentYear.months[dateTime.month].days[dateTime.day].numericRepresentation.toString();
-            result.dayOfTheWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(result.year, month.numericRepresentation, dateTime.day + 1);
-            result.weekdays = SimpleCalendar.instance.currentYear.weekdays.map(w => w.name);
-            result.currentSeason = SimpleCalendar.instance.currentYear.getSeason(dateTime.month, dateTime.day + 1);
+            result.dayDisplay = day.numericRepresentation.toString();
+
+            result.display.year = dateTime.year.toString();
+            result.display.yearName = SimpleCalendar.instance.currentYear.getYearName(result.year);
+            result.display.yearPrefix = SimpleCalendar.instance.currentYear.prefix;
+            result.display.yearPostfix = SimpleCalendar.instance.currentYear.postfix;
+            result.display.month = month.numericRepresentation.toString();
+            result.display.monthName = month.name;
+            result.display.weekDay = SimpleCalendar.instance.currentYear.weekdays[result.dayOfTheWeek].name;
+            result.display.day = day.numericRepresentation.toString();
+            result.display.daySuffix = Utilities.ordinalSuffix(day.numericRepresentation);
         }
         return result;
     }

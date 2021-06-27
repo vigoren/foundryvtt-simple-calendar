@@ -18,6 +18,7 @@ import Moon from "./moon";
 import {Note} from "./note";
 import SimpleCalendar from "./simple-calendar";
 import PF2E from "./systems/pf2e";
+import Utilities from "./utilities";
 
 /**
  * Class for representing a year
@@ -1010,7 +1011,7 @@ export default class Year {
             if(this.yearNamingRule === YearNamingRules.Repeat){
                 nameIndex = (((yearToUse - this.yearNamesStart) % this.yearNames.length) + this.yearNames.length) % this.yearNames.length;
             } else if(this.yearNamingRule === YearNamingRules.Random){
-                const yearHash = this.randomHash(`${yearToUse}-AbCxYz`);
+                const yearHash = Utilities.randomHash(`${yearToUse}-AbCxYz`);
                 nameIndex = (((yearHash - this.yearNamesStart) % this.yearNames.length) + this.yearNames.length) % this.yearNames.length;
             } else {
                 nameIndex = Math.abs(this.yearNamesStart - yearToUse);
@@ -1024,21 +1025,5 @@ export default class Year {
         return name;
     }
 
-    /**
-     * Generates a random numeric value based on the passed in string.
-     * @param {string} value The string to hash
-     * @return {number} The number representing the hash value
-     */
-    randomHash(value: string) {
-        let hash = 0;
-        if (value.length == 0) {
-            return hash;
-        }
-        for (let i = 0; i < value.length; i++) {
-            let char = value.charCodeAt(i);
-            hash = ((hash<<5)-hash)+char;
-            hash = hash & hash; // Convert to 32bit integer
-        }
-        return hash;
-    }
+
 }

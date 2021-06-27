@@ -561,7 +561,7 @@ describe('Year Class Tests', () => {
     test('Visible Month Starting Day Of Week', () => {
         year.months.push(month);
         month.visible = true;
-        expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
+        expect(year.monthStartingDayOfWeek(month, year.numericRepresentation)).toBe(0);
         year.weekdays.push(new Weekday(1, 'S'));
         year.weekdays.push(new Weekday(2, 'M'));
         year.weekdays.push(new Weekday(3, 'T'));
@@ -569,19 +569,19 @@ describe('Year Class Tests', () => {
         year.weekdays.push(new Weekday(5, 'T'));
         year.weekdays.push(new Weekday(6, 'F'));
         year.weekdays.push(new Weekday(7, 'S'));
-        expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
+        expect(year.monthStartingDayOfWeek(month, year.numericRepresentation)).toBe(0);
         month.visible = false;
         year.months.push(new Month("Test 2", 2, 0, 22));
         year.months[1].visible = true;
-        expect(year.visibleMonthStartingDayOfWeek()).toBe(2);
+        expect(year.monthStartingDayOfWeek(year.months[1], year.numericRepresentation)).toBe(2);
 
         year.months[1].visible = false;
-        expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
+        expect(year.monthStartingDayOfWeek(month, year.numericRepresentation)).toBe(0);
 
         year.months.push(new Month("Test 3", 3, 0, 2));
         year.months[2].visible = true;
         year.months[2].intercalary = true;
-        expect(year.visibleMonthStartingDayOfWeek()).toBe(0);
+        expect(year.monthStartingDayOfWeek(year.months[2], year.numericRepresentation)).toBe(0);
     });
 
     test('Day of the Week', () => {
@@ -1041,11 +1041,6 @@ describe('Year Class Tests', () => {
         year.yearNamingRule = YearNamingRules.Random;
         expect(year.getYearName(4)).not.toBe('');
 
-    });
-
-    test('Random Hash', () => {
-        expect(year.randomHash('')).toBe(0);
-        expect(year.randomHash('asd')).not.toBe(0);
     });
 
 });

@@ -28,6 +28,11 @@ This update is mainly around notes and improving the experience around adding, e
 ### Quality of Life Changes
 
 
+### API Changes
+
+- Updated the timestampToDate function's return values. The result now contains a display object that contains all the different display strings for the parsed date.
+- Fixed a bug with the timestampToDate function where months with day offsets would return the incorrect day of the week for days in that month.
+
 ### Bug Fixes
 
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.

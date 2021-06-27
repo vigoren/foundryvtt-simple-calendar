@@ -176,7 +176,7 @@ export class SimpleCalendarNotes extends FormApplication {
         super.activateListeners(html);
         this.setWidthHeight(html);
         if(html.hasOwnProperty("length")) {
-            this.dateSelector?.activateListeners(html);
+            this.dateSelector?.activateListeners();
             (<JQuery>this.element).find('#scNoteTitle').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteRepeats').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));

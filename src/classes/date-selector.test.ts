@@ -15,11 +15,6 @@ import Year from "./year";
 import {DateRangeMatch} from "../constants";
 import Month from "./month";
 import {Note} from "./note";
-import jQuery from "jquery";
-
-// @ts-ignore
-global.jQuery = jQuery;
-
 
 describe('Date Selector Class Tests', () => {
 
@@ -211,7 +206,10 @@ describe('Date Selector Class Tests', () => {
         n.endDate = {
             year: 1,
             month: 1,
-            day: 1
+            day: 1,
+            hour: 0,
+            minute: 0,
+            seconds: 0
         };
 
         ds.updateSelectedDate(n);
