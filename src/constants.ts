@@ -24,7 +24,8 @@ export enum SettingNames {
     GeneralConfiguration = 'general-configuration',
     ImportRan = 'import-ran',
     SeasonConfiguration = 'season-configuration',
-    MoonConfiguration = 'moon-configuration'
+    MoonConfiguration = 'moon-configuration',
+    NoteCategories = 'note-categories'
 }
 
 /**

@@ -476,6 +476,32 @@ export default class API{
         return false;
     }
 
+    /**
+     * Returns the season for the current date
+     */
+    public static getCurrentSeason(){
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            const mon = SimpleCalendar.instance.currentYear.getMonth();
+            if(mon){
+                const mIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation = mon.numericRepresentation);
+                const day = mon.getDay();
+                if(day){
+                    return SimpleCalendar.instance.currentYear.getSeason(mIndex, day.numericRepresentation);
+                }
+            }
+        }
+        return {name: '', color: ''};
+    }
+
+    /**
+     * Returns details for all seasons set up in the calendar
+     */
+    public static getAllSeasons(){
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            return SimpleCalendar.instance.currentYear.seasons;
+        }
+        return [];
+    }
 
     /**
      * This is only here until Calendar Weather has finished their migration from about-time functions to Simple Calendar functions. At which point it will be removed.

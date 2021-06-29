@@ -2,7 +2,7 @@ import {Logger} from "./logging";
 import Year from "./year";
 import Month from "./month";
 import {Note} from "./note";
-import {CalendarTemplate, NoteTemplate, SimpleCalendarSocket} from "../interfaces";
+import {CalendarTemplate, NoteCategory, NoteTemplate, SimpleCalendarSocket} from "../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {GameSettings} from "./game-settings";
 import {Weekday} from "./weekday";
@@ -37,12 +37,13 @@ export default class SimpleCalendar extends Application{
      * @type {Year | null}
      */
     public currentYear: Year | null = null;
-
     /**
      * List of all notes in the calendar
      * @type {Array.<Note>}
      */
     public notes: Note[] = [];
+
+    public noteCategories: NoteCategory[] = [];
 
     /**
      * The CSS class associated with the animated clock
@@ -1033,6 +1034,9 @@ export default class SimpleCalendar extends Application{
         if(type === 'all' || type === 'general'){
             this.loadGeneralSettings();
         }
+        if(type === 'all' || type === 'note-categories'){
+            this.loadNoteCategories();
+        }
         this.loadCurrentDate();
         if(update && this.currentYear?.time.timeKeeper.getStatus() !== TimeKeeperStatus.Started ) {
             this.updateApp();
@@ -1336,6 +1340,10 @@ export default class SimpleCalendar extends Application{
         if(update){
             this.updateApp();
         }
+    }
+
+    public loadNoteCategories(){
+        this.noteCategories= GameSettings.LoadNoteCategories();
     }
 
     /**

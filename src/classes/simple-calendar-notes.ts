@@ -5,6 +5,7 @@ import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import DateSelector from "./date-selector";
 import {SCDateSelector} from "../interfaces";
+import Utilities from "./utilities";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**
@@ -123,7 +124,7 @@ export class SimpleCalendarNotes extends FormApplication {
                 data.authDisplay = {
                     name: user.name,
                     color: user.color || user.data.color,
-                    textColor: Note.GetContrastColor(user.color || user.data.color)
+                    textColor: Utilities.GetContrastColor(user.color || user.data.color)
                 }
             }
         }

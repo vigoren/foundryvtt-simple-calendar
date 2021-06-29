@@ -3,6 +3,7 @@ import {GameSettings} from "./game-settings"
 import {DateRangeMatch, NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import DateSelector from "./date-selector";
+import Utilities from "./utilities";
 
 /**
  * All content around a calendar note
@@ -89,23 +90,7 @@ export class Note{
      */
     categories: NoteCategory[] = [];
 
-    static GetContrastColor(color: string){
-        let contrastColor = "#000000";
-        if (color.indexOf('#') === 0) {
-            color = color.slice(1);
-        }
-        if(color.length === 3 || color.length === 6){
-            // convert 3-digit hex to 6-digits.
-            if (color.length === 3) {
-                color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
-            }
-            var r = parseInt(color.slice(0, 2), 16),
-                g = parseInt(color.slice(2, 4), 16),
-                b = parseInt(color.slice(4, 6), 16);
-            contrastColor = (r * 0.299 + g * 0.587 + b * 0.114) > 186? '#000000' : '#FFFFFF'
-        }
-        return contrastColor;
-    }
+
 
     /**
      * The note constructor
@@ -144,7 +129,7 @@ export class Note{
             authDisplay = {
                 name: author.name,
                 color: author.color || author.data.color,
-                textColor: Note.GetContrastColor(author.color || author.data.color)
+                textColor: Utilities.GetContrastColor(author.color || author.data.color)
             };
         } else {
             authDisplay = null;

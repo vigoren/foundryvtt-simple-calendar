@@ -18,6 +18,7 @@ import {Weekday} from "./weekday";
 import {GameSystems, LeapYearRules} from "../constants";
 import SpyInstance = jest.SpyInstance;
 import Mock = jest.Mock;
+import Season from "./season";
 jest.spyOn(console, 'error').mockImplementation(() => {});
 
 
@@ -229,6 +230,24 @@ describe('API Class Tests', () => {
         expect(API.stopClock()).toBe(false);
         SimpleCalendar.instance.currentYear = year;
         expect(API.stopClock()).toBe(true);
+    });
+
+    test('Get Current Season', () => {
+        expect(API.getCurrentSeason()).toStrictEqual({name:'', color: ''});
+        SimpleCalendar.instance.currentYear = year;
+        year.seasons.push(new Season('s1', 1, 1));
+        expect(API.getCurrentSeason()).toStrictEqual({name:'s1', color: '#ffffff'});
+        year.months[0].days[0].current = false;
+        expect(API.getCurrentSeason()).toStrictEqual({name:'', color: ''});
+        year.months[0].current = false;
+        expect(API.getCurrentSeason()).toStrictEqual({name:'', color: ''});
+    });
+
+    test('Get All Seasons', () => {
+        expect(API.getAllSeasons().length).toBe(0);
+        SimpleCalendar.instance.currentYear = year;
+        year.seasons.push(new Season('s1', 1, 1));
+        expect(API.getAllSeasons().length).toBe(1);
     });
 
     test('Calendar Weather Import', async () => {

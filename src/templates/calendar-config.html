@@ -154,6 +154,34 @@
                     <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
                 </div>
             </div>
+            <div class="settings-group">
+                <h2>{{localize 'FSC.Configuration.Notes.NoteCategories'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#note-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="f-table">
+                    <div class="row head">
+                        <div title="{{localize 'FSC.Configuration.NoteCategories.NameHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.NoteCategories.Name'}}</div>
+                        <div title="{{localize 'FSC.Configuration.NoteCategories.ColorHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.NoteCategories.Color'}}</div>
+                        <div style="min-width: 15%;"></div>
+                    </div>
+                    {{#each noteCategories}}
+                    <div class="row">
+                        <div style="min-width: 15%;">
+                            <input class="note-category-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.NoteCategories.NameHelp'}}" />
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <input type="color" value="{{color}}" class="note-category-color" data-index="{{@index}}" title="{{localize 'FSC.Configuration.NoteCategories.Color'}}" />
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <button class="remove-note-category control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                <div class="table-actions">
+                    <button class="note-category-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.NoteCategories.Add'}}</button>
+                    <span class="spacer"></span>
+                    <button class="remove-note-category control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.NoteCategories.RemoveAll'}}</button>
+                </div>
+            </div>
         </div>
         <div class="tab year-settings" data-tab="yearSettings">
             <div class="settings-group">

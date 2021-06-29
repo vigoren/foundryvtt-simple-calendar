@@ -16,6 +16,7 @@ This update is mainly around notes and improving the experience around adding, e
 #### New Configuration Options
 
 - Added a new setting to allow players to order notes on a day or not.
+- Added the ability to specify note categories with unique labels and colors. These can be applied to a note to help distinguish different types of notes.
 
 #### Visual Changes
 
@@ -27,11 +28,14 @@ This update is mainly around notes and improving the experience around adding, e
   
 ### Quality of Life Changes
 
+- Changed the default "Show Clock" option so that new installs will show the clock right away. The clock can still be disabled by unchecking that option.
 
 ### API Changes
 
-- Updated the timestampToDate function's return values. The result now contains a display object that contains all the different display strings for the parsed date.
+- Updated the timestampToDate function's return values. The result now contains a display object that contains all the different display strings for the passed in timestamp.
 - Fixed a bug with the timestampToDate function where months with day offsets would return the incorrect day of the week for days in that month.
+- Added a function `SimpleCalendar.api.getCurrentSeason()` that returns details about the season for the current date.
+- Added a function `SimpleCalendar.api.getAllSeasons()` that returns details for every configured season in Simple Calendar.
 
 ### Bug Fixes
 

@@ -16,6 +16,8 @@ import Season from "./season";
 import Moon from "./moon";
 import SimpleCalendar from "./simple-calendar";
 import {saveAs} from "file-saver";
+import {NoteCategory} from "../interfaces";
+import Utilities from "./utilities";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -30,6 +32,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * @private
      */
     private year: Year;
+
+    private noteCategories: NoteCategory[] = [];
 
     /**
      * If the year has changed
@@ -51,6 +55,14 @@ export class SimpleCalendarConfiguration extends FormApplication {
         this.year = data;
 
         this.generalSettings.defaultPlayerNoteVisibility = GameSettings.GetDefaultNoteVisibility();
+
+        this.noteCategories = SimpleCalendar.instance.noteCategories.map(nc => {
+            return {
+                name: nc.name,
+                color: nc.color,
+                textColor: nc.textColor
+            }
+        });
     }
 
     /**
@@ -164,6 +176,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 'random': 'FSC.Random'
             },
             users: <{[key: string]: string}>{},
+            noteCategories: <NoteCategory[]>[]
         };
 
         const calendarWeather = game.modules.get('calendar-weather');
@@ -193,6 +206,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     data.users[u.id] = u.name;
                 }
             });
+        }
+
+        if(SimpleCalendar.instance){
+            data.noteCategories = this.noteCategories;
         }
 
         return data;
@@ -232,6 +249,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".remove-moon").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'moon'));
             (<JQuery>html).find(".remove-moon-phase").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'moon-phase'));
             (<JQuery>html).find(".remove-year-name").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'year-name'));
+            (<JQuery>html).find(".remove-note-category").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'note-category'));
 
             //Table Adds
             (<JQuery>html).find(".month-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'month'));
@@ -240,6 +258,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".moon-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'moon'));
             (<JQuery>html).find(".moon-phase-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'moon-phase'));
             (<JQuery>html).find(".year-name-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'year-name'));
+            (<JQuery>html).find(".note-category-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'note-category'));
 
             //Import Buttons
             (<JQuery>html).find("#scAboutTimeImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'about-time'));
@@ -292,7 +311,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public addToTable(setting: string, e: Event){
         e.preventDefault();
-        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name';
+        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name' | 'note-category';
         switch (filteredSetting){
             case "month":
                 const newMonthNumber = (<Year>this.object).months.length + 1;
@@ -346,6 +365,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
             case "year-name":
                 (<Year>this.object).yearNames.push('New Named Year');
                 break;
+            case 'note-category':
+                this.noteCategories.push({name: "New Category", color:"#b13737 ", textColor:"#ffffff"});
+                break;
         }
         this.updateApp();
     }
@@ -357,7 +379,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public removeFromTable(setting: string, e: Event){
         e.preventDefault();
-        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name';
+        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name' | 'note-category';
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
         if(dataIndex && dataIndex !== 'all'){
             const index = parseInt(dataIndex);
@@ -407,6 +429,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                             (<Year>this.object).yearNames.splice(index, 1);
                         }
                         break;
+                    case 'note-category':
+                        if(index < this.noteCategories.length){{
+                            this.noteCategories.splice(index, 1);
+                        }}
+                        break;
                 }
                 this.updateApp();
             }
@@ -435,6 +462,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     break;
                 case "year-name":
                     (<Year>this.object).yearNames = [];
+                    break;
+                case 'note-category':
+                    this.noteCategories = [];
                     break;
             }
             this.updateApp();
@@ -1540,6 +1570,13 @@ export class SimpleCalendarConfiguration extends FormApplication {
                             }
                         }
                     }
+                    // Note Categories
+                    else if(cssClass === 'note-category-name' && this.noteCategories.length > index){
+                        this.noteCategories[index].name = value;
+                    } else if(cssClass === 'note-category-color' && this.noteCategories.length > index){
+                        this.noteCategories[index].color = value;
+                        this.noteCategories[index].textColor = Utilities.GetContrastColor(value);
+                    }
                 }
             }
             this.updateApp();
@@ -1674,6 +1711,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
             const noteDefaultPlayerVisibility = (<HTMLInputElement>document.getElementById('scDefaultPlayerVisibility')).checked;
             await GameSettings.SetDefaultNoteVisibility(noteDefaultPlayerVisibility);
 
+            await GameSettings.SaveNoteCategories(this.noteCategories);
+
             if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
                 await SimpleCalendar.instance.currentYear.syncTime(true);
             }
@@ -1696,6 +1735,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             leapYearSettings: GameSettings.LoadLeapYearRules(),
             monthSettings: GameSettings.LoadMonthData(),
             moonSettings: GameSettings.LoadMoonData(),
+            noteCategories: GameSettings.LoadNoteCategories(),
             seasonSettings: GameSettings.LoadSeasonData(),
             timeSettings: GameSettings.LoadTimeData(),
             weekdaySettings: GameSettings.LoadWeekdayData(),
@@ -1753,6 +1793,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 }
                 if(res.hasOwnProperty('generalSettings')){
                     await game.settings.set(ModuleName, SettingNames.GeneralConfiguration, res.generalSettings);
+                }
+                if(res.hasOwnProperty('noteCategories')){
+                    await game.settings.set(ModuleName, SettingNames.NoteCategories, res.noteCategories);
                 }
                 if(res.hasOwnProperty('currentDate')){
                     await game.settings.set(ModuleName, SettingNames.CurrentDate, res.currentDate);

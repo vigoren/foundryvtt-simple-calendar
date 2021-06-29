@@ -105,7 +105,7 @@ export default class Year {
      */
     generalSettings: GeneralSettings = {
         gameWorldTimeIntegration: GameWorldTimeIntegrations.None,
-        showClock: false,
+        showClock: true,
         pf2eSync: true,
         permissions: {
             viewCalendar: {player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined},

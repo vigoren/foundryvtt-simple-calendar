@@ -5,7 +5,7 @@ import {
     GeneralSettings,
     LeapYearConfig,
     MonthConfig,
-    MoonConfiguration,
+    MoonConfiguration, NoteCategory,
     NoteConfig,
     SeasonConfiguration,
     SimpleCalendarSocket,
@@ -164,6 +164,14 @@ export class GameSettings {
             default: [],
             onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'moon')
         });
+        game.settings.register(ModuleName, SettingNames.NoteCategories, {
+            name: "Note Categories",
+            scope: "world",
+            config: false,
+            type: Array,
+            default: [{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}],
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'note-categories')
+        });
 
         game.settings.register("about-time", "savedCalendar", {
             name: "Hidden",
@@ -309,6 +317,23 @@ export class GameSettings {
                 returnData = <NoteConfig[]>notes[0];
             } else {
                 returnData = <NoteConfig[]>notes;
+            }
+        }
+        return returnData;
+    }
+
+    /**
+     * Loads the note categories from the game world settings
+     * @return {Array.<NoteCategory>}
+     */
+    static LoadNoteCategories(): NoteCategory[] {
+        let returnData: NoteCategory[] = [];
+        let noteCategories = <any[]>game.settings.get(ModuleName, SettingNames.NoteCategories);
+        if(noteCategories && noteCategories.length) {
+            if (Array.isArray(noteCategories[0])) {
+                returnData = <NoteCategory[]>noteCategories[0];
+            } else {
+                returnData = <NoteCategory[]>noteCategories;
             }
         }
         return returnData;
@@ -542,6 +567,19 @@ export class GameSettings {
                 return game.settings.set(ModuleName, SettingNames.TimeConfiguration, newtc).then(() => { return true });
             } else {
                 Logger.debug('Time configuration has not changed, not updating settings');
+            }
+        }
+        return false;
+    }
+
+    static async SaveNoteCategories(categories: NoteCategory[]): Promise<any> {
+        Logger.debug(`Saving Note Categories.`);
+        if(GameSettings.IsGm()){
+            const current = GameSettings.LoadNoteCategories();
+            if(JSON.stringify(current) !== JSON.stringify(categories)){
+                return game.settings.set(ModuleName, SettingNames.NoteCategories, categories).then(() => {return true});
+            }else {
+                Logger.debug('Note Categories have not changed, not updating');
             }
         }
         return false;
