@@ -43,6 +43,15 @@ This update is mainly around notes and improving the experience around adding, e
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
 
 
+## v1.2.113 - API Changes
+
+- Updated the timestampToDate function's return values. The result now contains a display object that contains all the different display strings for the passed in timestamp.
+- Fixed a bug with the timestampToDate function where months with day offsets would return the incorrect day of the week for days in that month.
+- Fixed a bug with the timestampToDate function where the "showWeekdayHeadings" property would be incorrectly set.
+- Added a function SimpleCalendar.api.getCurrentSeason() that returns details about the season for the current date.
+- Added a function SimpleCalendar.api.getAllSeasons() that returns details for every configured season in Simple Calendar.
+- Fixed a bug when importing from Calendar/weather where the hours per day would end up being undefined.
+
 ## v1.2.107 - Calendar Configuration Import/Export, API Changes, Bug Fixes
 
 ### Import/Export

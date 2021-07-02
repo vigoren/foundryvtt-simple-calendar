@@ -102,13 +102,14 @@ export default class API{
             display: {
                 day: '',
                 daySuffix: '',
-                weekDay: '',
+                weekday: '',
                 monthName: '',
                 month: '',
                 year: '',
                 yearName: '',
                 yearPrefix: '',
-                yearPostfix: ''
+                yearPostfix: '',
+                time: ''
             }
         };
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
@@ -149,9 +150,10 @@ export default class API{
             result.display.yearPostfix = SimpleCalendar.instance.currentYear.postfix;
             result.display.month = month.numericRepresentation.toString();
             result.display.monthName = month.name;
-            result.display.weekDay = SimpleCalendar.instance.currentYear.weekdays[result.dayOfTheWeek].name;
+            result.display.weekday = SimpleCalendar.instance.currentYear.weekdays[result.dayOfTheWeek].name;
             result.display.day = day.numericRepresentation.toString();
             result.display.daySuffix = Utilities.ordinalSuffix(day.numericRepresentation);
+            result.display.time = SimpleCalendar.instance.currentYear.time.toString();
         }
         return result;
     }
@@ -436,12 +438,12 @@ export default class API{
             }
         }
         return {
-          year: year,
-          month: month,
-          day: day,
-          hour: hour,
-          minute: minute,
-          second: second
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            second: second
         };
     }
 

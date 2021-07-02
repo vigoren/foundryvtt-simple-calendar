@@ -1024,6 +1024,4 @@ export default class Year {
 
         return name;
     }
-
-
 }

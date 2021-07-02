@@ -312,22 +312,38 @@ The date object that is return has the following properties:
 Property|Type|Default Value|Description
 ---------|-----|-------------|-----------
 year|Number|0|The year represented in the timestamp.
-yearName|String|""|The name of the year, if year names have been set up.
+yearName|String|""|**Depreciated** Please use display.yearName instead. This will be removed when Foundry v9 Stable is released.
 month|Number|0|The index of the month represented in the timestamp.
-monthName|String|""|The name of the month.
+monthName|String|""|**Depreciated** Please use display.monthName instead. This will be removed when Foundry v9 Stable is released.
 dayOffset|Number|0|The number of days that the months days are offset by.
 day|Number|0|The index of the day of the month represented in the timestamp.
-dayDisplay|String|""|How the day is displayed, generally its number on the calendar.
+dayDisplay|String|""|**Depreciated** Please use display.day instead. This will be removed when Foundry v9 Stable is released.
 dayOfTheWeek|Number|0|The day of the week the day falls on.
 hour|Number|0|The hour represented in the timestamp.
 minute|Number|0|The minute represented in the timestamp.
 second|Number|0|The seconds represented in the timestamp.
 yearZero|Number|0|What is considered as year zero when doing timestamp calculations.
-yearPrefix|String|""|The prefix value for the year
-yearPostfix|String|""|The postfix value for the year
+yearPrefix|String|""|**Depreciated** Please use display.yearPrefix instead. This will be removed when Foundry v9 Stable is released.
+yearPostfix|String|""|**Depreciated** Please use display.yearPostfix instead. This will be removed when Foundry v9 Stable is released.
 weekdays|String Array|[]|A list of weekday names.
 showWeekdayHeadings|Boolean|true|If to show the weekday headings for the month.
 currentSeason|Season|{}|The information for the season of the date, properties include "name" for the seasons name and "color" for the color associated with the season.
+display|Display Object|{}|All of the strings associated with displaying the date are put here
+
+#### Display object
+
+Property|Type|Default Value|Description
+---------|-----|-------------|-----------
+year|String|""|The year number
+yearName|String|""|The name of the year, if year names have been set up.
+yearPrefix|String|""|The prefix value for the year
+yearPostfix|String|""|The postfix value for the year
+month|String|""|The month number.
+monthName|String|""|The name of the month.
+weekday|String|""|The name of the weekday this date falls on.
+day|String|""|How the day is displayed, generally its number on the calendar.
+daySuffix|String|""|The Ordinal Suffix associated with the day number (st, nd, rd or th)
+time|String|''|The hour, minute and seconds.
 
 ### Examples
 
