@@ -133,6 +133,7 @@ export default class API{
             result.dayOfTheWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(result.year, month.numericRepresentation, day.numericRepresentation);
             result.currentSeason = SimpleCalendar.instance.currentYear.getSeason(dateTime.month, dateTime.day + 1);
             result.weekdays = SimpleCalendar.instance.currentYear.weekdays.map(w => w.name);
+            result.showWeekdayHeadings = SimpleCalendar.instance.currentYear.showWeekdayHeadings;
 
             // Display Stuff
             // Legacy - Depreciated first stable release of Foundry 9

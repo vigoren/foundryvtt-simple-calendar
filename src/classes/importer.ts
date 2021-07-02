@@ -158,7 +158,7 @@ export default class Importer{
         const currentSettings = <CalendarWeatherImport.Calendar> game.settings.get('calendar-weather', 'dateTime');
 
         //Set up the time
-        year.time.hoursInDay = currentSettings.dayLength;
+        //year.time.hoursInDay = currentSettings.dayLength;
 
         //Set up the weekdays
         year.weekdays = [];

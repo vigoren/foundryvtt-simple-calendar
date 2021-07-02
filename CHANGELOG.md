@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.3.0 - Notes
+## v1.3.0 - Note Improvements
 
 ### Notes
 
@@ -34,6 +34,7 @@ This update is mainly around notes and improving the experience around adding, e
 
 - Updated the timestampToDate function's return values. The result now contains a display object that contains all the different display strings for the passed in timestamp.
 - Fixed a bug with the timestampToDate function where months with day offsets would return the incorrect day of the week for days in that month.
+- Fixed a bug with the timestampToDate function where the "showWeekdayHeadings" property would be incorrectly set.
 - Added a function `SimpleCalendar.api.getCurrentSeason()` that returns details about the season for the current date.
 - Added a function `SimpleCalendar.api.getAllSeasons()` that returns details for every configured season in Simple Calendar.
 
