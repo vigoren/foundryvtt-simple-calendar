@@ -620,6 +620,7 @@ describe('Year Class Tests', () => {
         year.months.push(new Month("Test 3", 3, 0, 30));
         expect(year.dateToDays(0,1,-1)).toBe(0);
         expect(year.dateToDays(5,1,1)).toBe(450);
+        expect(year.dateToDays(5,11,1)).toBe(450);
         year.leapYearRule = new LeapYear();
         year.leapYearRule.rule = LeapYearRules.Gregorian;
         expect(year.dateToDays(5,1,1, true)).toBe(452);
@@ -1041,11 +1042,6 @@ describe('Year Class Tests', () => {
         year.yearNamingRule = YearNamingRules.Random;
         expect(year.getYearName(4)).not.toBe('');
 
-    });
-
-    test('Random Hash', () => {
-        expect(year.randomHash('')).toBe(0);
-        expect(year.randomHash('asd')).not.toBe(0);
     });
 
 });
