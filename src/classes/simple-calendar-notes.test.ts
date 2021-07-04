@@ -215,19 +215,6 @@ describe('Simple Calendar Notes Tests', () => {
         expect(TextEditor.changeResult()).toBe(true);
     });
 
-    test('Text Editor Button Click', () => {
-        //@ts-ignore
-        SimpleCalendarNotes.instance.editors['content'].button = document.createElement('a');
-        SimpleCalendarNotes.instance.textEditorButtonClick(new Event('click'));
-        //@ts-ignore
-        expect(SimpleCalendarNotes.instance.editors['content'].button.style.display).toBe('none');
-        expect(SimpleCalendarNotes.instance.richEditorSaved).toBe(false);
-
-        const cb = SimpleCalendarNotes.instance.editors['content'];
-        SimpleCalendarNotes.instance.editors['content'] = undefined;
-        expect(() => {SimpleCalendarNotes.instance.textEditorButtonClick(new Event('click'))}).toThrow(Error);
-        SimpleCalendarNotes.instance.editors['content'] = cb;
-    });
 
     test('Activate Listeners', () => {
         const onFunc = jest.fn();

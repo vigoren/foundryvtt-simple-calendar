@@ -57,7 +57,7 @@ describe('Note Tests', () => {
 
     test('To Template', () => {
         const c = n.toTemplate();
-        expect(Object.keys(c).length).toBe(13); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(14); //Make sure no new properties have been added
         expect(c.monthDisplay).toBe('');
         expect(c.title).toBe('');
         expect(c.content).toBe('');
@@ -84,6 +84,8 @@ describe('Note Tests', () => {
                 year: 1,
                 month: 2,
                 day: 3,
+                hour: 0,
+                minute: 0,
                 seconds: 0
             },
             order: 0,

@@ -30,4 +30,12 @@ describe('Utilities Class Tests', () => {
         expect(Utilities.ordinalSuffix(112)).toBe('th');
         expect(Utilities.ordinalSuffix(113)).toBe('th');
     });
+
+    test('Get Contrast Color', () => {
+        expect(Utilities.GetContrastColor('#ffffff')).toBe('#000000');
+        expect(Utilities.GetContrastColor('#000000')).toBe('#FFFFFF');
+        expect(Utilities.GetContrastColor('#000')).toBe('#FFFFFF');
+        expect(Utilities.GetContrastColor('ffffff')).toBe('#000000');
+        expect(Utilities.GetContrastColor('fffff')).toBe('#000000');
+    });
 });
