@@ -1149,18 +1149,18 @@ export default class SimpleCalendar extends Application{
             if(this.currentYear.months.length === 0) {
                 Logger.debug('No month configuration found, setting default month data.');
                 this.currentYear.months = [
-                    new Month(GameSettings.Localize("FSC.Date.January"), 1, 0, 31),
-                    new Month(GameSettings.Localize("FSC.Date.February"), 2, 0, 28, 29),
-                    new Month(GameSettings.Localize("FSC.Date.March"),3, 0, 31),
-                    new Month(GameSettings.Localize("FSC.Date.April"),4, 0, 30),
-                    new Month(GameSettings.Localize("FSC.Date.May"),5, 0, 31),
-                    new Month(GameSettings.Localize("FSC.Date.June"),6, 0, 30),
-                    new Month(GameSettings.Localize("FSC.Date.July"),7, 0, 31),
-                    new Month(GameSettings.Localize("FSC.Date.August"),8, 0, 31),
-                    new Month(GameSettings.Localize("FSC.Date.September"),9, 0, 30),
-                    new Month(GameSettings.Localize("FSC.Date.October"), 10, 0, 31),
-                    new Month(GameSettings.Localize("FSC.Date.November"), 11, 0, 30),
-                    new Month(GameSettings.Localize("FSC.Date.December"), 12, 0, 31),
+                    new Month('January', 1, 0, 31),
+                    new Month("February", 2, 0, 28, 29),
+                    new Month("March",3, 0, 31),
+                    new Month("April",4, 0, 30),
+                    new Month("May",5, 0, 31),
+                    new Month("June",6, 0, 30),
+                    new Month("July",7, 0, 31),
+                    new Month("August",8, 0, 31),
+                    new Month("September",9, 0, 30),
+                    new Month("October", 10, 0, 31),
+                    new Month("November", 11, 0, 30),
+                    new Month("December", 12, 0, 31),
                 ];
             }
         } else {
@@ -1184,13 +1184,13 @@ export default class SimpleCalendar extends Application{
             } else {
                 Logger.debug('No weekday configuration found, loading default data.');
                 this.currentYear.weekdays = [
-                    new Weekday(1, GameSettings.Localize('FSC.Date.Sunday')),
-                    new Weekday(2, GameSettings.Localize('FSC.Date.Monday')),
-                    new Weekday(3, GameSettings.Localize('FSC.Date.Tuesday')),
-                    new Weekday(4, GameSettings.Localize('FSC.Date.Wednesday')),
-                    new Weekday(5, GameSettings.Localize('FSC.Date.Thursday')),
-                    new Weekday(6, GameSettings.Localize('FSC.Date.Friday')),
-                    new Weekday(7, GameSettings.Localize('FSC.Date.Saturday'))
+                    new Weekday(1, 'Sunday'),
+                    new Weekday(2, 'Monday'),
+                    new Weekday(3, 'Tuesday'),
+                    new Weekday(4, 'Wednesday'),
+                    new Weekday(5, 'Thursday'),
+                    new Weekday(6, 'Friday'),
+                    new Weekday(7, 'Saturday')
                 ];
             }
         } else {

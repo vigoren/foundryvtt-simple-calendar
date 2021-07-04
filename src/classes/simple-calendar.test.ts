@@ -64,7 +64,7 @@ describe('Simple Calendar Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(SimpleCalendar.instance).length).toBe(11); //Make sure no new properties have been added
+        expect(Object.keys(SimpleCalendar.instance).length).toBe(12); //Make sure no new properties have been added
     });
 
     test('Default Options', () => {
@@ -82,8 +82,8 @@ describe('Simple Calendar Class Tests', () => {
         expect(SimpleCalendar.instance.currentYear).toBeNull();
         await SimpleCalendar.instance.init();
         expect(Handlebars.registerHelper).toHaveBeenCalledTimes(3);
-        expect(game.settings.register).toHaveBeenCalledTimes(13);
-        expect(game.settings.get).toHaveBeenCalledTimes(11);
+        expect(game.settings.register).toHaveBeenCalledTimes(14);
+        expect(game.settings.get).toHaveBeenCalledTimes(12);
         expect(SimpleCalendar.instance.currentYear?.numericRepresentation).toBe(0);
         expect(SimpleCalendar.instance.currentYear?.months.length).toBe(1);
         expect(SimpleCalendar.instance.currentYear?.months[0].days.length).toBe(2);
@@ -94,7 +94,7 @@ describe('Simple Calendar Class Tests', () => {
         // @ts-ignore
         game.user.isGM = true;
         await SimpleCalendar.instance.init();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(6);
         // @ts-ignore
         //expect(SimpleCalendar.instance.primaryCheckTimeout).toBeDefined();
         //expect(game.socket.emit).toHaveBeenCalledTimes(2);
@@ -288,9 +288,9 @@ describe('Simple Calendar Class Tests', () => {
                 "selectedDayOfWeek": "",
                 "selectedDayMoons": [],
                 "selectedDayNotes": [],
-                "showClock": false,
+                "showClock": true,
                 "showDateControls": true,
-                "showTimeControls": false,
+                "showTimeControls": true,
                 "showWeekdayHeaders": true,
                 "visibleMonth": undefined,
                 "weekdays": [],
@@ -575,8 +575,8 @@ describe('Simple Calendar Class Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(17);
-        expect(onFunc).toHaveBeenCalledTimes(11);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(19);
+        expect(onFunc).toHaveBeenCalledTimes(13);
 
         fakeQuery.find = jest.fn()
             .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
@@ -589,8 +589,8 @@ describe('Simple Calendar Class Tests', () => {
 
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(17);
-        expect(onFunc).toHaveBeenCalledTimes(22);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(19);
+        expect(onFunc).toHaveBeenCalledTimes(26);
 
         SimpleCalendar.instance.compactView = true;
         fakeQuery.find = jest.fn()
@@ -603,7 +603,7 @@ describe('Simple Calendar Class Tests', () => {
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
         expect(fakeQuery.find).toHaveBeenCalledTimes(12);
-        expect(onFunc).toHaveBeenCalledTimes(29);
+        expect(onFunc).toHaveBeenCalledTimes(33);
     });
 
     test('Show Compact Notes', () => {
@@ -1140,6 +1140,12 @@ describe('Simple Calendar Class Tests', () => {
         //@ts-ignore
         SimpleCalendar.instance.loadGeneralSettings();
         expect(y.generalSettings.permissions.addNotes.player).toBe(false);
+
+        game.settings.get =(moduleName: string, settingName: string) => { return {permissions: {}};};
+        //@ts-ignore
+        SimpleCalendar.instance.loadGeneralSettings();
+        expect(y.generalSettings.permissions.reorderNotes).toStrictEqual({player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined});
+
         game.settings.get = orig;
     });
 
@@ -1190,7 +1196,7 @@ describe('Simple Calendar Class Tests', () => {
             SimpleCalendar.instance.settingUpdate();
             expect(SimpleCalendar.instance.currentYear?.months.length).toBe(12);
             expect(SimpleCalendar.instance.currentYear?.months[0].numericRepresentation).toBe(1);
-            expect(SimpleCalendar.instance.currentYear?.months[0].name).toBe('1');
+            expect(SimpleCalendar.instance.currentYear?.months[0].name).toBe('January');
             expect(SimpleCalendar.instance.currentYear?.months[0].days.length).toBe(31);
             expect(SimpleCalendar.instance.currentYear?.weekdays.length).toBe(7);
 
@@ -1207,7 +1213,7 @@ describe('Simple Calendar Class Tests', () => {
             SimpleCalendar.instance.settingUpdate();
             expect(SimpleCalendar.instance.currentYear?.months.length).toBe(12);
             expect(SimpleCalendar.instance.currentYear?.months[0].numericRepresentation).toBe(1);
-            expect(SimpleCalendar.instance.currentYear?.months[0].name).toBe('1');
+            expect(SimpleCalendar.instance.currentYear?.months[0].name).toBe('January');
             expect(SimpleCalendar.instance.currentYear?.months[0].days.length).toBe(31);
 
             SimpleCalendar.instance.currentYear.months = [];
