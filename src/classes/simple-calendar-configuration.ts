@@ -50,9 +50,13 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * @param {Year} data The year data used to populate the configuration dialog
      */
     constructor(data: Year) {
-        super(data);
+        super(!data && SimpleCalendar.instance.currentYear? SimpleCalendar.instance.currentYear.clone() : data);
+        if(!data && SimpleCalendar.instance.currentYear){
+            this.year = SimpleCalendar.instance.currentYear;
+        } else {
+            this.year = data;
+        }
         this._tabs[0].active = "generalSettings";
-        this.year = data;
 
         this.generalSettings.defaultPlayerNoteVisibility = GameSettings.GetDefaultNoteVisibility();
 
@@ -234,55 +238,55 @@ export class SimpleCalendarConfiguration extends FormApplication {
         super.activateListeners(html);
         if(html.hasOwnProperty("length")) {
             //Month advanced click
-            (<JQuery>html).find(".month-show-advanced").on('click', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+            (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));
 
             //Save button clicks
-            (<JQuery>html).find("#scSubmit").on('click', SimpleCalendarConfiguration.instance.saveClick.bind(this));
+            (<JQuery>html).find("#scSubmit").on('click', this.saveClick.bind(this));
 
             //Predefined calendar apply
-            (<JQuery>html).find("#scApplyPredefined").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'predefined', ''));
+            (<JQuery>html).find("#scApplyPredefined").on('click', this.overwriteConfirmationDialog.bind(this, 'predefined', ''));
 
             //Table Removes
-            (<JQuery>html).find(".remove-month").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'month'));
-            (<JQuery>html).find(".remove-weekday").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'weekday'));
-            (<JQuery>html).find(".remove-season").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'season'));
-            (<JQuery>html).find(".remove-moon").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'moon'));
-            (<JQuery>html).find(".remove-moon-phase").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'moon-phase'));
-            (<JQuery>html).find(".remove-year-name").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'year-name'));
-            (<JQuery>html).find(".remove-note-category").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'note-category'));
+            (<JQuery>html).find(".remove-month").on('click', this.removeFromTable.bind(this, 'month'));
+            (<JQuery>html).find(".remove-weekday").on('click', this.removeFromTable.bind(this, 'weekday'));
+            (<JQuery>html).find(".remove-season").on('click', this.removeFromTable.bind(this, 'season'));
+            (<JQuery>html).find(".remove-moon").on('click', this.removeFromTable.bind(this, 'moon'));
+            (<JQuery>html).find(".remove-moon-phase").on('click', this.removeFromTable.bind(this, 'moon-phase'));
+            (<JQuery>html).find(".remove-year-name").on('click', this.removeFromTable.bind(this, 'year-name'));
+            (<JQuery>html).find(".remove-note-category").on('click', this.removeFromTable.bind(this, 'note-category'));
 
             //Table Adds
-            (<JQuery>html).find(".month-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'month'));
-            (<JQuery>html).find(".weekday-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'weekday'));
-            (<JQuery>html).find(".season-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'season'));
-            (<JQuery>html).find(".moon-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'moon'));
-            (<JQuery>html).find(".moon-phase-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'moon-phase'));
-            (<JQuery>html).find(".year-name-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'year-name'));
-            (<JQuery>html).find(".note-category-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'note-category'));
+            (<JQuery>html).find(".month-add").on('click', this.addToTable.bind(this, 'month'));
+            (<JQuery>html).find(".weekday-add").on('click', this.addToTable.bind(this, 'weekday'));
+            (<JQuery>html).find(".season-add").on('click', this.addToTable.bind(this, 'season'));
+            (<JQuery>html).find(".moon-add").on('click', this.addToTable.bind(this, 'moon'));
+            (<JQuery>html).find(".moon-phase-add").on('click', this.addToTable.bind(this, 'moon-phase'));
+            (<JQuery>html).find(".year-name-add").on('click', this.addToTable.bind(this, 'year-name'));
+            (<JQuery>html).find(".note-category-add").on('click', this.addToTable.bind(this, 'note-category'));
 
             //Import Buttons
-            (<JQuery>html).find("#scAboutTimeImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'about-time'));
-            (<JQuery>html).find("#scAboutTimeExport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-export','about-time'));
-            (<JQuery>html).find("#scCalendarWeatherImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'calendar-weather'));
-            (<JQuery>html).find("#scCalendarWeatherExport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-export','calendar-weather'));
+            (<JQuery>html).find("#scAboutTimeImport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-import', 'about-time'));
+            (<JQuery>html).find("#scAboutTimeExport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-export','about-time'));
+            (<JQuery>html).find("#scCalendarWeatherImport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-import', 'calendar-weather'));
+            (<JQuery>html).find("#scCalendarWeatherExport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-export','calendar-weather'));
 
-            (<JQuery>html).find("#exportCalendar").on('click', SimpleCalendarConfiguration.instance.exportCalendar.bind(this));
-            (<JQuery>html).find("#importCalendar").on('click', SimpleCalendarConfiguration.instance.importCalendar.bind(this));
+            (<JQuery>html).find("#exportCalendar").on('click', this.exportCalendar.bind(this));
+            (<JQuery>html).find("#importCalendar").on('click', this.importCalendar.bind(this));
 
             //Input Change
-            (<JQuery>html).find(".general-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".note-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".year-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".year-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".month-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".month-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".weekday-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".weekday-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".leapyear-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".leapyear-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".time-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".moon-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".moon-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+            (<JQuery>html).find(".general-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".note-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".year-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".year-settings select").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".month-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".month-settings select").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".weekday-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".weekday-settings select").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".leapyear-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".leapyear-settings select").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".time-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".moon-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".moon-settings select").on('change', this.inputChange.bind(this));
         }
     }
 
@@ -1627,7 +1631,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 yes: {
                     icon: '<i class="fas fa-check"></i>',
                     label: GameSettings.Localize('FSC.Apply'),
-                    callback: SimpleCalendarConfiguration.instance.overwriteConfirmationYes.bind(this, type, type2)
+                    callback: this.overwriteConfirmationYes.bind(this, type, type2)
                 },
                 no: {
                     icon: '<i class="fas fa-times"></i>',
@@ -1690,6 +1694,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).selectedYear = currentYear;
                 (<Year>this.object).visibleYear = currentYear;
             }
+
             await GameSettings.SaveYearConfiguration(<Year>this.object);
             // Update the Month Configuration
             await GameSettings.SaveMonthConfiguration((<Year>this.object).months);

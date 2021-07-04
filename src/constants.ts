@@ -12,6 +12,7 @@ export const ModuleSocketName = `module.${ModuleName}`;
  * The name of the settings that are saved in the world settings database
  */
 export enum SettingNames {
+    CalendarConfigurationMenu= 'calendar-configuration-menu',
     YearConfiguration = 'year-config',
     WeekdayConfiguration = 'weekday-config',
     MonthConfiguration = 'month-config',

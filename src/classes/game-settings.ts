@@ -23,6 +23,7 @@ import Time from "./time";
 import Season from "./season";
 import Moon from "./moon";
 import Hook from "./hook";
+import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 
 export class GameSettings {
     /**
@@ -68,12 +69,14 @@ export class GameSettings {
      * Register the settings this module needs to use with the game
      */
     static RegisterSettings(){
-        // game.settings.register(ModuleName, 'test', {
-        //     name: "Configuration",
-        //     scope: "client",
-        //     config: true,
-        //     type: SimpleCalendarConfiguration
-        // });
+        game.settings.registerMenu(ModuleName, SettingNames.CalendarConfigurationMenu, {
+            name: "",
+            label: "FSC.Configuration.Title",
+            hint: "",
+            icon: "fa fa-cog",
+            type: SimpleCalendarConfiguration,
+            restricted: true
+        });
         game.settings.register(ModuleName, SettingNames.GeneralConfiguration, {
             name: "General Configuration",
             scope: "world",

@@ -76,7 +76,7 @@ describe('Game Settings Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect(game.settings.register).toHaveBeenCalled();
-        expect(game.settings.register).toHaveBeenCalledTimes(13);
+        expect(game.settings.register).toHaveBeenCalledTimes(14);
     });
 
     test('Get Import Ran', () => {
@@ -90,7 +90,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load General Settings', () => {
-        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}});
+        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes: {player:false, trustedPlayer: false, assistantGameMaster: false}}});
         expect(game.settings.get).toHaveBeenCalled();
     });
 
@@ -167,6 +167,15 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.LoadNotes()).toStrictEqual([]);
         (<Mock>game.settings.get).mockReturnValueOnce([false]);
         expect(GameSettings.LoadNotes()).toStrictEqual([false]);
+    });
+
+    test('Load Note Categories', () => {
+        expect(GameSettings.LoadNoteCategories()).toStrictEqual([]);
+        expect(game.settings.get).toHaveBeenCalled();
+        (<Mock>game.settings.get).mockReturnValueOnce([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
+        expect(GameSettings.LoadNoteCategories()).toStrictEqual([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
+        (<Mock>game.settings.get).mockReturnValueOnce([[{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]]);
+        expect(GameSettings.LoadNoteCategories()).toStrictEqual([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
     });
 
     test('Set Import Ran', async () => {
@@ -332,6 +341,21 @@ describe('Game Settings Class Tests', () => {
         gs.gameTimeRatio = 4;
         await expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(true);
         expect(game.settings.set).toHaveBeenCalled();
+    });
+
+    test('Save Note Categories', async () => {
+        await GameSettings.SaveNoteCategories([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
+        (<Mock>game.settings.get).mockReturnValueOnce([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
+        await GameSettings.SaveNoteCategories([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
+        // @ts-ignore
+        game.user.isGM = false;
+        await GameSettings.SaveNoteCategories([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
+        expect(game.settings.set).toHaveBeenCalledTimes(1);
+
+        // @ts-ignore
+        game.user.isGM = true;
     });
 
     test('Save Notes', async () => {

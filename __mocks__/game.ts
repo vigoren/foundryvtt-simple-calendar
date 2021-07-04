@@ -60,6 +60,8 @@ const game = {
                     return {year: 0, month: 1, day: 2, seconds: 3};
                 case SettingNames.Notes:
                     return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false, id: 'abc123'}]];
+                case SettingNames.NoteCategories:
+                    return [];
                 case SettingNames.GeneralConfiguration:
                     return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}
                 case SettingNames.TimeConfiguration:
@@ -71,6 +73,7 @@ const game = {
             }
         }),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),
+        registerMenu: jest.fn(),
         set: jest.fn((moduleName: string, settingName: string, data: any) => {return Promise.resolve(true);})
     },
     time: {

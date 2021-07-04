@@ -28,15 +28,8 @@ This update is mainly around notes and improving the experience around adding, e
   
 ### Quality of Life Changes
 
+- Added a button to the module settings list that will open Simple Calendars configuration window.
 - Changed the default "Show Clock" option so that new installs will show the clock right away. The clock can still be disabled by unchecking that option.
-
-### API Changes
-
-- Updated the timestampToDate function's return values. The result now contains a display object that contains all the different display strings for the passed in timestamp.
-- Fixed a bug with the timestampToDate function where months with day offsets would return the incorrect day of the week for days in that month.
-- Fixed a bug with the timestampToDate function where the "showWeekdayHeadings" property would be incorrectly set.
-- Added a function `SimpleCalendar.api.getCurrentSeason()` that returns details about the season for the current date.
-- Added a function `SimpleCalendar.api.getAllSeasons()` that returns details for every configured season in Simple Calendar.
 
 ### Bug Fixes
 
