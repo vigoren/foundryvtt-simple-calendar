@@ -65,7 +65,7 @@ describe('Year Class Tests', () => {
         expect(year.time).toBeDefined();
         expect(year.timeChangeTriggered).toBe(false);
         expect(year.combatChangeTriggered).toBe(false);
-        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}  });
+        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: true, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}  });
         expect(year.seasons).toStrictEqual([]);
         expect(year.gameSystem).toBe(GameSystems.Other);
         expect(year.yearNames).toStrictEqual([]);
@@ -91,9 +91,9 @@ describe('Year Class Tests', () => {
         expect(t.weeks).toStrictEqual([]);
         expect(t.showWeekdayHeaders).toBe(true);
         expect(t.firstWeekday).toBe(0);
-        expect(t.showClock).toBe(false);
+        expect(t.showClock).toBe(true);
         expect(t.showDateControls).toBe(true);
-        expect(t.showTimeControls).toBe(false);
+        expect(t.showTimeControls).toBe(true);
         expect(t.clockClass).toBe("stopped");
         expect(t.currentTime).toStrictEqual({hour:"00", minute:"00", second: "00"});
         expect(t.currentSeasonColor).toBe("");
@@ -144,10 +144,14 @@ describe('Year Class Tests', () => {
         expect(t.selectedDayMoons.length).toBe(1);
 
         SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.currentYear = year;
         const n = new Note();
         n.day = 1;
         n.month = 1;
         n.year = 0;
+        n.endDate.day = 1;
+        n.endDate.month = 1;
+        n.endDate.year = 0;
         n.playerVisible = true;
         SimpleCalendar.instance.notes.push(n);
         t = year.toTemplate();
@@ -558,9 +562,11 @@ describe('Year Class Tests', () => {
 
     });
 
-    test('Visible Month Starting Day Of Week', () => {
+    test('Month Starting Day Of Week', () => {
         year.months.push(month);
         month.visible = true;
+        //@ts-ignore
+        expect(year.monthStartingDayOfWeek(false, year.numericRepresentation)).toBe(0);
         expect(year.monthStartingDayOfWeek(month, year.numericRepresentation)).toBe(0);
         year.weekdays.push(new Weekday(1, 'S'));
         year.weekdays.push(new Weekday(2, 'M'));
@@ -700,6 +706,7 @@ describe('Year Class Tests', () => {
         const select = document.createElement('input');
         select.value = 'gregorian';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
+        SimpleCalendar.instance = new SimpleCalendar();
         const sc = new SimpleCalendarConfiguration(year);
         sc.predefinedApplyConfirm();
         year.resetMonths();

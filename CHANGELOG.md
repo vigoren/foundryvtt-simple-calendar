@@ -34,7 +34,7 @@ This update is mainly around notes and improving the experience around adding, e
 ### Bug Fixes
 
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
-
+- Fixed a bug where on new installs the default month and weekday names would not load correctly.
 
 ## v1.2.113 - API Changes
 
