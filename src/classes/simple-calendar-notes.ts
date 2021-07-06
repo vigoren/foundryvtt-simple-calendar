@@ -115,6 +115,22 @@ export class SimpleCalendarNotes extends FormApplication {
             categories: SimpleCalendar.instance.noteCategories
         };
 
+        if(SimpleCalendar.instance.currentYear){
+            const daysBetween = DateSelector.DaysBetweenDates({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, allDay: true},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, allDay: true});
+
+            if(daysBetween >= SimpleCalendar.instance.currentYear.totalNumberOfDays(false, true)){
+                // @ts-ignore
+                data.repeatOptions = {0: 'FSC.Notes.Repeat.Never'};
+            } else if(daysBetween >= SimpleCalendar.instance.currentYear.months[0].days.length){
+                // @ts-ignore
+                data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 3: 'FSC.Notes.Repeat.Yearly'};
+            }else if(daysBetween >= SimpleCalendar.instance.currentYear.weekdays.length){
+                // @ts-ignore
+                data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'};
+            }
+        }
+
+
         data.displayDate = DateSelector.GetDisplayDate({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: (<Note>this.object).hour, minute: (<Note>this.object).minute, allDay: (<Note>this.object).allDay},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: (<Note>this.object).endDate.hour, minute: (<Note>this.object).endDate.minute, allDay: (<Note>this.object).allDay} )
         data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(data.repeatOptions[data.repeats])}`;
 

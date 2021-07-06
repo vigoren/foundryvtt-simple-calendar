@@ -104,7 +104,7 @@ export default class Year {
      * The default general settings for the simple calendar
      */
     generalSettings: GeneralSettings = {
-        gameWorldTimeIntegration: GameWorldTimeIntegrations.None,
+        gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed,
         showClock: true,
         pf2eSync: true,
         permissions: {

@@ -24,12 +24,14 @@ This update is mainly around notes and improving the experience around adding, e
   - Added an indicator to the note list for GMs if the note is visible to the players or not.
   - Added a label to the note list for the time the note takes place at.
   - Added a label to the note list for who wrote the note.
+  - Any custom note categories associated with the note will also be shown.
 - Changed the dialog's behaviour so that it will attempt to size itself to fit the content of the note appropriately.
   
 ### Quality of Life Changes
 
 - Added a button to the module settings list that will open Simple Calendars configuration window.
 - Changed the default "Show Clock" option so that new installs will show the clock right away. The clock can still be disabled by unchecking that option.
+- Changed the default for the "Game World Integration" from None to Mixed. This only affects new installs of the module.
 
 ### Bug Fixes
 

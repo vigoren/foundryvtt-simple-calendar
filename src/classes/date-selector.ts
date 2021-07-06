@@ -115,6 +115,15 @@ export default class DateSelector {
         return between;
     }
 
+    static DaysBetweenDates(startDate: SCDateSelector.Date, endDate: SCDateSelector.Date){
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            const sDays = SimpleCalendar.instance.currentYear.dateToDays(startDate.year, startDate.month, startDate.day);
+            const eDays = SimpleCalendar.instance.currentYear.dateToDays(endDate.year, endDate.month, endDate.day);
+            return eDays - sDays;
+        }
+        return 0;
+    }
+
     /**
      * Formats an hour and minute to include pre padded 0's
      * @param date

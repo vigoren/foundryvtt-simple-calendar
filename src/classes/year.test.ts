@@ -65,7 +65,7 @@ describe('Year Class Tests', () => {
         expect(year.time).toBeDefined();
         expect(year.timeChangeTriggered).toBe(false);
         expect(year.combatChangeTriggered).toBe(false);
-        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: true, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}  });
+        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}  });
         expect(year.seasons).toStrictEqual([]);
         expect(year.gameSystem).toBe(GameSystems.Other);
         expect(year.yearNames).toStrictEqual([]);
@@ -668,6 +668,7 @@ describe('Year Class Tests', () => {
     });
 
     test('Sync Time', () => {
+        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
         //@ts-ignore
         game.time.advance.mockClear();
         year.syncTime();
