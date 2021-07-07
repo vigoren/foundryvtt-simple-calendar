@@ -376,6 +376,13 @@ export interface DateTimeIntervals {
     second?: number;
 }
 
+export interface NoteRepeats {
+    0: string,
+    1?: string,
+    2?: string,
+    3?: string
+}
+
 /**
  * Namespace for our own socket information
  */
