@@ -112,7 +112,15 @@ export class SimpleCalendarNotes extends FormApplication {
                 textColor: ''
             },
             dateSelectorId: this.dateSelectorId,
-            categories: SimpleCalendar.instance.noteCategories
+            categories: SimpleCalendar.instance.noteCategories.filter(nc => (<Note>this.object).categories.includes(nc.name)),
+            allCategories: SimpleCalendar.instance.noteCategories.map(nc => {
+                return {
+                    name: nc.name,
+                    color : nc.color,
+                    textColor: nc.textColor,
+                    selected: (<Note>this.object).categories.find(c => c === nc.name) !== undefined
+                }
+            })
         };
 
         if(SimpleCalendar.instance.currentYear){
@@ -120,13 +128,10 @@ export class SimpleCalendarNotes extends FormApplication {
 
             if(daysBetween >= SimpleCalendar.instance.currentYear.totalNumberOfDays(false, true)){
                 data.repeatOptions = {0: 'FSC.Notes.Repeat.Never'};
-                (<Note>this.object).repeats = NoteRepeat.Never;
             } else if(daysBetween >= SimpleCalendar.instance.currentYear.months[0].days.length){
                 data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 3: 'FSC.Notes.Repeat.Yearly'};
-                (<Note>this.object).repeats = NoteRepeat.Never;
             }else if(daysBetween >= SimpleCalendar.instance.currentYear.weekdays.length){
                 data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'};
-                (<Note>this.object).repeats = NoteRepeat.Never;
             }
         }
 
@@ -201,6 +206,7 @@ export class SimpleCalendarNotes extends FormApplication {
             (<JQuery>this.element).find('#scNoteRepeats').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteDateAllDay').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('input[name="scNoteCategories"]').on('change', this.inputChanged.bind(this));
 
 
             (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
@@ -216,6 +222,7 @@ export class SimpleCalendarNotes extends FormApplication {
     public inputChanged(e: Event){
         Logger.debug('Input has changed, updating note object');
         const id = (<HTMLElement>e.currentTarget).id;
+        const name = (<HTMLInputElement>e.currentTarget).name;
         let value = (<HTMLInputElement>e.currentTarget).value;
         const checked = (<HTMLInputElement>e.currentTarget).checked;
 
@@ -229,6 +236,7 @@ export class SimpleCalendarNotes extends FormApplication {
                 (<Note>this.object).title = value;
             } else if(id === "scNoteRepeats"){
                 const r = parseInt(value);
+                console.log(r);
                 if(!isNaN(r)){
                     (<Note>this.object).repeats = r;
                 } else {
@@ -238,6 +246,17 @@ export class SimpleCalendarNotes extends FormApplication {
                 (<Note>this.object).playerVisible = checked;
             } else if(id === "scNoteDateAllDay"){
                 (<Note>this.object).allDay = !checked;
+            }
+        } else if(name){
+            Logger.debug(`Input Name "${name}" change found`);
+            if(name === 'scNoteCategories'){
+                if(checked){
+                    const nc = SimpleCalendar.instance.noteCategories.findIndex(nc => nc.name === value);
+                    (<Note>this.object).categories.push(SimpleCalendar.instance.noteCategories[nc].name);
+                } else {
+                    const nci = (<Note>this.object).categories.findIndex(nc => nc === value);
+                    (<Note>this.object).categories.splice(nci, 1);
+                }
             }
         }
         this.updateApp();

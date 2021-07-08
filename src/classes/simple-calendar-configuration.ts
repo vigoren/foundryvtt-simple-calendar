@@ -1576,7 +1576,17 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     }
                     // Note Categories
                     else if(cssClass === 'note-category-name' && this.noteCategories.length > index){
+                        const oldName = this.noteCategories[index].name;
                         this.noteCategories[index].name = value;
+                        if(index < SimpleCalendar.instance.noteCategories.length){
+                            //Update all existing notes with the new name;
+                            SimpleCalendar.instance.notes.forEach(n => {
+                                const nci = n.categories.indexOf(oldName);
+                                if (nci > -1) {
+                                    n.categories[nci] = value;
+                                }
+                            });
+                        }
                     } else if(cssClass === 'note-category-color' && this.noteCategories.length > index){
                         this.noteCategories[index].color = value;
                         this.noteCategories[index].textColor = Utilities.GetContrastColor(value);

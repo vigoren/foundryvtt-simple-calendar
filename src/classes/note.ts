@@ -86,9 +86,9 @@ export class Note{
     order: number = 0;
     /**
      * The categories that this note is associated with
-     * @type {NoteCategory[]}
+     * @type {string[]}
      */
-    categories: NoteCategory[] = [];
+    categories: string[] = [];
 
 
 
@@ -149,7 +149,7 @@ export class Note{
             minute: this.minute,
             endDate: this.endDate,
             order: this.order,
-            categories: this.categories
+            categories: SimpleCalendar.instance.noteCategories.filter(nc => this.categories.includes(nc.name)),
         };
     }
 
@@ -234,7 +234,7 @@ export class Note{
             };
         }
         n.order = this.order;
-        n.categories = this.categories.map(c => {return {name: c.name, color: c.color, textColor: c.textColor};});
+        n.categories = [...this.categories];
         return n;
     }
 

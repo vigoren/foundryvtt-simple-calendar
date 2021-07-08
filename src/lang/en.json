@@ -152,6 +152,7 @@
   "FSC.Configuration.NoteCategories.ColorHelp": "The color associated with the note category.",
   "FSC.Configuration.NoteCategories.Add": "Add Note Category",
   "FSC.Configuration.NoteCategories.RemoveAll": "Remove All Note Categories",
+  "FSC.Configuration.Notes.NoteCategoriesHelp": "Select all of the different note categories associated with this note.",
   "FSC.Configuration.Year.Title": "Year Settings",
   "FSC.Configuration.Year.Current": "Current Year",
   "FSC.Configuration.Year.CurrentHelp": "The current year that the game is taking place in. This can also be changed with the Date Controls.",

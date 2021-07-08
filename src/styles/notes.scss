@@ -32,6 +32,9 @@
         flex: 1 1 100%;
       }
     }
+    .category-list{
+      flex-wrap: wrap;
+    }
   }
 
   .note-details{
@@ -50,23 +53,37 @@
       margin-left: auto;
     }
 
-    .note-category{
-      font-size: 0.75rem;
-      border-radius: 7px;
-      padding: .2rem .4rem;
-      margin-right: 5px;
-      margin-bottom: 5px;
-      box-shadow: 1px 2px 5px #6b6b6b;
 
-      span{
-        margin-right: 0.15rem;
-      }
-    }
 
     .note-icon{
       span{
         margin-right: 0;
       }
+    }
+  }
+
+  .note-category{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    border-radius: 7px;
+    padding: .2rem .4rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    box-shadow: 1px 2px 5px #6b6b6b;
+
+    span{
+      margin-right: 0.25rem;
+    }
+
+    input[type="checkbox"]{
+      flex: unset;
+      width: unset;
+      height: unset;
+      margin-top: 1px;
     }
   }
 

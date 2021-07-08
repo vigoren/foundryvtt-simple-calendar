@@ -226,7 +226,7 @@ export interface NoteConfig {
     minute: number;
     endDate: DateTimeParts;
     order: number;
-    categories: NoteCategory[];
+    categories: string[];
 }
 
 /**

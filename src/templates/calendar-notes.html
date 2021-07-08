@@ -25,7 +25,11 @@
             {{/if}}
         </div>
         <div class="note-details">
-
+            {{#each categories}}
+            <div class="note-category" title="{{name}}" style="background-color:{{color}};color:{{textColor}};">
+                {{name}}
+            </div>
+            {{/each}}
         </div>
         {{{object.content}}}
         {{#if canEdit}}
@@ -54,7 +58,7 @@
             <label for="scNoteRepeats">{{localize 'FSC.Notes.Repeating'}}</label>
             <div class="form-fields">
                 <select id="scNoteRepeats">
-                    {{selectOptions repeatOptions selected=object.repeats localize=true}}
+                    {{selectOptions repeatOptions selected=repeats localize=true}}
                 </select>
             </div>
             <p class="notes">{{localize 'FSC.Notes.RepeatingHelp'}}</p>
@@ -67,10 +71,13 @@
             <p class="notes">{{localize 'FSC.Notes.PlayerVisibleHelp'}}</p>
         </div>
         <div class="form-group">
-            <label for="scNoteRemindMe"></label>
-            <div class="form-fields">
-                <input value="" type="checkbox" id="scNoteRemindMe" />
+            <label>{{localize 'FSC.Configuration.Notes.NoteCategories'}}</label>
+            <div class="form-fields category-list">
+                {{#each allCategories}}
+                <label class="note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{name}}" type="checkbox" name="scNoteCategories" {{checked selected}} /> {{name}}</label>
+                {{/each}}
             </div>
+            <p class="notes">{{localize 'FSC.Configuration.Notes.NoteCategoriesHelp'}}</p>
         </div>
         <h2>Details</h2>
         {{editor content=object.content target="content" owner=note.author button=enableRichTextEditButton editable=enableRichTextEditButton }}
