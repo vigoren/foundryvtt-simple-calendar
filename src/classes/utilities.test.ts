@@ -1,3 +1,14 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__mocks__/game";
+import "../../__mocks__/form-application";
+import "../../__mocks__/application";
+import "../../__mocks__/handlebars";
+import "../../__mocks__/event";
+import "../../__mocks__/crypto";
+import "../../__mocks__/dialog";
+import "../../__mocks__/hooks";
 import Utilities from "./utilities";
 
 describe('Utilities Class Tests', () => {
@@ -8,6 +19,20 @@ describe('Utilities Class Tests', () => {
     });
 
     test('Ordinal Suffix', () => {
+        const orig = game.i18n.localize;
+        game.i18n.localize = jest.fn((a: string) => {
+            switch (a){
+                case 'FSC.OrdinalSuffix.st':
+                    return 'st';
+                case 'FSC.OrdinalSuffix.nd':
+                    return 'nd';
+                case 'FSC.OrdinalSuffix.rd':
+                    return 'rd';
+                default:
+                    return 'th';
+            }
+        })
+
         expect(Utilities.ordinalSuffix(0)).toBe('th');
         expect(Utilities.ordinalSuffix(1)).toBe('st');
         expect(Utilities.ordinalSuffix(2)).toBe('nd');
@@ -29,6 +54,8 @@ describe('Utilities Class Tests', () => {
         expect(Utilities.ordinalSuffix(111)).toBe('th');
         expect(Utilities.ordinalSuffix(112)).toBe('th');
         expect(Utilities.ordinalSuffix(113)).toBe('th');
+
+        game.i18n.localize = orig;
     });
 
     test('Get Contrast Color', () => {

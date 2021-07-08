@@ -1,4 +1,5 @@
 import {SCDateSelector} from "../interfaces";
+import {GameSettings} from "./game-settings";
 
 export default class Utilities{
 
@@ -25,7 +26,7 @@ export default class Utilities{
      * @param {number} n The number to get the suffix for
      */
     public static ordinalSuffix(n: number): string {
-        return [undefined,'st','nd','rd'][n%100>>3^1&&n%10]||'th';
+        return [undefined,GameSettings.Localize('FSC.OrdinalSuffix.st'),GameSettings.Localize('FSC.OrdinalSuffix.nd'),GameSettings.Localize('FSC.OrdinalSuffix.rd')][n%100>>3^1&&n%10]||GameSettings.Localize('FSC.OrdinalSuffix.th');
     }
 
     /**
