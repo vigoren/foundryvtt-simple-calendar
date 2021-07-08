@@ -352,12 +352,6 @@ export interface MoonTemplate {
     dayList: DayTemplate[];
 }
 
-export interface DateParts{
-    year: number;
-    month: number;
-    day: number;
-}
-
 export interface DateTimeParts {
     year: number;
     month: number;
@@ -367,20 +361,20 @@ export interface DateTimeParts {
     seconds: number;
 }
 
-export interface DateTimeIntervals {
+export interface NoteRepeats {
+    0: string,
+    1?: string,
+    2?: string,
+    3?: string
+}
+
+export interface DateTime{
     year?: number;
     month?: number;
     day?: number;
     hour?: number;
     minute?: number;
     second?: number;
-}
-
-export interface NoteRepeats {
-    0: string,
-    1?: string,
-    2?: string,
-    3?: string
 }
 
 /**

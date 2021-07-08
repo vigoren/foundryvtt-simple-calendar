@@ -1,6 +1,6 @@
 import Month from "./month";
 import {
-    DateTimeIntervals,
+    DateTime,
     DateTimeParts,
     DayTemplate,
     GeneralSettings,
@@ -843,7 +843,7 @@ export default class Year {
      * Convert the passed in seconds into an interval of larger time
      * @param seconds
      */
-    secondsToInterval(seconds: number): DateTimeIntervals {
+    secondsToInterval(seconds: number): DateTime {
         let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
         if(sec >= this.time.secondsInMinute){
             min = Math.floor(sec / this.time.secondsInMinute);

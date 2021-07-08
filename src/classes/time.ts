@@ -1,9 +1,5 @@
 import {Logger} from "./logging";
-import {SimpleCalendarSocket, TimeTemplate} from "../interfaces";
-import SimpleCalendar from "./simple-calendar";
-import {ModuleSocketName, SimpleCalendarHooks, SocketTypes} from "../constants";
-import {GameSettings} from "./game-settings";
-import Hook from "./hook";
+import {TimeTemplate} from "../interfaces";
 import TimeKeeper from "./time-keeper";
 
 /**

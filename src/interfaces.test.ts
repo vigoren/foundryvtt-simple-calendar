@@ -91,7 +91,8 @@ describe('Interface Tests', () => {
         clockClass: '',
         timeUnits: {},
         compactView: false,
-        compactViewShowNotes: false
+        compactViewShowNotes: false,
+        reorderNotes: false
     };
 
 
@@ -217,7 +218,7 @@ describe('Interface Tests', () => {
     });
 
     test('Notes Template', () => {
-        const nt: NoteTemplate = {title: '', content: '', author: '', monthDisplay: '', id: ''};
+        const nt: NoteTemplate = {title: '', content: '', author: '', monthDisplay: '', id: '', };
         expect(Object.keys(nt).length).toBe(5); //Make sure no new properties have been added
         expect(nt.title).toBe('');
         expect(nt.content).toBe('');

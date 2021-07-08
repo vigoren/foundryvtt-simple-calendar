@@ -3,6 +3,7 @@ import SimpleCalendar from "./simple-calendar";
 import {Note} from "./note";
 import {DateRangeMatch} from "../constants";
 import {GameSettings} from "./game-settings";
+import Utilities from "./utilities";
 
 export default class DateSelector {
 
@@ -124,26 +125,7 @@ export default class DateSelector {
         return 0;
     }
 
-    /**
-     * Formats an hour and minute to include pre padded 0's
-     * @param date
-     * @constructor
-     */
-    static FormatTime(date: SCDateSelector.Date){
-        let text = '';
-        if(!date.allDay){
-            let sHour: string | number = date.hour;
-            let sMinute: string | number = date.minute;
-            if(sHour < 10){
-                sHour = `0${sHour}`;
-            }
-            if(sMinute < 10){
-                sMinute = `0${sMinute}`;
-            }
-            text = `${sHour}:${sMinute}`;
-        }
-        return text;
-    }
+
 
     /**
      * Gets the formatted display date for the passed in start and end date.
@@ -177,11 +159,11 @@ export default class DateSelector {
             let startTimeText = `00:00`;
             let endTimeText = `00:00`;
             if(!startDate.allDay){
-                startTimeText = ' ' + DateSelector.FormatTime(startDate);
+                startTimeText = ' ' + Utilities.FormatTime(startDate);
                 startDateTimeText += startTimeText;
             }
             if(!endDate.allDay){
-                endTimeText = ' ' + DateSelector.FormatTime(endDate);
+                endTimeText = ' ' + Utilities.FormatTime(endDate);
                 if(endDateTimeText !== '' || (endDateTimeText === '' && startTimeText !== endTimeText)){
                     endDateTimeText += endTimeText;
                 }
@@ -399,10 +381,10 @@ export default class DateSelector {
                 let startTimeText = `00:00`;
                 let endTimeText = `00:00`;
                 if(!this.selectedDate.startDate.allDay){
-                    startTimeText = ' ' + DateSelector.FormatTime(this.selectedDate.startDate);
+                    startTimeText = ' ' + Utilities.FormatTime(this.selectedDate.startDate);
                 }
                 if(!this.selectedDate.endDate.allDay){
-                    endTimeText = ' ' + DateSelector.FormatTime(this.selectedDate.endDate);
+                    endTimeText = ' ' + Utilities.FormatTime(this.selectedDate.endDate);
                 }
 
                 let timeWrapper = `<div class='time-container'>`;

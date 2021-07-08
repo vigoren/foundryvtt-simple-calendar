@@ -1,3 +1,5 @@
+import {SCDateSelector} from "../interfaces";
+
 export default class Utilities{
 
     /**
@@ -47,5 +49,25 @@ export default class Utilities{
             contrastColor = (r * 0.299 + g * 0.587 + b * 0.114) > 186? '#000000' : '#FFFFFF'
         }
         return contrastColor;
+    }
+
+    /**
+     * Formats an hour and minute to include pre padded 0's
+     * @param date
+     */
+    public static FormatTime(date: SCDateSelector.Date){
+        let text = '';
+        if(!date.allDay){
+            let sHour: string | number = date.hour;
+            let sMinute: string | number = date.minute;
+            if(sHour < 10){
+                sHour = `0${sHour}`;
+            }
+            if(sMinute < 10){
+                sMinute = `0${sMinute}`;
+            }
+            text = `${sHour}:${sMinute}`;
+        }
+        return text;
     }
 }

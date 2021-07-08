@@ -38,6 +38,10 @@ This update is mainly around notes and improving the experience around adding, e
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
 - Fixed a bug where on new installs the default month and weekday names would not load correctly.
 
+### Translations
+
+- German Translation updates from [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird), thanks!
+
 ## v1.2.113 - API Changes
 
 - Updated the timestampToDate function's return values. The result now contains a display object that contains all the different display strings for the passed in timestamp.
@@ -46,6 +50,7 @@ This update is mainly around notes and improving the experience around adding, e
 - Added a function SimpleCalendar.api.getCurrentSeason() that returns details about the season for the current date.
 - Added a function SimpleCalendar.api.getAllSeasons() that returns details for every configured season in Simple Calendar.
 - Fixed a bug when importing from Calendar/weather where the hours per day would end up being undefined.
+- Added the ability to use the new Date Selector input type to other modules/systems through Simple Calendars API. [Read more here!](./docs/API.md)
 
 ## v1.2.107 - Calendar Configuration Import/Export, API Changes, Bug Fixes
 
