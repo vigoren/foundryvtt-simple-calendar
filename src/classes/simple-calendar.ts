@@ -1213,8 +1213,8 @@ export default class SimpleCalendar extends Application{
                 Logger.debug('Setting the seasons from data.');
                 for(let i = 0; i < seasonData.length; i++){
                     const newSeason = new Season(seasonData[i].name, seasonData[i].startingMonth, seasonData[i].startingDay);
-                    newSeason.color = seasonData[i].color;
-                    newSeason.customColor = seasonData[i].customColor;
+                    const sCustColor = seasonData[i].customColor;
+                    newSeason.color = seasonData[i].color === 'custom' && sCustColor? sCustColor : seasonData[i].color;
                     this.currentYear.seasons.push(newSeason);
                 }
             }

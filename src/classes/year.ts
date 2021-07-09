@@ -964,7 +964,11 @@ export default class Year {
             }
         }
 
-        return this.getSeason(currentMonth, currentDay);
+        const season = this.getSeason(currentMonth, currentDay);
+        return {
+            name: season.name,
+            color: season.color
+        };
     }
 
     /**
@@ -973,6 +977,7 @@ export default class Year {
      * @param {number} day The day number
      */
     getSeason(monthIndex: number, day: number) {
+        let season = new Season('', 1, 1);
         if(day > 0 && monthIndex >= 0){
             let currentSeason: Season | null = null;
             for(let i = 0; i < this.seasons.length; i++){
@@ -988,16 +993,14 @@ export default class Year {
             }
 
             if(currentSeason){
-                return {
-                    name: currentSeason.name,
-                    color: currentSeason.color === 'custom'? currentSeason.customColor : currentSeason.color
-                };
+                season = currentSeason.clone();
             }
         }
-        return {
-            name: '',
-            color: ''
-        };
+        if(this.months.length > 0){
+            season.startingMonth = this.months.findIndex(m => m.numericRepresentation === season.startingMonth);
+            season.startingDay = this.months[season.startingMonth >= 0? season.startingMonth : 0].days.findIndex(d => d.numericRepresentation === season.startingDay);
+        }
+        return season;
     }
 
     /**

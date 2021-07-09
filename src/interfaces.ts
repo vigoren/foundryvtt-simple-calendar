@@ -303,7 +303,7 @@ export interface SeasonConfiguration {
     startingMonth: number;
     startingDay: number;
     color: string;
-    customColor: string;
+    customColor?: string;
 }
 
 /**

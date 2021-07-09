@@ -136,7 +136,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Season Data', () => {
-        expect(GameSettings.LoadSeasonData()).toStrictEqual([{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', customColor: ''}]);
+        expect(GameSettings.LoadSeasonData()).toStrictEqual([{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff'}]);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadSeasonData()).toStrictEqual([]);
@@ -297,7 +297,6 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         game.user.isGM = false;
         const season = new Season('', 1, 1);
-        season.customColor = '';
         await expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;

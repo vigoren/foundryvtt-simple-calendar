@@ -33,6 +33,13 @@ This update is mainly around notes and improving the experience around adding, e
 - Changed the default "Show Clock" option so that new installs will show the clock right away. The clock can still be disabled by unchecking that option.
 - Changed the default for the "Game World Integration" from None to Mixed. This only affects new installs of the module.
 
+### API Changes
+
+- Fixed a bug with the API getCurrentSeason function where the last season would always be returned.
+- Additional information about the Season is returned for the api functions `getCurrentSeason`, `getAllSeasons` and `timestampToDate`:
+  - startingMonth: The month index the season starts on.
+  - startingDay: The day index of the starting month the season starts on.
+
 ### Bug Fixes
 
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.

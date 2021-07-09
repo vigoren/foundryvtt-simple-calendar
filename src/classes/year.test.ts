@@ -96,7 +96,7 @@ describe('Year Class Tests', () => {
         expect(t.showTimeControls).toBe(true);
         expect(t.clockClass).toBe("stopped");
         expect(t.currentTime).toStrictEqual({hour:"00", minute:"00", second: "00"});
-        expect(t.currentSeasonColor).toBe("");
+        expect(t.currentSeasonColor).toBe("#ffffff");
         expect(t.currentSeasonName).toBe("");
         expect(t.gameSystem).toBe(GameSystems.Other);
         expect(t.yearNames).toStrictEqual([]);
@@ -994,19 +994,19 @@ describe('Year Class Tests', () => {
     test('Get Current Season', () => {
         let data = year.getCurrentSeason();
         expect(data.name).toBe('');
-        expect(data.color).toBe('');
+        expect(data.color).toBe('#ffffff');
 
         year.months.push(month);
         year.months.push(new Month('Month 2', 2, 0, 20));
         month.current = true;
         data = year.getCurrentSeason();
         expect(data.name).toBe('');
-        expect(data.color).toBe('');
+        expect(data.color).toBe('#ffffff');
 
         month.days[0].current = true;
         data = year.getCurrentSeason();
         expect(data.name).toBe('');
-        expect(data.color).toBe('');
+        expect(data.color).toBe('#ffffff');
 
         year.seasons.push(new Season('Spring', 1, 5));
         year.seasons.push(new Season('Winter', 2, 10));
@@ -1020,16 +1020,21 @@ describe('Year Class Tests', () => {
 
         year.months[1].days[0].selected = false;
         year.months[1].days[9].current = true;
-        year.seasons[1].color = 'custom';
-        year.seasons[1].customColor = '#000000';
         data = year.getCurrentSeason();
         expect(data.name).toBe('Winter');
-        expect(data.color).toBe('#000000');
 
         year.months[1].days[9].current = false;
         data = year.getCurrentSeason();
         expect(data.name).toBe('Spring');
         expect(data.color).toBe('#ffffff');
+    });
+
+    test('Get Season', () => {
+        year.months.push(month);
+        year.months.push(new Month('Month 2', 2, 0, 20));
+        year.seasons.push(new Season('Spring', 3, 5));
+
+        let data = year.getSeason(0, 1);
     });
 
     test('Get Year Name', () => {

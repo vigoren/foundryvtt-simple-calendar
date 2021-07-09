@@ -142,6 +142,77 @@ SimpleCalendar.api.dateToTimestamp({}); //Returns the timestamp for the current 
 SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, second: 0}); //Returns 1609462860
 ```
 
+## `SimpleCalendar.api.getAllSeasons()`
+
+Gets all the seasons for the calendar.
+
+### Returns
+
+This function returns an array of [Season objects](#simplecalendarapigetcurrentseason).
+
+### Examples
+```javascript
+SimpleCalendar.api.getAllSeasons();
+/*
+    Returns an array like this, assuming the Gregorian Calendar
+    [
+        {
+            color: "#fffce8",
+            name: "Spring",
+            startingDay: 19,
+            startingMonth: 2
+        },
+        {
+            color: "#f3fff3",
+            name: "Summer",
+            startingDay: 19,
+            startingMonth: 5
+        },
+        {
+            color: "#fff7f2",
+            name: "Fall",
+            startingDay: 21,
+            startingMonth: 8
+        },
+        {
+            color: "#f2f8ff",
+            name: "Winter",
+            startingDay: 20,
+            startingMonth: 11
+        }
+    ]
+ */
+```
+
+## `SimpleCalendar.api.getCurrentSeason()`
+
+Gets the details about the season for the current date of the calendar.
+
+### Returns
+
+This function returns a Season object with the following properties:
+
+Property|Type|Default Value|Description
+---------|-----|-------------|-----------
+name|String|''|The name of the season.
+color|String|#ffffff|The color associated with this season.
+startingDay|Number|1|The day index of the month that the season starts on.
+startingMonth|Number|1|The month index that the season starts on.
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getCurrentSeason();
+/* Returns an object like this
+{
+    name: "Summer",
+    color:"#f3fff3",
+    startingDay: 19,
+    startingMonth: 5
+}
+*/
+```
+
 ## `SimpleCalendar.api.isPrimaryGM()`
 
 Returns if the current user is considered the primary GM or not.
@@ -353,22 +424,34 @@ let scDate = SimpleCalendar.api.timestampToDate(1622505600);
 console.log(scDate);
 /* This is what the returned object will look like
 {
-    currentSeason: {name: "Spring", color: "#fffce8"}
-    day: 0
-    dayDisplay: 1
-    dayOfTheWeek: 2
-    dayOffset: 0
-    hour: 0
-    minute: 0
-    month: 5
-    monthName: "June"
-    second: 0
-    showWeekdayHeadings: true
-    weekdays: (7) ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-    year: 2021
-    yearName: ""
-    yearPostfix: ""
-    yearPrefix: ""
+    currentSeason: {color: "#fffce8", startingMonth: 3, startingDay: 20, name: "Spring"},
+    day: 0,
+    dayDisplay: "1",
+    dayOfTheWeek: 2,
+    dayOffset: 0,
+    display: {
+        day: "1",
+        daySuffix: "st",
+        month: "6",
+        monthName: "June",
+        time: "21:03:35",
+        weekday: "Tuesday",
+        year: "2021",
+        yearName: "",
+        yearPostfix: "",
+        yearPrefix: "",
+    },
+    hour: 0,
+    minute: 0,
+    month: 5,
+    monthName: "June",
+    second: 0,
+    showWeekdayHeadings: true,
+    weekdays: (7) ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    year: 2021,
+    yearName: "",
+    yearPostfix: "",
+    yearPrefix: "",
     yearZero: 1970
 }
 */

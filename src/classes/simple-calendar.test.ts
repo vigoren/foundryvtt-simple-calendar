@@ -294,7 +294,7 @@ describe('Simple Calendar Class Tests', () => {
                 "showWeekdayHeaders": true,
                 "visibleMonth": undefined,
                 "weekdays": [],
-                "currentSeasonColor": "",
+                "currentSeasonColor": "#ffffff",
                 "currentSeasonName": "",
                 "weeks": [],
                 "yearNames": [],
@@ -1370,6 +1370,19 @@ describe('Simple Calendar Class Tests', () => {
         expect(y.time.updateFrequency).toBe(1);
         expect(y.time.timeKeeper.updateFrequency).toBe(1);
 
+    });
+
+    test('Load Season Configuration', () => {
+        const orig = (<Game>game).settings.get;
+        (<Game>game).settings.get = () => {return [{name:'', startingMonth: 1, startingDay: 1, color: 'custom', customColor: '#ff0000'}];}
+
+        SimpleCalendar.instance.currentYear = y;
+
+        //@ts-ignore
+        SimpleCalendar.instance.loadSeasonConfiguration();
+        expect(y.seasons[0].color).toBe('#ff0000');
+
+        (<Game>game).settings.get = orig;
     });
 
     test('Load Notes', () => {

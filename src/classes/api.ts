@@ -510,12 +510,13 @@ export default class API{
      */
     public static getCurrentSeason(){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            const mon = SimpleCalendar.instance.currentYear.getMonth();
+            const clone = SimpleCalendar.instance.currentYear.clone();
+            const mon = clone.getMonth('current');
             if(mon){
-                const mIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation = mon.numericRepresentation);
+                const mIndex = clone.months.findIndex(m => m.numericRepresentation == mon.numericRepresentation);
                 const day = mon.getDay();
                 if(day){
-                    return SimpleCalendar.instance.currentYear.getSeason(mIndex, day.numericRepresentation);
+                    return clone.getSeason(mIndex, day.numericRepresentation);
                 }
             }
         }
@@ -527,7 +528,14 @@ export default class API{
      */
     public static getAllSeasons(){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            return SimpleCalendar.instance.currentYear.seasons;
+            const seasons = [];
+            for(let i = 0; i < SimpleCalendar.instance.currentYear.seasons.length; i++){
+                const s = SimpleCalendar.instance.currentYear.seasons[i].clone();
+                s.startingMonth = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === s.startingMonth);
+                s.startingDay = SimpleCalendar.instance.currentYear.months[s.startingMonth >= 0? s.startingMonth : 0].days.findIndex(d => d.numericRepresentation === s.startingDay);
+                seasons.push(s);
+            }
+            return seasons;
         }
         return [];
     }
