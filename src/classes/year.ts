@@ -141,7 +141,7 @@ export default class Year {
         this.leapYearRule = new LeapYear();
         this.time = new Time();
 
-        switch (game.system.id){
+        switch ((<Game>game).system.id){
             case GameSystems.DnD5E:
                 this.gameSystem = GameSystems.DnD5E;
                 break;
@@ -336,7 +336,7 @@ export default class Year {
         if(user === null){
             return false;
         }
-        return !!(user.isGM || (permissions.player && user.hasRole(1)) || (permissions.trustedPlayer && user.hasRole(2)) || (permissions.assistantGameMaster && user.hasRole(3)) || (permissions.users && permissions.users.includes(user.id)));
+        return !!(user.isGM || (permissions.player && user.hasRole(1)) || (permissions.trustedPlayer && user.hasRole(2)) || (permissions.assistantGameMaster && user.hasRole(3)) || (permissions.users && permissions.users.includes(user.id? user.id : '')));
     }
 
     /**
@@ -737,11 +737,11 @@ export default class Year {
      */
     async syncTime(force: boolean = false){
         // Only if the time tracking rules are set to self or mixed
-        if(this.canUser(game.user, this.generalSettings.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
+        if(this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
             Logger.debug(`Year.syncTime()`);
             const totalSeconds = this.toSeconds();
             // If the calculated seconds are different from what is set in the game world time, update the game world time to match sc's time
-            if(totalSeconds !== game.time.worldTime || force){
+            if(totalSeconds !== (<Game>game).time.worldTime || force){
                 //Let the local functions know that we all ready updated this time
                 this.timeChangeTriggered = true;
                 //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered

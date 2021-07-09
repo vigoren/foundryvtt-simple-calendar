@@ -20,6 +20,8 @@ import Season from "./season";
 import Moon from "./moon";
 import Day from "./day";
 import Hook from "./hook";
+import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
+import GameSockets from "./game-sockets";
 
 
 /**
@@ -122,7 +124,7 @@ export default class SimpleCalendar extends Application{
      */
     public initializeSockets(){
         //Set up the socket we use to forward data between players and the GM
-        game.socket.on(ModuleSocketName, this.processSocket.bind(this));
+        GameSockets.on(this.processSocket.bind(this));
 
         if(GameSettings.IsGm()){
             const socket = <SimpleCalendarSocket.Data>{
@@ -132,7 +134,7 @@ export default class SimpleCalendar extends Application{
                 }
             };
             this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
-            game.socket.emit(ModuleSocketName, socket);
+            GameSockets.emit(socket).catch(Logger.error);
         }
     }
 
@@ -143,11 +145,11 @@ export default class SimpleCalendar extends Application{
         Logger.debug('No primary GM found, taking over as primary');
         this.primary = true;
         const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: this.primary}};
-        game.socket.emit(ModuleSocketName, socketData);
-        const timeKeeperSocketData = <SimpleCalendarSocket.Data>{type: SocketTypes.time, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}}
-        game.socket.emit(ModuleSocketName, timeKeeperSocketData);
+        await GameSockets.emit(socketData);
+        const timeKeeperSocketData = <SimpleCalendarSocket.Data>{type: SocketTypes.time, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}};
+        await GameSockets.emit(timeKeeperSocketData);
         if(this.currentYear && this.currentYear.time.unifyGameAndClockPause){
-            game.togglePause(true, true);
+            (<Game>game).togglePause(true, true);
         }
         await this.timeKeepingCheck();
         this.updateApp();
@@ -178,7 +180,7 @@ export default class SimpleCalendar extends Application{
                 // Another client is asking if anyone is the primary GM, respond accordingly
                 if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).primaryCheck){
                     Logger.debug(`Checking if I am the primary`);
-                    game.socket.emit(ModuleSocketName, <SimpleCalendarSocket.Data>{
+                    await GameSockets.emit(<SimpleCalendarSocket.Data>{
                         type: SocketTypes.primary,
                         data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
                             amPrimary: this.primary
@@ -251,14 +253,14 @@ export default class SimpleCalendar extends Application{
             }
             return {
                 isGM: GameSettings.IsGm(),
-                changeDateTime: this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.changeDateTime),
+                changeDateTime: this.currentYear.canUser((<Game>game).user, this.currentYear.generalSettings.permissions.changeDateTime),
                 isPrimary: this.primary,
-                addNotes: this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.addNotes),
-                reorderNotes: this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.reorderNotes),
+                addNotes: this.currentYear.canUser((<Game>game).user, this.currentYear.generalSettings.permissions.addNotes),
+                reorderNotes: this.currentYear.canUser((<Game>game).user, this.currentYear.generalSettings.permissions.reorderNotes),
                 currentYear: this.currentYear.toTemplate(),
                 showSelectedDay: this.currentYear.visibleYear === this.currentYear.selectedYear,
                 showCurrentDay: this.currentYear.visibleYear === this.currentYear.numericRepresentation,
-                showSetCurrentDate: this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.changeDateTime) && showSetCurrentDate,
+                showSetCurrentDate: this.currentYear.canUser((<Game>game).user, this.currentYear.generalSettings.permissions.changeDateTime) && showSetCurrentDate,
                 notes: this.getNotesForDay().map(n => n.toTemplate()),
                 clockClass: this.clockClass,
                 timeUnits: this.timeUnits,
@@ -314,7 +316,7 @@ export default class SimpleCalendar extends Application{
      * @param controls
      */
     public getSceneControlButtons(controls: any[]){
-        if(this.currentYear && this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.viewCalendar)){
+        if(this.currentYear && this.currentYear.canUser((<Game>game).user, this.currentYear.generalSettings.permissions.viewCalendar)){
             let tokenControls = controls.find(c => c.name === "token" );
             if(tokenControls && tokenControls.hasOwnProperty('tools')){
                 tokenControls.tools.push({
@@ -332,7 +334,7 @@ export default class SimpleCalendar extends Application{
      * Shows the application window
      */
     public showApp(){
-        if(this.currentYear && this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.viewCalendar)){
+        if(this.currentYear && this.currentYear.canUser((<Game>game).user, this.currentYear.generalSettings.permissions.viewCalendar)){
             this.hasBeenResized = false;
             this.currentYear.setCurrentToVisible();
             this.render(true, {});
@@ -734,12 +736,12 @@ export default class SimpleCalendar extends Application{
             if(dataType && dataAmount){
                 const amount = parseInt(dataAmount);
                 if(!GameSettings.IsGm() || !this.primary){
-                    if(game.users && !game.users.find(u => u.isGM && u.active)){
-                        GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
+                    if(!(<Game>game).users?.find(u => u.isGM && u.active)){
+                        GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
                     } else {
                         const socketData = <SimpleCalendarSocket.SimpleCalendarSocketDateTime>{dataType: 'time', isNext: true, amount: amount, unit: dataType};
                         Logger.debug(`Sending Date/Time Change to Primary GM`);
-                        game.socket.emit(ModuleSocketName, {type: SocketTypes.dateTime, data: socketData});
+                        GameSockets.emit({type: SocketTypes.dateTime, data: socketData}).catch(Logger.error);
                     }
 
                 } else if(!isNaN(amount) && (dataType === 'second' || dataType === 'minute' || dataType === 'hour') ){
@@ -782,8 +784,8 @@ export default class SimpleCalendar extends Application{
             let change = false;
             // If a player or non primary GM makes a request, filter it through the primary GM
             if(!GameSettings.IsGm() || !this.primary){
-                if(game.users && !game.users.find(u => u.isGM && u.active)){
-                    GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
+                if(!(<Game>game).users?.find(u => u.isGM && u.active)){
+                    GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
                 } else {
                     const socketData = <SimpleCalendarSocket.SimpleCalendarSocketDateTime>{dataType: dataType, isNext: isNext, amount: 0, unit: this.timeUnits.second? 'second' : this.timeUnits.minute? 'minute' : 'hour'};
                     if(dataType === 'time'){
@@ -793,7 +795,7 @@ export default class SimpleCalendar extends Application{
                         }
                     }
                     Logger.debug(`Sending Date/Time Change to Primary GM: ${dataType}, ${isNext}`);
-                    game.socket.emit(ModuleSocketName, {type: SocketTypes.dateTime, data: socketData});
+                    GameSockets.emit({type: SocketTypes.dateTime, data: socketData}).catch(Logger.error);
                 }
             } else {
                 switch (dataType){
@@ -841,7 +843,7 @@ export default class SimpleCalendar extends Application{
      */
     public dateControlApply(e: Event){
         e.stopPropagation();
-        if(this.currentYear && this.currentYear.canUser(game.user, this.currentYear.generalSettings.permissions.changeDateTime)){
+        if(this.currentYear && this.currentYear.canUser((<Game>game).user, this.currentYear.generalSettings.permissions.changeDateTime)){
             let validSelection = false;
             const selectedYear = this.currentYear.selectedYear;
             const selectedMonth = this.currentYear.getMonth('selected');
@@ -890,12 +892,12 @@ export default class SimpleCalendar extends Application{
     public setCurrentDate(year: number, month: Month, day: Day){
         if(this.currentYear){
             if(!GameSettings.IsGm() || !this.primary){
-                if(game.users && !game.users.find(u => u.isGM && u.active)){
-                    GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
+                if(!(<Game>game).users?.find(u => u.isGM && u.active)){
+                    GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
                 } else {
                     const socketData = <SimpleCalendarSocket.SimpleCalendarSocketDate>{year: year, month: month.numericRepresentation, day: day.numericRepresentation};
                     Logger.debug(`Sending Date Change to Primary GM: ${socketData.year}, ${socketData.month}, ${socketData.day}`);
-                    game.socket.emit(ModuleSocketName, {type: SocketTypes.date, data: socketData});
+                    GameSockets.emit({type: SocketTypes.date, data: socketData}).catch(Logger.error);
                 }
             } else {
                 this.currentYear.numericRepresentation = year;
@@ -940,8 +942,8 @@ export default class SimpleCalendar extends Application{
     public addNote(e: Event) {
         e.stopPropagation();
         if(this.currentYear){
-            if(game.users && !game.users.find(u => u.isGM && u.active)){
-                GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
+            if(!(<Game>game).users?.find(u => u.isGM && u.active)){
+                GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
             } else {
                 const currentMonth = this.currentYear.getMonth('selected') || this.currentYear.getMonth();
                 if(currentMonth){
@@ -1387,7 +1389,7 @@ export default class SimpleCalendar extends Application{
      */
     gamePaused(paused: boolean){
         if(this.currentYear && this.currentYear.time.unifyGameAndClockPause){
-            if(!game.paused){
+            if(!(<Game>game).paused){
                 this.currentYear.time.timeKeeper.start(true);
             } else {
                 this.currentYear.time.timeKeeper.setStatus(TimeKeeperStatus.Paused);
@@ -1410,12 +1412,13 @@ export default class SimpleCalendar extends Application{
     /**
      * Triggered when a combat is create/started/turn advanced
      * @param {Combat} combat The specific combat data
-     * @param {Combat.CurrentTurn} round The current turns data
+     * @param {RoundData} round The current turns data
      * @param {Object} time The amount of time that has advanced
      */
-    combatUpdate(combat: Combat, round: Combat.CurrentTurn, time: any){
+    combatUpdate(combat: Combat, round: RoundData, time: any){
         Logger.debug('Combat Update');
-        const activeScene = game.scenes? game.scenes.active.id : null;
+        const scenes = (<Game>game).scenes;
+        const activeScene = scenes? scenes.active? scenes.active.id : null : null;
         if(this.currentYear && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
             this.currentYear.time.combatRunning = true;
             if(time && time.hasOwnProperty('advanceTime')){
@@ -1440,9 +1443,11 @@ export default class SimpleCalendar extends Application{
      */
     startTime(){
         if(this.currentYear){
-            const activeScene = game.scenes? game.scenes.active.id : null;
-            if(game.combats && game.combats.size > 0 && game.combats.find(g => g.started && ((activeScene !== null && g.scene && g.scene.id === activeScene) || activeScene === null))){
-                GameSettings.UiNotification(game.i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
+            const scenes = (<Game>game).scenes;
+            const combats = (<Game>game).combats;
+            const activeScene = scenes? scenes.active? scenes.active.id : null : null;
+            if(combats && combats.size > 0 && combats.find(g => g.started && ((activeScene !== null && g.scene && g.scene.id === activeScene) || activeScene === null))){
+                GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
             } else if(this.currentYear.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.currentYear.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
                 this.currentYear.time.timeKeeper.start();
             }
@@ -1467,8 +1472,8 @@ export default class SimpleCalendar extends Application{
             const importRun = GameSettings.GetImportRan();
             // If we haven't asked about the import in the past
             if(!importRun){
-                const calendarWeather = game.modules.get('calendar-weather');
-                const aboutTime = game.modules.get('about-time');
+                const calendarWeather = (<Game>game).modules.get('calendar-weather');
+                const aboutTime = (<Game>game).modules.get('about-time');
                 //Ask about calendar/weather first, then about time
                 if(calendarWeather && calendarWeather.active){
                     Logger.debug('Calendar/Weather detected.');

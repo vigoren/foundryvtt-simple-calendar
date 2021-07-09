@@ -79,6 +79,6 @@ describe('Time Tests', () => {
 
     test('Set World Time', () => {
         t.setWorldTime(100);
-        expect(game.time.advance).toHaveBeenCalledTimes(1);
+        expect((<Game>game).time.advance).toHaveBeenCalledTimes(1);
     });
 });

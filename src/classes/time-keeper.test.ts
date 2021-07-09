@@ -19,6 +19,7 @@ describe('Time Keeper Class Tests', () => {
     let tk: TimeKeeper
 
     beforeEach(() => {
+        jest.spyOn(console, 'error').mockImplementation();
         tk = new TimeKeeper(1);
         SimpleCalendar.instance = new SimpleCalendar();
     });

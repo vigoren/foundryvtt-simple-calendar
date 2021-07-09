@@ -166,9 +166,9 @@ export default class Time {
      * @param {number} seconds The number of seconds to set the world time too
      */
     async setWorldTime(seconds: number){
-        const currentWorldTime = game.time.worldTime;
+        const currentWorldTime = (<Game>game).time.worldTime;
         let diff = seconds - currentWorldTime;
-        const newTime = await game.time.advance(diff);
+        const newTime = await (<Game>game).time.advance(diff);
         Logger.debug(`Set New Game World Time: ${newTime}`);
     }
 }

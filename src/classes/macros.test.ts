@@ -23,6 +23,7 @@ describe('Macros Tests', () => {
     beforeEach(()=>{
         //Spy on console.error calls
         jest.spyOn(console, 'error').mockImplementation();
+        jest.spyOn(console, 'warn').mockImplementation();
         //Set up a new Simple Calendar instance
         SimpleCalendar.instance = new SimpleCalendar();
         //Spy on the inherited render function of the new instance

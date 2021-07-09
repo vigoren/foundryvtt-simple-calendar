@@ -19,11 +19,6 @@ export class SimpleCalendarNotes extends FormApplication {
      */
     viewMode: boolean;
     /**
-     * If the rich text editor has been saved or not.
-     * @type {boolean}
-     */
-    richEditorSaved: boolean = false;
-    /**
      * If the note dialog has been resized at all
      */
     hasBeenResized: boolean = false;
@@ -88,7 +83,7 @@ export class SimpleCalendarNotes extends FormApplication {
      *      - Moerills Expandable Markdown Editor (https://www.foundryvtt-hub.com/package/markdown-editor/)
      */
     checkForThirdPartyMarkdownEditors(){
-        const meme = game.modules.get('markdown-editor');
+        const meme = (<Game>game).modules.get('markdown-editor');
         return meme !== undefined && meme.active;
     }
 
@@ -141,14 +136,15 @@ export class SimpleCalendarNotes extends FormApplication {
             data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(rOpt)}`;
         }
 
-        if(game.users){
+        const users = (<Game>game).users;
+        if(users){
             Logger.debug(`Looking for users with the id "${(<Note>this.object).author}"`);
-            const user = game.users.get((<Note>this.object).author);
+            const user = users.get((<Note>this.object).author);
             if(user){
                 data.authDisplay = {
-                    name: user.name,
-                    color: user.color || user.data.color,
-                    textColor: Utilities.GetContrastColor(user.color || user.data.color)
+                    name: user.name? user.name : '',
+                    color: user.data.color? user.data.color : '',
+                    textColor: Utilities.GetContrastColor(user.data.color? user.data.color : '')
                 }
             }
         }
@@ -236,7 +232,6 @@ export class SimpleCalendarNotes extends FormApplication {
                 (<Note>this.object).title = value;
             } else if(id === "scNoteRepeats"){
                 const r = parseInt(value);
-                console.log(r);
                 if(!isNaN(r)){
                     (<Note>this.object).repeats = r;
                 } else {
@@ -267,7 +262,6 @@ export class SimpleCalendarNotes extends FormApplication {
      * @param selectedDate
      */
     dateSelectorClick(selectedDate: SCDateSelector.SelectedDate){
-        console.log(selectedDate);
         (<Note>this.object).year = selectedDate.startDate.year;
         (<Note>this.object).month = selectedDate.startDate.month;
         (<Note>this.object).day = selectedDate.startDate.day;
@@ -299,10 +293,8 @@ export class SimpleCalendarNotes extends FormApplication {
      * @protected
      */
     protected _updateObject(event: Event | JQuery.Event, formData: any): Promise<any> {
-        console.log(formData);
         (<Note>this.object).content = formData['content'];
         Logger.debug('Update Object Called');
-        this.richEditorSaved = true;
         this.updateApp();
         return Promise.resolve(false);
     }
@@ -398,32 +390,27 @@ export class SimpleCalendarNotes extends FormApplication {
     public async saveButtonClick(e: Event){
         Logger.debug('Saving New Note');
         e.preventDefault();
-        let detailsEmpty = true;
+
         if(this.editors['content'] && this.editors['content'].mce){
             if(this.editors['content'].mce.getContent().trim() !== ''){
                 (<Note>this.object).content = this.editors['content'].mce.getContent().trim();
-                detailsEmpty = false;
             }
         }
-        if(this.richEditorSaved || !detailsEmpty){
-            if((<Note>this.object).title){
-                let currentNotes = GameSettings.LoadNotes().map(n => {
-                    const note = new Note();
-                    note.loadFromConfig(n);
-                    return note;
-                });
-                if(this.updateNote){
-                    currentNotes = currentNotes.map(n => n.id === (<Note>this.object).id? (<Note>this.object) : n);
-                } else {
-                    currentNotes.push(<Note>this.object);
-                }
-                await GameSettings.SaveNotes(currentNotes).catch(Logger.error);
-                this.closeApp();
+        if((<Note>this.object).title){
+            let currentNotes = GameSettings.LoadNotes().map(n => {
+                const note = new Note();
+                note.loadFromConfig(n);
+                return note;
+            });
+            if(this.updateNote){
+                currentNotes = currentNotes.map(n => n.id === (<Note>this.object).id? (<Note>this.object) : n);
             } else {
-                GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoTitle"), 'error');
+                currentNotes.push(<Note>this.object);
             }
+            await GameSettings.SaveNotes(currentNotes).catch(Logger.error);
+            this.closeApp();
         } else {
-            GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.RichText"), 'warn');
+            GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoTitle"), 'error');
         }
     }
 }

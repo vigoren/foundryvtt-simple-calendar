@@ -32,20 +32,20 @@ describe('Year Class Tests', () => {
     });
 
     test('Game System Setting', () => {
-        game.system.id = GameSystems.DnD5E;
+        (<Game>game).system.id = GameSystems.DnD5E;
         year = new Year(0);
         expect(year.gameSystem).toBe(GameSystems.DnD5E);
-        game.system.id = GameSystems.PF1E;
+        (<Game>game).system.id = GameSystems.PF1E;
         year = new Year(0);
         expect(year.gameSystem).toBe(GameSystems.PF1E);
-        game.system.id = GameSystems.PF2E;
+        (<Game>game).system.id = GameSystems.PF2E;
         year = new Year(0);
         expect(year.gameSystem).toBe(GameSystems.PF2E);
-        game.system.id = GameSystems.WarhammerFantasy4E;
+        (<Game>game).system.id = GameSystems.WarhammerFantasy4E;
         year = new Year(0);
         expect(year.gameSystem).toBe(GameSystems.WarhammerFantasy4E);
 
-        game.system.id = GameSystems.Other;
+        (<Game>game).system.id = GameSystems.Other;
     });
 
     test('Properties', () => {
@@ -199,15 +199,15 @@ describe('Year Class Tests', () => {
 
     test('Can User', () => {
         expect(year.canUser(null, year.generalSettings.permissions.addNotes)).toBe(false);
-        expect(year.canUser(game.user, year.generalSettings.permissions.addNotes)).toBe(false);
-        expect(year.canUser(game.user, year.generalSettings.permissions.viewCalendar)).toBe(true);
+        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.addNotes)).toBe(false);
+        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
         year.generalSettings.permissions.viewCalendar.player = false;
-        expect(year.canUser(game.user, year.generalSettings.permissions.viewCalendar)).toBe(true);
+        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
         year.generalSettings.permissions.viewCalendar.trustedPlayer = false;
-        expect(year.canUser(game.user, year.generalSettings.permissions.viewCalendar)).toBe(true);
+        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
         year.generalSettings.permissions.viewCalendar.assistantGameMaster = false;
         year.generalSettings.permissions.viewCalendar.users = [''];
-        expect(year.canUser(game.user, year.generalSettings.permissions.viewCalendar)).toBe(true);
+        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
     });
 
     test('Get Display Name', () => {
@@ -672,35 +672,35 @@ describe('Year Class Tests', () => {
         //@ts-ignore
         game.time.advance.mockClear();
         year.syncTime();
-        expect(game.time.advance).not.toHaveBeenCalled();
+        expect((<Game>game).time.advance).not.toHaveBeenCalled();
         //@ts-ignore
         game.user.isGM = true;
         year.syncTime()
-        expect(game.time.advance).not.toHaveBeenCalled();
+        expect((<Game>game).time.advance).not.toHaveBeenCalled();
         year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
         year.months.push(month);
         year.syncTime()
-        expect(game.time.advance).toHaveBeenCalledTimes(1);
+        expect((<Game>game).time.advance).toHaveBeenCalledTimes(1);
 
         month.current = true;
         year.syncTime()
-        expect(game.time.advance).toHaveBeenCalledTimes(2);
+        expect((<Game>game).time.advance).toHaveBeenCalledTimes(2);
         month.days[0].current = true;
         year.syncTime()
-        expect(game.time.advance).toHaveBeenCalledTimes(3);
+        expect((<Game>game).time.advance).toHaveBeenCalledTimes(3);
 
         year.yearZero = 1;
         year.syncTime()
-        expect(game.time.advance).toHaveBeenCalledTimes(4);
+        expect((<Game>game).time.advance).toHaveBeenCalledTimes(4);
 
         expect(year.toSeconds()).toBe(-2592000);
         //@ts-ignore
         game.time.worldTime = -2592000;
         year.syncTime();
-        expect(game.time.advance).toHaveBeenCalledTimes(4);
+        expect((<Game>game).time.advance).toHaveBeenCalledTimes(4);
 
         year.syncTime(true);
-        expect(game.time.advance).toHaveBeenCalledTimes(5);
+        expect((<Game>game).time.advance).toHaveBeenCalledTimes(5);
     });
 
     test('Seconds To Date', () => {
@@ -936,21 +936,21 @@ describe('Year Class Tests', () => {
         SimpleCalendar.instance.primary = true;
         year.setFromTime(120, 60);
         expect(year.time.seconds).toBe(120);
-        expect(game.settings.set).toHaveBeenCalledTimes(1);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
 
         year.time.seconds = 60;
         year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
         year.combatChangeTriggered = true;
         year.setFromTime(120, 60);
         expect(year.time.seconds).toBe(120);
-        expect(game.settings.set).toHaveBeenCalledTimes(2);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(2);
 
         //@ts-ignore
         game.user.isGM = false;
         year.combatChangeTriggered = true;
         year.setFromTime(240, 60);
         expect(year.time.seconds).toBe(240);
-        expect(game.settings.set).toHaveBeenCalledTimes(2);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(2);
 
         //@ts-ignore
         game.user.isGM = true;

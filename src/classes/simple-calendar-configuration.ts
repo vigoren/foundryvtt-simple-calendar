@@ -183,8 +183,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
             noteCategories: <NoteCategory[]>[]
         };
 
-        const calendarWeather = game.modules.get('calendar-weather');
-        const aboutTime = game.modules.get('about-time');
+        const calendarWeather = (<Game>game).modules.get('calendar-weather');
+        const aboutTime = (<Game>game).modules.get('about-time');
 
         data.importing.showCalendarWeather = calendarWeather !== undefined && calendarWeather.active;
         data.importing.showAboutTime = aboutTime !== undefined && aboutTime.active;
@@ -203,11 +203,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
         for(let i = 0; i < (<Year>this.object).weekdays.length; i++){
             data.monthStartingWeekdays[(<Year>this.object).weekdays[i].numericRepresentation.toString()] = (<Year>this.object).weekdays[i].name;
         }
-
-        if(game.users){
-            game.users.forEach(u => {
-                if(!u.isGM){
-                    data.users[u.id] = u.name;
+        const users = (<Game>game).users;
+        if(users){
+            users.forEach(u => {
+                if(!u.isGM && u.id !== null){
+                    data.users[u.id] = u.name? u.name : '';
                 }
             });
         }
@@ -1786,34 +1786,34 @@ export class SimpleCalendarConfiguration extends FormApplication {
             if(reader.result){
                 const res = JSON.parse(reader.result.toString());
                 if(res.hasOwnProperty('yearSettings')){
-                    await game.settings.set(ModuleName, SettingNames.YearConfiguration, res.yearSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.YearConfiguration, res.yearSettings);
                 }
                 if(res.hasOwnProperty('monthSettings')){
-                    await game.settings.set(ModuleName, SettingNames.MonthConfiguration, res.monthSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.MonthConfiguration, res.monthSettings);
                 }
                 if(res.hasOwnProperty('weekdaySettings')){
-                    await game.settings.set(ModuleName, SettingNames.WeekdayConfiguration, res.weekdaySettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.WeekdayConfiguration, res.weekdaySettings);
                 }
                 if(res.hasOwnProperty('leapYearSettings')){
-                    await game.settings.set(ModuleName, SettingNames.LeapYearRule, res.leapYearSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.LeapYearRule, res.leapYearSettings);
                 }
                 if(res.hasOwnProperty('timeSettings')){
-                    await game.settings.set(ModuleName, SettingNames.TimeConfiguration, res.timeSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.TimeConfiguration, res.timeSettings);
                 }
                 if(res.hasOwnProperty('seasonSettings')){
-                    await game.settings.set(ModuleName, SettingNames.SeasonConfiguration, res.seasonSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.SeasonConfiguration, res.seasonSettings);
                 }
                 if(res.hasOwnProperty('moonSettings')){
-                    await game.settings.set(ModuleName, SettingNames.MoonConfiguration, res.moonSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.MoonConfiguration, res.moonSettings);
                 }
                 if(res.hasOwnProperty('generalSettings')){
-                    await game.settings.set(ModuleName, SettingNames.GeneralConfiguration, res.generalSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.GeneralConfiguration, res.generalSettings);
                 }
                 if(res.hasOwnProperty('noteCategories')){
-                    await game.settings.set(ModuleName, SettingNames.NoteCategories, res.noteCategories);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.NoteCategories, res.noteCategories);
                 }
                 if(res.hasOwnProperty('currentDate')){
-                    await game.settings.set(ModuleName, SettingNames.CurrentDate, res.currentDate);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.CurrentDate, res.currentDate);
                 }
                 this.closeApp();
             }

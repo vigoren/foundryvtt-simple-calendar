@@ -315,7 +315,7 @@ export default class API{
      * @param interval
      */
     public static changeDate(interval: DateTime): boolean{
-        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser(game.user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser((<Game>game).user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
             let change = false;
             if(interval.year){
                 SimpleCalendar.instance.currentYear.changeYear(interval.year, true, 'current');
@@ -354,7 +354,7 @@ export default class API{
      * @param date
      */
     public static setDate(date: DateTime): boolean{
-        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser(game.user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser((<Game>game).user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
             const seconds = this.dateToTimestamp(date);
             SimpleCalendar.instance.currentYear.updateTime(SimpleCalendar.instance.currentYear.secondsToDate(seconds));
             GameSettings.SaveCurrentDate(SimpleCalendar.instance.currentYear).catch(Logger.error);

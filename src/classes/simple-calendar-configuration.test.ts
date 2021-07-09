@@ -8,6 +8,7 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
+import "../../__mocks__/crypto";
 
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import Year from "./year";
@@ -20,6 +21,7 @@ import Moon from "./moon";
 import SpyInstance = jest.SpyInstance;
 import Mock = jest.Mock;
 import SimpleCalendar from "./simple-calendar";
+import {Note} from "./note";
 
 jest.mock('./importer');
 jest.mock('file-saver');
@@ -61,7 +63,7 @@ describe('Simple Calendar Configuration Tests', () => {
         (<Mock>console.error).mockClear();
         (<Mock>console.debug).mockClear();
         renderSpy.mockClear();
-        (<Mock>game.settings.set).mockClear();
+        (<Mock>(<Game>game).settings.set).mockClear();
     });
 
     test('Constructor', () => {
@@ -124,19 +126,24 @@ describe('Simple Calendar Configuration Tests', () => {
         //@ts-ignore
         expect(data.weekdays).toStrictEqual(y.weekdays.map(m => m.toTemplate()));
 
-        (<Mock>game.modules.get).mockReturnValueOnce({active:true}).mockReturnValueOnce({active:true});
+        (<Mock>(<Game>game).modules.get).mockReturnValueOnce({active:true}).mockReturnValueOnce({active:true});
         data = SimpleCalendarConfiguration.instance.getData();
         //@ts-ignore
         expect(data.importing.showCalendarWeather).toBe(true);
         //@ts-ignore
         expect(data.importing.showAboutTime).toBe(true);
 
-        const orig = game.users;
+        const orig = (<Game>game).users;
         //@ts-ignore
         game.user.isGM = true;
         data = SimpleCalendarConfiguration.instance.getData();
         //@ts-ignore
         expect(data.users).toStrictEqual({});
+        //@ts-ignore
+        game.users = [{isGM: false, id: 'asd', name: 'name'}];
+        data = SimpleCalendarConfiguration.instance.getData();
+        //@ts-ignore
+        expect(data.users).toStrictEqual({'asd': 'name'});
         //@ts-ignore
         game.users = false;
         // @ts-ignore
@@ -144,7 +151,7 @@ describe('Simple Calendar Configuration Tests', () => {
         data = SimpleCalendarConfiguration.instance.getData();
         //@ts-ignore
         expect(data.users).toStrictEqual({});
-        game.users = orig;
+        (<Game>game).users = orig;
     });
 
     test('Update Object', () => {
@@ -942,6 +949,9 @@ describe('Simple Calendar Configuration Tests', () => {
     test('Note Category Input Change', () => {
         //@ts-ignore
         SimpleCalendarConfiguration.instance.noteCategories.push({name: 'a', color: 'a', textColor: 'a'});
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.noteCategories.push({name: 'b', color: 'b', textColor: 'b'});
+        SimpleCalendar.instance = new SimpleCalendar();
         const event = new Event('change');
         (<HTMLElement>event.currentTarget).classList.remove('next');
         (<HTMLInputElement>event.currentTarget).classList.add('note-category-name');
@@ -950,6 +960,21 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         //@ts-ignore
         expect(SimpleCalendarConfiguration.instance.noteCategories[0].name).toBe('asd');
+
+        SimpleCalendar.instance.noteCategories.push({name: 'asd', color: 'a', textColor: 'a'});
+        SimpleCalendar.instance.noteCategories.push({name: 'b', color: 'b', textColor: 'b'});
+        const n = new Note();
+        n.categories.push('asd');
+        SimpleCalendar.instance.notes.push(n);
+        (<HTMLInputElement>event.currentTarget).value = 'qwe';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        //@ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories[0].name).toBe('qwe');
+        expect(n.categories).toStrictEqual(['qwe']);
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.noteCategories[0].name = 'asd';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect(n.categories).toStrictEqual(['qwe']);
 
         (<HTMLElement>event.currentTarget).classList.remove('note-category-name');
         (<HTMLInputElement>event.currentTarget).classList.add('note-category-color');
@@ -1279,7 +1304,7 @@ describe('Simple Calendar Configuration Tests', () => {
         //Invalid year
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(invalidYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(7);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(7);
         expect(closeSpy).toHaveBeenCalledTimes(1);
 
         //Valid year weekday, invalid month days
@@ -1287,7 +1312,7 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.yearChanged = true;
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(validYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(16);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(16);
         expect(closeSpy).toHaveBeenCalledTimes(2);
         expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(2);
         expect((<Year>SimpleCalendarConfiguration.instance.object).selectedYear).toBe(2);
@@ -1295,7 +1320,7 @@ describe('Simple Calendar Configuration Tests', () => {
 
         (<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule = LeapYearRules.Gregorian;
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(16);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(16);
         expect(closeSpy).toHaveBeenCalledTimes(2);
 
         SimpleCalendar.instance = new SimpleCalendar();
@@ -1309,40 +1334,40 @@ describe('Simple Calendar Configuration Tests', () => {
         game.user.isGM = true;
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('a', 'b');
         expect(renderSpy).not.toHaveBeenCalled();
-        expect(game.settings.set).not.toHaveBeenCalled();
+        expect((<Game>game).settings.set).not.toHaveBeenCalled();
 
         const select = document.createElement('input');
         select.value = 'gregorian';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValue(select);
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('predefined', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect(game.settings.set).not.toHaveBeenCalled();
+        expect((<Game>game).settings.set).not.toHaveBeenCalled();
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect(game.settings.set).toHaveBeenCalledTimes(1);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect(game.settings.set).toHaveBeenCalledTimes(2);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(2);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(game.settings.set).toHaveBeenCalledTimes(3);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(3);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(game.settings.set).toHaveBeenCalledTimes(4);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(4);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(game.settings.set).toHaveBeenCalledTimes(5);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(5);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(game.settings.set).toHaveBeenCalledTimes(6);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(6);
 
-        (<Mock>game.settings.set).mockClear();
+        (<Mock>(<Game>game).settings.set).mockClear();
     });
 
     test('Export Calendar', () => {

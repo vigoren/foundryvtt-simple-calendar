@@ -21,16 +21,22 @@ const user: User = {
     viewedScene: '',
     avatar: '',
     //character: {},
+    // @ts-ignore
     permissions: [],
     isTrusted: false,
     isGM: false,
     isSelf: true,
+    // @ts-ignore
     can: jest.fn((permission: string) => {return false;}),
     hasPermission: jest.fn((permission: string) => {return false;}),
+    // @ts-ignore
     hasRole: jest.fn((role: string) => {return true;}),
+    // @ts-ignore
     isRole: jest.fn((role: string) => {return false;}),
+    // @ts-ignore
     setPermission: jest.fn((premission: string, allowed: boolean) => {}),
-    assignHotbarMacro: jest.fn((macro: Macro | null, slot: number, {fromSlot}: { fromSlot?: number }): Promise<User> => { return Promise.resolve(user);}),
+    assignHotbarMacro: jest.fn((macro: Macro | null, slot: string | number, {fromSlot}: { fromSlot: number }): Promise<User> => { return Promise.resolve(user);}),
+    // @ts-ignore
     getHotbarMacros: jest.fn((page?: number): Macro[] => {return [];})
 };
 

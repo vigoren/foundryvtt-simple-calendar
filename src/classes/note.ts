@@ -128,8 +128,8 @@ export class Note{
         if(author){
             authDisplay = {
                 name: author.name,
-                color: author.color || author.data.color,
-                textColor: Utilities.GetContrastColor(author.color || author.data.color)
+                color: author.data.color? author.data.color : '',
+                textColor: Utilities.GetContrastColor(author.data.color? author.data.color : '')
             };
         } else {
             authDisplay = null;
@@ -189,11 +189,11 @@ export class Note{
             };
         } else {
             this.endDate = {
-                year: noteConfig.year,
-                month: noteConfig.month,
-                day: noteConfig.day,
-                hour: noteConfig.hour,
-                minute: noteConfig.minute,
+                year: this.year,
+                month: this.month,
+                day: this.day,
+                hour: this.hour,
+                minute: this.minute,
                  seconds: 0
             };
         }
@@ -223,16 +223,14 @@ export class Note{
         n.playerVisible = this.playerVisible;
         n.id = this.id;
         n.repeats = this.repeats;
-        if(this.endDate !== null){
-            n.endDate = {
-                year: this.endDate.year,
-                month: this.endDate.month,
-                day: this.endDate.day,
-                hour: this.endDate.hour,
-                minute: this.endDate.minute,
-                seconds: this.endDate.seconds
-            };
-        }
+        n.endDate = {
+            year: this.endDate.year,
+            month: this.endDate.month,
+            day: this.endDate.day,
+            hour: this.endDate.hour,
+            minute: this.endDate.minute,
+            seconds: this.endDate.seconds
+        };
         n.order = this.order;
         n.categories = [...this.categories];
         return n;
@@ -254,9 +252,7 @@ export class Note{
                 if(SimpleCalendar.instance.currentYear){
                     noteStartDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(this.year, this.month, this.day);
                     targetDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(year, month, day);
-                    if(this.endDate){
-                        noteEndDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(this.endDate.year, this.endDate.month, this.endDate.day);
-                    }
+                    noteEndDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(this.endDate.year, this.endDate.month, this.endDate.day);
                 }
                 if(noteStartDayOfWeek === targetDayOfWeek){
                     inBetween = DateRangeMatch.Start;

@@ -4,6 +4,7 @@ import SimpleCalendar from "./simple-calendar";
 import Hook from "./hook";
 import {GameSettings} from "./game-settings";
 import {SimpleCalendarSocket} from "../interfaces";
+import GameSockets from "./game-sockets";
 
 /**
  * The Time Keeper class used by the built in Simple Calendar Clock to keep real time
@@ -47,7 +48,7 @@ export default class TimeKeeper{
         if(this.status !== TimeKeeperStatus.Started ){
             this.pauseClicked = false;
             if(SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.unifyGameAndClockPause && !fromPause){
-                game.togglePause(false, true);
+                (<Game>game).togglePause(false, true);
             }
             if(this.intervalNumber === undefined) {
                 Logger.debug(`TimeKeeper Starting`);
@@ -64,7 +65,7 @@ export default class TimeKeeper{
             this.pauseClicked = true;
             this.updateStatus(TimeKeeperStatus.Paused);
             if(SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.unifyGameAndClockPause){
-                game.togglePause(true, true);
+                (<Game>game).togglePause(true, true);
             }
         }
     }
@@ -78,7 +79,7 @@ export default class TimeKeeper{
             window.clearInterval(this.intervalNumber);
             window.clearInterval(this.saveIntervalNumber);
             if(SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.unifyGameAndClockPause){
-                game.togglePause(true, true);
+                (<Game>game).togglePause(true, true);
             }
             this.intervalNumber = undefined;
             this.saveIntervalNumber = undefined;
@@ -159,7 +160,7 @@ export default class TimeKeeper{
         if(newStatus !== null){
             this.status = newStatus;
         } else if(this.intervalNumber !== undefined){
-            if(this.pauseClicked || game.paused || (SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.combatRunning)){
+            if(this.pauseClicked || (<Game>game).paused || (SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.time.combatRunning)){
                 this.status = TimeKeeperStatus.Paused;
             } else {
                 this.status = TimeKeeperStatus.Started;
@@ -187,7 +188,7 @@ export default class TimeKeeper{
                     timeKeeperStatus: this.status
                 }
             };
-            game.socket.emit(ModuleSocketName, socketData);
+            GameSockets.emit(socketData).catch(Logger.error);
             SimpleCalendar.instance.processSocket(socketData).catch(Logger.error);
         }
     }

@@ -398,9 +398,9 @@ export default class DateSelector {
                     for(let i = 0; i < SimpleCalendar.instance.currentYear.time.hoursInDay; i++){
                         let startSelected = '', startHalfSelected = '', endSelected = '', endHalfSelected = '';
                         if(this.selectedDate.startDate.hour === i || this.selectedDate.endDate.hour === i){
-                            if(this.selectedDate.startDate.minute === 0){
+                            if(this.selectedDate.startDate.hour === i && this.selectedDate.startDate.minute === 0){
                                 startSelected = 'selected';
-                            } else if(this.selectedDate.startDate.minute === halfHour){
+                            } else if(this.selectedDate.startDate.hour === i && this.selectedDate.startDate.minute === halfHour){
                                 startHalfSelected = 'selected';
                             } else if(this.selectedDate.endDate.minute === 0){
                                 endSelected = 'selected';
@@ -675,7 +675,7 @@ export default class DateSelector {
      * @param {boolean} next If to go to the next month or the previous month
      */
     changeMonth(next: boolean){
-        if(SimpleCalendar.instance.currentYear){
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             let monthIndex = 0;
             for(let i = 0; i < SimpleCalendar.instance.currentYear.months.length; i++){
                 if(SimpleCalendar.instance.currentYear.months[i].numericRepresentation === this.selectedDate.visibleDate.month){
@@ -832,15 +832,21 @@ export default class DateSelector {
                 minute = 0;
             }
             if(cssClass === 'start-time'){
-                this.selectedDate.startDate.hour = hour;
-                this.selectedDate.startDate.minute = minute;
-
-                if(this.selectedDate.endDate.hour === 0){
+                if(hour >= this.selectedDate.endDate.hour){
+                    this.selectedDate.endDate.hour = hour;
                     this.selectedDate.endDate.hour = hour + 1;
                     if(this.selectedDate.endDate.hour > SimpleCalendar.instance.currentYear.time.hoursInDay - 1){
                         this.selectedDate.endDate.hour = SimpleCalendar.instance.currentYear.time.hoursInDay - 1;
                     }
+
+                    if(minute > this.selectedDate.endDate.minute){
+                        this.selectedDate.endDate.minute = minute;
+                    }
                 }
+
+                this.selectedDate.startDate.hour = hour;
+                this.selectedDate.startDate.minute = minute;
+
             } else if(cssClass === 'end-time'){
                 if(hour <= this.selectedDate.startDate.hour){
                     hour = this.selectedDate.startDate.hour;
