@@ -54,7 +54,7 @@ This update is mainly around notes and improving the experience around adding, e
 
 ### Translations
 
-- German Translation updates from [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird), thanks!
+- German Translation updates from [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird) and [MasterZelgadis](https://github.com/MasterZelgadis), thanks!
 
 ## v1.2.113 - API Changes
 

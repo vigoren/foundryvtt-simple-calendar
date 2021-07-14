@@ -3,11 +3,11 @@
 Here are all the exposed functions that can be used when creating a macro.
 
 ## Open Simple Calendar
-This macro has been depreciated. Please use the new [showCalendar](./docs/API.md#simplecalendarapishowcalendardate) function.
+This macro has been depreciated. Please use the new [showCalendar](./API.md#simplecalendarapishowcalendardate) function.
 
 ## Set Date and Time
-This macro has been depreciated. Please use the new [setDate](./docs/API.md#simplecalendarapisetdatedate) function.
+This macro has been depreciated. Please use the new [setDate](./API.md#simplecalendarapisetdatedate) function.
 
 ## Change Date Time
 
-This macro has been depreciated. Please use the new [changeDate](./docs/API.md#simplecalendarapichangedateinterval) function.
+This macro has been depreciated. Please use the new [changeDate](./API.md#simplecalendarapichangedateinterval) function.
