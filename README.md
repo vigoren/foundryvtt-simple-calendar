@@ -20,15 +20,29 @@ A simple calendar module for [FoundryVTT](https://foundryvtt.com/) that is syste
 This module allows you to create a calendar with any number of months per year, any number of days per month and customizable hours, minutes and seconds for your game world.
 It is intended as a way for a GM to show a calendar like interface that maps to their in game world.
 
+## Contents
+
+- [Features](#features)
+- [Installation](#installing-the-module)
+- [Compatible Modules](#compatible-modules)
+- [Accessing and using the calendar](./docs/UsingTheCalendar.md)
+- [Configuring your Calendar](./docs/Configuration.md)
+- [Changing the date and time](./docs/UpdatingDateTime.md)
+- [Notes](./docs/Notes.md)
+- [Hooks](./docs/Hooks.md)
+- [API (For other modules and systems)](./docs/API.md)
+- [Translations](#translations)
+
 ## Features
  Simple Calendar has a number of features that make it a great time keeping tool for your games!
 
 ### For GMs
-* Complete customization of the calendar to meet your worlds needs:
-  * Set the year as well as add any prefix or postfix to the years name.
+* Complete customization of the calendar to meet your worlds needs! Including the following functionality:
+  * Set the year as well as add any prefix or postfix or a custom name for the year.
   * Define how many months in a year.
-  * Set a custom name, the number of days and days during a leap year (if applicable) for each month.
+  * Set a custom name, the number of days for each month.
   * Choose if months are considered intercalary (fall outside normal months).
+  * Define how many days in a week and the name of each weekday.
   * Set the number hours in a day, minutes in an hour and seconds in a minute.  
   * Set up your own Leap Year rules.
   * Set up different seasons for your calendar and how they are displayed to the users.
@@ -36,7 +50,9 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
   * Or choose from a selection of [preset calendars](./docs/Configuration.md#predefined-calendars).
 * Set and change the current day and time as your game story progresses or have it automatically advance based on real world time and passing combat rounds.
 * Add notes to specific days on the calendar to remind yourself of events or other world related things.
-  * These notes can either be visible to players as well as the GM or just the GM.
+  * Add custom labels to notes to help distinguish the type of note.
+  * Set if the note is visible to players or just the GM.
+  * Support for repeating notes! They can repeat weekly, monthly or yearly.
 
 ![GM View of Calendar](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-1.png)
 
@@ -50,17 +66,7 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 
 ![Player View of Calendar](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player.gif)
 
-## Contents
 
-- [Installation](#installing-the-module)
-- [Compatible Modules](#compatible-modules)
-- [Accessing and using the calendar](./docs/UsingTheCalendar.md)
-- [Changing the date and time](./docs/UpdatingDateTime.md)
-- [Notes](./docs/Notes.md)
-- [Configuring your Calendar](./docs/Configuration.md)
-- [Macros](./docs/Macros.md)
-- [Hooks](./docs/Hooks.md)
-- [Translations](#translations)
 
 ## Installing The Module
 
@@ -89,7 +95,7 @@ Simple Calendar is available in languages other than English thanks to the follo
 
 Language|Translator(s)
 --------|----------
-German (de)|[MasterZelgadis](https://github.com/MasterZelgadis)
+German (de)|[MasterZelgadis](https://github.com/MasterZelgadis) <br/> [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird)
 Traditional Chinese (zh)|[benwater12](https://github.com/benwater12)
 Spanish (es)|[areymoreno](https://github.com/areymoreno)
 Korean (ko)|[drdwing](https://github.com/drdwing)

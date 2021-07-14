@@ -12,7 +12,7 @@ Hooks.on('init', () => {
         show: Macros.show,
         setDateTime: Macros.setDateTime,
         changeDateTime: Macros.changeDateTime,
-        api:API,
+        api: API,
         Hooks: SimpleCalendarHooks
     };
 });

@@ -91,7 +91,8 @@ describe('Interface Tests', () => {
         clockClass: '',
         timeUnits: {},
         compactView: false,
-        compactViewShowNotes: false
+        compactViewShowNotes: false,
+        reorderNotes: false
     };
 
 
@@ -157,7 +158,7 @@ describe('Interface Tests', () => {
     });
 
     test('Calendar Template', () => {
-        expect(Object.keys(ct).length).toBe(13); //Make sure no new properties have been added
+        expect(Object.keys(ct).length).toBe(14); //Make sure no new properties have been added
         expect(ct.isGM).toBe(false);
         expect(ct.changeDateTime).toBe(false);
         expect(ct.addNotes).toBe(false);
@@ -217,17 +218,27 @@ describe('Interface Tests', () => {
     });
 
     test('Notes Template', () => {
-        const nt: NoteTemplate = {title: '', content: '', author: '', monthDisplay: '', id: ''};
-        expect(Object.keys(nt).length).toBe(5); //Make sure no new properties have been added
+        const nt: NoteTemplate = {title: '', content: '', author: '', monthDisplay: '', id: '', minute: 0, hour: 0, categories: [], displayDate: '', order: 0, allDay: false, authorDisplay: '', playerVisible: true, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}};
+        expect(Object.keys(nt).length).toBe(14); //Make sure no new properties have been added
         expect(nt.title).toBe('');
         expect(nt.content).toBe('');
         expect(nt.author).toBe('');
         expect(nt.monthDisplay).toBe('');
+        expect(nt.id).toBe('');
+        expect(nt.displayDate).toBe('');
+        expect(nt.authorDisplay).toBe('');
+        expect(nt.hour).toBe(0);
+        expect(nt.minute).toBe(0);
+        expect(nt.order).toBe(0);
+        expect(nt.allDay).toBe(false);
+        expect(nt.playerVisible).toBe(true);
+        expect(nt.endDate).toStrictEqual({year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0});
+        expect(nt.categories).toStrictEqual([]);
     });
 
     test('Notes Config', () => {
-        const nc: NoteConfig = {year: 0, month:0, day:0, title: '', content: '', author: '', playerVisible: false, monthDisplay: '', id: '', repeats: 0};
-        expect(Object.keys(nc).length).toBe(10); //Make sure no new properties have been added
+        const nc: NoteConfig = {year: 0, month:0, day:0, title: '', content: '', author: '', playerVisible: false, monthDisplay: '', id: '', repeats: 0, hour: 0, minute: 0, allDay: true, order: 0, categories: [], endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}};
+        expect(Object.keys(nc).length).toBe(16); //Make sure no new properties have been added
         expect(nc.title).toBe('');
         expect(nc.content).toBe('');
         expect(nc.author).toBe('');
@@ -238,6 +249,13 @@ describe('Interface Tests', () => {
         expect(nc.monthDisplay).toBe('');
         expect(nc.id).toBe('');
         expect(nc.repeats).toBe(0);
+        expect(nc.hour).toBe(0);
+        expect(nc.minute).toBe(0);
+        expect(nc.order).toBe(0);
+        expect(nc.allDay).toBe(true);
+        expect(nc.playerVisible).toBe(false);
+        expect(nc.endDate).toStrictEqual({year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0});
+        expect(nc.categories).toStrictEqual([]);
     });
 
     test('Leap Year Config', () => {

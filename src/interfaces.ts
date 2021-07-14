@@ -10,6 +10,7 @@ import {
     MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus
 } from "./constants";
 import {Note} from "./classes/note";
+import DateSelector from "./classes/date-selector";
 
 /**
  * The general settings for the Simple calendar
@@ -28,6 +29,8 @@ export interface GeneralSettings {
         viewCalendar: PermissionMatrix,
         /** Who can add notes */
         addNotes: PermissionMatrix,
+        /** Who can reorder notes */
+        reorderNotes: PermissionMatrix,
         /** Who can change the date and time */
         changeDateTime: PermissionMatrix
     };
@@ -46,6 +49,7 @@ export interface CalendarTemplate {
     changeDateTime: boolean;
     isPrimary: boolean;
     addNotes: boolean;
+    reorderNotes: boolean;
     currentYear: YearTemplate;
     showSelectedDay: boolean;
     showCurrentDay: boolean;
@@ -132,7 +136,7 @@ export interface  MonthTemplate {
     current: boolean;
     visible: boolean;
     selected: boolean;
-    days: any[];
+    days: DayTemplate[];
     numberOfDays: number;
     numberOfLeapYearDays: number;
     intercalary: boolean;
@@ -189,9 +193,18 @@ export interface CurrentDateConfig {
 export interface NoteTemplate {
     title: string;
     content: string;
+    playerVisible: boolean;
     author: string;
+    authorDisplay: any | null;
     monthDisplay: string;
     id: string;
+    displayDate: string;
+    allDay: boolean;
+    hour: number;
+    minute: number;
+    endDate: DateTimeParts;
+    order: number;
+    categories: NoteCategory[];
 }
 
 /**
@@ -208,6 +221,21 @@ export interface NoteConfig {
     playerVisible: boolean;
     id: string;
     repeats: NoteRepeat;
+    allDay: boolean;
+    hour: number;
+    minute: number;
+    endDate: DateTimeParts;
+    order: number;
+    categories: string[];
+}
+
+/**
+ * Categories used for notes
+ */
+export interface NoteCategory {
+    name: string;
+    color: string;
+    textColor: string;
 }
 
 /**
@@ -275,7 +303,7 @@ export interface SeasonConfiguration {
     startingMonth: number;
     startingDay: number;
     color: string;
-    customColor: string;
+    customColor?: string;
 }
 
 /**
@@ -324,12 +352,6 @@ export interface MoonTemplate {
     dayList: DayTemplate[];
 }
 
-export interface DateParts{
-    year: number;
-    month: number;
-    day: number;
-}
-
 export interface DateTimeParts {
     year: number;
     month: number;
@@ -339,7 +361,14 @@ export interface DateTimeParts {
     seconds: number;
 }
 
-export interface DateTimeIntervals {
+export interface NoteRepeats {
+    0: string,
+    1?: string,
+    2?: string,
+    3?: string
+}
+
+export interface DateTime{
     year?: number;
     month?: number;
     day?: number;
@@ -394,6 +423,35 @@ export namespace SimpleCalendarSocket{
     export interface SimpleCalendarPrimary{
         primaryCheck?: boolean;
         amPrimary?: boolean;
+    }
+}
+
+export namespace SCDateSelector {
+    export interface SelectorList {
+        [key: string]: DateSelector;
+    }
+
+    export interface Options {
+        placeHolderText?: string;
+        onDateSelect?: Function;
+        rangeSelect?: boolean;
+        showDate: boolean;
+        showTime: boolean;
+    }
+
+    export interface Date{
+        year: number;
+        month: number;
+        day: number;
+        hour: number;
+        minute: number;
+        allDay: boolean;
+    }
+
+    export interface SelectedDate {
+        visibleDate: SCDateSelector.Date;
+        startDate: SCDateSelector.Date;
+        endDate: SCDateSelector.Date;
     }
 }
 
@@ -455,9 +513,13 @@ export namespace CalendarWeatherImport{
      * Calendar/Weather date class
      */
     export interface Date {
+        year: string;
         month: string;
         day: number;
         combined: string;
+        hours: number;
+        minutes: number
+        seconds: number;
     }
 
     /**
@@ -523,6 +585,7 @@ export namespace CalendarWeatherImport{
     export interface Event {
         name: string;
         text: string;
+        allDay: boolean;
         date: Date;
     }
 

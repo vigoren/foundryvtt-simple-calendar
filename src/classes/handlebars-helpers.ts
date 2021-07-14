@@ -1,5 +1,6 @@
 import SimpleCalendar from "./simple-calendar";
 import {GameSettings} from "./game-settings";
+import DateSelector from "./date-selector";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -10,8 +11,22 @@ export default class HandlebarsHelpers{
      * Registers the helper functions with Handlebars
      */
     static Register(){
+        Handlebars.registerHelper("sc-date-selector", HandlebarsHelpers.DateSelector);
         Handlebars.registerHelper("day-has-note", HandlebarsHelpers.DayHasNotes);
         Handlebars.registerHelper("day-moon-phase", HandlebarsHelpers.DayMoonPhase);
+    }
+
+    /**
+     * Handlebar Helper for rendering a DateSelector
+     * @param options
+     */
+    static DateSelector(options: any){
+        if(SimpleCalendar.instance.currentYear && options.hash.hasOwnProperty('id') ){
+            const id = options.hash['id'];
+            const ds = DateSelector.GetSelector(id, {showDate: true, showTime: false});
+            return new Handlebars.SafeString(ds.build());
+        }
+        return '';
     }
 
     /**
@@ -39,7 +54,7 @@ export default class HandlebarsHelpers{
                             title += `${nTitle}`;
                         }
                     }
-                    return `<span class="note-count" title="${title}">${count}</span>`;
+                    return new Handlebars.SafeString(`<span class="note-count" title="${title}">${count}</span>`);
                 }
             }
         }
@@ -61,7 +76,7 @@ export default class HandlebarsHelpers{
                     html += `<span class="moon-phase ${mp.icon}" title="${SimpleCalendar.instance.currentYear.moons[i].name} - ${mp.name}" style="background-color: ${SimpleCalendar.instance.currentYear.moons[i].color};"></span>`;
                 }
             }
-            return html;
+            return new Handlebars.SafeString(html);
         }
         return '';
     }

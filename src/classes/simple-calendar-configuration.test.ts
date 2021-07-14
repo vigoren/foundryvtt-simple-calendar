@@ -8,6 +8,7 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
+import "../../__mocks__/crypto";
 
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import Year from "./year";
@@ -20,6 +21,7 @@ import Moon from "./moon";
 import SpyInstance = jest.SpyInstance;
 import Mock = jest.Mock;
 import SimpleCalendar from "./simple-calendar";
+import {Note} from "./note";
 
 jest.mock('./importer');
 jest.mock('file-saver');
@@ -49,6 +51,8 @@ describe('Simple Calendar Configuration Tests', () => {
         y.months[0].days[0].current = true;
         y.months[0].days[0].selected = true;
 
+        SimpleCalendar.instance = new SimpleCalendar();
+
         //Set up a new Simple Calendar instance
         SimpleCalendarConfiguration.instance = new SimpleCalendarConfiguration(y);
 
@@ -59,7 +63,18 @@ describe('Simple Calendar Configuration Tests', () => {
         (<Mock>console.error).mockClear();
         (<Mock>console.debug).mockClear();
         renderSpy.mockClear();
-        (<Mock>game.settings.set).mockClear();
+        (<Mock>(<Game>game).settings.set).mockClear();
+    });
+
+    test('Constructor', () => {
+        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.noteCategories.push({name: 'a', color:'a', textColor: 'a'});
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance = new SimpleCalendarConfiguration();
+        //@ts-ignore
+        expect(SimpleCalendarConfiguration.instance.year).toStrictEqual(y);
+        //@ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories ).toStrictEqual([{name: 'a', color:'a', textColor: 'a'}]);
     });
 
     test('Default Options', () => {
@@ -111,25 +126,32 @@ describe('Simple Calendar Configuration Tests', () => {
         //@ts-ignore
         expect(data.weekdays).toStrictEqual(y.weekdays.map(m => m.toTemplate()));
 
-        (<Mock>game.modules.get).mockReturnValueOnce({active:true}).mockReturnValueOnce({active:true});
+        (<Mock>(<Game>game).modules.get).mockReturnValueOnce({active:true}).mockReturnValueOnce({active:true});
         data = SimpleCalendarConfiguration.instance.getData();
         //@ts-ignore
         expect(data.importing.showCalendarWeather).toBe(true);
         //@ts-ignore
         expect(data.importing.showAboutTime).toBe(true);
 
-        const orig = game.users;
+        const orig = (<Game>game).users;
         //@ts-ignore
         game.user.isGM = true;
         data = SimpleCalendarConfiguration.instance.getData();
         //@ts-ignore
         expect(data.users).toStrictEqual({});
         //@ts-ignore
+        game.users = [{isGM: false, id: 'asd', name: 'name'}];
+        data = SimpleCalendarConfiguration.instance.getData();
+        //@ts-ignore
+        expect(data.users).toStrictEqual({'asd': 'name'});
+        //@ts-ignore
         game.users = false;
+        // @ts-ignore
+        SimpleCalendar.instance = null;
         data = SimpleCalendarConfiguration.instance.getData();
         //@ts-ignore
         expect(data.users).toStrictEqual({});
-        game.users = orig;
+        (<Game>game).users = orig;
     });
 
     test('Update Object', () => {
@@ -150,8 +172,8 @@ describe('Simple Calendar Configuration Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendarConfiguration.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(34);
-        expect(onFunc).toHaveBeenCalledTimes(34);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(36);
+        expect(onFunc).toHaveBeenCalledTimes(36);
     });
 
     test('Rebase Month Numbers', () => {
@@ -473,6 +495,62 @@ describe('Simple Calendar Configuration Tests', () => {
         expect((<Year>SimpleCalendarConfiguration.instance.object).moons[0].phases.length).toBe(0);
     });
 
+    test('Add Note Category', () => {
+        const event = new Event('click');
+        // @ts-ignore
+        const currentLength = SimpleCalendarConfiguration.instance.noteCategories.length;
+        SimpleCalendarConfiguration.instance.addToTable('note-category', event);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        // @ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories.length).toBe(currentLength + 1);
+    });
+
+    test('Remove Note Category', () => {
+        const event = new Event('click');
+        // @ts-ignore
+        SimpleCalendarConfiguration.instance.noteCategories.push({name: 'a', color: 'a', textColor: 'a'});
+        // @ts-ignore
+        let currentLength = SimpleCalendarConfiguration.instance.noteCategories.length;
+        SimpleCalendarConfiguration.instance.removeFromTable('note-category',event);
+        expect(renderSpy).not.toHaveBeenCalled();
+        // @ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories.length).toBe(currentLength);
+
+        //Check for invalid index
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', 'a');
+        // @ts-ignore
+        currentLength = SimpleCalendarConfiguration.instance.noteCategories.length;
+        SimpleCalendarConfiguration.instance.removeFromTable('note-category',event);
+        expect(renderSpy).not.toHaveBeenCalled();
+        // @ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories.length).toBe(currentLength);
+
+        //Check for index outside of season length
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', '12');
+        // @ts-ignore
+        currentLength = SimpleCalendarConfiguration.instance.noteCategories.length;
+        SimpleCalendarConfiguration.instance.removeFromTable('note-category',event);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        // @ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories.length).toBe(currentLength);
+
+        //Check for valid index
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', '0');
+        // @ts-ignore
+        currentLength = SimpleCalendarConfiguration.instance.noteCategories.length;
+        SimpleCalendarConfiguration.instance.removeFromTable('note-category',event);
+        expect(renderSpy).toHaveBeenCalledTimes(2);
+        // @ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories.length).toBe(currentLength - 1);
+
+        //Check for removing all seasons
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', 'all');
+        SimpleCalendarConfiguration.instance.removeFromTable('note-category',event);
+        expect(renderSpy).toHaveBeenCalledTimes(3);
+        // @ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories.length).toBe(0);
+    });
+
     test('Predefined Apply Confirm', () => {
         const select = document.createElement('input');
 
@@ -628,6 +706,16 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLInputElement>event.currentTarget).id = "scChangeDateTimeAGM";
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.changeDateTime.assistantGameMaster ).toBe(true);
+
+        (<HTMLInputElement>event.currentTarget).id = "scReorderNotesP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.reorderNotes.player ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scReorderNotesTP";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.reorderNotes.trustedPlayer ).toBe(true);
+        (<HTMLInputElement>event.currentTarget).id = "scReorderNotesAGM";
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).generalSettings.permissions.reorderNotes.assistantGameMaster ).toBe(true);
     });
 
     test('Year Input Change', () => {
@@ -705,14 +793,6 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLInputElement>event.currentTarget).value = 'Wint';
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].name).toBe('Wint');
-
-        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-custom');
-        (<HTMLInputElement>event.currentTarget).value = '#000000';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].customColor).toBe('#000000');
-        (<HTMLInputElement>event.currentTarget).value = '000000';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].customColor).toBe('#000000');
 
         (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-month');
         (<HTMLInputElement>event.currentTarget).value = '2';
@@ -856,6 +936,47 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLInputElement>event.currentTarget).checked = false;
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).showWeekdayHeadings).toBe(false);
+    });
+
+    test('Note Category Input Change', () => {
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.noteCategories.push({name: 'a', color: 'a', textColor: 'a'});
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.noteCategories.push({name: 'b', color: 'b', textColor: 'b'});
+        SimpleCalendar.instance = new SimpleCalendar();
+        const event = new Event('change');
+        (<HTMLElement>event.currentTarget).classList.remove('next');
+        (<HTMLInputElement>event.currentTarget).classList.add('note-category-name');
+        (<HTMLElement>event.currentTarget).setAttribute('data-index', '0');
+        (<HTMLInputElement>event.currentTarget).value = 'asd';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        //@ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories[0].name).toBe('asd');
+
+        SimpleCalendar.instance.noteCategories.push({name: 'asd', color: 'a', textColor: 'a'});
+        SimpleCalendar.instance.noteCategories.push({name: 'b', color: 'b', textColor: 'b'});
+        const n = new Note();
+        n.categories.push('asd');
+        SimpleCalendar.instance.notes.push(n);
+        (<HTMLInputElement>event.currentTarget).value = 'qwe';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        //@ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories[0].name).toBe('qwe');
+        expect(n.categories).toStrictEqual(['qwe']);
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.noteCategories[0].name = 'asd';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect(n.categories).toStrictEqual(['qwe']);
+
+        (<HTMLElement>event.currentTarget).classList.remove('note-category-name');
+        (<HTMLInputElement>event.currentTarget).classList.add('note-category-color');
+        (<HTMLInputElement>event.currentTarget).value = '#ffffff';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        //@ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories[0].color).toBe('#ffffff');
+        //@ts-ignore
+        expect(SimpleCalendarConfiguration.instance.noteCategories[0].textColor).toBe('#000000');
+
     });
 
     test('Weekday First Day Change', () => {
@@ -1175,7 +1296,7 @@ describe('Simple Calendar Configuration Tests', () => {
         //Invalid year
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(invalidYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(7);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(7);
         expect(closeSpy).toHaveBeenCalledTimes(1);
 
         //Valid year weekday, invalid month days
@@ -1183,7 +1304,7 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.yearChanged = true;
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(gameWorldIntegration).mockReturnValueOnce(validYear).mockReturnValueOnce(showWeekday);
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(16);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(16);
         expect(closeSpy).toHaveBeenCalledTimes(2);
         expect((<Year>SimpleCalendarConfiguration.instance.object).numericRepresentation).toBe(2);
         expect((<Year>SimpleCalendarConfiguration.instance.object).selectedYear).toBe(2);
@@ -1191,7 +1312,7 @@ describe('Simple Calendar Configuration Tests', () => {
 
         (<Year>SimpleCalendarConfiguration.instance.object).leapYearRule.rule = LeapYearRules.Gregorian;
         await SimpleCalendarConfiguration.instance.saveClick(event);
-        expect(game.settings.set).toHaveBeenCalledTimes(16);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(16);
         expect(closeSpy).toHaveBeenCalledTimes(2);
 
         SimpleCalendar.instance = new SimpleCalendar();
@@ -1205,40 +1326,40 @@ describe('Simple Calendar Configuration Tests', () => {
         game.user.isGM = true;
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('a', 'b');
         expect(renderSpy).not.toHaveBeenCalled();
-        expect(game.settings.set).not.toHaveBeenCalled();
+        expect((<Game>game).settings.set).not.toHaveBeenCalled();
 
         const select = document.createElement('input');
         select.value = 'gregorian';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValue(select);
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('predefined', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect(game.settings.set).not.toHaveBeenCalled();
+        expect((<Game>game).settings.set).not.toHaveBeenCalled();
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect(game.settings.set).toHaveBeenCalledTimes(1);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect(game.settings.set).toHaveBeenCalledTimes(2);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(2);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(game.settings.set).toHaveBeenCalledTimes(3);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(3);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(game.settings.set).toHaveBeenCalledTimes(4);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(4);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(game.settings.set).toHaveBeenCalledTimes(5);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(5);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect(game.settings.set).toHaveBeenCalledTimes(6);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(6);
 
-        (<Mock>game.settings.set).mockClear();
+        (<Mock>(<Game>game).settings.set).mockClear();
     });
 
     test('Export Calendar', () => {
@@ -1291,7 +1412,7 @@ describe('Simple Calendar Configuration Tests', () => {
         //@ts-ignore
         expect(ui.notifications.error).toHaveBeenCalledTimes(1);
 
-        reader.result = "{\"currentDate\":{\"year\":1999,\"month\":3,\"day\":35,\"seconds\":72014},\"generalSettings\":{\"gameWorldTimeIntegration\":\"mixed\",\"showClock\":true,\"pf2eSync\":true,\"permissions\":{\"viewCalendar\":{\"player\":true,\"trustedPlayer\":true,\"assistantGameMaster\":true},\"addNotes\":{\"player\":false,\"trustedPlayer\":false,\"assistantGameMaster\":false},\"changeDateTime\":{\"player\":false,\"trustedPlayer\":false,\"assistantGameMaster\":false}}},\"leapYearSettings\":{\"rule\":\"gregorian\",\"customMod\":0},\"monthSettings\":[{\"name\":\"New Month1\",\"numericRepresentation\":1,\"numericRepresentationOffset\":0,\"numberOfDays\":30,\"numberOfLeapYearDays\":30,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New Month2\",\"numericRepresentation\":2,\"numericRepresentationOffset\":0,\"numberOfDays\":17,\"numberOfLeapYearDays\":17,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New 3\",\"numericRepresentation\":-1,\"numericRepresentationOffset\":0,\"numberOfDays\":1,\"numberOfLeapYearDays\":1,\"intercalary\":true,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New Month4\",\"numericRepresentation\":3,\"numericRepresentationOffset\":17,\"numberOfDays\":18,\"numberOfLeapYearDays\":19,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New Month5\",\"numericRepresentation\":4,\"numericRepresentationOffset\":0,\"numberOfDays\":30,\"numberOfLeapYearDays\":30,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null}],\"moonSettings\":[{\"name\":\"Moon\",\"cycleLength\":29.53059,\"firstNewMoon\":{\"yearReset\":\"none\",\"yearX\":0,\"year\":2000,\"month\":1,\"day\":6},\"phases\":[{\"name\":\"New Moon\",\"length\":1,\"icon\":\"new\",\"singleDay\":true},{\"name\":\"Waxing Crescent\",\"length\":6.3826,\"icon\":\"waxing-crescent\",\"singleDay\":false},{\"name\":\"First Quarter\",\"length\":1,\"icon\":\"first-quarter\",\"singleDay\":true},{\"name\":\"Waxing Gibbous\",\"length\":6.3826,\"icon\":\"waxing-gibbous\",\"singleDay\":false},{\"name\":\"Full Moon\",\"length\":1,\"icon\":\"full\",\"singleDay\":true},{\"name\":\"Waning Gibbous\",\"length\":6.3826,\"icon\":\"waning-gibbous\",\"singleDay\":false},{\"name\":\"Last Quarter\",\"length\":1,\"icon\":\"last-quarter\",\"singleDay\":true},{\"name\":\"Waning Crescent\",\"length\":6.3826,\"icon\":\"waning-crescent\",\"singleDay\":false}],\"color\":\"#ffffff\",\"cycleDayAdjust\":0.5}],\"seasonSettings\":[{\"name\":\"Spring\",\"startingMonth\":3,\"startingDay\":20,\"color\":\"#fffce8\",\"customColor\":\"\"},{\"name\":\"Summer\",\"startingMonth\":6,\"startingDay\":20,\"color\":\"#f3fff3\",\"customColor\":\"\"},{\"name\":\"Fall\",\"startingMonth\":9,\"startingDay\":22,\"color\":\"#fff7f2\",\"customColor\":\"\"},{\"name\":\"Winter\",\"startingMonth\":12,\"startingDay\":21,\"color\":\"#f2f8ff\",\"customColor\":\"\"}],\"timeSettings\":{\"hoursInDay\":24,\"minutesInHour\":60,\"secondsInMinute\":60,\"gameTimeRatio\":1,\"unifyGameAndClockPause\":false,\"updateFrequency\":1},\"weekdaySettings\":[{\"name\":\"Sunday\",\"numericRepresentation\":1},{\"name\":\"Monday\",\"numericRepresentation\":2},{\"name\":\"Tuesday\",\"numericRepresentation\":3},{\"name\":\"Wednesday\",\"numericRepresentation\":4},{\"name\":\"Thursday\",\"numericRepresentation\":5},{\"name\":\"Friday\",\"numericRepresentation\":6},{\"name\":\"Saturday\",\"numericRepresentation\":7}],\"yearSettings\":{\"numericRepresentation\":2021,\"prefix\":\"\",\"postfix\":\"\",\"showWeekdayHeadings\":true,\"firstWeekday\":4,\"yearZero\":1970,\"yearNames\":[],\"yearNamingRule\":\"default\",\"yearNamesStart\":0}}";
+        reader.result = "{\"currentDate\":{\"year\":1999,\"month\":3,\"day\":35,\"seconds\":72014},\"generalSettings\":{\"gameWorldTimeIntegration\":\"mixed\",\"showClock\":true,\"pf2eSync\":true,\"permissions\":{\"viewCalendar\":{\"player\":true,\"trustedPlayer\":true,\"assistantGameMaster\":true},\"addNotes\":{\"player\":false,\"trustedPlayer\":false,\"assistantGameMaster\":false},\"changeDateTime\":{\"player\":false,\"trustedPlayer\":false,\"assistantGameMaster\":false}}},\"leapYearSettings\":{\"rule\":\"gregorian\",\"customMod\":0},\"monthSettings\":[{\"name\":\"New Month1\",\"numericRepresentation\":1,\"numericRepresentationOffset\":0,\"numberOfDays\":30,\"numberOfLeapYearDays\":30,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New Month2\",\"numericRepresentation\":2,\"numericRepresentationOffset\":0,\"numberOfDays\":17,\"numberOfLeapYearDays\":17,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New 3\",\"numericRepresentation\":-1,\"numericRepresentationOffset\":0,\"numberOfDays\":1,\"numberOfLeapYearDays\":1,\"intercalary\":true,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New Month4\",\"numericRepresentation\":3,\"numericRepresentationOffset\":17,\"numberOfDays\":18,\"numberOfLeapYearDays\":19,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null},{\"name\":\"New Month5\",\"numericRepresentation\":4,\"numericRepresentationOffset\":0,\"numberOfDays\":30,\"numberOfLeapYearDays\":30,\"intercalary\":false,\"intercalaryInclude\":false,\"startingWeekday\":null}],\"moonSettings\":[{\"name\":\"Moon\",\"cycleLength\":29.53059,\"firstNewMoon\":{\"yearReset\":\"none\",\"yearX\":0,\"year\":2000,\"month\":1,\"day\":6},\"phases\":[{\"name\":\"New Moon\",\"length\":1,\"icon\":\"new\",\"singleDay\":true},{\"name\":\"Waxing Crescent\",\"length\":6.3826,\"icon\":\"waxing-crescent\",\"singleDay\":false},{\"name\":\"First Quarter\",\"length\":1,\"icon\":\"first-quarter\",\"singleDay\":true},{\"name\":\"Waxing Gibbous\",\"length\":6.3826,\"icon\":\"waxing-gibbous\",\"singleDay\":false},{\"name\":\"Full Moon\",\"length\":1,\"icon\":\"full\",\"singleDay\":true},{\"name\":\"Waning Gibbous\",\"length\":6.3826,\"icon\":\"waning-gibbous\",\"singleDay\":false},{\"name\":\"Last Quarter\",\"length\":1,\"icon\":\"last-quarter\",\"singleDay\":true},{\"name\":\"Waning Crescent\",\"length\":6.3826,\"icon\":\"waning-crescent\",\"singleDay\":false}],\"color\":\"#ffffff\",\"cycleDayAdjust\":0.5}],\"seasonSettings\":[{\"name\":\"Spring\",\"startingMonth\":3,\"startingDay\":20,\"color\":\"#fffce8\",\"customColor\":\"\"},{\"name\":\"Summer\",\"startingMonth\":6,\"startingDay\":20,\"color\":\"#f3fff3\",\"customColor\":\"\"},{\"name\":\"Fall\",\"startingMonth\":9,\"startingDay\":22,\"color\":\"#fff7f2\",\"customColor\":\"\"},{\"name\":\"Winter\",\"startingMonth\":12,\"startingDay\":21,\"color\":\"#f2f8ff\",\"customColor\":\"\"}],\"timeSettings\":{\"hoursInDay\":24,\"minutesInHour\":60,\"secondsInMinute\":60,\"gameTimeRatio\":1,\"unifyGameAndClockPause\":false,\"updateFrequency\":1},\"weekdaySettings\":[{\"name\":\"Sunday\",\"numericRepresentation\":1},{\"name\":\"Monday\",\"numericRepresentation\":2},{\"name\":\"Tuesday\",\"numericRepresentation\":3},{\"name\":\"Wednesday\",\"numericRepresentation\":4},{\"name\":\"Thursday\",\"numericRepresentation\":5},{\"name\":\"Friday\",\"numericRepresentation\":6},{\"name\":\"Saturday\",\"numericRepresentation\":7}],\"yearSettings\":{\"numericRepresentation\":2021,\"prefix\":\"\",\"postfix\":\"\",\"showWeekdayHeadings\":true,\"firstWeekday\":4,\"yearZero\":1970,\"yearNames\":[],\"yearNamingRule\":\"default\",\"yearNamesStart\":0},\"noteCategories\":[{\"name\": \"a\"}]}";
         //@ts-ignore
         SimpleCalendarConfiguration.instance.importOnLoad(reader, event);
         //@ts-ignore

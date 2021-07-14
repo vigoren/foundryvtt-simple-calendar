@@ -25,17 +25,17 @@ describe('Leap Year Tests', () => {
     });
 
     test('Load From Settings', () => {
-        (<Mock>game.settings.get).mockReturnValueOnce({rule: 'custom', customMod: 4});
+        (<Mock>(<Game>game).settings.get).mockReturnValueOnce({rule: 'custom', customMod: 4});
         lr.loadFromSettings();
         expect(lr.rule).toBe(LeapYearRules.Custom);
         expect(lr.customMod).toBe(4);
 
-        (<Mock>game.settings.get).mockReturnValueOnce(false);
+        (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         lr.loadFromSettings();
         expect(lr.rule).toBe(LeapYearRules.Custom);
         expect(lr.customMod).toBe(4);
 
-        (<Mock>game.settings.get).mockReturnValueOnce({});
+        (<Mock>(<Game>game).settings.get).mockReturnValueOnce({});
         lr.loadFromSettings();
         expect(lr.rule).toBe(LeapYearRules.Custom);
         expect(lr.customMod).toBe(4);

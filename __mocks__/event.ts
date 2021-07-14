@@ -7,7 +7,7 @@ class Event{
         this.currentTarget.classList.add('next');
     }
     target = document.createElement('input');
-    currentTarget = document.createElement('a')
+    currentTarget = document.createElement('a');
 }
 
 //@ts-ignore

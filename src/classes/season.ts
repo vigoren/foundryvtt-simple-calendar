@@ -17,11 +17,6 @@ export default class Season {
      */
     color: string = '#ffffff';
     /**
-     * The custom color of the season
-     * @type{string}
-     */
-    customColor: string = '';
-    /**
      * The month this season starts on
      * @type{number}
      */
@@ -51,7 +46,6 @@ export default class Season {
     clone(): Season {
         const t = new Season(this.name, this.startingMonth, this.startingDay);
         t.color = this.color;
-        t.customColor = this.customColor;
         return t;
     }
 
@@ -67,10 +61,6 @@ export default class Season {
             color: this.color,
             dayList: []
         };
-
-        if(this.color === 'custom'){
-            data.color = this.customColor;
-        }
 
         const month = year.months.find(m => m.numericRepresentation === data.startingMonth);
         if(month){

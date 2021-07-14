@@ -1,3 +1,5 @@
+import SimpleCalendar from "../simple-calendar";
+
 /**
  * System specific functionality for Pathfinder 2E
  */
@@ -6,7 +8,7 @@ export default class PF2E {
      * Gets the world creation time in seconds
      * @return {number}
      */
-    public static getWorldCreateSeconds(): number{
+    public static getWorldCreateSeconds(adjustByDay: boolean = true): number{
         let seconds = 0;
         // If this is a Pathfinder 2E game, when setting Simple Calendar from the world time we need to add:
         //  - The World Create Time Stamp Offset (Used by PF2E to calculate the current world time) - This is a timestamp in Real world time
@@ -19,6 +21,9 @@ export default class PF2E {
                 worldCreateTimeStamp += 62167219200;
             }
             seconds += worldCreateTimeStamp;
+            if(adjustByDay && SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+                seconds -= SimpleCalendar.instance.currentYear.time.secondsPerDay;
+            }
         }
         return seconds;
     }

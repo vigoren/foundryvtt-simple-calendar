@@ -72,7 +72,7 @@ export default class Moon{
         this.cycleLength = cycleLength;
 
         this.phases.push({
-            name: game.i18n.localize('FSC.Moon.Phase.New'),
+            name: (<Game>game).i18n.localize('FSC.Moon.Phase.New'),
             length: 3.69,
             icon: MoonIcons.NewMoon,
             singleDay: true

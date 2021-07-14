@@ -12,6 +12,7 @@ export const ModuleSocketName = `module.${ModuleName}`;
  * The name of the settings that are saved in the world settings database
  */
 export enum SettingNames {
+    CalendarConfigurationMenu= 'calendar-configuration-menu',
     YearConfiguration = 'year-config',
     WeekdayConfiguration = 'weekday-config',
     MonthConfiguration = 'month-config',
@@ -24,7 +25,8 @@ export enum SettingNames {
     GeneralConfiguration = 'general-configuration',
     ImportRan = 'import-ran',
     SeasonConfiguration = 'season-configuration',
-    MoonConfiguration = 'moon-configuration'
+    MoonConfiguration = 'moon-configuration',
+    NoteCategories = 'note-categories'
 }
 
 /**
@@ -35,6 +37,14 @@ export enum NoteRepeat {
     Weekly,
     Monthly,
     Yearly
+}
+
+export enum DateRangeMatch {
+    None = 'none',
+    Start = 'start',
+    End = 'end',
+    Middle = 'mid',
+    Exact = 'exact'
 }
 
 /**

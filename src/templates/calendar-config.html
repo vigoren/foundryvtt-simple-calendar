@@ -81,6 +81,16 @@
                         <p class="hint">{{localize 'FSC.Configuration.General.PlayerAddNotesHelp'}}</p>
                     </li>
                     <li class="permission form-group">
+                        <label class="index">{{localize 'FSC.Configuration.General.PlayerReorderNotes'}}</label>
+                        <div class="form-fields">
+                            <input type="checkbox" name="AddNotes.P" id="scReorderNotesP" {{checked currentYear.generalSettings.permissions.reorderNotes.player}} />
+                            <input type="checkbox" name="AddNotes.TP" id="scReorderNotesTP" {{checked currentYear.generalSettings.permissions.reorderNotes.trustedPlayer}} />
+                            <input type="checkbox" name="AddNotes.AGM" id="scReorderNotesAGM" {{checked currentYear.generalSettings.permissions.reorderNotes.assistantGameMaster}} />
+                            <input type="checkbox" name="AddNotes.GM" checked disabled />
+                        </div>
+                        <p class="hint">{{localize 'FSC.Configuration.General.PlayerReorderNotesHelp'}}</p>
+                    </li>
+                    <li class="permission form-group">
                         <label class="index">{{localize 'FSC.Configuration.General.PlayersChangeDateTime'}}</label>
                         <div class="form-fields">
                             <input type="checkbox" name="AddNotes.P" id="scChangeDateTimeP" {{checked currentYear.generalSettings.permissions.changeDateTime.player}} />
@@ -135,13 +145,41 @@
         </div>
         <div class="tab note-settings" data-tab="noteSettings">
             <div class="settings-group">
-                <h2>{{localize 'FSC.Configuration.General.Notes'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#notes" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.General.Notes'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#note-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group">
                     <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
                     <div class="form-fields">
                         <input value="{{defaultPlayerNoteVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{checked defaultPlayerNoteVisibility}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h2>{{localize 'FSC.Configuration.Notes.NoteCategories'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#note-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="f-table">
+                    <div class="row head">
+                        <div title="{{localize 'FSC.Configuration.NoteCategories.NameHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.NoteCategories.Name'}}</div>
+                        <div title="{{localize 'FSC.Configuration.NoteCategories.ColorHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.NoteCategories.Color'}}</div>
+                        <div style="min-width: 15%;"></div>
+                    </div>
+                    {{#each noteCategories}}
+                    <div class="row">
+                        <div style="min-width: 15%;">
+                            <input class="note-category-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.NoteCategories.NameHelp'}}" />
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <input type="color" value="{{color}}" class="note-category-color" data-index="{{@index}}" title="{{localize 'FSC.Configuration.NoteCategories.Color'}}" />
+                        </div>
+                        <div class="center" style="min-width: 15%;">
+                            <button class="remove-note-category control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                <div class="table-actions">
+                    <button class="note-category-add control"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.NoteCategories.Add'}}</button>
+                    <span class="spacer"></span>
+                    <button class="remove-note-category control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.NoteCategories.RemoveAll'}}</button>
                 </div>
             </div>
         </div>
@@ -290,7 +328,7 @@
                             <input class="month-days" value="{{numberOfDays}}" type="number" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.DaysHelp'}}" />
                         </div>
                         <div style="text-align: center;">
-                            <input class="month-intercalary" value="{{intercalary}}" type="checkbox" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}" {{#if intercalary}}checked="checked"{{/if}} />
+                            <input class="month-intercalary" value="{{intercalary}}" type="checkbox" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Month.IntercalaryHelp'}}" {{checked intercalary}} />
                         </div>
                         <div class="month-number">{{#if (gt numericRepresentation 0)}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
                         <div>
