@@ -1,9 +1,11 @@
 import {Note} from './note';
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
-import {ModuleName, ModuleSocketName, NoteRepeat, SettingNames, SocketTypes} from "../constants";
+import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
-import {SimpleCalendarSocket} from "../interfaces";
+import DateSelector from "./date-selector";
+import {NoteRepeats, SCDateSelector} from "../interfaces";
+import Utilities from "./utilities";
 
 export class SimpleCalendarNotes extends FormApplication {
     /**
@@ -17,10 +19,21 @@ export class SimpleCalendarNotes extends FormApplication {
      */
     viewMode: boolean;
     /**
-     * If the rich text editor has been saved or not.
-     * @type {boolean}
+     * If the note dialog has been resized at all
      */
-    richEditorSaved: boolean = false;
+    hasBeenResized: boolean = false;
+    /**
+     * The ID of the date selector input
+     * @type {string}
+     */
+    dateSelectorId: string = '';
+    /**
+     * The date selector object
+     * @type {DateSelector | null}
+     */
+    dateSelector: DateSelector | null = null;
+
+    initialLoad: boolean = true;
 
     /**
      * Used to store a globally accessible copy of the Simple calendar Notes class for access from event functions.
@@ -36,26 +49,18 @@ export class SimpleCalendarNotes extends FormApplication {
         super(data);
         this.viewMode = viewOnly;
         this.updateNote = false;
-        this.editors['content'] = {
-            target: 'content',
-            changed: false,
-            initial: (<Note>this.object).content,
-            //@ts-ignore
-            button: null,
-            hasButton: false,
-            active: false,
-            mce: null,
-            options: {
-                //@ts-ignore
-                target: null,
-                //@ts-ignore
-                height: 200,
-                save_onsavecallback: this.saveEditor.bind(this, 'content')
-            },
-        };
         if(!GameSettings.IsGm()){
             (<Note>this.object).playerVisible = true;
         }
+        this.dateSelectorId = `scNoteDate_${data.id}`;
+        this.dateSelector = DateSelector.GetSelector(this.dateSelectorId, {
+            onDateSelect: this.dateSelectorClick.bind(this),
+            placeHolderText: '',
+            rangeSelect: true,
+            showDate: true,
+            showTime: true
+        });
+        this.dateSelector.updateSelectedDate(data);
     }
 
     /**
@@ -73,6 +78,16 @@ export class SimpleCalendarNotes extends FormApplication {
     }
 
     /**
+     * Checks to see if any of the known markdown editor modules are loaded and active in the world
+     * Current Supported Editors:
+     *      - Moerills Expandable Markdown Editor (https://www.foundryvtt-hub.com/package/markdown-editor/)
+     */
+    checkForThirdPartyMarkdownEditors(){
+        const meme = (<Game>game).modules.get('markdown-editor');
+        return meme !== undefined && meme.active;
+    }
+
+    /**
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
     getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
@@ -80,91 +95,97 @@ export class SimpleCalendarNotes extends FormApplication {
             ... super.getData(options),
             isGM: GameSettings.IsGm(),
             viewMode: this.viewMode,
-            richButton: !this.viewMode,
             canEdit: GameSettings.IsGm() || GameSettings.UserID() === (<Note>this.object).author,
-            noteYear: 0,
-            noteMonth: '',
-            repeatOptions: {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
+            enableRichTextEditButton: this.checkForThirdPartyMarkdownEditors(),
+            displayDate: '',
+            repeatOptions: <NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             repeats: (<Note>this.object).repeats,
             repeatsText: '',
-            authorName: (<Note>this.object).author
+            authDisplay: {
+                name: '',
+                color: '',
+                textColor: ''
+            },
+            dateSelectorId: this.dateSelectorId,
+            categories: SimpleCalendar.instance.noteCategories.filter(nc => (<Note>this.object).categories.includes(nc.name)),
+            allCategories: SimpleCalendar.instance.noteCategories.map(nc => {
+                return {
+                    name: nc.name,
+                    color : nc.color,
+                    textColor: nc.textColor,
+                    selected: (<Note>this.object).categories.find(c => c === nc.name) !== undefined
+                }
+            })
         };
-        if(SimpleCalendar.instance.currentYear && ((<Note>this.object).repeats === NoteRepeat.Yearly || (<Note>this.object).repeats === NoteRepeat.Monthly)){
-            data.noteYear = SimpleCalendar.instance.currentYear.visibleYear;
-        } else {
-            data.noteYear = (<Note>this.object).year;
-        }
-        if(SimpleCalendar.instance.currentYear && (<Note>this.object).repeats === NoteRepeat.Monthly){
-            const visibleMonth = SimpleCalendar.instance.currentYear.getMonth('visible');
-            data.noteMonth = visibleMonth? visibleMonth.name : (<Note>this.object).monthDisplay;
-        } else {
-            data.noteMonth = (<Note>this.object).monthDisplay;
-        }
-        data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(data.repeatOptions[data.repeats])}`;
 
-        if(game.users){
+        if(SimpleCalendar.instance.currentYear){
+            const daysBetween = DateSelector.DaysBetweenDates({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, allDay: true},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, allDay: true});
+
+            if(daysBetween >= SimpleCalendar.instance.currentYear.totalNumberOfDays(false, true)){
+                data.repeatOptions = {0: 'FSC.Notes.Repeat.Never'};
+            } else if(daysBetween >= SimpleCalendar.instance.currentYear.months[0].days.length){
+                data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 3: 'FSC.Notes.Repeat.Yearly'};
+            }else if(daysBetween >= SimpleCalendar.instance.currentYear.weekdays.length){
+                data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'};
+            }
+        }
+
+        data.displayDate = (<Note>this.object).display();
+        const rOpt = data.repeatOptions[data.repeats];
+        if(rOpt){
+            data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(rOpt)}`;
+        }
+
+        const users = (<Game>game).users;
+        if(users){
             Logger.debug(`Looking for users with the id "${(<Note>this.object).author}"`);
-            const user = game.users.get((<Note>this.object).author);
+            const user = users.get((<Note>this.object).author);
             if(user){
-                data.authorName = user.name;
+                data.authDisplay = {
+                    name: user.name? user.name : '',
+                    color: user.data.color? user.data.color : '',
+                    textColor: Utilities.GetContrastColor(user.data.color? user.data.color : '')
+                }
             }
         }
         return data;
     }
 
     /**
-     * Sets up our rich text editor when the app is shown
-     * @param {JQuery<HTMLElement>} html The element that makes up the root of the application
-     * @private
+     * When the window is resized
+     * @param event
+     * @protected
      */
-    private setUpTextEditor(html: JQuery<HTMLElement>){
-        if(this.editors['content']){
-            if(this.editors['content'].mce === null){
-                this.editors['content'].options.target = (<JQuery>html).find('.editor .editor-content')[0];
-            }
-            if(!this.viewMode && this.editors['content'].options.target && this.editors['content'].button === null){
-                this.editors['content'].button = <HTMLElement>this.editors['content'].options.target.nextElementSibling;
-                this.editors['content'].hasButton = this.editors['content'].button && this.editors['content'].button.classList.contains("editor-edit");
-                this.editors['content'].active = !this.viewMode;
-                if(this.editors['content'].hasButton){
-                    this.editors['content'].button.onclick = SimpleCalendarNotes.instance.textEditorButtonClick.bind(this)
-                }
-            }
-            if(this.editors['content'].mce === null && this.editors['content'].active){
-                this.activateEditor('content');
-            }
-        }
+    protected _onResize(event: Event) {
+        super._onResize(event);
+        this.hasBeenResized = true;
     }
 
     /**
-     * Activates a rich text editor, copied code from the main code file but with the editor focus removed
-     * @param name
-     * @param options
-     * @param initialContent
+     * Sets the width and height of the note window so that everything that needs to be visible is.
+     * @param {JQuery} html
      */
-    public activateEditor(name: string, options: any ={}, initialContent="") {
-        const editor = this.editors[name];
-        if ( !editor ) throw new Error(`${name} is not a registered editor name!`);
-        options = mergeObject(editor.options, options);
-        options.height = options.target.offsetHeight;
-        TextEditor.create(options, initialContent || editor.initial).then(mce => {
-            editor.mce = mce;
-            editor.changed = false;
-            editor.active = true;
-            mce.on('change', ev => editor.changed = true);
-        });
-    }
-
-    /**
-     * The button click for re-initializing the text editor
-     * @param {Event} e The click event
-     */
-    public textEditorButtonClick(e: Event){
-        if(this.editors['content']){
-            this.editors['content'].button.style.display = "none";
+    setWidthHeight(html: JQuery){
+        if(this.hasBeenResized){
+            return;
         }
-        this.richEditorSaved = false;
-        this.activateEditor('content');
+        let height = 0;
+        let width = 16;
+
+        const form = (<JQuery>html).find('form');
+        if(form){
+            const h = form.outerHeight(true);
+            const w = form.outerWidth(true);
+            height += h? h : 0;
+            width += w? w : 0;
+        }
+
+        if(width< 440){
+            width = 440;
+        }
+        height += 46;
+
+        this.setPosition({width: width, height: height});
     }
 
     /**
@@ -173,14 +194,107 @@ export class SimpleCalendarNotes extends FormApplication {
      * @protected
      */
     public activateListeners(html: JQuery<HTMLElement>) {
+        super.activateListeners(html);
+        this.setWidthHeight(html);
         if(html.hasOwnProperty("length")) {
-            this.setUpTextEditor(html);
-            (<JQuery>this.element).find('#scNoteTitle').focus();
-            (<JQuery>html).find('#scSubmit').on('click', SimpleCalendarNotes.instance.saveButtonClick.bind(SimpleCalendarNotes.instance));
+            this.dateSelector?.activateListeners();
+            (<JQuery>this.element).find('#scNoteTitle').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('#scNoteRepeats').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('#scNoteDateAllDay').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('input[name="scNoteCategories"]').on('change', this.inputChanged.bind(this));
 
-            (<JQuery>html).find('#scNoteEdit').on('click', SimpleCalendarNotes.instance.editButtonClick.bind(SimpleCalendarNotes.instance));
-            (<JQuery>html).find('#scNoteDelete').on('click', SimpleCalendarNotes.instance.deleteButtonClick.bind(SimpleCalendarNotes.instance));
+
+            (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
+            (<JQuery>html).find('#scNoteEdit').on('click', this.editButtonClick.bind(this));
+            (<JQuery>html).find('#scNoteDelete').on('click', this.deleteButtonClick.bind(this));
+            if(this.initialLoad){
+                this.initialLoad = false;
+                setTimeout(this.focusTitleInput.bind(this), 1000);
+            }
         }
+    }
+
+    /**
+     * Focuses the title input
+     */
+    focusTitleInput(){
+        (<JQuery>this.element).find('#scNoteTitle').focus();
+    }
+
+    /**
+     * Processes all input change requests and ensures data is properly saved between form update
+     * @param {Event} e The change event
+     */
+    public inputChanged(e: Event){
+        Logger.debug('Input has changed, updating note object');
+        const id = (<HTMLElement>e.currentTarget).id;
+        const name = (<HTMLInputElement>e.currentTarget).name;
+        let value = (<HTMLInputElement>e.currentTarget).value;
+        const checked = (<HTMLInputElement>e.currentTarget).checked;
+
+        if(value){
+            value = value.trim();
+        }
+
+        if(id && id[0] !== '-'){
+            Logger.debug(`ID "${id}" change found`);
+            if(id === "scNoteTitle"){
+                (<Note>this.object).title = value;
+            } else if(id === "scNoteRepeats"){
+                const r = parseInt(value);
+                if(!isNaN(r)){
+                    (<Note>this.object).repeats = r;
+                } else {
+                    (<Note>this.object).repeats = 0;
+                }
+            } else if(id === "scNoteVisibility"){
+                (<Note>this.object).playerVisible = checked;
+            } else if(id === "scNoteDateAllDay"){
+                (<Note>this.object).allDay = !checked;
+            }
+        } else if(name){
+            Logger.debug(`Input Name "${name}" change found`);
+            if(name === 'scNoteCategories'){
+                if(checked){
+                    const nc = SimpleCalendar.instance.noteCategories.findIndex(nc => nc.name === value);
+                    (<Note>this.object).categories.push(SimpleCalendar.instance.noteCategories[nc].name);
+                } else {
+                    const nci = (<Note>this.object).categories.findIndex(nc => nc === value);
+                    (<Note>this.object).categories.splice(nci, 1);
+                }
+            }
+        }
+        this.updateApp();
+    }
+
+    /**
+     * Called when the date selector date has been selected
+     * @param selectedDate
+     */
+    dateSelectorClick(selectedDate: SCDateSelector.SelectedDate){
+        (<Note>this.object).year = selectedDate.startDate.year;
+        (<Note>this.object).month = selectedDate.startDate.month;
+        (<Note>this.object).day = selectedDate.startDate.day;
+        (<Note>this.object).allDay = selectedDate.startDate.allDay;
+        (<Note>this.object).hour = selectedDate.startDate.hour;
+        (<Note>this.object).minute = selectedDate.startDate.minute;
+        (<Note>this.object).endDate = {
+            year: selectedDate.endDate.year,
+            month: selectedDate.endDate.month,
+            day: selectedDate.endDate.day,
+            hour: selectedDate.endDate.hour,
+            minute: selectedDate.endDate.minute,
+            seconds: 0
+        };
+
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            const monthObj = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === selectedDate.startDate.month);
+            if(monthObj){
+                (<Note>this.object).monthDisplay = monthObj.name;
+            }
+        }
+        this.updateApp();
     }
 
     /**
@@ -192,14 +306,24 @@ export class SimpleCalendarNotes extends FormApplication {
     protected _updateObject(event: Event | JQuery.Event, formData: any): Promise<any> {
         (<Note>this.object).content = formData['content'];
         Logger.debug('Update Object Called');
-        this.richEditorSaved = true;
+        this.updateApp();
         return Promise.resolve(false);
+    }
+
+    /**
+     * Override the base close function so that we can properly remove any instances of the date selector before closing the dialog
+     * @param options
+     */
+    close(options?: FormApplication.CloseOptions): Promise<void> {
+        DateSelector.RemoveSelector(this.dateSelectorId);
+        return super.close(options);
     }
 
     /**
      * Shows the application window
      */
     public showApp(){
+        this.hasBeenResized = false;
         this.render(true);
     }
 
@@ -241,7 +365,7 @@ export class SimpleCalendarNotes extends FormApplication {
                 yes: {
                     icon: '<i class="fas fa-trash"></i>',
                     label: GameSettings.Localize('FSC.Delete'),
-                    callback: SimpleCalendarNotes.instance.deleteConfirm.bind(this)
+                    callback: this.deleteConfirm.bind(this)
                 },
                 no: {
                     icon: '<i class="fas fa-times"></i>',
@@ -277,52 +401,27 @@ export class SimpleCalendarNotes extends FormApplication {
     public async saveButtonClick(e: Event){
         Logger.debug('Saving New Note');
         e.preventDefault();
-        let detailsEmpty = true;
-        if(this.editors['content'] && this.editors['content'].mce){
-            if(this.editors['content'].mce.getContent().trim() !== '' && !this.editors['content'].mce.isNotDirty){
-                (<Note>this.object).content = this.editors['content'].mce.getContent().trim();
-                this.richEditorSaved = true;
-            }
-        } else {
-            detailsEmpty = false;
-        }
-        if(this.richEditorSaved || detailsEmpty){
-            const title = (<JQuery>this.element).find('#scNoteTitle').val();
-            const playerVisible = (<JQuery>this.element).find('#scNoteVisibility').is(':checked');
-            let repeats = (<JQuery>this.element).find('#scNoteRepeats').find(":selected").val();
-            if(repeats){
-                repeats = parseInt(repeats.toString());
-            } else {
-                repeats = 0;
-            }
-            if(title){
-                (<Note>this.object).title = title.toString();
-                (<Note>this.object).playerVisible = playerVisible;
-                (<Note>this.object).repeats = repeats;
-                const currentNotes = GameSettings.LoadNotes().map(n => {
-                    const note = new Note();
-                    note.loadFromConfig(n);
-                    return note;
-                });
-                if(this.updateNote){
-                    const updateNote = currentNotes.find(n => n.id === (<Note>this.object).id);
-                    if(updateNote){
-                        updateNote.title = (<Note>this.object).title;
-                        updateNote.content = (<Note>this.object).content;
-                        updateNote.playerVisible = (<Note>this.object).playerVisible;
-                        updateNote.repeats = (<Note>this.object).repeats;
-                    }
-                } else {
-                    currentNotes.push(<Note>this.object);
-                }
-                await GameSettings.SaveNotes(currentNotes).catch(Logger.error);
-                this.closeApp();
-            } else {
-                GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoTitle"), 'error');
-            }
-        } else {
-            GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.RichText"), 'warn');
-        }
 
+        if(this.editors['content'] && this.editors['content'].mce){
+            if(this.editors['content'].mce.getContent().trim() !== ''){
+                (<Note>this.object).content = this.editors['content'].mce.getContent().trim();
+            }
+        }
+        if((<Note>this.object).title){
+            let currentNotes = GameSettings.LoadNotes().map(n => {
+                const note = new Note();
+                note.loadFromConfig(n);
+                return note;
+            });
+            if(this.updateNote){
+                currentNotes = currentNotes.map(n => n.id === (<Note>this.object).id? (<Note>this.object) : n);
+            } else {
+                currentNotes.push(<Note>this.object);
+            }
+            await GameSettings.SaveNotes(currentNotes).catch(Logger.error);
+            this.closeApp();
+        } else {
+            GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoTitle"), 'error');
+        }
     }
 }

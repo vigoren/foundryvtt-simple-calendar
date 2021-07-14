@@ -1,6 +1,6 @@
 import Month from "./month";
 import {
-    DateTimeIntervals,
+    DateTime,
     DateTimeParts,
     DayTemplate,
     GeneralSettings,
@@ -104,12 +104,13 @@ export default class Year {
      * The default general settings for the simple calendar
      */
     generalSettings: GeneralSettings = {
-        gameWorldTimeIntegration: GameWorldTimeIntegrations.None,
-        showClock: false,
+        gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed,
+        showClock: true,
         pf2eSync: true,
         permissions: {
             viewCalendar: {player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined},
             addNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},
+            reorderNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},
             changeDateTime: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}
         }
     };
@@ -140,7 +141,7 @@ export default class Year {
         this.leapYearRule = new LeapYear();
         this.time = new Time();
 
-        switch (game.system.id){
+        switch ((<Game>game).system.id){
             case GameSystems.DnD5E:
                 this.gameSystem = GameSystems.DnD5E;
                 break;
@@ -241,7 +242,7 @@ export default class Year {
      */
     daysIntoWeeks(month: Month, year: number, weekLength: number): (boolean | DayTemplate)[][]{
         const weeks = [];
-        const dayOfWeekOffset = this.visibleMonthStartingDayOfWeek();
+        const dayOfWeekOffset = this.monthStartingDayOfWeek(month, year);
         const isLeapYear = this.leapYearRule.isLeapYear(year);
         const days = month.getDaysForTemplate(isLeapYear);
 
@@ -303,6 +304,7 @@ export default class Year {
         y.generalSettings.permissions.viewCalendar = Year.clonePermissions(this.generalSettings.permissions.viewCalendar);
         y.generalSettings.permissions.addNotes = Year.clonePermissions(this.generalSettings.permissions.addNotes);
         y.generalSettings.permissions.changeDateTime = Year.clonePermissions(this.generalSettings.permissions.changeDateTime);
+        y.generalSettings.permissions.reorderNotes = Year.clonePermissions(this.generalSettings.permissions.reorderNotes);
         y.seasons = this.seasons.map(s => s.clone());
         y.moons = this.moons.map(m => m.clone());
         y.yearNames = this.yearNames.map(n => n);
@@ -334,7 +336,7 @@ export default class Year {
         if(user === null){
             return false;
         }
-        return !!(user.isGM || (permissions.player && user.hasRole(1)) || (permissions.trustedPlayer && user.hasRole(2)) || (permissions.assistantGameMaster && user.hasRole(3)) || (permissions.users && permissions.users.includes(user.id)));
+        return !!(user.isGM || (permissions.player && user.hasRole(1)) || (permissions.trustedPlayer && user.hasRole(2)) || (permissions.assistantGameMaster && user.hasRole(3)) || (permissions.users && permissions.users.includes(user.id? user.id : '')));
     }
 
     /**
@@ -584,15 +586,16 @@ export default class Year {
 
     /**
      * Calculates the day of the week the first day of the currently visible month lands on
+     * @param {Month} month The month to get the starting day of the week for
+     * @param {number} year The year the check
      * @return {number}
      */
-    visibleMonthStartingDayOfWeek(): number {
-        const visibleMonth = this.getMonth('visible');
-        if(visibleMonth){
-            if(visibleMonth.intercalary && !visibleMonth.intercalaryInclude){
+    monthStartingDayOfWeek(month: Month, year: number): number {
+        if(month){
+            if(month.intercalary && !month.intercalaryInclude){
                 return 0;
             } else {
-                return this.dayOfTheWeek(this.visibleYear, visibleMonth.numericRepresentation, 1);
+                return this.dayOfTheWeek(year, month.numericRepresentation, 1);
             }
         } else {
             return 0;
@@ -723,7 +726,7 @@ export default class Year {
                     daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
                 }
                 daysSoFar++;
-                totalSeconds =  this.time.getTotalSeconds(daysSoFar) - PF2E.getWorldCreateSeconds();
+                totalSeconds =  this.time.getTotalSeconds(daysSoFar) - PF2E.getWorldCreateSeconds(false);
             }
         }
         return totalSeconds;
@@ -734,11 +737,11 @@ export default class Year {
      */
     async syncTime(force: boolean = false){
         // Only if the time tracking rules are set to self or mixed
-        if(this.canUser(game.user, this.generalSettings.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
+        if(this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
             Logger.debug(`Year.syncTime()`);
             const totalSeconds = this.toSeconds();
             // If the calculated seconds are different from what is set in the game world time, update the game world time to match sc's time
-            if(totalSeconds !== game.time.worldTime || force){
+            if(totalSeconds !== (<Game>game).time.worldTime || force){
                 //Let the local functions know that we all ready updated this time
                 this.timeChangeTriggered = true;
                 //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
@@ -840,7 +843,7 @@ export default class Year {
      * Convert the passed in seconds into an interval of larger time
      * @param seconds
      */
-    secondsToInterval(seconds: number): DateTimeIntervals {
+    secondsToInterval(seconds: number): DateTime {
         let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
         if(sec >= this.time.secondsInMinute){
             min = Math.floor(sec / this.time.secondsInMinute);
@@ -898,7 +901,6 @@ export default class Year {
         // If this is a Pathfinder 2E game, add the world creation seconds
         if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
             newTime += PF2E.getWorldCreateSeconds();
-            newTime -= this.time.secondsPerDay;
         }
         if(changeAmount !== 0){
             // If the tracking rules are for self or mixed and the clock is running then we make the change.
@@ -961,7 +963,11 @@ export default class Year {
             }
         }
 
-        return this.getSeason(currentMonth, currentDay);
+        const season = this.getSeason(currentMonth, currentDay);
+        return {
+            name: season.name,
+            color: season.color
+        };
     }
 
     /**
@@ -970,6 +976,7 @@ export default class Year {
      * @param {number} day The day number
      */
     getSeason(monthIndex: number, day: number) {
+        let season = new Season('', 1, 1);
         if(day > 0 && monthIndex >= 0){
             let currentSeason: Season | null = null;
             for(let i = 0; i < this.seasons.length; i++){
@@ -985,16 +992,14 @@ export default class Year {
             }
 
             if(currentSeason){
-                return {
-                    name: currentSeason.name,
-                    color: currentSeason.color === 'custom'? currentSeason.customColor : currentSeason.color
-                };
+                season = currentSeason.clone();
             }
         }
-        return {
-            name: '',
-            color: ''
-        };
+        if(this.months.length > 0){
+            season.startingMonth = this.months.findIndex(m => m.numericRepresentation === season.startingMonth);
+            season.startingDay = this.months[season.startingMonth >= 0? season.startingMonth : 0].days.findIndex(d => d.numericRepresentation === season.startingDay);
+        }
+        return season;
     }
 
     /**

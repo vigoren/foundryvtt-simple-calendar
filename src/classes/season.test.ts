@@ -22,12 +22,11 @@ describe('Season Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(s).length).toBe(5); //Make sure no new properties have been added
+        expect(Object.keys(s).length).toBe(4); //Make sure no new properties have been added
         expect(s.name).toBe('Spring');
         expect(s.startingMonth).toBe(1);
         expect(s.startingDay).toBe(1);
         expect(s.color).toBe('#ffffff');
-        expect(s.customColor).toBe('');
     });
 
     test('Clone', () => {
@@ -51,11 +50,6 @@ describe('Season Tests', () => {
         y.months.push(new Month("Month 1", 1, 0, 10));
         c = s.toTemplate(y);
         expect(c.dayList.length).toStrictEqual(10);
-
-        s.color = 'custom';
-        s.customColor = '#FF0000';
-        c = s.toTemplate(y);
-        expect(c.color).toBe('#FF0000');
     });
 
 });

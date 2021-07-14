@@ -1,5 +1,61 @@
 # Change Log
 
+## v1.3.0 - Note Improvements
+
+### Notes
+
+This update is mainly around notes and improving the experience around adding, editing and viewing them. The notable improvements/changes to notes are:
+
+#### Functional Changes
+
+- Notes can now span more than 1 day.
+- Notes can now have a start and end time associated with them.
+- Added a built-in Date/Time selector. This is a new input type that will show a calendar where you can choose a day, or range of days for the note a well as add a start/end time for the note.
+- Notes can now be ordered on a day. By default, notes are ordered by starting time but can be adjusted for a custom order.
+
+#### New Configuration Options
+
+- Added a new setting to allow players to order notes on a day or not.
+- Added the ability to specify note categories with unique labels and colors. These can be applied to a note to help distinguish different types of notes.
+
+#### Visual Changes
+
+- Refreshed the look of the note list.
+  - Added an indicator to the note list for GMs if the note is visible to the players or not.
+  - Added a label to the note list for the time the note takes place at.
+  - Added a label to the note list for who wrote the note.
+  - Any custom note categories associated with the note will also be shown.
+- Changed the dialog's behaviour so that it will attempt to size itself to fit the content of the note appropriately.
+  
+### Quality of Life Changes
+
+- Added a button to the module settings list that will open Simple Calendars configuration window.
+- Changed the default "Show Clock" option so that new installs will show the clock right away. The clock can still be disabled by unchecking that option.
+- Changed the default for the "Game World Integration" from None to Mixed. This only affects new installs of the module.
+
+### API Changes
+
+- Fixed a bug with the API getCurrentSeason function where the last season would always be returned.
+- Additional information about the Season is returned for the api functions `getCurrentSeason`, `getAllSeasons` and `timestampToDate`:
+  - startingMonth: The month index the season starts on.
+  - startingDay: The day index of the starting month the season starts on.
+- Fixed a bug with the API function `timestampPlusInterval` where in PF2E systems the returned value would be ahead by 1 day.
+
+### Bug Fixes
+
+- Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
+- Fixed a bug where on new installs the default month and weekday names would not load correctly.
+- Added a temporary "fix" to help with the weirdness that happens when running the latest version of Calendar/Weather. This "fix" will go away once Calendar/Weather has finished their integration with Simple Calendar. Some things to note about the changes:
+  - Any updates to the calendar structure (changing or months, season or moons) done within the Calendar/Weather interface will now require you to go into Simple Calendars configuration and re-import the calendar to have the changes reflected there.
+  - I have run tests with PF2E worlds and everything should stay in sync with that systems world clock.
+  - Calendar/Weather, about-time and Simple Calendar play better together but they will be their best when Calendar/Weather has finished its rewrite to properly utilize Simple Calendars API.
+- Fixed an issued with importing events from Calendar/Weather.
+  - In some instances Calendar/Weather Events don't have their month saved properly, in these instances the month is set to the first month of the year.
+
+### Translations
+
+- German Translation updates from [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird), thanks!
+
 ## v1.2.113 - API Changes
 
 - Updated the timestampToDate function's return values. The result now contains a display object that contains all the different display strings for the passed in timestamp.
@@ -8,6 +64,7 @@
 - Added a function SimpleCalendar.api.getCurrentSeason() that returns details about the season for the current date.
 - Added a function SimpleCalendar.api.getAllSeasons() that returns details for every configured season in Simple Calendar.
 - Fixed a bug when importing from Calendar/weather where the hours per day would end up being undefined.
+- Added the ability to use the new Date Selector input type to other modules/systems through Simple Calendars API. [Read more here!](./docs/API.md)
 
 ## v1.2.107 - Calendar Configuration Import/Export, API Changes, Bug Fixes
 

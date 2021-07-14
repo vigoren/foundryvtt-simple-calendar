@@ -1,23 +1,112 @@
 #simpleCalendarNotes{
   .editor{
-    min-width: 500px;
+    background-color: #ffffff;
     .editor-content{
+      min-height: 200px;
+    }
+    .EasyMDEContainer{
       min-height: 200px;
     }
   }
 
-  .note-repeat{
-    float: right;
-    font-size: 12px;
+  form{
+    margin-bottom: 50px;
+
+    .hide {
+      display: none;
+    }
+    .date-time-select{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-content: center;
+      justify-content: space-between;
+
+      & > label{
+        flex: 1 1;
+      }
+      .fields{
+        flex: 2;
+      }
+      & > p{
+        flex: 1 1 100%;
+      }
+    }
+    .category-list{
+      flex-wrap: wrap;
+    }
   }
 
-  .note-author{
-    text-align: right;
-    color: #383838;
-    font-size: 12px;
+  .note-details{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .note-time{
+      background-color: #444141;
+      color: #ffffff;
+    }
+
+    .note-repeats{
+      background-color: #bbbbbb;
+      color: #000;
+      margin-left: auto;
+    }
+
+
+
+    .note-icon{
+      span{
+        margin-right: 0;
+      }
+    }
   }
+
+  .note-category{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    border-radius: 7px;
+    padding: .2rem .4rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    box-shadow: 1px 2px 5px #6b6b6b;
+
+    span{
+      margin-right: 0.25rem;
+    }
+
+    input[type="checkbox"]{
+      flex: unset;
+      width: unset;
+      height: unset;
+      margin-top: 1px;
+    }
+  }
+
   .edit-controls{
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    backdrop-filter: blur(2px);
+    left: 0;
+    bottom: 0;
+    height: 30px;
+    border-top: 1px solid #b5b5b5;
     display: flex;
     justify-content: space-around;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    .fa-edit, .fa-trash{
+      width: 25%;
+    }
+
+    .save{
+      width: 50%;
+    }
   }
 }

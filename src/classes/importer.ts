@@ -2,10 +2,12 @@ import Year from "./year";
 import {AboutTimeImport, CalendarWeatherImport} from "../interfaces";
 import {Weekday} from "./weekday";
 import Month from "./month";
-import {GameSystems, LeapYearRules, MoonIcons} from "../constants";
+import {GameSystems, LeapYearRules, MoonIcons, NoteRepeat} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
+import {Note} from "./note";
+import SimpleCalendar from "./simple-calendar";
 
 export default class Importer{
 
@@ -14,7 +16,7 @@ export default class Importer{
      */
     static aboutTimeV1(){
         let abv1 = false;
-        const aboutTime = game.modules.get('about-time');
+        const aboutTime = (<Game>game).modules.get('about-time');
         if(aboutTime && aboutTime.active){
             //@ts-ignore
             const versionParts = aboutTime.data.version.split('.');
@@ -31,7 +33,7 @@ export default class Importer{
      * @param {Year} year The year to load the about time configuration into
      */
     static async importAboutTime(year: Year){
-        const aboutTimeCalendar = <AboutTimeImport.Calendar>game.settings.get('about-time', 'savedCalendar');
+        const aboutTimeCalendar = <AboutTimeImport.Calendar>(<Game>game).settings.get('about-time', 'savedCalendar');
 
         //Set up the time parameters
         year.time.hoursInDay = aboutTimeCalendar['hours_per_day'];
@@ -76,7 +78,7 @@ export default class Importer{
         }
 
         //Set the current time
-        const currentTime = year.secondsToDate(game.time.worldTime);
+        const currentTime = year.secondsToDate((<Game>game).time.worldTime);
         year.updateTime(currentTime);
 
         //Save everything
@@ -133,16 +135,16 @@ export default class Importer{
             //Gross but might be all we can do
             newAboutTimeConfig.leap_year_rule = `(year) => Math.floor(year / ${year.leapYearRule.customMod} ) + 1`;
         }
-        game.settings.set("about-time", "savedCalendar", newAboutTimeConfig);
+        (<Game>game).settings.set("about-time", "savedCalendar", newAboutTimeConfig);
 
         // Set the about-time timeZeroOffset to an empty string as it doesn't need to be set to anything, unless this is a PF2E game then don't set
         if(year.gameSystem !== GameSystems.PF2E){
-            await game.settings.set("about-time", "timeZeroOffset", '');
+            await (<Game>game).settings.set("about-time", "timeZeroOffset", '');
         }
 
         // Ensure about time uses the new calendar on startup
-        if (game.settings.get("about-time", "calendar") !== 0){
-            await game.settings.set("about-time", "calendar", 0);
+        if ((<Game>game).settings.get("about-time", "calendar") !== 0){
+            await (<Game>game).settings.set("about-time", "calendar", 0);
         }
     }
 
@@ -155,7 +157,7 @@ export default class Importer{
      *      - Seasons: The color of the seasons can not be transferred over
      */
     static async importCalendarWeather(year: Year){
-        const currentSettings = <CalendarWeatherImport.Calendar> game.settings.get('calendar-weather', 'dateTime');
+        const currentSettings = <CalendarWeatherImport.Calendar> (<Game>game).settings.get('calendar-weather', 'dateTime');
 
         //Set up the time
         //year.time.hoursInDay = currentSettings.dayLength;
@@ -200,7 +202,7 @@ export default class Importer{
         year.yearZero = 0;
 
         //Set the current time
-        const currentTime = year.secondsToDate(game.time.worldTime);
+        const currentTime = year.secondsToDate((<Game>game).time.worldTime);
         year.updateTime(currentTime);
 
         //Set up the seasons
@@ -259,6 +261,60 @@ export default class Importer{
             year.moons.push(newMoon);
         }
 
+        if(SimpleCalendar.instance){
+            for(let i = 0; i < currentSettings.events.length; i++){
+                const event = currentSettings.events[i];
+                const note = new Note();
+                note.title = event.name;
+                note.content = event.text;
+                note.allDay = event.allDay;
+                note.year = parseInt(event.date.year.toString());
+                note.endDate.year = note.year;
+
+                let month = year.months.findIndex(m => m.numericRepresentation === parseInt(event.date.month) || m.name === event.date.month);
+                if(month < 0){
+                    month = 0;
+                }
+
+                note.month = year.months[month].numericRepresentation;
+                note.endDate.month = note.month;
+                note.day = event.date.day;
+                note.endDate.day = note.day;
+                note.hour = event.date.hours;
+                note.minute = event.date.minutes;
+                note.endDate.hour = note.hour;
+                note.endDate.minute = note.minute;
+                SimpleCalendar.instance.notes.push(note);
+            }
+
+            for(let i = 0; i < currentSettings.reEvents.length; i++){
+                const event = currentSettings.reEvents[i];
+                const note = new Note();
+                note.title = event.name;
+                note.content = event.text;
+                note.year = 0;
+                note.endDate.year = note.year;
+
+                let month = year.months.findIndex(m => m.numericRepresentation === parseInt(event.date.month) || m.name === event.date.month);
+                if(month < 0){
+                    month = 0;
+                }
+
+                note.month = year.months[month].numericRepresentation;
+                note.endDate.month = note.month;
+                note.day = event.date.day;
+                note.endDate.day = note.day;
+                note.hour = 0;
+                note.minute = 0;
+                note.endDate.hour = note.hour;
+                note.endDate.minute = note.minute;
+                note.repeats = NoteRepeat.Yearly;
+                SimpleCalendar.instance.notes.push(note);
+            }
+
+            await GameSettings.SaveNotes(SimpleCalendar.instance.notes);
+        }
+
         //Save everything
         await GameSettings.SaveYearConfiguration(year);
         await GameSettings.SaveMonthConfiguration(year.months);
@@ -280,7 +336,7 @@ export default class Importer{
      *      - Seasons: Simple Calendars colors do not exist in Calendar/Weather so they can not be exported
      */
     static async exportCalendarWeather(year: Year){
-        const currentSettings = <CalendarWeatherImport.Calendar>game.settings.get('calendar-weather', 'dateTime');
+        const currentSettings = <CalendarWeatherImport.Calendar>(<Game>game).settings.get('calendar-weather', 'dateTime');
 
         const monthList: CalendarWeatherImport.Month[] = [];
         for(let i = 0; i < year.months.length; i++){
@@ -306,7 +362,11 @@ export default class Importer{
                 date: {
                     day: year.seasons[i].startingDay - 1,
                     month: '',
-                    combined: `-${year.seasons[i].startingDay - 1}`
+                    combined: `-${year.seasons[i].startingDay - 1}`,
+                    year: year.numericRepresentation.toString(),
+                    hours: 0,
+                    minutes: 0,
+                    seconds: 0
                 }
             });
         }
@@ -341,7 +401,7 @@ export default class Importer{
         currentSettings.first_day = 0;
         currentSettings.seasons = seasonList;
         currentSettings.moons = moonList;
-        await game.settings.set('calendar-weather', 'dateTime', currentSettings);
+        await (<Game>game).settings.set('calendar-weather', 'dateTime', currentSettings);
         await Importer.exportToAboutTime(year);
         window.location.reload();
     }
