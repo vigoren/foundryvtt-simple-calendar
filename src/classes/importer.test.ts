@@ -8,6 +8,7 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
+import "../../__mocks__/crypto";
 
 import Year from "./year";
 import Month from "./month";
@@ -23,6 +24,7 @@ describe('Importer Class Tests', () => {
     let y: Year;
 
     beforeEach(() => {
+        jest.spyOn(console,'error').mockImplementation();
         SimpleCalendar.instance = new SimpleCalendar();
         y = new Year(0);
         y.months.push(new Month('M', 1, 0, 5));
@@ -207,8 +209,14 @@ describe('Importer Class Tests', () => {
                 referencePercent:  0,
                 isWaxing: false
             }],
-            events: [],
-            reEvents: []
+            events: [
+                { "name":"event", "date":{ "month":"", "day":1, "year":"4721", "hours":19, "minutes":36, "seconds":18, "combined":"-1-4721" }, "text":"", "allDay":false },
+                { "name":"event", "date":{ "month":"1", "day":1, "year":"4721", "hours":19, "minutes":36, "seconds":18, "combined":"-1-4721" }, "text":"", "allDay":false },
+            ],
+            reEvents: [
+                { "name":"rere", "date":{ "month":"", "day":6, "combined":"-6" }, "text":"" },
+                { "name":"rere", "date":{ "month":"2", "day":6, "combined":"-6" }, "text":"" }
+            ]
         };
 
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(mockCalendarWeather);
@@ -263,6 +271,11 @@ describe('Importer Class Tests', () => {
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(mockCalendarWeather);
         Importer.importCalendarWeather(y);
         expect(y.seasons[0].color).toBe('#5b80a5');
+
+        // @ts-ignore
+        SimpleCalendar.instance = null;
+        (<Mock>(<Game>game).settings.get).mockReturnValueOnce(mockCalendarWeather);
+        Importer.importCalendarWeather(y);
     });
 
     test('Export Calendar Weather', async () => {

@@ -58,59 +58,59 @@ export default class DateSelector {
     static IsDayBetweenDates(checkDate: SCDateSelector.Date, startDate: SCDateSelector.Date, endDate: SCDateSelector.Date){
         let between = DateRangeMatch.None;
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+
             let checkMonthIndex = checkDate.month;
+            let checkDayIndex = checkDate.day;
             let startMonthIndex = startDate.month;
-            let endMonthIndex = 0;
+            let startDayIndex = startDate.day;
+            let endMonthIndex = endDate.month;
+            let endDayIndex = endDate.day;
+
+            let checkSeconds = 0;
+            let startSeconds = 0;
+            let endSeconds = 0;
 
             const sMonth = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === startDate.month);
             const cMonth = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === checkDate.month);
+            const eMonth = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === endDate.month);
+            let clone = SimpleCalendar.instance.currentYear.clone();
+            clone.time.setTime(0, 0, 0);
+
             if(sMonth > -1){
                 startMonthIndex = sMonth;
+                startDayIndex = SimpleCalendar.instance.currentYear.months[startMonthIndex].days.findIndex(d => d.numericRepresentation === startDate.day);
+                clone.updateMonth(startMonthIndex, 'current', true, startDayIndex);
+                clone.numericRepresentation = startDate.year;
+                startSeconds = clone.toSeconds();
             }
             if(cMonth > -1){
                 checkMonthIndex = cMonth;
+                checkDayIndex = SimpleCalendar.instance.currentYear.months[checkMonthIndex].days.findIndex(d => d.numericRepresentation === checkDate.day);
+                clone.updateMonth(checkMonthIndex, 'current', true, checkDayIndex);
+                clone.numericRepresentation = checkDate.year;
+                checkSeconds = clone.toSeconds();
             }
-
-            const eMonth = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === endDate.month);
             if(eMonth > -1){
                 endMonthIndex = eMonth;
-            } else {
-                endMonthIndex = endDate.month;
+                endDayIndex = SimpleCalendar.instance.currentYear.months[endMonthIndex].days.findIndex(d => d.numericRepresentation === endDate.day);
+                clone.updateMonth(endMonthIndex, 'current', true, endDayIndex);
+                clone.numericRepresentation = endDate.year;
+                endSeconds = clone.toSeconds();
             }
-            // If the start and end date are the same
-            if(checkDate.day === startDate.day && checkMonthIndex === startMonthIndex && checkDate.year === startDate.year && checkDate.day === endDate.day && checkMonthIndex === endMonthIndex && checkDate.year === endDate.year){
+
+            if(cMonth === -1 || sMonth === -1 || eMonth === -1){
+                between = DateRangeMatch.None;
+            }
+            //If the start and end date are the same as the check date
+            else if(checkSeconds === startSeconds && checkSeconds === endSeconds){
                 between = DateRangeMatch.Exact;
-            } else if(checkDate.day === startDate.day && checkMonthIndex === startMonthIndex && checkDate.year === startDate.year){
+            }
+            else if(checkSeconds === startSeconds){
                 between = DateRangeMatch.Start;
-            } else if(checkDate.day === endDate.day && checkMonthIndex === endMonthIndex && checkDate.year === endDate.year){
+            } else if(checkSeconds === endSeconds){
                 between = DateRangeMatch.End;
-            } else {
-                // Start and end are the same month and year
-                if(startMonthIndex === endMonthIndex && startMonthIndex === checkMonthIndex && startDate.year === endDate.year && startDate.year === checkDate.year){
-                    if(checkDate.day > startDate.day && checkDate.day < endDate.day){
-                        between = DateRangeMatch.Middle;
-                    }
-                }
-                // Start and end are different month but year is the same
-                else if(startMonthIndex !== endMonthIndex){
-                    // Start month go until the end of the month
-                    if(checkMonthIndex === startMonthIndex && checkDate.day > startDate.day && checkDate.year === startDate.year){
-                        between = DateRangeMatch.Middle;
-                    }
-                    //End month go from the first of the month until the end
-                    else if(checkMonthIndex === endMonthIndex && checkDate.day < endDate.day && checkDate.year === endDate.year){
-                        between = DateRangeMatch.Middle;
-                    }
-                    //In-between month go from first until end of the month
-                    else if(
-                        (checkMonthIndex > startMonthIndex && checkMonthIndex < endMonthIndex) ||
-                        (checkDate.year > startDate.year && checkDate.year < endDate.year) //||
-                        //(checkMonthIndex > startMonthIndex && checkDate.year === startDate.year) ||
-                        //(checkMonthIndex < endMonthIndex && checkDate.year === endDate.year)
-                    ){
-                        between = DateRangeMatch.Middle;
-                    }
-                }
+            } else if( checkSeconds < endSeconds && checkSeconds > startSeconds){
+                between = DateRangeMatch.Middle;
             }
         }
         return between;

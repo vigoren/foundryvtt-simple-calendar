@@ -89,7 +89,7 @@ describe('Date Selector Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         expect(DateSelector.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.None);
         SimpleCalendar.instance.currentYear = y;
-        expect(DateSelector.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Exact);
+        expect(DateSelector.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.None);
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));
         y.months.push(new Month('W', 3, 0, 20));
@@ -128,7 +128,7 @@ describe('Date Selector Class Tests', () => {
 
         endDate.year = 3;
         endDate.month = 1;
-        expect(DateSelector.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.None);
+        expect(DateSelector.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Middle);
     });
 
     test('Days Between Dates', () => {

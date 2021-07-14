@@ -1,9 +1,10 @@
-import {DateTimeParts, NoteCategory, NoteConfig, NoteTemplate} from "../interfaces";
+import {DateTimeParts, DayTemplate, NoteConfig, NoteTemplate} from "../interfaces";
 import {GameSettings} from "./game-settings"
 import {DateRangeMatch, NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import DateSelector from "./date-selector";
 import Utilities from "./utilities";
+import {start} from "repl";
 
 /**
  * All content around a calendar note
@@ -269,14 +270,243 @@ export class Note{
                     }
                 }
             } else if(this.repeats === NoteRepeat.Monthly){
-                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                let sMonth = month;
+                let eMonth = month;
+                let sYear = year;
+                let eYear = year;
+                if(SimpleCalendar.instance.currentYear) {
+                    if (this.month !== this.endDate.month) {
+                        let sMonthIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === this.month);
+                        let eMonthIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === this.endDate.month);
+                        let cMonthIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === month);
+                        let mDiff = eMonthIndex - sMonthIndex;
+                        sMonthIndex = cMonthIndex - mDiff;
+                        if(sMonthIndex < 0){
+                            sMonthIndex = SimpleCalendar.instance.currentYear.months.length - 1;
+                            sYear--;
+                        }
+                        eMonthIndex = cMonthIndex + mDiff;
+                        if(eMonthIndex >= SimpleCalendar.instance.currentYear.months.length){
+                            eMonthIndex = 0;
+                            eYear++;
+                        }
+                        if(sMonthIndex > -1 && sMonthIndex < SimpleCalendar.instance.currentYear.months.length && eMonthIndex > -1 && eMonthIndex < SimpleCalendar.instance.currentYear.months.length){
+                            sMonth = SimpleCalendar.instance.currentYear.months[sMonthIndex].numericRepresentation;
+                            eMonth = SimpleCalendar.instance.currentYear.months[eMonthIndex].numericRepresentation;
+
+                            const sInBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                            const eInBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                            if(sInBetween !== DateRangeMatch.None || eInBetween !== DateRangeMatch.None){
+                                inBetween = DateRangeMatch.Middle;
+                            }
+                        }
+                    }
+                    else {
+                        inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    }
+                }
             } else if(this.repeats === NoteRepeat.Yearly){
-                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                let sYear = year;
+                let eYear = year;
+                if(SimpleCalendar.instance.currentYear) {
+                    if(this.year !== this.endDate.year){
+                        const yDiff = this.endDate.year - this.year;
+                        sYear = year - yDiff;
+                        eYear = year + yDiff;
+                        const sInBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                        const eInBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                        if(sInBetween !== DateRangeMatch.None || eInBetween !== DateRangeMatch.None){
+                            inBetween = DateRangeMatch.Middle;
+                        }
+                    }
+                    else{
+                        inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    }
+                }
             } else {
                 inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: this.year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
             }
             dayVisible = inBetween !== DateRangeMatch.None;
         }
         return userVisible && dayVisible;
+    }
+
+    /**
+     * Returns the display text for the note
+     * Takes into account if the note repeats.
+     */
+    display(){
+        let display: string = '';
+
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            let currentVisibleYear = SimpleCalendar.instance.currentYear.visibleYear;
+            let currentVisibleMonthIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.selected);
+            if(currentVisibleMonthIndex === -1){
+                currentVisibleMonthIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.current);
+            }
+            let currentVisibleDayIndex = SimpleCalendar.instance.currentYear.months[currentVisibleMonthIndex].days.findIndex(d => d.selected);
+            if(currentVisibleDayIndex === -1){
+                currentVisibleDayIndex = SimpleCalendar.instance.currentYear.months[currentVisibleMonthIndex].days.findIndex(d => d.current);
+            }
+            let noteStartMonthIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === this.month);
+            let noteEndMonthIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === this.endDate.month);
+            if(noteStartMonthIndex === -1){
+                noteStartMonthIndex = 0;
+            }
+            if(noteEndMonthIndex === -1){
+                noteEndMonthIndex = 0;
+            }
+            let noteStartDayIndex = SimpleCalendar.instance.currentYear.months[noteStartMonthIndex].days.findIndex(d => d.numericRepresentation === this.day);
+            let noteEndDayIndex = SimpleCalendar.instance.currentYear.months[noteEndMonthIndex].days.findIndex(d => d.numericRepresentation === this.endDate.day);
+
+
+            let startYear = this.year;
+            let startMonth = this.month;
+            let startDay = this.day;
+            let endYear = this.endDate.year;
+            let endMonth = this.endDate.month;
+            let endDay = this.endDate.day;
+
+            if(this.repeats === NoteRepeat.Weekly){
+                startYear = currentVisibleYear;
+                endYear = currentVisibleYear;
+                let sMonth = currentVisibleMonthIndex;
+                let eMonth = currentVisibleMonthIndex;
+                let sDay: number | undefined = this.day;
+                let eDay: number | undefined = this.endDate.day;
+                const currentVisibleDayNumericRepresentation = SimpleCalendar.instance.currentYear.months[currentVisibleMonthIndex].days[currentVisibleDayIndex].numericRepresentation;
+                let noteStartDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(this.year, this.month, startDay);
+                let noteEndDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(this.endDate.year, this.endDate.month, endDay);
+                let currentDayOfWeek = SimpleCalendar.instance.currentYear.dayOfTheWeek(SimpleCalendar.instance.currentYear.visibleYear, SimpleCalendar.instance.currentYear.months[currentVisibleMonthIndex].numericRepresentation, currentVisibleDayNumericRepresentation);
+                let weeks = SimpleCalendar.instance.currentYear.daysIntoWeeks(SimpleCalendar.instance.currentYear.months[currentVisibleMonthIndex], currentVisibleYear, SimpleCalendar.instance.currentYear.weekdays.length);
+
+                for(let i = 0; i < weeks.length; i++){
+                    const res = weeks[i].find(wd => wd !== false && wd !== true && wd.numericRepresentation === currentVisibleDayNumericRepresentation);
+                    if(res !== false && res !== true && res !== undefined) {
+                        // Note spans weeks
+                        if (noteEndDayOfWeek < noteStartDayOfWeek) {
+                            if (currentDayOfWeek <= noteEndDayOfWeek) {
+                                eDay = (<DayTemplate>weeks[i][noteEndDayOfWeek]).numericRepresentation;
+                                //Choose the previous week
+                                if (i > 0) {
+                                    sDay = (<DayTemplate>weeks[i - 1][noteStartDayOfWeek]).numericRepresentation;
+                                } else {
+                                    sDay = undefined;
+                                }
+                            } else {
+                                sDay = (<DayTemplate>weeks[i][noteStartDayOfWeek]).numericRepresentation;
+                                //Choose the next week
+                                if (i < weeks.length - 1) {
+                                    eDay = (<DayTemplate>weeks[i + 1][noteEndDayOfWeek]).numericRepresentation;
+                                } else {
+                                    eDay = undefined;
+                                }
+                            }
+                        } else {
+                            sDay = (<DayTemplate>weeks[i][noteStartDayOfWeek]).numericRepresentation;
+                            eDay = (<DayTemplate>weeks[i][noteEndDayOfWeek]).numericRepresentation;
+                        }
+                    }
+                }
+                if(sDay === undefined){
+                    if(sMonth > 0){
+                        sMonth--;
+                    } else {
+                        startYear--;
+                        sMonth = SimpleCalendar.instance.currentYear.months.length - 1;
+                    }
+                    weeks = SimpleCalendar.instance.currentYear.daysIntoWeeks(SimpleCalendar.instance.currentYear.months[sMonth], startYear, SimpleCalendar.instance.currentYear.weekdays.length);
+                    let wi = weeks.length - 1;
+                    while(wi >= 0){
+                        if(weeks[wi][noteStartDayOfWeek] !== false){
+                            sDay = (<DayTemplate>weeks[wi][noteStartDayOfWeek]).numericRepresentation;
+                        }
+                        wi--;
+                        if(sDay !== undefined){
+                            break;
+                        }
+                    }
+                }
+                if(eDay === undefined){
+                    if(eMonth < SimpleCalendar.instance.currentYear.months.length - 1){
+                        eMonth++;
+                    } else {
+                        endYear++;
+                        eMonth = 0;
+                    }
+                    weeks = SimpleCalendar.instance.currentYear.daysIntoWeeks(SimpleCalendar.instance.currentYear.months[eMonth], endYear, SimpleCalendar.instance.currentYear.weekdays.length);
+                    let wi = 0;
+                    while(wi < weeks.length){
+                        if(weeks[wi][noteEndDayOfWeek] !== false){
+                            eDay = (<DayTemplate>weeks[wi][noteEndDayOfWeek]).numericRepresentation;
+                        }
+                        wi++;
+                        if(eDay !== undefined){
+                            break;
+                        }
+                    }
+                }
+                startMonth = SimpleCalendar.instance.currentYear.months[sMonth].numericRepresentation;
+                endMonth = SimpleCalendar.instance.currentYear.months[eMonth].numericRepresentation;
+                startDay = sDay? sDay : 1;
+                endDay = eDay? eDay : 1;
+
+            } else if(this.repeats === NoteRepeat.Monthly){
+                startYear = currentVisibleYear;
+                endYear = currentVisibleYear;
+                let sMonth = currentVisibleMonthIndex;
+                let eMonth = currentVisibleMonthIndex;
+                if (this.month !== this.endDate.month) {
+                    const mDiff = noteEndMonthIndex - noteStartMonthIndex;
+                    if(noteStartDayIndex <= currentVisibleDayIndex){
+                        eMonth = currentVisibleMonthIndex + mDiff;
+                        if(eMonth >= SimpleCalendar.instance.currentYear.months.length){
+                            eMonth = 0;
+                            endYear = currentVisibleYear + 1;
+                        }
+                    } else if(noteEndDayIndex >= currentVisibleDayIndex){
+                        sMonth = currentVisibleMonthIndex - mDiff;
+                        if(sMonth < 0){
+                            sMonth = SimpleCalendar.instance.currentYear.months.length - 1;
+                            startYear = currentVisibleYear - 1;
+                        }
+                    }
+                    startMonth = SimpleCalendar.instance.currentYear.months[sMonth].numericRepresentation;
+                    endMonth = SimpleCalendar.instance.currentYear.months[eMonth].numericRepresentation;
+                } else {
+                    startMonth = SimpleCalendar.instance.currentYear.months[currentVisibleMonthIndex].numericRepresentation;
+                    endMonth = SimpleCalendar.instance.currentYear.months[currentVisibleMonthIndex].numericRepresentation;
+                }
+                // Check if the selected start day is more days than the current month has, if so adjust the end day to the max number of day.
+                if(noteStartDayIndex >= SimpleCalendar.instance.currentYear.months[sMonth].days.length){
+                    const isLeapYear = SimpleCalendar.instance.currentYear.leapYearRule.isLeapYear(startYear);
+                    startDay = isLeapYear? SimpleCalendar.instance.currentYear.months[sMonth].numberOfLeapYearDays : SimpleCalendar.instance.currentYear.months[sMonth].numberOfDays;
+                }
+
+                // Check if the selected end day is more days than the current month has, if so adjust the end day to the max number of day.
+                if(noteEndDayIndex >= SimpleCalendar.instance.currentYear.months[eMonth].days.length){
+                    const isLeapYear = SimpleCalendar.instance.currentYear.leapYearRule.isLeapYear(endYear);
+                    endDay = isLeapYear? SimpleCalendar.instance.currentYear.months[eMonth].numberOfLeapYearDays : SimpleCalendar.instance.currentYear.months[eMonth].numberOfDays;
+                }
+            } else if(this.repeats === NoteRepeat.Yearly){
+                if(this.year !== this.endDate.year){
+                    const yDiff = this.endDate.year - this.year;
+                    // The start month is in the current month and  the start day is less than the current day
+                    if(noteStartMonthIndex === currentVisibleMonthIndex && noteStartDayIndex <= currentVisibleDayIndex){
+                        startYear = currentVisibleYear;
+                        endYear = currentVisibleYear + yDiff
+                    } else if(noteEndMonthIndex === currentVisibleMonthIndex && noteEndDayIndex >= currentVisibleDayIndex){
+                        startYear = currentVisibleYear - yDiff;
+                        endYear = currentVisibleYear;
+                    }
+                }
+                else{
+                    startYear = currentVisibleYear;
+                    endYear = currentVisibleYear;
+                }
+            }
+            display = DateSelector.GetDisplayDate({year: startYear, month: startMonth, day: startDay, hour: this.hour, minute: this.minute, allDay: this.allDay},{year: endYear, month: endMonth, day: endDay, hour: this.endDate.hour, minute: this.endDate.minute, allDay: this.allDay} );
+        }
+        return display;
     }
 }

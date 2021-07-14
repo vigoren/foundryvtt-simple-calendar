@@ -2,10 +2,12 @@ import Year from "./year";
 import {AboutTimeImport, CalendarWeatherImport} from "../interfaces";
 import {Weekday} from "./weekday";
 import Month from "./month";
-import {GameSystems, LeapYearRules, MoonIcons} from "../constants";
+import {GameSystems, LeapYearRules, MoonIcons, NoteRepeat} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
+import {Note} from "./note";
+import SimpleCalendar from "./simple-calendar";
 
 export default class Importer{
 
@@ -259,6 +261,60 @@ export default class Importer{
             year.moons.push(newMoon);
         }
 
+        if(SimpleCalendar.instance){
+            for(let i = 0; i < currentSettings.events.length; i++){
+                const event = currentSettings.events[i];
+                const note = new Note();
+                note.title = event.name;
+                note.content = event.text;
+                note.allDay = event.allDay;
+                note.year = parseInt(event.date.year.toString());
+                note.endDate.year = note.year;
+
+                let month = year.months.findIndex(m => m.numericRepresentation === parseInt(event.date.month) || m.name === event.date.month);
+                if(month < 0){
+                    month = 0;
+                }
+
+                note.month = year.months[month].numericRepresentation;
+                note.endDate.month = note.month;
+                note.day = event.date.day;
+                note.endDate.day = note.day;
+                note.hour = event.date.hours;
+                note.minute = event.date.minutes;
+                note.endDate.hour = note.hour;
+                note.endDate.minute = note.minute;
+                SimpleCalendar.instance.notes.push(note);
+            }
+
+            for(let i = 0; i < currentSettings.reEvents.length; i++){
+                const event = currentSettings.reEvents[i];
+                const note = new Note();
+                note.title = event.name;
+                note.content = event.text;
+                note.year = 0;
+                note.endDate.year = note.year;
+
+                let month = year.months.findIndex(m => m.numericRepresentation === parseInt(event.date.month) || m.name === event.date.month);
+                if(month < 0){
+                    month = 0;
+                }
+
+                note.month = year.months[month].numericRepresentation;
+                note.endDate.month = note.month;
+                note.day = event.date.day;
+                note.endDate.day = note.day;
+                note.hour = 0;
+                note.minute = 0;
+                note.endDate.hour = note.hour;
+                note.endDate.minute = note.minute;
+                note.repeats = NoteRepeat.Yearly;
+                SimpleCalendar.instance.notes.push(note);
+            }
+
+            await GameSettings.SaveNotes(SimpleCalendar.instance.notes);
+        }
+
         //Save everything
         await GameSettings.SaveYearConfiguration(year);
         await GameSettings.SaveMonthConfiguration(year.months);
@@ -306,7 +362,11 @@ export default class Importer{
                 date: {
                     day: year.seasons[i].startingDay - 1,
                     month: '',
-                    combined: `-${year.seasons[i].startingDay - 1}`
+                    combined: `-${year.seasons[i].startingDay - 1}`,
+                    year: year.numericRepresentation.toString(),
+                    hours: 0,
+                    minutes: 0,
+                    seconds: 0
                 }
             });
         }

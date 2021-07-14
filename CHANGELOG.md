@@ -39,11 +39,18 @@ This update is mainly around notes and improving the experience around adding, e
 - Additional information about the Season is returned for the api functions `getCurrentSeason`, `getAllSeasons` and `timestampToDate`:
   - startingMonth: The month index the season starts on.
   - startingDay: The day index of the starting month the season starts on.
+- Fixed a bug with the API function `timestampPlusInterval` where in PF2E systems the returned value would be ahead by 1 day.
 
 ### Bug Fixes
 
 - Fixed a bug where the [Moerills Expandable Markdown Editor](https://www.foundryvtt-hub.com/package/markdown-editor/) would not load properly when adding/editing notes.
 - Fixed a bug where on new installs the default month and weekday names would not load correctly.
+- Added a temporary "fix" to help with the weirdness that happens when running the latest version of Calendar/Weather. This "fix" will go away once Calendar/Weather has finished their integration with Simple Calendar. Some things to note about the changes:
+  - Any updates to the calendar structure (changing or months, season or moons) done within the Calendar/Weather interface will now require you to go into Simple Calendars configuration and re-import the calendar to have the changes reflected there.
+  - I have run tests with PF2E worlds and everything should stay in sync with that systems world clock.
+  - Calendar/Weather, about-time and Simple Calendar play better together but they will be their best when Calendar/Weather has finished its rewrite to properly utilize Simple Calendars API.
+- Fixed an issued with importing events from Calendar/Weather.
+  - In some instances Calendar/Weather Events don't have their month saved properly, in these instances the month is set to the first month of the year.
 
 ### Translations
 

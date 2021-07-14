@@ -43,17 +43,21 @@ describe('Handlebars Helpers Tests', () => {
             SimpleCalendar.instance.currentYear.months[0].visible = false;
             expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
             SimpleCalendar.instance.currentYear.months[0].visible = true;
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
             options.hash['day'].numericRepresentation = 2;
             expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
 
             SimpleCalendar.instance.notes = [];
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
             for(let i = 0; i < 2; i++){
                 var n = new Note()
                 n.title = i.toString();
                 n.year = SimpleCalendar.instance.currentYear.numericRepresentation;
                 n.month = 1;
                 n.day = 2;
+                n.endDate.year = n.year;
+                n.endDate.month = n.month;
+                n.endDate.day = n.day;
                 SimpleCalendar.instance.notes.push(n);
             }
             expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
@@ -63,6 +67,9 @@ describe('Handlebars Helpers Tests', () => {
                 n.year = SimpleCalendar.instance.currentYear.numericRepresentation;
                 n.month = 1;
                 n.day = 2;
+                n.endDate.year = n.year;
+                n.endDate.month = n.month;
+                n.endDate.day = n.day;
                 SimpleCalendar.instance.notes.push(n);
             }
             expect(SimpleCalendar.instance.notes.length).toBe(100);

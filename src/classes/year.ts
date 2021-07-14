@@ -726,7 +726,7 @@ export default class Year {
                     daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
                 }
                 daysSoFar++;
-                totalSeconds =  this.time.getTotalSeconds(daysSoFar) - PF2E.getWorldCreateSeconds();
+                totalSeconds =  this.time.getTotalSeconds(daysSoFar) - PF2E.getWorldCreateSeconds(false);
             }
         }
         return totalSeconds;
@@ -901,7 +901,6 @@ export default class Year {
         // If this is a Pathfinder 2E game, add the world creation seconds
         if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
             newTime += PF2E.getWorldCreateSeconds();
-            newTime -= this.time.secondsPerDay;
         }
         if(changeAmount !== 0){
             // If the tracking rules are for self or mixed and the clock is running then we make the change.

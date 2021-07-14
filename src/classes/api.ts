@@ -1,5 +1,5 @@
 import SimpleCalendar from "./simple-calendar";
-import {DateTime} from "../interfaces";
+import {CalendarWeatherImport, DateTime} from "../interfaces";
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {GameSystems, TimeKeeperStatus} from "../constants";
@@ -35,7 +35,6 @@ export default class API{
     public static timestampPlusInterval(currentSeconds: number, interval: DateTime): number{
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             const clone = SimpleCalendar.instance.currentYear.clone();
-
             // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
             if(SimpleCalendar.instance.currentYear.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.currentYear.generalSettings.pf2eSync){
                 currentSeconds += PF2E.getWorldCreateSeconds();
@@ -122,7 +121,6 @@ export default class API{
             // If this is a Pathfinder 2E game, add the world creation seconds
             if(SimpleCalendar.instance.currentYear.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.currentYear.generalSettings.pf2eSync){
                 seconds += PF2E.getWorldCreateSeconds();
-                seconds -= SimpleCalendar.instance.currentYear.time.secondsPerDay;
             }
 
             const dateTime = SimpleCalendar.instance.currentYear.secondsToDate(seconds);
@@ -546,7 +544,7 @@ export default class API{
      */
     public static async calendarWeatherImport(): Promise<boolean>{
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            await Importer.importCalendarWeather(SimpleCalendar.instance.currentYear);
+            //await Importer.importCalendarWeather(SimpleCalendar.instance.currentYear, true);
             return true;
         }
         return false;

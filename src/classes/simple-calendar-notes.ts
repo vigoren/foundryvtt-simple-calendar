@@ -130,7 +130,7 @@ export class SimpleCalendarNotes extends FormApplication {
             }
         }
 
-        data.displayDate = DateSelector.GetDisplayDate({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: (<Note>this.object).hour, minute: (<Note>this.object).minute, allDay: (<Note>this.object).allDay},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: (<Note>this.object).endDate.hour, minute: (<Note>this.object).endDate.minute, allDay: (<Note>this.object).allDay} )
+        data.displayDate = (<Note>this.object).display();
         const rOpt = data.repeatOptions[data.repeats];
         if(rOpt){
             data.repeatsText = `${GameSettings.Localize("FSC.Notes.Repeats")} ${GameSettings.Localize(rOpt)}`;

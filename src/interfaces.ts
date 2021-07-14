@@ -513,9 +513,13 @@ export namespace CalendarWeatherImport{
      * Calendar/Weather date class
      */
     export interface Date {
+        year: string;
         month: string;
         day: number;
         combined: string;
+        hours: number;
+        minutes: number
+        seconds: number;
     }
 
     /**
@@ -581,6 +585,7 @@ export namespace CalendarWeatherImport{
     export interface Event {
         name: string;
         text: string;
+        allDay: boolean;
         date: Date;
     }
 

@@ -206,8 +206,14 @@ describe('Year Class Tests', () => {
         year.generalSettings.permissions.viewCalendar.trustedPlayer = false;
         expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
         year.generalSettings.permissions.viewCalendar.assistantGameMaster = false;
-        year.generalSettings.permissions.viewCalendar.users = [''];
+        // @ts-ignore
+        (<Game>game).user.id = "asd";
+        year.generalSettings.permissions.viewCalendar.users = ['asd'];
         expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
+        // @ts-ignore
+        (<Game>game).user.id = "";
+        year.generalSettings.permissions.viewCalendar.users = ['asd'];
+        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(false);
     });
 
     test('Get Display Name', () => {

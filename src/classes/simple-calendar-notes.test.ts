@@ -34,6 +34,9 @@ describe('Simple Calendar Notes Tests', () => {
         note.content = '';
         note.author = '1';
         note.playerVisible = false;
+        note.endDate.year = 0;
+        note.endDate.month = 1;
+        note.endDate.day = 2;
 
         SimpleCalendarNotes.instance = new SimpleCalendarNotes(note);
 
@@ -119,6 +122,8 @@ describe('Simple Calendar Notes Tests', () => {
         SimpleCalendar.instance.currentYear.months.push(new Month('M2', 2, 0, 30));
         SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(1, 'W1'));
         SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(2, 'W2'));
+        SimpleCalendar.instance.currentYear.months[0].current = true;
+        SimpleCalendar.instance.currentYear.months[0].days[0].current = true;
         (<Note>SimpleCalendarNotes.instance.object).repeats = 12;
         data = SimpleCalendarNotes.instance.getData();
         //@ts-ignore
@@ -130,12 +135,15 @@ describe('Simple Calendar Notes Tests', () => {
         //@ts-ignore
         expect(data.repeatOptions).toStrictEqual({"0": "FSC.Notes.Repeat.Never"});
 
-        (<Note>SimpleCalendarNotes.instance.object).endDate.month = 1;
+        (<Note>SimpleCalendarNotes.instance.object).endDate.year = 0;
+        (<Note>SimpleCalendarNotes.instance.object).endDate.month = 2;
+        (<Note>SimpleCalendarNotes.instance.object).endDate.day = 2;
         data = SimpleCalendarNotes.instance.getData();
         //@ts-ignore
         expect(data.repeatOptions).toStrictEqual({0: 'FSC.Notes.Repeat.Never', 3: 'FSC.Notes.Repeat.Yearly'});
 
         (<Note>SimpleCalendarNotes.instance.object).endDate.year = 0;
+        (<Note>SimpleCalendarNotes.instance.object).endDate.month = 1;
         (<Note>SimpleCalendarNotes.instance.object).endDate.day = 5;
         data = SimpleCalendarNotes.instance.getData();
         //@ts-ignore
