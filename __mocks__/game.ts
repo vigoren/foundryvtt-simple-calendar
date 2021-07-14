@@ -21,16 +21,22 @@ const user: User = {
     viewedScene: '',
     avatar: '',
     //character: {},
+    // @ts-ignore
     permissions: [],
     isTrusted: false,
     isGM: false,
     isSelf: true,
+    // @ts-ignore
     can: jest.fn((permission: string) => {return false;}),
     hasPermission: jest.fn((permission: string) => {return false;}),
+    // @ts-ignore
     hasRole: jest.fn((role: string) => {return true;}),
+    // @ts-ignore
     isRole: jest.fn((role: string) => {return false;}),
+    // @ts-ignore
     setPermission: jest.fn((premission: string, allowed: boolean) => {}),
-    assignHotbarMacro: jest.fn((macro: Macro | null, slot: number, {fromSlot}: { fromSlot?: number }): Promise<User> => { return Promise.resolve(user);}),
+    assignHotbarMacro: jest.fn((macro: Macro | null, slot: string | number, {fromSlot}: { fromSlot: number }): Promise<User> => { return Promise.resolve(user);}),
+    // @ts-ignore
     getHotbarMacros: jest.fn((page?: number): Macro[] => {return [];})
 };
 
@@ -60,17 +66,20 @@ const game = {
                     return {year: 0, month: 1, day: 2, seconds: 3};
                 case SettingNames.Notes:
                     return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false, id: 'abc123'}]];
+                case SettingNames.NoteCategories:
+                    return [];
                 case SettingNames.GeneralConfiguration:
-                    return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}
+                    return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}
                 case SettingNames.TimeConfiguration:
                     return {hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1};
                 case SettingNames.SeasonConfiguration:
-                    return [[{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', customColor: ''}]];
+                    return [[{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff'}]];
                 case SettingNames.MoonConfiguration:
                     return [[{"name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]];
             }
         }),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),
+        registerMenu: jest.fn(),
         set: jest.fn((moduleName: string, settingName: string, data: any) => {return Promise.resolve(true);})
     },
     time: {

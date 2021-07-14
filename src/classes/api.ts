@@ -1,16 +1,22 @@
 import SimpleCalendar from "./simple-calendar";
-import {DateParts, DateTimeIntervals} from "../interfaces";
+import {CalendarWeatherImport, DateTime} from "../interfaces";
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {GameSystems, TimeKeeperStatus} from "../constants";
 import PF2E from "./systems/pf2e";
 import Importer from "./importer";
 import Utilities from "./utilities";
+import DateSelector from "./date-selector";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
  */
 export default class API{
+    /**
+     * The Date selector class used to create date selector inputs based on the calendar
+     */
+    public static DateSelector = DateSelector;
+
     /**
      * Get the timestamp for the current year
      */
@@ -26,10 +32,9 @@ export default class API{
      * @param currentSeconds
      * @param interval
      */
-    public static timestampPlusInterval(currentSeconds: number, interval: DateTimeIntervals): number{
+    public static timestampPlusInterval(currentSeconds: number, interval: DateTime): number{
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             const clone = SimpleCalendar.instance.currentYear.clone();
-
             // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
             if(SimpleCalendar.instance.currentYear.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.currentYear.generalSettings.pf2eSync){
                 currentSeconds += PF2E.getWorldCreateSeconds();
@@ -116,7 +121,6 @@ export default class API{
             // If this is a Pathfinder 2E game, add the world creation seconds
             if(SimpleCalendar.instance.currentYear.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.currentYear.generalSettings.pf2eSync){
                 seconds += PF2E.getWorldCreateSeconds();
-                seconds -= SimpleCalendar.instance.currentYear.time.secondsPerDay;
             }
 
             const dateTime = SimpleCalendar.instance.currentYear.secondsToDate(seconds);
@@ -160,9 +164,9 @@ export default class API{
 
     /**
      * Converts the passed in date to a timestamp. If date members are missing the current date members are used.
-     * @param {DateTimeIntervals} date
+     * @param {DateTime} date
      */
-    public static dateToTimestamp(date: DateTimeIntervals): number{
+    public static dateToTimestamp(date: DateTime): number{
         let ts = 0;
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             const clone = SimpleCalendar.instance.currentYear.clone();
@@ -212,8 +216,8 @@ export default class API{
      * Attempts to convert the passed in seconds to an interval (day, month, year, hour, minute, second etc)
      * @param seconds
      */
-    public static secondsToInterval(seconds: number): DateTimeIntervals{
-        let results: DateTimeIntervals = {
+    public static secondsToInterval(seconds: number): DateTime{
+        let results: DateTime = {
             year: 0,
             month: 0,
             day: 0,
@@ -247,13 +251,33 @@ export default class API{
 
     /**
      * Shows the calendar. If a date is passed in, the calendar will open so that date is visible and selected
-     * @param {DateParts | null} [date=null] The date to set as visible, it not passed in what ever the users current date will be used
+     * @param {DateTime | null} [date=null] The date to set as visible, it not passed in what ever the users current date will be used
      * @param {boolean} [compact=false] If the calendar should open in compact mode or not
      */
-    public static showCalendar(date: DateParts | null = null, compact: boolean = false){
+    public static showCalendar(date: DateTime | null = null, compact: boolean = false){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             if(date !== null){
-                if(date.hasOwnProperty('year') && Number.isInteger(date.year) && date.hasOwnProperty('month') && Number.isInteger(date.month) && date.hasOwnProperty('day') && Number.isInteger(date.day)){
+                if(!date.year){
+                    date.year = SimpleCalendar.instance.currentYear.numericRepresentation;
+                }
+
+                if(!date.month || !date.day){
+                    const curMonth = SimpleCalendar.instance.currentYear.getMonth();
+                    if(!date.month){
+                        date.month = curMonth? SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === curMonth.numericRepresentation) : 0;
+                    }
+
+                    if(!date.day){
+                        if(curMonth){
+                            const curDay = curMonth.getDay();
+                            date.day = curDay? curMonth.days.findIndex(d => d.numericRepresentation === curDay.numericRepresentation) : 0;
+                        } else {
+                            date.day = 0;
+                        }
+                    }
+                }
+
+                if(Number.isInteger(date.year) && Number.isInteger(date.month) && Number.isInteger(date.day)){
                     const isLeapYear = SimpleCalendar.instance.currentYear.leapYearRule.isLeapYear(date.year);
                     SimpleCalendar.instance.currentYear.visibleYear = date.year;
                     if(date.month === -1 || date.month > SimpleCalendar.instance.currentYear.months.length){
@@ -288,8 +312,8 @@ export default class API{
      * Changes the date of the calendar by the passed in interval. Checks to make sure only users who have permission can change the date.
      * @param interval
      */
-    public static changeDate(interval: DateTimeIntervals): boolean{
-        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser(game.user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
+    public static changeDate(interval: DateTime): boolean{
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser((<Game>game).user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
             let change = false;
             if(interval.year){
                 SimpleCalendar.instance.currentYear.changeYear(interval.year, true, 'current');
@@ -327,8 +351,8 @@ export default class API{
      * Sets the current date to the passed in date object
      * @param date
      */
-    public static setDate(date: DateTimeIntervals): boolean{
-        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser(game.user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
+    public static setDate(date: DateTime): boolean{
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && SimpleCalendar.instance.currentYear.canUser((<Game>game).user, SimpleCalendar.instance.currentYear.generalSettings.permissions.changeDateTime)){
             const seconds = this.dateToTimestamp(date);
             SimpleCalendar.instance.currentYear.updateTime(SimpleCalendar.instance.currentYear.secondsToDate(seconds));
             GameSettings.SaveCurrentDate(SimpleCalendar.instance.currentYear).catch(Logger.error);
@@ -346,7 +370,7 @@ export default class API{
      * @param startingDate
      * @param endingDate
      */
-    public static chooseRandomDate(startingDate: DateTimeIntervals = {}, endingDate: DateTimeIntervals = {}): DateTimeIntervals {
+    public static chooseRandomDate(startingDate: DateTime = {}, endingDate: DateTime = {}): DateTime {
         let year = 0, month = 0, day = 0, hour = 0, minute = 0, second = 0;
 
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
@@ -484,12 +508,13 @@ export default class API{
      */
     public static getCurrentSeason(){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            const mon = SimpleCalendar.instance.currentYear.getMonth();
+            const clone = SimpleCalendar.instance.currentYear.clone();
+            const mon = clone.getMonth('current');
             if(mon){
-                const mIndex = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation = mon.numericRepresentation);
+                const mIndex = clone.months.findIndex(m => m.numericRepresentation == mon.numericRepresentation);
                 const day = mon.getDay();
                 if(day){
-                    return SimpleCalendar.instance.currentYear.getSeason(mIndex, day.numericRepresentation);
+                    return clone.getSeason(mIndex, day.numericRepresentation);
                 }
             }
         }
@@ -501,7 +526,14 @@ export default class API{
      */
     public static getAllSeasons(){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            return SimpleCalendar.instance.currentYear.seasons;
+            const seasons = [];
+            for(let i = 0; i < SimpleCalendar.instance.currentYear.seasons.length; i++){
+                const s = SimpleCalendar.instance.currentYear.seasons[i].clone();
+                s.startingMonth = SimpleCalendar.instance.currentYear.months.findIndex(m => m.numericRepresentation === s.startingMonth);
+                s.startingDay = SimpleCalendar.instance.currentYear.months[s.startingMonth >= 0? s.startingMonth : 0].days.findIndex(d => d.numericRepresentation === s.startingDay);
+                seasons.push(s);
+            }
+            return seasons;
         }
         return [];
     }
@@ -512,7 +544,7 @@ export default class API{
      */
     public static async calendarWeatherImport(): Promise<boolean>{
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            await Importer.importCalendarWeather(SimpleCalendar.instance.currentYear);
+            //await Importer.importCalendarWeather(SimpleCalendar.instance.currentYear, true);
             return true;
         }
         return false;

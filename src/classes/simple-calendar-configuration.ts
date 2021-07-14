@@ -16,6 +16,8 @@ import Season from "./season";
 import Moon from "./moon";
 import SimpleCalendar from "./simple-calendar";
 import {saveAs} from "file-saver";
+import {NoteCategory} from "../interfaces";
+import Utilities from "./utilities";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -30,6 +32,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * @private
      */
     private year: Year;
+
+    private noteCategories: NoteCategory[] = [];
 
     /**
      * If the year has changed
@@ -46,11 +50,23 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * @param {Year} data The year data used to populate the configuration dialog
      */
     constructor(data: Year) {
-        super(data);
+        super(!data && SimpleCalendar.instance.currentYear? SimpleCalendar.instance.currentYear.clone() : data);
+        if(!data && SimpleCalendar.instance.currentYear){
+            this.year = SimpleCalendar.instance.currentYear;
+        } else {
+            this.year = data;
+        }
         this._tabs[0].active = "generalSettings";
-        this.year = data;
 
         this.generalSettings.defaultPlayerNoteVisibility = GameSettings.GetDefaultNoteVisibility();
+
+        this.noteCategories = SimpleCalendar.instance.noteCategories.map(nc => {
+            return {
+                name: nc.name,
+                color: nc.color,
+                textColor: nc.textColor
+            }
+        });
     }
 
     /**
@@ -164,10 +180,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 'random': 'FSC.Random'
             },
             users: <{[key: string]: string}>{},
+            noteCategories: <NoteCategory[]>[]
         };
 
-        const calendarWeather = game.modules.get('calendar-weather');
-        const aboutTime = game.modules.get('about-time');
+        const calendarWeather = (<Game>game).modules.get('calendar-weather');
+        const aboutTime = (<Game>game).modules.get('about-time');
 
         data.importing.showCalendarWeather = calendarWeather !== undefined && calendarWeather.active;
         data.importing.showAboutTime = aboutTime !== undefined && aboutTime.active;
@@ -186,13 +203,17 @@ export class SimpleCalendarConfiguration extends FormApplication {
         for(let i = 0; i < (<Year>this.object).weekdays.length; i++){
             data.monthStartingWeekdays[(<Year>this.object).weekdays[i].numericRepresentation.toString()] = (<Year>this.object).weekdays[i].name;
         }
-
-        if(game.users){
-            game.users.forEach(u => {
-                if(!u.isGM){
-                    data.users[u.id] = u.name;
+        const users = (<Game>game).users;
+        if(users){
+            users.forEach(u => {
+                if(!u.isGM && u.id !== null){
+                    data.users[u.id] = u.name? u.name : '';
                 }
             });
+        }
+
+        if(SimpleCalendar.instance){
+            data.noteCategories = this.noteCategories;
         }
 
         return data;
@@ -217,53 +238,55 @@ export class SimpleCalendarConfiguration extends FormApplication {
         super.activateListeners(html);
         if(html.hasOwnProperty("length")) {
             //Month advanced click
-            (<JQuery>html).find(".month-show-advanced").on('click', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+            (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));
 
             //Save button clicks
-            (<JQuery>html).find("#scSubmit").on('click', SimpleCalendarConfiguration.instance.saveClick.bind(this));
+            (<JQuery>html).find("#scSubmit").on('click', this.saveClick.bind(this));
 
             //Predefined calendar apply
-            (<JQuery>html).find("#scApplyPredefined").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'predefined', ''));
+            (<JQuery>html).find("#scApplyPredefined").on('click', this.overwriteConfirmationDialog.bind(this, 'predefined', ''));
 
             //Table Removes
-            (<JQuery>html).find(".remove-month").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'month'));
-            (<JQuery>html).find(".remove-weekday").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'weekday'));
-            (<JQuery>html).find(".remove-season").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'season'));
-            (<JQuery>html).find(".remove-moon").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'moon'));
-            (<JQuery>html).find(".remove-moon-phase").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'moon-phase'));
-            (<JQuery>html).find(".remove-year-name").on('click', SimpleCalendarConfiguration.instance.removeFromTable.bind(this, 'year-name'));
+            (<JQuery>html).find(".remove-month").on('click', this.removeFromTable.bind(this, 'month'));
+            (<JQuery>html).find(".remove-weekday").on('click', this.removeFromTable.bind(this, 'weekday'));
+            (<JQuery>html).find(".remove-season").on('click', this.removeFromTable.bind(this, 'season'));
+            (<JQuery>html).find(".remove-moon").on('click', this.removeFromTable.bind(this, 'moon'));
+            (<JQuery>html).find(".remove-moon-phase").on('click', this.removeFromTable.bind(this, 'moon-phase'));
+            (<JQuery>html).find(".remove-year-name").on('click', this.removeFromTable.bind(this, 'year-name'));
+            (<JQuery>html).find(".remove-note-category").on('click', this.removeFromTable.bind(this, 'note-category'));
 
             //Table Adds
-            (<JQuery>html).find(".month-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'month'));
-            (<JQuery>html).find(".weekday-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'weekday'));
-            (<JQuery>html).find(".season-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'season'));
-            (<JQuery>html).find(".moon-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'moon'));
-            (<JQuery>html).find(".moon-phase-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'moon-phase'));
-            (<JQuery>html).find(".year-name-add").on('click', SimpleCalendarConfiguration.instance.addToTable.bind(this, 'year-name'));
+            (<JQuery>html).find(".month-add").on('click', this.addToTable.bind(this, 'month'));
+            (<JQuery>html).find(".weekday-add").on('click', this.addToTable.bind(this, 'weekday'));
+            (<JQuery>html).find(".season-add").on('click', this.addToTable.bind(this, 'season'));
+            (<JQuery>html).find(".moon-add").on('click', this.addToTable.bind(this, 'moon'));
+            (<JQuery>html).find(".moon-phase-add").on('click', this.addToTable.bind(this, 'moon-phase'));
+            (<JQuery>html).find(".year-name-add").on('click', this.addToTable.bind(this, 'year-name'));
+            (<JQuery>html).find(".note-category-add").on('click', this.addToTable.bind(this, 'note-category'));
 
             //Import Buttons
-            (<JQuery>html).find("#scAboutTimeImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'about-time'));
-            (<JQuery>html).find("#scAboutTimeExport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-export','about-time'));
-            (<JQuery>html).find("#scCalendarWeatherImport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-import', 'calendar-weather'));
-            (<JQuery>html).find("#scCalendarWeatherExport").on('click', SimpleCalendarConfiguration.instance.overwriteConfirmationDialog.bind(this, 'tp-export','calendar-weather'));
+            (<JQuery>html).find("#scAboutTimeImport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-import', 'about-time'));
+            (<JQuery>html).find("#scAboutTimeExport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-export','about-time'));
+            (<JQuery>html).find("#scCalendarWeatherImport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-import', 'calendar-weather'));
+            (<JQuery>html).find("#scCalendarWeatherExport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-export','calendar-weather'));
 
-            (<JQuery>html).find("#exportCalendar").on('click', SimpleCalendarConfiguration.instance.exportCalendar.bind(this));
-            (<JQuery>html).find("#importCalendar").on('click', SimpleCalendarConfiguration.instance.importCalendar.bind(this));
+            (<JQuery>html).find("#exportCalendar").on('click', this.exportCalendar.bind(this));
+            (<JQuery>html).find("#importCalendar").on('click', this.importCalendar.bind(this));
 
             //Input Change
-            (<JQuery>html).find(".general-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".note-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".year-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".year-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".month-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".month-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".weekday-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".weekday-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".leapyear-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".leapyear-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".time-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".moon-settings input").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
-            (<JQuery>html).find(".moon-settings select").on('change', SimpleCalendarConfiguration.instance.inputChange.bind(this));
+            (<JQuery>html).find(".general-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".note-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".year-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".year-settings select").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".month-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".month-settings select").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".weekday-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".weekday-settings select").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".leapyear-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".leapyear-settings select").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".time-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".moon-settings input").on('change', this.inputChange.bind(this));
+            (<JQuery>html).find(".moon-settings select").on('change', this.inputChange.bind(this));
         }
     }
 
@@ -292,7 +315,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public addToTable(setting: string, e: Event){
         e.preventDefault();
-        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name';
+        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name' | 'note-category';
         switch (filteredSetting){
             case "month":
                 const newMonthNumber = (<Year>this.object).months.length + 1;
@@ -346,6 +369,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
             case "year-name":
                 (<Year>this.object).yearNames.push('New Named Year');
                 break;
+            case 'note-category':
+                this.noteCategories.push({name: "New Category", color:"#b13737 ", textColor:"#ffffff"});
+                break;
         }
         this.updateApp();
     }
@@ -357,7 +383,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public removeFromTable(setting: string, e: Event){
         e.preventDefault();
-        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name';
+        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name' | 'note-category';
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
         if(dataIndex && dataIndex !== 'all'){
             const index = parseInt(dataIndex);
@@ -407,6 +433,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                             (<Year>this.object).yearNames.splice(index, 1);
                         }
                         break;
+                    case 'note-category':
+                        if(index < this.noteCategories.length){{
+                            this.noteCategories.splice(index, 1);
+                        }}
+                        break;
                 }
                 this.updateApp();
             }
@@ -435,6 +466,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     break;
                 case "year-name":
                     (<Year>this.object).yearNames = [];
+                    break;
+                case 'note-category':
+                    this.noteCategories = [];
                     break;
             }
             this.updateApp();
@@ -1316,6 +1350,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).generalSettings.permissions.changeDateTime.trustedPlayer = checked;
             } else if(id === 'scChangeDateTimeAGM'){
                 (<Year>this.object).generalSettings.permissions.changeDateTime.assistantGameMaster = checked;
+            } else if(id === 'scReorderNotesP'){
+                (<Year>this.object).generalSettings.permissions.reorderNotes.player = checked;
+            } else if(id === 'scReorderNotesTP'){
+                (<Year>this.object).generalSettings.permissions.reorderNotes.trustedPlayer = checked;
+            } else if(id === 'scReorderNotesAGM'){
+                (<Year>this.object).generalSettings.permissions.reorderNotes.assistantGameMaster = checked;
             }
             //Year Setting Inputs
             else if(id === "scCurrentYear"){
@@ -1404,11 +1444,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     //Season Setting Inputs
                     else if(cssClass === 'season-name' && (<Year>this.object).seasons.length > index){
                         (<Year>this.object).seasons[index].name = value;
-                    } else if(cssClass === 'season-custom' && (<Year>this.object).seasons.length > index){
-                        if(value[0] !== "#"){
-                            value = '#'+value;
-                        }
-                        (<Year>this.object).seasons[index].customColor = value;
                     } else if(cssClass === 'season-month' && (<Year>this.object).seasons.length > index){
                         const month = parseInt(value);
                         if(!isNaN(month)){
@@ -1534,6 +1569,23 @@ export class SimpleCalendarConfiguration extends FormApplication {
                             }
                         }
                     }
+                    // Note Categories
+                    else if(cssClass === 'note-category-name' && this.noteCategories.length > index){
+                        const oldName = this.noteCategories[index].name;
+                        this.noteCategories[index].name = value;
+                        if(index < SimpleCalendar.instance.noteCategories.length){
+                            //Update all existing notes with the new name;
+                            SimpleCalendar.instance.notes.forEach(n => {
+                                const nci = n.categories.indexOf(oldName);
+                                if (nci > -1) {
+                                    n.categories[nci] = value;
+                                }
+                            });
+                        }
+                    } else if(cssClass === 'note-category-color' && this.noteCategories.length > index){
+                        this.noteCategories[index].color = value;
+                        this.noteCategories[index].textColor = Utilities.GetContrastColor(value);
+                    }
                 }
             }
             this.updateApp();
@@ -1584,7 +1636,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 yes: {
                     icon: '<i class="fas fa-check"></i>',
                     label: GameSettings.Localize('FSC.Apply'),
-                    callback: SimpleCalendarConfiguration.instance.overwriteConfirmationYes.bind(this, type, type2)
+                    callback: this.overwriteConfirmationYes.bind(this, type, type2)
                 },
                 no: {
                     icon: '<i class="fas fa-times"></i>',
@@ -1647,6 +1699,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Year>this.object).selectedYear = currentYear;
                 (<Year>this.object).visibleYear = currentYear;
             }
+
             await GameSettings.SaveYearConfiguration(<Year>this.object);
             // Update the Month Configuration
             await GameSettings.SaveMonthConfiguration((<Year>this.object).months);
@@ -1667,6 +1720,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
             const noteDefaultPlayerVisibility = (<HTMLInputElement>document.getElementById('scDefaultPlayerVisibility')).checked;
             await GameSettings.SetDefaultNoteVisibility(noteDefaultPlayerVisibility);
+
+            await GameSettings.SaveNoteCategories(this.noteCategories);
 
             if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
                 await SimpleCalendar.instance.currentYear.syncTime(true);
@@ -1690,6 +1745,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             leapYearSettings: GameSettings.LoadLeapYearRules(),
             monthSettings: GameSettings.LoadMonthData(),
             moonSettings: GameSettings.LoadMoonData(),
+            noteCategories: GameSettings.LoadNoteCategories(),
             seasonSettings: GameSettings.LoadSeasonData(),
             timeSettings: GameSettings.LoadTimeData(),
             weekdaySettings: GameSettings.LoadWeekdayData(),
@@ -1725,31 +1781,34 @@ export class SimpleCalendarConfiguration extends FormApplication {
             if(reader.result){
                 const res = JSON.parse(reader.result.toString());
                 if(res.hasOwnProperty('yearSettings')){
-                    await game.settings.set(ModuleName, SettingNames.YearConfiguration, res.yearSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.YearConfiguration, res.yearSettings);
                 }
                 if(res.hasOwnProperty('monthSettings')){
-                    await game.settings.set(ModuleName, SettingNames.MonthConfiguration, res.monthSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.MonthConfiguration, res.monthSettings);
                 }
                 if(res.hasOwnProperty('weekdaySettings')){
-                    await game.settings.set(ModuleName, SettingNames.WeekdayConfiguration, res.weekdaySettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.WeekdayConfiguration, res.weekdaySettings);
                 }
                 if(res.hasOwnProperty('leapYearSettings')){
-                    await game.settings.set(ModuleName, SettingNames.LeapYearRule, res.leapYearSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.LeapYearRule, res.leapYearSettings);
                 }
                 if(res.hasOwnProperty('timeSettings')){
-                    await game.settings.set(ModuleName, SettingNames.TimeConfiguration, res.timeSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.TimeConfiguration, res.timeSettings);
                 }
                 if(res.hasOwnProperty('seasonSettings')){
-                    await game.settings.set(ModuleName, SettingNames.SeasonConfiguration, res.seasonSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.SeasonConfiguration, res.seasonSettings);
                 }
                 if(res.hasOwnProperty('moonSettings')){
-                    await game.settings.set(ModuleName, SettingNames.MoonConfiguration, res.moonSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.MoonConfiguration, res.moonSettings);
                 }
                 if(res.hasOwnProperty('generalSettings')){
-                    await game.settings.set(ModuleName, SettingNames.GeneralConfiguration, res.generalSettings);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.GeneralConfiguration, res.generalSettings);
+                }
+                if(res.hasOwnProperty('noteCategories')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.NoteCategories, res.noteCategories);
                 }
                 if(res.hasOwnProperty('currentDate')){
-                    await game.settings.set(ModuleName, SettingNames.CurrentDate, res.currentDate);
+                    await (<Game>game).settings.set(ModuleName, SettingNames.CurrentDate, res.currentDate);
                 }
                 this.closeApp();
             }
