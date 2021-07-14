@@ -248,6 +248,21 @@ describe('Simple Calendar Notes Tests', () => {
         SimpleCalendarNotes.instance.element = el;
     });
 
+    test('Focus Title Input', () => {
+        //@ts-ignore
+        const el = SimpleCalendarNotes.instance.element;
+        const focusFun = jest.fn();
+        //@ts-ignore
+        SimpleCalendarNotes.instance.element = {
+            find: jest.fn().mockReturnValue({focus: focusFun})
+        }
+        SimpleCalendarNotes.instance.focusTitleInput();
+        expect(focusFun).toHaveBeenCalled();
+
+        //@ts-ignore
+        SimpleCalendarNotes.instance.element = el;
+    });
+
     test('Input Change', () => {
         const event = new Event('change');
         (<HTMLElement>event.currentTarget).id = '';

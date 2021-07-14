@@ -208,7 +208,18 @@ export class SimpleCalendarNotes extends FormApplication {
             (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
             (<JQuery>html).find('#scNoteEdit').on('click', this.editButtonClick.bind(this));
             (<JQuery>html).find('#scNoteDelete').on('click', this.deleteButtonClick.bind(this));
+            if(this.initialLoad){
+                this.initialLoad = false;
+                setTimeout(this.focusTitleInput.bind(this), 1000);
+            }
         }
+    }
+
+    /**
+     * Focuses the title input
+     */
+    focusTitleInput(){
+        (<JQuery>this.element).find('#scNoteTitle').focus();
     }
 
     /**
