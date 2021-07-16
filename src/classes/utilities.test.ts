@@ -11,6 +11,7 @@ import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 import Utilities from "./utilities";
 import {SCDateSelector} from "../interfaces";
+import {MoonIcons} from "../constants";
 
 describe('Utilities Class Tests', () => {
 
@@ -83,5 +84,18 @@ describe('Utilities Class Tests', () => {
         dateToCheck.hour = 10;
         dateToCheck.minute = 15;
         expect(Utilities.FormatTime(dateToCheck)).toBe('10:15');
+    });
+
+    test('Get Moon Phase Icon', () => {
+        //@ts-ignore
+        expect(Utilities.GetMoonPhaseIcon()).toBe('');
+        expect(Utilities.GetMoonPhaseIcon(MoonIcons.FirstQuarter, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(MoonIcons.Full, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(MoonIcons.LastQuarter, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(MoonIcons.NewMoon, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaningCrescent, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaningGibbous, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaxingCrescent, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaxingGibbous, '#ffffff')).toBeDefined();
     });
 });

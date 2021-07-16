@@ -1,5 +1,14 @@
 import {SCDateSelector} from "../interfaces";
 import {GameSettings} from "./game-settings";
+import {MoonIcons} from "../constants";
+import FirstQuarterIcon from "../icons/moon-first-quarter.svg";
+import FullMoonIcon from "../icons/moon-full.svg";
+import LastQuarterIcon from "../icons/moon-last-quarter.svg";
+import NewMoonIcon from "../icons/moon-new.svg";
+import WaningCrescentIcon from "../icons/moon-waning-crescent.svg";
+import WaningGibbousIcon from "../icons/moon-waning-gibbous.svg";
+import WaxingCrescentIcon from "../icons/moon-waxing-crescent.svg";
+import WaxingGibbousIcon from "../icons/moon-waxing-gibbous.svg";
 
 export default class Utilities{
 
@@ -70,5 +79,41 @@ export default class Utilities{
             text = `${sHour}:${sMinute}`;
         }
         return text;
+    }
+
+    /**
+     * Gets the SVG icon for the specific moon phase
+     * @param {MoonIcons} icon The phase of the moon
+     * @param {string} color The color of the moon
+     */
+    public static GetMoonPhaseIcon(icon: MoonIcons, color: string){
+        let moon = '';
+        switch (icon){
+            case MoonIcons.FirstQuarter:
+                moon = FirstQuarterIcon;
+                break;
+            case MoonIcons.Full:
+                moon = FullMoonIcon;
+                break;
+            case MoonIcons.LastQuarter:
+                moon = LastQuarterIcon;
+                break;
+            case MoonIcons.NewMoon:
+                moon = NewMoonIcon;
+                break;
+            case MoonIcons.WaningCrescent:
+                moon = WaningCrescentIcon;
+                break;
+            case MoonIcons.WaningGibbous:
+                moon = WaningGibbousIcon;
+                break;
+            case MoonIcons.WaxingCrescent:
+                moon = WaxingCrescentIcon;
+                break;
+            case MoonIcons.WaxingGibbous:
+                moon = WaxingGibbousIcon;
+                break;
+        }
+        return moon.replace(`fill="#ffffff"`, `fill="${color}"`);
     }
 }

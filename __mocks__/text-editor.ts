@@ -10,6 +10,10 @@ class TE {
     on(a: string, b: Function){
         this.changeResult = b;
     }
+
+    enrichHTML(){
+
+    }
 }
 
 //@ts-ignore

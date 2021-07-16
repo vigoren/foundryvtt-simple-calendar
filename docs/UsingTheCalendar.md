@@ -1,4 +1,21 @@
 # Accessing and Using the Calendar
+
+To access the calendar, a button has been added under the Token Controls left menu.
+
+![Calendar Button Location](./images/calendar-button.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
 The module adds a calendar button to the basic controls section of the layer controls. Clicking on this will open the module window
 
 ![Calendar Button Location](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/layers-button.png)

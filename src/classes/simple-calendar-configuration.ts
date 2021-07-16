@@ -125,12 +125,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 darksun: 'Dark Sun',
                 eberron: 'Eberron',
                 exandrian: 'Exandrian',
+                harptos: 'Forgotten Realms: Harptos',
                 golarianpf1e : 'Golarian: Pathfinder 1E',
                 golarianpf2e : 'Golarian: Pathfinder 2E',
                 greyhawk: 'Greyhawk',
-                harptos: 'Harptos',
                 'traveller-ic': 'Traveller: Imperial Calendar',
-                warhammer: "Warhammer"
+                warhammer: "Warhammer: Imperial Calendar"
             },
             timeTrackers: {
                 none: 'FSC.Configuration.General.None',

@@ -1,6 +1,7 @@
 import SimpleCalendar from "./simple-calendar";
 import {GameSettings} from "./game-settings";
 import DateSelector from "./date-selector";
+import Utilities from "./utilities";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -73,7 +74,8 @@ export default class HandlebarsHelpers{
             for(let i = 0; i < SimpleCalendar.instance.currentYear.moons.length; i++){
                 const mp = SimpleCalendar.instance.currentYear.moons[i].getMoonPhase(SimpleCalendar.instance.currentYear, 'visible', day);
                 if(mp && (mp.singleDay || day.selected || day.current)){
-                    html += `<span class="moon-phase ${mp.icon}" title="${SimpleCalendar.instance.currentYear.moons[i].name} - ${mp.name}" style="background-color: ${SimpleCalendar.instance.currentYear.moons[i].color};"></span>`;
+                    let moon = Utilities.GetMoonPhaseIcon(mp.icon, SimpleCalendar.instance.currentYear.moons[i].color);
+                    html += `<span class="moon-phase ${mp.icon}" title="${SimpleCalendar.instance.currentYear.moons[i].name} - ${mp.name}">${moon}</span>`;
                 }
             }
             return new Handlebars.SafeString(html);

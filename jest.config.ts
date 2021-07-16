@@ -7,7 +7,10 @@ const config: Config.InitialOptions = {
     moduleFileExtensions: ["js", "jsx", "json", "node", "ts"],
     testEnvironment: 'node',
     testMatch: [ "**/?(*.)+(spec|test).+(ts|tsx|js)" ],
-    transform: {"^.+\\.(ts|tsx)$": "ts-jest"},
+    transform: {
+        "^.+\\.(ts|tsx)$": "ts-jest",
+        "^.+\\.svg$": "jest-transform-stub"
+    },
     collectCoverage: true,
     coverageDirectory: './docs/coverage'
 };

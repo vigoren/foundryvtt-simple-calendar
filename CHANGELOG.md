@@ -1,5 +1,21 @@
 # Change Log
 
+## v1.3.8 - Bug Fixes
+
+### Quality of Life Improvements
+
+- Changed the moon icons to a new set of SVG's. This will make the creation of Calendar themes easier in the future.
+
+### Bug Fixes
+
+- Fixed a bug for the DSA5 system where the save configuration button would float in the middle of the content.
+- Fixed a bug where linked items (Journals, Tables, Macros, etc...) in notes were not linking properly.
+- Fixed a bug where you were unable to set a note end time to be less than the start time for notes that spanned multiple days.
+- Fixed a bug when converting seconds to a date where months with 0 days for that year were not skipped.
+- Fixed a bug when calculating the seconds for a date for calendars with a "Leap Month" (A month with 0 days normally but days during a leap year) that had more than one day. The calendar would incorrectly advance by the number of days in that leap month.
+- Fixed a bug where months were unable to have 0 leap year days.
+- Fixed a bug where the moon calculation could occasionally say every day of a month was the same moon phase.
+
 ## v1.3.0 - Note Improvements
 
 ### Notes
