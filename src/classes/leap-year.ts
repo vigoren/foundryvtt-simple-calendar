@@ -62,7 +62,7 @@ export default class LeapYear {
 
     fraction(year: number){
         const previousLeapYear = this.previousLeapYear(year);
-        if(previousLeapYear !== null){
+        if(previousLeapYear !== null && previousLeapYear !== 0){
             const yearInto = year%previousLeapYear;
             if(this.rule === LeapYearRules.Gregorian){
                 return yearInto / 4

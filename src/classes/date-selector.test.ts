@@ -754,14 +754,27 @@ describe('Date Selector Class Tests', () => {
         ds.selectedDate.startDate.minute = 59;
         ds.timeUpdate(event);
         expect(updateSpy).toHaveBeenCalledTimes(7);
+        expect(ds.selectedDate.endDate.hour).toBe(23);
+        expect(ds.selectedDate.endDate.minute).toBe(59);
 
         ds.selectedDate.startDate.minute = 0;
         ds.timeUpdate(event);
         expect(updateSpy).toHaveBeenCalledTimes(8);
+        expect(ds.selectedDate.endDate.hour).toBe(23);
+        expect(ds.selectedDate.endDate.minute).toBe(0);
 
         (<HTMLInputElement>event.currentTarget).value = '1:1';
         ds.selectedDate.startDate.hour = 0;
         ds.timeUpdate(event);
         expect(updateSpy).toHaveBeenCalledTimes(9);
+        expect(ds.selectedDate.endDate.hour).toBe(1);
+        expect(ds.selectedDate.endDate.minute).toBe(1);
+
+        ds.selectedDate.startDate.hour = 10;
+        ds.selectedDate.endDate.day = 10;
+        ds.timeUpdate(event);
+        expect(updateSpy).toHaveBeenCalledTimes(10);
+        expect(ds.selectedDate.endDate.hour).toBe(1);
+        expect(ds.selectedDate.endDate.minute).toBe(1);
     });
 });

@@ -45,7 +45,8 @@ const config: webpack.Configuration = {
                     {
                         loader: 'css-loader',
                         options: {
-                            url: (url: string, resourcePath: string) => {return url.indexOf('/systems') !== 0; }
+                            url: { filter: (url: string, resourcePath: string) => {return url.indexOf('/systems') !== 0;}
+                            }
                         }
                     },
                     // Compiles Sass to CSS
@@ -54,7 +55,7 @@ const config: webpack.Configuration = {
             },
             {
                 test: /\.svg$/,
-                type: 'asset/inline'
+                type: 'asset/source'
             },
         ]
     },

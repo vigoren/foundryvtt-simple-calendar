@@ -848,11 +848,13 @@ export default class DateSelector {
                 this.selectedDate.startDate.minute = minute;
 
             } else if(cssClass === 'end-time'){
-                if(hour <= this.selectedDate.startDate.hour){
-                    hour = this.selectedDate.startDate.hour;
+                if(DateSelector.DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
+                    if(hour <= this.selectedDate.startDate.hour){
+                        hour = this.selectedDate.startDate.hour;
 
-                    if(minute < this.selectedDate.startDate.minute){
-                        minute = this.selectedDate.startDate.minute;
+                        if(minute < this.selectedDate.startDate.minute){
+                            minute = this.selectedDate.startDate.minute;
+                        }
                     }
                 }
                 this.selectedDate.endDate.hour = hour;

@@ -15,22 +15,21 @@
 
 # Simple Calendar
 
-A simple calendar module for [FoundryVTT](https://foundryvtt.com/) that is system independent. 
+A simple calendar module for [FoundryVTT](https://foundryvtt.com/) that is game system independent. 
 
-This module allows you to create a calendar with any number of months per year, any number of days per month and customizable hours, minutes and seconds for your game world.
-It is intended as a way for a GM to show a calendar like interface that maps to their in game world.
+This module allows you to create a completely customizable calendar that ties in with the Game Masters world exactly how they want it to. Notes and events can be added to the calendar to help keep track of what and when things are happening in your world.
+
+All of this is done using a familiar calendaring view both the GM and players will enjoy!
 
 ## Contents
 
 - [Features](#features)
 - [Installation](#installing-the-module)
-- [Compatible Modules](#compatible-modules)
 - [Accessing and using the calendar](./docs/UsingTheCalendar.md)
 - [Configuring your Calendar](./docs/Configuration.md)
-- [Changing the date and time](./docs/UpdatingDateTime.md)
 - [Notes](./docs/Notes.md)
 - [Hooks](./docs/Hooks.md)
-- [API (For other modules and systems)](./docs/API.md)
+- [API (For use by other modules, systems or macros)](./docs/API.md)
 - [Translations](#translations)
 
 ## Features
@@ -70,24 +69,20 @@ It is intended as a way for a GM to show a calendar like interface that maps to 
 
 ## Installing The Module
 
-There are 2 ways to install the module, using the module.json file or by manually downloading the zip file.
+There are 3 ways to install the module:
+
+### Through Foundry
+
+Foundry has a built-in directory of modules that you can install. The easiest way is to use this feature and search for "Simple Calendar" and install!
 
 ### module.json
 
-To install using the module json file, use this link [https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json](https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json)
+Through the same built-in module installer in foundry, you can specify the link of the module to install instead of searching the directory. To install using the module json file, use this link [https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json](https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json)
 
 ### Zip File
 
 To install the most recent version of the module, view the releases section to the right of the main GitHub page. 
 Selecting the latest release will bring you to a page where you can download the module.zip asset. This will contain everything you need to manually install the module.
-
-## Compatible Modules
-These are other time keeping modules that Simple Calendar can work if they are installed in your world.
-
-**Important**: None of these modules are required, the option to work with them is available to make a GMs life easier if they want to use Simple Calendar but have another of these modules installed.
-
-- [about-time](https://foundryvtt.com/packages/about-time): See the [about-time module configuration for Simple Calendar](./docs/Configuration.md#about-time) for more information.
-- [Calendar/Weather](https://foundryvtt.com/packages/calendar-weather): See the [Calendar/Weather module configuration for Simple Calendar](./docs/Configuration.md#calendarweather) for more information.
 
 ## Translations
 
@@ -113,4 +108,4 @@ If your language is missing from the list, and you would like to help translate 
 
 ## Credits
 
-Moon Icons by [Wolf Böse](https://thenounproject.com/neuedeutsche/)
+Moon Icons by [Bas Milius](https://github.com/basmilius/weather-icons), modified by [vigorator](https://github.com/vigoren)

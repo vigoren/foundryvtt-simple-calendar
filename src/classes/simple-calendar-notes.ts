@@ -97,6 +97,7 @@ export class SimpleCalendarNotes extends FormApplication {
             viewMode: this.viewMode,
             canEdit: GameSettings.IsGm() || GameSettings.UserID() === (<Note>this.object).author,
             enableRichTextEditButton: this.checkForThirdPartyMarkdownEditors(),
+            enrichedContent: TextEditor.enrichHTML((<Note>this.object).content),
             displayDate: '',
             repeatOptions: <NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             repeats: (<Note>this.object).repeats,
@@ -203,7 +204,6 @@ export class SimpleCalendarNotes extends FormApplication {
             (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteDateAllDay').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('input[name="scNoteCategories"]').on('change', this.inputChanged.bind(this));
-
 
             (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
             (<JQuery>html).find('#scNoteEdit').on('click', this.editButtonClick.bind(this));

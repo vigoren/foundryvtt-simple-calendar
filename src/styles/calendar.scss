@@ -133,44 +133,19 @@
           flex-direction: row;
 
           .moon-phase{
-            width: 10px;
-            height: 10px;
-            background-size: contain;
+            svg{
+              width: 20px;
+              height: 20px;
+              margin-top: -5px;
+            }
+            width: 11px;
+            height: 11px;
             margin-right: 2px;
-            margin-bottom: 2px;
-            border-radius: 5px;
           }
         }
 
       }
     }
-  }
-}
-
-.moon-phase{
-  &.new{
-    background-image: url("../icons/new.svg") ;
-  }
-  &.waxing-crescent{
-    background-image: url("../icons/waxing-crescent.svg") ;
-  }
-  &.first-quarter{
-    background-image: url("../icons/first-quarter.svg") ;
-  }
-  &.waxing-gibbous{
-    background-image: url("../icons/waxing-gibbous.svg") ;
-  }
-  &.full{
-    background-image: url("../icons/full.svg") ;
-  }
-  &.waning-gibbous{
-    background-image: url("../icons/waning-gibbous.svg");
-  }
-  &.last-quarter{
-    background-image: url("../icons/last-quarter.svg") ;
-  }
-  &.waning-crescent{
-    background-image: url("../icons/waning-crescent.svg") ;
   }
 }
 
@@ -410,9 +385,12 @@
       .moon-phase{
         width: 12px;
         height: 12px;
-        background-size: contain;
-        border-radius: 6px;
         margin-right: 2px;
+        svg{
+          width: 20px;
+          height: 20px;
+          margin-top: -3px;
+        }
       }
     }
 

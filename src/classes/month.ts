@@ -79,16 +79,16 @@ export default class Month {
      * @param {number} numberOfDays The number of days in this month
      * @param {number} numberOfLeapYearDays The number of days in this month on a leap year
      */
-    constructor(name: string, numericRepresentation: number, numericRepresentationOffset: number = 0, numberOfDays: number = 0, numberOfLeapYearDays: number = 0) {
+    constructor(name: string, numericRepresentation: number, numericRepresentationOffset: number = 0, numberOfDays: number = 0, numberOfLeapYearDays: number | null = null) {
         this.name = name.trim();
         this.numericRepresentation = numericRepresentation;
         this.numericRepresentationOffset = numericRepresentationOffset;
         if(this.name === ''){
             this.name = numericRepresentation.toString();
         }
-        this.numberOfLeapYearDays = numberOfLeapYearDays < 1? numberOfDays : numberOfLeapYearDays;
+        this.numberOfLeapYearDays = numberOfLeapYearDays === null? numberOfDays : numberOfLeapYearDays;
         this.numberOfDays = numberOfDays;
-        this.populateDays(numberOfLeapYearDays > numberOfDays? numberOfLeapYearDays : numberOfDays);
+        this.populateDays(this.numberOfLeapYearDays > this.numberOfDays? this.numberOfLeapYearDays : this.numberOfDays);
     }
 
     /**

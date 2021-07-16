@@ -14,7 +14,6 @@ import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import {Note} from "./note";
 import SpyInstance = jest.SpyInstance;
 import Mock = jest.Mock;
-import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";

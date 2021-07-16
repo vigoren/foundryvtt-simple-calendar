@@ -1,0 +1,20 @@
+.system-dsa5{
+  .window-app{
+    &.simple-calendar-configuration{
+
+      .window-content{
+        position: unset;
+      }
+
+      #simpleCalendarConfiguration{
+        .config-save{
+          width: unset;
+          left: 9px;
+          right: 14px;
+          bottom: 40px;
+          height: 40px;
+        }
+      }
+    }
+  }
+}

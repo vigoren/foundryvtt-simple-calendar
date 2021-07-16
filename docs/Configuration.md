@@ -18,12 +18,12 @@ Gregorian|This the standard real life calendar|The current date will be used
 Dark Sun |This is the calendar from the Sark Sun setting for Dungeons and Dragons|Scorch 1,1
 Eberron| This is the calendar from the Eberron setting for Dungeons and Dragons | Zarantyr 1, 998 YK
 Exandrian |This is the calendar from the Exandria setting for Dungeons and Dragons | Horisal 1, 812 P.D.
+Forgotten Realms: Harptos | This is the calendar used across Faerun in the Forgotten Realms | Hammer 1, 1495 DR
 Golarian: Pathfinder 1E | This is the calendar from the Pathfinder 1E game | Abadius 1, 4710 AR
 Golarian: Pathfinder 2E | This is the calendar from the Pathfinder 2E game | Abadius 1, 4710 AR
 Greyhawk | This is the calendar from the Greyhawk setting for Dungeons and Dragons | Needfest 1, 591 cy
-Harptos | This is the calendar used across Faerun in the Forgotten Realms | Hammer 1, 1495 DR
 Traveller: Imperial Calendar|This is the Imperial calendar used for the Traveller game system|1, 1000
-Warhammer | This is the calendar used by the Imperium in the Fantasy Warhammer game | Hexenstag 1, 2522
+Warhammer: Imperial Calendar | This is the calendar used by the Imperium in the Fantasy Warhammer game | Hexenstag 1, 2522
 
 All of these calendars can be further customized after they are loaded. They are here to provide a simple starting point for your game.
 
@@ -33,12 +33,12 @@ These settings dictate how Simple Calendar interacts with Foundry's game world t
 
 Option|Description|Update Game World Time|When Game World Time is Updated
 --------|--------------------|-------------------------------------------------|----------------------------------------------------------
-None (default)|Simple Calendar does not interact with the game world time at all. This setting is ideal if you want to keep Simple Calendar isolated from other modules.|Does not update the game world time|Simple Calendar is not updated when the game world time is updated by something else.
+None|Simple Calendar does not interact with the game world time at all. This setting is ideal if you want to keep Simple Calendar isolated from other modules.|Does not update the game world time|Simple Calendar is not updated when the game world time is updated by something else.
 Self|Treats Simple Calendar as the authority source for the game world time. This setting is ideal when you want Simple Calendar to be in control of the games time and don't want other modules updating Simple Calendar|Updates the game world time to match what is in Simple Calendar.|Combat round changes will update Simple Calendars time. Simple Calendar will ignore updates from all others modules.
 Third Party Module|This will instruct Simple Calendar to just display the Time in the game world time. All date changing controls are disabled and the changing of time relies 100% on another module. This setting is ideal if you are just want to use Simple Calenar to display the date in calendar form and/or take advantage of the notes.|Does not update the game world time.|Updates it's display everytime the game world time is changed, following what the other modules say the time is.
-Mixed|This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.|Will update the game world time|Will update it's own time based on changes to the game world time, following what other modules say the time is.
+Mixed (default)|This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.|Will update the game world time|Will update it's own time based on changes to the game world time, following what other modules say the time is.
 
-The most common interaction with another module is likely to be with Calendar/Weather. For this module I recommend using the "Self" or "Mixed" setting. With self weather effects will still trigger from Calendar/Weather as you advance time in Simple Calendar. Only use mixed if you also want to be able to use the Calendar/Weather controls to advance time to certain points (like dawn or dusk).
+Mixed is the best option to ensure compatibility with any other modules that interact with game time.
 
 ### Pathfinder 2E: World Clock Sync
 For games running the Pathfinder 2E system, this setting will attempt to keep Simple Calendars date and time in sync with the Pathfinder 2E's World Clock.
@@ -55,6 +55,7 @@ Permission|Description|Roles
 ----------|------------|----
 View Calendar | If users in this role can view the calendar interface or not.|Player, Trusted Player, Assistant GM
 Add Notes | If users in these roles are able to add notes to the calendar.|Player, Trusted Player, Assistant GM
+Reorder Notes| If users in these roles are able to reorder notes on a specific day.|Player, Trusted Player, Assistant GM
 Change Date and Time| If users in these roles are able to change the calendars date and time.|Player, Trusted Player, Assistant GM
 
 ### Import/Export
@@ -71,13 +72,13 @@ The current supported modules for importing/exporting settings:
 
 #### about-time
 
-The [about-time](https://foundryvtt.com/packages/about-time) module is used for many other modules but can also be used on its own. 
+The [about-time](https://foundryvtt.com/packages/about-time) module as of v1.0.0 now depends on Simple Calendar for its calendaring functionality.
 
-Settings can be imported and exported between these two modules without issue.
+For help with updating to this version the settings from about-time can be imported into Simple Calendar.
 
 #### Calendar/Weather
 
-The [Calendar/Weather](https://foundryvtt.com/packages/calendar-weather) module is used as a way to integrate about-time with a custom calendar and additional weather effects.
+The [Calendar/Weather](https://foundryvtt.com/packages/calendar-weather) module is currently going under a large re-write (v4) that will integrate with Simple Calendar for all calendar functionality and provide weather functionality for it. 
 
 Most settings can be imported and exported between these two modules with these notable exceptions:
 
@@ -93,12 +94,21 @@ Most settings can be imported and exported between these two modules with these 
 
 This tab contains the settings for creating and interacting with notes.
 
-Setting | Description
--------- | ----------
-Note Default Player Visibility | For new notes, if by default the player visibility option is checked or not.
-Players Can Add Notes | If checked players will be allowed to add their own notes to the calendar.
-Players Can Re-Order Notes | If checked players will be allowed to re-order the notes on a day.
+### Note Default Player Visibility
 
+For new notes, if by default the player visibility option is checked or unchecked.
+
+### Note Categories
+
+This section is used to specify any custom categories for notes.
+
+Category Setting|Description
+----------------|------------
+Note Category Name| This is the name used to identify the custom category. Also used as the display text for the category.
+Note Category Color| The color associated with the category. Used as the background color for the category.
+Remove| Removes the note category from the list.
+Add Note Category| Adds a new note category to the list.
+Remove All Note Categories|Removes all note categories.
 
 ## Year Settings
 

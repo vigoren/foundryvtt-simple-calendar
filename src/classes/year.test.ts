@@ -646,6 +646,7 @@ describe('Year Class Tests', () => {
         expect(year.dateToDays(4,1,1, true)).toBe(-91);
         expect(year.dateToDays(3,1,1, true)).toBe(-181);
         expect(year.dateToDays(-1,1,1, true)).toBe(-542);
+        expect(year.dateToDays(-4,1,1, true)).toBe(-813);
 
         year.months[2].intercalary = true;
         expect(year.dateToDays(4,1,1, true)).toBe(-61);
@@ -876,6 +877,31 @@ describe('Year Class Tests', () => {
         expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 0, seconds: 1});
         year.time.seconds = 3661;
         expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 3, day: 11, hour: 1, minute: 1, seconds: 1});
+
+        // Testing Leap Month's
+        year.numericRepresentation = -1950;
+        year.months.push(new Month('Leap Month', 13, 0, 0, 2));
+        year.months.push(new Month('Leap Month 2', 14, 0, 0, 2));
+        year.months.push(new Month('New Month', 15, 0, 10));
+        year.months.push(new Month('No Leap Month', 16, 0, 10, 0));
+        year.resetMonths();
+        year.months[11].current = true;
+        year.months[11].days[29].current = true;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1950, month: 11, day: 29, hour: 1, minute: 1, seconds: 1});
+        year.numericRepresentation = -1948;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: -1948, month: 11, day: 29, hour: 1, minute: 1, seconds: 1});
+
+        year.numericRepresentation = 2000;
+        year.resetMonths();
+        year.months[14].current = true;
+        year.months[14].days[0].current = true;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 2000, month: 14, day: 0, hour: 1, minute: 1, seconds: 1});
+        year.numericRepresentation = 2001;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 2001, month: 14, day: 0, hour: 1, minute: 1, seconds: 1});
+        year.resetMonths();
+        year.months[14].current = true;
+        year.months[14].days[9].current = true;
+        expect(year.secondsToDate(year.toSeconds())).toStrictEqual({year: 2001, month: 14, day: 9, hour: 1, minute: 1, seconds: 1});
     });
 
     test('Seconds To Interval', () => {

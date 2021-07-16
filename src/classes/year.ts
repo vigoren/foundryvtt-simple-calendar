@@ -187,10 +187,12 @@ export default class Year {
                 }
                 if(this.moons.length){
                     for(let i = 0; i < this.moons.length; i++){
+                        const phase = this.moons[i].getMoonPhase(this, 'current');
                         sMoonsPhase.push({
                             name: this.moons[i].name,
                             color: this.moons[i].color,
-                            phase: this.moons[i].getMoonPhase(this, 'current')
+                            phase: this.moons[i].getMoonPhase(this, 'current'),
+                            iconSVG: Utilities.GetMoonPhaseIcon(phase.icon, this.moons[i].color)
                         });
                     }
                 }
@@ -616,8 +618,7 @@ export default class Year {
             if(month && month.startingWeekday !== null){
                 daysSoFar = targetDay + month.startingWeekday - 2;
             } else {
-                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + (this.yearZero === 0 && this.leapYearRule.rule !== LeapYearRules.None? -1 : 0) + this.firstWeekday;
-                //daysSoFar = this.dateToDays(year, targetMonth, targetDay) + this.firstWeekday;
+                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + this.firstWeekday;
             }
             return (daysSoFar % this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
@@ -694,14 +695,18 @@ export default class Year {
         }
         if(beforeYearZero){
             daysSoFar = daysSoFar + 1;
-            if(year < 0 && this.yearZero === 0 && this.leapYearRule.rule !== LeapYearRules.None){
-                daysSoFar--;
+            if(year <= 0 && this.leapYearRule.rule !== LeapYearRules.None){
+                if(this.yearZero === 0 && !isLeapYear){
+                    daysSoFar -= leapYearDayDifference;
+                } else if(this.yearZero !== 0 && isLeapYear){
+                    daysSoFar += leapYearDayDifference;
+                }
             }
         } else {
             daysSoFar = daysSoFar - 1;
         }
         if(year > 0 && this.yearZero === 0 && this.leapYearRule.rule !== LeapYearRules.None){
-            daysSoFar++;
+            daysSoFar += leapYearDayDifference;
         }
         return beforeYearZero? daysSoFar * -1 : daysSoFar;
     }
@@ -791,13 +796,22 @@ export default class Year {
             }
             while(dayCount > 0){
                 const yearTotalDays = this.totalNumberOfDays(isLeapYear, true);
-                const monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
+                let monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
                 if(dayCount >= yearTotalDays){
                     year = year - 1;
                     isLeapYear = this.leapYearRule.isLeapYear(year);
+                    monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
                     dayCount = dayCount - yearTotalDays;
                 } else if(dayCount >= monthDays){
                     month = month - 1;
+                    //Check the new month to see if it has days for this year, if not then skip to the previous months until a month with days this year is found.
+                    let newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
+                    let safetyCounter = 0
+                    while(newMonthDays === 0 && safetyCounter <= this.months.length){
+                        month--;
+                        newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
+                        safetyCounter++;
+                    }
                     day = isLeapYear? this.months[month].numberOfLeapYearDays - 1 : this.months[month].numberOfDays - 1;
                     dayCount = dayCount - monthDays;
                 } else {
@@ -819,6 +833,14 @@ export default class Year {
                     dayCount = dayCount - yearTotalDays;
                 } else if(dayCount >= monthDays){
                     month = month + 1;
+                    //Check the new month to see if it has days for this year, if not then skip to the next months until a month with days this year is found.
+                    let newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
+                    let safetyCounter = 0
+                    while(newMonthDays === 0 && safetyCounter <= this.months.length){
+                        month++;
+                        newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
+                        safetyCounter++;
+                    }
                     dayCount = dayCount - monthDays;
                 } else {
                     day = day + 1;
