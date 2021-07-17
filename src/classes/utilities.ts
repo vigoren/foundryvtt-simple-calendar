@@ -13,6 +13,14 @@ import WaxingGibbousIcon from "../icons/moon-waxing-gibbous.svg";
 export default class Utilities{
 
     /**
+     * Generates a random hash string that is cryptographically strong
+     * @return {string}
+     */
+    public static generateUniqueId(){
+        return window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
+    }
+
+    /**
      * Generates a random numeric value based on the passed in string.
      * @param {string} value The string to hash
      * @return {number} The number representing the hash value

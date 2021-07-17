@@ -76,6 +76,7 @@
     .week{
       display: flex;
       flex-direction: row;
+      margin: 2px 0;
 
       .empty-day{
         width: 40px;
@@ -113,18 +114,29 @@
           }
         }
 
-        .note-count{
+        .day-notes{
           position: absolute;
-          top: 0;
+          top: -3px;
           right: 0;
-          background-color: #c30505;
-          color: #ffffff;
-          width: 16px;
-          height: 16px;
-          font-size: 12px;
-          padding: 1px 1px 1px 2px;
-          border-radius: 8px;
+          display: flex;
+          .note-count{
+            background-color: #c30505;
+            color: #ffffff;
+            width: 16px;
+            height: 16px;
+            font-size: 12px;
+            margin-right: 2px;
+            padding: 1px 1px 1px 2px;
+            border-radius: 8px;
+
+            &.reminders{
+              background-color: #384582;
+              margin-right: 0;
+            }
+          }
         }
+
+
 
         .moons{
           position: absolute;
@@ -308,12 +320,12 @@
   }
 
   &:hover {
-    background-color: #cad1f3;
+    background-color: #cbe0ff70;
     cursor: pointer;
   }
 
   &.drag-active{
-    background-color: #cad1f3;
+    background-color: #cbe0ff70;
     .note-details-wrapper{
       visibility: hidden;
     }

@@ -615,7 +615,8 @@ export class GameSettings {
             minute: w.minute,
             endDate: w.endDate,
             order: w.order,
-            categories: w.categories
+            categories: w.categories,
+            remindUsers: w.remindUsers
         };});
         if(GameSettings.IsGm()){
             return (<Game>game).settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});

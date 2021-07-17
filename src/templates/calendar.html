@@ -3,7 +3,10 @@
     <div class="compact-calendar">
         <div class="season-moon-info" style="{{#if currentYear.currentSeasonColor }}background-color:{{currentYear.currentSeasonColor}};{{/if}}">
             <div class="notes-wrapper">
-                <button class="control delete notes {{#unless currentYear.selectedDayNotes.length}}none{{/unless}} fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}"> {{currentYear.selectedDayNotes.length}}</button>
+                <button class="control delete notes {{#unless currentYear.selectedDayNotes.normal}}none{{/unless}} fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}"> {{currentYear.selectedDayNotes.normal}}</button>
+                {{#if (gt currentYear.selectedDayNotes.reminders 0)}}
+                <button class="control notes {{#unless currentYear.selectedDayNotes.reminders}}none{{/unless}} fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}"> {{currentYear.selectedDayNotes.reminders}}</button>
+                {{/if}}
                 {{#if addNotes}}
                 <button class="fa fa-plus control save add-note" title="{{localize 'FSC.Notes.AddNew'}}"></button>
                 {{/if}}
@@ -78,6 +81,11 @@
                         </div>
                         {{/if}}
                         {{/if}}
+                        {{#if reminder}}
+                        <div class="note-category note-icon" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.ReminderHelp'}}">
+                            <span class="fa fa-bell"></span>
+                        </div>
+                        {{/if}}
                         <div class="note-time note-category" title="{{localize 'FSC.Notes.Time'}}">
                             <span class="fa fa-clock"></span>  {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
                         </div>
@@ -128,7 +136,9 @@
                         <div class="empty-day"></div>
                         {{else}}
                         <div class="day {{#if ../../showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../../showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
+                            <div class="day-notes">
                             {{day-has-note day=this}}
+                            </div>
                             {{this.name}}
                             <div class="moons">
                                 {{day-moon-phase day=this}}
@@ -253,6 +263,11 @@
                             <span class="fa fa-eye-slash"></span>
                         </div>
                         {{/if}}
+                        {{/if}}
+                        {{#if reminder}}
+                        <div class="note-category note-icon" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.ReminderHelp'}}">
+                            <span class="fa fa-bell"></span>
+                        </div>
                         {{/if}}
                         <div class="note-time note-category" title="{{localize 'FSC.Notes.Time'}}">
                             <span class="fa fa-clock"></span>  {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}

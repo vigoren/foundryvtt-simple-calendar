@@ -43,7 +43,7 @@ describe('Note Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(n).length).toBe(16); //Make sure no new properties have been added
+        expect(Object.keys(n).length).toBe(17); //Make sure no new properties have been added
         expect(n.year).toBe(0);
         expect(n.month).toBe(1);
         expect(n.day).toBe(2);
@@ -78,7 +78,7 @@ describe('Note Tests', () => {
         SimpleCalendar.instance.noteCategories.push({name: 'cat', color: '#fff', textColor: '#000'})
 
         let c = n.toTemplate();
-        expect(Object.keys(c).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(15); //Make sure no new properties have been added
         expect(c.title).toBe('');
         expect(c.content).toBe('');
         expect(c.playerVisible).toBe(false);
@@ -110,6 +110,19 @@ describe('Note Tests', () => {
         expect(c.authorDisplay).toStrictEqual({name: 'name', color: '#ffffff', textColor: '#000000'});
 
         (<Game>game).users = orig;
+
+        const uOrig = (<Game>game).user;
+        //@ts-ignore
+        (<Game>game).user = {id: 'asd'};
+
+        c = n.toTemplate();
+        expect(c.reminder).toBe(false);
+        n.remindUsers = ['asd'];
+        c = n.toTemplate();
+        expect(c.reminder).toBe(true);
+
+        //@ts-ignore
+        (<Game>game).user = uOrig;
     });
 
     test('Load From Config', () => {
@@ -136,7 +149,8 @@ describe('Note Tests', () => {
                 seconds: 0
             },
             order: 0,
-            categories: []
+            categories: [],
+            remindUsers: []
         };
         n.loadFromConfig(config);
         expect(n.year).toBe(1);

@@ -169,7 +169,7 @@ export default class Year {
         const selectedMonth = this.getMonth('selected');
         const visibleMonth = this.getMonth('visible');
 
-        let sMonth = '', sDay = '', sDayOfWeek = '', sMoonsPhase = [], sNotes: Note[] = [];
+        let sMonth = '', sDay = '', sDayOfWeek = '', sMoonsPhase = [], sNotes: Note[] = [], remNotes: Note[] = [];
         if(selectedMonth){
             sMonth = selectedMonth.name;
             const d = selectedMonth.getDay('selected');
@@ -197,7 +197,12 @@ export default class Year {
                     }
                 }
                 if(SimpleCalendar.instance){
-                    sNotes = SimpleCalendar.instance.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
+                    const notes = SimpleCalendar.instance.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
+                    const userId = GameSettings.UserID();
+                    if(notes.length){
+                        sNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
+                        remNotes = notes.filter(n => n.remindUsers.indexOf(userId) !== -1);
+                    }
                 }
             }
         }
@@ -215,7 +220,10 @@ export default class Year {
             selectedDisplayDay: sDay,
             selectedDayOfWeek: sDayOfWeek,
             selectedDayMoons: sMoonsPhase,
-            selectedDayNotes: sNotes,
+            selectedDayNotes: {
+                reminders: remNotes.length,
+                normal: sNotes.length
+            },
             yearZero: this.yearZero,
             numericRepresentation: this.numericRepresentation,
             weekdays: this.weekdays.map(w => w.toTemplate()),
