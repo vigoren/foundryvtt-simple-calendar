@@ -22,7 +22,6 @@ import Day from "./day";
 import Hook from "./hook";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import GameSockets from "./game-sockets";
-import Calendar from "./calendar";
 
 
 /**
@@ -47,8 +46,6 @@ export default class SimpleCalendar extends Application{
     public notes: Note[] = [];
 
     public noteCategories: NoteCategory[] = [];
-
-    public calendars: Calendar[] = [];
 
     /**
      * The CSS class associated with the animated clock
