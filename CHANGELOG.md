@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.3.10 - Note Reminders and Bug Fixing
+## v1.3.12 - Note Reminders and Bug Fixing
 
 ### Note Reminders
 
@@ -8,12 +8,16 @@ GMs and players can select notes to be reminded of when the current calendar dat
 
 - When viewing or adding a new note there is a "Remind Me!" button in the top right of the dialog. Clicking that will register you to be reminded about this note (the button will change green when registered).
 - A green bell icon will appear next to the note(s) in the note list that you will be reminded of on that day.
-- Days that have reminder notes for the player will have an additional indicator showing the number of notes they wanted to be reminded of on that day.
+- Days that have reminder notes for the player will have an additional blue indicator showing the number of notes they wanted to be reminded of on that day.
 
 ### Bug Fixes
 
 - Updated the styling around the note list to work better on systems with darker backgrounds.
 - Changed the rules of determining the initial size of the note dialog to have a minimum height and a maximum width.
+
+### Translations
+
+- Simple Calendar has been translated to Portuguese thanks to [castanhocorreia](https://github.com/castanhocorreia), thank you!
 
 ## v1.3.8 - Bug Fixes
 
