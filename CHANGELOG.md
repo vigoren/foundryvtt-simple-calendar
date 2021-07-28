@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.3.12 - Note Reminders and Bug Fixing
+## v1.3.14 - Note Reminders and Bug Fixing
 
 ### Note Reminders
 
@@ -14,10 +14,12 @@ GMs and players can select notes to be reminded of when the current calendar dat
 
 - Updated the styling around the note list to work better on systems with darker backgrounds.
 - Changed the rules of determining the initial size of the note dialog to have a minimum height and a maximum width.
+- Fixed a bug where calendars would get a scrollbar in Firefox when a moon icon was visible on the last week of that month.
 
 ### Translations
 
 - Simple Calendar has been translated to Portuguese thanks to [castanhocorreia](https://github.com/castanhocorreia), thank you!
+- Simple Calendar has been translated to Czech thanks to [robertjunek](https://github.com/robertjunek), thank you!
 
 ## v1.3.8 - Bug Fixes
 
