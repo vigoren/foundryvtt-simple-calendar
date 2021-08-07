@@ -90,10 +90,12 @@ Simple Calendar is available in languages other than English thanks to the follo
 
 Language|Translator(s)
 --------|----------
-German (de)|[MasterZelgadis](https://github.com/MasterZelgadis) <br/> [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird)
+German (de)|[MasterZelgadis](https://github.com/MasterZelgadis) <br/> [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird) <br/> [Fallayn](https://github.com/Fallayn)
 Traditional Chinese (zh)|[benwater12](https://github.com/benwater12)
 Spanish (es)|[areymoreno](https://github.com/areymoreno)
 Korean (ko)|[drdwing](https://github.com/drdwing)
+Portuguese Brasil (pt-BR)|[castanhocorreia](https://github.com/castanhocorreia)
+Czech (cs)|[robertjunek](https://github.com/robertjunek)
 
 If your language is missing from the list, and you would like to help translate Simple Calendar please follow these steps:
 

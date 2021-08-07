@@ -102,6 +102,7 @@ export class SimpleCalendarNotes extends FormApplication {
             repeatOptions: <NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             repeats: (<Note>this.object).repeats,
             repeatsText: '',
+            reminder: (<Note>this.object).remindUsers.indexOf(GameSettings.UserID()) > -1,
             authDisplay: {
                 name: '',
                 color: '',
@@ -170,6 +171,7 @@ export class SimpleCalendarNotes extends FormApplication {
         if(this.hasBeenResized){
             return;
         }
+        let halfWidth  = window.innerWidth / 2;
         let height = 0;
         let width = 16;
 
@@ -181,10 +183,17 @@ export class SimpleCalendarNotes extends FormApplication {
             width += w? w : 0;
         }
 
+        if(width > halfWidth){
+            width = halfWidth;
+        }
+
         if(width< 440){
             width = 440;
         }
         height += 46;
+        if(height < 250){
+            height = 250;
+        }
 
         this.setPosition({width: width, height: height});
     }
@@ -204,6 +213,7 @@ export class SimpleCalendarNotes extends FormApplication {
             (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteDateAllDay').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('input[name="scNoteCategories"]').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('h1 .reminder input').on('change', this.reminderChange.bind(this));
 
             (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
             (<JQuery>html).find('#scNoteEdit').on('click', this.editButtonClick.bind(this));
@@ -268,6 +278,29 @@ export class SimpleCalendarNotes extends FormApplication {
         this.updateApp();
     }
 
+    /**
+     * Triggers when the remind me button is clicks for a note.
+     * @param e
+     */
+    public reminderChange(e: Event){
+        const userId = GameSettings.UserID();
+        const userIndex = (<Note>this.object).remindUsers.indexOf(userId);
+        if(userId !== '' && userIndex === -1){
+            (<Note>this.object).remindUsers.push(userId);
+        } else if(userId !== '' && userIndex !== -1) {
+            (<Note>this.object).remindUsers.splice(userIndex, 1);
+        }
+        if(this.viewMode){
+            let currentNotes = GameSettings.LoadNotes().map(n => {
+                const note = new Note();
+                note.loadFromConfig(n);
+                return note;
+            });
+            currentNotes = currentNotes.map(n => n.id === (<Note>this.object).id? (<Note>this.object) : n);
+            GameSettings.SaveNotes(currentNotes).catch(Logger.error);
+        }
+        this.updateApp();
+    }
     /**
      * Called when the date selector date has been selected
      * @param selectedDate

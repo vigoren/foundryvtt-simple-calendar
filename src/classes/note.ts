@@ -4,7 +4,6 @@ import {DateRangeMatch, NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import DateSelector from "./date-selector";
 import Utilities from "./utilities";
-import {start} from "repl";
 
 /**
  * All content around a calendar note
@@ -91,13 +90,24 @@ export class Note{
      */
     categories: string[] = [];
 
+    /**
+     * List of user IDs to send reminders too when the time reaches the note time
+     * @type {string[]}
+     */
+    remindUsers: string[] = [];
+
+    /**
+     * If a reminder for this note has been sent to the user or not (Local variable to the user)
+     * @type {boolean}
+     */
+    reminderSent: boolean = false;
 
 
     /**
      * The note constructor
      */
     constructor() {
-        this.id = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16)
+        this.id = Utilities.generateUniqueId();
     }
 
     /**
@@ -136,6 +146,11 @@ export class Note{
             authDisplay = null;
         }
 
+        let reminder = false;
+        if(this.remindUsers.indexOf(GameSettings.UserID()) > -1){
+            reminder = true;
+        }
+
         return {
             title: this.title,
             content: this.content,
@@ -151,6 +166,7 @@ export class Note{
             endDate: this.endDate,
             order: this.order,
             categories: SimpleCalendar.instance.noteCategories.filter(nc => this.categories.includes(nc.name)),
+            reminder: reminder
         };
     }
 
@@ -204,6 +220,9 @@ export class Note{
         if(noteConfig.hasOwnProperty('categories')){
             this.categories = noteConfig.categories;
         }
+        if(noteConfig.hasOwnProperty('remindUsers')){
+            this.remindUsers = noteConfig.remindUsers;
+        }
     }
 
     /**
@@ -234,6 +253,7 @@ export class Note{
         };
         n.order = this.order;
         n.categories = [...this.categories];
+        n.remindUsers = [...this.remindUsers];
         return n;
     }
 

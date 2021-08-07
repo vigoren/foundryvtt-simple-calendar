@@ -2,6 +2,7 @@ import SimpleCalendar from "./simple-calendar";
 import {GameSettings} from "./game-settings";
 import DateSelector from "./date-selector";
 import Utilities from "./utilities";
+import {Note} from "./note";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -43,23 +44,47 @@ export default class HandlebarsHelpers{
             if(month){
                 const notes = SimpleCalendar.instance.notes.filter(n => n.isVisible(year, month.numericRepresentation, day));
                 if(notes.length){
-                    const count = notes.length < 100? notes.length : 99;
-                    let title = `${count} ${GameSettings.Localize('FSC.Configuration.General.Notes')}`;
-                    if(notes.length < 3){
-                        title = GameSettings.Localize('FSC.Configuration.General.Notes') + ':\n';
-                        for(let i = 0; i < notes.length; i++){
-                            if(i !== 0){
-                                title += '\n';
-                            }
-                            const nTitle = notes[i].title.replace(/"/g,'&quot;');
-                            title += `${nTitle}`;
-                        }
+                    const userId = GameSettings.UserID();
+                    const regularNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
+                    const reminderNotes = notes.filter(n => n.remindUsers.indexOf(userId) !== -1);
+                    let r = '';
+                    if(regularNotes.length){
+                        const rCount = regularNotes.length < 100? regularNotes.length : 99;
+                        let rTitle = HandlebarsHelpers.GenerateNoteIconTitle(rCount, regularNotes);
+                        r = `<span class="note-count" title="${rTitle}">${rCount}</span>`;
                     }
-                    return new Handlebars.SafeString(`<span class="note-count" title="${title}">${count}</span>`);
+                    if(reminderNotes.length){
+                        const remCount = reminderNotes.length < 100? reminderNotes.length : 99;
+                        let remTitle = HandlebarsHelpers.GenerateNoteIconTitle(remCount, reminderNotes);
+                        r += `<span class="note-count reminders" title="${remTitle}">${remCount}</span>`;
+                    }
+
+                    return new Handlebars.SafeString(r);
                 }
             }
         }
         return '';
+    }
+
+    /**
+     * Generates the title for the note indicator
+     * @param {number} count How many notes there are
+     * @param {Note[]} notes The notes for the indicator
+     * @private
+     */
+    private static GenerateNoteIconTitle(count: number, notes: Note[]){
+        let rTitle = `${count} ${GameSettings.Localize('FSC.Configuration.General.Notes')}`;
+        if(notes.length < 3){
+            rTitle = GameSettings.Localize('FSC.Configuration.General.Notes') + ':\n';
+            for(let i = 0; i < notes.length; i++){
+                if(i !== 0){
+                    rTitle += '\n';
+                }
+                const nTitle = notes[i].title.replace(/"/g,'&quot;');
+                rTitle += `${nTitle}`;
+            }
+        }
+        return rTitle;
     }
 
     /**

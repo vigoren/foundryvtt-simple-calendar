@@ -30,6 +30,23 @@ export enum SettingNames {
 }
 
 /**
+ * The different predefined calendars that come with the calendar
+ */
+export enum PredefinedCalendars{
+    Gregorian = 'gregorian',
+    DarkSun = 'darksun',
+    Eberron = 'eberron',
+    Exandrian = 'exandrian',
+    ForbiddenLands = 'forbidden-lands',
+    Harptos = 'harptos',
+    GolarianPF1E = 'golarianpf1e',
+    GolarianPF2E = 'golarianpf2e',
+    Greyhawk = 'greyhawk',
+    TravellerImperialCalendar = 'traveller-ic',
+    WarhammerImperialCalendar = 'warhammer'
+}
+
+/**
  * The different intervals a note can repeat
  */
 export enum NoteRepeat {
@@ -73,7 +90,8 @@ export enum SocketTypes {
     time = 'time',
     journal = 'journal',
     dateTime = 'date-time',
-    date = 'date'
+    date = 'date',
+    noteReminders = 'note-reminder'
 }
 
 /**

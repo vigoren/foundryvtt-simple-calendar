@@ -23,6 +23,11 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+**Foundry Information**
+ - Foundry Version: [e.g. 0.8.4]
+ - Game System: [e.g. DnD5e]
+ - Simple Calendar Configuration: [optional, can help in debugging custom calendars]
+
 **Browser (please complete the following information):**
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]

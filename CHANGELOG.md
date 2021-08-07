@@ -1,5 +1,49 @@
 # Change Log
 
+## v1.3.23 - Note Reminders, API Changes, Bug Fixing and Translations
+
+### Note Reminders
+
+GMs and players can select notes to be reminded of when the current calendar date and time read the date and time of the note.
+
+- When viewing or adding a new note there is a "Remind Me!" button in the top right of the dialog. Clicking that will register you to be reminded about this note (the button will change green when registered).
+- In the note list a green bell icon will appear next to the note(s) that you will be reminded of on that day.
+- Days that have reminder notes for the player will have an additional blue indicator showing the number of notes they wanted to be reminded of on that day.
+- When the current date changes to a day with a note reminder, all users who have registered to be reminded will receive a whispered chat message with the date, title of the note and the content of the note.
+  - For notes with a set time they will be sent when the current time equals or is greater than the notes start time.
+  - When a user first logs in any notes on the current day will be whispered to them.
+  - These whispers are only sent once so if you move the day forward, whispers will be sent out then if you move back to that date whispers will not be re-sent.
+    - This setting on persists per session, so if you re-load the page the whispers will be resent.
+    - This is set up so that if the time is advanced past the starting time note reminders will still be sent but will not be continually sent as time changes.
+  - If you skip a day with reminders those days reminders are not sent.
+    - This is to prevent advancing the clock by a year and getting a year's worth of reminders all in one go.
+
+### Quality of Life Improvements
+
+- Added the Forbidden Lands calendar as a predefined calendar.
+
+### API Changes
+
+- Added a new enum `SimpleCalendar.api.Calendars`. This enum contains a list of all available predefined calendars in Simple Calendar.
+- Added a new enum `SimpleCalendar.api.LeapYearRules`. This enum contains a list of all rules that can be used when calculating leap years.
+- Added a new enum `SimpleCalendar.api.MoonIcons`. This enum contains a list of all available moon icons.
+- Added a new enum `SimpleCalendar.api.MoonYearResetOptions`. This is an enum that contains the options for when a moons first new moon year should be reset.
+- Added a new enum `SimpleCalendar.api.YearNamingRules`. This enum contains a list of all rules that can be used when determining what name a given year gets.
+- Added a new function `SimpleCalendar.api.configureCalendar`. This function will set up the calendar configuration to be one of the predefined calendars (if an option from the new Calendars enum is passed in) or can take in a JSON object to configure the calendar in a custom way. The JSON object will look the same as the contents of a configuration export file.
+
+### Bug Fixes
+
+- Updated the styling around the note list to work better on systems with darker backgrounds.
+- Changed the rules of determining the initial size of the note dialog to have a minimum height and a maximum width.
+- Fixed a bug where calendars would get a scrollbar in Firefox when a moon icon was visible on the last week of that month.
+
+### Translations
+
+- Simple Calendar has been translated to Portuguese thanks to [castanhocorreia](https://github.com/castanhocorreia), thank you!
+- Simple Calendar has been translated to Czech thanks to [robertjunek](https://github.com/robertjunek), thank you!
+- Updates to the German translation thanks to [Fallayn](https://github.com/Fallayn)!
+- Updates to the Korean translation thanks to [drdwing](https://github.com/drdwing)!
+
 ## v1.3.8 - Bug Fixes
 
 ### Quality of Life Improvements

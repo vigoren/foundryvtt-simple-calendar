@@ -85,7 +85,6 @@ describe('Year Class Tests', () => {
         expect(t.selectedDisplayMonth).toBe("");
         expect(t.selectedDisplayDay).toBe("");
         expect(t.selectedDayOfWeek).toBe("");
-        expect(t.selectedDayNotes).toStrictEqual([]);
         expect(t.selectedDayMoons).toStrictEqual([]);
         expect(t.visibleMonth).toBeUndefined();
         expect(t.weeks).toStrictEqual([]);
@@ -145,6 +144,9 @@ describe('Year Class Tests', () => {
 
         SimpleCalendar.instance = new SimpleCalendar();
         SimpleCalendar.instance.currentYear = year;
+        t = year.toTemplate();
+        expect(t.selectedDayNotes.normal).toBe(0);
+
         const n = new Note();
         n.day = 1;
         n.month = 1;
@@ -155,7 +157,7 @@ describe('Year Class Tests', () => {
         n.playerVisible = true;
         SimpleCalendar.instance.notes.push(n);
         t = year.toTemplate();
-        expect(t.selectedDayNotes.length).toBe(1);
+        expect(t.selectedDayNotes.normal).toBe(1);
 
 
     });

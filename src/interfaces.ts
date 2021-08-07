@@ -76,7 +76,7 @@ export interface YearTemplate {
     selectedDisplayDay: string;
     selectedDayOfWeek: string;
     selectedDayMoons: any[];
-    selectedDayNotes: Note[];
+    selectedDayNotes: { reminders: number; normal: number; };
     yearZero: number;
     /** The numeric representation of the year */
     numericRepresentation: number;
@@ -205,6 +205,7 @@ export interface NoteTemplate {
     endDate: DateTimeParts;
     order: number;
     categories: NoteCategory[];
+    reminder: boolean;
 }
 
 /**
@@ -227,6 +228,7 @@ export interface NoteConfig {
     endDate: DateTimeParts;
     order: number;
     categories: string[];
+    remindUsers: string[];
 }
 
 /**
@@ -387,7 +389,7 @@ export namespace SimpleCalendarSocket{
      */
     export interface Data {
         type: SocketTypes;
-        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate;
+        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate|SimpleCalendarNoteReminder;
     }
 
     export interface SimpleCalendarSocketDateTime{
@@ -423,6 +425,10 @@ export namespace SimpleCalendarSocket{
     export interface SimpleCalendarPrimary{
         primaryCheck?: boolean;
         amPrimary?: boolean;
+    }
+
+    export interface SimpleCalendarNoteReminder{
+        justTimeChange?: boolean;
     }
 }
 

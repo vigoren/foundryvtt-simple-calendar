@@ -2,19 +2,13 @@ import {Logger} from "./logging";
 import Year from "./year";
 import Month from "./month";
 import {Note} from "./note";
-import {CalendarTemplate, NoteCategory, NoteTemplate, SimpleCalendarSocket} from "../interfaces";
+import {CalendarTemplate, NoteCategory, NoteTemplate, SCDateSelector, SimpleCalendarSocket} from "../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {GameSettings} from "./game-settings";
 import {Weekday} from "./weekday";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
-import {
-    GameWorldTimeIntegrations,
-    ModuleSocketName,
-    SimpleCalendarHooks,
-    SocketTypes,
-    TimeKeeperStatus
-} from "../constants";
+import {GameWorldTimeIntegrations, NoteRepeat, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../constants";
 import Importer from "./importer";
 import Season from "./season";
 import Moon from "./moon";
@@ -234,6 +228,8 @@ export default class SimpleCalendar extends Application{
                     }
                 }
             }
+        } else if(data.type === SocketTypes.noteReminders){
+            this.checkNoteReminders((<SimpleCalendarSocket.SimpleCalendarNoteReminder>data.data).justTimeChange);
         }
     }
 
@@ -1615,6 +1611,74 @@ export default class SimpleCalendar extends Application{
                 return dayNote? dayNote : n;
             });
             GameSettings.SaveNotes(currentNotes).catch(Logger.error);
+        }
+    }
+
+    /**
+     * Checks to see if any note reminders needs to be sent to players for the current date.
+     * @param {boolean} [justTimeChange=false] If only the time (hour, minute, second) has changed or not
+     */
+    checkNoteReminders(justTimeChange: boolean = false){
+        if(this.currentYear){
+            const userID = GameSettings.UserID();
+            const noteRemindersForPlayer = this.notes.filter(n => n.remindUsers.indexOf(userID) > -1);
+            if(noteRemindersForPlayer.length){
+                const currentMonth = this.currentYear.getMonth();
+                const currentDay = currentMonth? currentMonth.getDay() : this.currentYear.months[0].days[0];
+                const time = this.currentYear.time.getCurrentTime();
+                const currentHour = parseInt(time.hour);
+                const currentMinute = parseInt(time.minute);
+
+                const currentDate: SCDateSelector.Date = {
+                    year: this.currentYear.numericRepresentation,
+                    month: currentMonth? currentMonth.numericRepresentation : 1,
+                    day: currentDay? currentDay.numericRepresentation : 1,
+                    hour: currentHour,
+                    minute: currentMinute,
+                    allDay: false
+                };
+                const noteRemindersCurrentDay = noteRemindersForPlayer.filter(n => {
+                    if(n.repeats !== NoteRepeat.Never && !justTimeChange){
+                        if(n.repeats === NoteRepeat.Yearly){
+                            if(n.year !== currentDate.year){
+                                n.reminderSent = false;
+                            }
+                        } else if(n.repeats === NoteRepeat.Monthly){
+                            if(n.year !== currentDate.year || n.month !== currentDate.month || (n.month === currentDate.month && n.year !== currentDate.year)){
+                                n.reminderSent = false;
+                            }
+                        } else if(n.repeats === NoteRepeat.Weekly){
+                            if(n.year !== currentDate.year || n.month !== currentDate.month || n.day !== currentDate.day || (n.day === currentDate.day && (n.month !== currentDate.month || n.year !== currentDate.year))){
+                                n.reminderSent = false;
+                            }
+                        }
+                    }
+                    //Check if the reminder has been sent or not and if the new day is between the notes start/end date
+                    if(!n.reminderSent && n.isVisible(currentDate.year, currentDate.month, currentDate.day)){
+                        if(n.allDay){
+                            return true;
+                        } else if(currentDate.hour === n.hour){
+                            if(currentDate.minute >= n.minute){
+                                return true;
+                            }
+                        } else if(currentDate.hour > n.hour){
+                            return true;
+                        } else if(currentDate.year > n.year || currentDate.month > n.month || currentDate.day > n.day){
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+                for(let i = 0; i < noteRemindersCurrentDay.length; i++){
+                    const note = noteRemindersCurrentDay[i];
+                    ChatMessage.create({
+                        speaker: {alias: "Simple Calendar Reminder"},
+                        whisper: [userID],
+                        content: `<div style="margin-bottom: 0.5rem;font-size:0.75rem">${note.display()}</div><h2>${note.title}</h2>${note.content}`
+                    }).catch(Logger.error);
+                    note.reminderSent = true;
+                }
+            }
         }
     }
 

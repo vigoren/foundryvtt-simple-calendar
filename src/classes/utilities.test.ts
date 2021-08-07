@@ -9,11 +9,17 @@ import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
+import "../../__mocks__/crypto";
+
 import Utilities from "./utilities";
 import {SCDateSelector} from "../interfaces";
 import {MoonIcons} from "../constants";
 
 describe('Utilities Class Tests', () => {
+
+    test('Generate Unique Id', () => {
+        expect(Utilities.generateUniqueId()).toBeDefined();
+    });
 
     test('Random Hash', () => {
         expect(Utilities.randomHash('')).toBe(0);
