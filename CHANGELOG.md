@@ -1,13 +1,13 @@
 # Change Log
 
-## v1.3.19 - Note Reminders, API Changes, Bug Fixing and Translations
+## v1.3.23 - Note Reminders, API Changes, Bug Fixing and Translations
 
 ### Note Reminders
 
 GMs and players can select notes to be reminded of when the current calendar date and time read the date and time of the note.
 
 - When viewing or adding a new note there is a "Remind Me!" button in the top right of the dialog. Clicking that will register you to be reminded about this note (the button will change green when registered).
-- A green bell icon will appear next to the note(s) in the note list that you will be reminded of on that day.
+- In the note list a green bell icon will appear next to the note(s) that you will be reminded of on that day.
 - Days that have reminder notes for the player will have an additional blue indicator showing the number of notes they wanted to be reminded of on that day.
 - When the current date changes to a day with a note reminder, all users who have registered to be reminded will receive a whispered chat message with the date, title of the note and the content of the note.
   - For notes with a set time they will be sent when the current time equals or is greater than the notes start time.
@@ -25,6 +25,10 @@ GMs and players can select notes to be reminded of when the current calendar dat
 ### API Changes
 
 - Added a new enum `SimpleCalendar.api.Calendars`. This enum contains a list of all available predefined calendars in Simple Calendar.
+- Added a new enum `SimpleCalendar.api.LeapYearRules`. This enum contains a list of all rules that can be used when calculating leap years.
+- Added a new enum `SimpleCalendar.api.MoonIcons`. This enum contains a list of all available moon icons.
+- Added a new enum `SimpleCalendar.api.MoonYearResetOptions`. This is an enum that contains the options for when a moons first new moon year should be reset.
+- Added a new enum `SimpleCalendar.api.YearNamingRules`. This enum contains a list of all rules that can be used when determining what name a given year gets.
 - Added a new function `SimpleCalendar.api.configureCalendar`. This function will set up the calendar configuration to be one of the predefined calendars (if an option from the new Calendars enum is passed in) or can take in a JSON object to configure the calendar in a custom way. The JSON object will look the same as the contents of a configuration export file.
 
 ### Bug Fixes

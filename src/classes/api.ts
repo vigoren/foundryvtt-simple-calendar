@@ -2,7 +2,14 @@ import SimpleCalendar from "./simple-calendar";
 import {DateTime} from "../interfaces";
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
-import {GameSystems, ModuleName, PredefinedCalendars, SettingNames, TimeKeeperStatus} from "../constants";
+import {
+    GameSystems,
+    LeapYearRules,
+    ModuleName, MoonIcons, MoonYearResetOptions,
+    PredefinedCalendars,
+    SettingNames,
+    TimeKeeperStatus, YearNamingRules
+} from "../constants";
 import PF2E from "./systems/pf2e";
 import Utilities from "./utilities";
 import DateSelector from "./date-selector";
@@ -22,6 +29,22 @@ export default class API{
      * The predefined calendars packaged with the calendar
      */
     public static Calendars = PredefinedCalendars;
+    /**
+     * The leap year rules
+     */
+    public static LeapYearRules = LeapYearRules;
+    /**
+     * The Moon Icons
+     */
+    public static MoonIcons = MoonIcons;
+    /**
+     * The moon year reset options
+     */
+    public static MoonYearResetOptions = MoonYearResetOptions;
+    /**
+     * The year naming rules
+     */
+    public static YearNamingRules = YearNamingRules;
 
     /**
      * Get the timestamp for the current year

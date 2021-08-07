@@ -269,6 +269,35 @@ describe('API Class Tests', () => {
         expect(API.getAllSeasons().length).toBe(2);
     });
 
+    test('Configure Calendar', async () => {
+        //@ts-ignore
+        game.user.isGM = false;
+        let r = await API.configureCalendar(API.Calendars.Harptos);
+        expect(r).toBe(false);
+
+        SimpleCalendar.instance.currentYear = year;
+        r = await API.configureCalendar(API.Calendars.Harptos);
+        expect(r).toBe(false);
+
+        //@ts-ignore
+        game.user.isGM = true;
+        r = await API.configureCalendar(123);
+        expect(r).toBe(false);
+
+        r = await API.configureCalendar(API.Calendars.Harptos);
+        expect(r).toBe(true);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(16);
+
+        r = await API.configureCalendar({asd: 1});
+        expect(r).toBe(true);
+
+        r = await API.configureCalendar({"currentDate":{"year":811,"month":4,"day":13,"seconds":5400},"generalSettings":{"gameWorldTimeIntegration":"mixed","showClock":true,"pf2eSync":true,"permissions":{"viewCalendar":{"player":true,"trustedPlayer":true,"assistantGameMaster":true},"addNotes":{"player":false,"trustedPlayer":false,"assistantGameMaster":false},"reorderNotes":{"player":false,"trustedPlayer":false,"assistantGameMaster":false},"changeDateTime":{"player":false,"trustedPlayer":false,"assistantGameMaster":false}}},"leapYearSettings":{"rule":"none","customMod":0},"monthSettings":[{"name":"Torsmånad","numericRepresentation":1,"numericRepresentationOffset":0,"numberOfDays":29,"numberOfLeapYearDays":29,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Göjemånad","numericRepresentation":2,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Ugglemånad","numericRepresentation":3,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Gräsmånad","numericRepresentation":4,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Blomstermånad","numericRepresentation":5,"numericRepresentationOffset":0,"numberOfDays":28,"numberOfLeapYearDays":28,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Sommarmånad","numericRepresentation":6,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Hömånad","numericRepresentation":7,"numericRepresentationOffset":0,"numberOfDays":32,"numberOfLeapYearDays":32,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Skördemånad","numericRepresentation":8,"numericRepresentationOffset":0,"numberOfDays":29,"numberOfLeapYearDays":29,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Höstmånad","numericRepresentation":9,"numericRepresentationOffset":0,"numberOfDays":27,"numberOfLeapYearDays":27,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Slakmånad","numericRepresentation":10,"numericRepresentationOffset":0,"numberOfDays":29,"numberOfLeapYearDays":29,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Vintermånad","numericRepresentation":11,"numericRepresentationOffset":0,"numberOfDays":32,"numberOfLeapYearDays":32,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null}],"moonSettings":[{"name":"Selia","cycleLength":33,"firstNewMoon":{"yearReset":"none","yearX":0,"year":810,"month":1,"day":4},"phases":[{"name":"Nymåne","length":1,"icon":"new","singleDay":true},{"name":"Första kvarten","length":7.25,"icon":"waxing-crescent","singleDay":false},{"name":"Halvmåne","length":1,"icon":"first-quarter","singleDay":true},{"name":"Andra kvarten","length":7.25,"icon":"waxing-gibbous","singleDay":false},{"name":"Fullmåne","length":1,"icon":"full","singleDay":true},{"name":"Tredje kvarten","length":7.25,"icon":"waning-gibbous","singleDay":false},{"name":"Halvmåne","length":1,"icon":"last-quarter","singleDay":true},{"name":"Sista kvarten","length":7.25,"icon":"waning-crescent","singleDay":false}],"color":"#ffffff","cycleDayAdjust":0},{"name":"Demira","cycleLength":328,"firstNewMoon":{"yearReset":"none","yearX":0,"year":810,"month":3,"day":22},"phases":[{"name":"Nymåne","length":1,"icon":"new","singleDay":true},{"name":"Första kvarten","length":81,"icon":"waxing-crescent","singleDay":false},{"name":"Halvmåne","length":1,"icon":"first-quarter","singleDay":true},{"name":"Andra kvarten","length":81,"icon":"waxing-gibbous","singleDay":false},{"name":"Fullmåne","length":1,"icon":"full","singleDay":true},{"name":"Tredje kvarten","length":81,"icon":"waning-gibbous","singleDay":false},{"name":"Halvmåne","length":1,"icon":"last-quarter","singleDay":true},{"name":"Sista kvarten","length":81,"icon":"waning-crescent","singleDay":false}],"color":"#ff0d00","cycleDayAdjust":0}],"noteCategories":[{"name":"Helgdag","color":"#148e94","textColor":"#FFFFFF"}],"seasonSettings":[{"name":"Sommar","startingMonth":5,"startingDay":5,"color":"#f3fff3"},{"name":"Höst","startingMonth":9,"startingDay":9,"color":"#fff7f2"},{"name":"Vinter","startingMonth":11,"startingDay":10,"color":"#f2f8ff"},{"name":"Vår","startingMonth":3,"startingDay":14,"color":"#fffce8"}],"timeSettings":{"hoursInDay":24,"minutesInHour":60,"secondsInMinute":60,"gameTimeRatio":5,"unifyGameAndClockPause":false,"updateFrequency":1},"weekdaySettings":[{"name":"Manadagher","numericRepresentation":1},{"name":"Tirsdagher","numericRepresentation":2},{"name":"Óðinsdagher","numericRepresentation":3},{"name":"Torsdagher","numericRepresentation":4},{"name":"Frejdagher","numericRepresentation":5},{"name":"Rûndagher","numericRepresentation":6},{"name":"Soldagher","numericRepresentation":7}],"yearSettings":{"numericRepresentation":811,"prefix":"","postfix":"E.C","showWeekdayHeadings":true,"firstWeekday":0,"yearZero":0,"yearNames":[],"yearNamingRule":"default","yearNamesStart":0}});
+        expect(r).toBe(true);
+
+        //@ts-ignore
+        game.user.isGM = false;
+    });
+
     test('Calendar Weather Import', async () => {
         let r = await API.calendarWeatherImport();
         expect(r).toBe(false);
