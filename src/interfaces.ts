@@ -389,7 +389,7 @@ export namespace SimpleCalendarSocket{
      */
     export interface Data {
         type: SocketTypes;
-        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate;
+        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate|SimpleCalendarNoteReminder;
     }
 
     export interface SimpleCalendarSocketDateTime{
@@ -425,6 +425,10 @@ export namespace SimpleCalendarSocket{
     export interface SimpleCalendarPrimary{
         primaryCheck?: boolean;
         amPrimary?: boolean;
+    }
+
+    export interface SimpleCalendarNoteReminder{
+        justTimeChange?: boolean;
     }
 }
 

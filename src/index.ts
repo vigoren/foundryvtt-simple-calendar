@@ -19,6 +19,7 @@ Hooks.on('init', () => {
 Hooks.on('ready', () => {
     //Initialize the Simple Calendar Sockets
     SimpleCalendar.instance.initializeSockets();
+    SimpleCalendar.instance.checkNoteReminders();
 });
 Hooks.on('getSceneControlButtons', SimpleCalendar.instance.getSceneControlButtons.bind(SimpleCalendar.instance));
 Hooks.on("updateWorldTime", SimpleCalendar.instance.worldTimeUpdate.bind(SimpleCalendar.instance));

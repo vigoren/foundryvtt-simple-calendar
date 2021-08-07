@@ -144,6 +144,9 @@ describe('Year Class Tests', () => {
 
         SimpleCalendar.instance = new SimpleCalendar();
         SimpleCalendar.instance.currentYear = year;
+        t = year.toTemplate();
+        expect(t.selectedDayNotes.normal).toBe(0);
+
         const n = new Note();
         n.day = 1;
         n.month = 1;

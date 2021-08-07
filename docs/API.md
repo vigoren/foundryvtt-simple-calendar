@@ -4,6 +4,33 @@ There are the functions that other modules, systems and macros can access and wh
 
 Simple Calendar exposes a variable called `SimpleCalendar`, all of these API functions exist the property api on that variable `SimpleCalendar.api`
 
+## Properties List
+- [Calendars](#simplecalendarapicalendars)
+
+## Function List
+- [changeDate](#simplecalendarapichangedateinterval)
+- [chooseRandomDate](#simplecalendarapichooserandomdatestartdate-enddate)
+- [clockStatus](#simplecalendarapiclockstatus)
+- [configureCalendar](#simplecalendarapiconfigurecalendarconfig)
+- [dateToTimestamp](#simplecalendarapidatetotimestampdate)
+- [getAllSeasons](#simplecalendarapigetallseasons)
+- [getCurrentSeason](#simplecalendarapigetcurrentseason)
+- [isPrimaryGM](#simplecalendarapiisprimarygm)
+- [secondsToInterval](#simplecalendarapisecondstointervalseconds)
+- [setDate](#simplecalendarapisetdatedate)
+- [showCalendar](#simplecalendarapishowcalendardate-compact)
+- [timestamp](#simplecalendarapitimestamp)
+- [startClock](#simplecalendarapistartclock)
+- [stopClock](#simplecalendarapistopclock)
+- [timestampPlusInterval](#simplecalendarapitimestampplusintervaltimestamp-interval)
+- [timestampToDate](#simplecalendarapitimestamptodatetimestamp)
+
+## `SimpleCalendar.api.Calendars`
+
+This is an enum that contains a list of all available predefined calendars within Simple Calendar.
+
+**Important**: This is a list of keys used internally to determine which Predefined calendar should be used it does not return an object containing the configuration for a predefined calendar.
+
 ## `SimpleCalendar.api.changeDate(interval)`
 
 Changes the current date of Simple Calendar.
@@ -119,6 +146,39 @@ const status = SimpleCalendar.api.clockStatus();
 console.log(status); // {started: false, stopped: true, paused: false}
 ```
 
+## `SimpleCalendar.api.configureCalendar(config)`
+
+Sets up the current calendar to match the passed in configuration. This function can only be run by GMs.
+
+### Parameters
+
+Parameter|Type|Default Value|Description
+---------|-----|-------------|-----------
+config|`SimpleCalendar.api.Calendar` or [CalendarConfiguration](#calendarconfigurationobject)|undefined|The configuration to set the current year to. It can be one of the predefined calendars or an [Calendar Configuration object](#calendarconfigurationobject) representing a custom calendar.
+
+#### CalendarConfiguration Object
+
+Parameter|Type|Default Value|Description
+---------|-----|-------------|-----------
+
+### Returns
+
+Returns a promise that resolves to a boolean value, true if the change was successful and false if it was not.
+
+### Examples
+
+```javascript
+
+//Set the calendar configuration to the Gregorian calendar
+const result = await SimpleCalendar.api.configureCalendar(SimpleCalendar.api.Calendars.Gregorian);
+
+//Set the calendar configuration to a custom calendar
+const custom = {};
+
+const result = await SimpleCalendar.api.configureCalendar(custom);
+
+```
+
 ## `SimpleCalendar.api.dateToTimestamp(date)`
 
 Will convert that passed in date object to a timestamp.
@@ -224,7 +284,6 @@ Returns if the current user is considered the primary GM or not.
 SimpleCalendar.api.isPrimaryGM(); //True or Flase depending on if the current user is primary gm
 
 ```
-
 
 ## `SimpleCalendar.api.secondsToInterval(seconds)`
 

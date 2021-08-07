@@ -58,7 +58,10 @@ describe('Interface Tests', () => {
         selectedDisplayDay: '',
         selectedDayOfWeek: '',
         selectedDayMoons: [],
-        selectedDayNotes: [],
+        selectedDayNotes: {
+            normal: 0,
+            reminders: 0
+        },
         numericRepresentation: 0,
         visibleMonth: mt,
         weekdays: [wt],
@@ -136,7 +139,7 @@ describe('Interface Tests', () => {
         expect(yt.selectedDisplayDay).toBe('');
         expect(yt.selectedDayOfWeek).toBe('');
         expect(yt.selectedDayMoons).toStrictEqual([]);
-        expect(yt.selectedDayNotes).toStrictEqual([]);
+        expect(yt.selectedDayNotes).toStrictEqual({normal: 0, reminders: 0});
         expect(yt.numericRepresentation).toBe(0);
         expect(yt.visibleMonth).toStrictEqual(mt);
         expect(yt.weeks).toStrictEqual([]);
@@ -218,8 +221,8 @@ describe('Interface Tests', () => {
     });
 
     test('Notes Template', () => {
-        const nt: NoteTemplate = {title: '', content: '', author: '', monthDisplay: '', id: '', minute: 0, hour: 0, categories: [], displayDate: '', order: 0, allDay: false, authorDisplay: '', playerVisible: true, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}};
-        expect(Object.keys(nt).length).toBe(14); //Make sure no new properties have been added
+        const nt: NoteTemplate = {title: '', content: '', author: '', monthDisplay: '', id: '', minute: 0, hour: 0, categories: [], displayDate: '', order: 0, allDay: false, authorDisplay: '', playerVisible: true, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, reminder: false};
+        expect(Object.keys(nt).length).toBe(15); //Make sure no new properties have been added
         expect(nt.title).toBe('');
         expect(nt.content).toBe('');
         expect(nt.author).toBe('');
@@ -237,8 +240,8 @@ describe('Interface Tests', () => {
     });
 
     test('Notes Config', () => {
-        const nc: NoteConfig = {year: 0, month:0, day:0, title: '', content: '', author: '', playerVisible: false, monthDisplay: '', id: '', repeats: 0, hour: 0, minute: 0, allDay: true, order: 0, categories: [], endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}};
-        expect(Object.keys(nc).length).toBe(16); //Make sure no new properties have been added
+        const nc: NoteConfig = {year: 0, month:0, day:0, title: '', content: '', author: '', playerVisible: false, monthDisplay: '', id: '', repeats: 0, hour: 0, minute: 0, allDay: true, order: 0, categories: [], endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, remindUsers: []};
+        expect(Object.keys(nc).length).toBe(17); //Make sure no new properties have been added
         expect(nc.title).toBe('');
         expect(nc.content).toBe('');
         expect(nc.author).toBe('');

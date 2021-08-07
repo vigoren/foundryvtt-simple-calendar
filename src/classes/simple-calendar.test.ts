@@ -9,13 +9,14 @@ import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
+import "../../__mocks__/chat-message";
 
 
 import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";
 import {Note} from "./note";
-import {GameWorldTimeIntegrations, SettingNames, SocketTypes, TimeKeeperStatus} from "../constants";
+import {GameWorldTimeIntegrations, NoteRepeat, SettingNames, SocketTypes, TimeKeeperStatus} from "../constants";
 import {SimpleCalendarSocket} from "../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {Weekday} from "./weekday";
@@ -263,6 +264,10 @@ describe('Simple Calendar Class Tests', () => {
         d.type = 'asd';
         await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(0);
+
+        d.type = SocketTypes.noteReminders;
+        await SimpleCalendar.instance.processSocket(d);
+        expect(renderSpy).toHaveBeenCalledTimes(0);
     });
 
     test('Get Data', async () => {
@@ -287,7 +292,10 @@ describe('Simple Calendar Class Tests', () => {
                 "selectedDisplayYear": "0",
                 "selectedDayOfWeek": "",
                 "selectedDayMoons": [],
-                "selectedDayNotes": [],
+                "selectedDayNotes": {
+                    "normal": 0,
+                    "reminders": 0
+                },
                 "showClock": true,
                 "showDateControls": true,
                 "showTimeControls": true,
@@ -1656,5 +1664,124 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.noteDragEnd(e);
         expect((<Game>game).settings.set).toHaveBeenCalledTimes(3);
         (<Game>game).settings.get = orig;
+    });
+
+    test('Check Note Reminders', () => {
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).not.toHaveBeenCalled();
+
+        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).not.toHaveBeenCalled();
+
+        const n = new Note();
+        n.title = 'Note';
+        n.year = 0;
+        n.month = 1;
+        n.day = 1;
+        n.endDate.year = 0;
+        n.endDate.month = 1;
+        n.endDate.day = 1;
+        n.remindUsers.push('');
+        SimpleCalendar.instance.notes.push(n);
+
+        //Tests for note that is only 1 day, does not repeat.
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(1);
+
+        y.resetMonths();
+        n.reminderSent = false;
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(2);
+
+        y.months[0].current = true;
+        y.months[0].days[1].current = true;
+        n.reminderSent = false;
+        //Current day is not the date of the note, not called
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(2);
+
+        y.months[0].days[1].current = false;
+        n.reminderSent = false;
+        n.allDay = false;
+        n.hour = 1;
+        n.endDate.hour = 2;
+
+        //Note at a specific time but current time is before the note, not called
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(2);
+
+        n.reminderSent = false;
+        n.minute = 1;
+        y.time.seconds = 3600;
+        //Note at a specific time, current time hour is equal to the hour but minutes are not, not called
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(2);
+
+        n.reminderSent = false;
+        y.time.seconds = 3660;
+        //Note at a specific time, current time hour is equal and minutes are equal, called
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(3);
+
+        n.reminderSent = false;
+        y.time.seconds = 7261;
+        //Note at a specific time, current time is greater than starting time, called
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(4);
+
+        //Note repeats yearly
+        n.repeats = NoteRepeat.Yearly;
+        n.reminderSent = false;
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(5);
+        y.numericRepresentation = 1;
+        n.reminderSent = false;
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(6);
+
+        //Note Repeats Monthly
+        n.repeats = NoteRepeat.Monthly;
+        n.reminderSent = false;
+        y.numericRepresentation = 0;
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(7);
+        y.resetMonths();
+        y.months[1].current = true;
+        y.months[1].days[0].current = true;
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(8);
+
+        //Note Repeats Weekly
+        n.repeats = NoteRepeat.Weekly;
+        n.reminderSent = false;
+        y.resetMonths();
+        y.months[0].current = true;
+        y.months[0].days[0].current = true;
+        y.weekdays.push(new Weekday(1, 'W1'));
+        y.weekdays.push(new Weekday(2, 'W2'));
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(9);
+        y.months[0].days[0].current = false;
+        y.months[0].days[2].current = true;
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(10);
+
+        //Invalid Repeats
+        //@ts-ignore
+        n.repeats = 'asd';
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(10);
+
+        //Note spans multiple days with a specific starting time but the time is earlier than the days current time but on a day in the middle
+        n.repeats = NoteRepeat.Never;
+        n.endDate.day = 3;
+        n.reminderSent = false;
+        y.resetMonths();
+        y.months[0].current = true;
+        y.months[0].days[1].current = true;
+        y.time.seconds = 0;
+        SimpleCalendar.instance.checkNoteReminders();
+        expect(ChatMessage.create).toHaveBeenCalledTimes(11);
     });
 });

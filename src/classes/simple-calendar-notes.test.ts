@@ -215,6 +215,10 @@ describe('Simple Calendar Notes Tests', () => {
         //@ts-ignore
         expect(SimpleCalendarNotes.instance.setPosition).toHaveBeenCalledTimes(3);
 
+        fakeQuery.find.mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(441), outerWidth: jest.fn().mockReturnValue(2000)});
+        //@ts-ignore
+        SimpleCalendarNotes.instance.setWidthHeight(fakeQuery);
+
         //@ts-ignore;
         SimpleCalendarNotes.instance.setPosition = orig;
     });
@@ -237,7 +241,7 @@ describe('Simple Calendar Notes Tests', () => {
         //@ts-ignore
         SimpleCalendarNotes.instance.activateListeners(fakeQuery);
         //@ts-ignore
-        expect(SimpleCalendarNotes.instance.element.find).toHaveBeenCalledTimes(5);
+        expect(SimpleCalendarNotes.instance.element.find).toHaveBeenCalledTimes(6);
 
         SimpleCalendarNotes.instance.dateSelector = null;
         //@ts-ignore
@@ -323,6 +327,32 @@ describe('Simple Calendar Notes Tests', () => {
         (<HTMLInputElement>event.currentTarget).name = 'scNotReal';
         SimpleCalendarNotes.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(11);
+    });
+
+    test('Reminder Click', () => {
+        const e = new Event('click');
+        SimpleCalendarNotes.instance.reminderChange(e);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        game.user.id = 'asd';
+        SimpleCalendarNotes.instance.reminderChange(e);
+        expect(renderSpy).toHaveBeenCalledTimes(2);
+        expect(note.remindUsers).toStrictEqual(['asd']);
+
+        SimpleCalendarNotes.instance.reminderChange(e);
+        expect(renderSpy).toHaveBeenCalledTimes(3);
+        expect(note.remindUsers).toStrictEqual([]);
+
+
+        SimpleCalendarNotes.instance.viewMode = true;
+        (<Mock>(<Game>game).settings.get).mockReturnValueOnce([new Note(), note]);
+        SimpleCalendarNotes.instance.reminderChange(e);
+        expect(renderSpy).toHaveBeenCalledTimes(4);
+        expect((<Game>game).settings.get).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        game.user.id = '';
     });
 
     test('Date Selector Click', () => {

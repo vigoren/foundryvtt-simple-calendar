@@ -43,7 +43,7 @@ describe('Note Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(n).length).toBe(17); //Make sure no new properties have been added
+        expect(Object.keys(n).length).toBe(18); //Make sure no new properties have been added
         expect(n.year).toBe(0);
         expect(n.month).toBe(1);
         expect(n.day).toBe(2);

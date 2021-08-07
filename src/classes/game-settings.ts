@@ -397,6 +397,10 @@ export class GameSettings {
                     if(currentDate.year !== newDate.year || currentDate.month !== newDate.month || currentDate.day !== newDate.day || currentDate.seconds !== newDate.seconds){
                         await (<Game>game).settings.set(ModuleName, SettingNames.CurrentDate, newDate);
                         Hook.emit(SimpleCalendarHooks.DateTimeChange);
+                        await GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.noteReminders, data: { justTimeChange: currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day }});
+                        if(SimpleCalendar.instance){
+                            SimpleCalendar.instance.checkNoteReminders(currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day);
+                        }
                         return true;
                     } else {
                         Logger.debug('Current Date data has not changed, not updating settings');

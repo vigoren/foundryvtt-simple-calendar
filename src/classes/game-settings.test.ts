@@ -25,6 +25,7 @@ describe('Game Settings Class Tests', () => {
     beforeEach(()=>{
         (<Mock>(<Game>game).settings.get).mockClear();
         (<Mock>(<Game>game).settings.set).mockClear();
+        (<Mock>(<Game>game).socket?.emit).mockClear();
     });
 
     test('Localize', () => {
@@ -235,6 +236,18 @@ describe('Game Settings Class Tests', () => {
         (<Mock>(<Game>game).settings.get).mockClear();
         year.months[0].days[1].current = false;
         year.months[0].days[2].current = true;
+        await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
+        expect((<Game>game).settings.get).toHaveBeenCalled();
+        expect((<Game>game).settings.set).toHaveBeenCalled();
+
+        year.time.seconds = 300;
+        (<Mock>(<Game>game).settings.get).mockClear();
+        await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
+        expect((<Game>game).settings.get).toHaveBeenCalled();
+        expect((<Game>game).settings.set).toHaveBeenCalled();
+
+        //@ts-ignore
+        SimpleCalendar.instance = null;
         await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         expect((<Game>game).settings.set).toHaveBeenCalled();

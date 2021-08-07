@@ -96,6 +96,12 @@ export class Note{
      */
     remindUsers: string[] = [];
 
+    /**
+     * If a reminder for this note has been sent to the user or not (Local variable to the user)
+     * @type {boolean}
+     */
+    reminderSent: boolean = false;
+
 
     /**
      * The note constructor

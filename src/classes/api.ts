@@ -1,12 +1,13 @@
 import SimpleCalendar from "./simple-calendar";
-import {CalendarWeatherImport, DateTime} from "../interfaces";
+import {DateTime} from "../interfaces";
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
-import {GameSystems, TimeKeeperStatus} from "../constants";
+import {GameSystems, ModuleName, PredefinedCalendars, SettingNames, TimeKeeperStatus} from "../constants";
 import PF2E from "./systems/pf2e";
-import Importer from "./importer";
 import Utilities from "./utilities";
 import DateSelector from "./date-selector";
+import PredefinedCalendar from "./predefined-calendar";
+import Year from "./year";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
@@ -16,6 +17,11 @@ export default class API{
      * The Date selector class used to create date selector inputs based on the calendar
      */
     public static DateSelector = DateSelector;
+
+    /**
+     * The predefined calendars packaged with the calendar
+     */
+    public static Calendars = PredefinedCalendars;
 
     /**
      * Get the timestamp for the current year
@@ -536,6 +542,61 @@ export default class API{
             return seasons;
         }
         return [];
+    }
+
+    /**
+     * Sets the current year to the passed in predefined calendar or the custom calendar object
+     * @param o
+     */
+    public static async configureCalendar(o: PredefinedCalendars | any){
+        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear && GameSettings.IsGm()){
+            if(typeof o === "string"){
+                const clone = SimpleCalendar.instance.currentYear.clone();
+                const res = PredefinedCalendar.setToPredefined(clone, <PredefinedCalendars>o);
+                await GameSettings.SaveYearConfiguration(clone);
+                await GameSettings.SaveMonthConfiguration(clone.months);
+                await GameSettings.SaveWeekdayConfiguration(clone.weekdays);
+                await GameSettings.SaveLeapYearRules(clone.leapYearRule);
+                await GameSettings.SaveTimeConfiguration(clone.time);
+                await GameSettings.SaveSeasonConfiguration(clone.seasons);
+                await GameSettings.SaveMoonConfiguration(clone.moons);
+                await GameSettings.SaveCurrentDate(clone);
+                return res;
+            } else if(Object.keys(o).length) {
+                if(o.hasOwnProperty('yearSettings')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.YearConfiguration, o.yearSettings);
+                }
+                if(o.hasOwnProperty('monthSettings')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.MonthConfiguration, o.monthSettings);
+                }
+                if(o.hasOwnProperty('weekdaySettings')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.WeekdayConfiguration, o.weekdaySettings);
+                }
+                if(o.hasOwnProperty('leapYearSettings')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.LeapYearRule, o.leapYearSettings);
+                }
+                if(o.hasOwnProperty('timeSettings')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.TimeConfiguration, o.timeSettings);
+                }
+                if(o.hasOwnProperty('seasonSettings')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.SeasonConfiguration, o.seasonSettings);
+                }
+                if(o.hasOwnProperty('moonSettings')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.MoonConfiguration, o.moonSettings);
+                }
+                if(o.hasOwnProperty('generalSettings')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.GeneralConfiguration, o.generalSettings);
+                }
+                if(o.hasOwnProperty('noteCategories')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.NoteCategories, o.noteCategories);
+                }
+                if(o.hasOwnProperty('currentDate')){
+                    await (<Game>game).settings.set(ModuleName, SettingNames.CurrentDate, o.currentDate);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

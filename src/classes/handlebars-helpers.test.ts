@@ -74,6 +74,34 @@ describe('Handlebars Helpers Tests', () => {
             }
             expect(SimpleCalendar.instance.notes.length).toBe(100);
             expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
+
+            SimpleCalendar.instance.notes = [];
+            var n = new Note()
+            n.year = SimpleCalendar.instance.currentYear.numericRepresentation;
+            n.month = 1;
+            n.day = 2;
+            n.endDate.year = n.year;
+            n.endDate.month = n.month;
+            n.endDate.day = n.day;
+            n.remindUsers.push('');
+            SimpleCalendar.instance.notes.push(n);
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
+
+            SimpleCalendar.instance.notes = [];
+            for(let i = 0; i < 100; i++){
+                var n = new Note()
+                n.year = SimpleCalendar.instance.currentYear.numericRepresentation;
+                n.month = 1;
+                n.day = 2;
+                n.endDate.year = n.year;
+                n.endDate.month = n.month;
+                n.endDate.day = n.day;
+                n.remindUsers.push('');
+                SimpleCalendar.instance.notes.push(n);
+            }
+            expect(SimpleCalendar.instance.notes.length).toBe(100);
+            expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
+
         } else {
             fail('Current year is not set');
         }
