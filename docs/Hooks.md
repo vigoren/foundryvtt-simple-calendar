@@ -24,11 +24,11 @@ Hook Name|Value|Description
 ### When it is emitted
 This hook is emitted any time the current date is updated. The current date can be updated by several means:
 
-- When the GM clicks on the "[Set Current Date](./docs/UpdatingDateTime.md#date-controls)" button after adjusting the current date.
-- When the [clock](./docs/UsingTheCalendar.md#simple-calendars-clock) is running every interval update.
-- When the [Set Date/Time API function](./docs/API.md#simplecalendarapisetdatedate) is called.
-- When the [Change Date/Time API function](./docs/API.md#simplecalendarapichangedateinterval) is called.
-- When the [game world time](./docs/Configuration.md#game-world-time-integration) has changed and Simple Calendar is configured to update when that changes.
+- When the GM clicks on the "[Set Current Date](UpdatingDateTime.md#date-controls)" button after adjusting the current date.
+- When the [clock](UsingTheCalendar.md#simple-calendars-clock) is running every interval update.
+- When the [Set Date/Time API function](API.md#simplecalendarapisetdatedate) is called.
+- When the [Change Date/Time API function](API.md#simplecalendarapichangedateinterval) is called.
+- When the [game world time](Configuration.md#game-world-time-integration) has changed and Simple Calendar is configured to update when that changes.
 
 ### What is passed
 
@@ -36,8 +36,8 @@ When this hook is emitted it will pass a data object that contains information a
 
 Property Name|Type|Default Value|Description
 -------------|----|---------|------------
-date|[Date Object](./docs/API.md#date-object)|`{}`|This contains information about the current date of the calendar.
-moons|Array<[Moon Object](./docs/API.md#moon-object)>|`[]`|This contains information about the moon(s) phases for the current date.
+date|[Date Object](API.md#date-object)|`{}`|This contains information about the current date of the calendar.
+moons|Array<[Moon Object](API.md#moon-object)>|`[]`|This contains information about the moon(s) phases for the current date.
 year|[Year Object](#year-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
 month|[Month Object](#month-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
 day|[Day Object](#day-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.

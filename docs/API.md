@@ -657,7 +657,7 @@ This type contains information about a moon.
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
 color|String|No|"#FFFFFF"|The color associated with the moon.
-currentPhase|[Moon Phase Object](#moon-phase-object)|Yes|{}|The moon phase for the current date. This option is present only in results from the [DateTimeChange hook](./docs/Hooks.md#datetime-change)
+currentPhase|[Moon Phase Object](#moon-phase-object)|Yes|{}|The moon phase for the current date. This option is present only in results from the [DateTimeChange hook](Hooks.md#datetime-change)
 cycleDayAdjust|Number|No|0|A way to nudge the cycle calculations to align with correct dates.
 cycleLength|Number|No|0|How many days it takes the moon to complete 1 cycle.
 firstNewMoon|[First New Moon Object](#first-new-moon-object)|Yes|{}|When the first new moon was. This is used to calculate the current phase for a given day.
