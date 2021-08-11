@@ -15,8 +15,8 @@ The current hooks that are emitted are:
 
 Hook Name|Value|Description
 ---------|------|----------
-DateTimeChange|`"simple-calendar-date-time-change"`|This hook is emitted any time the current date is updated.
-ClockStartStop|`"simple-calendar-clock-start-stop"`|This hook is emitted any time the clock is started/stopped or paused.
+[DateTimeChange](#datetime-change)|`"simple-calendar-date-time-change"`|This hook is emitted any time the current date is updated.
+[ClockStartStop](#clock-startstop)|`"simple-calendar-clock-start-stop"`|This hook is emitted any time the clock is started/stopped or paused.
 
 ## Date/Time Change
 
