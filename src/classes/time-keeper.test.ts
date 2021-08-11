@@ -14,6 +14,7 @@ import TimeKeeper from "./time-keeper";
 import SimpleCalendar from "./simple-calendar";
 import {TimeKeeperStatus} from "../constants";
 import Year from "./year";
+import Month from "./month";
 
 describe('Time Keeper Class Tests', () => {
     let tk: TimeKeeper
@@ -149,6 +150,9 @@ describe('Time Keeper Class Tests', () => {
         tk.interval();
 
         SimpleCalendar.instance.currentYear = new Year(0);
+        SimpleCalendar.instance.currentYear.months.push(new Month('M',1,0,10));
+        SimpleCalendar.instance.currentYear.months[0].current = true;
+        SimpleCalendar.instance.currentYear.months[0].days[0].current = true;
         //@ts-ignore
         tk.interval();
 

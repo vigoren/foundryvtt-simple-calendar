@@ -1,5 +1,20 @@
 # Change Log
 
+## v1.3.28 - API Changes
+
+### API Changes
+
+- Updated the [DateTimeChange hook](./docs/Hooks.md#datetime-change) to have a new property in its returned value called "date". This property contains the same contents as the [API timestampToDate function](./docs/API.md#simplecalendarapitimestamptodatetimestamp) with the current timestamp passed in. This is to have the exact same data available in the hook as the API function. As a result some existing properties will be removed as stated below:
+  - **Future Breaking**: The property "year" will be removed when Foundry v10 Stable is released. Please use the year information from the new "date" property.
+  - **Future Breaking**: The property "month" will be removed when Foundry v10 Stable is released. Please use the month information from the new "date" property.
+  - **Future Breaking**: The property "day" will be removed when Foundry v10 Stable is released. Please use the day information from the new "date" property.
+  - **Future Breaking**: The property "time" will be removed when Foundry v10 Stable is released. Please use the time information from the new "date" property.
+  - **Future Breaking**: The property "season" will be removed when Foundry v10 Stable is released. Please use the season information from the new "date" property.
+- Updated the [Clock Start/Stop hook](./docs/Hooks.md#clock-startstop) so that it uses the same function as the [API clockStatus function](./docs/API.md#simplecalendarapiclockstatus). No change to returned values, this is to keep consistency between those functions.
+- Updated the [PrimaryGM hook](./docs/Hooks.md#is-primary-gm) so that it uses the same function as the [API isPrimaryGM function](./docs/API.md#simplecalendarapiisprimarygm). No change to returned values, this is to keep consistency between those functions.
+- Changed when the DateTimeChange hook is fired to include every tick of the clock.
+- Added the "isLeapYear" property to the [Date Object](./docs/API.md#date-object) returned by [timeStampToDate API function](./docs/API.md#simplecalendarapitimestamptodatetimestamp) that indicates if the date falls on a leap year or not.
+
 ## v1.3.23 - Note Reminders, API Changes, Bug Fixing and Translations
 
 ### Note Reminders

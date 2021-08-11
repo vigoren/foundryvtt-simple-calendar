@@ -14,7 +14,6 @@ import PF2E from "./systems/pf2e";
 import Utilities from "./utilities";
 import DateSelector from "./date-selector";
 import PredefinedCalendar from "./predefined-calendar";
-import Year from "./year";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
@@ -128,6 +127,7 @@ export default class API{
             weekdays: <string[]>[],
             showWeekdayHeadings: true,
             currentSeason: {},
+            isLeapYear: false,
             monthName: "",
             dayDisplay: '',
             yearName: "",
@@ -168,6 +168,7 @@ export default class API{
             result.currentSeason = SimpleCalendar.instance.currentYear.getSeason(dateTime.month, dateTime.day + 1);
             result.weekdays = SimpleCalendar.instance.currentYear.weekdays.map(w => w.name);
             result.showWeekdayHeadings = SimpleCalendar.instance.currentYear.showWeekdayHeadings;
+            result.isLeapYear = SimpleCalendar.instance.currentYear.leapYearRule.isLeapYear(result.year);
 
             // Display Stuff
             // Legacy - Depreciated first stable release of Foundry 9
@@ -183,7 +184,9 @@ export default class API{
             result.display.yearPostfix = SimpleCalendar.instance.currentYear.postfix;
             result.display.month = month.numericRepresentation.toString();
             result.display.monthName = month.name;
-            result.display.weekday = SimpleCalendar.instance.currentYear.weekdays[result.dayOfTheWeek].name;
+            if(SimpleCalendar.instance.currentYear.weekdays.length > result.dayOfTheWeek){
+                result.display.weekday = SimpleCalendar.instance.currentYear.weekdays[result.dayOfTheWeek].name;
+            }
             result.display.day = day.numericRepresentation.toString();
             result.display.daySuffix = Utilities.ordinalSuffix(day.numericRepresentation);
             result.display.time = SimpleCalendar.instance.currentYear.time.toString();
