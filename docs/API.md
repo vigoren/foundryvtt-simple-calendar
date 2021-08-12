@@ -550,24 +550,25 @@ This type contains the current date information
 
 Property|Type|Default Value|Description
 ---------|-----|-------------|-----------
-year|Number|0|The year represented in the timestamp.
-yearName|String|""|**Depreciated** Please use display.yearName instead. This will be removed when Foundry v9 Stable is released.
-month|Number|0|The index of the month represented in the timestamp.
-monthName|String|""|**Depreciated** Please use display.monthName instead. This will be removed when Foundry v9 Stable is released.
-dayOffset|Number|0|The number of days that the months days are offset by.
+currentSeason|[Season Object](#season-object)|{}|The information for the season of the date, properties include "name" for the seasons name and "color" for the color associated with the season.
 day|Number|0|The index of the day of the month represented in the timestamp.
 dayDisplay|String|""|**Depreciated** Please use display.day instead. This will be removed when Foundry v9 Stable is released.
 dayOfTheWeek|Number|0|The day of the week the day falls on.
-hour|Number|0|The hour represented in the timestamp.
-minute|Number|0|The minute represented in the timestamp.
-second|Number|0|The seconds represented in the timestamp.
-yearZero|Number|0|What is considered as year zero when doing timestamp calculations.
-yearPrefix|String|""|**Depreciated** Please use display.yearPrefix instead. This will be removed when Foundry v9 Stable is released.
-yearPostfix|String|""|**Depreciated** Please use display.yearPostfix instead. This will be removed when Foundry v9 Stable is released.
-weekdays|String Array|[]|A list of weekday names.
-showWeekdayHeadings|Boolean|true|If to show the weekday headings for the month.
-currentSeason|Season|{}|The information for the season of the date, properties include "name" for the seasons name and "color" for the color associated with the season.
+dayOffset|Number|0|The number of days that the months days are offset by.
 display|[Date Display Object](#date-display-object)|{}|All of the strings associated with displaying the date are put here
+hour|Number|0|The hour represented in the timestamp.
+isLeapYear|Boolean|false|If this date falls on a leap year.
+minute|Number|0|The minute represented in the timestamp.
+month|Number|0|The index of the month represented in the timestamp.
+monthName|String|""|**Depreciated** Please use display.monthName instead. This will be removed when Foundry v9 Stable is released.
+second|Number|0|The seconds represented in the timestamp.
+showWeekdayHeadings|Boolean|true|If to show the weekday headings for the month.
+weekdays|String Array|[]|A list of weekday names.
+year|Number|0|The year represented in the timestamp.
+yearName|String|""|**Depreciated** Please use display.yearName instead. This will be removed when Foundry v9 Stable is released.
+yearPostfix|String|""|**Depreciated** Please use display.yearPostfix instead. This will be removed when Foundry v9 Stable is released.
+yearPrefix|String|""|**Depreciated** Please use display.yearPrefix instead. This will be removed when Foundry v9 Stable is released.
+yearZero|Number|0|What is considered as year zero when doing timestamp calculations.
 
 
 ## Date Display Object
@@ -576,16 +577,16 @@ This type contains the formatted strings used to display the current date and ti
 
 Property|Type|Default Value|Description
 ---------|-----|-------------|-----------
-year|String|""|The year number
-yearName|String|""|The name of the year, if year names have been set up.
-yearPrefix|String|""|The prefix value for the year
-yearPostfix|String|""|The postfix value for the year
-month|String|""|The month number.
-monthName|String|""|The name of the month.
-weekday|String|""|The name of the weekday this date falls on.
 day|String|""|How the day is displayed, generally its number on the calendar.
 daySuffix|String|""|The Ordinal Suffix associated with the day number (st, nd, rd or th)
+month|String|""|The month number.
+monthName|String|""|The name of the month.
 time|String|''|The hour, minute and seconds.
+weekday|String|""|The name of the weekday this date falls on.
+year|String|""|The year number
+yearName|String|""|The name of the year, if year names have been set up.
+yearPostfix|String|""|The postfix value for the year
+yearPrefix|String|""|The prefix value for the year
 
 ## Date Time Object
 
@@ -655,12 +656,13 @@ This type contains information about a moon.
 
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
-name|String|No|""|The name of the moon.
-cycleLength|Number|No|0|How many days it takes the moon to complete 1 cycle.
 color|String|No|"#FFFFFF"|The color associated with the moon.
+currentPhase|[Moon Phase Object](#moon-phase-object)|Yes|{}|The moon phase for the current date. This option is present only in results from the [DateTimeChange hook](Hooks.md#datetime-change)
 cycleDayAdjust|Number|No|0|A way to nudge the cycle calculations to align with correct dates.
-firstNewMoon|[First New Moon Object](#first-new-moon-object)|No|{}|When the first new moon was. This is used to calculate the current phase for a given day.
-phases|Array<[Moon Phase Object](#moon-phase-object)>|No|[]|The different phases of the moon.
+cycleLength|Number|No|0|How many days it takes the moon to complete 1 cycle.
+firstNewMoon|[First New Moon Object](#first-new-moon-object)|Yes|{}|When the first new moon was. This is used to calculate the current phase for a given day.
+name|String|No|""|The name of the moon.
+phases|Array<[Moon Phase Object](#moon-phase-object)>|Yes|[]|The different phases of the moon.
 
 ## Moon Phase Object
 
@@ -668,10 +670,11 @@ This type contains information about a moon phase.
 
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
-name|String|No|""|The name of the phase.
-length|Number|No|0|How many days of the cycle this phase takes up.
-singleDay|Boolean|No|False|If this phase should only take place on a single day.
 icon|[MoonIcons](#simplecalendarapimoonicons)|No|``|The icon to associate with this moon phase.
+length|Number|No|0|How many days of the cycle this phase takes up.
+name|String|No|""|The name of the phase.
+singleDay|Boolean|No|False|If this phase should only take place on a single day.
+
 
 ## Note Category Object
 

@@ -1,5 +1,5 @@
 import {Logger} from "./logging";
-import {ModuleSocketName, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../constants";
+import {SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Hook from "./hook";
 import {GameSettings} from "./game-settings";
@@ -133,6 +133,7 @@ export default class TimeKeeper{
                 if (GameSettings.IsGm() && SimpleCalendar.instance.primary) {
                     SimpleCalendar.instance.currentYear.syncTime().catch(Logger.error);
                 }
+                Hook.emit(SimpleCalendarHooks.DateTimeChange);
             }
         }
     }

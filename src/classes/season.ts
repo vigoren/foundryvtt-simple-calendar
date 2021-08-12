@@ -1,4 +1,3 @@
-import SimpleCalendar from "./simple-calendar";
 import {SeasonTemplate} from "../interfaces";
 import Year from "./year";
 
@@ -27,6 +26,10 @@ export default class Season {
      */
     startingDay: number = -1;
 
+    //sunriseTime: number = 0;
+
+    //sunsetTime: number = 0;
+
     /**
      * The Season Constructor
      * @param {string} name The name of the season
@@ -46,6 +49,8 @@ export default class Season {
     clone(): Season {
         const t = new Season(this.name, this.startingMonth, this.startingDay);
         t.color = this.color;
+        //t.sunriseTime = this.sunriseTime;
+        //t.sunsetTime = this.sunsetTime;
         return t;
     }
 

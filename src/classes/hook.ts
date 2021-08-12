@@ -1,6 +1,7 @@
-import {SimpleCalendarHooks, TimeKeeperStatus} from "../constants";
+import {SimpleCalendarHooks} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import {Logger} from "./logging";
+import API from "./api";
 
 export default class Hook{
 
@@ -10,11 +11,13 @@ export default class Hook{
      */
     public static emit(hook: SimpleCalendarHooks){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            const data: any = {};
+            let data: any = {};
 
             if(hook === SimpleCalendarHooks.DateTimeChange){
-                data['season'] = {};
+                data['date'] = API.timestampToDate(SimpleCalendar.instance.currentYear.toSeconds());
                 data['moons'] = [];
+
+                data['season'] = {};
                 data['month'] = {};
                 data['day'] = {};
                 data['time'] = {};
@@ -54,12 +57,9 @@ export default class Hook{
                     });
                 }
             } else if(hook === SimpleCalendarHooks.ClockStartStop){
-                const status = SimpleCalendar.instance.currentYear.time.timeKeeper.getStatus();
-                data['started'] = status === TimeKeeperStatus.Started;
-                data['stopped'] = status === TimeKeeperStatus.Stopped;
-                data['paused'] = status === TimeKeeperStatus.Paused;
+                data = API.clockStatus();
             } else if(hook === SimpleCalendarHooks.PrimaryGM){
-                data['isPrimaryGM'] = SimpleCalendar.instance.primary;
+                data['isPrimaryGM'] = API.isPrimaryGM();
             }
             Hooks.callAll(hook, data);
         } else {
