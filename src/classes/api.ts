@@ -189,7 +189,7 @@ export default class API{
             }
             result.display.day = day.numericRepresentation.toString();
             result.display.daySuffix = Utilities.ordinalSuffix(day.numericRepresentation);
-            result.display.time = SimpleCalendar.instance.currentYear.time.toString();
+            result.display.time = Utilities.FormatTime(result.hour, result.minute, result.second);
         }
         return result;
     }

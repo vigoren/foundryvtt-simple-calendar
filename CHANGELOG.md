@@ -1,5 +1,19 @@
 # Change Log
 
+## v1.3.30 - Bug Fixing
+
+### Bug Fixes
+
+- Fixed a bug with the `SimpleCalendar.api.timestampToDate` function where the display time was always returning as the current time not the time from the passed in timestamp.
+
+### Foundry 0.8.9
+
+- Made sure that Simple Calendar works as expected with Foundry version 0.8.9!
+
+### Translations
+
+- I am happy to say that Simple Calendar has been translated to French thanks to [JDR-Ninja](https://github.com/JDR-Ninja) with input from [Julien Stébenne](https://github.com/TheBird956)!
+
 ## v1.3.28 - API Changes
 
 - Updated the [DateTimeChange hook](./docs/Hooks.md#datetime-change) to have a new property in its returned value called "date". This property contains the same contents as the [API timestampToDate function](./docs/API.md#simplecalendarapitimestamptodatetimestamp) with the current timestamp passed in. This is to have the exact same data available in the hook as the API function. As a result some existing properties will be removed as stated below:

@@ -70,20 +70,29 @@ export default class Utilities{
     }
 
     /**
-     * Formats an hour and minute to include pre padded 0's
-     * @param date
+     * Formats an hour, minute and optionally second to include pre padded 0's
+     * @param {Number} hour
+     * @param {Number} minute
+     * @param {Number|Boolean} second
      */
-    public static FormatTime(date: SCDateSelector.Date){
+    public static FormatTime(hour: number, minute: number, second: number | false){
         let text = '';
-        if(!date.allDay){
-            let sHour: string | number = date.hour;
-            let sMinute: string | number = date.minute;
-            if(sHour < 10){
-                sHour = `0${sHour}`;
+        let sHour = hour.toString();
+        let sMinute = minute.toString()
+        if(hour < 10){
+            sHour = `0${hour}`;
+        }
+        if(minute < 10){
+            sMinute = `0${minute}`;
+        }
+
+        if(second !== false){
+            let sSecond = second.toString();
+            if(second < 10){
+                sSecond = `0${second}`;
             }
-            if(sMinute < 10){
-                sMinute = `0${sMinute}`;
-            }
+            text = `${sHour}:${sMinute}:${sSecond}`;
+        } else {
             text = `${sHour}:${sMinute}`;
         }
         return text;

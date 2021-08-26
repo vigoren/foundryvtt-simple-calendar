@@ -159,11 +159,11 @@ export default class DateSelector {
             let startTimeText = `00:00`;
             let endTimeText = `00:00`;
             if(!startDate.allDay){
-                startTimeText = ' ' + Utilities.FormatTime(startDate);
+                startTimeText = ' ' + Utilities.FormatTime(startDate.hour, startDate.minute, false);
                 startDateTimeText += startTimeText;
             }
             if(!endDate.allDay){
-                endTimeText = ' ' + Utilities.FormatTime(endDate);
+                endTimeText = ' ' + Utilities.FormatTime(endDate.hour, endDate.minute, false);
                 if(endDateTimeText !== '' || (endDateTimeText === '' && startTimeText !== endTimeText)){
                     endDateTimeText += endTimeText;
                 }
@@ -381,10 +381,10 @@ export default class DateSelector {
                 let startTimeText = `00:00`;
                 let endTimeText = `00:00`;
                 if(!this.selectedDate.startDate.allDay){
-                    startTimeText = ' ' + Utilities.FormatTime(this.selectedDate.startDate);
+                    startTimeText = ' ' + Utilities.FormatTime(this.selectedDate.startDate.hour, this.selectedDate.startDate.minute, false);
                 }
                 if(!this.selectedDate.endDate.allDay){
-                    endTimeText = ' ' + Utilities.FormatTime(this.selectedDate.endDate);
+                    endTimeText = ' ' + Utilities.FormatTime(this.selectedDate.endDate.hour, this.selectedDate.endDate.minute, false);
                 }
 
                 let timeWrapper = `<div class='time-container'>`;
