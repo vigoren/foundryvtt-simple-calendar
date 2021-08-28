@@ -1,6 +1,5 @@
 import {DayTemplate, SCDateSelector} from "../interfaces";
 import SimpleCalendar from "./simple-calendar";
-import {Note} from "./note";
 import {DateRangeMatch} from "../constants";
 import {GameSettings} from "./game-settings";
 import Utilities from "./utilities";
@@ -132,8 +131,10 @@ export default class DateSelector {
      * @param {SCDateSelector.Date} startDate The starting datetime
      * @param {SCDateSelector.Date} endDate The ending datetime
      * @param {boolean} [dontIncludeSameDate=false] If to include the date if it is the same in the result (useful for just getting the time)
+     * @param {boolean} [showYear=true] If to include the year in the display string
+     * @param {string} [delimiter='-'] The delimiter to use between the 2 dates
      */
-    static GetDisplayDate(startDate: SCDateSelector.Date, endDate: SCDateSelector.Date, dontIncludeSameDate: boolean = false){
+    static GetDisplayDate(startDate: SCDateSelector.Date, endDate: SCDateSelector.Date, dontIncludeSameDate: boolean = false, showYear: boolean = true, delimiter: string = '-'){
         let startDateTimeText = '', endDateTimeText = '', startingMonthName = '', endingMonthName = '';
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             const startingMonth = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === startDate.month);
@@ -153,7 +154,11 @@ export default class DateSelector {
                     endDateTimeText += `, ${endDate.year}`;
                 }
             } else if(!dontIncludeSameDate){
-                startDateTimeText += `${startingMonthName} ${startDate.day}, ${startDate.year}`;
+                if(showYear){
+                    startDateTimeText += `${startingMonthName} ${startDate.day}, ${startDate.year}`;
+                } else {
+                    startDateTimeText += `${startingMonthName} ${startDate.day}`;
+                }
             }
 
             let startTimeText = `00:00`;
@@ -169,7 +174,7 @@ export default class DateSelector {
                 }
             }
         }
-        return `${startDateTimeText}${endDateTimeText? ' - ' + endDateTimeText: ''}`;
+        return `${startDateTimeText}${endDateTimeText? ` ${delimiter} ` + endDateTimeText: ''}`;
     }
 
     /**
@@ -183,6 +188,11 @@ export default class DateSelector {
      */
     showDate: boolean;
     /**
+     * If to show the year for date selection
+     * @type {boolean}
+     */
+    showYear: boolean = true;
+    /**
      * If to show the time portion of the picker
      * @type{boolean}
      */
@@ -192,15 +202,35 @@ export default class DateSelector {
      */
     addTime: boolean = false;
     /**
+     * If to set the input box width to match the calendars width
+     * @type {boolean}
+     */
+    setInputWidth: boolean = true;
+    /**
      * Any place holder text for the Date Select input box
      * @type {string}
      */
     placeHolderText: string = '';
     /**
+     * The string between the start and end time inputs
+     * @type {string}
+     */
+    timeDelimiter: string = '-';
+    /**
      * If the date selector allows users to select a range of dates or just a single date
      * @type {boolean}
      */
-    range: boolean = false;
+    dateRange: boolean = false;
+    /**
+     * If the time selectors allow users to select a range of time or just a single time stamp
+     * @type {boolean}
+     */
+    timeRange: boolean = true;
+    /**
+     * If to show the time label next to the time inputs
+     * @type {boolean}
+     */
+    showTimeLabel: boolean = true;
     /**
      * Used internally to determine if the second day of a range has been selected.
      * @type {boolean}
@@ -252,6 +282,12 @@ export default class DateSelector {
                 minute: 0
             }
         };
+        if(options.showYear !== undefined){
+            this.showYear = options.showYear;
+        }
+        if(options.inputMatchCalendarWidth !== undefined){
+            this.setInputWidth = options.inputMatchCalendarWidth;
+        }
         if(options.placeHolderText){
             this.placeHolderText = options.placeHolderText;
         }
@@ -260,40 +296,62 @@ export default class DateSelector {
             this.onDateSelect = options.onDateSelect;
         }
 
-        if(options.rangeSelect !== undefined){
-            this.range = options.rangeSelect;
+        if(options.dateRangeSelect !== undefined){
+            this.dateRange = options.dateRangeSelect;
         }
-    }
+        if(options.timeRangeSelect !== undefined){
+            this.timeRange = options.timeRangeSelect;
+        }
+        if(options.showTimeLabel !== undefined){
+            this.showTimeLabel = options.showTimeLabel;
+        }
+        if(options.timeDelimiter !== undefined){
+            this.timeDelimiter = options.timeDelimiter;
+        }
 
-    /**
-     * Updates the currently selected date based on the passes in note.
-     * @param {Note} note
-     */
-    updateSelectedDate(note: Note){
-        this.selectedDate.startDate = {
-            year: note.year,
-            month: note.month,
-            day: note.day,
-            allDay: note.allDay,
-            hour: note.hour,
-            minute: note.minute
-        };
+        if(options.startDate !== undefined){
+            this.selectedDate.startDate = {
+                year: options.startDate.year,
+                month: options.startDate.month,
+                day: options.startDate.day,
+                allDay: !this.showTime,
+                hour: options.startDate.hour,
+                minute: options.startDate.minute
+            };
+        } else if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
+            this.selectedDate.startDate = {
+                year: SimpleCalendar.instance.currentYear.numericRepresentation,
+                month: 1,
+                day: 1,
+                allDay: true,
+                hour: 0,
+                minute: 0
+            };
+        }
         this.selectedDate.visibleDate = {
-            year: note.year,
-            month: note.month,
-            day: note.day,
-            allDay: note.allDay,
-            hour: note.hour,
-            minute: note.minute
+            year: this.selectedDate.startDate.year,
+            month: this.selectedDate.startDate.month,
+            day: this.selectedDate.startDate.day,
+            allDay: !this.selectedDate.startDate.allDay,
+            hour: this.selectedDate.startDate.hour,
+            minute: this.selectedDate.startDate.minute
         };
-        this.selectedDate.endDate = {
-            year: note.endDate.year,
-            month: note.endDate.month,
-            day: note.endDate.day,
-            allDay: note.allDay,
-            hour: note.endDate.hour? note.endDate.hour : 0,
-            minute: note.endDate.minute? note.endDate.minute : 0
-        };
+        this.selectedDate.endDate = this.selectedDate.startDate;
+        if(options.endDate !== undefined){
+            this.selectedDate.endDate = {
+                year: options.endDate.year,
+                month: options.endDate.month,
+                day: options.endDate.day,
+                allDay: !this.showTime,
+                hour: options.endDate.hour? options.endDate.hour : 0,
+                minute: options.endDate.minute? options.endDate.minute : 0
+            };
+        }
+        if(options.allDay !== undefined){
+            this.selectedDate.startDate.allDay = options.allDay;
+            this.selectedDate.endDate.allDay = options.allDay;
+            this.selectedDate.visibleDate.allDay = options.allDay;
+        }
         if(!this.selectedDate.startDate.allDay){
             this.addTime = true;
         }
@@ -323,8 +381,7 @@ export default class DateSelector {
                     return '';
                 }
                 calendarWidth = (10 + (weeks[0].length * 40));
-
-                calendar = `<div class="header"><div class="current"><a class="prev fa fa-chevron-left"></a><span class="month-year" data-visible="${this.selectedDate.visibleDate.month}/${this.selectedDate.visibleDate.year}">${visibleMonthName} ${this.selectedDate.visibleDate.year}</span><a class="next fa fa-chevron-right"></a></div>`;
+                calendar = `<div class="header"><div class="current"><a class="prev fa fa-chevron-left"></a><span class="month-year" data-visible="${this.selectedDate.visibleDate.month}/${this.selectedDate.visibleDate.year}">${visibleMonthName} ${this.showYear? this.selectedDate.visibleDate.year : ''}</span><a class="next fa fa-chevron-right"></a></div>`;
 
 
                 if(weekdays.length){
@@ -390,8 +447,6 @@ export default class DateSelector {
                 let timeWrapper = `<div class='time-container'>`;
 
                 if(this.addTime){
-
-
                     let startTimePicker = ``;
                     let endTimePicker = ``;
                     const halfHour = Math.floor(SimpleCalendar.instance.currentYear.time.minutesInHour / 2);
@@ -414,17 +469,32 @@ export default class DateSelector {
                         endTimePicker += `<div class="time-option ${endHalfSelected}" data-hour="${i}" data-minute="${halfHour}">${i < 10? '0'+i : i}:${halfHour}</div>`;
 
                     }
-                    const startTime = `<div class="time-selector"><input class="start-time" type="text" value="${startTimeText}" /><div class="time-dropdown hide">${startTimePicker}</div></div>`;
-                    const endTime = `<div class="time-selector"><input class="end-time" type="text" value="${endTimeText}" /><div class="time-dropdown hide">${endTimePicker}</div></div>`;
-                    timeWrapper += `<h3>${GameSettings.Localize('FSC.Notes.Time')}</h3><div class="time-selectors">${startTime}<span>-</span>${endTime}</div><button class="control delete"><i class="fa fa-times"></i> ${GameSettings.Localize('FSC.Clear')}</button>`;
+                    if(this.showDate || this.timeRange){
+                        const startTime = `<div class="time-selector"><input class="start-time" type="text" value="${startTimeText}" /><div class="time-dropdown hide">${startTimePicker}</div></div>`;
+                        const endTime = `<div class="time-selector"><input class="end-time" type="text" value="${endTimeText}" /><div class="time-dropdown hide">${endTimePicker}</div></div>`;
+                        if(this.showTimeLabel){
+                            timeWrapper += `<h3>${GameSettings.Localize('FSC.Notes.Time')}</h3>`;
+                        }
+                        if(this.timeRange){
+                            timeWrapper += `<div class="time-selectors">${startTime}<span>${this.timeDelimiter}</span>${endTime}</div>`;
+                        } else {
+                            timeWrapper += `<div class="time-selectors">${startTime}</div>`;
+                        }
+
+                        if(this.showDate){
+                            timeWrapper += `<button class="control delete"><i class="fa fa-times"></i> ${GameSettings.Localize('FSC.Clear')}</button>`;
+                        }
+                    } else{
+                        timeWrapper = `<div class='time-container just-time'><input class="start-time" type="hidden" value="${startTimeText}" /><div class="time-dropdown">${startTimePicker}</div>`;
+                    }
                 } else {
                     timeWrapper += `<div class="add-time"><button class="control"><i class="fa fa-clock"></i> ${GameSettings.Localize('FSC.Notes.DateTime.AllDay')}</button></div>`;
                 }
                 calendar += `${timeWrapper}</div>`;
             }
-            const displayDate = DateSelector.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate);
+            const displayDate = DateSelector.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate, (this.showTime && !this.showDate), this.showYear, this.timeDelimiter);
             if(!justCalendar){
-                returnHtml = `${wrapper}<input class="display-input" style="${calendarWidth? "width:"+calendarWidth+"px;" : ''}" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar" style="display:none;${calendarWidth? "width:"+calendarWidth+"px;" : ''}">${calendar}</div></div>`;
+                returnHtml = `${wrapper}<input class="display-input" style="${calendarWidth && this.setInputWidth? "width:"+calendarWidth+"px;" : ''}" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar${this.showTime && !this.showDate? ' just-time' : ''}" style="display:none;${calendarWidth? "width:"+calendarWidth+"px;" : ''}">${calendar}</div></div>`;
             } else {
                 returnHtml = calendar;
                 const displayInput = (<HTMLInputElement>document.querySelector(`#${this.id} .display-input`));
@@ -460,14 +530,14 @@ export default class DateSelector {
         }
         if(html){
             const dateSelector = html;
-            if(this.showDate){
-                if(!justCalendar){
-                    document.addEventListener('click', this.hideCalendar.bind(this,html));
-                    const di = <HTMLElement>html.querySelector('.display-input');
-                    if(di){
-                        di.addEventListener('click', this.toggleCalendar.bind(this, dateSelector));
-                    }
+            if(!justCalendar){
+                document.addEventListener('click', this.hideCalendar.bind(this,html));
+                const di = <HTMLElement>html.querySelector('.display-input');
+                if(di){
+                    di.addEventListener('click', this.toggleCalendar.bind(this, dateSelector));
                 }
+            }
+            if(this.showDate){
                 const cal = <HTMLElement>html.querySelector('.sc-date-selector-calendar');
                 if(cal){
                     cal.addEventListener('click', this.calendarClick.bind(this));
@@ -494,13 +564,13 @@ export default class DateSelector {
                 if(cb){
                     cb.addEventListener('click', this.removeTimeClick.bind(this));
                 }
-                html.querySelectorAll('.time-container .time-selectors input').forEach(el => {
+                html.querySelectorAll('.time-container input').forEach(el => {
                     el.addEventListener('click', this.timeClick.bind(this));
                 });
-                html.querySelectorAll('.time-container .time-selectors .time-dropdown .time-option').forEach(el => {
+                html.querySelectorAll('.time-container .time-dropdown .time-option').forEach(el => {
                     el.addEventListener('click', this.timeDropdownClick.bind(this));
                 });
-                html.querySelectorAll('.time-container .time-selectors input').forEach(el => {
+                html.querySelectorAll('.time-container input').forEach(el => {
                     el.addEventListener('change', this.timeUpdate.bind(this));
                 });
             }
@@ -576,7 +646,7 @@ export default class DateSelector {
                     const yearNumber = parseInt(my[1]);
                     if(!isNaN(yearNumber) && !isNaN(monthNumber) && !isNaN(dayNumber)){
                         let hideCalendar = true;
-                        if(this.range){
+                        if(this.dateRange){
                             if(!this.secondDaySelect){
                                 this.selectedDate.startDate.year = yearNumber;
                                 this.selectedDate.startDate.month = monthNumber;
@@ -861,6 +931,9 @@ export default class DateSelector {
                 this.selectedDate.endDate.minute = minute;
             }
             this.update();
+            if(this.showTime && !this.showDate && this.onDateSelect){
+                this.onDateSelect(this.selectedDate);
+            }
         }
     }
 }

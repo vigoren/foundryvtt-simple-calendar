@@ -1211,6 +1211,12 @@ export default class SimpleCalendar extends Application{
                     const newSeason = new Season(seasonData[i].name, seasonData[i].startingMonth, seasonData[i].startingDay);
                     const sCustColor = seasonData[i].customColor;
                     newSeason.color = seasonData[i].color === 'custom' && sCustColor? sCustColor : seasonData[i].color;
+                    if(seasonData[i].hasOwnProperty('sunriseTime')){
+                        newSeason.sunriseTime = seasonData[i].sunriseTime;
+                    }
+                    if(seasonData[i].hasOwnProperty('sunsetTime')){
+                        newSeason.sunsetTime = seasonData[i].sunsetTime;
+                    }
                     this.currentYear.seasons.push(newSeason);
                 }
             }

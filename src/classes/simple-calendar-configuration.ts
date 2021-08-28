@@ -238,6 +238,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public activateListeners(html: JQuery<HTMLElement>) {
         super.activateListeners(html);
+        (<Year>this.object).seasons.forEach(s => s.activateDateSelectors());
         if(html.hasOwnProperty("length")) {
             //Month advanced click
             (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));

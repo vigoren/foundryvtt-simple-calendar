@@ -56,11 +56,13 @@ export class SimpleCalendarNotes extends FormApplication {
         this.dateSelector = DateSelector.GetSelector(this.dateSelectorId, {
             onDateSelect: this.dateSelectorClick.bind(this),
             placeHolderText: '',
-            rangeSelect: true,
+            dateRangeSelect: true,
             showDate: true,
-            showTime: true
+            showTime: true,
+            startDate: {year: data.year, month: data.month, day: data.day, hour: data.hour, minute: data.minute, seconds: 0},
+            endDate: data.endDate,
+            allDay: data.allDay
         });
-        this.dateSelector.updateSelectedDate(data);
     }
 
     /**

@@ -267,8 +267,8 @@
                 <div class="f-table">
                     <div class="row head">
                         <div title="{{localize 'FSC.Configuration.Season.NameHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.Name'}}</div>
-                        <div title="{{localize 'FSC.Configuration.Season.StartingMonthHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.StartingMonth'}}</div>
-                        <div title="{{localize 'FSC.Configuration.Season.StartingDayHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.StartingDay'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Season.StartingDateHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.StartingDate'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Season.SunriseSunsetHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.SunriseSunset'}}</div>
                         <div title="{{localize 'FSC.Configuration.Season.ColorHelp'}}" style="min-width: 15%;">{{localize 'FSC.Configuration.Season.Color'}}</div>
                         <div style="min-width: 15%;"></div>
                     </div>
@@ -278,18 +278,10 @@
                             <input class="season-name" value="{{name}}" type="text" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Season.NameHelp'}}" />
                         </div>
                         <div class="center" style="min-width: 15%;">
-                            <select class="season-month" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Season.StartingMonth'}}">
-                                {{#each ../months}}
-                                <option value="{{numericRepresentation}}" {{#if (eq numericRepresentation ../startingMonth)}}selected="selected"{{/if}}>{{name}}</option>
-                                {{/each}}
-                            </select>
+                            {{sc-date-selector id=startDateSelectorId }}
                         </div>
                         <div class="center" style="min-width: 15%;">
-                            <select class="season-day" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Season.StartingDay'}}">
-                                {{#each dayList}}
-                                <option value="{{numericRepresentation}}" {{#if (eq numericRepresentation ../startingDay)}}selected="selected"{{/if}}>{{name}}</option>
-                                {{/each}}
-                            </select>
+                            {{sc-date-selector id=sunriseSelectorId }}
                         </div>
                         <div class="center" style="min-width: 15%;">
                             <input type="color" value="{{color}}" class="season-color" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Season.Color'}}" list="scSeasonColors" />

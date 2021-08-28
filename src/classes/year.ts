@@ -1009,16 +1009,19 @@ export default class Year {
         let season = new Season('', 1, 1);
         if(day > 0 && monthIndex >= 0){
             let currentSeason: Season | null = null;
-            for(let i = 0; i < this.seasons.length; i++){
-                const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === this.seasons[i].startingMonth);
-                if(seasonMonthIndex === monthIndex && this.seasons[i].startingDay <= day){
-                    currentSeason = this.seasons[i];
+
+            const sortedSeasons = this.seasons.sort((a, b) => { return a.startingMonth - b.startingMonth || a.startingDay - b.startingDay; });
+
+            for(let i = 0; i < sortedSeasons.length; i++){
+                const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === sortedSeasons[i].startingMonth);
+                if(seasonMonthIndex === monthIndex && sortedSeasons[i].startingDay <= day){
+                    currentSeason = sortedSeasons[i];
                 } else if (seasonMonthIndex < monthIndex){
-                    currentSeason = this.seasons[i];
+                    currentSeason = sortedSeasons[i];
                 }
             }
             if(currentSeason === null){
-                currentSeason = this.seasons[this.seasons.length - 1];
+                currentSeason = sortedSeasons[sortedSeasons.length - 1];
             }
 
             if(currentSeason){

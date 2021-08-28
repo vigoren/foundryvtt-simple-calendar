@@ -1,10 +1,18 @@
 # Change Log
 
-## v1.3.30 - Bug Fixing
+## v1.3.34 - Season Improvements and Bug Fixing
+
+### Season Changes
+
+- Updated the Starting Month and Starting Day fields to be one field "Starting Date" that uses the built-in Date Selector to choose a month and day.
+- Added the ability to set the Sunrise and Sunset times for the first day of the season:
+  - The setting of the times uses the built-in Time Selector to ensure that only times that work with your calendar can be chosen and that the sunset is always after the sunrise.
 
 ### Bug Fixes
 
 - Fixed a bug with the `SimpleCalendar.api.timestampToDate` function where the display time was always returning as the current time not the time from the passed in timestamp.
+- Fixed a bug with seasons always showing the last season for all, or most months. Seasons were expecting to be in order, now order does not matter.
+- Improvements to the built-in date/time selector to ensure a better user experience.
 
 ### Foundry 0.8.9
 
