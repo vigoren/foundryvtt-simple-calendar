@@ -1389,6 +1389,15 @@ describe('Simple Calendar Class Tests', () => {
         //@ts-ignore
         SimpleCalendar.instance.loadSeasonConfiguration();
         expect(y.seasons[0].color).toBe('#ff0000');
+        expect(y.seasons[0].sunriseTime).toBe(0);
+        expect(y.seasons[0].sunsetTime).toBe(0);
+
+        (<Game>game).settings.get = () => {return [{name:'', startingMonth: 1, startingDay: 1, color: 'custom', customColor: '#ff0000', sunriseTime: 3600, sunsetTime: 7200}];}
+
+        //@ts-ignore
+        SimpleCalendar.instance.loadSeasonConfiguration();
+        expect(y.seasons[0].sunriseTime).toBe(3600);
+        expect(y.seasons[0].sunsetTime).toBe(7200);
 
         (<Game>game).settings.get = orig;
     });

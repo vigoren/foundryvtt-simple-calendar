@@ -794,22 +794,6 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].name).toBe('Wint');
 
-        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-month');
-        (<HTMLInputElement>event.currentTarget).value = '2';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingMonth).toBe(2);
-        (<HTMLInputElement>event.currentTarget).value = 'qwe';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingMonth).toBe(2);
-
-        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-day');
-        (<HTMLInputElement>event.currentTarget).value = '2';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingDay).toBe(2);
-        (<HTMLInputElement>event.currentTarget).value = 'qwe';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingDay).toBe(2);
-
         (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-color');
         (<HTMLInputElement>event.currentTarget).value = '#fffeee';
         SimpleCalendarConfiguration.instance.inputChange(event);

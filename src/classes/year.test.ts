@@ -1066,9 +1066,16 @@ describe('Year Class Tests', () => {
     test('Get Season', () => {
         year.months.push(month);
         year.months.push(new Month('Month 2', 2, 0, 20));
-        year.seasons.push(new Season('Spring', 3, 5));
+        year.months.push(new Month('Month 3', 3, 0, 20));
+        year.seasons.push(new Season('Spring', 1, 10));
+        year.seasons.push(new Season('Summer', 2, 10));
+        year.seasons.push(new Season('Fall', 3, 10));
+        year.seasons.push(new Season('Winter', 3, 18));
 
         let data = year.getSeason(0, 1);
+        expect(data.name).toBe('Winter');
+        data = year.getSeason(2, 9);
+        expect(data.name).toBe('Summer');
     });
 
     test('Get Year Name', () => {

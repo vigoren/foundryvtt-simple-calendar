@@ -287,16 +287,15 @@ describe('Interface Tests', () => {
     });
 
     test('Season Template', () => {
-        const st: SeasonTemplate = {name: '', startingMonth: 1, startingDay: 1, color: '', dayList: []};
+        const st: SeasonTemplate = {name: '', startingMonth: 1, startingDay: 1, color: '', startDateSelectorId: '', sunriseSelectorId: ''};
         expect(st.name).toBe('');
         expect(st.color).toBe('');
         expect(st.startingMonth).toBe(1);
         expect(st.startingDay).toBe(1);
-        expect(st.dayList).toStrictEqual([]);
     });
 
     test('Season Configuration', () => {
-        const sc: SeasonConfiguration = {name: '', startingMonth: 1, startingDay: 1, color: '', customColor: ''};
+        const sc: SeasonConfiguration = {name: '', startingMonth: 1, startingDay: 1, color: '', customColor: '', sunriseTime: 0, sunsetTime: 0};
         expect(sc.name).toBe('');
         expect(sc.color).toBe('');
         expect(sc.customColor).toBe('');

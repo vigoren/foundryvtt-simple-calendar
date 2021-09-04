@@ -21,6 +21,7 @@
 ### Translations
 
 - I am happy to say that Simple Calendar has been translated to French thanks to [JDR-Ninja](https://github.com/JDR-Ninja) with input from [Julien Stébenne](https://github.com/TheBird956)!
+- Updates to the Spanish translation thanks to [lozalojo](https://github.com/lozalojo)!
 
 ## v1.3.28 - API Changes
 

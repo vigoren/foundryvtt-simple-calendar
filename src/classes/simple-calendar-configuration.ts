@@ -631,17 +631,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     //Season Setting Inputs
                     else if(cssClass === 'season-name' && (<Year>this.object).seasons.length > index){
                         (<Year>this.object).seasons[index].name = value;
-                    } else if(cssClass === 'season-month' && (<Year>this.object).seasons.length > index){
-                        const month = parseInt(value);
-                        if(!isNaN(month)){
-                            (<Year>this.object).seasons[index].startingMonth = month;
-                            (<Year>this.object).seasons[index].startingDay = 1;
-                        }
-                    } else if(cssClass === 'season-day' && (<Year>this.object).seasons.length > index){
-                        const day = parseInt(value);
-                        if(!isNaN(day)){
-                            (<Year>this.object).seasons[index].startingDay = day;
-                        }
                     } else if(cssClass === 'season-color' && (<Year>this.object).seasons.length > index){
                         (<Year>this.object).seasons[index].color = value;
                     }

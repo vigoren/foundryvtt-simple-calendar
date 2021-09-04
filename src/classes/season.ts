@@ -60,6 +60,7 @@ export default class Season {
      */
     clone(): Season {
         const t = new Season(this.name, this.startingMonth, this.startingDay);
+        t.id = this.id;
         t.color = this.color;
         t.sunriseTime = this.sunriseTime;
         t.sunsetTime = this.sunsetTime;
@@ -122,11 +123,19 @@ export default class Season {
         return data;
     }
 
+    /**
+     * Handles the start date selector changes
+     * @param {SCDateSelector.SelectedDate} selectedDate The date that was selected from the date selector
+     */
     startDateChange(selectedDate: SCDateSelector.SelectedDate){
         this.startingMonth = selectedDate.startDate.month;
         this.startingDay = selectedDate.startDate.day;
     }
 
+    /**
+     * Handles the Sunrise and Sunset date selector changes
+     * @param {SCDateSelector.SelectedDate} selectedDate The date/time that was selected from the date selector
+     */
     sunriseSunsetChange(selectedDate: SCDateSelector.SelectedDate){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
             this.sunriseTime = (selectedDate.startDate.hour * SimpleCalendar.instance.currentYear.time.minutesInHour * SimpleCalendar.instance.currentYear.time.secondsInMinute) + (selectedDate.startDate.minute * SimpleCalendar.instance.currentYear.time.secondsInMinute);
@@ -134,16 +143,11 @@ export default class Season {
         }
     }
 
+    /**
+     * Activates the listeners for the date selectors used by the season.
+     */
     activateDateSelectors(){
-        const sunriseSelectorId = `sc_season_sunrise_time_${this.id}`;
-        const sunsetSelectorId = `sc_season_sunset_time_${this.id}`;
-        const sdSelector = DateSelector.GetSelector(`sc_season_start_date_${this.id}`, {showDate: true, showTime: false});
-
-        if(sdSelector){
-            sdSelector.activateListeners();
-        }
-
-        DateSelector.GetSelector(sunriseSelectorId, {showDate: false, showTime: true})?.activateListeners();
-        DateSelector.GetSelector(sunsetSelectorId, {showDate: false, showTime: true})?.activateListeners();
+        DateSelector.GetSelector(`sc_season_start_date_${this.id}`, {showDate: true, showTime: false}).activateListeners();
+        DateSelector.GetSelector( `sc_season_sunrise_time_${this.id}`, {showDate: false, showTime: true}).activateListeners();
     }
 }

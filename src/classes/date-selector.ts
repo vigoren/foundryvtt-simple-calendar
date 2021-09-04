@@ -343,8 +343,8 @@ export default class DateSelector {
                 month: options.endDate.month,
                 day: options.endDate.day,
                 allDay: !this.showTime,
-                hour: options.endDate.hour? options.endDate.hour : 0,
-                minute: options.endDate.minute? options.endDate.minute : 0
+                hour: options.endDate.hour,
+                minute: options.endDate.minute
             };
         }
         if(options.allDay !== undefined){

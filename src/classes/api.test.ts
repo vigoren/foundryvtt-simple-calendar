@@ -77,10 +77,13 @@ describe('API Class Tests', () => {
     });
 
     test('Timestamp to Date', () => {
+        year.seasons.push(new Season('', 1, 1));
         expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "", yearName: "", yearZero: 0, weekdays: [], currentSeason: {}, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '', "display": {"day": "", "daySuffix": "", "month": "", "monthName": "", "weekday": "", "year": "", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:""}});
         SimpleCalendar.instance.currentYear = year;
         year.weekdays.push(new Weekday(1, 'W1'));
-        const season = new Season('', 0 ,0);
+        const season = year.seasons[0].clone();
+        season.startingMonth = 0;
+        season.startingDay = 0;
         expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "0", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"01:00:00"}});
         expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
         expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '2', "display": {"day": "2", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
@@ -253,8 +256,8 @@ describe('API Class Tests', () => {
         expect(API.getCurrentSeason()).toStrictEqual({name:'', color: ''});
         SimpleCalendar.instance.currentYear = year;
         year.seasons.push(new Season('s1', 1, 1));
-        const s = new Season('s1', 0 ,0);
-        expect(API.getCurrentSeason()).toStrictEqual(s);
+        const s = API.getCurrentSeason()
+        expect(s.name).toBe(year.seasons[0].name);
         year.months[0].days[0].current = false;
         expect(API.getCurrentSeason()).toStrictEqual({name:'', color: ''});
         year.months[0].current = false;

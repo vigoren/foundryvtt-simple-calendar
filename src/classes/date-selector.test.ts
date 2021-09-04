@@ -30,14 +30,33 @@ describe('Date Selector Class Tests', () => {
     });
 
     test('Get Selector', () => {
-        let newDs = DateSelector.GetSelector('test2', {showDate: true, showTime: true, rangeSelect: true, onDateSelect: () => {}, placeHolderText: 'asd'});
+        let newDs = DateSelector.GetSelector('test2', {
+            showDate: true,
+            showTime: true,
+            dateRangeSelect: true,
+            onDateSelect: () => {},
+            placeHolderText: 'asd',
+            timeDelimiter: '/',
+            showTimeLabel: false,
+            showYear: false,
+            allDay: false,
+            timeRangeSelect: true,
+            inputMatchCalendarWidth: false,
+            startDate: {year: 0, month: 1, day: 1, hour: 0, minute: 0, seconds: 0},
+            endDate: {year: 0, month: 1, day: 1, hour: 0, minute: 0, seconds: 0}
+        });
         expect(newDs.id).toBe('test2');
-        expect(newDs.range).toBe(true);
+        expect(newDs.dateRange).toBe(true);
         expect(newDs.onDateSelect ).not.toBeNull();
         expect(newDs.placeHolderText ).toBe('asd');
         expect(Object.keys(DateSelector.Selectors).length).toBe(2);
 
-        newDs = DateSelector.GetSelector('test', {showDate: true, showTime: true});
+        newDs = DateSelector.GetSelector('test', {
+            showDate: true,
+            showTime: true,
+            startDate: {year: 1, month: 1, day: 1, hour: 0, minute: 0, seconds: 0},
+            endDate: {year: 1, month: 1, day: 1, hour: 0, minute: 0, seconds: 0}
+        });
         expect(newDs).toStrictEqual(ds);
     });
 
@@ -212,84 +231,7 @@ describe('Date Selector Class Tests', () => {
         endDate.hour = 1;
         endDate.minute = 10;
         expect(DateSelector.GetDisplayDate(startDate, endDate)).toBe('M 10, 1 01:10');
-    });
-
-    test('Update Selected Date', () => {
-        const n = new Note();
-        n.year = 1;
-        n.month = 1;
-        n.day = 1;
-        n.allDay = true;
-        n.endDate = {
-            year: 1,
-            month: 1,
-            day: 1,
-            hour: 0,
-            minute: 0,
-            seconds: 0
-        };
-
-        ds.updateSelectedDate(n);
-        expect(ds.addTime).toBe(false);
-        expect(ds.selectedDate).toStrictEqual({
-            startDate: {
-                year: 1,
-                month: 1,
-                day: 1,
-                allDay: true,
-                hour: 0,
-                minute: 0
-            },
-            visibleDate: {
-                year: 1,
-                month: 1,
-                day: 1,
-                allDay: true,
-                hour: 0,
-                minute: 0
-            },
-            endDate: {
-                year: 1,
-                month: 1,
-                day: 1,
-                allDay: true,
-                hour: 0,
-                minute: 0
-            }
-        });
-
-        n.allDay = false;
-        n.hour = 1;
-        n.endDate.hour = 2;
-        n.endDate.minute = 30;
-        ds.updateSelectedDate(n);
-        expect(ds.addTime).toBe(true);
-        expect(ds.selectedDate).toStrictEqual({
-            startDate: {
-                year: 1,
-                month: 1,
-                day: 1,
-                allDay: false,
-                hour: 1,
-                minute: 0
-            },
-            visibleDate: {
-                year: 1,
-                month: 1,
-                day: 1,
-                allDay: false,
-                hour: 1,
-                minute: 0
-            },
-            endDate: {
-                year: 1,
-                month: 1,
-                day: 1,
-                allDay: false,
-                hour: 2,
-                minute: 30
-            }
-        });
+        expect(DateSelector.GetDisplayDate(startDate, endDate, false, false)).toBe('M 10 01:10');
     });
 
     test('Build', () => {
@@ -314,24 +256,34 @@ describe('Date Selector Class Tests', () => {
         expect(ds.build().length).toBeGreaterThan(0);
 
         ds.selectedDate.visibleDate.year = 1;
-        ds.selectedDate.startDate.year = 1;
-        ds.selectedDate.startDate.month = 1;
-        ds.selectedDate.startDate.day = 2;
-        ds.selectedDate.startDate.hour = 2;
-        ds.selectedDate.startDate.minute = 30;
-        ds.selectedDate.startDate.allDay = false;
-        ds.selectedDate.endDate.year = 1;
-        ds.selectedDate.endDate.month = 1;
-        ds.selectedDate.endDate.day = 2;
-        ds.selectedDate.endDate.hour = 4;
-        ds.selectedDate.endDate.minute = 30;
-        ds.selectedDate.endDate.allDay = false;
+        ds.selectedDate.startDate = {
+            year: 1,
+            month: 1,
+            day: 2,
+            hour: 2,
+            minute: 30,
+            allDay: false
+        };
+        ds.selectedDate.endDate = {
+            year: 1,
+            month: 1,
+            day: 2,
+            hour: 4,
+            minute: 30,
+            allDay: false
+        };
+        ds.showYear = false;
         expect(ds.build().length).toBeGreaterThan(0);
 
-        ds.selectedDate.endDate.year = 1;
-        ds.selectedDate.endDate.month = 1;
-        ds.selectedDate.endDate.day = 20;
-        ds.selectedDate.endDate.minute = 0;
+        ds.selectedDate.endDate = {
+            year: 1,
+            month: 1,
+            day: 10,
+            hour: 4,
+            minute: 0,
+            allDay: false
+        };
+        ds.showYear = true;
         expect(ds.build().length).toBeGreaterThan(0);
 
         ds.selectedDate.endDate.minute = 12;
@@ -340,6 +292,14 @@ describe('Date Selector Class Tests', () => {
 
         ds.showDate = true;
         ds.showTime = false;
+        expect(ds.build(true).length).toBeGreaterThan(0);
+
+        ds.showTime = true;
+        ds.showTimeLabel = false;
+        ds.timeRange = false;
+        expect(ds.build(true).length).toBeGreaterThan(0);
+
+        ds.showDate = false;
         expect(ds.build(true).length).toBeGreaterThan(0);
 
         jest.spyOn(document, 'querySelector').mockReturnValueOnce(document.createElement('input'));
@@ -410,10 +370,10 @@ describe('Date Selector Class Tests', () => {
         ds.showDate = false;
         ds.activateListeners(fakeWrapper);
         expect(docQSSpy).toHaveBeenCalledTimes(2);
-        expect(docAELSpy).toHaveBeenCalledTimes(3);
-        expect(fwqsSpy).toHaveBeenCalledTimes(15);
+        expect(docAELSpy).toHaveBeenCalledTimes(4);
+        expect(fwqsSpy).toHaveBeenCalledTimes(16);
         expect(fwqsaSpy).toHaveBeenCalledTimes(9);
-        expect(reaelSpy).toHaveBeenCalledTimes(14);
+        expect(reaelSpy).toHaveBeenCalledTimes(15);
 
         docQSSpy.mockRestore();
         docAELSpy.mockRestore();
@@ -511,7 +471,7 @@ describe('Date Selector Class Tests', () => {
         expect(updateSpy).toHaveBeenCalledTimes(1);
         expect(hideCalendarSpy).toHaveBeenCalledTimes(1);
 
-        ds.range = true;
+        ds.dateRange = true;
         ds.dayClick(html ,event);
         expect(htmlQSSpy).toHaveBeenCalledTimes(6);
         expect(updateSpy).toHaveBeenCalledTimes(2);
@@ -774,7 +734,32 @@ describe('Date Selector Class Tests', () => {
         ds.selectedDate.endDate.day = 10;
         ds.timeUpdate(event);
         expect(updateSpy).toHaveBeenCalledTimes(10);
+        expect(ds.selectedDate.endDate.hour).toBe(10);
+        expect(ds.selectedDate.endDate.minute).toBe(1);
+
+        ds.selectedDate.startDate = {
+            year: 0,
+            month: 1,
+            day: 1,
+            hour: 0,
+            minute: 0,
+            allDay: false
+        };
+        ds.selectedDate.endDate = {
+            year: 0,
+            month: 1,
+            day: 2,
+            hour: 0,
+            minute: 0,
+            allDay: false
+        };
+        ds.showTime = true;
+        ds.showDate = false;
+        ds.onDateSelect = jest.fn();
+        ds.timeUpdate(event);
+        expect(updateSpy).toHaveBeenCalledTimes(11);
         expect(ds.selectedDate.endDate.hour).toBe(1);
         expect(ds.selectedDate.endDate.minute).toBe(1);
+        expect(ds.onDateSelect).toHaveBeenCalledTimes(1);
     });
 });

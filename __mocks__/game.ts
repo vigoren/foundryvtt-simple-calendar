@@ -73,7 +73,7 @@ const game = {
                 case SettingNames.TimeConfiguration:
                     return {hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1};
                 case SettingNames.SeasonConfiguration:
-                    return [[{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff'}]];
+                    return [[{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', sunriseTime: 0, sunsetTime: 0}]];
                 case SettingNames.MoonConfiguration:
                     return [[{"name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]];
             }
