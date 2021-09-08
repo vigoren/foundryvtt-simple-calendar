@@ -1,18 +1,31 @@
 # Change Log
 
-## v1.3.34 - Season Improvements and Bug Fixing
+## v1.3.37 - Season Changes, API Changes and Bug Fixing
 
 ### Season Changes
 
 - Updated the Starting Month and Starting Day fields to be one field "Starting Date" that uses the built-in Date Selector to choose a month and day.
 - Added the ability to set the Sunrise and Sunset times for the first day of the season:
   - The setting of the times uses the built-in Time Selector to ensure that only times that work with your calendar can be chosen and that the sunset is always after the sunrise.
+- Sunrise and sunset times slowly change as days progress to meet the sunrise/sunset time of the next season. This is to add a smooth transition between seasons sunrise and sunset times.
+- Added buttons to the time control to advance to the next dawn, midday, dusk or midnight.
+  - Dawn will advance to the next sunrise.
+  - Midday will advance to the next middle of the day. The midday is calculated as the exact middle of the day, for most calendars this will be 12:00pm but for calendars with different hours per day it will calculate correctly.
+  - Dusk will advance to the next sunset.
+  - Midnight will advance to the next beginning of the day, time 00:00.
+- Set up default sunrise/sunset times for predefined calendars. Where information was available used that otherwise they will default to a 6am sunrise and a 6pm sunset.
 
 ### Bug Fixes
 
-- Fixed a bug with the `SimpleCalendar.api.timestampToDate` function where the display time was always returning as the current time not the time from the passed in timestamp.
 - Fixed a bug with seasons always showing the last season for all, or most months. Seasons were expecting to be in order, now order does not matter.
 - Improvements to the built-in date/time selector to ensure a better user experience.
+- Removed the Import/Export dialog for about-time and Calendar/Weather that appears on the first load of a world. This dialog was causing issues for some users and is no longer needed as these options can be reached through the calendar configuration dialog.
+
+### API Changes
+
+- Functions that return season information (`SimpleCalendar.api.getCurrentSeason`, `SimpleCalendar.api.getAllSeasons` and `SimpleCalendar.api.timstampToDate`) now includes the sunrise and sunset times for the season, as set through the new season options. The times are represented as seconds passed for that day eg. 3600 would be 1:00am in a Gregorian calendar.
+- The function `SimpleCalendar.api.timestampToDate` has 2 new properties, sunrise and sunset. These values represent the timestamps for the sunrise and sunset times parsed from the passed in timestamp.
+- Fixed a bug with the `SimpleCalendar.api.timestampToDate` function where the display time was always returning as the current time not the time from the passed in timestamp.
 
 ### Foundry 0.8.9
 

@@ -1321,27 +1321,21 @@ describe('Simple Calendar Configuration Tests', () => {
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(2);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(3);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(4);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(5);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(6);
 
         (<Mock>(<Game>game).settings.set).mockClear();
     });

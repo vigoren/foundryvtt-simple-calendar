@@ -19,6 +19,9 @@ import {Note} from "./note";
 import SimpleCalendar from "./simple-calendar";
 import PF2E from "./systems/pf2e";
 import Utilities from "./utilities";
+import Day from "./day";
+import DateSelector from "./date-selector";
+import API from "./api";
 
 /**
  * Class for representing a year
@@ -1058,5 +1061,62 @@ export default class Year {
         }
 
         return name;
+    }
+
+    /**
+     * Calculates the sunrise or sunset time for the passed in date, based on the the season setup
+     * @param {number} year The year of the date
+     * @param {Month} month The month object of the date
+     * @param {Day} day The day object of the date
+     * @param {boolean} [sunrise=true] If to calculate the sunrise or sunset
+     * @param {boolean} [calculateTimestamp=true] If to add the date timestamp to the sunrise/sunset time
+     */
+    getSunriseSunsetTime(year: number, month: Month, day: Day, sunrise: boolean = true, calculateTimestamp: boolean = true){
+        const monthIndex = this.months.findIndex(m => m.numericRepresentation === month.numericRepresentation);
+        const dayIndex = month.days.findIndex(d => d.numericRepresentation === day.numericRepresentation);
+
+        const sortedSeasons = this.seasons.sort((a, b) => { return a.startingMonth - b.startingMonth || a.startingDay - b.startingDay; });
+        let seasonIndex = sortedSeasons.length - 1;
+        for(let i = 0; i < sortedSeasons.length; i++){
+            const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === sortedSeasons[i].startingMonth);
+            if(seasonMonthIndex === monthIndex && sortedSeasons[i].startingDay <= day.numericRepresentation){
+                seasonIndex = i;
+            } else if (seasonMonthIndex < monthIndex){
+                seasonIndex = i;
+            }
+        }
+        const nextSeasonIndex = (seasonIndex + 1) % this.seasons.length;
+        if(seasonIndex < sortedSeasons.length && nextSeasonIndex < sortedSeasons.length){
+            let season = sortedSeasons[seasonIndex];
+            const nextSeason = sortedSeasons[nextSeasonIndex];
+            let seasonYear = year;
+            let nextSeasonYear = seasonYear;
+
+            //If the current season is the last season of the year we need to check to see if the year for this season is the year before the current date
+            if(seasonIndex === sortedSeasons.length - 1){
+                if(this.months[monthIndex].numericRepresentation < sortedSeasons[seasonIndex].startingMonth || (sortedSeasons[seasonIndex].startingMonth === this.months[monthIndex].numericRepresentation && this.months[monthIndex].days[dayIndex].numericRepresentation < sortedSeasons[seasonIndex].startingDay)){
+                    seasonYear = year - 1;
+                }
+                nextSeasonYear = seasonYear + 1
+            }
+            const daysBetweenSeasonStartAndDay = DateSelector.DaysBetweenDates(
+                { year: seasonYear, month: season.startingMonth, day: season.startingDay, allDay: false, hour: 0, minute: 0 },
+                { year: year, month: this.months[monthIndex].numericRepresentation, day: this.months[monthIndex].days[dayIndex].numericRepresentation, hour: 0, minute: 0, allDay: false }
+            );
+            const daysBetweenSeasons = DateSelector.DaysBetweenDates(
+                { year: seasonYear, month: season.startingMonth, day: season.startingDay, allDay: false, hour: 0, minute: 0 },
+                { year: nextSeasonYear, month: nextSeason.startingMonth, day: nextSeason.startingDay, allDay: false,  hour: 0, minute: 0 }
+            );
+            const diff = sunrise? nextSeason.sunriseTime - season.sunriseTime : nextSeason.sunsetTime - season.sunsetTime;
+            const averageChangePerDay = diff / daysBetweenSeasons;
+            const sunriseChangeForDay = daysBetweenSeasonStartAndDay * averageChangePerDay;
+            const finalSunriseTime = Math.round((sunrise? season.sunriseTime : season.sunsetTime) + sunriseChangeForDay);
+            if(calculateTimestamp){
+                return API.dateToTimestamp({ year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, second: 0 }) + finalSunriseTime;
+            } else {
+                return finalSunriseTime;
+            }
+        }
+        return 0;
     }
 }

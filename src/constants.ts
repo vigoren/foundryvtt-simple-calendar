@@ -23,7 +23,6 @@ export enum SettingNames {
     LeapYearRule = 'leap-year-rule',
     TimeConfiguration = 'time-configuration',
     GeneralConfiguration = 'general-configuration',
-    ImportRan = 'import-ran',
     SeasonConfiguration = 'season-configuration',
     MoonConfiguration = 'moon-configuration',
     NoteCategories = 'note-categories'

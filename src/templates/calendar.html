@@ -60,6 +60,12 @@
             <div class="selector" data-type="minute" data-amount="5">{{localize 'FSC.Five'}} {{localize 'FSC.MinuteShorthand'}}</div>
             <div class="selector" data-type="hour" data-amount="1">{{localize 'FSC.One'}} {{localize 'FSC.HourShorthand'}}</div>
         </div>
+        <div class="time-controls">
+            <div class="selector" data-type="dawn">{{localize 'FSC.Dawn'}}</div>
+            <div class="selector" data-type="midday">{{localize 'FSC.Midday'}}</div>
+            <div class="selector" data-type="dusk">{{localize 'FSC.Dusk'}}</div>
+            <div class="selector" data-type="midnight">{{localize 'FSC.Midnight'}}</div>
+        </div>
         {{/if}}
         {{/if}}
         {{#if compactViewShowNotes}}
@@ -200,6 +206,12 @@
                             <div>{{localize 'FSC.Five'}}</div>
                             <span class="fa fa-angle-double-right"></span>
                         </a>
+                    </div>
+                    <div class="row time-day">
+                        <a class="control" data-type="dawn">{{localize 'FSC.Dawn'}}</a>
+                        <a class="control" data-type="midday">{{localize 'FSC.Midday'}}</a>
+                        <a class="control" data-type="dusk">{{localize 'FSC.Dusk'}}</a>
+                        <a class="control" data-type="midnight">{{localize 'FSC.Midnight'}}</a>
                     </div>
                 </div>
                 {{/if}}

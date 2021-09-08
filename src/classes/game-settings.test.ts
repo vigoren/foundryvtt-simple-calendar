@@ -86,12 +86,7 @@ describe('Game Settings Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect((<Game>game).settings.register).toHaveBeenCalled();
-        expect((<Game>game).settings.register).toHaveBeenCalledTimes(14);
-    });
-
-    test('Get Import Ran', () => {
-        expect(GameSettings.GetImportRan()).toBe(false);
-        expect((<Game>game).settings.get).toHaveBeenCalled();
+        expect((<Game>game).settings.register).toHaveBeenCalledTimes(13);
     });
 
     test('Get Default Note Visibility', () => {
@@ -186,16 +181,6 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.LoadNoteCategories()).toStrictEqual([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce([[{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]]);
         expect(GameSettings.LoadNoteCategories()).toStrictEqual([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
-    });
-
-    test('Set Import Ran', async () => {
-        // @ts-ignore
-        game.user.isGM = false;
-        await expect(GameSettings.SetImportRan(true)).resolves.toBe(false);
-        // @ts-ignore
-        game.user.isGM = true;
-        await expect(GameSettings.SetImportRan(true)).resolves.toBe(true);
-        expect((<Game>game).settings.set).toHaveBeenCalled();
     });
 
     test('Save General Settings', async () => {

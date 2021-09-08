@@ -840,14 +840,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 await Importer.importCalendarWeather(<Year>this.object);
                 this.updateApp();
             }
-            await GameSettings.SetImportRan(true);
         } else if(type === 'tp-export'){
             if(type2 === 'about-time'){
                 await Importer.exportToAboutTime(<Year>this.object);
             } else if(type2 === 'calendar-weather'){
                 await Importer.exportCalendarWeather(<Year>this.object);
             }
-            await GameSettings.SetImportRan(true);
         }
     }
 
@@ -904,7 +902,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             }
 
             this.closeApp();
-        } catch (error){
+        } catch (error: any){
             Logger.error(error);
         }
     }

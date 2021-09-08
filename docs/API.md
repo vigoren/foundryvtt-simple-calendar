@@ -563,6 +563,8 @@ month|Number|0|The index of the month represented in the timestamp.
 monthName|String|""|**Depreciated** Please use display.monthName instead. This will be removed when Foundry v9 Stable is released.
 second|Number|0|The seconds represented in the timestamp.
 showWeekdayHeadings|Boolean|true|If to show the weekday headings for the month.
+sunrise|Number|0|The timestamp of when the sun rises for this date.
+sunset|Number|0|The timestamp of when the sun sets for this date.
 weekdays|String Array|[]|A list of weekday names.
 year|Number|0|The year represented in the timestamp.
 yearName|String|""|**Depreciated** Please use display.yearName instead. This will be removed when Foundry v9 Stable is released.
@@ -696,6 +698,8 @@ name|String|''|The name of the season.
 color|String|#ffffff|The color associated with this season.
 startingDay|Number|1|The day index of the month that the season starts on.
 startingMonth|Number|1|The month index that the season starts on.
+sunrise|Number|0|The number of seconds into the starting day of the season that the sun rises. EG. a value of 3600 would be 1:00am in a Gregorian Calendar.
+sunset|Number|0|The number of seconds into the starting day of the season that the sun sets. EG. a value of 82800 would be 11:00pm in a Gregorian Calendar.
 
 ## Time Object
 

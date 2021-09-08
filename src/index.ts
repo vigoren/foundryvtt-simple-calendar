@@ -28,3 +28,5 @@ Hooks.on("deleteCombat", SimpleCalendar.instance.combatDelete.bind(SimpleCalenda
 Hooks.on("pauseGame", SimpleCalendar.instance.gamePaused.bind(SimpleCalendar.instance));
 
 Logger.debugMode = false;
+
+//Hooks.on(SimpleCalendarHooks.DateTimeChange, (...args: any) => {console.log(...args);});

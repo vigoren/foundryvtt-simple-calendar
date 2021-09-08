@@ -453,7 +453,7 @@ export default class SimpleCalendar extends Application{
             }
             if(timeControls){
                 const h = timeControls.outerHeight(true);
-                height += h? h : 0;
+                height += h? h * 2 : 0;
             }
 
             if(noteListNote){
@@ -746,6 +746,11 @@ export default class SimpleCalendar extends Application{
                     //Sync the current time on apply, this will propagate to other modules
                     this.currentYear.syncTime().catch(Logger.error);
                 }
+            } else if(dataType && (dataType === 'dawn' || dataType === 'midday' || dataType === 'dusk' || dataType === 'midnight')){
+                this.timeOfDayControlClick(dataType);
+                GameSettings.SaveCurrentDate(this.currentYear).catch(Logger.error);
+                //Sync the current time on apply, this will propagate to other modules
+                this.currentYear.syncTime(true).catch(Logger.error);
             }
         }
     }
@@ -822,6 +827,13 @@ export default class SimpleCalendar extends Application{
                         this.currentYear.changeYear(isNext? 1 : -1, false, "current");
                         change = true;
                         break;
+                    case 'dawn':
+                    case 'midday':
+                    case 'dusk':
+                    case 'midnight':
+                        this.timeOfDayControlClick(dataType);
+                        change = true;
+                        break;
                 }
             }
             if(change){
@@ -832,6 +844,67 @@ export default class SimpleCalendar extends Application{
         }
     }
 
+
+    public timeOfDayControlClick(type: string){
+        if(this.currentYear){
+            let month = this.currentYear.getMonth();
+            let day: Day | undefined;
+            switch (type){
+                case 'dawn':
+                    if(month){
+                        day = month.getDay();
+                        if(day){
+                            let sunriseTime = this.currentYear.getSunriseSunsetTime(this.currentYear.numericRepresentation, month, day, true, false);
+                            if(this.currentYear.time.seconds >= sunriseTime){
+                                this.currentYear.changeDay(1, 'current');
+                                month = this.currentYear.getMonth();
+                                if(month){
+                                    day = month.getDay();
+                                    if(day){
+                                        sunriseTime = this.currentYear.getSunriseSunsetTime(this.currentYear.numericRepresentation, month, day, true, false);
+                                        this.currentYear.time.seconds = sunriseTime;
+                                    }
+                                }
+                            } else {
+                                this.currentYear.time.seconds = sunriseTime;
+                            }
+                        }
+                    }
+                    break;
+                case 'midday':
+                    const halfDay = this.currentYear.time.secondsPerDay / 2;
+                    if(this.currentYear.time.seconds >= halfDay){
+                        this.currentYear.changeDay(1, 'current');
+                    }
+                    this.currentYear.time.seconds = halfDay;
+                    break;
+                case 'dusk':
+                    if(month){
+                        day = month.getDay();
+                        if(day){
+                            let sunsetTime = this.currentYear.getSunriseSunsetTime(this.currentYear.numericRepresentation, month, day, false, false);
+                            if(this.currentYear.time.seconds >= sunsetTime){
+                                this.currentYear.changeDay(1, 'current');
+                                month = this.currentYear.getMonth();
+                                if(month){
+                                    day = month.getDay();
+                                    if(day){
+                                        sunsetTime = this.currentYear.getSunriseSunsetTime(this.currentYear.numericRepresentation, month, day, false, false);
+                                        this.currentYear.time.seconds = sunsetTime;
+                                    }
+                                }
+                            } else {
+                                this.currentYear.time.seconds = sunsetTime;
+                            }
+                        }
+                    }
+                    break;
+                case 'midnight':
+                    this.currentYear.changeTime(true, 'second', this.currentYear.time.secondsPerDay - this.currentYear.time.seconds);
+                    break;
+            }
+        }
+    }
     /**
      * Click event for when a gm user clicks on the apply button for the current date controls
      * Will attempt to save the new current date to the world settings.
@@ -1471,105 +1544,9 @@ export default class SimpleCalendar extends Application{
     async timeKeepingCheck(){
         //If the current year is set up and the calendar is set up for time keeping and the user is the GM
         if(this.currentYear && this.currentYear.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.None && GameSettings.IsGm() ){
-            const importRun = GameSettings.GetImportRan();
-            // If we haven't asked about the import in the past
-            if(!importRun){
-                const calendarWeather = (<Game>game).modules.get('calendar-weather');
-                const aboutTime = (<Game>game).modules.get('about-time');
-                //Ask about calendar/weather first, then about time
-                if(calendarWeather && calendarWeather.active){
-                    Logger.debug('Calendar/Weather detected.');
-                    const cwD = new Dialog({
-                        title: GameSettings.Localize('FSC.Module.CalendarWeather.Title'),
-                        content: GameSettings.Localize('FSC.Module.CalendarWeather.Message'),
-                        buttons:{
-                            import: {
-                                label: GameSettings.Localize('FSC.Module.Import'),
-                                callback: this.moduleImportClick.bind(this, 'calendar-weather')
-                            },
-                            export: {
-                                label: GameSettings.Localize('FSC.Module.CalendarWeather.Export'),
-                                callback: this.moduleExportClick.bind(this,'calendar-weather')
-                            },
-                            no: {
-                                label: GameSettings.Localize('FSC.Module.NoChanges'),
-                                callback: this.moduleDialogNoChangeClick.bind(this)
-                            }
-                        },
-                        default: "no"
-                    });
-                    cwD.render(true);
-                } else if(aboutTime && aboutTime.active){
-                    Logger.debug(`About Time detected.`);
-                    const cwD = new Dialog({
-                        title: GameSettings.Localize('FSC.Module.AboutTime.Title'),
-                        content: GameSettings.Localize('FSC.Module.AboutTime.Message'),
-                        buttons:{
-                            import: {
-                                label: GameSettings.Localize('FSC.Module.Import'),
-                                callback: this.moduleImportClick.bind(this, 'about-time')
-                            },
-                            export: {
-                                label: GameSettings.Localize('FSC.Module.AboutTime.Export'),
-                                callback: this.moduleExportClick.bind(this,'about-time')
-                            },
-                            no: {
-                                label: GameSettings.Localize('FSC.Module.NoChanges'),
-                                callback: this.moduleDialogNoChangeClick.bind(this)
-                            }
-                        },
-                        default: "no"
-                    });
-                    cwD.render(true);
-                }
-            }
-
             //Sync the current world time with the simple calendar
             await this.currentYear.syncTime();
         }
-    }
-
-    /**
-     * Called when the import option is selection from the importing/exporting module dialog
-     * @param {string} type The module
-     */
-    async moduleImportClick(type: string) {
-        if(this.currentYear){
-            if(type === 'about-time'){
-                await Importer.importAboutTime(this.currentYear);
-                this.updateApp();
-            } else if(type === 'calendar-weather'){
-                await Importer.importCalendarWeather(this.currentYear);
-                this.updateApp();
-            }
-            await GameSettings.SetImportRan(true);
-        } else {
-            Logger.error('Could not export as the current year is not defined');
-        }
-    }
-
-    /**
-     * Called when the export option is selection from the importing/exporting module dialog
-     * @param {string} type The module
-     */
-    async moduleExportClick(type: string){
-        if(this.currentYear){
-            if(type === 'about-time'){
-                await Importer.exportToAboutTime(this.currentYear);
-            } else if(type === 'calendar-weather'){
-                await Importer.exportCalendarWeather(this.currentYear);
-            }
-            await GameSettings.SetImportRan(true);
-        } else {
-            Logger.error('Could not export as the current year is not defined');
-        }
-    }
-
-    /**
-     * Called when the no change dialog option is clicked for importing/exporting module data
-     */
-    async moduleDialogNoChangeClick(){
-        await GameSettings.SetImportRan(true);
     }
 
     /**

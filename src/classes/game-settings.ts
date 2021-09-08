@@ -149,13 +149,6 @@ export class GameSettings {
             default: {},
             onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'time')
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.ImportRan, {
-            name: "Import",
-            scope: "world",
-            config: false,
-            type: Boolean,
-            default: false
-        });
         (<Game>game).settings.register(ModuleName, SettingNames.SeasonConfiguration, {
             name: "Season Configuration",
             scope: "world",
@@ -190,13 +183,6 @@ export class GameSettings {
             config: false
         });
 
-    }
-
-    /**
-     * Gets if the import question has been run for modules
-     */
-    static GetImportRan(){
-        return <boolean>(<Game>game).settings.get(ModuleName, SettingNames.ImportRan);
     }
 
     /**
@@ -345,18 +331,6 @@ export class GameSettings {
             }
         }
         return returnData;
-    }
-
-    /**
-     * Sets the import ran setting
-     * @param {boolean} ran If the import was ran/asked about
-     */
-    static async SetImportRan(ran: boolean){
-        if(GameSettings.IsGm()){
-            await (<Game>game).settings.set(ModuleName, SettingNames.ImportRan, ran);
-            return true;
-        }
-        return false;
     }
 
     /**

@@ -52,7 +52,6 @@ const game = {
             switch (settingName){
                 case SettingNames.AllowPlayersToAddNotes:
                 case SettingNames.DefaultNoteVisibility:
-                case SettingNames.ImportRan:
                     return false;
                 case SettingNames.YearConfiguration:
                     return {numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: 'default', yearNamesStart: 0};
