@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.3.38 - Season Changes, QoL Improvements, API Changes and Bug Fixing
+## v1.3.39 - Season Changes, QoL Improvements, API Changes and Bug Fixing
 
 ### Season Changes
 
@@ -31,6 +31,7 @@
 
 - Fixed a bug with seasons always showing the last season for all, or most months. Seasons were expecting to be in order, now order does not matter.
 - Improvements to the built-in date/time selector to ensure a better user experience.
+- Fixed a bug where setting a different hours per day could cause the clock to not advance days properly.
 
 ### Foundry 0.8.9
 

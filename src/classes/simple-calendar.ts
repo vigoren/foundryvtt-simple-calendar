@@ -1342,6 +1342,7 @@ export default class SimpleCalendar extends Application{
                 this.currentYear.time.minutesInHour = timeData.minutesInHour;
                 this.currentYear.time.secondsInMinute = timeData.secondsInMinute;
                 this.currentYear.time.gameTimeRatio = timeData.gameTimeRatio;
+                this.currentYear.time.secondsPerDay = this.currentYear.time.hoursInDay * this.currentYear.time.minutesInHour * this.currentYear.time.secondsInMinute;
 
                 if(timeData.hasOwnProperty('unifyGameAndClockPause')){
                     this.currentYear.time.unifyGameAndClockPause = timeData.unifyGameAndClockPause;
