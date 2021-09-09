@@ -238,6 +238,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public activateListeners(html: JQuery<HTMLElement>) {
         super.activateListeners(html);
+        (<Year>this.object).seasons.forEach(s => s.activateDateSelectors());
         if(html.hasOwnProperty("length")) {
             //Month advanced click
             (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));
@@ -602,6 +603,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 if(!isNaN(min)){
                     (<Year>this.object).time.secondsInMinute = min;
                 }
+            } else if(id === 'scSecondsInCombatRound'){
+                const s = parseInt(value);
+                if(!isNaN(s)){
+                    (<Year>this.object).time.secondsInCombatRound = s;
+                }
             } else if(id === 'scGameTimeRatio'){
                 const min = parseFloat(value);
                 if(!isNaN(min)){
@@ -630,17 +636,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     //Season Setting Inputs
                     else if(cssClass === 'season-name' && (<Year>this.object).seasons.length > index){
                         (<Year>this.object).seasons[index].name = value;
-                    } else if(cssClass === 'season-month' && (<Year>this.object).seasons.length > index){
-                        const month = parseInt(value);
-                        if(!isNaN(month)){
-                            (<Year>this.object).seasons[index].startingMonth = month;
-                            (<Year>this.object).seasons[index].startingDay = 1;
-                        }
-                    } else if(cssClass === 'season-day' && (<Year>this.object).seasons.length > index){
-                        const day = parseInt(value);
-                        if(!isNaN(day)){
-                            (<Year>this.object).seasons[index].startingDay = day;
-                        }
                     } else if(cssClass === 'season-color' && (<Year>this.object).seasons.length > index){
                         (<Year>this.object).seasons[index].color = value;
                     }
@@ -850,14 +845,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 await Importer.importCalendarWeather(<Year>this.object);
                 this.updateApp();
             }
-            await GameSettings.SetImportRan(true);
         } else if(type === 'tp-export'){
             if(type2 === 'about-time'){
                 await Importer.exportToAboutTime(<Year>this.object);
             } else if(type2 === 'calendar-weather'){
                 await Importer.exportCalendarWeather(<Year>this.object);
             }
-            await GameSettings.SetImportRan(true);
         }
     }
 
@@ -914,7 +907,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             }
 
             this.closeApp();
-        } catch (error){
+        } catch (error: any){
             Logger.error(error);
         }
     }

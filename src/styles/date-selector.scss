@@ -16,6 +16,10 @@
   overflow-y: auto;
   z-index: 100;
 
+  &.just-time{
+    overflow-y: visible;
+  }
+
   .header{
     position: sticky;
     top: 0;
@@ -105,6 +109,10 @@
     padding-top: 0.5rem;
     border-top: 1px solid #ccc;
 
+    &.just-time{
+      overflow-y: auto;
+    }
+
     .add-time{
       text-align: center;
       margin: 0.5rem 0;
@@ -140,32 +148,38 @@
         max-width: 60px;
         position: relative;
 
-        .time-dropdown{
+        .time-dropdown {
           position: absolute;
           bottom: 25px;
           right: 0;
           z-index: 100;
-          max-height: 100px;
           overflow: auto;
           background-color: #ffffff;
           color: #000000;
           border: 1px solid #c3c3c3;
           box-shadow: 2px 2px 2px #c3c3c3;
-
-          .time-option{
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-
-            &:hover, &.selected{
-              background-color: #d8d8d8;
-            }
-          }
         }
       }
 
       &>span{
         text-align: center;
         width: 30px;
+      }
+    }
+
+    .time-dropdown{
+      max-height: 100px;
+      &.hide{
+        display: none;
+      }
+
+      .time-option{
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+
+        &:hover, &.selected{
+          background-color: #d8d8d8;
+        }
       }
     }
 

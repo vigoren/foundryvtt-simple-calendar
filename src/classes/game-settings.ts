@@ -149,13 +149,6 @@ export class GameSettings {
             default: {},
             onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'time')
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.ImportRan, {
-            name: "Import",
-            scope: "world",
-            config: false,
-            type: Boolean,
-            default: false
-        });
         (<Game>game).settings.register(ModuleName, SettingNames.SeasonConfiguration, {
             name: "Season Configuration",
             scope: "world",
@@ -190,13 +183,6 @@ export class GameSettings {
             config: false
         });
 
-    }
-
-    /**
-     * Gets if the import question has been run for modules
-     */
-    static GetImportRan(){
-        return <boolean>(<Game>game).settings.get(ModuleName, SettingNames.ImportRan);
     }
 
     /**
@@ -348,18 +334,6 @@ export class GameSettings {
     }
 
     /**
-     * Sets the import ran setting
-     * @param {boolean} ran If the import was ran/asked about
-     */
-    static async SetImportRan(ran: boolean){
-        if(GameSettings.IsGm()){
-            await (<Game>game).settings.set(ModuleName, SettingNames.ImportRan, ran);
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Saves the general settings to the world settings
      * @param {GeneralSettings} settings The settings to save
      */
@@ -502,7 +476,7 @@ export class GameSettings {
         if(GameSettings.IsGm()){
             Logger.debug('Saving season configuration.');
             const currentConfig = JSON.stringify(GameSettings.LoadSeasonData());
-            const newConfig: SeasonConfiguration[] = seasons.map(s => {return {name: s.name, startingMonth: s.startingMonth, startingDay: s.startingDay, color: s.color}});
+            const newConfig: SeasonConfiguration[] = seasons.map(s => {return {name: s.name, startingMonth: s.startingMonth, startingDay: s.startingDay, color: s.color, sunriseTime: s.sunriseTime, sunsetTime: s.sunsetTime}});
             if(currentConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.SeasonConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -571,6 +545,7 @@ export class GameSettings {
                 hoursInDay: time.hoursInDay,
                 minutesInHour: time.minutesInHour,
                 secondsInMinute: time.secondsInMinute,
+                secondsInCombatRound: time.secondsInCombatRound,
                 gameTimeRatio: time.gameTimeRatio,
                 unifyGameAndClockPause: time.unifyGameAndClockPause,
                 updateFrequency: time.updateFrequency

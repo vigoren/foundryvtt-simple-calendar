@@ -86,12 +86,7 @@ describe('Game Settings Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect((<Game>game).settings.register).toHaveBeenCalled();
-        expect((<Game>game).settings.register).toHaveBeenCalledTimes(14);
-    });
-
-    test('Get Import Ran', () => {
-        expect(GameSettings.GetImportRan()).toBe(false);
-        expect((<Game>game).settings.get).toHaveBeenCalled();
+        expect((<Game>game).settings.register).toHaveBeenCalledTimes(13);
     });
 
     test('Get Default Note Visibility', () => {
@@ -137,7 +132,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Season Data', () => {
-        expect(GameSettings.LoadSeasonData()).toStrictEqual([{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff'}]);
+        expect(GameSettings.LoadSeasonData()).toStrictEqual([{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', sunriseTime: 0, sunsetTime: 0}]);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadSeasonData()).toStrictEqual([]);
@@ -164,7 +159,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Time Data', () => {
-        expect(GameSettings.LoadTimeData()).toStrictEqual({hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1});
+        expect(GameSettings.LoadTimeData()).toStrictEqual({hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1, secondsInCombatRound: 6});
         expect((<Game>game).settings.get).toHaveBeenCalled();
     });
 
@@ -186,16 +181,6 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.LoadNoteCategories()).toStrictEqual([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce([[{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]]);
         expect(GameSettings.LoadNoteCategories()).toStrictEqual([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
-    });
-
-    test('Set Import Ran', async () => {
-        // @ts-ignore
-        game.user.isGM = false;
-        await expect(GameSettings.SetImportRan(true)).resolves.toBe(false);
-        // @ts-ignore
-        game.user.isGM = true;
-        await expect(GameSettings.SetImportRan(true)).resolves.toBe(true);
-        expect((<Game>game).settings.set).toHaveBeenCalled();
     });
 
     test('Save General Settings', async () => {

@@ -19,6 +19,9 @@ import {Note} from "./note";
 import SimpleCalendar from "./simple-calendar";
 import PF2E from "./systems/pf2e";
 import Utilities from "./utilities";
+import Day from "./day";
+import DateSelector from "./date-selector";
+import API from "./api";
 
 /**
  * Class for representing a year
@@ -1009,16 +1012,19 @@ export default class Year {
         let season = new Season('', 1, 1);
         if(day > 0 && monthIndex >= 0){
             let currentSeason: Season | null = null;
-            for(let i = 0; i < this.seasons.length; i++){
-                const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === this.seasons[i].startingMonth);
-                if(seasonMonthIndex === monthIndex && this.seasons[i].startingDay <= day){
-                    currentSeason = this.seasons[i];
+
+            const sortedSeasons = this.seasons.sort((a, b) => { return a.startingMonth - b.startingMonth || a.startingDay - b.startingDay; });
+
+            for(let i = 0; i < sortedSeasons.length; i++){
+                const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === sortedSeasons[i].startingMonth);
+                if(seasonMonthIndex === monthIndex && sortedSeasons[i].startingDay <= day){
+                    currentSeason = sortedSeasons[i];
                 } else if (seasonMonthIndex < monthIndex){
-                    currentSeason = this.seasons[i];
+                    currentSeason = sortedSeasons[i];
                 }
             }
             if(currentSeason === null){
-                currentSeason = this.seasons[this.seasons.length - 1];
+                currentSeason = sortedSeasons[sortedSeasons.length - 1];
             }
 
             if(currentSeason){
@@ -1055,5 +1061,84 @@ export default class Year {
         }
 
         return name;
+    }
+
+    /**
+     * If we have determined that the system does not change the world time when a combat round is changed we run this function to update the time by the set amount.
+     * @param {Combat} combat The current active combat
+     */
+    processOwnCombatRoundTime(combat: Combat){
+        let roundSeconds = this.time.secondsInCombatRound;
+        let roundsPassed = 1;
+
+        if(combat.hasOwnProperty('previous') && combat['previous'].round){
+            roundsPassed = combat.round - combat['previous'].round;
+        }
+        if(roundSeconds !== 0 && roundsPassed !== 0){
+            const parsedDate = this.secondsToDate(this.toSeconds() + (roundSeconds * roundsPassed));
+            this.updateTime(parsedDate);
+            // If the current player is the GM then we need to save this new value to the database
+            // Since the current date is updated this will trigger an update on all players as well
+            if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
+                GameSettings.SaveCurrentDate(this).catch(Logger.error);
+            }
+        }
+    }
+
+    /**
+     * Calculates the sunrise or sunset time for the passed in date, based on the the season setup
+     * @param {number} year The year of the date
+     * @param {Month} month The month object of the date
+     * @param {Day} day The day object of the date
+     * @param {boolean} [sunrise=true] If to calculate the sunrise or sunset
+     * @param {boolean} [calculateTimestamp=true] If to add the date timestamp to the sunrise/sunset time
+     */
+    getSunriseSunsetTime(year: number, month: Month, day: Day, sunrise: boolean = true, calculateTimestamp: boolean = true){
+        const monthIndex = this.months.findIndex(m => m.numericRepresentation === month.numericRepresentation);
+        const dayIndex = month.days.findIndex(d => d.numericRepresentation === day.numericRepresentation);
+
+        const sortedSeasons = this.seasons.sort((a, b) => { return a.startingMonth - b.startingMonth || a.startingDay - b.startingDay; });
+        let seasonIndex = sortedSeasons.length - 1;
+        for(let i = 0; i < sortedSeasons.length; i++){
+            const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === sortedSeasons[i].startingMonth);
+            if(seasonMonthIndex === monthIndex && sortedSeasons[i].startingDay <= day.numericRepresentation){
+                seasonIndex = i;
+            } else if (seasonMonthIndex < monthIndex){
+                seasonIndex = i;
+            }
+        }
+        const nextSeasonIndex = (seasonIndex + 1) % this.seasons.length;
+        if(seasonIndex < sortedSeasons.length && nextSeasonIndex < sortedSeasons.length){
+            let season = sortedSeasons[seasonIndex];
+            const nextSeason = sortedSeasons[nextSeasonIndex];
+            let seasonYear = year;
+            let nextSeasonYear = seasonYear;
+
+            //If the current season is the last season of the year we need to check to see if the year for this season is the year before the current date
+            if(seasonIndex === sortedSeasons.length - 1){
+                if(this.months[monthIndex].numericRepresentation < sortedSeasons[seasonIndex].startingMonth || (sortedSeasons[seasonIndex].startingMonth === this.months[monthIndex].numericRepresentation && this.months[monthIndex].days[dayIndex].numericRepresentation < sortedSeasons[seasonIndex].startingDay)){
+                    seasonYear = year - 1;
+                }
+                nextSeasonYear = seasonYear + 1
+            }
+            const daysBetweenSeasonStartAndDay = DateSelector.DaysBetweenDates(
+                { year: seasonYear, month: season.startingMonth, day: season.startingDay, allDay: false, hour: 0, minute: 0 },
+                { year: year, month: this.months[monthIndex].numericRepresentation, day: this.months[monthIndex].days[dayIndex].numericRepresentation, hour: 0, minute: 0, allDay: false }
+            );
+            const daysBetweenSeasons = DateSelector.DaysBetweenDates(
+                { year: seasonYear, month: season.startingMonth, day: season.startingDay, allDay: false, hour: 0, minute: 0 },
+                { year: nextSeasonYear, month: nextSeason.startingMonth, day: nextSeason.startingDay, allDay: false,  hour: 0, minute: 0 }
+            );
+            const diff = sunrise? nextSeason.sunriseTime - season.sunriseTime : nextSeason.sunsetTime - season.sunsetTime;
+            const averageChangePerDay = diff / daysBetweenSeasons;
+            const sunriseChangeForDay = daysBetweenSeasonStartAndDay * averageChangePerDay;
+            const finalSunriseTime = Math.round((sunrise? season.sunriseTime : season.sunsetTime) + sunriseChangeForDay);
+            if(calculateTimestamp){
+                return API.dateToTimestamp({ year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, second: 0 }) + finalSunriseTime;
+            } else {
+                return finalSunriseTime;
+            }
+        }
+        return 0;
     }
 }

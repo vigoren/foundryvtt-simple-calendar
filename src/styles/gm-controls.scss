@@ -87,8 +87,14 @@
         }
       }
       &.time-amount{
+        margin-bottom: 0.5rem;
         .control{
           margin: 0 8px;
+        }
+      }
+      &.time-day{
+        .control{
+          margin: 0 4px;
         }
       }
     }

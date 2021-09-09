@@ -12,13 +12,21 @@ import "../../__mocks__/hooks";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {GameSystems, GameWorldTimeIntegrations, LeapYearRules, TimeKeeperStatus, YearNamingRules} from "../constants";
+import {
+    GameSystems,
+    GameWorldTimeIntegrations,
+    LeapYearRules,
+    PredefinedCalendars,
+    TimeKeeperStatus,
+    YearNamingRules
+} from "../constants";
 import LeapYear from "./leap-year";
 import Season from "./season";
 import Moon from "./moon";
 import SimpleCalendar from "./simple-calendar";
 import {Note} from "./note";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
+import PredefinedCalendar from "./predefined-calendar";
 
 describe('Year Class Tests', () => {
     let year: Year;
@@ -1066,9 +1074,20 @@ describe('Year Class Tests', () => {
     test('Get Season', () => {
         year.months.push(month);
         year.months.push(new Month('Month 2', 2, 0, 20));
-        year.seasons.push(new Season('Spring', 3, 5));
+        year.months.push(new Month('Month 3', 3, 0, 20));
+        year.seasons.push(new Season('Spring', 1, 10));
+        year.seasons.push(new Season('Summer', 2, 10));
+        year.seasons.push(new Season('Fall', 3, 10));
+        year.seasons.push(new Season('Winter', 3, 18));
 
         let data = year.getSeason(0, 1);
+        expect(data.name).toBe('Winter');
+        data = year.getSeason(2, 9);
+        expect(data.name).toBe('Summer');
+
+        year.seasons[0].startingMonth = -1;
+        data = year.getSeason(0, 1);
+        expect(data.name).toBe('Spring');
     });
 
     test('Get Year Name', () => {
@@ -1089,6 +1108,55 @@ describe('Year Class Tests', () => {
         year.yearNamingRule = YearNamingRules.Random;
         expect(year.getYearName(4)).not.toBe('');
 
+    });
+
+    test('Process Own Combat Round Time', () => {
+        PredefinedCalendar.setToPredefined(year, PredefinedCalendars.Gregorian);
+        let curTime = year.time.seconds;
+        year.processOwnCombatRoundTime(<Combat>{});
+        expect(year.time.seconds).toBe(curTime + year.time.secondsInCombatRound);
+
+        //@ts-ignore
+        game.user.isGM = true;
+        curTime = year.time.seconds;
+        //@ts-ignore
+        year.processOwnCombatRoundTime({round: 2, previous: {round: 1}});
+        expect(year.time.seconds).toBe(curTime + year.time.secondsInCombatRound);
+
+        curTime = year.time.seconds;
+        //@ts-ignore
+        year.processOwnCombatRoundTime({round: 2, previous: {round: 2}});
+        expect(year.time.seconds).toBe(curTime);
+        //@ts-ignore
+        game.user.isGM = false;
+    });
+
+    test('Get Sunrise Sunset Time', () => {
+        year.months.push(month);
+        let sunrise = year.getSunriseSunsetTime(year.numericRepresentation, month, month.days[0]);
+        expect(sunrise).toBe(0);
+
+        PredefinedCalendar.setToPredefined(year, PredefinedCalendars.Gregorian);
+
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.currentYear = year;
+
+        sunrise = year.getSunriseSunsetTime(year.numericRepresentation, year.months[0], year.months[0].days[0], true, false);
+        expect(sunrise).toBe(21600);
+
+        sunrise = year.getSunriseSunsetTime(year.numericRepresentation, year.months[2], year.months[2].days[19], false, false);
+        expect(sunrise).toBe(64800);
+
+        sunrise = year.getSunriseSunsetTime(year.numericRepresentation, year.months[3], year.months[3].days[19], true, true);
+        expect(sunrise).toBe(1618898400);
+
+        sunrise = year.getSunriseSunsetTime(year.numericRepresentation, year.months[11], year.months[11].days[21], true, false);
+        expect(sunrise).toBe(21600);
+
+        year.seasons[1].startingMonth = 3;
+        year.seasons[1].startingDay = 29;
+        sunrise = year.getSunriseSunsetTime(year.numericRepresentation, year.months[0], year.months[0].days[0], true, false);
+        expect(sunrise).toBe(21600);
     });
 
 });

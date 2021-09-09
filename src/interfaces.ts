@@ -272,6 +272,7 @@ export interface TimeConfig {
     hoursInDay: number;
     minutesInHour: number;
     secondsInMinute: number;
+    secondsInCombatRound: number;
     gameTimeRatio: number;
     unifyGameAndClockPause: boolean;
     updateFrequency: number;
@@ -294,7 +295,8 @@ export interface SeasonTemplate {
     startingMonth: number;
     startingDay: number;
     color: string;
-    dayList: DayTemplate[];
+    startDateSelectorId: string;
+    sunriseSelectorId: string;
 }
 
 /**
@@ -304,6 +306,8 @@ export interface SeasonConfiguration {
     name: string;
     startingMonth: number;
     startingDay: number;
+    sunriseTime: number;
+    sunsetTime: number;
     color: string;
     customColor?: string;
 }
@@ -440,9 +444,17 @@ export namespace SCDateSelector {
     export interface Options {
         placeHolderText?: string;
         onDateSelect?: Function;
-        rangeSelect?: boolean;
+        dateRangeSelect?: boolean;
+        timeRangeSelect?: boolean;
+        showYear?: boolean;
+        inputMatchCalendarWidth?: boolean;
         showDate: boolean;
         showTime: boolean;
+        startDate?: DateTimeParts,
+        endDate?: DateTimeParts,
+        allDay?: boolean
+        timeDelimiter?: string;
+        showTimeLabel?: boolean;
     }
 
     export interface Date{

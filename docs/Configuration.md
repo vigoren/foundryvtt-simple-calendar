@@ -2,6 +2,16 @@
 
 Configuration of the calendar is straight forward. As the GM open the configuration dialog and start customizing your calendar!
 
+## Settings
+- [General Settings](#general-settings)
+- [Note Settings](#note-settings)
+- [Year Settings](#year-settings)
+- [Month Settings](#month-settings)
+- [Weekday Settings](#weekday-settings)
+- [Leap Year Settings](#leap-year-settings)
+- [Time Settings](#time-settings)
+- [Moon Settings](#moon-settings)
+
 ## General Settings
 
 This tab allows you to set some general settings for the entire calendar.
@@ -145,10 +155,9 @@ The options available for customizing each Season are listed below:
 Setting | Description
 --------|------------
 Season Name | These text boxes for each season allow you to change the name of an existing season.
-Starting Month | These drop downs for each season show all of the months of your calendar and allow you to choose which month this season starts in.
-Starting Day | These drop downs for each season show all of the days for the selected Starting Month and allow you to choose with day the season starts on in that month.
+Starting Date | This field will open up a date selector that allows you to choose a month and day from the calendar for when the season starts.
+Sunrise/Sunset Time | This field will open up a time selector that allows you to choose the sunrise and sunset times. It also makes sure that the sunset time is after the sunrise time.
 Color | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color.
-Custom Color | If the color option is set to Custom Color this text box will appear where you can enter a custom Hex representation of a color to use for the season.
 Remove Button | These buttons for each season allow you to remove the specific season from the list.
 Add New Season Button | This button will add a new season to the bottom of the list with a default name that you can then configure to your liking.
 Remove All Seasons Button | This button will remove all of the seasons from the list.
@@ -212,6 +221,7 @@ Setting | Description
 Hours in a Day | This defines how many hours make up a single day.
 Minutes in a Hour | This defines how many minutes make up a single hour.
 Seconds in a Minute | This defines how many seconds make up a single minute.
+Seconds per Combat Round | This defines how many seconds pass during 1 round of combat. **Important**: This is only applied if the current system does not increment time during combat rounds!
 
 ### Clock Settings
 

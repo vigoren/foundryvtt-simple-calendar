@@ -124,6 +124,8 @@ export default class API{
             minute: 0,
             second: 0,
             yearZero: 0,
+            sunrise: 0,
+            sunset: 0,
             weekdays: <string[]>[],
             showWeekdayHeadings: true,
             currentSeason: {},
@@ -169,6 +171,8 @@ export default class API{
             result.weekdays = SimpleCalendar.instance.currentYear.weekdays.map(w => w.name);
             result.showWeekdayHeadings = SimpleCalendar.instance.currentYear.showWeekdayHeadings;
             result.isLeapYear = SimpleCalendar.instance.currentYear.leapYearRule.isLeapYear(result.year);
+            result.sunrise = SimpleCalendar.instance.currentYear.getSunriseSunsetTime(result.year, month, day, true);
+            result.sunset = SimpleCalendar.instance.currentYear.getSunriseSunsetTime(result.year, month, day, false);
 
             // Display Stuff
             // Legacy - Depreciated first stable release of Foundry 9
@@ -189,7 +193,7 @@ export default class API{
             }
             result.display.day = day.numericRepresentation.toString();
             result.display.daySuffix = Utilities.ordinalSuffix(day.numericRepresentation);
-            result.display.time = SimpleCalendar.instance.currentYear.time.toString();
+            result.display.time = Utilities.FormatTime(result.hour, result.minute, result.second);
         }
         return result;
     }

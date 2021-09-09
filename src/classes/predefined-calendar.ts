@@ -61,6 +61,14 @@ export default class PredefinedCalendar{
                 year.seasons[1].color = "#f3fff3";
                 year.seasons[2].color = "#fff7f2";
                 year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].sunriseTime = 21600;
+                year.seasons[1].sunriseTime = 21600;
+                year.seasons[2].sunriseTime = 21600;
+                year.seasons[3].sunriseTime = 21600;
+                year.seasons[0].sunsetTime = 64800;
+                year.seasons[1].sunsetTime = 64800;
+                year.seasons[2].sunsetTime = 64800;
+                year.seasons[3].sunsetTime = 64800;
                 year.moons = [
                     new Moon('Moon', 29.53059)
                 ];
@@ -128,6 +136,12 @@ export default class PredefinedCalendar{
                 year.seasons[2].color = '#fff2da';
                 year.seasons[0].color = '#dececc';
                 year.seasons[1].color = '#fff1e7';
+                year.seasons[0].sunriseTime = 21600;
+                year.seasons[1].sunriseTime = 21600;
+                year.seasons[2].sunriseTime = 21600;
+                year.seasons[0].sunsetTime = 64800;
+                year.seasons[1].sunsetTime = 64800;
+                year.seasons[2].sunsetTime = 64800;
                 year.time.hoursInDay = 24;
                 year.time.minutesInHour = 60;
                 year.time.secondsInMinute = 60;
@@ -347,6 +361,14 @@ export default class PredefinedCalendar{
                 year.seasons[1].color = "#f3fff3";
                 year.seasons[2].color = "#fff7f2";
                 year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].sunriseTime = 27000;
+                year.seasons[1].sunriseTime = 21600;
+                year.seasons[2].sunriseTime = 27000;
+                year.seasons[3].sunriseTime = 32400;
+                year.seasons[0].sunsetTime = 64800;
+                year.seasons[1].sunsetTime = 75600;
+                year.seasons[2].sunsetTime = 64800;
+                year.seasons[3].sunsetTime = 54000;
                 year.moons = [
                     new Moon('Catha', 33),
                     new Moon('Ruidus', 328)
@@ -429,6 +451,14 @@ export default class PredefinedCalendar{
                 year.seasons[1].color = "#ff9393";
                 year.seasons[2].color = "#ffdf99";
                 year.seasons[3].color = "#a8a8ff";
+                year.seasons[0].sunriseTime = 21600;
+                year.seasons[1].sunriseTime = 21600;
+                year.seasons[2].sunriseTime = 21600;
+                year.seasons[3].sunriseTime = 21600;
+                year.seasons[0].sunsetTime = 64800;
+                year.seasons[1].sunsetTime = 64800;
+                year.seasons[2].sunsetTime = 64800;
+                year.seasons[3].sunsetTime = 64800;
 
                 year.time.hoursInDay = 24;
                 year.time.minutesInHour = 60;
@@ -510,6 +540,14 @@ export default class PredefinedCalendar{
                 year.seasons[1].color = "#f3fff3";
                 year.seasons[2].color = "#fff7f2";
                 year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].sunriseTime = 21600;
+                year.seasons[1].sunriseTime = 21600;
+                year.seasons[2].sunriseTime = 21600;
+                year.seasons[3].sunriseTime = 21600;
+                year.seasons[0].sunsetTime = 64800;
+                year.seasons[1].sunsetTime = 64800;
+                year.seasons[2].sunsetTime = 64800;
+                year.seasons[3].sunsetTime = 64800;
                 year.moons = [
                     new Moon('Somal', 29.5)
                 ];
@@ -582,6 +620,14 @@ export default class PredefinedCalendar{
                 year.seasons[1].color = "#f3fff3";
                 year.seasons[2].color = "#fff7f2";
                 year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].sunriseTime = 21600;
+                year.seasons[1].sunriseTime = 21600;
+                year.seasons[2].sunriseTime = 21600;
+                year.seasons[3].sunriseTime = 21600;
+                year.seasons[0].sunsetTime = 64800;
+                year.seasons[1].sunsetTime = 64800;
+                year.seasons[2].sunsetTime = 64800;
+                year.seasons[3].sunsetTime = 64800;
                 year.moons = [
                     new Moon('Somal', 29.5)
                 ];
@@ -656,6 +702,16 @@ export default class PredefinedCalendar{
                 year.seasons[2].color = "#f3fff3";
                 year.seasons[3].color = "#fff7f2";
                 year.seasons[4].color = "#f2f8ff";
+                year.seasons[0].sunriseTime = 24300;
+                year.seasons[1].sunriseTime = 18840;
+                year.seasons[2].sunriseTime = 16500;
+                year.seasons[3].sunriseTime = 20400;
+                year.seasons[4].sunriseTime = 25740;
+                year.seasons[0].sunsetTime = 48360;
+                year.seasons[1].sunsetTime = 66540;
+                year.seasons[2].sunsetTime = 69540;
+                year.seasons[3].sunsetTime = 64140;
+                year.seasons[4].sunsetTime = 59160;
                 year.time.hoursInDay = 24;
                 year.time.minutesInHour = 60;
                 year.time.secondsInMinute = 60;
@@ -759,6 +815,14 @@ export default class PredefinedCalendar{
                 year.seasons[1].color = "#f3fff3";
                 year.seasons[2].color = "#fff7f2";
                 year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].sunriseTime = 21600;
+                year.seasons[1].sunriseTime = 21600;
+                year.seasons[2].sunriseTime = 21600;
+                year.seasons[3].sunriseTime = 21600;
+                year.seasons[0].sunsetTime = 64800;
+                year.seasons[1].sunsetTime = 64800;
+                year.seasons[2].sunsetTime = 64800;
+                year.seasons[3].sunsetTime = 64800;
                 year.time.hoursInDay = 24;
                 year.time.minutesInHour = 60;
                 year.time.secondsInMinute = 60;
@@ -880,6 +944,14 @@ export default class PredefinedCalendar{
                 year.seasons[1].color = "#f3fff3";
                 year.seasons[2].color = "#fff7f2";
                 year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].sunriseTime = 21600;
+                year.seasons[1].sunriseTime = 21600;
+                year.seasons[2].sunriseTime = 21600;
+                year.seasons[3].sunriseTime = 21600;
+                year.seasons[0].sunsetTime = 64800;
+                year.seasons[1].sunsetTime = 64800;
+                year.seasons[2].sunsetTime = 64800;
+                year.seasons[3].sunsetTime = 64800;
                 year.time.hoursInDay = 24;
                 year.time.minutesInHour = 60;
                 year.time.secondsInMinute = 60;

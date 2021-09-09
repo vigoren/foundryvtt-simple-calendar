@@ -83,13 +83,12 @@ describe('Utilities Class Tests', () => {
             hour: 0,
             minute: 0
         };
-
-        expect(Utilities.FormatTime(dateToCheck)).toBe('');
-        dateToCheck.allDay = false;
-        expect(Utilities.FormatTime(dateToCheck)).toBe('00:00');
+        expect(Utilities.FormatTime(dateToCheck.hour, dateToCheck.minute, false)).toBe('00:00');
         dateToCheck.hour = 10;
         dateToCheck.minute = 15;
-        expect(Utilities.FormatTime(dateToCheck)).toBe('10:15');
+        expect(Utilities.FormatTime(dateToCheck.hour, dateToCheck.minute, false)).toBe('10:15');
+        expect(Utilities.FormatTime(dateToCheck.hour, dateToCheck.minute, 0)).toBe('10:15:00');
+        expect(Utilities.FormatTime(dateToCheck.hour, dateToCheck.minute, 12)).toBe('10:15:12');
     });
 
     test('Get Moon Phase Icon', () => {

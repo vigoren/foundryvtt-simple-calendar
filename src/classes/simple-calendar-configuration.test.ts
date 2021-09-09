@@ -794,22 +794,6 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].name).toBe('Wint');
 
-        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-month');
-        (<HTMLInputElement>event.currentTarget).value = '2';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingMonth).toBe(2);
-        (<HTMLInputElement>event.currentTarget).value = 'qwe';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingMonth).toBe(2);
-
-        (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-day');
-        (<HTMLInputElement>event.currentTarget).value = '2';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingDay).toBe(2);
-        (<HTMLInputElement>event.currentTarget).value = 'qwe';
-        SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Year>SimpleCalendarConfiguration.instance.object).seasons[0].startingDay).toBe(2);
-
         (<HTMLInputElement>event.currentTarget).setAttribute('class', 'season-color');
         (<HTMLInputElement>event.currentTarget).value = '#fffeee';
         SimpleCalendarConfiguration.instance.inputChange(event);
@@ -1108,6 +1092,16 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).time.secondsInMinute).toBe(10);
 
+        //Invalid seconds in combat round
+        (<HTMLInputElement>event.currentTarget).id = "scSecondsInCombatRound";
+        (<HTMLInputElement>event.currentTarget).value = 'asd';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).time.secondsInCombatRound).toBe(6);
+        //Valid seconds in combat round
+        (<HTMLInputElement>event.currentTarget).value = '10';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).time.secondsInCombatRound).toBe(10);
+
         //Invalid game time ratio
         (<HTMLInputElement>event.currentTarget).id = "scGameTimeRatio";
         (<HTMLInputElement>event.currentTarget).value = 'asd';
@@ -1337,27 +1331,21 @@ describe('Simple Calendar Configuration Tests', () => {
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(1);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(2);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-import', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(3);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(4);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(5);
 
         await SimpleCalendarConfiguration.instance.overwriteConfirmationYes('tp-export', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(6);
 
         (<Mock>(<Game>game).settings.set).mockClear();
     });

@@ -52,7 +52,6 @@ const game = {
             switch (settingName){
                 case SettingNames.AllowPlayersToAddNotes:
                 case SettingNames.DefaultNoteVisibility:
-                case SettingNames.ImportRan:
                     return false;
                 case SettingNames.YearConfiguration:
                     return {numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: 'default', yearNamesStart: 0};
@@ -71,9 +70,9 @@ const game = {
                 case SettingNames.GeneralConfiguration:
                     return {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}
                 case SettingNames.TimeConfiguration:
-                    return {hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1};
+                    return {hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, secondsInCombatRound: 6, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1};
                 case SettingNames.SeasonConfiguration:
-                    return [[{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff'}]];
+                    return [[{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', sunriseTime: 0, sunsetTime: 0}]];
                 case SettingNames.MoonConfiguration:
                     return [[{"name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]];
             }
