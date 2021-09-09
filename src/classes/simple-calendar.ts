@@ -1351,6 +1351,10 @@ export default class SimpleCalendar extends Application{
                     this.currentYear.time.updateFrequency = timeData.updateFrequency;
                     this.currentYear.time.timeKeeper.updateFrequency = timeData.updateFrequency;
                 }
+
+                if(timeData.hasOwnProperty('secondsInCombatRound')){
+                    this.currentYear.time.secondsInCombatRound = timeData.secondsInCombatRound;
+                }
             }
         } else {
             Logger.error('No Current year configured, can not load time data.');
@@ -1496,9 +1500,16 @@ export default class SimpleCalendar extends Application{
         const activeScene = scenes? scenes.active? scenes.active.id : null : null;
         if(this.currentYear && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
             this.currentYear.time.combatRunning = true;
+
+            //If time does not have the advanceTime property the combat was just started
             if(time && time.hasOwnProperty('advanceTime')){
-                Logger.debug('Combat Change Triggered');
-                this.currentYear.combatChangeTriggered = true;
+                if(time.advanceTime !== 0){
+                    Logger.debug('Combat Change Triggered');
+                    this.currentYear.combatChangeTriggered = true;
+                } else {
+                    // System does not advance time when combat rounds change, check our own settings
+                    this.currentYear.processOwnCombatRoundTime(combat);
+                }
             }
         }
     }

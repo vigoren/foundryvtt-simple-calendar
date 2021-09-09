@@ -1110,6 +1110,27 @@ describe('Year Class Tests', () => {
 
     });
 
+    test('Process Own Combat Round Time', () => {
+        PredefinedCalendar.setToPredefined(year, PredefinedCalendars.Gregorian);
+        let curTime = year.time.seconds;
+        year.processOwnCombatRoundTime(<Combat>{});
+        expect(year.time.seconds).toBe(curTime + year.time.secondsInCombatRound);
+
+        //@ts-ignore
+        game.user.isGM = true;
+        curTime = year.time.seconds;
+        //@ts-ignore
+        year.processOwnCombatRoundTime({round: 2, previous: {round: 1}});
+        expect(year.time.seconds).toBe(curTime + year.time.secondsInCombatRound);
+
+        curTime = year.time.seconds;
+        //@ts-ignore
+        year.processOwnCombatRoundTime({round: 2, previous: {round: 2}});
+        expect(year.time.seconds).toBe(curTime);
+        //@ts-ignore
+        game.user.isGM = false;
+    });
+
     test('Get Sunrise Sunset Time', () => {
         year.months.push(month);
         let sunrise = year.getSunriseSunsetTime(year.numericRepresentation, month, month.days[0]);

@@ -1549,6 +1549,9 @@ describe('Simple Calendar Class Tests', () => {
         //@ts-ignore
         SimpleCalendar.instance.combatUpdate({started: true, scene: {id:"123"}}, {}, {advanceTime: 2});
         expect(y.combatChangeTriggered).toBe(true);
+        //@ts-ignore
+        SimpleCalendar.instance.combatUpdate({started: true, scene: {id:"123"}}, {}, {advanceTime: 0});
+        expect(y.combatChangeTriggered).toBe(true);
 
         //@ts-ignore
         game.scenes = null;

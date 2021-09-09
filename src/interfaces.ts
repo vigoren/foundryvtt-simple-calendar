@@ -272,6 +272,7 @@ export interface TimeConfig {
     hoursInDay: number;
     minutesInHour: number;
     secondsInMinute: number;
+    secondsInCombatRound: number;
     gameTimeRatio: number;
     unifyGameAndClockPause: boolean;
     updateFrequency: number;

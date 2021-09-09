@@ -603,6 +603,11 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 if(!isNaN(min)){
                     (<Year>this.object).time.secondsInMinute = min;
                 }
+            } else if(id === 'scSecondsInCombatRound'){
+                const s = parseInt(value);
+                if(!isNaN(s)){
+                    (<Year>this.object).time.secondsInCombatRound = s;
+                }
             } else if(id === 'scGameTimeRatio'){
                 const min = parseFloat(value);
                 if(!isNaN(min)){

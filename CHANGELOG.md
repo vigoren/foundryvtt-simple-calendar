@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.3.37 - Season Changes, API Changes and Bug Fixing
+## v1.3.38 - Season Changes, QoL Improvements, API Changes and Bug Fixing
 
 ### Season Changes
 
@@ -15,10 +15,9 @@
   - Midnight will advance to the next beginning of the day, time 00:00.
 - Set up default sunrise/sunset times for predefined calendars. Where information was available used that otherwise they will default to a 6am sunrise and a 6pm sunset.
 
-### Bug Fixes
+### Quality of Life Improvements
 
-- Fixed a bug with seasons always showing the last season for all, or most months. Seasons were expecting to be in order, now order does not matter.
-- Improvements to the built-in date/time selector to ensure a better user experience.
+- Added a new time setting to specify how long a round of combat lasts in seconds. This is to address the issue where the clock did not advance as combat rounds passed when using systems that do not increment time during combat.
 - Removed the Import/Export dialog for about-time and Calendar/Weather that appears on the first load of a world. This dialog was causing issues for some users and is no longer needed as these options can be reached through the calendar configuration dialog.
 
 ### API Changes
@@ -26,6 +25,12 @@
 - Functions that return season information (`SimpleCalendar.api.getCurrentSeason`, `SimpleCalendar.api.getAllSeasons` and `SimpleCalendar.api.timstampToDate`) now includes the sunrise and sunset times for the season, as set through the new season options. The times are represented as seconds passed for that day eg. 3600 would be 1:00am in a Gregorian calendar.
 - The function `SimpleCalendar.api.timestampToDate` has 2 new properties, sunrise and sunset. These values represent the timestamps for the sunrise and sunset times parsed from the passed in timestamp.
 - Fixed a bug with the `SimpleCalendar.api.timestampToDate` function where the display time was always returning as the current time not the time from the passed in timestamp.
+
+
+### Bug Fixes
+
+- Fixed a bug with seasons always showing the last season for all, or most months. Seasons were expecting to be in order, now order does not matter.
+- Improvements to the built-in date/time selector to ensure a better user experience.
 
 ### Foundry 0.8.9
 

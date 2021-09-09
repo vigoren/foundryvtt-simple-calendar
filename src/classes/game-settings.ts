@@ -545,6 +545,7 @@ export class GameSettings {
                 hoursInDay: time.hoursInDay,
                 minutesInHour: time.minutesInHour,
                 secondsInMinute: time.secondsInMinute,
+                secondsInCombatRound: time.secondsInCombatRound,
                 gameTimeRatio: time.gameTimeRatio,
                 unifyGameAndClockPause: time.unifyGameAndClockPause,
                 updateFrequency: time.updateFrequency

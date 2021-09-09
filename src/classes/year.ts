@@ -1064,6 +1064,28 @@ export default class Year {
     }
 
     /**
+     * If we have determined that the system does not change the world time when a combat round is changed we run this function to update the time by the set amount.
+     * @param {Combat} combat The current active combat
+     */
+    processOwnCombatRoundTime(combat: Combat){
+        let roundSeconds = this.time.secondsInCombatRound;
+        let roundsPassed = 1;
+
+        if(combat.hasOwnProperty('previous') && combat['previous'].round){
+            roundsPassed = combat.round - combat['previous'].round;
+        }
+        if(roundSeconds !== 0 && roundsPassed !== 0){
+            const parsedDate = this.secondsToDate(this.toSeconds() + (roundSeconds * roundsPassed));
+            this.updateTime(parsedDate);
+            // If the current player is the GM then we need to save this new value to the database
+            // Since the current date is updated this will trigger an update on all players as well
+            if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
+                GameSettings.SaveCurrentDate(this).catch(Logger.error);
+            }
+        }
+    }
+
+    /**
      * Calculates the sunrise or sunset time for the passed in date, based on the the season setup
      * @param {number} year The year of the date
      * @param {Month} month The month object of the date

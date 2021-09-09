@@ -159,7 +159,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Time Data', () => {
-        expect(GameSettings.LoadTimeData()).toStrictEqual({hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1});
+        expect(GameSettings.LoadTimeData()).toStrictEqual({hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1, secondsInCombatRound: 6});
         expect((<Game>game).settings.get).toHaveBeenCalled();
     });
 

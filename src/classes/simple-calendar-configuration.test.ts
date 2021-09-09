@@ -1092,6 +1092,16 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Year>SimpleCalendarConfiguration.instance.object).time.secondsInMinute).toBe(10);
 
+        //Invalid seconds in combat round
+        (<HTMLInputElement>event.currentTarget).id = "scSecondsInCombatRound";
+        (<HTMLInputElement>event.currentTarget).value = 'asd';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).time.secondsInCombatRound).toBe(6);
+        //Valid seconds in combat round
+        (<HTMLInputElement>event.currentTarget).value = '10';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Year>SimpleCalendarConfiguration.instance.object).time.secondsInCombatRound).toBe(10);
+
         //Invalid game time ratio
         (<HTMLInputElement>event.currentTarget).id = "scGameTimeRatio";
         (<HTMLInputElement>event.currentTarget).value = 'asd';

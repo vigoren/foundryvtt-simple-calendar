@@ -22,6 +22,11 @@ export default class Time {
      */
     secondsInMinute: number;
     /**
+     * How many seconds pass during a single round of combat
+     * @type {number}
+     */
+    secondsInCombatRound: number;
+    /**
      * The ratio at which to advance game time while real time passes, ratio of 1 is the same, ratio of 2 is twice as fast
      * @type {number}
      */
@@ -63,6 +68,7 @@ export default class Time {
         this.hoursInDay = hoursInDay;
         this.minutesInHour = minutesInHour;
         this.secondsInMinute = secondsInMinute;
+        this.secondsInCombatRound = 6;
         this.gameTimeRatio = 1;
 
         this.secondsPerDay = this.hoursInDay * this.minutesInHour * this.secondsInMinute;
@@ -75,6 +81,7 @@ export default class Time {
      */
     clone() {
         const t = new Time(this.hoursInDay, this.minutesInHour, this.secondsInMinute);
+        t.secondsInCombatRound = this.secondsInCombatRound;
         t.seconds = this.seconds;
         t.gameTimeRatio = this.gameTimeRatio;
         t.combatRunning = this.combatRunning;

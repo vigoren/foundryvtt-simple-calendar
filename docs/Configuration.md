@@ -221,6 +221,7 @@ Setting | Description
 Hours in a Day | This defines how many hours make up a single day.
 Minutes in a Hour | This defines how many minutes make up a single hour.
 Seconds in a Minute | This defines how many seconds make up a single minute.
+Seconds per Combat Round | This defines how many seconds pass during 1 round of combat. **Important**: This is only applied if the current system does not increment time during combat rounds!
 
 ### Clock Settings
 
