@@ -85,7 +85,7 @@ export default class TimeKeeper{
             this.saveIntervalNumber = undefined;
             this.updateStatus();
             if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
-                this.saveInterval();
+                this.saveInterval(true);
             }
         }
     }
@@ -140,13 +140,14 @@ export default class TimeKeeper{
 
     /**
      * The save interval function that is called every 10 seconds to save the current time
+     * @param {boolean} [emitHook=false]
      * @private
      */
-    private saveInterval(){
+    private saveInterval(emitHook: boolean = false){
         if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear) {
             if (GameSettings.IsGm() && SimpleCalendar.instance.primary) {
                 SimpleCalendar.instance.currentYear.syncTime().catch(Logger.error);
-                GameSettings.SaveCurrentDate(SimpleCalendar.instance.currentYear).catch(Logger.error);
+                GameSettings.SaveCurrentDate(SimpleCalendar.instance.currentYear, emitHook).catch(Logger.error);
             }
         }
     }

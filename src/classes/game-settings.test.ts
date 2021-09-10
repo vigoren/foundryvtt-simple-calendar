@@ -231,6 +231,9 @@ describe('Game Settings Class Tests', () => {
         expect((<Game>game).settings.get).toHaveBeenCalled();
         expect((<Game>game).settings.set).toHaveBeenCalled();
 
+        year.time.seconds = 301;
+        await expect(GameSettings.SaveCurrentDate(year, false)).resolves.toBe(true);
+
         //@ts-ignore
         SimpleCalendar.instance = null;
         await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);

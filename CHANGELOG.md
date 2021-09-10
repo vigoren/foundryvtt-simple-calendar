@@ -1,5 +1,12 @@
 # Change Log
 
+## v1.3.41 - Bug Fixes
+
+### Bug Fixes
+
+- Fixed a bug where the Date/Time change hook would be fired multiple times while the clock was running.
+- Fixed a bug where creating an empty combat would not pause the real clock when a combatant was added in.
+
 ## v1.3.39 - Season Changes, QoL Improvements, API Changes and Bug Fixing
 
 ### Season Changes

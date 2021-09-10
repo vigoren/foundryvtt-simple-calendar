@@ -9,7 +9,6 @@ import {Weekday} from "./weekday";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
 import {GameWorldTimeIntegrations, NoteRepeat, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../constants";
-import Importer from "./importer";
 import Season from "./season";
 import Moon from "./moon";
 import Day from "./day";
@@ -1486,6 +1485,27 @@ export default class SimpleCalendar extends Application{
         Logger.debug(`World Time Update, new time: ${newTime}. Delta of: ${delta}.`);
         if(this.currentYear){
             this.currentYear.setFromTime(newTime, delta);
+        }
+    }
+
+    /**
+     * Triggered when a combatant is added to a combat.
+     * @param {Combatant} combatant The combatant details
+     * @param {object} options Options associated with creating the combatant
+     * @param {string} id The ID of the creation
+     */
+    createCombatant(combatant: Combatant, options: any, id: string){
+        console.log(combatant, options, id);
+        const combatList = (<Game>game).combats;
+        //If combat is running or if the combat list is undefined, skip this check
+        if(this.currentYear && !this.currentYear.time.combatRunning && combatList){
+            const combat = combatList.find(c => c.id === combatant.parent?.id);
+            const scenes = (<Game>game).scenes;
+            const activeScene = scenes? scenes.active? scenes.active.id : null : null;
+            //If the combat has started and the current active scene is the scene for the combat then set that there is a combat running.
+            if(combat && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
+                this.currentYear.time.combatRunning = true;
+            }
         }
     }
 
