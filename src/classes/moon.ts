@@ -2,6 +2,7 @@ import {DayTemplate, FirstNewMoonDate, MoonPhase, MoonTemplate} from "../interfa
 import Year from "./year";
 import {MoonIcons, MoonYearResetOptions} from "../constants";
 import {Logger} from "./logging";
+import {GameSettings} from "./game-settings";
 
 /**
  * Class for representing a moon
@@ -72,7 +73,7 @@ export default class Moon{
         this.cycleLength = cycleLength;
 
         this.phases.push({
-            name: (<Game>game).i18n.localize('FSC.Moon.Phase.New'),
+            name: GameSettings.Localize('FSC.Moon.Phase.New'),
             length: 3.69,
             icon: MoonIcons.NewMoon,
             singleDay: true

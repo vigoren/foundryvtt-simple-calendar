@@ -51,9 +51,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * @param {Year} data The year data used to populate the configuration dialog
      */
     constructor(data: Year) {
-        super(!data && SimpleCalendar.instance.currentYear? SimpleCalendar.instance.currentYear.clone() : data);
-        if(!data && SimpleCalendar.instance.currentYear){
-            this.year = SimpleCalendar.instance.currentYear;
+        super(!data? SimpleCalendar.instance.activeCalendar.year.clone() : data);
+        if(!data){
+            this.year = SimpleCalendar.instance.activeCalendar.year;
         } else {
             this.year = data;
         }
@@ -61,7 +61,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
         this.generalSettings.defaultPlayerNoteVisibility = GameSettings.GetDefaultNoteVisibility();
 
-        this.noteCategories = SimpleCalendar.instance.noteCategories.map(nc => {
+        this.noteCategories = SimpleCalendar.instance.activeCalendar.noteCategories.map(nc => {
             return {
                 name: nc.name,
                 color: nc.color,
@@ -754,9 +754,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     else if(cssClass === 'note-category-name' && this.noteCategories.length > index){
                         const oldName = this.noteCategories[index].name;
                         this.noteCategories[index].name = value;
-                        if(index < SimpleCalendar.instance.noteCategories.length){
+                        if(index < SimpleCalendar.instance.activeCalendar.noteCategories.length){
                             //Update all existing notes with the new name;
-                            SimpleCalendar.instance.notes.forEach(n => {
+                            SimpleCalendar.instance.activeCalendar.notes.forEach(n => {
                                 const nci = n.categories.indexOf(oldName);
                                 if (nci > -1) {
                                     n.categories[nci] = value;
@@ -902,9 +902,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
             await GameSettings.SaveNoteCategories(this.noteCategories);
 
-            if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-                await SimpleCalendar.instance.currentYear.syncTime(true);
-            }
+            await SimpleCalendar.instance.activeCalendar.year.syncTime(true);
 
             this.closeApp();
         } catch (error: any){

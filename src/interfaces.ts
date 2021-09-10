@@ -12,6 +12,13 @@ import {
 import {Note} from "./classes/note";
 import DateSelector from "./classes/date-selector";
 
+export interface CalendarConfiguration {
+    name: string;
+    generalSettings?: GeneralSettings;
+    year?: YearConfig;
+    months?: MonthConfig[];
+}
+
 /**
  * The general settings for the Simple calendar
  * NOTE: The Player note default visibility is not stored in these settings (Legacy support)

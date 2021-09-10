@@ -28,11 +28,6 @@ import API from "./api";
  */
 export default class Year {
     /**
-     * The currently running game system
-     * @type {GameSystems}
-     */
-    gameSystem: GameSystems;
-    /**
      * The numeric representation of this year
      * @type {string}
      */
@@ -143,24 +138,6 @@ export default class Year {
         this.visibleYear = numericRepresentation;
         this.leapYearRule = new LeapYear();
         this.time = new Time();
-
-        switch ((<Game>game).system.id){
-            case GameSystems.DnD5E:
-                this.gameSystem = GameSystems.DnD5E;
-                break;
-            case GameSystems.PF1E:
-                this.gameSystem = GameSystems.PF1E;
-                break;
-            case GameSystems.PF2E:
-                this.gameSystem = GameSystems.PF2E;
-                break;
-            case GameSystems.WarhammerFantasy4E:
-                this.gameSystem = GameSystems.WarhammerFantasy4E;
-                break;
-            default:
-                this.gameSystem = GameSystems.Other;
-                break;
-        }
     }
 
     /**
@@ -200,7 +177,7 @@ export default class Year {
                     }
                 }
                 if(SimpleCalendar.instance){
-                    const notes = SimpleCalendar.instance.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
+                    const notes = SimpleCalendar.instance.activeCalendar.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
                     const userId = GameSettings.UserID();
                     if(notes.length){
                         sNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
@@ -216,7 +193,7 @@ export default class Year {
             weeks = this.daysIntoWeeks(visibleMonth, this.visibleYear, this.weekdays.length);
         }
         return {
-            gameSystem: this.gameSystem,
+            gameSystem: SimpleCalendar.instance.activeCalendar.gameSystem,
             display: this.getDisplayName(),
             selectedDisplayYear: this.getDisplayName(true),
             selectedDisplayMonth: sMonth,
@@ -735,7 +712,7 @@ export default class Year {
             totalSeconds = this.time.getTotalSeconds(daysSoFar);
 
             // If this is a Pathfinder 2E game, subtract the world creation seconds
-            if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
+            if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
                 const newYZ = PF2E.newYearZero();
                 if(newYZ !== undefined){
                     this.yearZero = 1875;
@@ -932,7 +909,7 @@ export default class Year {
         Logger.debug('Year.setFromTime()');
 
         // If this is a Pathfinder 2E game, add the world creation seconds
-        if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
+        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
             newTime += PF2E.getWorldCreateSeconds();
         }
         if(changeAmount !== 0){

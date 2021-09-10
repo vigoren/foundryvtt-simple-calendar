@@ -68,7 +68,13 @@ export class GameSettings {
      * @param {string} key The localization string key
      */
     static Localize(key: string): string {
-        return (<Game>game).i18n.localize(key);
+        if((<Game>game).i18n){
+            return (<Game>game).i18n.localize(key);
+        } else {
+            const parts = key.split('.');
+            return parts[parts.length-1];
+        }
+
     }
 
     /**
@@ -140,7 +146,7 @@ export class GameSettings {
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.loadNotes.bind(SimpleCalendar.instance, true)
+            onChange: SimpleCalendar.instance.activeCalendar.loadNotes.bind(SimpleCalendar.instance, true)
         });
         (<Game>game).settings.register(ModuleName, SettingNames.TimeConfiguration, {
             name: "Time",

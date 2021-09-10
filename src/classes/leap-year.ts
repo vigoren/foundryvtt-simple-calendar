@@ -7,7 +7,7 @@ export default class LeapYear {
     customMod: number = 0;
 
     constructor() {
-        this.loadFromSettings();
+        //this.loadFromSettings();
     }
 
     public loadFromSettings(): void {

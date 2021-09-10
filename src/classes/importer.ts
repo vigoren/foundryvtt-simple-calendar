@@ -138,7 +138,7 @@ export default class Importer{
         (<Game>game).settings.set("about-time", "savedCalendar", newAboutTimeConfig);
 
         // Set the about-time timeZeroOffset to an empty string as it doesn't need to be set to anything, unless this is a PF2E game then don't set
-        if(year.gameSystem !== GameSystems.PF2E){
+        if(SimpleCalendar.instance.activeCalendar.gameSystem !== GameSystems.PF2E){
             await (<Game>game).settings.set("about-time", "timeZeroOffset", '');
         }
 
@@ -284,7 +284,7 @@ export default class Importer{
                 note.minute = event.date.minutes;
                 note.endDate.hour = note.hour;
                 note.endDate.minute = note.minute;
-                SimpleCalendar.instance.notes.push(note);
+                SimpleCalendar.instance.activeCalendar.notes.push(note);
             }
 
             for(let i = 0; i < currentSettings.reEvents.length; i++){
@@ -309,10 +309,10 @@ export default class Importer{
                 note.endDate.hour = note.hour;
                 note.endDate.minute = note.minute;
                 note.repeats = NoteRepeat.Yearly;
-                SimpleCalendar.instance.notes.push(note);
+                SimpleCalendar.instance.activeCalendar.notes.push(note);
             }
 
-            await GameSettings.SaveNotes(SimpleCalendar.instance.notes);
+            await GameSettings.SaveNotes(SimpleCalendar.instance.activeCalendar.notes);
         }
 
         //Save everything

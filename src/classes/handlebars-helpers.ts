@@ -23,7 +23,7 @@ export default class HandlebarsHelpers{
      * @param options
      */
     static DateSelector(options: any){
-        if(SimpleCalendar.instance.currentYear && options.hash.hasOwnProperty('id') ){
+        if(options.hash.hasOwnProperty('id') ){
             const id = options.hash['id'];
             const ds = DateSelector.GetSelector(id, {showDate: true, showTime: false});
             return new Handlebars.SafeString(ds.build());
@@ -37,12 +37,12 @@ export default class HandlebarsHelpers{
      * @return {string}
      */
     static DayHasNotes(options: any){
-        if(options.hash.hasOwnProperty('day') && SimpleCalendar.instance.currentYear){
+        if(options.hash.hasOwnProperty('day')){
             const day = options.hash['day'].numericRepresentation;
-            const month = SimpleCalendar.instance.currentYear.getMonth('visible');
-            const year = SimpleCalendar.instance.currentYear.visibleYear;
+            const month = SimpleCalendar.instance.activeCalendar.year.getMonth('visible');
+            const year = SimpleCalendar.instance.activeCalendar.year.visibleYear;
             if(month){
-                const notes = SimpleCalendar.instance.notes.filter(n => n.isVisible(year, month.numericRepresentation, day));
+                const notes = SimpleCalendar.instance.activeCalendar.notes.filter(n => n.isVisible(year, month.numericRepresentation, day));
                 if(notes.length){
                     const userId = GameSettings.UserID();
                     const regularNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
@@ -93,14 +93,14 @@ export default class HandlebarsHelpers{
      * @return {string}
      */
     static DayMoonPhase(options: any){
-        if(options.hash.hasOwnProperty('day') && SimpleCalendar.instance.currentYear){
+        if(options.hash.hasOwnProperty('day')){
             const day = options.hash['day'];
             let html = ''
-            for(let i = 0; i < SimpleCalendar.instance.currentYear.moons.length; i++){
-                const mp = SimpleCalendar.instance.currentYear.moons[i].getMoonPhase(SimpleCalendar.instance.currentYear, 'visible', day);
+            for(let i = 0; i < SimpleCalendar.instance.activeCalendar.year.moons.length; i++){
+                const mp = SimpleCalendar.instance.activeCalendar.year.moons[i].getMoonPhase(SimpleCalendar.instance.activeCalendar.year, 'visible', day);
                 if(mp && (mp.singleDay || day.selected || day.current)){
-                    let moon = Utilities.GetMoonPhaseIcon(mp.icon, SimpleCalendar.instance.currentYear.moons[i].color);
-                    html += `<span class="moon-phase ${mp.icon}" title="${SimpleCalendar.instance.currentYear.moons[i].name} - ${mp.name}">${moon}</span>`;
+                    let moon = Utilities.GetMoonPhaseIcon(mp.icon, SimpleCalendar.instance.activeCalendar.year.moons[i].color);
+                    html += `<span class="moon-phase ${mp.icon}" title="${SimpleCalendar.instance.activeCalendar.year.moons[i].name} - ${mp.name}">${moon}</span>`;
                 }
             }
             return new Handlebars.SafeString(html);

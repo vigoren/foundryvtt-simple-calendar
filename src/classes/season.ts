@@ -95,17 +95,15 @@ export default class Season {
         });
 
         let sunriseHour = 0, sunriseMinute = 0, sunsetHour = 0, sunsetMinute = 0;
-        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            sunriseMinute = Math.floor(this.sunriseTime / SimpleCalendar.instance.currentYear.time.secondsInMinute);
-            sunsetMinute = Math.floor(this.sunsetTime / SimpleCalendar.instance.currentYear.time.secondsInMinute);
-            if(sunriseMinute >= SimpleCalendar.instance.currentYear.time.minutesInHour){
-                sunriseHour = Math.floor(sunriseMinute / SimpleCalendar.instance.currentYear.time.minutesInHour);
-                sunriseMinute = sunriseMinute - (sunriseHour * SimpleCalendar.instance.currentYear.time.minutesInHour);
-            }
-            if(sunsetMinute >= SimpleCalendar.instance.currentYear.time.minutesInHour){
-                sunsetHour = Math.floor(sunsetMinute / SimpleCalendar.instance.currentYear.time.minutesInHour);
-                sunsetMinute = sunsetMinute - (sunsetHour * SimpleCalendar.instance.currentYear.time.minutesInHour);
-            }
+        sunriseMinute = Math.floor(this.sunriseTime / SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
+        sunsetMinute = Math.floor(this.sunsetTime / SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
+        if(sunriseMinute >= SimpleCalendar.instance.activeCalendar.year.time.minutesInHour){
+            sunriseHour = Math.floor(sunriseMinute / SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
+            sunriseMinute = sunriseMinute - (sunriseHour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
+        }
+        if(sunsetMinute >= SimpleCalendar.instance.activeCalendar.year.time.minutesInHour){
+            sunsetHour = Math.floor(sunsetMinute / SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
+            sunsetMinute = sunsetMinute - (sunsetHour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
         }
         DateSelector.GetSelector(sunriseSelectorId, {
             showDate: false,
@@ -137,10 +135,8 @@ export default class Season {
      * @param {SCDateSelector.SelectedDate} selectedDate The date/time that was selected from the date selector
      */
     sunriseSunsetChange(selectedDate: SCDateSelector.SelectedDate){
-        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            this.sunriseTime = (selectedDate.startDate.hour * SimpleCalendar.instance.currentYear.time.minutesInHour * SimpleCalendar.instance.currentYear.time.secondsInMinute) + (selectedDate.startDate.minute * SimpleCalendar.instance.currentYear.time.secondsInMinute);
-            this.sunsetTime = (selectedDate.endDate.hour * SimpleCalendar.instance.currentYear.time.minutesInHour * SimpleCalendar.instance.currentYear.time.secondsInMinute) + (selectedDate.endDate.minute * SimpleCalendar.instance.currentYear.time.secondsInMinute);
-        }
+        this.sunriseTime = (selectedDate.startDate.hour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + (selectedDate.startDate.minute * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
+        this.sunsetTime = (selectedDate.endDate.hour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + (selectedDate.endDate.minute * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
     }
 
     /**
