@@ -1,5 +1,4 @@
 import {Logger} from "./logging";
-import Year from "./year";
 import {GameSettings} from "./game-settings";
 import Month from "./month";
 import {Weekday} from "./weekday";
@@ -19,6 +18,7 @@ import {saveAs} from "file-saver";
 import {NoteCategory} from "../interfaces";
 import Utilities from "./utilities";
 import PredefinedCalendar from "./predefined-calendar";
+import Calendar from "./calendar";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -29,10 +29,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
     static instance: SimpleCalendarConfiguration;
     /**
      * The year object where the changes are applied and loaded from
-     * @type {Year}
+     * @type {Calendar}
      * @private
      */
-    private year: Year;
+    private calendar: Calendar;
 
     private noteCategories: NoteCategory[] = [];
 
@@ -48,14 +48,14 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
     /**
      * The Calendar configuration constructor
-     * @param {Year} data The year data used to populate the configuration dialog
+     * @param {Calendar} data The year data used to populate the configuration dialog
      */
-    constructor(data: Year) {
-        super(!data? SimpleCalendar.instance.activeCalendar.year.clone() : data);
+    constructor(data: Calendar) {
+        super(!data? SimpleCalendar.instance.activeCalendar.clone() : data);
         if(!data){
-            this.year = SimpleCalendar.instance.activeCalendar.year;
+            this.calendar = SimpleCalendar.instance.activeCalendar;
         } else {
-            this.year = data;
+            this.calendar = data;
         }
         this._tabs[0].active = "generalSettings";
 
@@ -114,13 +114,14 @@ export class SimpleCalendarConfiguration extends FormApplication {
         let data = {
             ...super.getData(options),
             defaultPlayerNoteVisibility: this.generalSettings.defaultPlayerNoteVisibility,
-            currentYear: (<Year>this.object),
-            months: (<Year>this.object).months.map(m => m.toTemplate()),
-            weekdays: (<Year>this.object).weekdays.map(w => w.toTemplate()),
+            currentYear: (<Calendar>this.object).year,
+            generalSettings: (<Calendar>this.object).generalSettings,
+            months: (<Calendar>this.object).year.months.map(m => m.toTemplate()),
+            weekdays: (<Calendar>this.object).year.weekdays.map(w => w.toTemplate()),
             leapYearRules: {none: 'FSC.Configuration.LeapYear.Rules.None', gregorian: 'FSC.Configuration.LeapYear.Rules.Gregorian', custom: 'FSC.Configuration.LeapYear.Rules.Custom'},
-            leapYearRule: (<Year>this.object).leapYearRule,
-            showLeapYearCustomMod: (<Year>this.object).leapYearRule.rule === LeapYearRules.Custom,
-            showLeapYearMonths: (<Year>this.object).leapYearRule.rule !== LeapYearRules.None,
+            leapYearRule: (<Calendar>this.object).year.leapYearRule,
+            showLeapYearCustomMod: (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom,
+            showLeapYearMonths: (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None,
             predefined: {
                 gregorian: 'FSC.Configuration.LeapYear.Rules.Gregorian',
                 darksun: 'Dark Sun',
@@ -146,7 +147,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 showCalendarWeather:false
             },
             monthStartingWeekdays: <{[key: string]: string}>{},
-            seasons: (<Year>this.object).seasons.map(s => s.toTemplate(<Year>this.object)),
+            seasons: (<Calendar>this.object).year.seasons.map(s => s.toTemplate((<Calendar>this.object).year)),
             seasonColors: [
                 {
                     value: '#ffffff',
@@ -169,7 +170,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorWinter")
                 }
             ],
-            moons: (<Year>this.object).moons.map(m => m.toTemplate(<Year>this.object)),
+            moons: (<Calendar>this.object).year.moons.map(m => m.toTemplate((<Calendar>this.object).year)),
             moonIcons: <{[key: string]: string}>{},
             moonYearReset: {
                 none: 'FSC.Configuration.Moon.YearResetNo',
@@ -202,8 +203,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
         data.moonIcons[MoonIcons.WaningCrescent] = GameSettings.Localize('FSC.Moon.Phase.WaningCrescent');
 
         data.monthStartingWeekdays['null'] = GameSettings.Localize('Default');
-        for(let i = 0; i < (<Year>this.object).weekdays.length; i++){
-            data.monthStartingWeekdays[(<Year>this.object).weekdays[i].numericRepresentation.toString()] = (<Year>this.object).weekdays[i].name;
+        for(let i = 0; i < (<Calendar>this.object).year.weekdays.length; i++){
+            data.monthStartingWeekdays[(<Calendar>this.object).year.weekdays[i].numericRepresentation.toString()] = (<Calendar>this.object).year.weekdays[i].name;
         }
         const users = (<Game>game).users;
         if(users){
@@ -238,7 +239,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public activateListeners(html: JQuery<HTMLElement>) {
         super.activateListeners(html);
-        (<Year>this.object).seasons.forEach(s => s.activateDateSelectors());
+        (<Calendar>this.object).year.seasons.forEach(s => s.activateDateSelectors());
         if(html.hasOwnProperty("length")) {
             //Month advanced click
             (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));
@@ -299,8 +300,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public rebaseMonthNumbers(){
         let lastMonthNumber = 0;
         let icMonths = 0;
-        for(let i = 0; i < (<Year>this.object).months.length; i++){
-            const month = (<Year>this.object).months[i];
+        for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
+            const month = (<Calendar>this.object).year.months[i];
             if(month.intercalary){
                 icMonths++;
                 month.numericRepresentation = -1 * icMonths;
@@ -321,16 +322,16 @@ export class SimpleCalendarConfiguration extends FormApplication {
         const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name' | 'note-category';
         switch (filteredSetting){
             case "month":
-                const newMonthNumber = (<Year>this.object).months.length + 1;
-                (<Year>this.object).months.push(new Month('New Month', newMonthNumber, 0, 30));
+                const newMonthNumber = (<Calendar>this.object).year.months.length + 1;
+                (<Calendar>this.object).year.months.push(new Month('New Month', newMonthNumber, 0, 30));
                 this.rebaseMonthNumbers();
                 break;
             case "weekday":
-                const newWeekdayNumber = (<Year>this.object).weekdays.length + 1;
-                (<Year>this.object).weekdays.push(new Weekday(newWeekdayNumber, 'New Weekday'));
+                const newWeekdayNumber = (<Calendar>this.object).year.weekdays.length + 1;
+                (<Calendar>this.object).year.weekdays.push(new Weekday(newWeekdayNumber, 'New Weekday'));
                 break;
             case "season":
-                (<Year>this.object).seasons.push(new Season('New Season', 1, 1));
+                (<Calendar>this.object).year.seasons.push(new Season('New Season', 1, 1));
                 break;
             case "moon":
                 const newMoon = new Moon('Moon', 29.53059);
@@ -352,25 +353,25 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
                     {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
                 ];
-                (<Year>this.object).moons.push(newMoon);
+                (<Calendar>this.object).year.moons.push(newMoon);
                 break;
             case "moon-phase":
                 const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
                 if(dataMoonIndex){
                     const moonIndex = parseInt(dataMoonIndex);
-                    if(!isNaN(moonIndex) && moonIndex < (<Year>this.object).moons.length){
-                        (<Year>this.object).moons[moonIndex].phases.push({
+                    if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length){
+                        (<Calendar>this.object).year.moons[moonIndex].phases.push({
                             name: "Phase",
                             length: 1,
                             icon: MoonIcons.NewMoon,
                             singleDay: false
                         });
-                        (<Year>this.object).moons[moonIndex].updatePhaseLength();
+                        (<Calendar>this.object).year.moons[moonIndex].updatePhaseLength();
                     }
                 }
                 break;
             case "year-name":
-                (<Year>this.object).yearNames.push('New Named Year');
+                (<Calendar>this.object).year.yearNames.push('New Named Year');
                 break;
             case 'note-category':
                 this.noteCategories.push({name: "New Category", color:"#b13737 ", textColor:"#ffffff"});
@@ -393,47 +394,47 @@ export class SimpleCalendarConfiguration extends FormApplication {
             if(!isNaN(index)){
                 switch (filteredSetting){
                     case "month":
-                        if(index < (<Year>this.object).months.length){
-                            (<Year>this.object).months.splice(index, 1);
+                        if(index < (<Calendar>this.object).year.months.length){
+                            (<Calendar>this.object).year.months.splice(index, 1);
                             //Reindex the remaining months
-                            for(let i = 0; i < (<Year>this.object).months.length; i++){
-                                (<Year>this.object).months[i].numericRepresentation = i + 1;
+                            for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
+                                (<Calendar>this.object).year.months[i].numericRepresentation = i + 1;
                             }
                             this.rebaseMonthNumbers();
                         }
                         break;
                     case "weekday":
-                        if(index < (<Year>this.object).weekdays.length){
-                            (<Year>this.object).weekdays.splice(index, 1);
+                        if(index < (<Calendar>this.object).year.weekdays.length){
+                            (<Calendar>this.object).year.weekdays.splice(index, 1);
                             //Reindex the remaining months
-                            for(let i = 0; i < (<Year>this.object).weekdays.length; i++){
-                                (<Year>this.object).weekdays[i].numericRepresentation = i + 1;
+                            for(let i = 0; i < (<Calendar>this.object).year.weekdays.length; i++){
+                                (<Calendar>this.object).year.weekdays[i].numericRepresentation = i + 1;
                             }
                         }
                         break;
                     case "season":
-                        if(index < (<Year>this.object).seasons.length){
-                            (<Year>this.object).seasons.splice(index, 1);
+                        if(index < (<Calendar>this.object).year.seasons.length){
+                            (<Calendar>this.object).year.seasons.splice(index, 1);
                         }
                         break;
                     case "moon":
-                        if(index < (<Year>this.object).moons.length){
-                            (<Year>this.object).moons.splice(index, 1);
+                        if(index < (<Calendar>this.object).year.moons.length){
+                            (<Calendar>this.object).year.moons.splice(index, 1);
                         }
                         break;
                     case "moon-phase":
                         const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
                         if(dataMoonIndex){
                             const moonIndex = parseInt(dataMoonIndex);
-                            if(!isNaN(moonIndex) && moonIndex < (<Year>this.object).moons.length && index < (<Year>this.object).moons[moonIndex].phases.length){
-                                (<Year>this.object).moons[moonIndex].phases.splice(index, 1);
-                                (<Year>this.object).moons[moonIndex].updatePhaseLength();
+                            if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length && index < (<Calendar>this.object).year.moons[moonIndex].phases.length){
+                                (<Calendar>this.object).year.moons[moonIndex].phases.splice(index, 1);
+                                (<Calendar>this.object).year.moons[moonIndex].updatePhaseLength();
                             }
                         }
                         break;
                     case "year-name":
-                        if(index < (<Year>this.object).yearNames.length){
-                            (<Year>this.object).yearNames.splice(index, 1);
+                        if(index < (<Calendar>this.object).year.yearNames.length){
+                            (<Calendar>this.object).year.yearNames.splice(index, 1);
                         }
                         break;
                     case 'note-category':
@@ -447,28 +448,28 @@ export class SimpleCalendarConfiguration extends FormApplication {
         } else if(dataIndex && dataIndex === 'all'){
             switch (filteredSetting){
                 case "month":
-                    (<Year>this.object).months = [];
+                    (<Calendar>this.object).year.months = [];
                     break;
                 case "weekday":
-                    (<Year>this.object).weekdays = [];
+                    (<Calendar>this.object).year.weekdays = [];
                     break;
                 case "season":
-                    (<Year>this.object).seasons = [];
+                    (<Calendar>this.object).year.seasons = [];
                     break;
                 case "moon":
-                    (<Year>this.object).moons = [];
+                    (<Calendar>this.object).year.moons = [];
                     break;
                 case "moon-phase":
                     const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
                     if(dataMoonIndex){
                         const moonIndex = parseInt(dataMoonIndex);
-                        if(!isNaN(moonIndex) && moonIndex < (<Year>this.object).moons.length){
-                            (<Year>this.object).moons[moonIndex].phases = [];
+                        if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length){
+                            (<Calendar>this.object).year.moons[moonIndex].phases = [];
                         }
                     }
                     break;
                 case "year-name":
-                    (<Year>this.object).yearNames = [];
+                    (<Calendar>this.object).year.yearNames = [];
                     break;
                 case 'note-category':
                     this.noteCategories = [];
@@ -485,7 +486,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public predefinedApplyConfirm() {
         const selectedPredefined = <PredefinedCalendars>(<HTMLInputElement>document.getElementById("scPreDefined")).value;
         Logger.debug(`Overwriting the existing calendar configuration with the "${selectedPredefined}" configuration`);
-        PredefinedCalendar.setToPredefined((<Year>this.object), selectedPredefined);
+        PredefinedCalendar.setToPredefined((<Calendar>this.object).year, selectedPredefined);
         this.yearChanged = true;
         this.updateApp();
     }
@@ -512,113 +513,113 @@ export class SimpleCalendarConfiguration extends FormApplication {
             if(id === "scDefaultPlayerVisibility"){
                 this.generalSettings.defaultPlayerNoteVisibility = checked;
             } else if(id === 'scGameWorldTime'){
-                (<Year>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>value;
+                (<Calendar>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>value;
             } else if(id === 'scShowClock'){
-                (<Year>this.object).generalSettings.showClock = checked;
+                (<Calendar>this.object).generalSettings.showClock = checked;
             } else if(id === 'scPF2ESync'){
-                (<Year>this.object).generalSettings.pf2eSync = checked;
+                (<Calendar>this.object).generalSettings.pf2eSync = checked;
             }
             //Permission Settings
             else if(id === 'scCalendarVisibleP'){
-                (<Year>this.object).generalSettings.permissions.viewCalendar.player = checked;
+                (<Calendar>this.object).generalSettings.permissions.viewCalendar.player = checked;
             } else if(id === 'scCalendarVisibleTP'){
-                (<Year>this.object).generalSettings.permissions.viewCalendar.trustedPlayer = checked;
+                (<Calendar>this.object).generalSettings.permissions.viewCalendar.trustedPlayer = checked;
             } else if(id === 'scCalendarVisibleAGM'){
-                (<Year>this.object).generalSettings.permissions.viewCalendar.assistantGameMaster = checked;
+                (<Calendar>this.object).generalSettings.permissions.viewCalendar.assistantGameMaster = checked;
             } else if(id === 'scAddNotesP'){
-                (<Year>this.object).generalSettings.permissions.addNotes.player = checked;
+                (<Calendar>this.object).generalSettings.permissions.addNotes.player = checked;
             } else if(id === 'scAddNotesTP'){
-                (<Year>this.object).generalSettings.permissions.addNotes.trustedPlayer = checked;
+                (<Calendar>this.object).generalSettings.permissions.addNotes.trustedPlayer = checked;
             } else if(id === 'scAddNotesAGM'){
-                (<Year>this.object).generalSettings.permissions.addNotes.assistantGameMaster = checked;
+                (<Calendar>this.object).generalSettings.permissions.addNotes.assistantGameMaster = checked;
             } else if(id === 'scChangeDateTimeP'){
-                (<Year>this.object).generalSettings.permissions.changeDateTime.player = checked;
+                (<Calendar>this.object).generalSettings.permissions.changeDateTime.player = checked;
             } else if(id === 'scChangeDateTimeTP'){
-                (<Year>this.object).generalSettings.permissions.changeDateTime.trustedPlayer = checked;
+                (<Calendar>this.object).generalSettings.permissions.changeDateTime.trustedPlayer = checked;
             } else if(id === 'scChangeDateTimeAGM'){
-                (<Year>this.object).generalSettings.permissions.changeDateTime.assistantGameMaster = checked;
+                (<Calendar>this.object).generalSettings.permissions.changeDateTime.assistantGameMaster = checked;
             } else if(id === 'scReorderNotesP'){
-                (<Year>this.object).generalSettings.permissions.reorderNotes.player = checked;
+                (<Calendar>this.object).generalSettings.permissions.reorderNotes.player = checked;
             } else if(id === 'scReorderNotesTP'){
-                (<Year>this.object).generalSettings.permissions.reorderNotes.trustedPlayer = checked;
+                (<Calendar>this.object).generalSettings.permissions.reorderNotes.trustedPlayer = checked;
             } else if(id === 'scReorderNotesAGM'){
-                (<Year>this.object).generalSettings.permissions.reorderNotes.assistantGameMaster = checked;
+                (<Calendar>this.object).generalSettings.permissions.reorderNotes.assistantGameMaster = checked;
             }
             //Year Setting Inputs
             else if(id === "scCurrentYear"){
                 const year = parseInt(value);
                 if(!isNaN(year)){
-                    (<Year>this.object).numericRepresentation = year;
+                    (<Calendar>this.object).numericRepresentation = year;
                     this.yearChanged = true;
                 }
             } else if(id === 'scYearPreFix'){
-                (<Year>this.object).prefix = value;
+                (<Calendar>this.object).year.prefix = value;
             } else if(id === 'scYearPostFix'){
-                (<Year>this.object).postfix = value;
+                (<Calendar>this.object).year.postfix = value;
             } else if(id === 'scYearZero'){
                 const year = parseInt(value);
                 if(!isNaN(year)){
-                    (<Year>this.object).yearZero = year;
+                    (<Calendar>this.object).year.yearZero = year;
                 }
             } else if(id === 'scYearNameBehaviour'){
-                (<Year>this.object).yearNamingRule =  <YearNamingRules>value;
+                (<Calendar>this.object).year.yearNamingRule =  <YearNamingRules>value;
             } else if(id === 'scYearNamesStart'){
                 const year = parseInt(value);
                 if(!isNaN(year)){
-                    (<Year>this.object).yearNamesStart = year;
+                    (<Calendar>this.object).year.yearNamesStart = year;
                 }
             }
             //Weekday Setting Inputs
             else if(id === 'scShowWeekdayHeaders'){
-                (<Year>this.object).showWeekdayHeadings = checked;
+                (<Calendar>this.object).year.showWeekdayHeadings = checked;
             }
             else if(id === 'scWeekdayFirstDay'){
                 const weekdayIndex = parseInt(value);
                 if(!isNaN(weekdayIndex)){
-                    (<Year>this.object).firstWeekday = weekdayIndex;
+                    (<Calendar>this.object).year.firstWeekday = weekdayIndex;
                 }
             }
             //Leap Year Setting Inputs
             else if(id === 'scLeapYearRule'){
-                (<Year>this.object).leapYearRule.rule = <LeapYearRules>value;
+                (<Calendar>this.object).year.leapYearRule.rule = <LeapYearRules>value;
             } else if(id === 'scLeapYearCustomMod'){
                 const lycm = parseInt(value);
                 if(!isNaN(lycm)){
-                    (<Year>this.object).leapYearRule.customMod = lycm;
+                    (<Calendar>this.object).year.leapYearRule.customMod = lycm;
                 }
             }
             //Time Setting Inputs
             else if(id === 'scHoursInDay'){
                 const min = parseInt(value);
                 if(!isNaN(min)){
-                    (<Year>this.object).time.hoursInDay = min;
+                    (<Calendar>this.object).year.time.hoursInDay = min;
                 }
             } else if(id === 'scMinutesInHour'){
                 const min = parseInt(value);
                 if(!isNaN(min)){
-                    (<Year>this.object).time.minutesInHour = min;
+                    (<Calendar>this.object).year.time.minutesInHour = min;
                 }
             } else if(id === 'scSecondsInMinute'){
                 const min = parseInt(value);
                 if(!isNaN(min)){
-                    (<Year>this.object).time.secondsInMinute = min;
+                    (<Calendar>this.object).year.time.secondsInMinute = min;
                 }
             } else if(id === 'scSecondsInCombatRound'){
                 const s = parseInt(value);
                 if(!isNaN(s)){
-                    (<Year>this.object).time.secondsInCombatRound = s;
+                    (<Calendar>this.object).year.time.secondsInCombatRound = s;
                 }
             } else if(id === 'scGameTimeRatio'){
                 const min = parseFloat(value);
                 if(!isNaN(min)){
-                    (<Year>this.object).time.gameTimeRatio = min;
+                    (<Calendar>this.object).year.time.gameTimeRatio = min;
                 }
             } else if(id === 'scUnifyClockWithFoundryPause'){
-                (<Year>this.object).time.unifyGameAndClockPause = checked;
+                (<Calendar>this.object).year.time.unifyGameAndClockPause = checked;
             } else if(id === 'scTimeUpdateFrequency'){
                 const min = parseInt(value);
                 if(!isNaN(min)){
-                    (<Year>this.object).time.updateFrequency = min;
+                    (<Calendar>this.object).year.time.updateFrequency = min;
                 }
             }
 
@@ -630,121 +631,121 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 Logger.debug(`Indexed item (${index}) changed.`);
                 if(!isNaN(index)){
                     //Year Name Inputs
-                    if(cssClass === 'year-name' && (<Year>this.object).yearNames.length > index){
-                        (<Year>this.object).yearNames[index] = value;
+                    if(cssClass === 'year-name' && (<Calendar>this.object).year.yearNames.length > index){
+                        (<Calendar>this.object).year.yearNames[index] = value;
                     }
                     //Season Setting Inputs
-                    else if(cssClass === 'season-name' && (<Year>this.object).seasons.length > index){
-                        (<Year>this.object).seasons[index].name = value;
-                    } else if(cssClass === 'season-color' && (<Year>this.object).seasons.length > index){
-                        (<Year>this.object).seasons[index].color = value;
+                    else if(cssClass === 'season-name' && (<Calendar>this.object).year.seasons.length > index){
+                        (<Calendar>this.object).year.seasons[index].name = value;
+                    } else if(cssClass === 'season-color' && (<Calendar>this.object).year.seasons.length > index){
+                        (<Calendar>this.object).year.seasons[index].color = value;
                     }
                     //Month Setting Inputs
-                    else if(cssClass === 'month-show-advanced' && (<Year>this.object).months.length > index){
-                        (<Year>this.object).months[index].showAdvanced = !(<Year>this.object).months[index].showAdvanced;
+                    else if(cssClass === 'month-show-advanced' && (<Calendar>this.object).year.months.length > index){
+                        (<Calendar>this.object).year.months[index].showAdvanced = !(<Calendar>this.object).year.months[index].showAdvanced;
                     }
-                    else if(cssClass === 'month-name' && (<Year>this.object).months.length > index){
-                        (<Year>this.object).months[index].name = value;
-                    } else if(cssClass === 'month-days' && (<Year>this.object).months.length > index){
+                    else if(cssClass === 'month-name' && (<Calendar>this.object).year.months.length > index){
+                        (<Calendar>this.object).year.months[index].name = value;
+                    } else if(cssClass === 'month-days' && (<Calendar>this.object).year.months.length > index){
                         let days = parseInt(value);
-                        if(!isNaN(days) && days !== (<Year>this.object).months[index].days.length){
-                            (<Year>this.object).months[index].numberOfDays = days;
-                            if((<Year>this.object).leapYearRule.rule === LeapYearRules.None){
-                                (<Year>this.object).months[index].numberOfLeapYearDays = days;
+                        if(!isNaN(days) && days !== (<Calendar>this.object).year.months[index].days.length){
+                            (<Calendar>this.object).year.months[index].numberOfDays = days;
+                            if((<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None){
+                                (<Calendar>this.object).year.months[index].numberOfLeapYearDays = days;
                             }
-                            this.updateMonthDays((<Year>this.object).months[index]);
+                            this.updateMonthDays((<Calendar>this.object).year.months[index]);
                         }
-                    } else if (cssClass === 'month-intercalary' && (<Year>this.object).months.length > index){
-                        (<Year>this.object).months[index].intercalary = checked;
+                    } else if (cssClass === 'month-intercalary' && (<Calendar>this.object).year.months.length > index){
+                        (<Calendar>this.object).year.months[index].intercalary = checked;
                         const a = (<JQuery>this.element).find(`.month-intercalary-include[data-index='${dataIndex}']`).parent().parent().parent();
-                        if((<Year>this.object).months[index].intercalary){
+                        if((<Calendar>this.object).year.months[index].intercalary){
                             a.removeClass('hidden');
                         } else {
                             a.addClass('hidden');
                         }
                         this.rebaseMonthNumbers();
-                    } else if (cssClass === 'month-intercalary-include' && (<Year>this.object).months.length > index){
-                        (<Year>this.object).months[index].intercalaryInclude = checked;
+                    } else if (cssClass === 'month-intercalary-include' && (<Calendar>this.object).year.months.length > index){
+                        (<Calendar>this.object).year.months[index].intercalaryInclude = checked;
                         this.rebaseMonthNumbers();
-                    } else if(cssClass === 'month-numeric-representation-offset' && (<Year>this.object).months.length > index){
+                    } else if(cssClass === 'month-numeric-representation-offset' && (<Calendar>this.object).year.months.length > index){
                         let v = parseInt(value);
                         if(!isNaN(v)){
-                            (<Year>this.object).months[index].numericRepresentationOffset = v;
+                            (<Calendar>this.object).year.months[index].numericRepresentationOffset = v;
                         }
-                    } else if(cssClass === 'month-starting-weekday' && (<Year>this.object).months.length > index){
+                    } else if(cssClass === 'month-starting-weekday' && (<Calendar>this.object).year.months.length > index){
                         let v = parseInt(value);
                         if(!isNaN(v)){
-                            (<Year>this.object).months[index].startingWeekday = v;
+                            (<Calendar>this.object).year.months[index].startingWeekday = v;
                         } else {
-                            (<Year>this.object).months[index].startingWeekday = null;
+                            (<Calendar>this.object).year.months[index].startingWeekday = null;
                         }
                     }
                     //Weekday Setting Inputs
-                    else if(cssClass === 'weekday-name' && (<Year>this.object).weekdays.length > index){
-                        (<Year>this.object).weekdays[index].name = value;
+                    else if(cssClass === 'weekday-name' && (<Calendar>this.object).year.weekdays.length > index){
+                        (<Calendar>this.object).year.weekdays[index].name = value;
                     }
                     //Leap Year Setting Inputs
-                    else if(cssClass === 'month-leap-days' && (<Year>this.object).months.length > index){
+                    else if(cssClass === 'month-leap-days' && (<Calendar>this.object).year.months.length > index){
                         const days = parseInt(value);
-                        if(!isNaN(days) && days !== (<Year>this.object).months[index].numberOfLeapYearDays){
-                            (<Year>this.object).months[index].numberOfLeapYearDays = days;
-                            this.updateMonthDays((<Year>this.object).months[index]);
+                        if(!isNaN(days) && days !== (<Calendar>this.object).year.months[index].numberOfLeapYearDays){
+                            (<Calendar>this.object).year.months[index].numberOfLeapYearDays = days;
+                            this.updateMonthDays((<Calendar>this.object).year.months[index]);
                         }
                     }
                     //Moon Setting Inputs
-                    else if(cssClass === 'moon-name' && (<Year>this.object).moons.length > index){
-                        (<Year>this.object).moons[index].name = value;
-                    } else if(cssClass === 'moon-cycle-length' && (<Year>this.object).moons.length > index){
+                    else if(cssClass === 'moon-name' && (<Calendar>this.object).year.moons.length > index){
+                        (<Calendar>this.object).year.moons[index].name = value;
+                    } else if(cssClass === 'moon-cycle-length' && (<Calendar>this.object).year.moons.length > index){
                         const cycle = parseFloat(value);
                         if(!isNaN(cycle)){
-                            (<Year>this.object).moons[index].cycleLength = cycle;
-                            (<Year>this.object).moons[index].updatePhaseLength();
+                            (<Calendar>this.object).year.moons[index].cycleLength = cycle;
+                            (<Calendar>this.object).year.moons[index].updatePhaseLength();
                         }
-                    } else if(cssClass === 'moon-cycle-adjustment' && (<Year>this.object).moons.length > index){
+                    } else if(cssClass === 'moon-cycle-adjustment' && (<Calendar>this.object).year.moons.length > index){
                         const cycle = parseFloat(value);
                         if(!isNaN(cycle)){
-                            (<Year>this.object).moons[index].cycleDayAdjust = cycle;
+                            (<Calendar>this.object).year.moons[index].cycleDayAdjust = cycle;
                         }
-                    } else if(cssClass === 'moon-year-reset' && (<Year>this.object).moons.length > index){
-                        (<Year>this.object).moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>value;
-                    } else if(cssClass === 'moon-year-x' && (<Year>this.object).moons.length > index){
+                    } else if(cssClass === 'moon-year-reset' && (<Calendar>this.object).year.moons.length > index){
+                        (<Calendar>this.object).year.moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>value;
+                    } else if(cssClass === 'moon-year-x' && (<Calendar>this.object).year.moons.length > index){
                         const year = parseInt(value);
                         if(!isNaN(year)){
-                            (<Year>this.object).moons[index].firstNewMoon.yearX = year;
+                            (<Calendar>this.object).year.moons[index].firstNewMoon.yearX = year;
                         }
-                    }else if(cssClass === 'moon-year' && (<Year>this.object).moons.length > index){
+                    }else if(cssClass === 'moon-year' && (<Calendar>this.object).year.moons.length > index){
                         const year = parseInt(value);
                         if(!isNaN(year)){
-                            (<Year>this.object).moons[index].firstNewMoon.year = year;
+                            (<Calendar>this.object).year.moons[index].firstNewMoon.year = year;
                         }
-                    } else if(cssClass === 'moon-month' && (<Year>this.object).moons.length > index){
+                    } else if(cssClass === 'moon-month' && (<Calendar>this.object).year.moons.length > index){
                         const month = parseInt(value);
                         if(!isNaN(month)){
-                            (<Year>this.object).moons[index].firstNewMoon.month = month;
-                            (<Year>this.object).moons[index].firstNewMoon.day = 1;
+                            (<Calendar>this.object).year.moons[index].firstNewMoon.month = month;
+                            (<Calendar>this.object).year.moons[index].firstNewMoon.day = 1;
                         }
-                    } else if(cssClass === 'moon-day' && (<Year>this.object).moons.length > index){
+                    } else if(cssClass === 'moon-day' && (<Calendar>this.object).year.moons.length > index){
                         const day = parseInt(value);
                         if(!isNaN(day)){
-                            (<Year>this.object).moons[index].firstNewMoon.day = day;
+                            (<Calendar>this.object).year.moons[index].firstNewMoon.day = day;
                         }
-                    } else if(cssClass === 'moon-color' && (<Year>this.object).moons.length > index){
+                    } else if(cssClass === 'moon-color' && (<Calendar>this.object).year.moons.length > index){
                         if(value[0] !== "#"){
                             value = '#'+value;
                         }
-                        (<Year>this.object).moons[index].color = value;
+                        (<Calendar>this.object).year.moons[index].color = value;
                     } else if(cssClass === 'moon-phase-name' || cssClass === 'moon-phase-single-day' || cssClass === 'moon-phase-icon'){
                         const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
                         if(dataMoonIndex){
                             const moonIndex = parseInt(dataMoonIndex);
-                            if(!isNaN(moonIndex) && (<Year>this.object).moons.length > moonIndex && (<Year>this.object).moons[moonIndex].phases.length > index){
+                            if(!isNaN(moonIndex) && (<Calendar>this.object).year.moons.length > moonIndex && (<Calendar>this.object).year.moons[moonIndex].phases.length > index){
                                 if(cssClass === 'moon-phase-name'){
-                                    (<Year>this.object).moons[moonIndex].phases[index].name = value;
+                                    (<Calendar>this.object).year.moons[moonIndex].phases[index].name = value;
                                 } else if(cssClass === 'moon-phase-single-day'){
-                                    (<Year>this.object).moons[moonIndex].phases[index].singleDay = checked;
-                                    (<Year>this.object).moons[moonIndex].updatePhaseLength();
+                                    (<Calendar>this.object).year.moons[moonIndex].phases[index].singleDay = checked;
+                                    (<Calendar>this.object).year.moons[moonIndex].updatePhaseLength();
                                 } else if(cssClass === 'moon-phase-icon'){
-                                    (<Year>this.object).moons[moonIndex].phases[index].icon = <MoonIcons>value;
+                                    (<Calendar>this.object).year.moons[moonIndex].phases[index].icon = <MoonIcons>value;
                                 }
 
                             }
@@ -839,17 +840,17 @@ export class SimpleCalendarConfiguration extends FormApplication {
             this.predefinedApplyConfirm();
         } else if(type === 'tp-import'){
             if(type2 === 'about-time'){
-                await Importer.importAboutTime(<Year>this.object);
+                await Importer.importAboutTime((<Calendar>this.object).year);
                 this.updateApp();
             } else if(type2 === 'calendar-weather'){
-                await Importer.importCalendarWeather(<Year>this.object);
+                await Importer.importCalendarWeather((<Calendar>this.object).year);
                 this.updateApp();
             }
         } else if(type === 'tp-export'){
             if(type2 === 'about-time'){
-                await Importer.exportToAboutTime(<Year>this.object);
+                await Importer.exportToAboutTime((<Calendar>this.object).year);
             } else if(type2 === 'calendar-weather'){
-                await Importer.exportCalendarWeather(<Year>this.object);
+                await Importer.exportCalendarWeather((<Calendar>this.object).year);
             }
         }
     }
@@ -862,39 +863,39 @@ export class SimpleCalendarConfiguration extends FormApplication {
         e.preventDefault();
         try{
             //If there is no leap year rule set ensure months leap year and normal days match
-            if((<Year>this.object).leapYearRule.rule === LeapYearRules.None){
-                for(let i = 0; i < (<Year>this.object).months.length; i++){
-                    (<Year>this.object).months[i].numberOfLeapYearDays = (<Year>this.object).months[i].numberOfDays;
+            if((<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None){
+                for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
+                    (<Calendar>this.object).year.months[i].numberOfLeapYearDays = (<Calendar>this.object).year.months[i].numberOfDays;
                 }
             }
             // Update the general Settings
-            (<Year>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>(<HTMLInputElement>document.getElementById("scGameWorldTime")).value;
-            await GameSettings.SaveGeneralSettings((<Year>this.object).generalSettings);
+            (<Calendar>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>(<HTMLInputElement>document.getElementById("scGameWorldTime")).value;
+            await GameSettings.SaveGeneralSettings((<Calendar>this.object).generalSettings);
 
             // Update the Year Configuration
             const currentYear = parseInt((<HTMLInputElement>document.getElementById("scCurrentYear")).value);
             if(!isNaN(currentYear)){
-                (<Year>this.object).numericRepresentation = currentYear;
-                (<Year>this.object).selectedYear = currentYear;
-                (<Year>this.object).visibleYear = currentYear;
+                (<Calendar>this.object).numericRepresentation = currentYear;
+                (<Calendar>this.object).year.selectedYear = currentYear;
+                (<Calendar>this.object).year.visibleYear = currentYear;
             }
 
-            await GameSettings.SaveYearConfiguration(<Year>this.object);
+            await GameSettings.SaveYearConfiguration((<Calendar>this.object).year);
             // Update the Month Configuration
-            await GameSettings.SaveMonthConfiguration((<Year>this.object).months);
+            await GameSettings.SaveMonthConfiguration((<Calendar>this.object).year.months);
             //Update Weekday Configuration
-            await GameSettings.SaveWeekdayConfiguration((<Year>this.object).weekdays);
+            await GameSettings.SaveWeekdayConfiguration((<Calendar>this.object).year.weekdays);
             //Update Leap Year Configuration
-            await GameSettings.SaveLeapYearRules((<Year>this.object).leapYearRule);
+            await GameSettings.SaveLeapYearRules((<Calendar>this.object).year.leapYearRule);
             //Update Time Configuration
-            await GameSettings.SaveTimeConfiguration((<Year>this.object).time);
+            await GameSettings.SaveTimeConfiguration((<Calendar>this.object).year.time);
             //Update Season Configuration
-            await GameSettings.SaveSeasonConfiguration((<Year>this.object).seasons);
+            await GameSettings.SaveSeasonConfiguration((<Calendar>this.object).year.seasons);
             //Update Moon Settings
-            await GameSettings.SaveMoonConfiguration((<Year>this.object).moons);
+            await GameSettings.SaveMoonConfiguration((<Calendar>this.object).year.moons);
 
             if(this.yearChanged){
-                await GameSettings.SaveCurrentDate(<Year>this.object);
+                await GameSettings.SaveCurrentDate((<Calendar>this.object).year);
             }
 
             const noteDefaultPlayerVisibility = (<HTMLInputElement>document.getElementById('scDefaultPlayerVisibility')).checked;
@@ -902,7 +903,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
             await GameSettings.SaveNoteCategories(this.noteCategories);
 
-            await SimpleCalendar.instance.activeCalendar.year.syncTime(true);
+            await SimpleCalendar.instance.activeCalendar.syncTime(true);
 
             this.closeApp();
         } catch (error: any){

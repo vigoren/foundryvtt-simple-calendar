@@ -128,7 +128,7 @@ export default class TimeKeeper{
                 SimpleCalendar.instance.updateApp();
             }
             if (GameSettings.IsGm() && SimpleCalendar.instance.primary) {
-                SimpleCalendar.instance.activeCalendar.year.syncTime().catch(Logger.error);
+                SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
             }
             Hook.emit(SimpleCalendarHooks.DateTimeChange);
         }
@@ -141,7 +141,7 @@ export default class TimeKeeper{
      */
     private saveInterval(emitHook: boolean = false){
         if (GameSettings.IsGm() && SimpleCalendar.instance.primary) {
-            SimpleCalendar.instance.activeCalendar.year.syncTime().catch(Logger.error);
+            SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
             GameSettings.SaveCurrentDate(SimpleCalendar.instance.activeCalendar.year, emitHook).catch(Logger.error);
         }
     }

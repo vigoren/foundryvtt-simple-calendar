@@ -1,8 +1,11 @@
 import {Logger} from "./logging";
-import Year from "./year";
 import Month from "./month";
 import {Note} from "./note";
-import {CalendarTemplate, NoteTemplate, SCDateSelector, SimpleCalendarSocket} from "../interfaces";
+import {
+    SCDateSelector,
+    SimpleCalendarSocket,
+    SimpleCalendarTemplate
+} from "../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {GameSettings} from "./game-settings";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
@@ -90,7 +93,7 @@ export default class SimpleCalendar extends Application{
      */
     constructor() {
         super();
-        this.calendars.push(new Calendar({name: 'Gregorian'}));
+        this.calendars.push(new Calendar({id: '', name: 'Gregorian'}));
     }
 
     /**
@@ -214,7 +217,7 @@ export default class SimpleCalendar extends Application{
                     }
                     GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
                     //Sync the current time on apply, this will propagate to other modules
-                    this.activeCalendar.year.syncTime().catch(Logger.error);
+                    this.activeCalendar.syncTime().catch(Logger.error);
                 }
             }
         } else if(data.type === SocketTypes.date){
@@ -236,30 +239,14 @@ export default class SimpleCalendar extends Application{
      * Gets the data object to be used by Handlebars when rending the HTML template
      * @param {Application.RenderOptions | undefined} options The data options
      */
-    getData(options?: Application.RenderOptions): CalendarTemplate | Promise<CalendarTemplate> {
-        let showSetCurrentDate = false;
-        const selectedMonth = this.activeCalendar.year.getMonth('selected');
-        if(selectedMonth){
-            const selectedDay = selectedMonth.getDay('selected');
-            if(selectedDay && !selectedDay.current){
-                showSetCurrentDate = true;
-            }
-        }
+    getData(options?: Application.RenderOptions): SimpleCalendarTemplate | Promise<SimpleCalendarTemplate> {
         return {
-            isGM: GameSettings.IsGm(),
-            changeDateTime: this.activeCalendar.canUser((<Game>game).user, this.activeCalendar.generalSettings.permissions.changeDateTime),
-            isPrimary: this.primary,
-            addNotes: this.activeCalendar.canUser((<Game>game).user, this.activeCalendar.generalSettings.permissions.addNotes),
-            reorderNotes: this.activeCalendar.canUser((<Game>game).user, this.activeCalendar.generalSettings.permissions.reorderNotes),
-            currentYear: this.activeCalendar.year.toTemplate(),
-            showSelectedDay: this.activeCalendar.year.visibleYear === this.activeCalendar.year.selectedYear,
-            showCurrentDay: this.activeCalendar.year.visibleYear === this.activeCalendar.year.numericRepresentation,
-            showSetCurrentDate: this.activeCalendar.canUser((<Game>game).user, this.activeCalendar.generalSettings.permissions.changeDateTime) && showSetCurrentDate,
-            notes: this.getNotesForDay().map(n => n.toTemplate()),
+            calendar: this.activeCalendar.toTemplate(),
             clockClass: this.clockClass,
-            timeUnits: this.timeUnits,
             compactView: this.compactView,
-            compactViewShowNotes: this.compactViewShowNotes
+            compactViewShowNotes: this.compactViewShowNotes,
+            isPrimary: this.primary,
+            timeUnits: this.timeUnits
         };
     }
 
@@ -715,13 +702,13 @@ export default class SimpleCalendar extends Application{
                 this.activeCalendar.year.changeTime(true, dataType, amount);
                 GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
                 //Sync the current time on apply, this will propagate to other modules
-                this.activeCalendar.year.syncTime().catch(Logger.error);
+                this.activeCalendar.syncTime().catch(Logger.error);
             }
         } else if(dataType && (dataType === 'dawn' || dataType === 'midday' || dataType === 'dusk' || dataType === 'midnight')){
             this.timeOfDayControlClick(dataType);
             GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
-            this.activeCalendar.year.syncTime(true).catch(Logger.error);
+            this.activeCalendar.syncTime(true).catch(Logger.error);
         }
     }
 
@@ -806,7 +793,7 @@ export default class SimpleCalendar extends Application{
         if(change){
             GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
-            this.activeCalendar.year.syncTime(true).catch(Logger.error);
+            this.activeCalendar.syncTime(true).catch(Logger.error);
         }
     }
 
@@ -909,7 +896,7 @@ export default class SimpleCalendar extends Application{
             if(!validSelection){
                 GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
                 //Sync the current time on apply, this will propagate to other modules
-                this.activeCalendar.year.syncTime().catch(Logger.error);
+                this.activeCalendar.syncTime().catch(Logger.error);
             }
         } else {
             GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Calendar.GMCurrent"), 'warn');
@@ -940,7 +927,7 @@ export default class SimpleCalendar extends Application{
             day.selected = false;
             GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
-            this.activeCalendar.year.syncTime().catch(Logger.error);
+            this.activeCalendar.syncTime().catch(Logger.error);
         }
     }
 
@@ -952,7 +939,7 @@ export default class SimpleCalendar extends Application{
         e.stopPropagation();
         if(GameSettings.IsGm()){
             if(!SimpleCalendarConfiguration.instance || (SimpleCalendarConfiguration.instance && !SimpleCalendarConfiguration.instance.rendered)){
-                SimpleCalendarConfiguration.instance = new SimpleCalendarConfiguration(this.activeCalendar.year.clone());
+                SimpleCalendarConfiguration.instance = new SimpleCalendarConfiguration(this.activeCalendar.clone());
                 SimpleCalendarConfiguration.instance.showApp();
             } else {
                 SimpleCalendarConfiguration.instance.bringToTop();
@@ -1039,39 +1026,6 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
-     * Gets all of the notes associated with the selected or current day
-     * @private
-     * @return NoteTemplate[]
-     */
-    private getNotesForDay(): Note[] {
-        const dayNotes: Note[] = [];
-        const year = this.activeCalendar.year.selectedYear || this.activeCalendar.year.numericRepresentation;
-        const month = this.activeCalendar.year.getMonth('selected') || this.activeCalendar.year.getMonth();
-        if(month){
-            const day = month.getDay('selected') || month.getDay();
-            if(day){
-                this.activeCalendar.notes.forEach((note) => {
-                    if(note.isVisible(year, month.numericRepresentation, day.numericRepresentation)){
-                        dayNotes.push(note);
-                    }
-                });
-            }
-        }
-        dayNotes.sort(SimpleCalendar.dayNoteSort);
-        return dayNotes;
-    }
-
-    /**
-     * Sort function for the list of notes on a day. Sorts by order, then hour then minute
-     * @param {Note} a The first note to compare
-     * @param {Note} b The second noe to compare
-     * @private
-     */
-    private static dayNoteSort(a: Note, b: Note): number {
-        return a.order - b.order || a.hour - b.hour || a.minute - b.minute;
-    }
-
-    /**
      * Triggered when the games pause state is changed.
      * @param paused
      */
@@ -1092,7 +1046,7 @@ export default class SimpleCalendar extends Application{
      */
     worldTimeUpdate(newTime: number, delta: number){
         Logger.debug(`World Time Update, new time: ${newTime}. Delta of: ${delta}.`);
-        this.activeCalendar.year.setFromTime(newTime, delta);
+        this.activeCalendar.setFromTime(newTime, delta);
     }
 
     /**
@@ -1177,7 +1131,7 @@ export default class SimpleCalendar extends Application{
         //If the current year is set up and the calendar is set up for time keeping and the user is the GM
         if(this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.None && GameSettings.IsGm() ){
             //Sync the current world time with the simple calendar
-            await this.activeCalendar.year.syncTime();
+            await this.activeCalendar.syncTime();
         }
     }
 
@@ -1208,7 +1162,7 @@ export default class SimpleCalendar extends Application{
             id = selectedItem.getAttribute('data-index');
         selectedItem.classList.remove('drag-active');
         if(id && list){
-            const dayNotes = this.getNotesForDay();
+            const dayNotes = this.activeCalendar.getNotesForDay();
             for(let i = 0; i < list.children.length; i++){
                 const cid = list.children[i].getAttribute('data-index');
                 const n = dayNotes.find(n => n.id === cid);

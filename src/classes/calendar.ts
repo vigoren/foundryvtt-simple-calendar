@@ -1,5 +1,5 @@
 import Year from "./year";
-import {CalendarConfiguration, GeneralSettings, NoteCategory, PermissionMatrix} from "../interfaces";
+import {CalendarConfiguration, CalendarTemplate, NoteCategory, PermissionMatrix} from "../interfaces";
 import {GameSystems, GameWorldTimeIntegrations, PredefinedCalendars, TimeKeeperStatus} from "../constants";
 import {Note} from "./note";
 import Month from "./month";
@@ -10,24 +10,22 @@ import Season from "./season";
 import Moon from "./moon";
 import SimpleCalendar from "./simple-calendar";
 import PredefinedCalendar from "./predefined-calendar";
+import GeneralSettings from "./general-settings";
+import ConfigurationItemBase from "./configuration-item-base";
+import Utilities from "./utilities";
+import PF2E from "./systems/pf2e";
 
-export default class Calendar{
+export default class Calendar extends ConfigurationItemBase{
 
     /**
      * Loads the calendars from the settings
      */
     static LoadCalendars(){
-        const cal = new Calendar({name: 'default'});
+        const cal = new Calendar({id: '', name: 'default'});
         cal.settingUpdate();
 
         return [cal];
     }
-
-    /**
-     * The name of this calendar
-     * @type {string}
-     */
-    name: string;
     /**
      * The currently running game system
      * @type {GameSystems}
@@ -37,17 +35,7 @@ export default class Calendar{
      * All of the general settings for a calendar
      * @type {GeneralSettings}
      */
-    generalSettings: GeneralSettings = {
-        gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed,
-        showClock: true,
-        pf2eSync: true,
-        permissions: {
-            viewCalendar: {player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined},
-            addNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},
-            reorderNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},
-            changeDateTime: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}
-        }
-    };
+    generalSettings: GeneralSettings = new GeneralSettings();
     /**
      * The year class for the calendar
      * @type {Year}
@@ -69,8 +57,9 @@ export default class Calendar{
      * @param {CalendarConfiguration} configuration The configuration object for the calendar
      */
     constructor(configuration: CalendarConfiguration) {
+        super(configuration.name);
+        this.id = Utilities.generateUniqueId();
         // Set Calendar Data
-        this.name = configuration.name;
         this.gameSystem = GameSystems.Other;
 
         if((<Game>game).system){
@@ -106,6 +95,157 @@ export default class Calendar{
         return !!(user.isGM || (permissions.player && user.hasRole(1)) || (permissions.trustedPlayer && user.hasRole(2)) || (permissions.assistantGameMaster && user.hasRole(3)) || (permissions.users && permissions.users.includes(user.id? user.id : '')));
     }
 
+    /**
+     * Creates a cloned version of the Calendar class
+     */
+    clone(): Calendar {
+        const c = new Calendar({ id: '', name: this.name });
+        c.id = this.id;
+        c.name = this.name;
+        c.gameSystem = this.gameSystem;
+        c.generalSettings = this.generalSettings.clone();
+        c.year = this.year.clone();
+
+        return c;
+    }
+
+    /**
+     * Creates a template for the calendar class
+     */
+    toTemplate(): CalendarTemplate{
+        let showSetCurrentDate = false;
+        const selectedMonth = this.year.getMonth('selected');
+        if(selectedMonth){
+            const selectedDay = selectedMonth.getDay('selected');
+            if(selectedDay && !selectedDay.current){
+                showSetCurrentDate = true;
+            }
+        }
+        return {
+            ...super.toTemplate(),
+            addNotes: this.canUser((<Game>game).user, this.generalSettings.permissions.addNotes),
+            changeDateTime: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime),
+            currentYear: this.year.toTemplate(),
+            gameSystem: this.gameSystem,
+            isGM: GameSettings.IsGm(),
+            name: this.name,
+            notes: this.getNotesForDay().map(n => n.toTemplate()),
+            reorderNotes: this.canUser((<Game>game).user, this.generalSettings.permissions.reorderNotes),
+            showClock: this.generalSettings.showClock,
+            showCurrentDay: this.year.visibleYear === this.year.numericRepresentation,
+            showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
+            showSelectedDay: this.year.visibleYear === this.year.selectedYear,
+            showSetCurrentDate: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && showSetCurrentDate,
+            showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty
+        };
+    }
+
+    /**
+     * Gets all of the notes associated with the selected or current day
+     * @private
+     * @return NoteTemplate[]
+     */
+    public getNotesForDay(): Note[] {
+        const dayNotes: Note[] = [];
+        const year = this.year.selectedYear || this.year.numericRepresentation;
+        const month = this.year.getMonth('selected') || this.year.getMonth();
+        if(month){
+            const day = month.getDay('selected') || month.getDay();
+            if(day){
+                this.notes.forEach((note) => {
+                    if(note.isVisible(year, month.numericRepresentation, day.numericRepresentation)){
+                        dayNotes.push(note);
+                    }
+                });
+            }
+        }
+        dayNotes.sort(Calendar.dayNoteSort);
+        return dayNotes;
+    }
+
+    /**
+     * Sort function for the list of notes on a day. Sorts by order, then hour then minute
+     * @param {Note} a The first note to compare
+     * @param {Note} b The second noe to compare
+     * @private
+     */
+    private static dayNoteSort(a: Note, b: Note): number {
+        return a.order - b.order || a.hour - b.hour || a.minute - b.minute;
+    }
+
+    /**
+     * Sets the current game world time to match what our current time is
+     */
+    async syncTime(force: boolean = false){
+        // Only if the time tracking rules are set to self or mixed
+        if(this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
+            Logger.debug(`Year.syncTime()`);
+            const totalSeconds = this.year.toSeconds();
+            // If the calculated seconds are different from what is set in the game world time, update the game world time to match sc's time
+            if(totalSeconds !== (<Game>game).time.worldTime || force){
+                //Let the local functions know that we all ready updated this time
+                this.year.timeChangeTriggered = true;
+                //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
+                await this.year.time.setWorldTime(totalSeconds);
+            }
+        }
+    }
+
+    /**
+     * Sets the simple calendars year, month, day and time from a passed in number of seconds
+     * @param {number} newTime The new time represented by seconds
+     * @param {number} changeAmount The amount that the time has changed by
+     */
+    setFromTime(newTime: number, changeAmount: number){
+        Logger.debug('Year.setFromTime()');
+
+        // If this is a Pathfinder 2E game, add the world creation seconds
+        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
+            newTime += PF2E.getWorldCreateSeconds();
+        }
+        if(changeAmount !== 0){
+            // If the tracking rules are for self or mixed and the clock is running then we make the change.
+            if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.year.time.timeKeeper.getStatus() === TimeKeeperStatus.Started){
+                Logger.debug(`Tracking Rule: Self/Mixed\nClock Is Running, no need to update the date.`)
+                const parsedDate = this.year.secondsToDate(newTime);
+                this.year.updateTime(parsedDate);
+                this.year.time.timeKeeper.setClockTime(this.year.time.toString());
+                if((this.year.time.updateFrequency * this.year.time.gameTimeRatio) !== changeAmount){
+                    SimpleCalendar.instance.updateApp();
+                }
+            }
+            // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
+            else if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.year.timeChangeTriggered || this.year.combatChangeTriggered)){
+                Logger.debug(`Tracking Rule: Self.\nTriggered Change: Simple Calendar/Combat Turn. Applying Change!`);
+                //If we didn't request the change (from a combat change) we need to update the internal time to match the new world time
+                if(!this.year.timeChangeTriggered){
+                    const parsedDate = this.year.secondsToDate(newTime);
+                    this.year.updateTime(parsedDate);
+                    // If the current player is the GM then we need to save this new value to the database
+                    // Since the current date is updated this will trigger an update on all players as well
+                    if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
+                        GameSettings.SaveCurrentDate(this.year).catch(Logger.error);
+                    }
+                }
+            }
+                // If we didn't (locally) request this change then parse the new time into years, months, days and seconds and set those values
+            // This covers other modules/built in features updating the world time and Simple Calendar updating to reflect those changes
+            else if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.ThirdParty || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && !this.year.timeChangeTriggered){
+                Logger.debug('Tracking Rule: ThirdParty.\nTriggered Change: External Change. Applying Change!');
+                const parsedDate = this.year.secondsToDate(newTime);
+                this.year.updateTime(parsedDate);
+                //We need to save the change so that when the game is reloaded simple calendar will display the correct time
+                if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
+                    GameSettings.SaveCurrentDate(this.year).catch(Logger.error);
+                }
+            } else {
+                Logger.debug(`Not Applying Change!`);
+            }
+        }
+        Logger.debug('Resetting time change triggers.');
+        this.year.timeChangeTriggered = false;
+        this.year.combatChangeTriggered = false;
+    }
 
 
 
@@ -180,38 +320,12 @@ export default class Calendar{
             }
         }
         if(type === 'all' || type === 'general'){
-            this.loadGeneralSettings();
+            this.generalSettings.loadFromSettings(GameSettings.LoadGeneralSettings());
         }
         if(type === 'all' || type === 'note-categories'){
             this.loadNoteCategories();
         }
         this.loadCurrentDate();
-    }
-
-    /**
-     * Loads the general settings from the world settings and apply them
-     * @private
-     */
-    private loadGeneralSettings(){
-        Logger.debug('Loading general settings from world settings');
-        const gSettings = GameSettings.LoadGeneralSettings();
-        if(gSettings && Object.keys(gSettings).length){
-            this.generalSettings.gameWorldTimeIntegration = gSettings.gameWorldTimeIntegration;
-            this.generalSettings.showClock = gSettings.showClock;
-            if(gSettings.hasOwnProperty('pf2eSync')){
-                this.generalSettings.pf2eSync = gSettings.pf2eSync;
-            }
-            if(gSettings.hasOwnProperty('permissions')){
-                this.generalSettings.permissions = gSettings.permissions;
-                if(!gSettings.permissions.hasOwnProperty('reorderNotes')){
-                    this.generalSettings.permissions.reorderNotes = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
-                }
-            } else if(gSettings.hasOwnProperty('playersAddNotes')){
-                this.generalSettings.permissions.addNotes.player = <boolean>gSettings['playersAddNotes'];
-                this.generalSettings.permissions.addNotes.trustedPlayer = <boolean>gSettings['playersAddNotes'];
-                this.generalSettings.permissions.addNotes.assistantGameMaster = <boolean>gSettings['playersAddNotes'];
-            }
-        }
     }
 
     /**

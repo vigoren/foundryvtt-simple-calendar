@@ -343,7 +343,7 @@ export default class API{
 
             if(change){
                 GameSettings.SaveCurrentDate(SimpleCalendar.instance.activeCalendar.year).catch(Logger.error);
-                SimpleCalendar.instance.activeCalendar.year.syncTime().catch(Logger.error);
+                SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
                 SimpleCalendar.instance.updateApp();
             }
             return true;
@@ -362,7 +362,7 @@ export default class API{
             const seconds = this.dateToTimestamp(date);
             SimpleCalendar.instance.activeCalendar.year.updateTime(SimpleCalendar.instance.activeCalendar.year.secondsToDate(seconds));
             GameSettings.SaveCurrentDate(SimpleCalendar.instance.activeCalendar.year).catch(Logger.error);
-            SimpleCalendar.instance.activeCalendar.year.syncTime().catch(Logger.error);
+            SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
             SimpleCalendar.instance.updateApp();
             return true;
         } else {

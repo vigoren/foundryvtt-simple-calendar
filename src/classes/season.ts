@@ -122,7 +122,7 @@ export default class Season extends ConfigurationItemBase{
      * @param {SeasonConfiguration} config The configuration object for this class
      */
     loadFromSettings(config: SeasonConfiguration) {
-        if(config){
+        if(config && Object.keys(config).length){
             this.id = config.id;
             this.name = config.name;
             this.startingMonth = config.startingMonth;

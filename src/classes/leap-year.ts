@@ -47,7 +47,7 @@ export default class LeapYear extends ConfigurationItemBase{
      * @param {LeapYearConfig} config The configuration object for this class
      */
     loadFromSettings(config: LeapYearConfig): void {
-        if(config){
+        if(config && Object.keys(config).length){
             if(config.hasOwnProperty('rule')){
                 this.rule = config.rule;
             }

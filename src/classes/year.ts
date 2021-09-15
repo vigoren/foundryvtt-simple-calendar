@@ -3,7 +3,6 @@ import {
     DateTime,
     DateTimeParts,
     DayTemplate,
-    GeneralSettings,
     PermissionMatrix, YearConfig,
     YearTemplate
 } from "../interfaces";
@@ -11,7 +10,7 @@ import {Logger} from "./logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
 import Time from "./time";
-import {GameSystems, GameWorldTimeIntegrations, LeapYearRules, TimeKeeperStatus, YearNamingRules} from "../constants";
+import {GameSystems, LeapYearRules, TimeKeeperStatus, YearNamingRules} from "../constants";
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
@@ -93,21 +92,6 @@ export default class Year extends ConfigurationItemBase {
      * @type {boolean}
      */
     combatChangeTriggered: boolean = false;
-
-    /**
-     * The default general settings for the simple calendar
-     */
-    generalSettings: GeneralSettings = {
-        gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed,
-        showClock: true,
-        pf2eSync: true,
-        permissions: {
-            viewCalendar: {player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined},
-            addNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},
-            reorderNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},
-            changeDateTime: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}
-        }
-    };
     /**
      * All of the seasons for this calendar
      * @type {Array.<Season>}
@@ -190,8 +174,13 @@ export default class Year extends ConfigurationItemBase {
         }
         return {
             ...super.toTemplate(),
-            gameSystem: SimpleCalendar.instance.activeCalendar.gameSystem,
+            currentTime: this.time.getCurrentTime(),
+            currentSeasonName: currentSeason.name,
+            currentSeasonColor: currentSeason.color,
             display: this.getDisplayName(),
+            firstWeekday: this.firstWeekday,
+            gameSystem: SimpleCalendar.instance.activeCalendar.gameSystem,
+            numericRepresentation: this.numericRepresentation,
             selectedDisplayYear: this.getDisplayName(true),
             selectedDisplayMonth: sMonth,
             selectedDisplayDay: sDay,
@@ -201,20 +190,11 @@ export default class Year extends ConfigurationItemBase {
                 reminders: remNotes.length,
                 normal: sNotes.length
             },
-            yearZero: this.yearZero,
-            numericRepresentation: this.numericRepresentation,
-            weekdays: this.weekdays.map(w => w.toTemplate()),
             showWeekdayHeaders: this.showWeekdayHeadings,
-            firstWeekday: this.firstWeekday,
             visibleMonth: visibleMonth?.toTemplate(this),
-            showClock: this.generalSettings.showClock,
-            clockClass: 'stopped',
-            showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
-            showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
-            currentTime: this.time.getCurrentTime(),
-            currentSeasonName: currentSeason.name,
-            currentSeasonColor: currentSeason.color,
+            weekdays: this.weekdays.map(w => w.toTemplate()),
             weeks: weeks,
+            yearZero: this.yearZero,
             yearNames: this.yearNames,
             yearNamesStart: this.yearNamesStart,
             yearNamingRule: this.yearNamingRule
@@ -226,7 +206,7 @@ export default class Year extends ConfigurationItemBase {
      * @param {YearConfig} config The configuration object for this class
      */
     loadFromSettings(config: YearConfig) {
-        if(config){
+        if(config && Object.keys(config).length){
             Logger.debug('Setting the year from data.');
             this.numericRepresentation = config.numericRepresentation;
             this.prefix = config.prefix;
@@ -318,33 +298,12 @@ export default class Year extends ConfigurationItemBase {
         y.showWeekdayHeadings = this.showWeekdayHeadings;
         y.firstWeekday = this.firstWeekday;
         y.time = this.time.clone();
-        y.generalSettings.gameWorldTimeIntegration = this.generalSettings.gameWorldTimeIntegration;
-        y.generalSettings.showClock = this.generalSettings.showClock;
-        y.generalSettings.pf2eSync = this.generalSettings.pf2eSync;
-        y.generalSettings.permissions.viewCalendar = Year.clonePermissions(this.generalSettings.permissions.viewCalendar);
-        y.generalSettings.permissions.addNotes = Year.clonePermissions(this.generalSettings.permissions.addNotes);
-        y.generalSettings.permissions.changeDateTime = Year.clonePermissions(this.generalSettings.permissions.changeDateTime);
-        y.generalSettings.permissions.reorderNotes = Year.clonePermissions(this.generalSettings.permissions.reorderNotes);
         y.seasons = this.seasons.map(s => s.clone());
         y.moons = this.moons.map(m => m.clone());
         y.yearNames = this.yearNames.map(n => n);
         y.yearNamesStart = this.yearNamesStart;
         y.yearNamingRule = this.yearNamingRule;
         return y;
-    }
-
-    /**
-     * Makes a copy of a Permission Matrix
-     * @param {PermissionMatrix} p The permission matric to copy
-     * @private
-     */
-    private static clonePermissions(p: PermissionMatrix): PermissionMatrix{
-        return {
-            player: p.player,
-            trustedPlayer: p.trustedPlayer,
-            assistantGameMaster: p.assistantGameMaster,
-            users: p.users
-        };
     }
 
     /**
@@ -756,24 +715,6 @@ export default class Year extends ConfigurationItemBase {
     }
 
     /**
-     * Sets the current game world time to match what our current time is
-     */
-    async syncTime(force: boolean = false){
-        // Only if the time tracking rules are set to self or mixed
-        if(this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
-            Logger.debug(`Year.syncTime()`);
-            const totalSeconds = this.toSeconds();
-            // If the calculated seconds are different from what is set in the game world time, update the game world time to match sc's time
-            if(totalSeconds !== (<Game>game).time.worldTime || force){
-                //Let the local functions know that we all ready updated this time
-                this.timeChangeTriggered = true;
-                //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
-                await this.time.setWorldTime(totalSeconds);
-            }
-        }
-    }
-
-    /**
      * Convert a number of seconds to year, month, day, hour, minute, seconds
      * @param {number} seconds The seconds to convert
      */
@@ -930,61 +871,6 @@ export default class Year extends ConfigurationItemBase {
         this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.seconds);
     }
 
-    /**
-     * Sets the simple calendars year, month, day and time from a passed in number of seconds
-     * @param {number} newTime The new time represented by seconds
-     * @param {number} changeAmount The amount that the time has changed by
-     */
-    setFromTime(newTime: number, changeAmount: number){
-        Logger.debug('Year.setFromTime()');
-
-        // If this is a Pathfinder 2E game, add the world creation seconds
-        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
-            newTime += PF2E.getWorldCreateSeconds();
-        }
-        if(changeAmount !== 0){
-            // If the tracking rules are for self or mixed and the clock is running then we make the change.
-            if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.time.timeKeeper.getStatus() === TimeKeeperStatus.Started){
-                Logger.debug(`Tracking Rule: Self/Mixed\nClock Is Running, no need to update the date.`)
-                const parsedDate = this.secondsToDate(newTime);
-                this.updateTime(parsedDate);
-                this.time.timeKeeper.setClockTime(this.time.toString());
-                if((this.time.updateFrequency * this.time.gameTimeRatio) !== changeAmount){
-                    SimpleCalendar.instance.updateApp();
-                }
-            }
-            // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
-            else if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.timeChangeTriggered || this.combatChangeTriggered)){
-                Logger.debug(`Tracking Rule: Self.\nTriggered Change: Simple Calendar/Combat Turn. Applying Change!`);
-                //If we didn't request the change (from a combat change) we need to update the internal time to match the new world time
-                if(!this.timeChangeTriggered){
-                    const parsedDate = this.secondsToDate(newTime);
-                    this.updateTime(parsedDate);
-                    // If the current player is the GM then we need to save this new value to the database
-                    // Since the current date is updated this will trigger an update on all players as well
-                    if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
-                        GameSettings.SaveCurrentDate(this).catch(Logger.error);
-                    }
-                }
-            }
-            // If we didn't (locally) request this change then parse the new time into years, months, days and seconds and set those values
-            // This covers other modules/built in features updating the world time and Simple Calendar updating to reflect those changes
-            else if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.ThirdParty || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && !this.timeChangeTriggered){
-                Logger.debug('Tracking Rule: ThirdParty.\nTriggered Change: External Change. Applying Change!');
-                const parsedDate = this.secondsToDate(newTime);
-                this.updateTime(parsedDate);
-                //We need to save the change so that when the game is reloaded simple calendar will display the correct time
-                if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
-                    GameSettings.SaveCurrentDate(this).catch(Logger.error);
-                }
-            } else {
-                Logger.debug(`Not Applying Change!`);
-            }
-        }
-        Logger.debug('Resetting time change triggers.');
-        this.timeChangeTriggered = false;
-        this.combatChangeTriggered = false;
-    }
 
     /**
      * Gets the current season based on the current date

@@ -2,7 +2,7 @@ import Year from "./year";
 import {Logger} from "./logging";
 import {
     CurrentDateConfig,
-    GeneralSettings,
+    GeneralSettingsConfig,
     LeapYearConfig,
     MonthConfig,
     MoonConfiguration,
@@ -203,8 +203,8 @@ export class GameSettings {
     /**
      * Loads the general settings from the game world settings
      */
-    static LoadGeneralSettings(): GeneralSettings {
-        return <GeneralSettings>(<Game>game).settings.get(ModuleName, SettingNames.GeneralConfiguration);
+    static LoadGeneralSettings(): GeneralSettingsConfig {
+        return <GeneralSettingsConfig>(<Game>game).settings.get(ModuleName, SettingNames.GeneralConfiguration);
     }
 
     /**
@@ -342,9 +342,9 @@ export class GameSettings {
 
     /**
      * Saves the general settings to the world settings
-     * @param {GeneralSettings} settings The settings to save
+     * @param {GeneralSettingsConfig} settings The settings to save
      */
-    static async SaveGeneralSettings(settings: GeneralSettings): Promise<boolean> {
+    static async SaveGeneralSettings(settings: GeneralSettingsConfig): Promise<boolean> {
         if(GameSettings.IsGm()){
             Logger.debug('Saving General Settings.');
             const currentSettings = GameSettings.LoadGeneralSettings();

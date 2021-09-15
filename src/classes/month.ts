@@ -162,7 +162,7 @@ export default class Month extends ConfigurationItemBase {
      * @param {MonthConfig} config The configuration object for this class
      */
     loadFromSettings(config: MonthConfig) {
-        if(config){
+        if(config && Object.keys(config).length){
             this.name = config.name;
             this.numericRepresentation = config.numericRepresentation;
             this.numericRepresentationOffset = config.numericRepresentationOffset;
