@@ -115,28 +115,69 @@ export default class Calendar{
      */
     public settingUpdate(type: string = 'all'){
         if(type === 'all' || type === 'year'){
-            this.loadYearConfiguration();
+            this.year.loadFromSettings(GameSettings.LoadYearData());
         }
         if(type === 'all' || type === 'month'){
-            this.loadMonthConfiguration();
+            Logger.debug('Loading month configuration from settings.');
+            const monthData = GameSettings.LoadMonthData();
+            if(monthData.length){
+                Logger.debug('Setting the months from data.');
+                this.year.months = [];
+                for(let i = 0; i < monthData.length; i++){
+                    const newMonth = new Month();
+                    newMonth.loadFromSettings(monthData[i]);
+                    this.year.months.push(newMonth);
+                }
+            }
         }
         if(type === 'all' || type === 'weekday'){
-            this.loadWeekdayConfiguration();
+            Logger.debug('Loading weekday configuration from settings.');
+            const weekdayData = GameSettings.LoadWeekdayData();
+            if(weekdayData.length){
+                Logger.debug('Setting the weekdays from data.');
+                this.year.weekdays = [];
+                for(let i = 0; i < weekdayData.length; i++){
+                    const weekday = new Weekday();
+                    weekday.loadFromSettings(weekdayData[i]);
+                    this.year.weekdays.push(weekday);
+                }
+            }
         }
         if(type === 'all' || type === 'notes'){
             this.loadNotes();
         }
-        if(type === 'leapyear'){
-            this.year.leapYearRule.loadFromSettings();
+        if(type === 'all' || type === 'leapyear'){
+            Logger.debug('Loading Leap Year Settings');
+            this.year.leapYearRule.loadFromSettings(GameSettings.LoadLeapYearRules());
         }
         if(type === 'all' || type === 'time'){
             this.loadTimeConfiguration();
         }
         if(type === 'all' || type === 'season'){
-            this.loadSeasonConfiguration();
+            Logger.debug('Loading season configuration from settings.');
+            const seasonData = GameSettings.LoadSeasonData();
+            this.year.seasons = [];
+            if(seasonData.length){
+                Logger.debug('Setting the seasons from data.');
+                for(let i = 0; i < seasonData.length; i++){
+                    const newSeason = new Season();
+                    newSeason.loadFromSettings(seasonData[i]);
+                    this.year.seasons.push(newSeason);
+                }
+            }
         }
         if(type === 'all' || type === 'moon'){
-            this.loadMoonConfiguration();
+            Logger.debug('Loading moon configuration from settings.');
+            const moonData = GameSettings.LoadMoonData();
+            this.year.moons = [];
+            if(moonData.length){
+                Logger.debug('Setting the moons from data.');
+                for(let i = 0; i < moonData.length; i++){
+                    const newMoon = new Moon();
+                    newMoon.loadFromSettings(moonData[i]);
+                    this.year.moons.push(newMoon);
+                }
+            }
         }
         if(type === 'all' || type === 'general'){
             this.loadGeneralSettings();
@@ -169,140 +210,6 @@ export default class Calendar{
                 this.generalSettings.permissions.addNotes.player = <boolean>gSettings['playersAddNotes'];
                 this.generalSettings.permissions.addNotes.trustedPlayer = <boolean>gSettings['playersAddNotes'];
                 this.generalSettings.permissions.addNotes.assistantGameMaster = <boolean>gSettings['playersAddNotes'];
-            }
-        }
-    }
-
-    /**
-     * Loads the year configuration data from the settings and applies them to the current year
-     */
-    private loadYearConfiguration(){
-        Logger.debug('Loading year configuration from settings.');
-
-        const yearData = GameSettings.LoadYearData();
-        if(yearData && Object.keys(yearData).length){
-            Logger.debug('Setting the year from data.');
-            this.year.numericRepresentation = yearData.numericRepresentation;
-            this.year.prefix = yearData.prefix;
-            this.year.postfix = yearData.postfix;
-
-            if(yearData.hasOwnProperty('showWeekdayHeadings')){
-                this.year.showWeekdayHeadings = yearData.showWeekdayHeadings;
-            }
-            if(yearData.hasOwnProperty('firstWeekday')){
-                this.year.firstWeekday = yearData.firstWeekday;
-            }
-            // Check to see if a year 0 has been set in the settings and use that
-            if(yearData.hasOwnProperty('yearZero')){
-                this.year.yearZero = yearData.yearZero;
-            }
-
-            if(yearData.hasOwnProperty('yearNames')){
-                this.year.yearNames = yearData.yearNames;
-            }
-            if(yearData.hasOwnProperty('yearNamingRule')){
-                this.year.yearNamingRule = yearData.yearNamingRule;
-            }
-            if(yearData.hasOwnProperty('yearNamesStart')){
-                this.year.yearNamesStart = yearData.yearNamesStart;
-            }
-        }
-    }
-
-    /**
-     * Loads the month configuration data from the settings and applies them to the current year
-     */
-    private loadMonthConfiguration(){
-        Logger.debug('Loading month configuration from settings.');
-        const monthData = GameSettings.LoadMonthData();
-        if(monthData.length){
-            this.year.months = [];
-            Logger.debug('Setting the months from data.');
-            for(let i = 0; i < monthData.length; i++){
-                if(Object.keys(monthData[i]).length){
-                    let numDays = parseInt(monthData[i].numberOfDays.toString());
-                    let numLeapDays = monthData[i].numberOfLeapYearDays === undefined? 0 : parseInt(monthData[i].numberOfLeapYearDays.toString());
-                    if(isNaN(numDays)){
-                        numDays = 1;
-                    }
-                    if(isNaN(numLeapDays)){
-                        numLeapDays = 1;
-                    }
-                    const newMonth = new Month(monthData[i].name, monthData[i].numericRepresentation, monthData[i].numericRepresentationOffset, numDays, numLeapDays);
-                    newMonth.intercalary = monthData[i].intercalary;
-                    newMonth.intercalaryInclude = monthData[i].intercalaryInclude;
-                    if(monthData[i].hasOwnProperty('startingWeekday')){
-                        newMonth.startingWeekday = monthData[i].startingWeekday;
-                    }
-                    this.year.months.push(newMonth);
-                }
-            }
-        }
-    }
-
-    /**
-     * Loads the weekday configuration data from the settings and applies them to the current year
-     */
-    private loadWeekdayConfiguration(){
-        Logger.debug('Loading weekday configuration from settings.');
-        const weekdayData = GameSettings.LoadWeekdayData();
-        if(weekdayData.length){
-            Logger.debug('Setting the weekdays from data.');
-            this.year.weekdays = [];
-            for(let i = 0; i < weekdayData.length; i++){
-                this.year.weekdays.push(new Weekday(weekdayData[i].numericRepresentation, weekdayData[i].name));
-            }
-        }
-    }
-
-    /**
-     * Loads the season configuration data from the settings and applies them to the current year
-     * @private
-     */
-    private loadSeasonConfiguration(){
-        Logger.debug('Loading season configuration from settings.');
-        const seasonData = GameSettings.LoadSeasonData();
-        this.year.seasons = [];
-        if(seasonData.length){
-            Logger.debug('Setting the seasons from data.');
-            for(let i = 0; i < seasonData.length; i++){
-                const newSeason = new Season(seasonData[i].name, seasonData[i].startingMonth, seasonData[i].startingDay);
-                const sCustColor = seasonData[i].customColor;
-                newSeason.color = seasonData[i].color === 'custom' && sCustColor? sCustColor : seasonData[i].color;
-                if(seasonData[i].hasOwnProperty('sunriseTime')){
-                    newSeason.sunriseTime = seasonData[i].sunriseTime;
-                }
-                if(seasonData[i].hasOwnProperty('sunsetTime')){
-                    newSeason.sunsetTime = seasonData[i].sunsetTime;
-                }
-                this.year.seasons.push(newSeason);
-            }
-        }
-    }
-
-    /**
-     * Loads the moon configuration data from the settings and applies them to the current year
-     * @private
-     */
-    private loadMoonConfiguration(){
-        Logger.debug('Loading moon configuration from settings.');
-        const moonData = GameSettings.LoadMoonData();
-        this.year.moons = [];
-        if(moonData.length){
-            Logger.debug('Setting the moons from data.');
-            for(let i = 0; i < moonData.length; i++){
-                const newMoon = new Moon(moonData[i].name, moonData[i].cycleLength);
-                newMoon.phases = moonData[i].phases;
-                newMoon.firstNewMoon = {
-                    yearReset: moonData[i].firstNewMoon.yearReset,
-                    yearX: moonData[i].firstNewMoon.yearX,
-                    year: moonData[i].firstNewMoon.year,
-                    month: moonData[i].firstNewMoon.month,
-                    day: moonData[i].firstNewMoon.day
-                };
-                newMoon.color = moonData[i].color;
-                newMoon.cycleDayAdjust = moonData[i].cycleDayAdjust;
-                this.year.moons.push(newMoon);
             }
         }
     }

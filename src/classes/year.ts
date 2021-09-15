@@ -4,7 +4,7 @@ import {
     DateTimeParts,
     DayTemplate,
     GeneralSettings,
-    PermissionMatrix,
+    PermissionMatrix, YearConfig,
     YearTemplate
 } from "../interfaces";
 import {Logger} from "./logging";
@@ -22,16 +22,12 @@ import Utilities from "./utilities";
 import Day from "./day";
 import DateSelector from "./date-selector";
 import API from "./api";
+import ConfigurationItemBase from "./configuration-item-base";
 
 /**
  * Class for representing a year
  */
-export default class Year {
-    /**
-     * The numeric representation of this year
-     * @type {string}
-     */
-    numericRepresentation: number;
+export default class Year extends ConfigurationItemBase {
     /**
      * Any prefix to use for this year to display before its name
      * @type {string}
@@ -133,7 +129,7 @@ export default class Year {
      * @param {number} numericRepresentation The numeric representation of this year
      */
     constructor(numericRepresentation: number) {
-        this.numericRepresentation = numericRepresentation;
+        super('', numericRepresentation);
         this.selectedYear = numericRepresentation;
         this.visibleYear = numericRepresentation;
         this.leapYearRule = new LeapYear();
@@ -193,6 +189,7 @@ export default class Year {
             weeks = this.daysIntoWeeks(visibleMonth, this.visibleYear, this.weekdays.length);
         }
         return {
+            ...super.toTemplate(),
             gameSystem: SimpleCalendar.instance.activeCalendar.gameSystem,
             display: this.getDisplayName(),
             selectedDisplayYear: this.getDisplayName(true),
@@ -209,7 +206,7 @@ export default class Year {
             weekdays: this.weekdays.map(w => w.toTemplate()),
             showWeekdayHeaders: this.showWeekdayHeadings,
             firstWeekday: this.firstWeekday,
-            visibleMonth: visibleMonth?.toTemplate(this.leapYearRule.isLeapYear(this.visibleYear)),
+            visibleMonth: visibleMonth?.toTemplate(this),
             showClock: this.generalSettings.showClock,
             clockClass: 'stopped',
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
@@ -221,6 +218,40 @@ export default class Year {
             yearNames: this.yearNames,
             yearNamesStart: this.yearNamesStart,
             yearNamingRule: this.yearNamingRule
+        }
+    }
+
+    /**
+     * Loads the year data from the config object.
+     * @param {YearConfig} config The configuration object for this class
+     */
+    loadFromSettings(config: YearConfig) {
+        if(config){
+            Logger.debug('Setting the year from data.');
+            this.numericRepresentation = config.numericRepresentation;
+            this.prefix = config.prefix;
+            this.postfix = config.postfix;
+
+            if(config.hasOwnProperty('showWeekdayHeadings')){
+                this.showWeekdayHeadings = config.showWeekdayHeadings;
+            }
+            if(config.hasOwnProperty('firstWeekday')){
+                this.firstWeekday = config.firstWeekday;
+            }
+            // Check to see if a year 0 has been set in the settings and use that
+            if(config.hasOwnProperty('yearZero')){
+                this.yearZero = config.yearZero;
+            }
+
+            if(config.hasOwnProperty('yearNames')){
+                this.yearNames = config.yearNames;
+            }
+            if(config.hasOwnProperty('yearNamingRule')){
+                this.yearNamingRule = config.yearNamingRule;
+            }
+            if(config.hasOwnProperty('yearNamesStart')){
+                this.yearNamesStart = config.yearNamesStart;
+            }
         }
     }
 
@@ -283,8 +314,7 @@ export default class Year {
         y.visibleYear = this.visibleYear;
         y.months = this.months.map(m => m.clone());
         y.weekdays = this.weekdays.map(w => w.clone());
-        y.leapYearRule.rule = this.leapYearRule.rule;
-        y.leapYearRule.customMod = this.leapYearRule.customMod;
+        y.leapYearRule = this.leapYearRule.clone();
         y.showWeekdayHeadings = this.showWeekdayHeadings;
         y.firstWeekday = this.firstWeekday;
         y.time = this.time.clone();

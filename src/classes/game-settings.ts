@@ -413,6 +413,7 @@ export class GameSettings {
                 currentYearConfig.showWeekdayHeadings = true;
             }
             const yc: YearConfig = {
+                id: year.id,
                 numericRepresentation: year.numericRepresentation,
                 prefix: year.prefix,
                 postfix: year.postfix,
@@ -441,6 +442,7 @@ export class GameSettings {
             Logger.debug(`Saving month configuration.`);
             const currentMonthConfig = JSON.stringify(GameSettings.LoadMonthData());
             const newConfig: MonthConfig[] = months.map(m => { return {
+                id: m.id,
                 name: m.name,
                 numericRepresentation: m.numericRepresentation,
                 numericRepresentationOffset: m.numericRepresentationOffset,
@@ -467,7 +469,7 @@ export class GameSettings {
         if(GameSettings.IsGm()) {
             Logger.debug(`Saving weekday configuration.`);
             const currentWeekdayConfig = JSON.stringify(GameSettings.LoadWeekdayData());
-            const newConfig: WeekdayConfig[] = weekdays.map(w => {return {name: w.name, numericRepresentation: w.numericRepresentation}; });
+            const newConfig: WeekdayConfig[] = weekdays.map(w => {return {id: w.id, name: w.name, numericRepresentation: w.numericRepresentation}; });
             if(currentWeekdayConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.WeekdayConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -486,7 +488,7 @@ export class GameSettings {
         if(GameSettings.IsGm()){
             Logger.debug('Saving season configuration.');
             const currentConfig = JSON.stringify(GameSettings.LoadSeasonData());
-            const newConfig: SeasonConfiguration[] = seasons.map(s => {return {name: s.name, startingMonth: s.startingMonth, startingDay: s.startingDay, color: s.color, sunriseTime: s.sunriseTime, sunsetTime: s.sunsetTime}});
+            const newConfig: SeasonConfiguration[] = seasons.map(s => {return {id: s.id, name: s.name, startingMonth: s.startingMonth, startingDay: s.startingDay, color: s.color, sunriseTime: s.sunriseTime, sunsetTime: s.sunsetTime}});
             if(currentConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.SeasonConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -505,6 +507,7 @@ export class GameSettings {
             Logger.debug('Saving moon configuration.');
             const currentConfig = JSON.stringify(GameSettings.LoadMoonData());
             const newConfig: MoonConfiguration[] = moons.map(m => {return {
+                id: m.id,
                 name: m.name,
                 cycleLength: m.cycleLength,
                 firstNewMoon: m.firstNewMoon,
@@ -530,6 +533,7 @@ export class GameSettings {
             Logger.debug(`Saving leap year configuration.`);
             const current = GameSettings.LoadLeapYearRules();
             const newlyc: LeapYearConfig = {
+                id: leapYear.id,
                 rule: leapYear.rule,
                 customMod: leapYear.customMod
             };

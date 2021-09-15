@@ -1,18 +1,14 @@
-import {DayTemplate, FirstNewMoonDate, MoonPhase, MoonTemplate} from "../interfaces";
+import {DayTemplate, FirstNewMoonDate, MoonConfiguration, MoonPhase, MoonTemplate} from "../interfaces";
 import Year from "./year";
 import {MoonIcons, MoonYearResetOptions} from "../constants";
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
+import ConfigurationItemBase from "./configuration-item-base";
 
 /**
  * Class for representing a moon
  */
-export default class Moon{
-    /**
-     * The name of the moon
-     * @type {string}
-     */
-    name: string;
+export default class Moon extends ConfigurationItemBase{
     /**
      * How long in calendar days the moon takes to do 1 revolution
      * @type {number}
@@ -68,8 +64,8 @@ export default class Moon{
      * @param {string} name The name of the moon
      * @param {number} cycleLength The length of the moons cycle
      */
-    constructor(name: string, cycleLength: number) {
-        this.name = name;
+    constructor(name: string = '', cycleLength: number = 0) {
+        super(name);
         this.cycleLength = cycleLength;
 
         this.phases.push({
@@ -86,6 +82,7 @@ export default class Moon{
      */
     clone(): Moon {
         const c = new Moon(this.name, this.cycleLength);
+        c.id = this.id;
         c.phases = this.phases.map(p => { return { name: p.name, length: p.length, icon: p.icon, singleDay: p.singleDay };});
         c.firstNewMoon.yearReset = this.firstNewMoon.yearReset;
         c.firstNewMoon.yearX = this.firstNewMoon.yearX;
@@ -103,6 +100,7 @@ export default class Moon{
      */
     toTemplate(year: Year): MoonTemplate {
         const data: MoonTemplate = {
+            ...super.toTemplate(),
             name: this.name,
             cycleLength: this.cycleLength,
             firstNewMoon: this.firstNewMoon,
@@ -119,6 +117,27 @@ export default class Moon{
         }
 
         return data;
+    }
+
+    /**
+     * Loads the moon data from the config object.
+     * @param {MoonConfiguration} config The configuration object for this class
+     */
+    loadFromSettings(config: MoonConfiguration) {
+        if(config){
+            this.name = config.name;
+            this.cycleLength = config.cycleLength;
+            this.phases = config.phases;
+            this.firstNewMoon = {
+                yearReset: config.firstNewMoon.yearReset,
+                yearX: config.firstNewMoon.yearX,
+                year: config.firstNewMoon.year,
+                month: config.firstNewMoon.month,
+                day: config.firstNewMoon.day
+            };
+            this.color = config.color;
+            this.cycleDayAdjust = config.cycleDayAdjust;
+        }
     }
 
     /**
