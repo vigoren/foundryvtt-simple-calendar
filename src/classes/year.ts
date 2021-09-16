@@ -1013,7 +1013,11 @@ export default class Year {
         if(day > 0 && monthIndex >= 0){
             let currentSeason: Season | null = null;
 
-            const sortedSeasons = this.seasons.sort((a, b) => { return a.startingMonth - b.startingMonth || a.startingDay - b.startingDay; });
+            const sortedSeasons = this.seasons.sort((a, b) => {
+                const aIndex = this.months.findIndex(m => m.numericRepresentation === a.startingMonth);
+                const bIndex = this.months.findIndex(m => m.numericRepresentation === b.startingMonth);
+                return aIndex - bIndex || a.startingDay - b.startingDay;
+            });
 
             for(let i = 0; i < sortedSeasons.length; i++){
                 const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === sortedSeasons[i].startingMonth);
@@ -1097,7 +1101,11 @@ export default class Year {
         const monthIndex = this.months.findIndex(m => m.numericRepresentation === month.numericRepresentation);
         const dayIndex = month.days.findIndex(d => d.numericRepresentation === day.numericRepresentation);
 
-        const sortedSeasons = this.seasons.sort((a, b) => { return a.startingMonth - b.startingMonth || a.startingDay - b.startingDay; });
+        const sortedSeasons = this.seasons.sort((a, b) => {
+            const aIndex = this.months.findIndex(m => m.numericRepresentation === a.startingMonth);
+            const bIndex = this.months.findIndex(m => m.numericRepresentation === b.startingMonth);
+            return aIndex - bIndex || a.startingDay - b.startingDay;
+        });
         let seasonIndex = sortedSeasons.length - 1;
         for(let i = 0; i < sortedSeasons.length; i++){
             const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === sortedSeasons[i].startingMonth);
