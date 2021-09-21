@@ -36,7 +36,7 @@
   "FSC.SetCurrentDateDialog.Content": "Vous avez choisi de changer la date en un jour qui n'est actuellement pas visible !<br/>Voulez-vous vraiment changer la date du jour en <strong>{DATE}</strong> ?",
   "FSC.Apply": "Appliquer",
   "FSC.AdvancedOptions": "Options Avancées",
-  "FSC.Today": "Ajourd'hui",
+  "FSC.Today": "Aujourd'hui",
   "FSC.Configure": "Configurer",
   "FSC.Import": "Importer",
   "FSC.Export": "Exporter",

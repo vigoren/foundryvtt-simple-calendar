@@ -1,7 +1,7 @@
 import Year from "./year";
 import {CalendarConfiguration, CalendarTemplate, NoteCategory, PermissionMatrix} from "../interfaces";
 import {GameSystems, GameWorldTimeIntegrations, PredefinedCalendars, TimeKeeperStatus} from "../constants";
-import {Note} from "./note";
+import Note from "./note";
 import Month from "./month";
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
@@ -105,7 +105,8 @@ export default class Calendar extends ConfigurationItemBase{
         c.gameSystem = this.gameSystem;
         c.generalSettings = this.generalSettings.clone();
         c.year = this.year.clone();
-
+        c.notes = this.notes.map(n => n.clone());
+        c.noteCategories = this.noteCategories.map(nc => {return {name: nc.name, textColor: nc.textColor, color: nc.color}});
         return c;
     }
 
@@ -200,7 +201,7 @@ export default class Calendar extends ConfigurationItemBase{
         Logger.debug('Year.setFromTime()');
 
         // If this is a Pathfinder 2E game, add the world creation seconds
-        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
+        if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
             newTime += PF2E.getWorldCreateSeconds();
         }
         if(changeAmount !== 0){
@@ -247,8 +248,6 @@ export default class Calendar extends ConfigurationItemBase{
         this.year.combatChangeTriggered = false;
     }
 
-
-
     /**
      * Called when a setting is updated, refreshes the configurations for all types
      * @param {string} [type='all']
@@ -284,14 +283,21 @@ export default class Calendar extends ConfigurationItemBase{
             }
         }
         if(type === 'all' || type === 'notes'){
-            this.loadNotes();
+            Logger.debug('Loading notes from settings.');
+            const notes = GameSettings.LoadNotes();
+            this.notes = notes.map(n => {
+                const note = new Note();
+                note.loadFromSettings(n);
+                return note;
+            });
         }
         if(type === 'all' || type === 'leapyear'){
             Logger.debug('Loading Leap Year Settings');
             this.year.leapYearRule.loadFromSettings(GameSettings.LoadLeapYearRules());
         }
         if(type === 'all' || type === 'time'){
-            this.loadTimeConfiguration();
+            Logger.debug('Loading time configuration from settings.');
+            this.year.time.loadFromSettings(GameSettings.LoadTimeData());
         }
         if(type === 'all' || type === 'season'){
             Logger.debug('Loading season configuration from settings.');
@@ -320,47 +326,19 @@ export default class Calendar extends ConfigurationItemBase{
             }
         }
         if(type === 'all' || type === 'general'){
+            Logger.debug('Loading General Settings');
             this.generalSettings.loadFromSettings(GameSettings.LoadGeneralSettings());
         }
         if(type === 'all' || type === 'note-categories'){
-            this.loadNoteCategories();
+            this.noteCategories= GameSettings.LoadNoteCategories();
         }
         this.loadCurrentDate();
     }
 
     /**
-     * Loads the time configuration from the settings and applies them to the current year
-     * @private
-     */
-    private loadTimeConfiguration(){
-        Logger.debug('Loading time configuration from settings.');
-        const timeData = GameSettings.LoadTimeData();
-        if(timeData && Object.keys(timeData).length){
-            this.year.time.hoursInDay = timeData.hoursInDay;
-            this.year.time.minutesInHour = timeData.minutesInHour;
-            this.year.time.secondsInMinute = timeData.secondsInMinute;
-            this.year.time.gameTimeRatio = timeData.gameTimeRatio;
-            this.year.time.secondsPerDay = this.year.time.hoursInDay * this.year.time.minutesInHour * this.year.time.secondsInMinute;
-
-            if(timeData.hasOwnProperty('unifyGameAndClockPause')){
-                this.year.time.unifyGameAndClockPause = timeData.unifyGameAndClockPause;
-            }
-
-            if(timeData.hasOwnProperty('updateFrequency')){
-                this.year.time.updateFrequency = timeData.updateFrequency;
-                this.year.time.timeKeeper.updateFrequency = timeData.updateFrequency;
-            }
-
-            if(timeData.hasOwnProperty('secondsInCombatRound')){
-                this.year.time.secondsInCombatRound = timeData.secondsInCombatRound;
-            }
-        }
-    }
-
-    /**
      * Loads the current date data from the settings and applies them to the current year
      */
-    private loadCurrentDate(){
+    public loadCurrentDate(){
         Logger.debug('Loading current date from settings.');
         const currentDate = GameSettings.LoadCurrentDate();
         if(currentDate && Object.keys(currentDate).length){
@@ -400,26 +378,5 @@ export default class Calendar extends ConfigurationItemBase{
         } else {
             Logger.error('Error setting the current date.');
         }
-    }
-
-    /**
-     * Loads the notes from the game setting
-     * @private
-     */
-    public loadNotes(update = false){
-        Logger.debug('Loading notes from settings.');
-        const notes = GameSettings.LoadNotes();
-        this.notes = notes.map(n => {
-            const note = new Note();
-            note.loadFromConfig(n);
-            return note;
-        });
-        if(update){
-            SimpleCalendar.instance.updateApp();
-        }
-    }
-
-    public loadNoteCategories(){
-        this.noteCategories= GameSettings.LoadNoteCategories();
     }
 }

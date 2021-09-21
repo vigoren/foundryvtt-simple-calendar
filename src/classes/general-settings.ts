@@ -31,6 +31,7 @@ export default class GeneralSettings extends ConfigurationItemBase{
      */
     clone(): GeneralSettings {
         const gs = new GeneralSettings();
+        gs.id = this.id;
         gs.gameWorldTimeIntegration = this.gameWorldTimeIntegration;
         gs.showClock = this.showClock;
         gs.pf2eSync = this.pf2eSync;

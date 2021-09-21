@@ -1,4 +1,4 @@
-import {Note} from './note';
+import Note from './note';
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {NoteRepeat} from "../constants";
@@ -122,7 +122,7 @@ export class SimpleCalendarNotes extends FormApplication {
             })
         };
 
-        const daysBetween = DateSelector.DaysBetweenDates({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, allDay: true},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, allDay: true});
+        const daysBetween = Utilities.DaysBetweenDates({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, seconds: 0},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, seconds: 0});
 
         if(daysBetween >= SimpleCalendar.instance.activeCalendar.year.totalNumberOfDays(false, true)){
             data.repeatOptions = {0: 'FSC.Notes.Repeat.Never'};
@@ -293,7 +293,7 @@ export class SimpleCalendarNotes extends FormApplication {
         if(this.viewMode){
             let currentNotes = GameSettings.LoadNotes().map(n => {
                 const note = new Note();
-                note.loadFromConfig(n);
+                note.loadFromSettings(n);
                 return note;
             });
             currentNotes = currentNotes.map(n => n.id === (<Note>this.object).id? (<Note>this.object) : n);
@@ -414,7 +414,7 @@ export class SimpleCalendarNotes extends FormApplication {
     public async deleteConfirm(){
         const currentNotes = GameSettings.LoadNotes().map(n => {
             const note = new Note();
-            note.loadFromConfig(n);
+            note.loadFromSettings(n);
             return note;
         });
         const indexToDelete = currentNotes.map(n => n.id).indexOf((<Note>this.object).id);
@@ -441,7 +441,7 @@ export class SimpleCalendarNotes extends FormApplication {
         if((<Note>this.object).title){
             let currentNotes = GameSettings.LoadNotes().map(n => {
                 const note = new Note();
-                note.loadFromConfig(n);
+                note.loadFromSettings(n);
                 return note;
             });
             if(this.updateNote){

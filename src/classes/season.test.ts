@@ -11,7 +11,6 @@ import "../../__mocks__/crypto";
 import Season from "./season";
 import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
-import Month from "./month";
 
 describe('Season Tests', () => {
 
@@ -20,12 +19,13 @@ describe('Season Tests', () => {
     beforeEach(() => {
         s = new Season('Spring', 1, 1);
 
+        const s2 = new Season();
         // @ts-ignore
         SimpleCalendar.instance = undefined;
     });
 
     test('Properties', () => {
-        expect(Object.keys(s).length).toBe(7); //Make sure no new properties have been added
+        expect(Object.keys(s).length).toBe(8); //Make sure no new properties have been added
         expect(s.id).toBeDefined();
         expect(s.name).toBe('Spring');
         expect(s.startingMonth).toBe(1);
@@ -42,7 +42,7 @@ describe('Season Tests', () => {
     test('To Template', () => {
         const y = new Year(0);
         let c = s.toTemplate(y);
-        expect(Object.keys(c).length).toBe(6); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(8); //Make sure no new properties have been added
         expect(c.name).toBe('Spring');
         expect(c.startingMonth).toBe(1);
         expect(c.startingDay).toBe(1);
@@ -51,12 +51,30 @@ describe('Season Tests', () => {
         expect(c.sunriseSelectorId).toBeDefined();
 
         SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.currentYear = new Year(0);
+        SimpleCalendar.instance.activeCalendar.year = new Year(0);
         c = s.toTemplate(y);
 
         s.sunriseTime = 3660;
         s.sunsetTime = 3660;
         c = s.toTemplate(y);
+    });
+
+    test('Load From Settings', () => {
+        //@ts-ignore
+        s.loadFromSettings({});
+        expect(s.id).toBeDefined();
+
+        //@ts-ignore
+        s.loadFromSettings({name: 'test', color:'custom', customColor:"#123FFF"});
+        expect(s.id).toBeDefined();
+        expect(s.color).toBe("#123FFF");
+
+        //@ts-ignore
+        s.loadFromSettings({id: 'a', name: 'test', sunriseTime: 0, sunsetTime: 0});
+        expect(s.id).toBe('a');
+        expect(s.sunriseTime).toBe(0);
+        expect(s.sunsetTime).toBe(0);
+
     });
 
     test('Start Date Change', () => {
@@ -79,7 +97,7 @@ describe('Season Tests', () => {
         expect(s.sunsetTime).toBe(0);
 
         SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.currentYear = new Year(0);
+        SimpleCalendar.instance.activeCalendar.year = new Year(0);
         s.sunriseSunsetChange({
             startDate: { year: 0, month: 1, day: 1, minute: 30, hour: 2, allDay: false },
             endDate: { year: 0, month: 1, day: 1, minute: 0, hour: 4, allDay: false },

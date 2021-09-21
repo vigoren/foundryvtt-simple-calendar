@@ -8,10 +8,10 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 
-import {Note} from "./note";
+import SimpleCalendar from "./simple-calendar";
+import Note from "./note";
 import {NoteConfig} from "../interfaces";
 import {LeapYearRules, NoteRepeat} from "../constants";
-import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
@@ -43,7 +43,7 @@ describe('Note Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(n).length).toBe(18); //Make sure no new properties have been added
+        expect(Object.keys(n).length).toBe(20); //Make sure no new properties have been added
         expect(n.year).toBe(0);
         expect(n.month).toBe(1);
         expect(n.day).toBe(2);
@@ -75,10 +75,10 @@ describe('Note Tests', () => {
 
     test('To Template', () => {
         SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.noteCategories.push({name: 'cat', color: '#fff', textColor: '#000'})
+        SimpleCalendar.instance.activeCalendar.noteCategories.push({name: 'cat', color: '#fff', textColor: '#000'})
 
         let c = n.toTemplate();
-        expect(Object.keys(c).length).toBe(15); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(17); //Make sure no new properties have been added
         expect(c.title).toBe('');
         expect(c.content).toBe('');
         expect(c.playerVisible).toBe(false);
@@ -125,7 +125,7 @@ describe('Note Tests', () => {
         (<Game>game).user = uOrig;
     });
 
-    test('Load From Config', () => {
+    test('Load From Settings', () => {
         let config: NoteConfig = {
             year: 1,
             month: 2,
@@ -152,7 +152,7 @@ describe('Note Tests', () => {
             categories: [],
             remindUsers: []
         };
-        n.loadFromConfig(config);
+        n.loadFromSettings(config);
         expect(n.year).toBe(1);
         expect(n.month).toBe(2);
         expect(n.day).toBe(3);
@@ -183,7 +183,7 @@ describe('Note Tests', () => {
             id: 'i',
             repeats: 1
         };
-        n.loadFromConfig(config);
+        n.loadFromSettings(config);
         expect(n.year).toBe(2);
         expect(n.month).toBe(3);
         expect(n.day).toBe(4);
@@ -194,6 +194,9 @@ describe('Note Tests', () => {
         expect(n.endDate).toStrictEqual({ year: 2, month: 3, day: 4, hour: 0, minute: 0, seconds: 0});
         expect(n.order).toBe(0);
         expect(n.categories).toStrictEqual([]);
+
+        //@ts-ignore
+        n.loadFromSettings({});
     });
 
     test('Clone', () => {
@@ -203,7 +206,7 @@ describe('Note Tests', () => {
     test('Is Visible', () => {
         SimpleCalendar.instance = new SimpleCalendar()
         const y = new Year(0);
-        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.activeCalendar.year = y;
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));
         y.months.push(new Month('W', 3, 0, 20));
@@ -231,7 +234,7 @@ describe('Note Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         expect(n.isVisible(99,3,10)).toBe(false);
 
-        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.activeCalendar.year = y;
         n.year = 0;
         n.month = 1;
         n.day = 2;
@@ -262,18 +265,18 @@ describe('Note Tests', () => {
         n.repeats = NoteRepeat.Weekly;
         SimpleCalendar.instance = new SimpleCalendar();
         expect(n.isVisible(0,0,0)).toBe(false);
-        expect(n.isVisible(0,1,2)).toBe(false);
+        expect(n.isVisible(0,1,2)).toBe(true);
 
-        SimpleCalendar.instance.currentYear = new Year(0);
-        SimpleCalendar.instance.currentYear.months.push(new Month('J', 1, 0, 31));
-        SimpleCalendar.instance.currentYear.months.push(new Month('F', 2, 0, 28));
-        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(1, 'S'));
-        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(2, 'M'));
-        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(3, 'T'));
-        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(4, 'W'));
-        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(5, 'T'));
-        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(6, 'F'));
-        SimpleCalendar.instance.currentYear.weekdays.push(new Weekday(7, 'S'));
+        SimpleCalendar.instance.activeCalendar.year = new Year(0);
+        SimpleCalendar.instance.activeCalendar.year.months.push(new Month('J', 1, 0, 31));
+        SimpleCalendar.instance.activeCalendar.year.months.push(new Month('F', 2, 0, 28));
+        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(1, 'S'));
+        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(2, 'M'));
+        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(3, 'T'));
+        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(4, 'W'));
+        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(5, 'T'));
+        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(6, 'F'));
+        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(7, 'S'));
         expect(n.isVisible(0,0,0)).toBe(false);
         expect(n.isVisible(0,1,1)).toBe(false);
         expect(n.isVisible(0,1,2)).toBe(true);
@@ -344,9 +347,9 @@ describe('Note Tests', () => {
 
     test('Display', () => {
         SimpleCalendar.instance = new SimpleCalendar();
-        expect(n.display()).toBe('');
+        expect(n.display()).toBe('1 2, 0');
         const y = new Year(0);
-        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.activeCalendar.year = y;
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));
         y.months.push(new Month('W', 3, 0, 18));

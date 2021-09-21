@@ -46,6 +46,7 @@ export default class Day extends ConfigurationItemBase {
      */
     clone(): Day {
         const d = new Day(this.numericRepresentation, this.name);
+        d.id = this.id;
         d.current = this.current;
         d.selected = this.selected;
         return d;

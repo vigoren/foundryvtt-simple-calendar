@@ -18,7 +18,7 @@ import {ModuleName, SettingNames, SimpleCalendarHooks, SocketTypes} from "../con
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {Note} from "./note";
+import Note from "./note";
 import LeapYear from "./leap-year";
 import Time from "./time";
 import Season from "./season";
@@ -146,7 +146,7 @@ export class GameSettings {
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.activeCalendar.loadNotes.bind(SimpleCalendar.instance, true)
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'notes')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.TimeConfiguration, {
             name: "Time",
@@ -378,7 +378,7 @@ export class GameSettings {
                     };
                     if(currentDate.year !== newDate.year || currentDate.month !== newDate.month || currentDate.day !== newDate.day || currentDate.seconds !== newDate.seconds){
                         await (<Game>game).settings.set(ModuleName, SettingNames.CurrentDate, newDate);
-                        if(emitHook){
+                        if(emitHook && SimpleCalendar.instance){
                             Hook.emit(SimpleCalendarHooks.DateTimeChange);
                         }
                         await GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.noteReminders, data: { justTimeChange: currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day }});
@@ -556,6 +556,7 @@ export class GameSettings {
             Logger.debug(`Saving time configuration.`);
             const current = GameSettings.LoadTimeData();
             const newtc: TimeConfig = {
+                id: time.id,
                 hoursInDay: time.hoursInDay,
                 minutesInHour: time.minutesInHour,
                 secondsInMinute: time.secondsInMinute,

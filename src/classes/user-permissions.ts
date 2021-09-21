@@ -47,6 +47,7 @@ export default class UserPermissions extends ConfigurationItemBase{
      */
     clone(): UserPermissions {
         const up = new UserPermissions();
+        up.id = this.id;
         up.viewCalendar = UserPermissions.clonePermissions(this.viewCalendar);
         up.addNotes = UserPermissions.clonePermissions(this.addNotes);
         up.reorderNotes = UserPermissions.clonePermissions(this.reorderNotes);

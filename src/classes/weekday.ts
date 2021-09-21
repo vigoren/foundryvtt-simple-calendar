@@ -49,7 +49,9 @@ export class Weekday extends ConfigurationItemBase{
      */
     loadFromSettings(config: WeekdayConfig) {
         if(config && Object.keys(config).length){
-            this.id = config.id;
+            if(config.hasOwnProperty('id')){
+                this.id = config.id;
+            }
             this.name = config.name;
             this.numericRepresentation = config.numericRepresentation;
         }

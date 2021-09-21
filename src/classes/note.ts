@@ -2,18 +2,13 @@ import {DateTimeParts, DayTemplate, NoteConfig, NoteTemplate} from "../interface
 import {GameSettings} from "./game-settings"
 import {DateRangeMatch, NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
-import DateSelector from "./date-selector";
 import Utilities from "./utilities";
+import ConfigurationItemBase from "./configuration-item-base";
 
 /**
  * All content around a calendar note
  */
-export class Note{
-    /**
-     * The Unique ID of the note
-     * @type {string}
-     */
-    id: string;
+export default class Note extends ConfigurationItemBase{
     /**
      * The year the note is in
      * @type {number}
@@ -107,7 +102,7 @@ export class Note{
      * The note constructor
      */
     constructor() {
-        this.id = Utilities.generateUniqueId();
+        super();
     }
 
     /**
@@ -152,15 +147,15 @@ export class Note{
         }
 
         return {
+            ...super.toTemplate(),
             title: this.title,
             content: this.content,
             playerVisible: this.playerVisible,
             author: this.author,
             authorDisplay: authDisplay,
             monthDisplay: this.monthDisplay,
-            id: this.id,
             allDay: this.allDay,
-            displayDate: DateSelector.GetDisplayDate({year: this.year, month: this.month, day: this.day, hour: this.hour, minute: this.minute, allDay: this.allDay}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, hour: this.endDate.hour? this.endDate.hour : 0, minute: this.endDate.minute? this.endDate.minute : 0, allDay: this.allDay}, true),
+            displayDate: Utilities.GetDisplayDate({year: this.year, month: this.month, day: this.day, hour: this.hour, minute: this.minute, allDay: this.allDay}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, hour: this.endDate.hour? this.endDate.hour : 0, minute: this.endDate.minute? this.endDate.minute : 0, allDay: this.allDay}, true),
             hour: this.hour,
             minute: this.minute,
             endDate: this.endDate,
@@ -171,57 +166,59 @@ export class Note{
     }
 
     /**
-     * Populates this note with the content from a note config
-     * @param {NoteConfig} noteConfig The data loaded from the game settings to populate this note with
+     * Sets the properties for this class to options set in the passed in configuration object
+     * @param {NoteConfig} config The configuration object for this class
      */
-    loadFromConfig(noteConfig: NoteConfig){
-        this.year = noteConfig.year;
-        this.month = noteConfig.month;
-        this.day = noteConfig.day;
-        this.monthDisplay = noteConfig.monthDisplay;
-        this.title = noteConfig.title;
-        this.content = noteConfig.content;
-        this.author = noteConfig.author;
-        this.playerVisible = noteConfig.playerVisible;
-        this.id = noteConfig.id;
-        this.repeats = noteConfig.repeats;
+    loadFromSettings(config: NoteConfig) {
+        if(config && Object.keys(config).length){
+            this.id = config.id;
+            this.year = config.year;
+            this.month = config.month;
+            this.day = config.day;
+            this.monthDisplay = config.monthDisplay;
+            this.title = config.title;
+            this.content = config.content;
+            this.author = config.author;
+            this.playerVisible = config.playerVisible;
+            this.repeats = config.repeats;
 
-        if(noteConfig.hasOwnProperty('allDay')){
-            this.allDay = noteConfig.allDay;
-        }
-        if(noteConfig.hasOwnProperty('hour')){
-            this.hour = noteConfig.hour;
-        }
-        if(noteConfig.hasOwnProperty('minute')){
-            this.minute = noteConfig.minute;
-        }
-        if(noteConfig.hasOwnProperty('endDate')){
-            this.endDate = {
-                year: noteConfig.endDate.year,
-                month: noteConfig.endDate.month,
-                day: noteConfig.endDate.day,
-                hour: noteConfig.endDate.hour,
-                minute: noteConfig.endDate.minute,
-                seconds: 0
-            };
-        } else {
-            this.endDate = {
-                year: this.year,
-                month: this.month,
-                day: this.day,
-                hour: this.hour,
-                minute: this.minute,
-                 seconds: 0
-            };
-        }
-        if(noteConfig.hasOwnProperty('order')){
-            this.order = noteConfig.order;
-        }
-        if(noteConfig.hasOwnProperty('categories')){
-            this.categories = noteConfig.categories;
-        }
-        if(noteConfig.hasOwnProperty('remindUsers')){
-            this.remindUsers = noteConfig.remindUsers;
+            if(config.hasOwnProperty('allDay')){
+                this.allDay = config.allDay;
+            }
+            if(config.hasOwnProperty('hour')){
+                this.hour = config.hour;
+            }
+            if(config.hasOwnProperty('minute')){
+                this.minute = config.minute;
+            }
+            if(config.hasOwnProperty('endDate')){
+                this.endDate = {
+                    year: config.endDate.year,
+                    month: config.endDate.month,
+                    day: config.endDate.day,
+                    hour: config.endDate.hour,
+                    minute: config.endDate.minute,
+                    seconds: 0
+                };
+            } else {
+                this.endDate = {
+                    year: this.year,
+                    month: this.month,
+                    day: this.day,
+                    hour: this.hour,
+                    minute: this.minute,
+                    seconds: 0
+                };
+            }
+            if(config.hasOwnProperty('order')){
+                this.order = config.order;
+            }
+            if(config.hasOwnProperty('categories')){
+                this.categories = config.categories;
+            }
+            if(config.hasOwnProperty('remindUsers')){
+                this.remindUsers = config.remindUsers;
+            }
         }
     }
 
@@ -230,6 +227,7 @@ export class Note{
      */
     clone(): Note {
         const n = new Note();
+        n.id = this.id;
         n.year = this.year;
         n.month = this.month;
         n.day = this.day;
@@ -241,7 +239,6 @@ export class Note{
         n.content = this.content;
         n.author = this.author;
         n.playerVisible = this.playerVisible;
-        n.id = this.id;
         n.repeats = this.repeats;
         n.endDate = {
             year: this.endDate.year,
@@ -311,15 +308,15 @@ export class Note{
                         sMonth = SimpleCalendar.instance.activeCalendar.year.months[sMonthIndex].numericRepresentation;
                         eMonth = SimpleCalendar.instance.activeCalendar.year.months[eMonthIndex].numericRepresentation;
 
-                        const sInBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
-                        const eInBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                        const sInBetween = Utilities.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                        const eInBetween = Utilities.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
                         if(sInBetween !== DateRangeMatch.None || eInBetween !== DateRangeMatch.None){
                             inBetween = DateRangeMatch.Middle;
                         }
                     }
                 }
                 else {
-                    inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    inBetween = Utilities.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
                 }
             } else if(this.repeats === NoteRepeat.Yearly){
                 let sYear = year;
@@ -328,17 +325,17 @@ export class Note{
                     const yDiff = this.endDate.year - this.year;
                     sYear = year - yDiff;
                     eYear = year + yDiff;
-                    const sInBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
-                    const eInBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    const sInBetween = Utilities.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    const eInBetween = Utilities.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
                     if(sInBetween !== DateRangeMatch.None || eInBetween !== DateRangeMatch.None){
                         inBetween = DateRangeMatch.Middle;
                     }
                 }
                 else{
-                    inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    inBetween = Utilities.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
                 }
             } else {
-                inBetween = DateSelector.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: this.year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                inBetween = Utilities.IsDayBetweenDates({year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: this.year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
             }
             dayVisible = inBetween !== DateRangeMatch.None;
         }
@@ -518,7 +515,7 @@ export class Note{
                 endYear = currentVisibleYear;
             }
         }
-        display = DateSelector.GetDisplayDate({year: startYear, month: startMonth, day: startDay, hour: this.hour, minute: this.minute, allDay: this.allDay},{year: endYear, month: endMonth, day: endDay, hour: this.endDate.hour, minute: this.endDate.minute, allDay: this.allDay} );
+        display = Utilities.GetDisplayDate({year: startYear, month: startMonth, day: startDay, hour: this.hour, minute: this.minute, allDay: this.allDay},{year: endYear, month: endMonth, day: endDay, hour: this.endDate.hour, minute: this.endDate.minute, allDay: this.allDay} );
         return display;
     }
 }

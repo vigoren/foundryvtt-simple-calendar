@@ -39,137 +39,6 @@ export default class DateSelector {
     }
 
     /**
-     * If the two dates are the same or not
-     * @param {SCDateSelector.Date} startDate
-     * @param {SCDateSelector.Date} endDate
-     */
-    static DateTheSame(startDate: SCDateSelector.Date, endDate: SCDateSelector.Date){
-        return startDate.year === endDate.year && startDate.month == endDate.month && startDate.day === endDate.day;
-    }
-
-    /**
-     * Checks if a passed in date is between 2 other dates. Will return a DateRangeMatch which indicates where it falls (Exact, Start, End, Between or None)
-     * @param {SCDateSelector.Date} checkDate The date to check
-     * @param {SCDateSelector.Date} startDate The starting date to use
-     * @param {SCDateSelector.Date} endDate The ending date to use
-     * @constructor
-     */
-    static IsDayBetweenDates(checkDate: SCDateSelector.Date, startDate: SCDateSelector.Date, endDate: SCDateSelector.Date){
-        let between = DateRangeMatch.None;
-        let checkMonthIndex = checkDate.month;
-        let checkDayIndex = checkDate.day;
-        let startMonthIndex = startDate.month;
-        let startDayIndex = startDate.day;
-        let endMonthIndex = endDate.month;
-        let endDayIndex = endDate.day;
-
-        let checkSeconds = 0;
-        let startSeconds = 0;
-        let endSeconds = 0;
-
-        const sMonth = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === startDate.month);
-        const cMonth = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === checkDate.month);
-        const eMonth = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === endDate.month);
-        let clone = SimpleCalendar.instance.activeCalendar.year.clone();
-        clone.time.setTime(0, 0, 0);
-
-        if(sMonth > -1){
-            startMonthIndex = sMonth;
-            startDayIndex = SimpleCalendar.instance.activeCalendar.year.months[startMonthIndex].days.findIndex(d => d.numericRepresentation === startDate.day);
-            clone.updateMonth(startMonthIndex, 'current', true, startDayIndex);
-            clone.numericRepresentation = startDate.year;
-            startSeconds = clone.toSeconds();
-        }
-        if(cMonth > -1){
-            checkMonthIndex = cMonth;
-            checkDayIndex = SimpleCalendar.instance.activeCalendar.year.months[checkMonthIndex].days.findIndex(d => d.numericRepresentation === checkDate.day);
-            clone.updateMonth(checkMonthIndex, 'current', true, checkDayIndex);
-            clone.numericRepresentation = checkDate.year;
-            checkSeconds = clone.toSeconds();
-        }
-        if(eMonth > -1){
-            endMonthIndex = eMonth;
-            endDayIndex = SimpleCalendar.instance.activeCalendar.year.months[endMonthIndex].days.findIndex(d => d.numericRepresentation === endDate.day);
-            clone.updateMonth(endMonthIndex, 'current', true, endDayIndex);
-            clone.numericRepresentation = endDate.year;
-            endSeconds = clone.toSeconds();
-        }
-
-        if(cMonth === -1 || sMonth === -1 || eMonth === -1){
-            between = DateRangeMatch.None;
-        }
-        //If the start and end date are the same as the check date
-        else if(checkSeconds === startSeconds && checkSeconds === endSeconds){
-            between = DateRangeMatch.Exact;
-        }
-        else if(checkSeconds === startSeconds){
-            between = DateRangeMatch.Start;
-        } else if(checkSeconds === endSeconds){
-            between = DateRangeMatch.End;
-        } else if( checkSeconds < endSeconds && checkSeconds > startSeconds){
-            between = DateRangeMatch.Middle;
-        }
-        return between;
-    }
-
-    static DaysBetweenDates(startDate: SCDateSelector.Date, endDate: SCDateSelector.Date){
-        const sDays = SimpleCalendar.instance.activeCalendar.year.dateToDays(startDate.year, startDate.month, startDate.day);
-        const eDays = SimpleCalendar.instance.activeCalendar.year.dateToDays(endDate.year, endDate.month, endDate.day);
-        return eDays - sDays;
-    }
-
-
-
-    /**
-     * Gets the formatted display date for the passed in start and end date.
-     * @param {SCDateSelector.Date} startDate The starting datetime
-     * @param {SCDateSelector.Date} endDate The ending datetime
-     * @param {boolean} [dontIncludeSameDate=false] If to include the date if it is the same in the result (useful for just getting the time)
-     * @param {boolean} [showYear=true] If to include the year in the display string
-     * @param {string} [delimiter='-'] The delimiter to use between the 2 dates
-     */
-    static GetDisplayDate(startDate: SCDateSelector.Date, endDate: SCDateSelector.Date, dontIncludeSameDate: boolean = false, showYear: boolean = true, delimiter: string = '-'){
-        let startDateTimeText = '', endDateTimeText = '', startingMonthName = '', endingMonthName = '';
-        const startingMonth = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === startDate.month);
-        const endingMonth = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === endDate.month);
-        if(startingMonth){
-            startingMonthName = startingMonth.name;
-        }
-        if(endingMonth){
-            endingMonthName = endingMonth.name;
-        }
-
-        if(!DateSelector.DateTheSame(startDate, endDate) && endDate.month !== 0 && endDate.day !== 0){
-            startDateTimeText += `${startingMonthName} ${startDate.day}`;
-            endDateTimeText += `${endingMonthName} ${endDate.day}`;
-            if(!dontIncludeSameDate || (dontIncludeSameDate && startDate.year !== endDate.year)){
-                startDateTimeText += `, ${startDate.year}`;
-                endDateTimeText += `, ${endDate.year}`;
-            }
-        } else if(!dontIncludeSameDate){
-            if(showYear){
-                startDateTimeText += `${startingMonthName} ${startDate.day}, ${startDate.year}`;
-            } else {
-                startDateTimeText += `${startingMonthName} ${startDate.day}`;
-            }
-        }
-
-        let startTimeText = `00:00`;
-        let endTimeText = `00:00`;
-        if(!startDate.allDay){
-            startTimeText = ' ' + Utilities.FormatTime(startDate.hour, startDate.minute, false);
-            startDateTimeText += startTimeText;
-        }
-        if(!endDate.allDay){
-            endTimeText = ' ' + Utilities.FormatTime(endDate.hour, endDate.minute, false);
-            if(endDateTimeText !== '' || (endDateTimeText === '' && startTimeText !== endTimeText)){
-                endDateTimeText += endTimeText;
-            }
-        }
-        return `${startDateTimeText}${endDateTimeText? ` ${delimiter} ` + endDateTimeText: ''}`;
-    }
-
-    /**
      * The unique ID of the date selector object
      * @type {string}
      */
@@ -312,7 +181,7 @@ export default class DateSelector {
             };
         } else {
             this.selectedDate.startDate = {
-                year: SimpleCalendar.instance.activeCalendar.year.numericRepresentation,
+                year: 0,
                 month: 1,
                 day: 1,
                 allDay: true,
@@ -402,7 +271,7 @@ export default class DateSelector {
                             hour: 0,
                             minute: 0
                         };
-                        const inBetween = DateSelector.IsDayBetweenDates(checkDate, this.selectedDate.startDate, this.selectedDate.endDate);
+                        const inBetween = Utilities.IsDayBetweenDates(checkDate, this.selectedDate.startDate, this.selectedDate.endDate);
                         switch (inBetween){
                             case DateRangeMatch.Exact:
                                 selected = 'selected';
@@ -483,7 +352,7 @@ export default class DateSelector {
             }
             calendar += `${timeWrapper}</div>`;
         }
-        const displayDate = DateSelector.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate, (this.showTime && !this.showDate), this.showYear, this.timeDelimiter);
+        const displayDate = Utilities.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate, (this.showTime && !this.showDate), this.showYear, this.timeDelimiter);
         if(!justCalendar){
             returnHtml = `${wrapper}<input class="display-input" style="${calendarWidth && this.setInputWidth? "width:"+calendarWidth+"px;" : ''}" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar${this.showTime && !this.showDate? ' just-time' : ''}" style="display:none;${calendarWidth? "width:"+calendarWidth+"px;" : ''}">${calendar}</div></div>`;
         } else {
@@ -903,7 +772,7 @@ export default class DateSelector {
             this.selectedDate.startDate.minute = minute;
 
         } else if(cssClass === 'end-time'){
-            if(DateSelector.DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
+            if(Utilities.DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
                 if(hour <= this.selectedDate.startDate.hour){
                     hour = this.selectedDate.startDate.hour;
 

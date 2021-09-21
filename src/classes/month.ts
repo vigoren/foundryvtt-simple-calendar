@@ -144,6 +144,8 @@ export default class Month extends ConfigurationItemBase {
      */
     clone(): Month {
         const m = new Month(this.name, this.numericRepresentation, this.numericRepresentationOffset);
+        m.id = this.id;
+        m.name = this.name;
         m.current = this.current;
         m.selected = this.selected;
         m.visible = this.visible;
@@ -163,6 +165,9 @@ export default class Month extends ConfigurationItemBase {
      */
     loadFromSettings(config: MonthConfig) {
         if(config && Object.keys(config).length){
+            if(config.hasOwnProperty('id')){
+                this.id = config.id;
+            }
             this.name = config.name;
             this.numericRepresentation = config.numericRepresentation;
             this.numericRepresentationOffset = config.numericRepresentationOffset;
@@ -182,6 +187,7 @@ export default class Month extends ConfigurationItemBase {
             if(config.hasOwnProperty('startingWeekday')){
                 this.startingWeekday = config.startingWeekday;
             }
+            this.days = [];
             this.populateDays(this.numberOfLeapYearDays > this.numberOfDays? this.numberOfLeapYearDays : this.numberOfDays);
         }
     }

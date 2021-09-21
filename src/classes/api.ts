@@ -251,12 +251,11 @@ export default class API{
      */
     public static clockStatus(){
         const status = SimpleCalendar.instance.activeCalendar.year.time.timeKeeper.getStatus();
-        const data = {
+        return {
             started: status === TimeKeeperStatus.Started,
             stopped: status === TimeKeeperStatus.Stopped,
             paused: status === TimeKeeperStatus.Paused
         };
-        return data;
     }
 
     /**
@@ -598,6 +597,6 @@ export default class API{
             //await Importer.importCalendarWeather(SimpleCalendar.instance.activeCalendar.year, true);
             return true;
         //}
-        return false;
+        //return false;
     }
 }

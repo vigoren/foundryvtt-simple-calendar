@@ -549,7 +549,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             else if(id === "scCurrentYear"){
                 const year = parseInt(value);
                 if(!isNaN(year)){
-                    (<Calendar>this.object).numericRepresentation = year;
+                    (<Calendar>this.object).year.numericRepresentation = year;
                     this.yearChanged = true;
                 }
             } else if(id === 'scYearPreFix'){
@@ -875,7 +875,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             // Update the Year Configuration
             const currentYear = parseInt((<HTMLInputElement>document.getElementById("scCurrentYear")).value);
             if(!isNaN(currentYear)){
-                (<Calendar>this.object).numericRepresentation = currentYear;
+                (<Calendar>this.object).year.numericRepresentation = currentYear;
                 (<Calendar>this.object).year.selectedYear = currentYear;
                 (<Calendar>this.object).year.visibleYear = currentYear;
             }

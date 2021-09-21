@@ -14,12 +14,11 @@ import {GameSystems, LeapYearRules, TimeKeeperStatus, YearNamingRules} from "../
 import {GameSettings} from "./game-settings";
 import Season from "./season";
 import Moon from "./moon";
-import {Note} from "./note";
+import Note from "./note";
 import SimpleCalendar from "./simple-calendar";
 import PF2E from "./systems/pf2e";
 import Utilities from "./utilities";
 import Day from "./day";
-import DateSelector from "./date-selector";
 import API from "./api";
 import ConfigurationItemBase from "./configuration-item-base";
 
@@ -99,13 +98,23 @@ export default class Year extends ConfigurationItemBase {
     seasons: Season[] = [];
     /**
      * All of the moons for this calendar
+     * @type {Array.<Moon>}
      */
     moons: Moon[] =[];
-
+    /**
+     * A list of names to pull from for naming a year
+     * @type {Array.<string>}
+     */
     yearNames: string[] = [];
-
+    /**
+     * The year to start pulling from the name list
+     * @type {number}
+     */
     yearNamesStart: number = 0;
-
+    /**
+     * The rule around how to apply names to a given year
+     * @type {YearNamingRules}
+     */
     yearNamingRule: YearNamingRules = YearNamingRules.Default;
 
     /**
@@ -156,13 +165,11 @@ export default class Year extends ConfigurationItemBase {
                         });
                     }
                 }
-                if(SimpleCalendar.instance){
-                    const notes = SimpleCalendar.instance.activeCalendar.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
-                    const userId = GameSettings.UserID();
-                    if(notes.length){
-                        sNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
-                        remNotes = notes.filter(n => n.remindUsers.indexOf(userId) !== -1);
-                    }
+                const notes = SimpleCalendar.instance.activeCalendar.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
+                const userId = GameSettings.UserID();
+                if(notes.length){
+                    sNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
+                    remNotes = notes.filter(n => n.remindUsers.indexOf(userId) !== -1);
                 }
             }
         }
@@ -179,7 +186,6 @@ export default class Year extends ConfigurationItemBase {
             currentSeasonColor: currentSeason.color,
             display: this.getDisplayName(),
             firstWeekday: this.firstWeekday,
-            gameSystem: SimpleCalendar.instance.activeCalendar.gameSystem,
             numericRepresentation: this.numericRepresentation,
             selectedDisplayYear: this.getDisplayName(true),
             selectedDisplayMonth: sMonth,
@@ -208,6 +214,9 @@ export default class Year extends ConfigurationItemBase {
     loadFromSettings(config: YearConfig) {
         if(config && Object.keys(config).length){
             Logger.debug('Setting the year from data.');
+            if(config.hasOwnProperty('id')){
+                this.id = config.id;
+            }
             this.numericRepresentation = config.numericRepresentation;
             this.prefix = config.prefix;
             this.postfix = config.postfix;
@@ -287,6 +296,7 @@ export default class Year extends ConfigurationItemBase {
      */
     clone(): Year {
         const y = new Year(this.numericRepresentation);
+        y.id = this.id;
         y.postfix = this.postfix;
         y.prefix = this.prefix;
         y.yearZero = this.yearZero;
@@ -304,18 +314,6 @@ export default class Year extends ConfigurationItemBase {
         y.yearNamesStart = this.yearNamesStart;
         y.yearNamingRule = this.yearNamingRule;
         return y;
-    }
-
-    /**
-     * Checks if a user can do an action based on a passed in permission matrix
-     * @param user
-     * @param permissions
-     */
-    canUser(user: User | null, permissions: PermissionMatrix): boolean{
-        if(user === null){
-            return false;
-        }
-        return !!(user.isGM || (permissions.player && user.hasRole(1)) || (permissions.trustedPlayer && user.hasRole(2)) || (permissions.assistantGameMaster && user.hasRole(3)) || (permissions.users && permissions.users.includes(user.id? user.id : '')));
     }
 
     /**
@@ -1022,13 +1020,13 @@ export default class Year extends ConfigurationItemBase {
                 }
                 nextSeasonYear = seasonYear + 1
             }
-            const daysBetweenSeasonStartAndDay = DateSelector.DaysBetweenDates(
-                { year: seasonYear, month: season.startingMonth, day: season.startingDay, allDay: false, hour: 0, minute: 0 },
-                { year: year, month: this.months[monthIndex].numericRepresentation, day: this.months[monthIndex].days[dayIndex].numericRepresentation, hour: 0, minute: 0, allDay: false }
+            const daysBetweenSeasonStartAndDay = Utilities.DaysBetweenDates(
+                { year: seasonYear, month: season.startingMonth, day: season.startingDay, hour: 0, minute: 0, seconds: 0 },
+                { year: year, month: this.months[monthIndex].numericRepresentation, day: this.months[monthIndex].days[dayIndex].numericRepresentation, hour: 0, minute: 0, seconds: 0 }
             );
-            const daysBetweenSeasons = DateSelector.DaysBetweenDates(
-                { year: seasonYear, month: season.startingMonth, day: season.startingDay, allDay: false, hour: 0, minute: 0 },
-                { year: nextSeasonYear, month: nextSeason.startingMonth, day: nextSeason.startingDay, allDay: false,  hour: 0, minute: 0 }
+            const daysBetweenSeasons = Utilities.DaysBetweenDates(
+                { year: seasonYear, month: season.startingMonth, day: season.startingDay, hour: 0, minute: 0, seconds: 0 },
+                { year: nextSeasonYear, month: nextSeason.startingMonth, day: nextSeason.startingDay, hour: 0, minute: 0, seconds: 0 }
             );
             const diff = sunrise? nextSeason.sunriseTime - season.sunriseTime : nextSeason.sunsetTime - season.sunsetTime;
             const averageChangePerDay = diff / daysBetweenSeasons;

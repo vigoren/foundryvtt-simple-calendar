@@ -6,6 +6,7 @@ import "../../__mocks__/form-application";
 import "../../__mocks__/application";
 import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
+import "../../__mocks__/crypto";
 import "../../__mocks__/hooks";
 import Time from "./time";
 
@@ -17,7 +18,7 @@ describe('Time Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(t).length).toBe(11); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(14); //Make sure no new properties have been added
         expect(t.hoursInDay).toBe(24);
         expect(t.minutesInHour).toBe(60);
         expect(t.secondsInMinute).toBe(60);
@@ -34,6 +35,26 @@ describe('Time Tests', () => {
     test('Clone', () => {
         const temp = t.clone();
         expect(temp).toStrictEqual(t);
+    });
+
+    test('Load From Settings', () => {
+        //@ts-ignore
+        t.loadFromSettings({});
+        expect(t.id).toBeDefined();
+        expect(t.hoursInDay).toBe(24);
+
+        //@ts-ignore
+        t.loadFromSettings({hoursInDay:2, minutesInHour: 3, secondsInMinute: 4, gameTimeRatio: 1});
+        expect(t.id).toBeDefined();
+        expect(t.hoursInDay).toBe(2);
+
+        //@ts-ignore
+        t.loadFromSettings({id: 'id', hoursInDay:2, minutesInHour: 3, secondsInMinute: 4, gameTimeRatio: 1, unifyGameAndClockPause: false, updateFrequency: 1, secondsInCombatRound: 5});
+        expect(t.id).toBe('id');
+        expect(t.hoursInDay).toBe(2);
+        expect(t.unifyGameAndClockPause).toBe(false);
+        expect(t.updateFrequency).toBe(1);
+        expect(t.secondsInCombatRound).toBe(5);
     });
 
     test('Get Current Time', () => {

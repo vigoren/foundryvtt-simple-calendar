@@ -1,6 +1,6 @@
 import {Logger} from "./logging";
 import Month from "./month";
-import {Note} from "./note";
+import Note from "./note";
 import {
     SCDateSelector,
     SimpleCalendarSocket,
@@ -1172,7 +1172,7 @@ export default class SimpleCalendar extends Application{
             }
             let currentNotes = GameSettings.LoadNotes().map(n => {
                 const note = new Note();
-                note.loadFromConfig(n);
+                note.loadFromSettings(n);
                 return note;
             });
             currentNotes = currentNotes.map(n => {

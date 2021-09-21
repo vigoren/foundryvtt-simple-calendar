@@ -9,19 +9,30 @@ import {
     MoonIcons,
     MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus
 } from "./constants";
-import {Note} from "./classes/note";
+import Note from "./classes/note";
 import DateSelector from "./classes/date-selector";
 
-
+/**
+ * Interface for the Configuration Item Base Template
+ */
 export interface IConfigurationItemBaseTemplate{
+    /** The ID of the configuration base item */
     id: string;
+    /** The optional name of the configuration base item */
     name?: string;
+    /** The optional numeric representation of the configuration base item */
     numericRepresentation?: number;
 }
 
+/**
+ * Interface Configuration Item Base Config
+ */
 export interface IConfigurationItemBaseConfig{
+    /** The ID of the configuration base item */
     id: string;
+    /** The optional name of the configuration base item */
     name?: string;
+    /** The optional numeric representation of the configuration base item */
     numericRepresentation?: number;
 }
 
@@ -33,7 +44,6 @@ export interface SimpleCalendarTemplate{
     isPrimary: boolean;
     timeUnits: any;
 }
-
 
 export interface CalendarConfiguration extends IConfigurationItemBaseConfig {
     name: string;
@@ -116,7 +126,6 @@ export interface PermissionMatrix {
  * Interface for the year template that is passed to the HTML for rendering
  */
 export interface YearTemplate extends IConfigurationItemBaseTemplate {
-    gameSystem: GameSystems;
     /** The display text of the year */
     display: string;
     /** The display text for the selected, or current, year */
@@ -137,17 +146,11 @@ export interface YearTemplate extends IConfigurationItemBaseTemplate {
     showWeekdayHeaders: boolean;
     /** The days of the week */
     weekdays: WeekdayTemplate[];
-
     firstWeekday: number;
-
     currentTime: TimeTemplate;
-
     currentSeasonName: string;
-
     currentSeasonColor: string;
-
     weeks: (boolean | DayTemplate)[][];
-
     yearNames: string[];
     yearNamesStart: number;
     yearNamingRule: YearNamingRules;
@@ -233,14 +236,13 @@ export interface CurrentDateConfig {
 /**
  * Interface for the note template that is passed to the HTML for rendering
  */
-export interface NoteTemplate {
+export interface NoteTemplate extends IConfigurationItemBaseTemplate{
     title: string;
     content: string;
     playerVisible: boolean;
     author: string;
     authorDisplay: any | null;
     monthDisplay: string;
-    id: string;
     displayDate: string;
     allDay: boolean;
     hour: number;
@@ -254,7 +256,7 @@ export interface NoteTemplate {
 /**
  * Interface for the data saved to the game settings for a note
  */
-export interface NoteConfig {
+export interface NoteConfig extends IConfigurationItemBaseConfig{
     year: number;
     month: number;
     day: number;
@@ -263,7 +265,6 @@ export interface NoteConfig {
     author: string;
     monthDisplay: string;
     playerVisible: boolean;
-    id: string;
     repeats: NoteRepeat;
     allDay: boolean;
     hour: number;
@@ -316,7 +317,7 @@ export interface LeapYearTemplate extends IConfigurationItemBaseTemplate{
 /**
  * Interface for the data saved to the game settings for the time information
  */
-export interface TimeConfig {
+export interface TimeConfig extends IConfigurationItemBaseConfig{
     hoursInDay: number;
     minutesInHour: number;
     secondsInMinute: number;

@@ -2,7 +2,7 @@ import SimpleCalendar from "./simple-calendar";
 import {GameSettings} from "./game-settings";
 import DateSelector from "./date-selector";
 import Utilities from "./utilities";
-import {Note} from "./note";
+import Note from "./note";
 
 /**
  * Class that contains all of the Handlebars helper functions

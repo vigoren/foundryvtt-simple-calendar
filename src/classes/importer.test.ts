@@ -10,6 +10,7 @@ import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 import "../../__mocks__/crypto";
 
+import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";
 import Importer from "./importer";
@@ -17,7 +18,6 @@ import {GameSystems, LeapYearRules} from "../constants";
 import {Weekday} from "./weekday";
 import Season from "./season";
 import Moon from "./moon";
-import SimpleCalendar from "./simple-calendar";
 import Mock = jest.Mock;
 
 describe('Importer Class Tests', () => {
@@ -34,7 +34,7 @@ describe('Importer Class Tests', () => {
         y.weekdays.push(new Weekday(1, 'S'));
         y.seasons.push(new Season('S', 1, 1));
         y.moons.push(new Moon('M', 1));
-        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.activeCalendar.year = y;
         // @ts-ignore
         game.user.isGM = true;
         (<Mock>(<Game>game).settings.set).mockClear();
@@ -77,6 +77,7 @@ describe('Importer Class Tests', () => {
             "leap_year_rule": '',
             "notes": {}
         };
+        Importer.importAboutTime(y);
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(mockAboutTime);
         Importer.importAboutTime(y);
 
@@ -131,7 +132,7 @@ describe('Importer Class Tests', () => {
 
         y.leapYearRule.rule = LeapYearRules.Custom;
         y.leapYearRule.customMod = 8;
-        y.gameSystem = GameSystems.PF2E;
+        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         await Importer.exportToAboutTime(y);
         //@ts-ignore
         expect(game.settings.set).toHaveBeenCalledTimes(7);
@@ -218,7 +219,7 @@ describe('Importer Class Tests', () => {
                 { "name":"rere", "date":{ "month":"2", "day":6, "combined":"-6" }, "text":"" }
             ]
         };
-
+        Importer.importCalendarWeather(y);
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(mockCalendarWeather);
         Importer.importCalendarWeather(y);
 
@@ -295,6 +296,7 @@ describe('Importer Class Tests', () => {
             dayLength: 0,
             first_day: 0
         };
+        await Importer.exportCalendarWeather(y);
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(xport);
         await Importer.exportCalendarWeather(y);
 

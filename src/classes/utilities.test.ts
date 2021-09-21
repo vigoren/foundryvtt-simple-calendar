@@ -12,10 +12,19 @@ import "../../__mocks__/hooks";
 import "../../__mocks__/crypto";
 
 import Utilities from "./utilities";
-import {SCDateSelector} from "../interfaces";
-import {MoonIcons} from "../constants";
+import {DateTimeParts, SCDateSelector} from "../interfaces";
+import {DateRangeMatch, MoonIcons} from "../constants";
+import SimpleCalendar from "./simple-calendar";
+import Month from "./month";
+import Year from "./year";
 
 describe('Utilities Class Tests', () => {
+
+    let y: Year;
+
+    beforeEach(() => {
+        y = new Year(1);
+    });
 
     test('Generate Unique Id', () => {
         expect(Utilities.generateUniqueId()).toBeDefined();
@@ -102,5 +111,166 @@ describe('Utilities Class Tests', () => {
         expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaningGibbous, '#ffffff')).toBeDefined();
         expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaxingCrescent, '#ffffff')).toBeDefined();
         expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaxingGibbous, '#ffffff')).toBeDefined();
+    });
+
+    test('Date The Same', () => {
+        expect(Utilities.DateTheSame({year: 1, month: 2, day: 3, allDay: false, hour: 4, minute: 5}, {year: 1, month: 2, day: 3, allDay: false, hour: 4, minute: 5})).toBe(true);
+        expect(Utilities.DateTheSame({year: 1, month: 2, day: 3, allDay: false, hour: 4, minute: 5}, {year: 1, month: 2, day: 3, allDay: false, hour: 5, minute: 5})).toBe(true);
+        expect(Utilities.DateTheSame({year: 1, month: 2, day: 3, allDay: false, hour: 4, minute: 5}, {year: 1, month: 2, day: 3, allDay: false, hour: 4, minute: 6})).toBe(true);
+        expect(Utilities.DateTheSame({year: 1, month: 2, day: 3, allDay: false, hour: 4, minute: 5}, {year: 1, month: 2, day: 3, allDay: true, hour: 4, minute: 5})).toBe(true);
+        expect(Utilities.DateTheSame({year: 1, month: 2, day: 3, allDay: false, hour: 4, minute: 5}, {year: 1, month: 2, day: 4, allDay: false, hour: 4, minute: 5})).toBe(false);
+        expect(Utilities.DateTheSame({year: 1, month: 2, day: 3, allDay: false, hour: 4, minute: 5}, {year: 1, month: 3, day: 3, allDay: false, hour: 4, minute: 5})).toBe(false);
+        expect(Utilities.DateTheSame({year: 1, month: 2, day: 3, allDay: false, hour: 4, minute: 5}, {year: 2, month: 2, day: 3, allDay: false, hour: 4, minute: 5})).toBe(false);
+    });
+
+    test('Is Day Between Dates', () => {
+        const dateToCheck: SCDateSelector.Date = {
+            year: 1,
+            month: 1,
+            day: 10,
+            allDay: true,
+            hour: 0,
+            minute: 0
+        };
+        const startDate: SCDateSelector.Date = {
+            year: 1,
+            month: 1,
+            day: 10,
+            allDay: true,
+            hour: 0,
+            minute: 0
+        };
+        const endDate: SCDateSelector.Date = {
+            year: 1,
+            month: 1,
+            day: 10,
+            allDay: true,
+            hour: 0,
+            minute: 0
+        };
+
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.activeCalendar.year = y;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.None);
+        y.months.push(new Month('M', 1, 0, 20));
+        y.months.push(new Month('T', 2, 0, 20));
+        y.months.push(new Month('W', 3, 0, 20));
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Exact);
+
+        endDate.day = 11;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Start);
+
+        startDate.day = 9;
+        endDate.day = 10;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.End);
+
+        endDate.day = 11;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Middle);
+
+        endDate.day = 9;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.None);
+
+        endDate.month = 3;
+        endDate.day = 11;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Middle);
+
+        dateToCheck.month = 3;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Middle);
+
+        dateToCheck.month = 2;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Middle);
+
+        endDate.year = 3;
+        dateToCheck.month = 3;
+        dateToCheck.year = 2;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Middle);
+
+        endDate.year = 1;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.None);
+
+        endDate.year = 3;
+        endDate.month = 1;
+        expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.Middle);
+    });
+
+    test('Days Between Dates', () => {
+        const startDate: DateTimeParts = {
+            year: 1,
+            month: 1,
+            day: 10,
+            hour: 0,
+            minute: 0,
+            seconds: 0
+        };
+        const endDate: DateTimeParts = {
+            year: 1,
+            month: 1,
+            day: 10,
+            hour: 0,
+            minute: 0,
+            seconds: 0
+        };
+
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.activeCalendar.year = y;
+        y.months.push(new Month('M', 1, 0, 20));
+        y.months.push(new Month('T', 2, 0, 20));
+        y.months.push(new Month('W', 3, 0, 20));
+
+        expect(Utilities.DaysBetweenDates(startDate, endDate)).toBe(0);
+
+        endDate.day = 11;
+        expect(Utilities.DaysBetweenDates(startDate, endDate)).toBe(1);
+
+        endDate.day = 12;
+        expect(Utilities.DaysBetweenDates(startDate, endDate)).toBe(2);
+    });
+
+    test('Get Display Date', () => {
+        const startDate: SCDateSelector.Date = {
+            year: 1,
+            month: 1,
+            day: 10,
+            allDay: true,
+            hour: 0,
+            minute: 0
+        };
+        const endDate: SCDateSelector.Date = {
+            year: 1,
+            month: 1,
+            day: 10,
+            allDay: true,
+            hour: 0,
+            minute: 0
+        };
+
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.activeCalendar.year = y;
+        expect(Utilities.GetDisplayDate(startDate, endDate)).toBe(' 10, 1');
+        y.months.push(new Month('M', 1, 0, 20));
+        y.months.push(new Month('T', 2, 0, 20));
+        y.months.push(new Month('W', 3, 0, 20));
+        expect(Utilities.GetDisplayDate(startDate, endDate)).toBe('M 10, 1');
+        expect(Utilities.GetDisplayDate(startDate, endDate, true)).toBe('');
+
+        endDate.day = 12;
+        expect(Utilities.GetDisplayDate(startDate, endDate)).toBe('M 10, 1 - M 12, 1');
+        expect(Utilities.GetDisplayDate(startDate, endDate, true)).toBe('M 10 - M 12');
+
+        startDate.allDay = false;
+        startDate.hour = 1;
+        startDate.minute = 10;
+        endDate.allDay = false;
+        endDate.hour = 2;
+        endDate.minute = 30;
+        expect(Utilities.GetDisplayDate(startDate, endDate)).toBe('M 10, 1 01:10 - M 12, 1 02:30');
+
+        endDate.day = 10;
+        expect(Utilities.GetDisplayDate(startDate, endDate)).toBe('M 10, 1 01:10 -  02:30');
+
+        endDate.hour = 1;
+        endDate.minute = 10;
+        expect(Utilities.GetDisplayDate(startDate, endDate)).toBe('M 10, 1 01:10');
+        expect(Utilities.GetDisplayDate(startDate, endDate, false, false)).toBe('M 10 01:10');
     });
 });

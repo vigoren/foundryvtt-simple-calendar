@@ -125,6 +125,9 @@ export default class Moon extends ConfigurationItemBase{
      */
     loadFromSettings(config: MoonConfiguration) {
         if(config && Object.keys(config).length){
+            if(config.hasOwnProperty('id')){
+                this.id = config.id;
+            }
             this.name = config.name;
             this.cycleLength = config.cycleLength;
             this.phases = config.phases;

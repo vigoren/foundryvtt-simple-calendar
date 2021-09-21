@@ -11,7 +11,6 @@ import "../../../__mocks__/dialog";
 import "../../../__mocks__/hooks";
 import PF2E from "./pf2e";
 import SimpleCalendar from "../simple-calendar";
-import Year from "../year";
 
 describe('Systems/PF2E Class Tests', () => {
 
@@ -23,7 +22,6 @@ describe('Systems/PF2E Class Tests', () => {
         expect(PF2E.getWorldCreateSeconds()).toBe(1626101710);
 
         SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.currentYear = new Year(0);
         expect(PF2E.getWorldCreateSeconds()).toBe(1626015310);
 
         //@ts-ignore
