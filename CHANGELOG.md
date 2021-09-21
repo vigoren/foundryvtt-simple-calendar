@@ -1,6 +1,19 @@
 # Change Log
 
-## v1.3.42 - Bug Fixes
+## v1.3.43 - Bug Fixes
+
+### Pre-work for Multi-calendar Support
+
+There have been a few requests to support more than one calendar and the ability to switch between them. 
+Simple Calendar was built with only one calendar in mind, as such support for adding more than one calendar requires some backend code changes.
+This update includes some of that work.
+
+The changes in this update involved creating some new classes and moving functionality from other classes into those new classes. 
+Since functionality has only been moved around and not changed there should be **no changes to how calendars or the API currently work**. 
+All functionality will be exactly the same as the previous version, with the exception of the bug fixes below. 
+
+This portion of the update is just informative to let everyone know where I am at with the multi-calendar support and that there have been some changes to the backend of the codebase.
+If any bugs do crop up in your game I am sorry and please let me know with a bug report and I will fix it up right away.
 
 ### Bug Fixes
 
