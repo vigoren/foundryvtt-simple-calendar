@@ -1,5 +1,29 @@
 # Change Log
 
+## v1.3.44 - Bug Fixes
+
+### Bug Fixes
+
+- Fixed a bug where the Date/Time change hook would be fired multiple times while the clock was running.
+- Fixed a bug where creating an empty combat would not pause the real clock when a combatant was added in.
+- Fixed a bug where ending a combat in a scene that is not the active scene could restart the real time clock while a combat was running in the active scene.
+- Fixed a bug where seasons that start on an Intercalary Month would not be sorted properly, this would cause the seasons to not be selected correctly.
+  - This fix also applies to the Sunrise/Sunset calculation for seasons that start on an intercalary month.
+
+### Pre-work for Multi-calendar Support
+
+There have been a few requests to support more than one calendar and the ability to switch between them. 
+Simple Calendar was built with only one calendar in mind, as such support for adding more than one calendar requires some backend code changes.
+This update includes some of that work.
+
+The changes in this update involved creating some new classes and moving functionality from other classes into those new classes. 
+Since functionality has only been moved around and not changed there should be **no changes to how calendars or the API currently work**. 
+All functionality will be exactly the same as the previous version, with the exception of the bug fixes above. 
+
+This portion of the update is just informative to let everyone know where I am at with the multi-calendar support and that there have been some changes to the backend of the codebase.
+If any bugs do crop up in your game I am sorry and please let me know with a bug report and I will fix it up right away.
+
+
 ## v1.3.39 - Season Changes, QoL Improvements, API Changes and Bug Fixing
 
 ### Season Changes

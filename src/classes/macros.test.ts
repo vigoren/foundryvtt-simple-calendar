@@ -9,7 +9,6 @@ import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import SimpleCalendar from "./simple-calendar";
-import {LeapYearRules} from "../constants";
 import Year from "./year";
 import SpyInstance = jest.SpyInstance;
 import Month from "./month";
@@ -43,7 +42,7 @@ describe('Macros Tests', () => {
     });
 
     test('Macro Show', () => {
-        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.activeCalendar.year = y;
         Macros.show();
         expect(renderSpy).toHaveBeenCalledTimes(1);
         Macros.show(0,1,1);
@@ -56,7 +55,7 @@ describe('Macros Tests', () => {
 
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.activeCalendar.year = y;
         Macros.setDateTime();
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
@@ -72,7 +71,7 @@ describe('Macros Tests', () => {
         expect(renderSpy).toHaveBeenCalledTimes(0);
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance.activeCalendar.year = y;
         Macros.changeDateTime(10);
         expect(renderSpy).toHaveBeenCalledTimes(1);
         //@ts-ignore

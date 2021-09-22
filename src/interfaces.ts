@@ -9,32 +9,110 @@ import {
     MoonIcons,
     MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus
 } from "./constants";
-import {Note} from "./classes/note";
+import Note from "./classes/note";
 import DateSelector from "./classes/date-selector";
 
 /**
- * The general settings for the Simple calendar
- * NOTE: The Player note default visibility is not stored in these settings (Legacy support)
+ * Interface for the Configuration Item Base Template
  */
-export interface GeneralSettings {
+export interface IConfigurationItemBaseTemplate{
+    /** The ID of the configuration base item */
+    id: string;
+    /** The optional name of the configuration base item */
+    name?: string;
+    /** The optional numeric representation of the configuration base item */
+    numericRepresentation?: number;
+}
+
+/**
+ * Interface Configuration Item Base Config
+ */
+export interface IConfigurationItemBaseConfig{
+    /** The ID of the configuration base item */
+    id: string;
+    /** The optional name of the configuration base item */
+    name?: string;
+    /** The optional numeric representation of the configuration base item */
+    numericRepresentation?: number;
+}
+
+export interface SimpleCalendarTemplate{
+    calendar: CalendarConfiguration;
+    clockClass: string;
+    compactView: boolean;
+    compactViewShowNotes: boolean;
+    isPrimary: boolean;
+    timeUnits: any;
+}
+
+export interface CalendarConfiguration extends IConfigurationItemBaseConfig {
+    name: string;
+    generalSettings?: GeneralSettingsConfig;
+    year?: YearConfig;
+    months?: MonthConfig[];
+}
+
+export interface CalendarTemplate extends IConfigurationItemBaseTemplate {
+    addNotes: boolean;
+    changeDateTime: boolean;
+    isGM: boolean;
+    reorderNotes: boolean;
+    showClock: boolean;
+    showCurrentDay: boolean;
+    showDateControls: boolean;
+    showTimeControls: boolean;
+    showSelectedDay: boolean;
+    showSetCurrentDate: boolean;
+    name: string;
+    currentYear: YearTemplate;
+    gameSystem: GameSystems;
+    notes: NoteTemplate[];
+}
+
+export interface GeneralSettingsConfig extends IConfigurationItemBaseConfig{
     /** How Simple Calendar interacts with the game world time */
     gameWorldTimeIntegration: GameWorldTimeIntegrations;
     /** If to show the clock below the calendar */
     showClock: boolean;
     /** If the Pathfinder 2e world clock sync is turned on */
     pf2eSync: boolean;
-    /** What roles/players are allows to do certain actions */
-    permissions: {
-        /** Who can view the calendar */
-        viewCalendar: PermissionMatrix,
-        /** Who can add notes */
-        addNotes: PermissionMatrix,
-        /** Who can reorder notes */
-        reorderNotes: PermissionMatrix,
-        /** Who can change the date and time */
-        changeDateTime: PermissionMatrix
-    };
+    /** The user permissions for the calendar */
+    permissions: UserPermissionsConfig;
+    /** @deprecated Old Players can add notes permission, only used for very old setting files */
     playersAddNotes?: boolean;
+}
+
+export interface GeneralSettingsTemplate extends IConfigurationItemBaseTemplate{
+    /** How Simple Calendar interacts with the game world time */
+    gameWorldTimeIntegration: GameWorldTimeIntegrations;
+    /** If to show the clock below the calendar */
+    showClock: boolean;
+    /** If the Pathfinder 2e world clock sync is turned on */
+    pf2eSync: boolean;
+    /** The user permissions for the calendar */
+    permissions: UserPermissionsConfig;
+}
+
+export interface UserPermissionsConfig extends IConfigurationItemBaseConfig {
+    /** Who can view the calendar */
+    viewCalendar: PermissionMatrix;
+    /** Who can add notes */
+    addNotes: PermissionMatrix;
+    /** Who can reorder notes */
+    reorderNotes: PermissionMatrix;
+    /** Who can change the date and time */
+    changeDateTime: PermissionMatrix;
+}
+
+export interface UserPermissionsTemplate extends IConfigurationItemBaseTemplate {
+    /** Who can view the calendar */
+    viewCalendar: PermissionMatrix;
+    /** Who can add notes */
+    addNotes: PermissionMatrix;
+    /** Who can reorder notes */
+    reorderNotes: PermissionMatrix;
+    /** Who can change the date and time */
+    changeDateTime: PermissionMatrix;
 }
 
 export interface PermissionMatrix {
@@ -44,28 +122,10 @@ export interface PermissionMatrix {
     users?: string[]
 }
 
-export interface CalendarTemplate {
-    isGM: boolean;
-    changeDateTime: boolean;
-    isPrimary: boolean;
-    addNotes: boolean;
-    reorderNotes: boolean;
-    currentYear: YearTemplate;
-    showSelectedDay: boolean;
-    showCurrentDay: boolean;
-    showSetCurrentDate: boolean;
-    notes: NoteTemplate[];
-    clockClass: string;
-    timeUnits: any;
-    compactView: boolean;
-    compactViewShowNotes: boolean;
-}
-
 /**
  * Interface for the year template that is passed to the HTML for rendering
  */
-export interface YearTemplate {
-    gameSystem: GameSystems;
+export interface YearTemplate extends IConfigurationItemBaseTemplate {
     /** The display text of the year */
     display: string;
     /** The display text for the selected, or current, year */
@@ -86,25 +146,11 @@ export interface YearTemplate {
     showWeekdayHeaders: boolean;
     /** The days of the week */
     weekdays: WeekdayTemplate[];
-
     firstWeekday: number;
-
-    showClock: boolean;
-
-    clockClass: string;
-
-    showTimeControls: boolean;
-
-    showDateControls: boolean;
-
     currentTime: TimeTemplate;
-
     currentSeasonName: string;
-
     currentSeasonColor: string;
-
     weeks: (boolean | DayTemplate)[][];
-
     yearNames: string[];
     yearNamesStart: number;
     yearNamingRule: YearNamingRules;
@@ -113,7 +159,7 @@ export interface YearTemplate {
 /**
  * Interface for the data saved to the game settings for a year class
  */
-export interface YearConfig {
+export interface YearConfig extends IConfigurationItemBaseConfig {
     numericRepresentation: number;
     prefix: string;
     postfix: string;
@@ -128,7 +174,7 @@ export interface YearConfig {
 /**
  * Interface for the month template that is passed to the HTML for rendering
  */
-export interface  MonthTemplate {
+export interface  MonthTemplate extends IConfigurationItemBaseTemplate {
     display: string;
     name: string;
     numericRepresentation: number;
@@ -148,7 +194,7 @@ export interface  MonthTemplate {
 /**
  * Interface for the data saved to the game settings for a month class
  */
-export interface MonthConfig {
+export interface MonthConfig extends IConfigurationItemBaseConfig {
     name: string;
     numericRepresentation: number;
     numericRepresentationOffset: number;
@@ -162,7 +208,7 @@ export interface MonthConfig {
 /**
  * Interface for the day template that is passed to the HTML for rendering
  */
-export interface DayTemplate {
+export interface DayTemplate extends IConfigurationItemBaseTemplate {
     /** The display name of the day */
     name: string;
     /** The numeric representation of the day */
@@ -190,14 +236,13 @@ export interface CurrentDateConfig {
 /**
  * Interface for the note template that is passed to the HTML for rendering
  */
-export interface NoteTemplate {
+export interface NoteTemplate extends IConfigurationItemBaseTemplate{
     title: string;
     content: string;
     playerVisible: boolean;
     author: string;
     authorDisplay: any | null;
     monthDisplay: string;
-    id: string;
     displayDate: string;
     allDay: boolean;
     hour: number;
@@ -211,7 +256,7 @@ export interface NoteTemplate {
 /**
  * Interface for the data saved to the game settings for a note
  */
-export interface NoteConfig {
+export interface NoteConfig extends IConfigurationItemBaseConfig{
     year: number;
     month: number;
     day: number;
@@ -220,7 +265,6 @@ export interface NoteConfig {
     author: string;
     monthDisplay: string;
     playerVisible: boolean;
-    id: string;
     repeats: NoteRepeat;
     allDay: boolean;
     hour: number;
@@ -243,16 +287,16 @@ export interface NoteCategory {
 /**
  * Interface for the weekday template that is passed to the HTML for rendering
  */
-export interface WeekdayTemplate {
+export interface WeekdayTemplate extends IConfigurationItemBaseTemplate{
     name: string;
-    firstCharacter: string;
     numericRepresentation: number;
+    firstCharacter: string;
 }
 
 /**
  * Interface for the data saved to the game settings for each weekday class
  */
-export interface WeekdayConfig {
+export interface WeekdayConfig extends IConfigurationItemBaseConfig{
     name: string;
     numericRepresentation: number;
 }
@@ -260,7 +304,12 @@ export interface WeekdayConfig {
 /**
  * Interface for the data save to the game settings for the leap year information
  */
-export interface LeapYearConfig {
+export interface LeapYearConfig extends IConfigurationItemBaseConfig{
+    rule: LeapYearRules;
+    customMod: number;
+}
+
+export interface LeapYearTemplate extends IConfigurationItemBaseTemplate{
     rule: LeapYearRules;
     customMod: number;
 }
@@ -268,7 +317,7 @@ export interface LeapYearConfig {
 /**
  * Interface for the data saved to the game settings for the time information
  */
-export interface TimeConfig {
+export interface TimeConfig extends IConfigurationItemBaseConfig{
     hoursInDay: number;
     minutesInHour: number;
     secondsInMinute: number;
@@ -290,7 +339,7 @@ export interface TimeTemplate {
 /**
  * Interface for displaying the season information
  */
-export interface SeasonTemplate {
+export interface SeasonTemplate extends IConfigurationItemBaseTemplate {
     name: string;
     startingMonth: number;
     startingDay: number;
@@ -302,7 +351,7 @@ export interface SeasonTemplate {
 /**
  * Interface for saving season information
  */
-export interface SeasonConfiguration {
+export interface SeasonConfiguration extends IConfigurationItemBaseConfig {
     name: string;
     startingMonth: number;
     startingDay: number;
@@ -336,7 +385,7 @@ export interface FirstNewMoonDate {
 /**
  * Interface for a moons configuration
  */
-export interface MoonConfiguration {
+export interface MoonConfiguration extends IConfigurationItemBaseConfig {
     name: string;
     cycleLength: number;
     phases: MoonPhase[];
@@ -348,7 +397,7 @@ export interface MoonConfiguration {
 /**
  * Interface for a moons template
  */
-export interface MoonTemplate {
+export interface MoonTemplate extends IConfigurationItemBaseTemplate {
     name: string;
     cycleLength: number;
     firstNewMoon: FirstNewMoonDate;

@@ -38,13 +38,16 @@ describe('Hook Tests', () => {
     });
 
     test('Emit Date/Time Change', ()=>{
+        // @ts-ignore
+        SimpleCalendar.instance = null;
         Hook.emit(SimpleCalendarHooks.DateTimeChange);
         expect(console.error).toHaveBeenCalledTimes(1);
 
         Hook.emit(SimpleCalendarHooks.ClockStartStop);
         expect(console.error).toHaveBeenCalledTimes(2);
 
-        SimpleCalendar.instance.currentYear = y;
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.activeCalendar.year = y;
         Hook.emit(SimpleCalendarHooks.DateTimeChange);
         expect(console.error).toHaveBeenCalledTimes(2);
         expect(Hooks.callAll).toHaveBeenCalledTimes(1);

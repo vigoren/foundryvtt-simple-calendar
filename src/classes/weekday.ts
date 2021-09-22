@@ -1,28 +1,18 @@
-import {WeekdayTemplate} from "../interfaces";
+import {WeekdayConfig, WeekdayTemplate} from "../interfaces";
+import ConfigurationItemBase from "./configuration-item-base";
 
 /**
  * Class for representing a weekday
  */
-export class Weekday {
-    /**
-     * The numeric representation of this weekday
-     * @type {number}
-     */
-    numericRepresentation: number;
-    /**
-     * The name of the weekday
-     * @type {string}
-     */
-    name: string;
+export class Weekday extends ConfigurationItemBase{
 
     /**
      * The weekday constructor
      * @param {number} numericRepresentation he numeric representation of this weekday
      * @param {string} name The name of the weekday
      */
-    constructor(numericRepresentation: number, name: string) {
-        this.numericRepresentation = numericRepresentation;
-        this.name = name;
+    constructor(numericRepresentation: number = NaN, name: string = '') {
+        super(name, numericRepresentation);
     }
 
     /**
@@ -34,11 +24,13 @@ export class Weekday {
         if(this.name.length > 1){
             abbrv += this.name.substring(1,2).toLowerCase();
         }
+
         return {
+            ...super.toTemplate(),
             name: this.name,
-            firstCharacter: abbrv,
-            numericRepresentation: this.numericRepresentation
-        };
+            numericRepresentation: this.numericRepresentation,
+            firstCharacter: abbrv
+        }
     }
 
     /**
@@ -46,6 +38,22 @@ export class Weekday {
      * @return {Weekday}
      */
     clone(): Weekday {
-        return new Weekday(this.numericRepresentation, this.name);
+        const w = new Weekday(this.numericRepresentation, this.name);
+        w.id = this.id;
+        return w;
+    }
+
+    /**
+     * Loads the weekday data from the config object.
+     * @param {WeekdayConfig} config The configuration object for this class
+     */
+    loadFromSettings(config: WeekdayConfig) {
+        if(config && Object.keys(config).length){
+            if(config.hasOwnProperty('id')){
+                this.id = config.id;
+            }
+            this.name = config.name;
+            this.numericRepresentation = config.numericRepresentation;
+        }
     }
 }

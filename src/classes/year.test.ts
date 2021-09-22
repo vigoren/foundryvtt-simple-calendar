@@ -9,22 +9,15 @@ import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
+import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {
-    GameSystems,
-    GameWorldTimeIntegrations,
-    LeapYearRules,
-    PredefinedCalendars,
-    TimeKeeperStatus,
-    YearNamingRules
-} from "../constants";
+import {GameSystems, LeapYearRules, PredefinedCalendars, TimeKeeperStatus, YearNamingRules} from "../constants";
 import LeapYear from "./leap-year";
 import Season from "./season";
 import Moon from "./moon";
-import SimpleCalendar from "./simple-calendar";
-import {Note} from "./note";
+import Note from "./note";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import PredefinedCalendar from "./predefined-calendar";
 
@@ -32,28 +25,14 @@ describe('Year Class Tests', () => {
     let year: Year;
     let year2: Year;
     let month: Month;
+    SimpleCalendar.instance = new SimpleCalendar();
 
     beforeEach(() => {
         year = new Year(0);
         month = new Month("Test", 1, 0, 30);
         year2 = new Year(2020);
-    });
 
-    test('Game System Setting', () => {
-        (<Game>game).system.id = GameSystems.DnD5E;
-        year = new Year(0);
-        expect(year.gameSystem).toBe(GameSystems.DnD5E);
-        (<Game>game).system.id = GameSystems.PF1E;
-        year = new Year(0);
-        expect(year.gameSystem).toBe(GameSystems.PF1E);
-        (<Game>game).system.id = GameSystems.PF2E;
-        year = new Year(0);
-        expect(year.gameSystem).toBe(GameSystems.PF2E);
-        (<Game>game).system.id = GameSystems.WarhammerFantasy4E;
-        year = new Year(0);
-        expect(year.gameSystem).toBe(GameSystems.WarhammerFantasy4E);
-
-        (<Game>game).system.id = GameSystems.Other;
+        SimpleCalendar.instance = new SimpleCalendar();
     });
 
     test('Properties', () => {
@@ -73,9 +52,7 @@ describe('Year Class Tests', () => {
         expect(year.time).toBeDefined();
         expect(year.timeChangeTriggered).toBe(false);
         expect(year.combatChangeTriggered).toBe(false);
-        expect(year.generalSettings).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}  });
         expect(year.seasons).toStrictEqual([]);
-        expect(year.gameSystem).toBe(GameSystems.Other);
         expect(year.yearNames).toStrictEqual([]);
         expect(year.yearNamesStart).toBe(0);
         expect(year.yearNamingRule).toBe(YearNamingRules.Default);
@@ -84,7 +61,7 @@ describe('Year Class Tests', () => {
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(25); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(22); //Make sure no new properties have been added
         expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
         expect(t.display).toBe("0");
         expect(t.numericRepresentation).toBe(0);
@@ -98,14 +75,9 @@ describe('Year Class Tests', () => {
         expect(t.weeks).toStrictEqual([]);
         expect(t.showWeekdayHeaders).toBe(true);
         expect(t.firstWeekday).toBe(0);
-        expect(t.showClock).toBe(true);
-        expect(t.showDateControls).toBe(true);
-        expect(t.showTimeControls).toBe(true);
-        expect(t.clockClass).toBe("stopped");
         expect(t.currentTime).toStrictEqual({hour:"00", minute:"00", second: "00"});
         expect(t.currentSeasonColor).toBe("#ffffff");
         expect(t.currentSeasonName).toBe("");
-        expect(t.gameSystem).toBe(GameSystems.Other);
         expect(t.yearNames).toStrictEqual([]);
         expect(t.yearNamesStart).toBe(0);
         expect(t.yearNamingRule).toBe(YearNamingRules.Default);
@@ -133,12 +105,6 @@ describe('Year Class Tests', () => {
         t = year.toTemplate();
         expect(t.visibleMonth).toStrictEqual(year.months[0].toTemplate());
 
-        year.generalSettings.showClock = true;
-        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.ThirdParty;
-        t = year.toTemplate();
-        expect(t.showDateControls).toBe(false);
-        expect(t.showTimeControls).toBe(false);
-
         year.resetMonths('selected');
         year.months[0].current = true;
         year.months[0].days[0].current = true;
@@ -151,7 +117,7 @@ describe('Year Class Tests', () => {
         expect(t.selectedDayMoons.length).toBe(1);
 
         SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
         t = year.toTemplate();
         expect(t.selectedDayNotes.normal).toBe(0);
 
@@ -163,11 +129,25 @@ describe('Year Class Tests', () => {
         n.endDate.month = 1;
         n.endDate.year = 0;
         n.playerVisible = true;
-        SimpleCalendar.instance.notes.push(n);
+        SimpleCalendar.instance.activeCalendar.notes.push(n);
         t = year.toTemplate();
         expect(t.selectedDayNotes.normal).toBe(1);
 
 
+    });
+
+    test('Load From Settings', () => {
+        //@ts-ignore
+        year.loadFromSettings({});
+        expect(year.id).toBeDefined();
+
+        //@ts-ignore
+        year.loadFromSettings({numericRepresentation: 12});
+        expect(year.numericRepresentation).toBe(12);
+
+        //@ts-ignore
+        year.loadFromSettings({id: 'id', showWeekdayHeadings: false, firstWeekday: 2, yearZero: 0, yearNames: [], yearNamingRule: YearNamingRules.Random, yearNamesStart: 0});
+        expect(year.id).toBe('id');
     });
 
     test('Days Into Weeks', () => {
@@ -205,25 +185,6 @@ describe('Year Class Tests', () => {
         year2.moons.push(new Moon('M',1))
         year2.yearNames.push('Asd');
         expect(year2.clone()).toStrictEqual(year2);
-    });
-
-    test('Can User', () => {
-        expect(year.canUser(null, year.generalSettings.permissions.addNotes)).toBe(false);
-        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.addNotes)).toBe(false);
-        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
-        year.generalSettings.permissions.viewCalendar.player = false;
-        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
-        year.generalSettings.permissions.viewCalendar.trustedPlayer = false;
-        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
-        year.generalSettings.permissions.viewCalendar.assistantGameMaster = false;
-        // @ts-ignore
-        (<Game>game).user.id = "asd";
-        year.generalSettings.permissions.viewCalendar.users = ['asd'];
-        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(true);
-        // @ts-ignore
-        (<Game>game).user.id = "";
-        year.generalSettings.permissions.viewCalendar.users = ['asd'];
-        expect(year.canUser((<Game>game).user, year.generalSettings.permissions.viewCalendar)).toBe(false);
     });
 
     test('Get Display Name', () => {
@@ -671,7 +632,7 @@ describe('Year Class Tests', () => {
         year.months[0].days[0].current = true;
         expect(year.toSeconds()).toBe(2592000);
 
-        year.gameSystem = GameSystems.PF2E;
+        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         expect(year.toSeconds()).toBe(2678400);
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AD", worldCreatedOn: 0}};
@@ -684,48 +645,12 @@ describe('Year Class Tests', () => {
 
     });
 
-    test('Sync Time', () => {
-        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
-        //@ts-ignore
-        game.time.advance.mockClear();
-        year.syncTime();
-        expect((<Game>game).time.advance).not.toHaveBeenCalled();
-        //@ts-ignore
-        game.user.isGM = true;
-        year.syncTime()
-        expect((<Game>game).time.advance).not.toHaveBeenCalled();
-        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
-        year.months.push(month);
-        year.syncTime()
-        expect((<Game>game).time.advance).toHaveBeenCalledTimes(1);
-
-        month.current = true;
-        year.syncTime()
-        expect((<Game>game).time.advance).toHaveBeenCalledTimes(2);
-        month.days[0].current = true;
-        year.syncTime()
-        expect((<Game>game).time.advance).toHaveBeenCalledTimes(3);
-
-        year.yearZero = 1;
-        year.syncTime()
-        expect((<Game>game).time.advance).toHaveBeenCalledTimes(4);
-
-        expect(year.toSeconds()).toBe(-2592000);
-        //@ts-ignore
-        game.time.worldTime = -2592000;
-        year.syncTime();
-        expect((<Game>game).time.advance).toHaveBeenCalledTimes(4);
-
-        year.syncTime(true);
-        expect((<Game>game).time.advance).toHaveBeenCalledTimes(5);
-    });
-
     test('Seconds To Date', () => {
         const select = document.createElement('input');
         select.value = 'gregorian';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
-        SimpleCalendar.instance = new SimpleCalendar();
-        const sc = new SimpleCalendarConfiguration(year);
+        SimpleCalendar.instance.activeCalendar.year = year;
+        const sc = new SimpleCalendarConfiguration(SimpleCalendar.instance.activeCalendar);
         sc.predefinedApplyConfirm();
         year.resetMonths();
         year.months[3].current = true;
@@ -940,99 +865,6 @@ describe('Year Class Tests', () => {
         expect(year.time.seconds).toBe(14706);
     });
 
-    test('Set From Time', () => {
-        year.months.push(month);
-        month.current = true;
-        //@ts-ignore
-        game.user.isGM = false;
-        year.time.seconds = 60;
-        year.timeChangeTriggered = true;
-        year.setFromTime(120, 0);
-        expect(year.time.seconds).toBe(60);
-        expect(year.timeChangeTriggered).toBe(false);
-        year.timeChangeTriggered = true;
-        year.setFromTime(120, 60);
-        expect(year.time.seconds).toBe(60);
-        expect(year.timeChangeTriggered).toBe(false);
-
-        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
-        year.timeChangeTriggered = false;
-        year.setFromTime(120, 60);
-        expect(year.time.seconds).toBe(60);
-        expect(year.timeChangeTriggered).toBe(false);
-
-        year.timeChangeTriggered = true;
-        year.setFromTime(120, 60);
-        expect(year.time.seconds).toBe(60);
-        expect(year.timeChangeTriggered).toBe(false);
-
-        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.ThirdParty;
-        year.setFromTime(120, 60);
-        expect(year.time.seconds).toBe(120);
-
-        year.time.seconds = 60;
-        //@ts-ignore
-        game.user.isGM = true;
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.currentYear = year;
-        SimpleCalendar.instance.primary = true;
-        year.setFromTime(120, 60);
-        expect(year.time.seconds).toBe(120);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
-
-        year.time.seconds = 60;
-        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
-        year.combatChangeTriggered = true;
-        year.setFromTime(120, 60);
-        expect(year.time.seconds).toBe(120);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(2);
-
-        //@ts-ignore
-        game.user.isGM = false;
-        year.combatChangeTriggered = true;
-        year.setFromTime(240, 60);
-        expect(year.time.seconds).toBe(240);
-        expect((<Game>game).settings.set).toHaveBeenCalledTimes(2);
-
-        //@ts-ignore
-        game.user.isGM = true;
-        year.gameSystem = GameSystems.PF2E;
-        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Mixed;
-        year.setFromTime(240, 60);
-        expect(year.time.seconds).toBe(240);
-
-        //@ts-ignore
-        game.pf2e = {worldClock: {dateTheme: "AD", worldCreatedOn: 0}};
-        year.setFromTime(240, 60);
-        expect(year.time.seconds).toBe(240);
-
-        const o = SimpleCalendar.instance.element;
-        //@ts-ignore
-        SimpleCalendar.instance.element = {
-            find: jest.fn().mockReturnValue({
-                removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
-                text: jest.fn()
-            })
-        };
-
-        year.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.Self;
-        //@ts-ignore
-        year.time.timeKeeper.status = TimeKeeperStatus.Started;
-        year.setFromTime(240, 60);
-        expect(year.time.seconds).toBe(240);
-
-        //@ts-ignore
-        year.time.timeKeeper.status = TimeKeeperStatus.Started
-        year.setFromTime(240, 1);
-        expect(year.time.seconds).toBe(240);
-
-        //@ts-ignore
-        SimpleCalendar.instance.element = o;
-
-        //@ts-ignore
-        game.user.isGM = false;
-    });
-
     test('Get Current Season', () => {
         let data = year.getCurrentSeason();
         expect(data.name).toBe('');
@@ -1127,6 +959,13 @@ describe('Year Class Tests', () => {
         //@ts-ignore
         year.processOwnCombatRoundTime({round: 2, previous: {round: 2}});
         expect(year.time.seconds).toBe(curTime);
+
+        SimpleCalendar.instance.primary = true;
+        curTime = year.time.seconds;
+        //@ts-ignore
+        year.processOwnCombatRoundTime({round: 2, previous: {round: 1}});
+        expect(year.time.seconds).toBe(curTime + year.time.secondsInCombatRound);
+
         //@ts-ignore
         game.user.isGM = false;
     });
@@ -1139,7 +978,7 @@ describe('Year Class Tests', () => {
         PredefinedCalendar.setToPredefined(year, PredefinedCalendars.Gregorian);
 
         SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
 
         sunrise = year.getSunriseSunsetTime(year.numericRepresentation, year.months[0], year.months[0].days[0], true, false);
         expect(sunrise).toBe(21600);

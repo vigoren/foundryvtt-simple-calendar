@@ -7,36 +7,50 @@ import "../../__mocks__/application";
 import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/crypto";
+
+import SimpleCalendar from "./simple-calendar";
 import LeapYear from "./leap-year";
 import {LeapYearRules} from "../constants";
 import Mock = jest.Mock;
+import {GameSettings} from "./game-settings";
 
 describe('Leap Year Tests', () => {
     let lr: LeapYear;
+    SimpleCalendar.instance = new SimpleCalendar();
 
     beforeEach(() => {
         lr = new LeapYear();
     });
 
     test('Properties', () => {
-        expect(Object.keys(lr).length).toBe(2); //Make sure no new properties have been added
+        expect(Object.keys(lr).length).toBe(5); //Make sure no new properties have been added
         expect(lr.rule).toBe(LeapYearRules.None);
         expect(lr.customMod).toBe(0);
     });
 
+    test('Clone', () => {
+        expect(lr.clone()).toStrictEqual(lr);
+    });
+
+    test('To Template', () => {
+        const lyt = lr.toTemplate();
+        expect(lyt.rule).toBe(LeapYearRules.None);
+        expect(lyt.customMod).toBe(0);
+    });
+
     test('Load From Settings', () => {
-        (<Mock>(<Game>game).settings.get).mockReturnValueOnce({rule: 'custom', customMod: 4});
-        lr.loadFromSettings();
+        (<Mock>(<Game>game).settings.get).mockReturnValueOnce({id: '', rule: 'custom', customMod: 4});
+        lr.loadFromSettings(GameSettings.LoadLeapYearRules());
         expect(lr.rule).toBe(LeapYearRules.Custom);
         expect(lr.customMod).toBe(4);
 
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
-        lr.loadFromSettings();
+        lr.loadFromSettings(GameSettings.LoadLeapYearRules());
         expect(lr.rule).toBe(LeapYearRules.Custom);
         expect(lr.customMod).toBe(4);
 
-        (<Mock>(<Game>game).settings.get).mockReturnValueOnce({});
-        lr.loadFromSettings();
+        (<Mock>(<Game>game).settings.get).mockReturnValueOnce({asd: ''});
+        lr.loadFromSettings(GameSettings.LoadLeapYearRules());
         expect(lr.rule).toBe(LeapYearRules.Custom);
         expect(lr.customMod).toBe(4);
     });

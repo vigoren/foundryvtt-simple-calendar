@@ -70,8 +70,8 @@ describe('Time Keeper Class Tests', () => {
         //@ts-ignore
         expect(tk.saveIntervalNumber).toBeUndefined();
 
-        SimpleCalendar.instance.currentYear = new Year(0);
-        SimpleCalendar.instance.currentYear.time.unifyGameAndClockPause = true;
+        SimpleCalendar.instance.activeCalendar.year = new Year(0);
+        SimpleCalendar.instance.activeCalendar.year.time.unifyGameAndClockPause = true;
         tk.start();
         //@ts-ignore
         expect(tk.intervalNumber).toBeDefined();
@@ -126,8 +126,8 @@ describe('Time Keeper Class Tests', () => {
 
         tk.setClockTime('');
         //@ts-ignore
-        expect(SimpleCalendar.instance.element.find).not.toHaveBeenCalled();
-        SimpleCalendar.instance.currentYear = new Year(0);
+        expect(SimpleCalendar.instance.element.find).toHaveBeenCalled();
+        SimpleCalendar.instance.activeCalendar.year = new Year(0);
         tk.setClockTime('');
         //@ts-ignore
         expect(SimpleCalendar.instance.element.find).toHaveBeenCalled();
@@ -149,10 +149,10 @@ describe('Time Keeper Class Tests', () => {
         //@ts-ignore
         tk.interval();
 
-        SimpleCalendar.instance.currentYear = new Year(0);
-        SimpleCalendar.instance.currentYear.months.push(new Month('M',1,0,10));
-        SimpleCalendar.instance.currentYear.months[0].current = true;
-        SimpleCalendar.instance.currentYear.months[0].days[0].current = true;
+        SimpleCalendar.instance.activeCalendar.year = new Year(0);
+        SimpleCalendar.instance.activeCalendar.year.months.push(new Month('M',1,0,10));
+        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current = true;
         //@ts-ignore
         tk.interval();
 
@@ -162,7 +162,7 @@ describe('Time Keeper Class Tests', () => {
         //@ts-ignore
         tk.interval();
 
-        SimpleCalendar.instance.currentYear.time.seconds = SimpleCalendar.instance.currentYear.time.secondsPerDay - 1;
+        SimpleCalendar.instance.activeCalendar.year.time.seconds = SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay - 1;
         //@ts-ignore
         tk.interval();
 
@@ -183,7 +183,7 @@ describe('Time Keeper Class Tests', () => {
         //@ts-ignore
         tk.saveInterval();
 
-        SimpleCalendar.instance.currentYear = new Year(0);
+        SimpleCalendar.instance.activeCalendar.year = new Year(0);
 
         //@ts-ignore
         tk.saveInterval();

@@ -1,17 +1,10 @@
 import {DayTemplate} from "../interfaces";
+import ConfigurationItemBase from "./configuration-item-base";
 
 /**
  * Class representing a day
  */
-export default class Day {
-    /**
-     * The name of the day, if it has a special name
-     */
-    name: string = '';
-    /**
-     * The numeric representation of this day
-     */
-    numericRepresentation: number = 0;
+export default class Day extends ConfigurationItemBase {
     /**
      * If this day is the current day
      */
@@ -27,9 +20,7 @@ export default class Day {
      * @param {string} [name=''] Optional name for the day
      */
     constructor(num: number, name: string = '') {
-        this.numericRepresentation = num;
-        this.name = name;
-
+        super(name, num);
         if(this.name === '' && this.numericRepresentation){
             this.name = this.numericRepresentation.toString();
         }
@@ -41,6 +32,7 @@ export default class Day {
      */
     toTemplate() : DayTemplate{
         return {
+            ...super.toTemplate(),
             name: this.name,
             numericRepresentation: this.numericRepresentation,
             current: this.current,
@@ -54,6 +46,7 @@ export default class Day {
      */
     clone(): Day {
         const d = new Day(this.numericRepresentation, this.name);
+        d.id = this.id;
         d.current = this.current;
         d.selected = this.selected;
         return d;

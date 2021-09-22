@@ -1,6 +1,21 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__mocks__/game";
+import "../../__mocks__/form-application";
+import "../../__mocks__/application";
+import "../../__mocks__/handlebars";
+import "../../__mocks__/event";
+import "../../__mocks__/crypto";
+import "../../__mocks__/dialog";
+import "../../__mocks__/hooks";
+import "../../__mocks__/chat-message";
+
+import SimpleCalendar from "./simple-calendar";
 import Day from "./day";
 
 describe('Day Class Tests', () => {
+    SimpleCalendar.instance = new SimpleCalendar();
     let day:Day;
     let dayS:Day;
     beforeEach(()=>{
@@ -9,7 +24,7 @@ describe('Day Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(day).length).toBe(4); //Make sure no new properties have been added
+        expect(Object.keys(day).length).toBe(5); //Make sure no new properties have been added
         expect(day.selected).toBe(false);
         expect(day.current).toBe(false);
         expect(day.name).toBe("1");
@@ -27,7 +42,7 @@ describe('Day Class Tests', () => {
     test('To Template', () => {
         const t = day.toTemplate();
         const tS = dayS.toTemplate();
-        expect(Object.keys(t).length).toBe(4); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(5); //Make sure no new properties have been added
         expect(t.selected).toBe(false);
         expect(t.current).toBe(false);
         expect(t.name).toBe("1");
