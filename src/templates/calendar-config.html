@@ -50,6 +50,31 @@
                 {{/if}}
             </div>
             <div class="settings-group">
+                <h2>{{localize 'FSC.Configuration.General.DisplayOptions'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#display-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h3>{{localize 'FSC.Configuration.General.Display.DateTimeFormatTitle'}}</h3>
+                <div class="form-group">
+                    <label for="scDateFormatsDate">{{localize 'FSC.Configuration.General.Display.DateFormat.Date'}}</label>
+                    <div class="form-fields">
+                        <input value="{{generalSettings.dateFormat.date}}" id="scDateFormatsDate" type="text" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.DateHelp'}}</p>
+                </div>
+                <div class="form-group">
+                    <label for="scDateFormatsTime">{{localize 'FSC.Configuration.General.Display.DateFormat.Time'}}</label>
+                    <div class="form-fields">
+                        <input value="{{generalSettings.dateFormat.time}}" id="scDateFormatsTime" type="text" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.TimeHelp'}}</p>
+                </div>
+                <div class="form-group">
+                    <label for="scDateFormatsMonthYear">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYear'}}</label>
+                    <div class="form-fields">
+                        <input value="{{generalSettings.dateFormat.monthYear}}" id="scDateFormatsMonthYear" type="text" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYearHelp'}}</p>
+                </div>
+            </div>
+            <div class="settings-group">
                 <h2>{{localize 'Permissions'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#permissions" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <p class="notes">{{localize 'FSC.Configuration.General.Permissions.Note'}}</p>
                 <header class="table-header flexrow">

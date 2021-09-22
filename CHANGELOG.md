@@ -1,5 +1,9 @@
 # Change Log
 
+## v1.3.45 - Custom Date Formats
+
+### Custom Date Formats
+
 ## v1.3.44 - Bug Fixes
 
 ### Bug Fixes

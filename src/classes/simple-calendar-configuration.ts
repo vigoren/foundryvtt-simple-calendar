@@ -518,6 +518,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Calendar>this.object).generalSettings.showClock = checked;
             } else if(id === 'scPF2ESync'){
                 (<Calendar>this.object).generalSettings.pf2eSync = checked;
+            } else if(id === 'scDateFormatsDate'){
+                (<Calendar>this.object).generalSettings.dateFormat.date = value;
+            } else if(id === 'scDateFormatsTime'){
+                (<Calendar>this.object).generalSettings.dateFormat.time = value;
+            } else if(id === 'scDateFormatsMonthYear'){
+                (<Calendar>this.object).generalSettings.dateFormat.monthYear = value;
             }
             //Permission Settings
             else if(id === 'scCalendarVisibleP'){

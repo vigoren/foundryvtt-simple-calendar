@@ -76,6 +76,12 @@ export interface GeneralSettingsConfig extends IConfigurationItemBaseConfig{
     showClock: boolean;
     /** If the Pathfinder 2e world clock sync is turned on */
     pf2eSync: boolean;
+    /** Formats used for display date and time information */
+    dateFormat: {
+        date: string;
+        time: string;
+        monthYear: string;
+    };
     /** The user permissions for the calendar */
     permissions: UserPermissionsConfig;
     /** @deprecated Old Players can add notes permission, only used for very old setting files */
@@ -89,6 +95,12 @@ export interface GeneralSettingsTemplate extends IConfigurationItemBaseTemplate{
     showClock: boolean;
     /** If the Pathfinder 2e world clock sync is turned on */
     pf2eSync: boolean;
+    /** Formats used for display date and time information */
+    dateFormat: {
+        date: string;
+        time: string;
+        monthYear: string;
+    };
     /** The user permissions for the calendar */
     permissions: UserPermissionsConfig;
 }
