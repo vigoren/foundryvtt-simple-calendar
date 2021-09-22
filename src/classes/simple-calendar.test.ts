@@ -1255,11 +1255,26 @@ describe('Simple Calendar Class Tests', () => {
     });
 
     test('Combat Delete', () => {
-        SimpleCalendar.instance.combatDelete();
         SimpleCalendar.instance.activeCalendar.year = y;
         y.time.combatRunning = true;
-        SimpleCalendar.instance.combatDelete();
+        //@ts-ignore
+        SimpleCalendar.instance.combatDelete({});
+        expect(y.time.combatRunning).toBe(true);
+
+        //@ts-ignore
+        game.scenes = {active: null};
+        //@ts-ignore
+        SimpleCalendar.instance.combatDelete({});
+        expect(y.time.combatRunning).toBe(true);
+
+        //@ts-ignore
+        game.scenes = {active: {id: '123'}};
+        //@ts-ignore
+        SimpleCalendar.instance.combatDelete({started: true, scene: {id:"123"}});
         expect(y.time.combatRunning).toBe(false);
+
+        //@ts-ignore
+        game.scenes = null;
     });
 
     test('Start Time', () => {

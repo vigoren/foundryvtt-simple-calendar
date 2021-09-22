@@ -1098,9 +1098,13 @@ export default class SimpleCalendar extends Application{
     /**
      * Triggered when a combat is finished and removed
      */
-    combatDelete(){
+    combatDelete(combat: Combat){
         Logger.debug('Combat Ended');
-        this.activeCalendar.year.time.combatRunning = false;
+        const scenes = (<Game>game).scenes;
+        const activeScene = scenes? scenes.active? scenes.active.id : null : null;
+        if(activeScene !== null && combat.scene && combat.scene.id === activeScene){
+            this.activeCalendar.year.time.combatRunning = false;
+        }
     }
 
     /**

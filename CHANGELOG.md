@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.3.43 - Bug Fixes
+## v1.3.44 - Bug Fixes
 
 ### Pre-work for Multi-calendar Support
 
@@ -19,6 +19,7 @@ If any bugs do crop up in your game I am sorry and please let me know with a bug
 
 - Fixed a bug where the Date/Time change hook would be fired multiple times while the clock was running.
 - Fixed a bug where creating an empty combat would not pause the real clock when a combatant was added in.
+- Fixed a bug where ending a combat in a scene that is not the active scene could restart the real time clock while a combat was running in the active scene.
 - Fixed a bug where seasons that start on an Intercalary Month would not be sorted properly, this would cause the seasons to not be selected correctly.
   - This fix also applies to the Sunrise/Sunset calculation for seasons that start on an intercalary month.
 
