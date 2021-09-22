@@ -88,7 +88,9 @@ For help with updating to this version the settings from about-time can be impor
 
 #### Calendar/Weather
 
-The [Calendar/Weather](https://foundryvtt.com/packages/calendar-weather) module is currently going under a large re-write (v4) that will integrate with Simple Calendar for all calendar functionality and provide weather functionality for it. 
+The [Calendar/Weather](https://foundryvtt.com/packages/calendar-weather) module has recently been updated to v4 which renames the module to [Weather Control](https://gitlab.com/jstebenne/foundryvtt-weather-control). The new version pulls data directly from Simple Calendar and no longer requires the import/export functionality. 
+
+If an older version of Calendar/Weather is being used the settings can still be imported/exported.
 
 Most settings can be imported and exported between these two modules with these notable exceptions:
 
