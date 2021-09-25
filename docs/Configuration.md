@@ -74,127 +74,145 @@ A date time format is text containing special tokens. These tokens are replaced 
       <th>Examples</th>
     </tr>
     <tr>
-      <td rowspan="5"><strong>Year</strong></td>
+      <td><strong>Year</strong></td>
       <td>YY</td>
       <td>Year shorthand</td>
       <td>90 91 ... 19 20</td>
     </tr>
     <tr>
+      <td></td>
       <td>YYYY</td>
       <td>Full year</td>
       <td>1990 1991 ... 2019 2020</td>
     </tr>
     <tr>
+      <td></td>
       <td>YN</td>
       <td>Year name, as determined by the year name settings.</td>
       <td>Ral's Fury</td>
     </tr>
     <tr>
+      <td></td>
       <td>YA</td>
       <td>Year prefix as defined in the Year Prefix setting.</td>
       <td>Pre</td>
     </tr>
     <tr>
+      <td></td>
       <td>YZ</td>
       <td>Year postfix as defined in the Year Postfix setting.</td>
       <td>AD</td>
     </tr>
     <tr>
-      <td rowspan="4"><strong>Month</strong></td>
+      <td><strong>Month</strong></td>
       <td>M</td>
       <td>Months number.</td>
       <td>1 2 ... 11 12</td>
     </tr>
     <tr>
+      <td></td>
       <td>MM</td>
       <td>Months number padded with a zero.</td>
       <td>01 02 ... 11 12</td>
     </tr>
     <tr>
+      <td></td>
       <td>MMM</td>
       <td>The months abbreviated name as defined in the months settings.</td>
       <td>Jan Feb ... Nov Dec</td>
     </tr>
     <tr>
+      <td></td>
       <td>MMMM</td>
       <td>The months full name as defined in the months settings.</td>
       <td>January February ... November December</td>
     </tr>
     <tr>
-      <td rowspan="5"><strong>Day</strong></td>
+      <td><strong>Day</strong></td>
       <td>D</td>
       <td>Day number.</td>
       <td>1 2 ... 30 31</td>
     </tr>
     <tr>
+      <td></td>
       <td>DD</td>
       <td>Day number padded with a zero.</td>
       <td>01 02 ... 30 31</td>
     </tr>
     <tr>
+      <td></td>
       <td>DO</td>
       <td>Days number appended with its suffix.</td>
       <td>1st 2nd ... 30th 31st</td>
     </tr>
     <tr>
+      <td></td>
       <td>DDD</td>
       <td>The abbreviated name for the day of the week.</td>
       <td>Sun Mon ... Fri Sat</td>
     </tr>
     <tr>
+      <td></td>
       <td>DDDD</td>
       <td>The full name for the day of the week.</td>
       <td>Sunday Monday ... Friday Saturday</td>
     </tr>
     <tr>
-      <td rowspan="6"><strong>Hour</strong></td>
+      <td><strong>Hour</strong></td>
       <td>h</td>
       <td>The hours number in the 12 hour format.</td>
       <td>1 2 ... 11 12</td>
     </tr>
     <tr>
+      <td></td>
       <td>H</td>
       <td>The hours number in the 24 hour format</td>
       <td>0 1 ... 22 23</td>
     </tr>
     <tr>
+      <td></td>
       <td>hh</td>
       <td>The hours number padded with a zero in the 12 hour format.</td>
       <td>01 02 ... 11 12</td>
     </tr>
     <tr>
+      <td></td>
       <td>HH</td>
       <td>The hours number padded with a zero in the 24 hour format.</td>
       <td>00 01 ... 22 23</td>
     </tr>
     <tr>
+      <td></td>
       <td>a</td>
       <td>The am/pm indicator for the 12 hour time format in lowercase.</td>
       <td>am pm</td>
     </tr>
     <tr>
+      <td></td>
       <td>A</td>
       <td>The AM/PM indicator for the 12 hour time format in uppercase.</td>
       <td>AM PM</td>
     </tr>
      <tr>
-      <td rowspan="2"><strong>Minute</strong></td>
+      <td><strong>Minute</strong></td>
       <td>m</td>
       <td>The minutes number.</td>
       <td>0 1 ... 58 59</td>
     </tr>
     <tr>
+      <td></td>
       <td>mm</td>
       <td>The minutes number padded with a zero.</td>
       <td>00 01 ... 58 59</td>
     </tr>
     <tr>
-      <td rowspan="2"><strong>Second</strong></td>
+      <td><strong>Second</strong></td>
       <td>s</td>
       <td>The seconds number.</td>
       <td>0 1 ... 58 59</td>
     </tr>
     <tr>
+      <td></td>
       <td>ss</td>
       <td>The seconds number padded with a zero.</td>
       <td>00 01 ... 58 59</td>
@@ -331,6 +349,7 @@ Setting | Description
 -------- | ----------
 Month Name | These text boxes for each month allow you to change the name of an existing month.
 Number of Days | These text boxes for each month allow you to change the number of days in each month. A month can have a minimum of 0 days.
+Month Name Abbreviation | These text boxes for each month allow you to set the name abbreviation for an existing month. This defaults to the first 3 letters of the months name.
 Intercalary Month | An intercalary month is one that does not follow the standard month numbering and is skipped.<br/>Example: If we were to add an intercalary month between January and February, January would still be considered the first month and February would be considered the second month. The new month does not get a number.<br/>Intercalary months also do not count towards the years total days nor do they affect the day of the week subsequent months start on.
 Include Intercalary Month in Day Calculations | When you select a month to be intercalary this option will appear. When checked the intercalary month will be treated like a normal month for calculating the day of the week days fall on and the total days in a year but still be listed as an intercalary month.
 Day Offset | The number of days to offset the day's number by. Example: Setting to 1 will have the month start on day 2 instead of day 1.
