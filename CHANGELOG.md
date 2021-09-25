@@ -1,8 +1,34 @@
 # Change Log
 
-## v1.3.45 - Custom Date Formats
+## v1.3.49 - Custom Date Formats, Quality of Life Improvements, API Changes
 
 ### Custom Date Formats
+
+You can now customize how the date is displayed in Simple Calendar with custom date/time formats!
+
+- New General Settings for specifying custom date/time formats to customize how dates and times are displayed in the calendar.
+  - **Date Format**: This indicates how all dates will appear within Simple Calendar. The dates that are affected by this format are:
+    - _**Full View**_: The note list heading, "Notes for [date]".
+    - _**Compact View**_: The displayed date.
+    - _**Date Selector**_: The date portion of the Date Selector text box.
+    - _**Notes**_: The Date/Time pill in the note list and in the note display will use this format to display the date portion.
+  - **Time Format**: This indicates how all times will be displayed within Simple Calendar. The times that are affected by this format are:
+    - _**Full View**_: The clock below the calendar.
+    - _**Compact View**_: The clock below the date.
+    - _**Date Selector**_: The time portion of the Date Selector text box as well as the time selection text boxes.
+    - _**Notes**_: The Date/Time pill in the note list and in the note display will use this format to display the time portion.
+  - **Month/Year Format**: This indicates how the month and year are displayed at the top of the calendar in the Full View and the Date Selector.
+
+
+### Quality of Life Improvements
+
+- Improved the performance of drawing calendars with a large number of days and/or a calendar with a large number of notes.
+
+### API Changes
+
+- Added a `date` property to the [Date Display Object](./docs/API.md#date-display-object) that contains the formatted date string for the date. This object is part of the return from the `SimpleCalendar.api.timestampToDate` function.
+- Updated the `time` property of the [Date Display Object](./docs/API.md#date-display-object) so that it contains the formatted time string for the date.
+- Added a new function to the API, `SimpleCalendar.api.formatDateTime(date)`. This takes in a DateTime object and will format it to the currently configured date and time formats. Check out the [API Docs](./docs/API.md#simplecalendarapiformatdatetimedate) for more details!
 
 ## v1.3.44 - Bug Fixes
 

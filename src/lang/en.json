@@ -213,6 +213,8 @@
   "FSC.Configuration.Month.DaysHelp": "The number of days that make up this month.",
   "FSC.Configuration.Month.Intercalary": "Intercalary Month",
   "FSC.Configuration.Month.IntercalaryHelp": "If this month is to be considered an intercalary month or not.",
+  "FSC.Configuration.Month.Abbreviation": "Month Name Abbreviation",
+  "FSC.Configuration.Month.AbbreviationHelp": "The abbreviated text name of this month.",
   "FSC.Configuration.Month.IntercalaryInclude": "Include Intercalary Month in Day Calculations",
   "FSC.Configuration.Month.IntercalaryIncludeHelp": "If checked the intercalary month will be treated like a normal month for calculating the day of the week days fall on and the total days in a year but still be listed as an intercalary month.",
   "FSC.Configuration.Month.DayOffset": "Day Offset",

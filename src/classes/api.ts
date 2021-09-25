@@ -130,6 +130,7 @@ export default class API{
             yearPrefix: '',
             yearPostfix: '',
             display: {
+                date: '',
                 day: '',
                 daySuffix: '',
                 weekday: '',
@@ -186,7 +187,8 @@ export default class API{
         }
         result.display.day = day.numericRepresentation.toString();
         result.display.daySuffix = Utilities.ordinalSuffix(day.numericRepresentation);
-        result.display.time = Utilities.FormatTime(result.hour, result.minute, result.second);
+        result.display.time = Utilities.FormatDateTime({year: 0, month: 0, day: 0, hour: result.hour, minute: result.minute, seconds: result.second}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time);
+        result.display.date = Utilities.FormatDateTime({year: result.year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds: 0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.date);
         return result;
     }
 
@@ -200,15 +202,15 @@ export default class API{
         const currentMonth = clone.getMonth();
         const currentTime = clone.time.getCurrentTime();
         if(date.second === undefined){
-            date.second = parseInt(currentTime.second);
+            date.second = currentTime.seconds;
         }
 
         if(date.minute === undefined){
-            date.minute = parseInt(currentTime.minute);
+            date.minute = currentTime.minute;
         }
 
         if(date.hour === undefined){
-            date.hour = parseInt(currentTime.hour);
+            date.hour = currentTime.hour;
         }
 
         // If not year is passed in, set to the current year
@@ -501,6 +503,40 @@ export default class API{
     public static stopClock(){
         SimpleCalendar.instance.activeCalendar.year.time.timeKeeper.stop();
         return true;
+    }
+
+    /**
+     * Returns the formatted date and time strings for the passed in date time object
+     * @param {DateTime} date The date and time to format
+     */
+    public static formatDateTime(date: DateTime){
+        const year = date.year? date.year : 0;
+        let monthIndex = date.month && date.month >= 0? date.month : 0;
+        if(monthIndex >= SimpleCalendar.instance.activeCalendar.year.months.length){
+            monthIndex = SimpleCalendar.instance.activeCalendar.year.months.length - 1;
+        }
+        const month = SimpleCalendar.instance.activeCalendar.year.months[monthIndex];
+        let dayIndex = date.day && date.day >= 0? date.day : 0;
+        if(dayIndex >= month.days.length){
+            dayIndex = month.days.length - 1;
+        }
+        const day = month.days[dayIndex];
+        let hour = date.hour && date.hour >= 0? date.hour : 0;
+        if(hour >= SimpleCalendar.instance.activeCalendar.year.time.hoursInDay){
+            hour = SimpleCalendar.instance.activeCalendar.year.time.hoursInDay - 1;
+        }
+        let minute = date.minute && date.minute >= 0? date.minute : 0;
+        if(minute >= SimpleCalendar.instance.activeCalendar.year.time.minutesInHour){
+            minute = SimpleCalendar.instance.activeCalendar.year.time.minutesInHour - 1;
+        }
+        let second = date.second && date.second >= 0? date.second : 0;
+        if(second >= SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute){
+            second = SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute - 1;
+        }
+        return {
+            date: Utilities.FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds:0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.date),
+            time: Utilities.FormatDateTime({year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds:second}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time)
+        };
     }
 
     /**

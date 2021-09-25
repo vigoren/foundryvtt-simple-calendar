@@ -227,21 +227,24 @@ export default class DateSelector {
         let wrapper = `<div id="${this.id}" class="sc-date-selector">`;
         let calendarWidth = 0;
         let calendar = '';
+        const timeMask = SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time.replace(/:?[s]/g, '');
+
         if(this.showDate){
             let weeks: (boolean | DayTemplate)[][] = [[false]],
-                visibleMonthName: string = '',
+                vMonth: number = 1,
                 weekdays = SimpleCalendar.instance.activeCalendar.year.showWeekdayHeadings? SimpleCalendar.instance.activeCalendar.year.weekdays : [];
             const visibleMonth = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === this.selectedDate.visibleDate.month);
             if(visibleMonth){
                 weeks = SimpleCalendar.instance.activeCalendar.year.daysIntoWeeks(visibleMonth, this.selectedDate.startDate.year, SimpleCalendar.instance.activeCalendar.year.weekdays.length);
-                visibleMonthName = visibleMonth.name;
+                vMonth = visibleMonth.numericRepresentation;
             }
 
             if(!weeks.length){
                 return '';
             }
+            const monthYearDisplay = this.showYear? Utilities.FormatDateTime({year: this.selectedDate.visibleDate.year, month: vMonth, day: 1, hour: 0, minute: 0, seconds:0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.monthYear) : Utilities.FormatDateTime({year: this.selectedDate.visibleDate.year, month: vMonth, day: 1, hour: 0, minute: 0, seconds:0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.monthYear.replace(/YN|YA|YZ|YY(?:YY)?/g, ''));
             calendarWidth = (10 + (weeks[0].length * 40));
-            calendar = `<div class="header"><div class="current"><a class="prev fa fa-chevron-left"></a><span class="month-year" data-visible="${this.selectedDate.visibleDate.month}/${this.selectedDate.visibleDate.year}">${visibleMonthName} ${this.showYear? this.selectedDate.visibleDate.year : ''}</span><a class="next fa fa-chevron-right"></a></div>`;
+            calendar = `<div class="header"><div class="current"><a class="prev fa fa-chevron-left"></a><span class="month-year" data-visible="${this.selectedDate.visibleDate.month}/${this.selectedDate.visibleDate.year}">${monthYearDisplay}</span><a class="next fa fa-chevron-right"></a></div>`;
 
 
             if(weekdays.length){
@@ -295,13 +298,14 @@ export default class DateSelector {
             calendar += `${dayContainer}`;
         }
         if(this.showTime){
+
             let startTimeText = `00:00`;
             let endTimeText = `00:00`;
             if(!this.selectedDate.startDate.allDay){
-                startTimeText = ' ' + Utilities.FormatTime(this.selectedDate.startDate.hour, this.selectedDate.startDate.minute, false);
+                startTimeText = ' ' + Utilities.FormatDateTime({year: 0, month: 1, day: 1, hour: this.selectedDate.startDate.hour, minute: this.selectedDate.startDate.minute, seconds: 0}, timeMask);
             }
             if(!this.selectedDate.endDate.allDay){
-                endTimeText = ' ' + Utilities.FormatTime(this.selectedDate.endDate.hour, this.selectedDate.endDate.minute, false);
+                endTimeText = ' ' + Utilities.FormatDateTime({year: 0, month: 1, day: 1, hour: this.selectedDate.endDate.hour, minute: this.selectedDate.endDate.minute, seconds: 0}, timeMask);
             }
 
             let timeWrapper = `<div class='time-container'>`;
@@ -323,10 +327,12 @@ export default class DateSelector {
                             endHalfSelected = 'selected';
                         }
                     }
-                    startTimePicker += `<div class="time-option ${startSelected}" data-hour="${i}" data-minute="0">${i < 10? '0'+i : i}:00</div>`;
-                    startTimePicker += `<div class="time-option ${startHalfSelected}" data-hour="${i}" data-minute="${halfHour}">${i < 10? '0'+i : i}:${halfHour}</div>`;
-                    endTimePicker += `<div class="time-option ${endSelected}" data-hour="${i}" data-minute="0">${i < 10? '0'+i : i}:00</div>`;
-                    endTimePicker += `<div class="time-option ${endHalfSelected}" data-hour="${i}" data-minute="${halfHour}">${i < 10? '0'+i : i}:${halfHour}</div>`;
+                    const hourStartDisp = Utilities.FormatDateTime({year: 0, month: 0, day: 0, hour: i, minute: 0, seconds: 0}, timeMask);
+                    const hourMidDisp = Utilities.FormatDateTime({year: 0, month: 0, day: 0, hour: i, minute: halfHour, seconds: 0}, timeMask)
+                    startTimePicker += `<div class="time-option ${startSelected}" data-hour="${i}" data-minute="0">${hourStartDisp}</div>`;
+                    startTimePicker += `<div class="time-option ${startHalfSelected}" data-hour="${i}" data-minute="${halfHour}">${hourMidDisp}</div>`;
+                    endTimePicker += `<div class="time-option ${endSelected}" data-hour="${i}" data-minute="0">${hourStartDisp}</div>`;
+                    endTimePicker += `<div class="time-option ${endHalfSelected}" data-hour="${i}" data-minute="${halfHour}">${hourMidDisp}</div>`;
 
                 }
                 if(this.showDate || this.timeRange){

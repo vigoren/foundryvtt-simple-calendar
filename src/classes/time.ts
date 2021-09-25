@@ -2,6 +2,7 @@ import {Logger} from "./logging";
 import {TimeConfig, TimeTemplate} from "../interfaces";
 import TimeKeeper from "./time-keeper";
 import ConfigurationItemBase from "./configuration-item-base";
+import Utilities from "./utilities";
 
 /**
  * Class representing the time of day
@@ -139,9 +140,9 @@ export default class Time extends ConfigurationItemBase{
         }
         s = Math.floor(s);
         return {
-            hour: h < 10? `0${h}` : h.toString(),
-            minute: m < 10? `0${m}` : m.toString(),
-            second: s < 10? `0${s}` : s.toString()
+            hour: h,
+            minute: m,
+            seconds: s
         };
     }
 
@@ -150,7 +151,7 @@ export default class Time extends ConfigurationItemBase{
      */
     toString(): string{
         const t = this.getCurrentTime();
-        return `${t.hour}:${t.minute}:${t.second}`;
+        return `${Utilities.PadNumber(t.hour)}:${Utilities.PadNumber(t.minute)}:${Utilities.PadNumber(t.seconds)}`;
     }
 
     /**

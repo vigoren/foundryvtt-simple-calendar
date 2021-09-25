@@ -63,6 +63,8 @@ export default class Month extends ConfigurationItemBase {
      */
     startingWeekday: number | null = null;
 
+    abbreviation: string = '';
+
     /**
      * Month class constructor
      * @param {string} name The name of the month
@@ -77,6 +79,7 @@ export default class Month extends ConfigurationItemBase {
         if(this.name === ''){
             this.name = numericRepresentation.toString();
         }
+        this.abbreviation = this.name.substring(0,3);
         this.numberOfLeapYearDays = numberOfLeapYearDays === null? numberOfDays : numberOfLeapYearDays;
         this.numberOfDays = numberOfDays;
         this.populateDays(this.numberOfLeapYearDays > this.numberOfDays? this.numberOfLeapYearDays : this.numberOfDays);
@@ -121,6 +124,7 @@ export default class Month extends ConfigurationItemBase {
         }
         return {
             ...super.toTemplate(),
+            abbreviation: this.abbreviation,
             display: this.getDisplayName(),
             name: this.name,
             numericRepresentation: this.numericRepresentation,
@@ -146,6 +150,7 @@ export default class Month extends ConfigurationItemBase {
         const m = new Month(this.name, this.numericRepresentation, this.numericRepresentationOffset);
         m.id = this.id;
         m.name = this.name;
+        m.abbreviation = this.abbreviation;
         m.current = this.current;
         m.selected = this.selected;
         m.visible = this.visible;
@@ -186,6 +191,11 @@ export default class Month extends ConfigurationItemBase {
             this.intercalaryInclude = config.intercalaryInclude;
             if(config.hasOwnProperty('startingWeekday')){
                 this.startingWeekday = config.startingWeekday;
+            }
+            if(config.hasOwnProperty('abbreviation')){
+                this.abbreviation = config.abbreviation;
+            } else {
+                this.abbreviation = this.name.substring(0, 3);
             }
             this.days = [];
             this.populateDays(this.numberOfLeapYearDays > this.numberOfDays? this.numberOfLeapYearDays : this.numberOfDays);

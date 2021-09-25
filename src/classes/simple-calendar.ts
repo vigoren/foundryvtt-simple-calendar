@@ -1198,8 +1198,8 @@ export default class SimpleCalendar extends Application{
             const currentMonth = this.activeCalendar.year.getMonth();
             const currentDay = currentMonth? currentMonth.getDay() : this.activeCalendar.year.months[0].days[0];
             const time = this.activeCalendar.year.time.getCurrentTime();
-            const currentHour = parseInt(time.hour);
-            const currentMinute = parseInt(time.minute);
+            const currentHour = time.hour;
+            const currentMinute = time.minute;
 
             const currentDate: SCDateSelector.Date = {
                 year: this.activeCalendar.year.numericRepresentation,

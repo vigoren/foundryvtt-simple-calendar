@@ -23,9 +23,9 @@ export default class GeneralSettings extends ConfigurationItemBase{
         /** Date format (year, month, day) and how to display it. Used in the compact view, Notes for <Date>, Date of Notes in display of notes and the Date Selector for notes */
         date: 'MMMM DD, YYYY',
         /** Time format (hour, minute, second) and how to display it. Used in the compact view, the clock, Notes that have a specific time set and Date Selector for time*/
-        time: 'hh:mm:ss',
+        time: 'HH:mm:ss',
         /** Format for displaying just the month and year. Used at the top of any calendar month display */
-        monthYear: 'MMMM YYYY'
+        monthYear: 'MMMM YAYYYYYZ'
     };
     /**
      * User permissions for different actions in the calendar

@@ -624,7 +624,7 @@ describe('Year Class Tests', () => {
     });
 
     test('To Seconds', () => {
-
+        SimpleCalendar.instance.activeCalendar.year = year;
         expect(year.toSeconds()).toBe(0);
         year.months.push(month);
         year.numericRepresentation = 1;
@@ -943,6 +943,7 @@ describe('Year Class Tests', () => {
     });
 
     test('Process Own Combat Round Time', () => {
+        SimpleCalendar.instance.activeCalendar.year = year;
         PredefinedCalendar.setToPredefined(year, PredefinedCalendars.Gregorian);
         let curTime = year.time.seconds;
         year.processOwnCombatRoundTime(<Combat>{});

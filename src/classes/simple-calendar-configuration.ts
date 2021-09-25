@@ -652,7 +652,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     }
                     else if(cssClass === 'month-name' && (<Calendar>this.object).year.months.length > index){
                         (<Calendar>this.object).year.months[index].name = value;
-                    } else if(cssClass === 'month-days' && (<Calendar>this.object).year.months.length > index){
+                        (<Calendar>this.object).year.months[index].abbreviation = value.substring(0, 3);
+                    } else if(cssClass === 'month-abbreviation'){
+                        (<Calendar>this.object).year.months[index].abbreviation = value;
+                    }else if(cssClass === 'month-days' && (<Calendar>this.object).year.months.length > index){
                         let days = parseInt(value);
                         if(!isNaN(days) && days !== (<Calendar>this.object).year.months[index].days.length){
                             (<Calendar>this.object).year.months[index].numberOfDays = days;

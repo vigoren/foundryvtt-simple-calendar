@@ -63,7 +63,10 @@ export interface CalendarTemplate extends IConfigurationItemBaseTemplate {
     showTimeControls: boolean;
     showSelectedDay: boolean;
     showSetCurrentDate: boolean;
+    calendarDisplay: string;
     name: string;
+    selectedDisplay: string;
+    timeDisplay: string;
     currentYear: YearTemplate;
     gameSystem: GameSystems;
     notes: NoteTemplate[];
@@ -138,15 +141,6 @@ export interface PermissionMatrix {
  * Interface for the year template that is passed to the HTML for rendering
  */
 export interface YearTemplate extends IConfigurationItemBaseTemplate {
-    /** The display text of the year */
-    display: string;
-    /** The display text for the selected, or current, year */
-    selectedDisplayYear: string;
-    /** The display text for the selected, or current, month */
-    selectedDisplayMonth: string;
-    /** The display text for the selected, or current, day */
-    selectedDisplayDay: string;
-    selectedDayOfWeek: string;
     selectedDayMoons: any[];
     selectedDayNotes: { reminders: number; normal: number; };
     yearZero: number;
@@ -159,7 +153,6 @@ export interface YearTemplate extends IConfigurationItemBaseTemplate {
     /** The days of the week */
     weekdays: WeekdayTemplate[];
     firstWeekday: number;
-    currentTime: TimeTemplate;
     currentSeasonName: string;
     currentSeasonColor: string;
     weeks: (boolean | DayTemplate)[][];
@@ -187,6 +180,7 @@ export interface YearConfig extends IConfigurationItemBaseConfig {
  * Interface for the month template that is passed to the HTML for rendering
  */
 export interface  MonthTemplate extends IConfigurationItemBaseTemplate {
+    abbreviation: string;
     display: string;
     name: string;
     numericRepresentation: number;
@@ -207,6 +201,7 @@ export interface  MonthTemplate extends IConfigurationItemBaseTemplate {
  * Interface for the data saved to the game settings for a month class
  */
 export interface MonthConfig extends IConfigurationItemBaseConfig {
+    abbreviation: string;
     name: string;
     numericRepresentation: number;
     numericRepresentationOffset: number;
@@ -343,9 +338,9 @@ export interface TimeConfig extends IConfigurationItemBaseConfig{
  * Interface for displaying the time information
  */
 export interface TimeTemplate {
-    hour: string;
-    minute: string;
-    second: string;
+    hour: number;
+    minute: number;
+    seconds: number;
 }
 
 /**

@@ -13,7 +13,7 @@ import "../../__mocks__/crypto";
 
 import Utilities from "./utilities";
 import {DateTimeParts, SCDateSelector} from "../interfaces";
-import {DateRangeMatch, MoonIcons} from "../constants";
+import {DateRangeMatch, GameSystems, MoonIcons} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import Year from "./year";
@@ -111,6 +111,28 @@ describe('Utilities Class Tests', () => {
         expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaningGibbous, '#ffffff')).toBeDefined();
         expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaxingCrescent, '#ffffff')).toBeDefined();
         expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaxingGibbous, '#ffffff')).toBeDefined();
+    });
+
+    test('Pad Number', () => {
+        expect(Utilities.PadNumber(1)).toBe('01');
+        expect(Utilities.PadNumber(11)).toBe('11');
+        expect(Utilities.PadNumber(11,2)).toBe('011');
+        expect(Utilities.PadNumber(111,2)).toBe('111');
+        expect(Utilities.PadNumber(1111,2)).toBe('1111');
+    });
+
+    test('To Seconds', () => {
+        SimpleCalendar.instance = new SimpleCalendar();
+        expect(Utilities.ToSeconds(1970, 1, 1, false)).toBe(0);
+
+        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        //@ts-ignore
+        delete game['pf2e'];
+        expect(Utilities.ToSeconds(1970, 1, 1, false)).toBe(86400);
+        //@ts-ignore
+        game.pf2e = {worldClock:{dateTheme: "AD", worldCreatedOn: 0}};
+        expect(Utilities.ToSeconds(1875, 1, 1)).toBe(86400);
+
     });
 
     test('Date The Same', () => {

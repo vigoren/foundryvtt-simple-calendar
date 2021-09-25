@@ -251,6 +251,41 @@ SimpleCalendar.api.dateToTimestamp({}); //Returns the timestamp for the current 
 SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, second: 0}); //Returns 1609462860
 ```
 
+## `SimpleCalendar.api.formatDateTime(date)`
+
+Converts the passed in date into formatted date and time strings that match the configured date and time formats.
+
+### Parameters
+
+Parameter|Type|Default Value|Description
+---------|-----|-------------|-----------
+date|[Date Time Ojbect](#date-time-object) or null|null|A date object (eg `{year:2021, month: 4, day: 12, hour: 0, mintue: 0, second: 0}`) with the parameters set to the date and time that should be formatted.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+
+- Any missing date/time parameters will default to a value of 0.
+- If the date/time parameters are negative, their value will be set to 0. The exception to this is the year parameter, it can be negative.
+- If the date/time parameters are set to a value greater than possible (eg. the 20th month in a calendar that only has 12 months, or the 34th hour when a day can only have 24 hours) the max value will be used.
+
+### Returns
+
+Returns an object that contains a formatted date string and a formatted time string.
+
+### Examples
+```javascript
+// Assuming that the default date and time formats are in place
+// Date: Full Month Name Day, Year
+// Time: 24Hour:Minute:Second
+
+SimpleCalendar.api.formatDate({year: 2021, month: 11, day: 24, hour: 12, minute: 13, second: 14});
+// Returns {date: 'December 25, 2021', time: '12:13:14'}
+
+SimpleCalendar.api.formatDate({year: -2021, month: -11, day: 24, hour: 12, minute: 13, second: 14})
+// Returns {date: 'January 25, -2021', time: '12:13:14'}
+
+SimpleCalendar.api.formatDate({year: 2021, month: 111, day: 224, hour: 44, minute: 313, second: 314})
+// Returns {date: 'December 31, 2021', time: '23:59:59'}
+```
+
+
 ## `SimpleCalendar.api.getAllSeasons()`
 
 Gets all the seasons for the calendar.
@@ -398,16 +433,6 @@ SimpleCalendar.api.showCalendar({year: 1999, month: 11, day: 25}); // Will open 
 SimpleCalendar.api.showCalendar(null, true); // Will opent the calendar to the current date in compact mode.
 ```
 
-## `SimpleCalendar.api.timestamp()`
-
-Return the timestamp (in seconds) of the calendars currently set date.
-
-### Examples
-```javascript
-const timestamp = SimpleCalendar.api.timestamp();
-console.log(timestamp); // This will be a number representing the current number of seconds passed in the calendar.
-```
-
 ## `SimpleCalendar.api.startClock()`
 
 Starts the real time clock of Simple Calendar. Only the primary GM can start a clock.
@@ -434,6 +459,16 @@ Will return true if the clock stopped, false if it did not.
 
 ```javascript
 SimpleCalendar.api.stopClock();
+```
+
+## `SimpleCalendar.api.timestamp()`
+
+Return the timestamp (in seconds) of the calendars currently set date.
+
+### Examples
+```javascript
+const timestamp = SimpleCalendar.api.timestamp();
+console.log(timestamp); // This will be a number representing the current number of seconds passed in the calendar.
 ```
 
 ## `SimpleCalendar.api.timestampPlusInterval(timestamp, interval)`
@@ -488,11 +523,12 @@ console.log(scDate);
     dayOfTheWeek: 2,
     dayOffset: 0,
     display: {
+        date: "June 01, 2021",
         day: "1",
         daySuffix: "st",
         month: "6",
         monthName: "June",
-        time: "21:03:35",
+        time: "00:00:00",
         weekday: "Tuesday",
         year: "2021",
         yearName: "",
@@ -505,7 +541,7 @@ console.log(scDate);
     monthName: "June",
     second: 0,
     showWeekdayHeadings: true,
-    weekdays: (7) ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     year: 2021,
     yearName: "",
     yearPostfix: "",
@@ -579,11 +615,12 @@ This type contains the formatted strings used to display the current date and ti
 
 Property|Type|Default Value|Description
 ---------|-----|-------------|-----------
+date|String|""|The formatted date string based on the format set in the configuration for the date.
 day|String|""|How the day is displayed, generally its number on the calendar.
 daySuffix|String|""|The Ordinal Suffix associated with the day number (st, nd, rd or th)
 month|String|""|The month number.
 monthName|String|""|The name of the month.
-time|String|''|The hour, minute and seconds.
+time|String|''|The formatted time string based on the format set in the configuration for the time.
 weekday|String|""|The name of the weekday this date falls on.
 year|String|""|The year number
 yearName|String|""|The name of the year, if year names have been set up.
