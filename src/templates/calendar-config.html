@@ -52,6 +52,185 @@
             <div class="settings-group">
                 <h2>{{localize 'FSC.Configuration.General.DisplayOptions'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#display-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <h3>{{localize 'FSC.Configuration.General.Display.DateTimeFormatTitle'}}</h3>
+                <div class="f-table" style="border-top: 1px solid #7a7971;">
+                    <div class="row head">
+                        <div>Format Tokens</div>
+                        <div>A list of the different formatting tokens to use in the format settings below.</div>
+                    </div>
+                    <div class="collapsable" style="display: none;">
+                        <div class="row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>Year Options</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th>Token</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    <tr>
+                                        <td>YYYY</td>
+                                        <td>Full year, eg 2021</td>
+                                    </tr>
+                                    <tr>
+                                        <td>YY</td>
+                                        <td>Year shorthand, eg 21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>YN</td>
+                                        <td>Year name, as determined by the year name settings.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>YA</td>
+                                        <td>Year prefix as defined in the Year Prefix setting.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>YZ</td>
+                                        <td>Year postfix as defined in the Year Postfix setting.</td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>Month Options</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th>Token</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    <tr>
+                                        <td>M</td>
+                                        <td>The months number, eg 1 or 11</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MM</td>
+                                        <td>The months number but padded with a zero, eg 01 or 11</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MMM</td>
+                                        <td>The months abbreviated name as defined in the months settings, eg Jan or Nov</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MMMM</td>
+                                        <td>The months full name as defined in the months settings, eg January or November</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>Day Options</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th>Token</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    <tr>
+                                        <td>D</td>
+                                        <td>The days number, eg 1 or 20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>DD</td>
+                                        <td>The days number but padded with a zero, eg 01 or 20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>DO</td>
+                                        <td>The days number with the added suffix, eg 1st or 20th</td>
+                                    </tr>
+                                    <tr>
+                                        <td>DDD</td>
+                                        <td>The abbreviated name for the day of the week the day falls on, eg Wed</td>
+                                    </tr>
+                                    <tr>
+                                        <td>DDDD</td>
+                                        <td>The full name for the day of the week the day falls on, eg Wednesday</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>Hour Options</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th>Token</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    <tr>
+                                        <td>h</td>
+                                        <td>The hours number in the 12 hour format, eg 1 or 11</td>
+                                    </tr>
+                                    <tr>
+                                        <td>H</td>
+                                        <td>The hours number in the 24 hour format, eg 1 or 23</td>
+                                    </tr>
+                                    <tr>
+                                        <td>hh</td>
+                                        <td>The hours number padded with a zero in the 12 hour format, eg 01 or 11</td>
+                                    </tr>
+                                    <tr>
+                                        <td>HH</td>
+                                        <td>The hours number padded with a zero in the 24 hour format, eg 01 or 23</td>
+                                    </tr>
+                                    <tr>
+                                        <td>a</td>
+                                        <td>The am/pm indicator for the 12 hour time format in lowercase</td>
+                                    </tr>
+                                    <tr>
+                                        <td>A</td>
+                                        <td>The AM/PM indicator for the 12 hour time format in uppercase</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>Minute Options</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th>Token</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    <tr>
+                                        <td>m</td>
+                                        <td>The minutes number, eg 1 or 23</td>
+                                    </tr>
+                                    <tr>
+                                        <td>mm</td>
+                                        <td>The minutes number padded with a zero, eg 01 or 23</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>Second Options</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th>Token</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    <tr>
+                                        <td>s</td>
+                                        <td>The seconds number, eg 1 or 23</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ss</td>
+                                        <td>The seconds number padded with a zero, eg 01 or 23</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>Text</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                For any text that should be in the format but not processed place square brackets around it. eg "[Don't process this text] HH:mm:ss"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p>For more details about configuring date formats, including examples, please check out the <a target="_blank" href="https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats">documentation</a>.</p>
+
                 <div class="form-group">
                     <label for="scDateFormatsDate">{{localize 'FSC.Configuration.General.Display.DateFormat.Date'}}</label>
                     <div class="form-fields">
