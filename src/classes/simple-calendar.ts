@@ -232,6 +232,11 @@ export default class SimpleCalendar extends Application{
             }
         } else if(data.type === SocketTypes.noteReminders){
             this.checkNoteReminders((<SimpleCalendarSocket.SimpleCalendarNoteReminder>data.data).justTimeChange);
+        } else if(data.type === SocketTypes.emitHook){
+            const hook = (<SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).hook
+            if(hook){
+                Hook.emit(hook);
+            }
         }
     }
 

@@ -7,7 +7,7 @@ import {
     GameWorldTimeIntegrations,
     SocketTypes,
     MoonIcons,
-    MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus
+    MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus, SimpleCalendarHooks
 } from "./constants";
 import Note from "./classes/note";
 import DateSelector from "./classes/date-selector";
@@ -449,7 +449,7 @@ export namespace SimpleCalendarSocket{
      */
     export interface Data {
         type: SocketTypes;
-        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate|SimpleCalendarNoteReminder;
+        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate|SimpleCalendarNoteReminder|SimpleCalendarEmitHook;
     }
 
     export interface SimpleCalendarSocketDateTime{
@@ -489,6 +489,10 @@ export namespace SimpleCalendarSocket{
 
     export interface SimpleCalendarNoteReminder{
         justTimeChange?: boolean;
+    }
+
+    export interface SimpleCalendarEmitHook{
+        hook?: SimpleCalendarHooks;
     }
 }
 

@@ -18,6 +18,7 @@ Simple Calendar exposes a variable called `SimpleCalendar`, all of these API fun
 - [configureCalendar](#simplecalendarapiconfigurecalendarconfig)
 - [dateToTimestamp](#simplecalendarapidatetotimestampdate)
 - [getAllSeasons](#simplecalendarapigetallseasons)
+- [formatDateTime](#simplecalendarapiformatdatetimedate)
 - [getCurrentSeason](#simplecalendarapigetcurrentseason)
 - [isPrimaryGM](#simplecalendarapiisprimarygm)
 - [secondsToInterval](#simplecalendarapisecondstointervalseconds)

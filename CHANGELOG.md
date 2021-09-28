@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.3.49 - Custom Date Formats, Quality of Life Improvements, API Changes
+## v1.3.50 - Custom Date Formats, Quality of Life Improvements, API Changes and Bug Fixes
 
 ### Custom Date Formats
 
@@ -23,6 +23,10 @@ You can now customize how the date and time is displayed in Simple Calendar with
 ### Quality of Life Improvements
 
 - Improved the performance of drawing calendars with a large number of days and/or a calendar with a large number of notes.
+
+### Bug Fixes
+
+- Fixed a bug where the `SimpleCalendar.Hooks.DateTimeChange` Hook would not fire for players when the date/time was changed.
 
 ### API Changes
 

@@ -24,11 +24,10 @@ import {
     GameWorldTimeIntegrations,
     NoteRepeat,
     PredefinedCalendars,
-    SettingNames,
+    SimpleCalendarHooks,
     SocketTypes,
     TimeKeeperStatus
 } from "../constants";
-
 import Mock = jest.Mock;
 import SpyInstance = jest.SpyInstance;
 
@@ -274,6 +273,14 @@ describe('Simple Calendar Class Tests', () => {
         d.type = SocketTypes.noteReminders;
         await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(0);
+
+        d.type = SocketTypes.emitHook;
+        d.data = {hook: SimpleCalendarHooks.DateTimeChange};
+        await SimpleCalendar.instance.processSocket(d);
+        expect(Hooks.callAll).toHaveBeenCalledTimes(13);
+        d.data = {};
+        await SimpleCalendar.instance.processSocket(d);
+        expect(Hooks.callAll).toHaveBeenCalledTimes(13);
     });
 
     test('Get Data', async () => {
