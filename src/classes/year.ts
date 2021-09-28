@@ -675,7 +675,7 @@ export default class Year extends ConfigurationItemBase {
         const month = this.getMonth();
         if(month){
             const day = month.getDay();
-            totalSeconds = Utilities.ToSeconds(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1);
+            totalSeconds = Utilities.ToSeconds(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, this);
         }
         return totalSeconds;
     }

@@ -46,6 +46,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
         defaultPlayerNoteVisibility: true
     }
 
+    private dateFormatTableExpanded: boolean = false;
+
     /**
      * The Calendar configuration constructor
      * @param {Calendar} data The year data used to populate the configuration dialog
@@ -113,6 +115,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
         let data = {
             ...super.getData(options),
+            showDateFormatTokens: this.dateFormatTableExpanded,
             defaultPlayerNoteVisibility: this.generalSettings.defaultPlayerNoteVisibility,
             currentYear: (<Calendar>this.object).year,
             generalSettings: (<Calendar>this.object).generalSettings,
@@ -241,6 +244,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
         super.activateListeners(html);
         (<Calendar>this.object).year.seasons.forEach(s => s.activateDateSelectors());
         if(html.hasOwnProperty("length")) {
+            //Date Format Tokens Show/hide
+            (<JQuery>html).find('.date-format-token-show').on('click', () => {this.dateFormatTableExpanded = !this.dateFormatTableExpanded; this.updateApp();});
+
             //Month advanced click
             (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));
 

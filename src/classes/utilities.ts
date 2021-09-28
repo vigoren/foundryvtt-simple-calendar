@@ -11,6 +11,7 @@ import WaxingGibbousIcon from "../icons/moon-waxing-gibbous.svg";
 import {DateTimeParts, SCDateSelector} from "../interfaces";
 import SimpleCalendar from "./simple-calendar";
 import PF2E from "./systems/pf2e";
+import Year from "./year";
 
 export default class Utilities{
 
@@ -127,14 +128,16 @@ export default class Utilities{
      * @param {string} mask The mask that is used to change the date/time to match the mask
      */
     public static FormatDateTime(date: DateTimeParts, mask: string){
-        const token = /DO|D{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|S{1,3}|ZZ|Z|([HhMms])\1?|[aA]/g;
+        const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|S{1,3}|ZZ|Z|([HhMmsD])\1?|[aA]/g;
         const literal = /\[([^]*?)\]/gm;
         const formatFlags: Record<string, (dateObj: DateTimeParts) => string> = {
             "D": (dateObj: DateTimeParts) => String(dateObj.day),
             "DD": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.day),
             "DO": (dateObj: DateTimeParts) => `${dateObj.day}${Utilities.ordinalSuffix(dateObj.day)}`,
-            "DDD": (dateObj: DateTimeParts) => `${SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name.substring(0, 3)}`,
-            "DDDD": (dateObj: DateTimeParts) => `${SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name}`,
+            "d": (dateObj: DateTimeParts) => String(SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
+            "dd": (dateObj: DateTimeParts) => Utilities.PadNumber(SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
+            "ddd": (dateObj: DateTimeParts) => `${SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name.substring(0, 3)}`,
+            "dddd": (dateObj: DateTimeParts) => `${SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name}`,
             "M": (dateObj: DateTimeParts) => String(dateObj.month),
             "MM": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.month),
             "MMM": (dateObj: DateTimeParts) => {
@@ -148,7 +151,7 @@ export default class Utilities{
             "YN": (dateObj: DateTimeParts) => SimpleCalendar.instance.activeCalendar.year.getYearName(dateObj.year),
             "YA": (dateObj: DateTimeParts) => SimpleCalendar.instance.activeCalendar.year.prefix,
             "YZ": (dateObj: DateTimeParts) => SimpleCalendar.instance.activeCalendar.year.postfix,
-            "YY": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.year, 4).substring(2),
+            "YY": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.year, 2).substring(2),
             "YYYY": (dateObj: DateTimeParts) => String(dateObj.year),
             "H": (dateObj: DateTimeParts) => String(dateObj.hour),
             "HH": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.hour),
@@ -194,20 +197,21 @@ export default class Utilities{
      * @param {number} month The month number
      * @param {number} day The day number
      * @param {boolean} [includeToday=true] If to include today's seconds in the calculation
+     * @param {Year} [yearClass=SimpleCalendar.instance.activeCalendar.year] The year class to use for the seconds calculations
      */
-    public static ToSeconds(year: number, month: number, day: number, includeToday: boolean = true){
+    public static ToSeconds(year: number, month: number, day: number, includeToday: boolean = true, yearClass: Year = SimpleCalendar.instance.activeCalendar.year){
         //Get the days so for and add one to include the current day
-        let daysSoFar = SimpleCalendar.instance.activeCalendar.year.dateToDays(year, month, day, true, true);
-        let totalSeconds = SimpleCalendar.instance.activeCalendar.year.time.getTotalSeconds(daysSoFar, includeToday);
+        let daysSoFar = yearClass.dateToDays(year, month, day, true, true);
+        let totalSeconds = yearClass.time.getTotalSeconds(daysSoFar, includeToday);
         // If this is a Pathfinder 2E game, subtract the world creation seconds
         if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
             const newYZ = PF2E.newYearZero();
             if(newYZ !== undefined){
                 SimpleCalendar.instance.activeCalendar.year.yearZero = 1875;
-                daysSoFar = SimpleCalendar.instance.activeCalendar.year.dateToDays(year, month, day, true, true);
+                daysSoFar = yearClass.dateToDays(year, month, day, true, true);
             }
             daysSoFar++;
-            totalSeconds =  SimpleCalendar.instance.activeCalendar.year.time.getTotalSeconds(daysSoFar, includeToday) - PF2E.getWorldCreateSeconds(false);
+            totalSeconds =  yearClass.time.getTotalSeconds(daysSoFar, includeToday) - PF2E.getWorldCreateSeconds(false);
         }
         return totalSeconds;
     }

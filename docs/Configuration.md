@@ -71,7 +71,7 @@ A date time format is text containing special tokens. These tokens are replaced 
       <th></th>
       <th>Token</th>
       <th>Description</th>
-      <th>Examples</th>
+      <th>Example Results</th>
     </tr>
     <tr>
       <td><strong>Year</strong></td>
@@ -142,18 +142,30 @@ A date time format is text containing special tokens. These tokens are replaced 
     <tr>
       <td></td>
       <td>DO</td>
-      <td>Days number appended with its suffix.</td>
+      <td>Day number appended with its suffix.</td>
       <td>1st 2nd ... 30th 31st</td>
     </tr>
     <tr>
+      <td><strong>Weekday</strong></td>
+      <td>d</td>
+      <td>The number for the day of the week.</td>
+      <td>1 2 ... 6 7</td>
+    </tr>
+    <tr>
       <td></td>
-      <td>DDD</td>
+      <td>dd</td>
+      <td>The number for the day of the week padded with a zero.</td>
+      <td>01 02 ... 06 07</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>ddd</td>
       <td>The abbreviated name for the day of the week.</td>
       <td>Sun Mon ... Fri Sat</td>
     </tr>
     <tr>
       <td></td>
-      <td>DDDD</td>
+      <td>dddd</td>
       <td>The full name for the day of the week.</td>
       <td>Sunday Monday ... Friday Saturday</td>
     </tr>

@@ -4,7 +4,7 @@
 
 ### Custom Date Formats
 
-You can now customize how the date is displayed in Simple Calendar with custom date/time formats!
+You can now customize how the date and time is displayed in Simple Calendar with custom date/time formats!
 
 - New General Settings for specifying custom date/time formats to customize how dates and times are displayed in the calendar.
   - **Date Format**: This indicates how all dates will appear within Simple Calendar. The dates that are affected by this format are:
@@ -18,7 +18,7 @@ You can now customize how the date is displayed in Simple Calendar with custom d
     - _**Date Selector**_: The time portion of the Date Selector text box as well as the time selection text boxes.
     - _**Notes**_: The Date/Time pill in the note list and in the note display will use this format to display the time portion.
   - **Month/Year Format**: This indicates how the month and year are displayed at the top of the calendar in the Full View and the Date Selector.
-
+- Above the new date format settings is a table that contains a list of all the tokens that can be used in the formats. This table is large so by default it is collapsed, but clicking the header will expand it. A detailed list of all the tokens is also available in the [configuration documentation](./docs/Configuration.md#datetime-formats).
 
 ### Quality of Life Improvements
 
@@ -29,6 +29,9 @@ You can now customize how the date is displayed in Simple Calendar with custom d
 - Added a `date` property to the [Date Display Object](./docs/API.md#date-display-object) that contains the formatted date string for the date. This object is part of the return from the `SimpleCalendar.api.timestampToDate` function.
 - Updated the `time` property of the [Date Display Object](./docs/API.md#date-display-object) so that it contains the formatted time string for the date.
 - Added a new function to the API, `SimpleCalendar.api.formatDateTime(date)`. This takes in a DateTime object and will format it to the currently configured date and time formats. Check out the [API Docs](./docs/API.md#simplecalendarapiformatdatetimedate) for more details!
+
+### Language Updates
+- An update to the korean language file thanks to drdwing!
 
 ## v1.3.44 - Bug Fixes
 
