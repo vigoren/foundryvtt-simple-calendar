@@ -1321,7 +1321,7 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.startTime();
         expect(y.time.timeKeeper.getStatus()).toBe(TimeKeeperStatus.Paused);
 
-        SimpleCalendar.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
+        SimpleCalendar.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.ThirdParty;
         //@ts-ignore
         game.combats.find = jest.fn((v)=>{
             return v.call(undefined, {started: true});

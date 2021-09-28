@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.3.50 - Custom Date Formats, Quality of Life Improvements, API Changes and Bug Fixes
+## v1.3.51 - Custom Date Formats, Quality of Life Improvements, API Changes and Bug Fixes
 
 ### Custom Date Formats
 
@@ -27,6 +27,7 @@ You can now customize how the date and time is displayed in Simple Calendar with
 ### Bug Fixes
 
 - Fixed a bug where the `SimpleCalendar.Hooks.DateTimeChange` Hook would not fire for players when the date/time was changed.
+- Fixed a bug where the real time clock would not run if the Game World Time Integration was set to None.
 
 ### API Changes
 

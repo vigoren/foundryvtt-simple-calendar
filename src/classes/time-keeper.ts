@@ -1,5 +1,5 @@
 import {Logger} from "./logging";
-import {SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../constants";
+import {GameWorldTimeIntegrations, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Hook from "./hook";
 import {GameSettings} from "./game-settings";
@@ -128,7 +128,12 @@ export default class TimeKeeper{
                 SimpleCalendar.instance.updateApp();
             }
             if (GameSettings.IsGm() && SimpleCalendar.instance.primary) {
-                SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
+                if(SimpleCalendar.instance.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
+                    SimpleCalendar.instance.updateApp();
+                    GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.time, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
+                } else {
+                    SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
+                }
             }
             Hook.emit(SimpleCalendarHooks.DateTimeChange);
         }
@@ -141,7 +146,11 @@ export default class TimeKeeper{
      */
     private saveInterval(emitHook: boolean = false){
         if (GameSettings.IsGm() && SimpleCalendar.instance.primary) {
-            SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
+            if(SimpleCalendar.instance.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
+                GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.time, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
+            } else {
+                SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
+            }
             GameSettings.SaveCurrentDate(SimpleCalendar.instance.activeCalendar.year, emitHook).catch(Logger.error);
         }
     }
