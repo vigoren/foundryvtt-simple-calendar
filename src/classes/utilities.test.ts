@@ -13,10 +13,11 @@ import "../../__mocks__/crypto";
 
 import Utilities from "./utilities";
 import {DateTimeParts, SCDateSelector} from "../interfaces";
-import {DateRangeMatch, GameSystems, MoonIcons} from "../constants";
+import {DateRangeMatch, GameSystems, MoonIcons, PredefinedCalendars} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import Year from "./year";
+import PredefinedCalendar from "./predefined-calendar";
 
 describe('Utilities Class Tests', () => {
 
@@ -83,23 +84,6 @@ describe('Utilities Class Tests', () => {
         expect(Utilities.GetContrastColor('fffff')).toBe('#000000');
     });
 
-    test('Format Time', () => {
-        const dateToCheck: SCDateSelector.Date = {
-            year: 1,
-            month: 1,
-            day: 10,
-            allDay: true,
-            hour: 0,
-            minute: 0
-        };
-        expect(Utilities.FormatTime(dateToCheck.hour, dateToCheck.minute, false)).toBe('00:00');
-        dateToCheck.hour = 10;
-        dateToCheck.minute = 15;
-        expect(Utilities.FormatTime(dateToCheck.hour, dateToCheck.minute, false)).toBe('10:15');
-        expect(Utilities.FormatTime(dateToCheck.hour, dateToCheck.minute, 0)).toBe('10:15:00');
-        expect(Utilities.FormatTime(dateToCheck.hour, dateToCheck.minute, 12)).toBe('10:15:12');
-    });
-
     test('Get Moon Phase Icon', () => {
         //@ts-ignore
         expect(Utilities.GetMoonPhaseIcon()).toBe('');
@@ -119,6 +103,33 @@ describe('Utilities Class Tests', () => {
         expect(Utilities.PadNumber(11,2)).toBe('011');
         expect(Utilities.PadNumber(111,2)).toBe('111');
         expect(Utilities.PadNumber(1111,2)).toBe('1111');
+    });
+
+    test('FormatDateTime', () => {
+        SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.activeCalendar.year.months[11].name = 'December';
+        SimpleCalendar.instance.activeCalendar.year.months[11].abbreviation = 'Dec';
+        SimpleCalendar.instance.activeCalendar.year.weekdays[1].name = 'Monday';
+        //Year
+        expect(Utilities.FormatDateTime({year: 2021, month: 12, day: 25, hour: 11, minute: 22, seconds: 33}, "YY YYYY YN YA YZ")).toBe('21 2021   ');
+        //Month
+        expect(Utilities.FormatDateTime({year: 2021, month: 12, day: 25, hour: 11, minute: 22, seconds: 33}, "M MM MMM MMMM")).toBe('12 12 Dec December');
+        //Month not found
+        expect(Utilities.FormatDateTime({year: 2021, month: 13, day: 25, hour: 11, minute: 22, seconds: 33}, "MMM MMMM")).toBe(' ');
+        //Day
+        expect(Utilities.FormatDateTime({year: 2021, month: 13, day: 25, hour: 11, minute: 22, seconds: 33}, "D DD DO")).toBe('25 25 25');
+        //Weekday
+        expect(Utilities.FormatDateTime({year: 2021, month: 13, day: 25, hour: 11, minute: 22, seconds: 33}, "d dd ddd dddd")).toBe('2 02 Mon Monday');
+        //Hour
+        expect(Utilities.FormatDateTime({year: 2021, month: 13, day: 25, hour: 11, minute: 22, seconds: 33}, "h H hh HH a A")).toBe('11 11 11 11 am AM');
+        expect(Utilities.FormatDateTime({year: 2021, month: 13, day: 25, hour: 13, minute: 22, seconds: 33}, "h H hh HH a A")).toBe('1 13 01 13 pm PM');
+        expect(Utilities.FormatDateTime({year: 2021, month: 13, day: 25, hour: 24, minute: 22, seconds: 33}, "h H hh HH a A")).toBe('12 24 12 24 pm PM');
+        //Minute
+        expect(Utilities.FormatDateTime({year: 2021, month: 13, day: 25, hour: 11, minute: 22, seconds: 33}, "m mm")).toBe('22 22');
+        //Second
+        expect(Utilities.FormatDateTime({year: 2021, month: 13, day: 25, hour: 11, minute: 22, seconds: 33}, "s ss")).toBe('33 33');
+        //Text
+        expect(Utilities.FormatDateTime({year: 2021, month: 13, day: 25, hour: 11, minute: 22, seconds: 33}, "[Text]")).toBe('Text');
     });
 
     test('To Seconds', () => {
@@ -277,7 +288,7 @@ describe('Utilities Class Tests', () => {
 
         endDate.day = 12;
         expect(Utilities.GetDisplayDate(startDate, endDate)).toBe('M 10, 1 - M 12, 1');
-        expect(Utilities.GetDisplayDate(startDate, endDate, true)).toBe('M 10 - M 12');
+        expect(Utilities.GetDisplayDate(startDate, endDate, true)).toBe('M 10, 1 - M 12, 1');
 
         startDate.allDay = false;
         startDate.hour = 1;

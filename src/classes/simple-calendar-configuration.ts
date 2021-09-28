@@ -245,7 +245,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
         (<Calendar>this.object).year.seasons.forEach(s => s.activateDateSelectors());
         if(html.hasOwnProperty("length")) {
             //Date Format Tokens Show/hide
-            (<JQuery>html).find('.date-format-token-show').on('click', () => {this.dateFormatTableExpanded = !this.dateFormatTableExpanded; this.updateApp();});
+            (<JQuery>html).find('.date-format-token-show').on('click', this.dateFormatTableClick.bind(this));
 
             //Month advanced click
             (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));
@@ -298,6 +298,14 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".moon-settings input").on('change', this.inputChange.bind(this));
             (<JQuery>html).find(".moon-settings select").on('change', this.inputChange.bind(this));
         }
+    }
+
+    /**
+     * When the date format table header is clicked, will expand/collapse the table of information
+     */
+    private dateFormatTableClick(){
+        this.dateFormatTableExpanded = !this.dateFormatTableExpanded;
+        this.updateApp();
     }
 
     /**

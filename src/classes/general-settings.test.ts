@@ -25,7 +25,7 @@ describe('General Settings Class Tests', () => {
     test('Properties', () => {
         const gs = new GeneralSettings();
 
-        expect(Object.keys(gs).length).toBe(7); //Make sure no new properties have been added
+        expect(Object.keys(gs).length).toBe(8); //Make sure no new properties have been added
     });
 
     test('Clone', () => {
@@ -56,7 +56,7 @@ describe('General Settings Class Tests', () => {
         expect(gs.id).toBe('a');
         expect(gs.permissions.addNotes.player).toBe(true);
 
-        gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, permissions: new UserPermissions(), playersAddNotes: true });
+        gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, dateFormat:{date: '', time: '', monthYear: ''}, permissions: new UserPermissions(), playersAddNotes: true });
         expect(gs.id).toBe('a');
         expect(gs.showClock).toBe(true);
         expect(gs.pf2eSync).toBe(true);

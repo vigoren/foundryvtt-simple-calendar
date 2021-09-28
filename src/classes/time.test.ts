@@ -58,9 +58,9 @@ describe('Time Tests', () => {
     });
 
     test('Get Current Time', () => {
-        expect(t.getCurrentTime()).toStrictEqual({"hour": "00", "minute": "00", "second": "00"});
+        expect(t.getCurrentTime()).toStrictEqual({"hour": 0, "minute": 0, "seconds": 0});
         t.seconds = t.secondsPerDay - 1;
-        expect(t.getCurrentTime()).toStrictEqual({"hour": "23", "minute": "59", "second": "59"});
+        expect(t.getCurrentTime()).toStrictEqual({"hour": 23, "minute": 59, "seconds": 59});
     });
 
     test('To String', () => {

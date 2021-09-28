@@ -56,7 +56,7 @@ const game = {
                 case SettingNames.YearConfiguration:
                     return {id:'', numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: 'default', yearNamesStart: 0};
                 case SettingNames.MonthConfiguration:
-                    return [[{id:'', name: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]];
+                    return [[{id:'', name: '', abbreviation: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]];
                 case SettingNames.WeekdayConfiguration:
                     return [[{id:'', name: '', numericRepresentation: 0}]];
                 case SettingNames.LeapYearRule:
@@ -68,7 +68,7 @@ const game = {
                 case SettingNames.NoteCategories:
                     return [];
                 case SettingNames.GeneralConfiguration:
-                    return {id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}
+                    return {id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, dateFormat: {date: 'MMMM DD, YYYY', time: 'HH:mm:ss', monthYear: 'MMMM YAYYYYYZ'}, permissions: {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}
                 case SettingNames.TimeConfiguration:
                     return {id:'', hoursInDay:24, minutesInHour: 60, secondsInMinute: 60, secondsInCombatRound: 6, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1};
                 case SettingNames.SeasonConfiguration:

@@ -102,7 +102,7 @@ describe('Simple Calendar Notes Tests', () => {
         //@ts-ignore
         expect(data.enableRichTextEditButton).toBe(false);
         //@ts-ignore
-        expect(data.displayDate).toBe('1 2, 0');
+        expect(data.displayDate).toBe('1 02, 0');
         //@ts-ignore
         expect(data.repeats).toBe(0);
         //@ts-ignore

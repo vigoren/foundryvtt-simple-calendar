@@ -443,8 +443,8 @@ export class GameSettings {
             const currentMonthConfig = JSON.stringify(GameSettings.LoadMonthData());
             const newConfig: MonthConfig[] = months.map(m => { return {
                 id: m.id,
-                abbreviation: m.abbreviation,
                 name: m.name,
+                abbreviation: m.abbreviation,
                 numericRepresentation: m.numericRepresentation,
                 numericRepresentationOffset: m.numericRepresentationOffset,
                 numberOfDays: m.numberOfDays,

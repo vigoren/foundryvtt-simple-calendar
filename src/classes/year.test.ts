@@ -61,21 +61,15 @@ describe('Year Class Tests', () => {
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();
-        expect(Object.keys(t).length).toBe(22); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(16); //Make sure no new properties have been added
         expect(t.weekdays).toStrictEqual(year.weekdays.map(w=>w.toTemplate()));
-        expect(t.display).toBe("0");
         expect(t.numericRepresentation).toBe(0);
         expect(t.yearZero).toBe(0);
-        expect(t.selectedDisplayYear).toBe("0");
-        expect(t.selectedDisplayMonth).toBe("");
-        expect(t.selectedDisplayDay).toBe("");
-        expect(t.selectedDayOfWeek).toBe("");
         expect(t.selectedDayMoons).toStrictEqual([]);
         expect(t.visibleMonth).toBeUndefined();
         expect(t.weeks).toStrictEqual([]);
         expect(t.showWeekdayHeaders).toBe(true);
         expect(t.firstWeekday).toBe(0);
-        expect(t.currentTime).toStrictEqual({hour:"00", minute:"00", second: "00"});
         expect(t.currentSeasonColor).toBe("#ffffff");
         expect(t.currentSeasonName).toBe("");
         expect(t.yearNames).toStrictEqual([]);
@@ -85,21 +79,15 @@ describe('Year Class Tests', () => {
         year.months.push(month);
         year.months[0].current = true;
         t = year.toTemplate();
-        expect(t.selectedDisplayMonth).toBe("Test");
-        expect(t.selectedDisplayDay).toBe("");
         year.months[0].days[0].current = true;
         t = year.toTemplate();
-        expect(t.selectedDisplayDay).toBe("1");
 
         year.months[0].current = false;
         year.months[0].selected = true;
         year.months[0].days[0].current = false;
         t = year.toTemplate();
-        expect(t.selectedDisplayMonth).toBe("Test");
-        expect(t.selectedDisplayDay).toBe("");
         year.months[0].days[0].selected = true;
         t = year.toTemplate();
-        expect(t.selectedDisplayDay).toBe("1");
 
         year.months[0].visible = true;
         t = year.toTemplate();
@@ -110,7 +98,6 @@ describe('Year Class Tests', () => {
         year.months[0].days[0].current = true;
         year.showWeekdayHeadings = false;
         t = year.toTemplate();
-        expect(t.selectedDayOfWeek).toBe('');
 
         year.moons.push(new Moon("Moon", 10));
         t = year.toTemplate();
@@ -193,9 +180,14 @@ describe('Year Class Tests', () => {
         year.postfix = 'Post';
         expect(year.getDisplayName()).toBe('Pre 0 Post');
 
+        year.selectedYear = 1;
+        expect(year.getDisplayName(true)).toBe('Pre 1 Post');
+
         year.yearNames.push('Name');
         expect(year.getDisplayName()).toBe('Pre Name (0) Post');
-        expect(year.getDisplayName(true)).toBe('Pre Name (0) Post');
+        expect(year.getDisplayName(true)).toBe('Pre Name (1) Post');
+
+
     });
 
     test('Get Current Month', () => {
