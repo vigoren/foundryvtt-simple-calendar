@@ -251,7 +251,7 @@ export default class DateSelector {
                 let weekdayRow = '<div class="weekdays">';
                 for(let i = 0; i < weekdays.length; i++){
                     const wd = weekdays[i].toTemplate();
-                    weekdayRow += `<div class="weekday" title="${wd.name}">${wd.firstCharacter}</div>`;
+                    weekdayRow += `<div class="weekday" title="${wd.name}">${wd.abbreviation}</div>`;
                 }
                 weekdayRow += '</div>';
                 calendar += weekdayRow;

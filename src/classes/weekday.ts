@@ -5,7 +5,10 @@ import ConfigurationItemBase from "./configuration-item-base";
  * Class for representing a weekday
  */
 export class Weekday extends ConfigurationItemBase{
-
+    /**
+     * The abbreviated name of the weekday
+     */
+    abbreviation: string = '';
     /**
      * The weekday constructor
      * @param {number} numericRepresentation he numeric representation of this weekday
@@ -13,6 +16,7 @@ export class Weekday extends ConfigurationItemBase{
      */
     constructor(numericRepresentation: number = NaN, name: string = '') {
         super(name, numericRepresentation);
+        this.abbreviation = name.substring(0, 2);
     }
 
     /**
@@ -20,6 +24,7 @@ export class Weekday extends ConfigurationItemBase{
      */
     toConfig(): WeekdayConfig {
         return {
+            abbreviation: this.abbreviation,
             id: this.id,
             name: this.name,
             numericRepresentation: this.numericRepresentation
@@ -31,16 +36,11 @@ export class Weekday extends ConfigurationItemBase{
      * @return {WeekdayTemplate}
      */
     toTemplate(): WeekdayTemplate{
-        let abbrv = this.name.substring(0,1).toUpperCase();
-        if(this.name.length > 1){
-            abbrv += this.name.substring(1,2).toLowerCase();
-        }
-
         return {
             ...super.toTemplate(),
+            abbreviation: this.abbreviation,
             name: this.name,
-            numericRepresentation: this.numericRepresentation,
-            firstCharacter: abbrv
+            numericRepresentation: this.numericRepresentation
         }
     }
 
@@ -51,6 +51,7 @@ export class Weekday extends ConfigurationItemBase{
     clone(): Weekday {
         const w = new Weekday(this.numericRepresentation, this.name);
         w.id = this.id;
+        w.abbreviation = this.abbreviation;
         return w;
     }
 
@@ -65,6 +66,12 @@ export class Weekday extends ConfigurationItemBase{
             }
             this.name = config.name;
             this.numericRepresentation = config.numericRepresentation;
+
+            if(config.hasOwnProperty('abbreviation')){
+                this.abbreviation = config.abbreviation;
+            } else {
+                this.abbreviation = this.name.substring(0, 2);
+            }
         }
     }
 }

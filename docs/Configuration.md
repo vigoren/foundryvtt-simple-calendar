@@ -387,6 +387,7 @@ The individual weekday settings are listed below:
 Setting | Description
 -------- | ----------
 Weekday Name | These text boxes for each weekday allow you to change the name of an existing weekday.
+Weekday Name Abbreviation | These text boses for each weekday allow you to change the abbreviated name of an existing weekday.
 Remove Button | These buttons for each weekday allow you to remove the weekday from the list.
 Add New Weekday Button | This button will add a new weekday to the bottom of the list with a default name that you can then configure to your liking.
 Remove All Weekdays Button | This button will remove all of the weekdays from the list.

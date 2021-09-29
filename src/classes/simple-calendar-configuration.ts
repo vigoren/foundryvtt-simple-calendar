@@ -706,6 +706,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     //Weekday Setting Inputs
                     else if(cssClass === 'weekday-name' && (<Calendar>this.object).year.weekdays.length > index){
                         (<Calendar>this.object).year.weekdays[index].name = value;
+                        (<Calendar>this.object).year.weekdays[index].abbreviation = value.substring(0, 2);
+                    }
+                    else if(cssClass === 'weekday-abbreviation' && (<Calendar>this.object).year.weekdays.length > index){
+                        (<Calendar>this.object).year.weekdays[index].abbreviation = value;
                     }
                     //Leap Year Setting Inputs
                     else if(cssClass === 'month-leap-days' && (<Calendar>this.object).year.months.length > index){

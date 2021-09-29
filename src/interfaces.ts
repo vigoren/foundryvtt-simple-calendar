@@ -295,15 +295,16 @@ export interface NoteCategory {
  * Interface for the weekday template that is passed to the HTML for rendering
  */
 export interface WeekdayTemplate extends IConfigurationItemBaseTemplate{
+    abbreviation: string;
     name: string;
     numericRepresentation: number;
-    firstCharacter: string;
 }
 
 /**
  * Interface for the data saved to the game settings for each weekday class
  */
 export interface WeekdayConfig extends IConfigurationItemBaseConfig{
+    abbreviation: string;
     name: string;
     numericRepresentation: number;
 }

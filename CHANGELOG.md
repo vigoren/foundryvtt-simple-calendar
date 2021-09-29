@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.3.60 - Custom Date Formats, API Changes and Bug Fixes
+## v1.3.62 - Custom Date Formats, Quality of Life Improvements, API Changes and Bug Fixes
 
 ### Custom Date Formats
 
@@ -19,6 +19,15 @@ You can now customize how the date and time is displayed in Simple Calendar with
     - _**Notes**_: The Date/Time pill in the note list and in the note display will use this format to display the time portion.
   - **Month/Year Format**: This indicates how the month and year are displayed at the top of the calendar in the Full View and the Date Selector.
 - Above the new date format settings is a table that contains a list of all the tokens that can be used in the formats. This table is large so by default it is collapsed, but clicking the header will expand it. A detailed list of all the tokens is also available in the [configuration documentation](./docs/Configuration.md#datetime-formats).
+
+### Quality of Life Improvements
+
+- Added a new month configuration option to set the abbreviated name of the month. By default, the first 3 letters of the name are used.
+  - This abbreviated text is used by the new date formatting.
+  - The setting is under the advanced options.
+- Added a new weekday configuration option to set the abbreviated name of the weekday. By default, the first 2 letters of the name are used.
+  - This abbreviated text is sued by the new date formatting and as the heading for each weekday in the calendar view.
+
 
 ### Bug Fixes
 

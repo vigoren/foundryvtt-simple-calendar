@@ -1029,6 +1029,12 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLElement>event.currentTarget).setAttribute('data-index', '0');
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.weekdays[0].name).toBe('X');
+
+        (<HTMLElement>event.currentTarget).classList.remove('weekday-name');
+        (<HTMLElement>event.currentTarget).classList.add('weekday-abbreviation');
+        (<HTMLInputElement>event.currentTarget).value = 'A';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.weekdays[0].abbreviation).toBe('A');
     });
 
     test('Leap Year Rule Change', () => {

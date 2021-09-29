@@ -300,6 +300,8 @@
   "FSC.Configuration.Weekday.ShowHeadingsHelp": "If to show the weekday headings on the calendar.",
   "FSC.Configuration.Weekday.Name": "Weekday Name",
   "FSC.Configuration.Weekday.NameHelp": "The text name of this day of the week.",
+  "FSC.Configuration.Weekday.Abbreviation": "Weekday Name Abbreviation",
+  "FSC.Configuration.Weekday.AbbreviationHelp": "The abbreviated text name of this day of the week.",
   "FSC.Configuration.Weekday.Add": "Add New Weekday",
   "FSC.Configuration.Weekday.RemoveAll": "Remove All Weekdays",
   "FSC.Configuration.Weekdays": "Weekdays",

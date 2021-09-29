@@ -58,7 +58,7 @@ const game = {
                 case SettingNames.MonthConfiguration:
                     return [[{id:'', name: '', abbreviation: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]];
                 case SettingNames.WeekdayConfiguration:
-                    return [[{id:'', name: '', numericRepresentation: 0}]];
+                    return [[{id:'', abbreviation: '', name: '', numericRepresentation: 0}]];
                 case SettingNames.LeapYearRule:
                     return {id:'', rule: 'none', customMod: 0};
                 case SettingNames.CurrentDate:
