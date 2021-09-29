@@ -34,7 +34,7 @@ import {
 describe('Interface Tests', () => {
     const tt: TimeTemplate = {hour: 0, minute: 0, seconds: 0};
     const dt: DayTemplate = {id: '', selected: false, current: false, name: '', numericRepresentation: 0};
-    const wt: WeekdayTemplate = {id: '', firstCharacter:'', name:'', numericRepresentation:0};
+    const wt: WeekdayTemplate = {id: '', abbreviation:'', name:'', numericRepresentation:0};
     const mt: MonthTemplate = {
         id: '',
         display: '',
@@ -136,7 +136,7 @@ describe('Interface Tests', () => {
     });
 
     test('Weekday Template', () => {
-        expect(wt.firstCharacter).toBe("");
+        expect(wt.abbreviation).toBe("");
         expect(wt.name).toBe("");
         expect(wt.numericRepresentation).toBe(0);
     });
@@ -199,8 +199,8 @@ describe('Interface Tests', () => {
     });
 
     test('Weekday Config', () => {
-        const wc: WeekdayConfig = {id: '', name: '', numericRepresentation: 0};
-        expect(Object.keys(wc).length).toBe(3); //Make sure no new properties have been added
+        const wc: WeekdayConfig = {abbreviation: '', id: '', name: '', numericRepresentation: 0};
+        expect(Object.keys(wc).length).toBe(4); //Make sure no new properties have been added
         expect(wc.name).toBe('');
         expect(wc.numericRepresentation).toBe(0);
     });

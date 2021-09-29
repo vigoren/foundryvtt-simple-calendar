@@ -54,6 +54,14 @@ You can now customize how the date and time is displayed in Simple Calendar with
 ### Language Updates
 - An update to the korean language file thanks to drdwing!
 
+### Patreon
+
+I have started up my own Patreon for those of you who are interested in supporting me as I develop this and other modules. There is zero pressure to do so as I create this module for fun but any contributions to get me a coffee are very much appreciated.
+
+I will not tie any functionality of Simple Calendar to being a patron, Simple Calendar will always remain free for everyone. My plan for any patrons is to provide update posts with more detail on what I am working on and maybe some polls about features or functionality.
+
+If you are interested is becoming a patron please check out [my page here](https://www.patreon.com/vigorator) and thank you!
+
 ## v1.3.44 - Bug Fixes
 
 ### Bug Fixes

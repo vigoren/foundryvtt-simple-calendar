@@ -128,7 +128,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Weekday Data', () => {
-        expect(GameSettings.LoadWeekdayData()).toStrictEqual([{id:'', numericRepresentation: 0, name: ''}]);
+        expect(GameSettings.LoadWeekdayData()).toStrictEqual([{id:'', abbreviation: '', numericRepresentation: 0, name: ''}]);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);

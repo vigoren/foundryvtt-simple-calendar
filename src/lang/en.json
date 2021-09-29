@@ -94,7 +94,7 @@
   "FSC.DateFormat.Second.NumberPaddedExample": "00 01 ... 58 59",
   "FSC.DateFormat.TextDescription": "For any text that should be in the format but not processed place square brackets around it.",
   "FSC.DateFormat.TextExample": "[Don't process this text]",
-  "FSC.DateFormat.Documentation": "For more details about configuring date formats please check out the <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">documentation</a>.",
+  "FSC.DateFormat.Documentation": "For more details about configuring date formats please check out the <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">documentation</a> or expand the table above.",
   "FSC.Description": "Description",
   "FSC.ExampleResult": "Example Results",
   "FSC.Token": "Token",
