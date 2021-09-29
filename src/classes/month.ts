@@ -113,6 +113,24 @@ export default class Month extends ConfigurationItemBase {
     }
 
     /**
+     * Returns the configuration data for the month
+     */
+    toConfig(): MonthConfig{
+        return {
+            id: this.id,
+            name: this.name,
+            abbreviation: this.abbreviation,
+            numericRepresentation: this.numericRepresentation,
+            numericRepresentationOffset: this.numericRepresentationOffset,
+            numberOfDays: this.numberOfDays,
+            numberOfLeapYearDays: this.numberOfLeapYearDays,
+            intercalary: this.intercalary,
+            intercalaryInclude: this.intercalaryInclude,
+            startingWeekday: this.startingWeekday
+        };
+    }
+
+    /**
      * Creates a month template to be used when rendering the month in HTML
      * @param {Year} [year=null] The year object
      * @return {MonthTemplate}

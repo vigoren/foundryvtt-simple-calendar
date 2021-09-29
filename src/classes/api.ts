@@ -1,5 +1,13 @@
 import SimpleCalendar from "./simple-calendar";
-import {DateTime} from "../interfaces";
+import {
+    DateTime,
+    LeapYearConfig,
+    MonthConfig,
+    MoonConfiguration,
+    TimeConfig,
+    WeekdayConfig,
+    YearConfig
+} from "../interfaces";
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {
@@ -540,6 +548,58 @@ export default class API{
     }
 
     /**
+     * Returns configuration details about the curent day, or null if the current day con't be found
+     */
+    public static getCurrentDay(){
+        const month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+        if(month){
+            const day = month.getDay();
+            if(day){
+                return day.toConfig();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the configuration details about leap years
+     */
+    public static getLeapYearConfiguration(): LeapYearConfig{
+        return SimpleCalendar.instance.activeCalendar.year.leapYearRule.toConfig();
+    }
+
+    /**
+     * Returns configuration details about the current month, or null if the current month can't be found.
+     * @returns {MonthConfig| null}
+     */
+    public static getCurrentMonth(): MonthConfig | null{
+        const month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+        if(month){
+            return month.toConfig();
+        }
+        return null;
+    }
+
+    /**
+     * Returns configuration details for all months
+     * @returns {Array<MonthConfig>}
+     */
+    public static getAllMonths(): MonthConfig[]{
+        return SimpleCalendar.instance.activeCalendar.year.months.map(m => m.toConfig());
+    }
+
+    /**
+     * Returns configuration details for all moons
+     */
+    public static getAllMoons(): MoonConfiguration[] {
+        return SimpleCalendar.instance.activeCalendar.year.moons.map(m => {
+            const c = m.toConfig();
+            c.currentPhase = m.getMoonPhase(SimpleCalendar.instance.activeCalendar.year);
+            return c;
+        });
+    }
+
+    /**
      * Returns the season for the current date
      */
     public static getCurrentSeason(){
@@ -549,7 +609,7 @@ export default class API{
             const mIndex = clone.months.findIndex(m => m.numericRepresentation == mon.numericRepresentation);
             const day = mon.getDay();
             if(day){
-                return clone.getSeason(mIndex, day.numericRepresentation);
+                return clone.getSeason(mIndex, day.numericRepresentation).toConfig();
             }
         }
         return {name: '', color: ''};
@@ -559,14 +619,45 @@ export default class API{
      * Returns details for all seasons set up in the calendar
      */
     public static getAllSeasons(){
-        const seasons = [];
-        for(let i = 0; i < SimpleCalendar.instance.activeCalendar.year.seasons.length; i++){
-            const s = SimpleCalendar.instance.activeCalendar.year.seasons[i].clone();
-            s.startingMonth = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === s.startingMonth);
-            s.startingDay = SimpleCalendar.instance.activeCalendar.year.months[s.startingMonth >= 0? s.startingMonth : 0].days.findIndex(d => d.numericRepresentation === s.startingDay);
-            seasons.push(s);
+        return SimpleCalendar.instance.activeCalendar.year.seasons.map(s => s.toConfig());
+    }
+
+    /**
+     * Returns details for how time is configured in the calendar
+     */
+    public static getTimeConfiguration(): TimeConfig{
+        return SimpleCalendar.instance.activeCalendar.year.time.toConfig();
+    }
+
+    /**
+     * Returns details for the weekday whe current date falls on.
+     * @returns {WeekdayConfig | null}
+     */
+    public static getCurrentWeekday(): WeekdayConfig | null{
+        const month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+        if(month){
+            const day = month.getDay();
+            if(day){
+                const weekdayIndex = SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(SimpleCalendar.instance.activeCalendar.year.numericRepresentation, month.numericRepresentation, day.numericRepresentation);
+                return SimpleCalendar.instance.activeCalendar.year.weekdays[weekdayIndex].toConfig();
+            }
         }
-        return seasons;
+        return null;
+    }
+
+    /**
+     * Returns details for all weekdays
+     * @returns {WeekdayConfig[]}
+     */
+    public static getAllWeekdays(): WeekdayConfig[]{
+        return SimpleCalendar.instance.activeCalendar.year.weekdays.map(w => w.toConfig());
+    }
+
+    /**
+     * Returns details for the current year
+     */
+    public static getCurrentYear(): YearConfig {
+        return SimpleCalendar.instance.activeCalendar.year.toConfig();
     }
 
     /**

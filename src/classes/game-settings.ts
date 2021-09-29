@@ -413,18 +413,7 @@ export class GameSettings {
             if(!currentYearConfig.hasOwnProperty('showWeekdayHeadings')){
                 currentYearConfig.showWeekdayHeadings = true;
             }
-            const yc: YearConfig = {
-                id: year.id,
-                numericRepresentation: year.numericRepresentation,
-                prefix: year.prefix,
-                postfix: year.postfix,
-                showWeekdayHeadings: year.showWeekdayHeadings,
-                firstWeekday: year.firstWeekday,
-                yearZero: year.yearZero,
-                yearNames: year.yearNames,
-                yearNamingRule: year.yearNamingRule,
-                yearNamesStart: year.yearNamesStart
-            };
+            const yc: YearConfig = year.toConfig();
             if(JSON.stringify(currentYearConfig) !== JSON.stringify(yc)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.YearConfiguration, yc).then(() => { return true }); //Return true because if no error was thrown then the save was successful and we don't need the returned data.
             } else {
@@ -442,18 +431,7 @@ export class GameSettings {
         if(GameSettings.IsGm()) {
             Logger.debug(`Saving month configuration.`);
             const currentMonthConfig = JSON.stringify(GameSettings.LoadMonthData());
-            const newConfig: MonthConfig[] = months.map(m => { return {
-                id: m.id,
-                name: m.name,
-                abbreviation: m.abbreviation,
-                numericRepresentation: m.numericRepresentation,
-                numericRepresentationOffset: m.numericRepresentationOffset,
-                numberOfDays: m.numberOfDays,
-                numberOfLeapYearDays: m.numberOfLeapYearDays,
-                intercalary: m.intercalary,
-                intercalaryInclude: m.intercalaryInclude,
-                startingWeekday: m.startingWeekday
-            }; });
+            const newConfig: MonthConfig[] = months.map(m => m.toConfig());
             if(currentMonthConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.MonthConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -471,7 +449,7 @@ export class GameSettings {
         if(GameSettings.IsGm()) {
             Logger.debug(`Saving weekday configuration.`);
             const currentWeekdayConfig = JSON.stringify(GameSettings.LoadWeekdayData());
-            const newConfig: WeekdayConfig[] = weekdays.map(w => {return {id: w.id, name: w.name, numericRepresentation: w.numericRepresentation}; });
+            const newConfig: WeekdayConfig[] = weekdays.map(w => w.toConfig());
             if(currentWeekdayConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.WeekdayConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -490,7 +468,7 @@ export class GameSettings {
         if(GameSettings.IsGm()){
             Logger.debug('Saving season configuration.');
             const currentConfig = JSON.stringify(GameSettings.LoadSeasonData());
-            const newConfig: SeasonConfiguration[] = seasons.map(s => {return {id: s.id, name: s.name, startingMonth: s.startingMonth, startingDay: s.startingDay, color: s.color, sunriseTime: s.sunriseTime, sunsetTime: s.sunsetTime}});
+            const newConfig: SeasonConfiguration[] = seasons.map(s => s.toConfig());
             if(currentConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.SeasonConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -508,15 +486,7 @@ export class GameSettings {
         if(GameSettings.IsGm()){
             Logger.debug('Saving moon configuration.');
             const currentConfig = JSON.stringify(GameSettings.LoadMoonData());
-            const newConfig: MoonConfiguration[] = moons.map(m => {return {
-                id: m.id,
-                name: m.name,
-                cycleLength: m.cycleLength,
-                firstNewMoon: m.firstNewMoon,
-                phases: m.phases,
-                color: m.color,
-                cycleDayAdjust: m.cycleDayAdjust
-            };});
+            const newConfig: MoonConfiguration[] = moons.map(m => m.toConfig());
             if(currentConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.MoonConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -534,11 +504,7 @@ export class GameSettings {
         if(GameSettings.IsGm()) {
             Logger.debug(`Saving leap year configuration.`);
             const current = GameSettings.LoadLeapYearRules();
-            const newlyc: LeapYearConfig = {
-                id: leapYear.id,
-                rule: leapYear.rule,
-                customMod: leapYear.customMod
-            };
+            const newlyc: LeapYearConfig = leapYear.toConfig();
             if(current.rule !== newlyc.rule || current.customMod !== newlyc.customMod){
                 return (<Game>game).settings.set(ModuleName, SettingNames.LeapYearRule, newlyc);
             } else {
@@ -557,16 +523,7 @@ export class GameSettings {
         if(GameSettings.IsGm()) {
             Logger.debug(`Saving time configuration.`);
             const current = GameSettings.LoadTimeData();
-            const newtc: TimeConfig = {
-                id: time.id,
-                hoursInDay: time.hoursInDay,
-                minutesInHour: time.minutesInHour,
-                secondsInMinute: time.secondsInMinute,
-                secondsInCombatRound: time.secondsInCombatRound,
-                gameTimeRatio: time.gameTimeRatio,
-                unifyGameAndClockPause: time.unifyGameAndClockPause,
-                updateFrequency: time.updateFrequency
-            };
+            const newtc: TimeConfig = time.toConfig();
             if(JSON.stringify(current) !== JSON.stringify(newtc)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.TimeConfiguration, newtc).then(() => { return true });
             } else {

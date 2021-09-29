@@ -28,6 +28,11 @@ describe('Weekday Class Tests', () => {
         expect(weekday.numericRepresentation).toBe(0);
     });
 
+    test('To Config', () => {
+        const c = weekday.toConfig();
+        expect(c.id).toBe(weekday.id);
+    });
+
     test('To Template', () => {
         const w = weekday.toTemplate();
         const w2 = weekday2.toTemplate();

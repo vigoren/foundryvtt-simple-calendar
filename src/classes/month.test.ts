@@ -75,6 +75,19 @@ describe('Month Class Tests', () => {
         expect(month2.getDisplayName()).toBe("0");
     });
 
+    test('To Config', () => {
+        const t = month.toConfig();
+        expect(Object.keys(t).length).toBe(10); //Make sure no new properties have been added
+        expect(t.name).toBe('Test');
+        expect(t.numericRepresentation).toBe(0);
+        expect(t.numericRepresentationOffset).toBe(0);
+        expect(t.numberOfDays).toBe(0);
+        expect(t.numberOfLeapYearDays).toBe(0);
+        expect(t.intercalary).toBe(false);
+        expect(t.intercalaryInclude).toBe(false);
+        expect(t.startingWeekday).toBe(null);
+    });
+
     test('To Template', () => {
         const t = month.toTemplate();
         expect(Object.keys(t).length).toBe(16); //Make sure no new properties have been added

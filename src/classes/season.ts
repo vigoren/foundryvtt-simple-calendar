@@ -62,6 +62,21 @@ export default class Season extends ConfigurationItemBase{
     }
 
     /**
+     * The configuration details for the season
+     */
+    toConfig(): SeasonConfiguration {
+        return {
+            id: this.id,
+            name: this.name,
+            startingMonth: this.startingMonth,
+            startingDay: this.startingDay,
+            color: this.color,
+            sunriseTime: this.sunriseTime,
+            sunsetTime: this.sunsetTime
+        }
+    }
+
+    /**
      * Creates a template of the season used to render its information
      * @param {Year} year The year to look in for the months and days list
      */

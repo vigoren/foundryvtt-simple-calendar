@@ -30,6 +30,12 @@ describe('Configuration Item Base Class Tests', () => {
         expect(cib.clone()).toStrictEqual(cib);
     });
 
+    test('To Config', () => {
+        const cib = new ConfigurationItemBase();
+        cib.id = "id";
+        expect(cib.toConfig()).toStrictEqual({id: 'id', name: '', numericRepresentation: NaN});
+    });
+
     test('To Template', () => {
         const cib = new ConfigurationItemBase();
         cib.id = "id";

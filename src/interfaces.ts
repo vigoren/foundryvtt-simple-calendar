@@ -395,6 +395,7 @@ export interface FirstNewMoonDate {
 export interface MoonConfiguration extends IConfigurationItemBaseConfig {
     name: string;
     cycleLength: number;
+    currentPhase?: MoonPhase;
     phases: MoonPhase[];
     firstNewMoon: FirstNewMoonDate;
     color: string;

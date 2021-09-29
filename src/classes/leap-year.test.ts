@@ -32,6 +32,13 @@ describe('Leap Year Tests', () => {
         expect(lr.clone()).toStrictEqual(lr);
     });
 
+    test('To Config', () => {
+        const lyc = lr.toConfig();
+        expect(lyc.id).toBeDefined();
+        expect(lyc.rule).toBe(LeapYearRules.None);
+        expect(lyc.customMod).toBe(0);
+    });
+
     test('To Template', () => {
         const lyt = lr.toTemplate();
         expect(lyt.rule).toBe(LeapYearRules.None);

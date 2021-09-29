@@ -249,10 +249,41 @@ describe('API Class Tests', () => {
         expect(API.formatDateTime({year: 2021, month: 111, day: 124, hour: 110, minute: 120, second: 130})).toStrictEqual({date: '12 31, 2021', time: '23:59:59'});
     });
 
+    test('Get Current Day', () => {
+        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        expect(API.getCurrentDay()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        expect(API.getCurrentDay()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current = true;
+        expect(API.getCurrentDay()).not.toBeNull();
+    });
+
+    test('Get Leap Year Configuration', () => {
+        expect(API.getLeapYearConfiguration()).toBeDefined();
+    });
+
+    test('Get Current Month', () => {
+        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        expect(API.getCurrentMonth()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        expect(API.getCurrentMonth()).not.toBeNull();
+    });
+
+    test('Get All Months', () => {
+        expect(API.getAllMonths().length).toBeGreaterThan(0);
+    });
+
+    test('Get All Moons', () => {
+        expect(API.getAllMoons().length).toBeGreaterThan(0);
+    });
+
     test('Get Current Season', () => {
         SimpleCalendar.instance.activeCalendar.year = year;
         year.seasons.push(new Season('s1', 1, 1));
-        const s = API.getCurrentSeason()
+        const s = API.getCurrentSeason();
         expect(s.name).toBe(year.seasons[0].name);
         year.months[0].days[0].current = false;
         expect(API.getCurrentSeason()).toStrictEqual({name:'', color: ''});
@@ -265,6 +296,29 @@ describe('API Class Tests', () => {
         year.seasons.push(new Season('s1', 1, 1));
         year.seasons.push(new Season('s1', 122, 1));
         expect(API.getAllSeasons().length).toBe(2);
+    });
+
+    test('Get Time Configuration', () => {
+        expect(API.getTimeConfiguration()).toBeDefined();
+    });
+
+    test('Get Current Weekday', () => {
+        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        expect(API.getCurrentWeekday()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        expect(API.getCurrentWeekday()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current = true;
+        expect(API.getCurrentWeekday()).not.toBeNull();
+    });
+
+    test('Get All Weekdays', () => {
+        expect(API.getAllWeekdays().length).toBeGreaterThan(0);
+    });
+
+    test('Get Current Year', () => {
+        expect(API.getCurrentYear()).toBeDefined();
     });
 
     test('Configure Calendar', async () => {

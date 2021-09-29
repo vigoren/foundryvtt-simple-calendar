@@ -58,6 +58,11 @@ describe('Year Class Tests', () => {
         expect(year.yearNamingRule).toBe(YearNamingRules.Default);
     });
 
+    test('To Config', () => {
+        const t = year.toConfig();
+        expect(t.id).toBe(year.id);
+    });
+
     test('To Template', () => {
         year.weekdays.push(new Weekday(1, 'S'));
         let t = year.toTemplate();

@@ -130,6 +130,24 @@ export default class Year extends ConfigurationItemBase {
     }
 
     /**
+     * Returns the configuration object for the year
+     */
+    toConfig(): YearConfig {
+        return {
+          id: this.id,
+          numericRepresentation: this.numericRepresentation,
+          prefix: this.prefix,
+          postfix: this.postfix,
+          showWeekdayHeadings: this.showWeekdayHeadings,
+          firstWeekday: this.firstWeekday,
+          yearZero: this.yearZero,
+          yearNames: this.yearNames,
+          yearNamingRule: this.yearNamingRule,
+          yearNamesStart: this.yearNamesStart
+        };
+    }
+
+    /**
      * Returns an object that is used to display the year in the HTML template
      * @returns {YearTemplate}
      */

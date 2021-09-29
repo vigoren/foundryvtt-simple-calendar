@@ -39,6 +39,15 @@ describe('Season Tests', () => {
         expect(s.clone()).toStrictEqual(s);
     });
 
+    test('To Config', () => {
+        const c = s.toConfig();
+        expect(Object.keys(c).length).toBe(7); //Make sure no new properties have been added
+        expect(c.name).toBe('Spring');
+        expect(c.startingMonth).toBe(1);
+        expect(c.startingDay).toBe(1);
+        expect(c.color).toBe('#ffffff');
+    });
+
     test('To Template', () => {
         const y = new Year(0);
         let c = s.toTemplate(y);

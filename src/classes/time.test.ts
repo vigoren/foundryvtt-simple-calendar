@@ -37,6 +37,11 @@ describe('Time Tests', () => {
         expect(temp).toStrictEqual(t);
     });
 
+    test('To Config', () => {
+        const c = t.toConfig();
+        expect(c.id).toBeDefined();
+    });
+
     test('Load From Settings', () => {
         //@ts-ignore
         t.loadFromSettings({});

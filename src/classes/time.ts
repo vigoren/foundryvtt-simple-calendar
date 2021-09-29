@@ -80,6 +80,22 @@ export default class Time extends ConfigurationItemBase{
     }
 
     /**
+     * Returns the configuration for time in the calendar
+     */
+    toConfig(): TimeConfig {
+        return {
+            id: this.id,
+            hoursInDay: this.hoursInDay,
+            minutesInHour: this.minutesInHour,
+            secondsInMinute: this.secondsInMinute,
+            secondsInCombatRound: this.secondsInCombatRound,
+            gameTimeRatio: this.gameTimeRatio,
+            unifyGameAndClockPause: this.unifyGameAndClockPause,
+            updateFrequency: this.updateFrequency
+        };
+    }
+
+    /**
      * Makes a clone of this class with all the same settings
      */
     clone() {

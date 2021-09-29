@@ -31,6 +31,17 @@ export default class LeapYear extends ConfigurationItemBase{
     }
 
     /**
+     * Returns the configuration for leap years
+     */
+    toConfig(): LeapYearConfig {
+        return {
+            id: this.id,
+            rule: this.rule,
+            customMod: this.customMod
+        };
+    }
+
+    /**
      * Converts this leap year to a leap year template used to render the leap year data
      * @type {LeapYearTemplate}
      */

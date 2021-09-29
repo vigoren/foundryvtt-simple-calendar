@@ -16,6 +16,17 @@ export class Weekday extends ConfigurationItemBase{
     }
 
     /**
+     * Returns the configuration data for the Weekday
+     */
+    toConfig(): WeekdayConfig {
+        return {
+            id: this.id,
+            name: this.name,
+            numericRepresentation: this.numericRepresentation
+        }
+    }
+
+    /**
      * Returns an object that is used to display the weekday in the HTML template
      * @return {WeekdayTemplate}
      */
