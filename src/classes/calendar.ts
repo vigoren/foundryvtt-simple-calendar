@@ -115,13 +115,31 @@ export default class Calendar extends ConfigurationItemBase{
      */
     toTemplate(): CalendarTemplate{
         let showSetCurrentDate = false;
+        let vMonth = 1, sMonth = 1, sDay = 1;
+        const currentMonth = this.year.getMonth();
         const selectedMonth = this.year.getMonth('selected');
+        const visibleMonth = this.year.getMonth('visible');
         if(selectedMonth){
+            sMonth = selectedMonth.numericRepresentation;
             const selectedDay = selectedMonth.getDay('selected');
-            if(selectedDay && !selectedDay.current){
-                showSetCurrentDate = true;
+            if(selectedDay){
+                sDay = selectedDay.numericRepresentation;
+                if(!selectedDay.current){
+                    showSetCurrentDate = true;
+                }
+            }
+        } else if(currentMonth){
+            sMonth = currentMonth.numericRepresentation;
+            const currentDay = currentMonth.getDay();
+            if(currentDay){
+                sDay = currentDay.numericRepresentation;
             }
         }
+
+        if(visibleMonth){
+            vMonth = visibleMonth.numericRepresentation;
+        }
+
         return {
             ...super.toTemplate(),
             addNotes: this.canUser((<Game>game).user, this.generalSettings.permissions.addNotes),
@@ -137,7 +155,10 @@ export default class Calendar extends ConfigurationItemBase{
             showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             showSelectedDay: this.year.visibleYear === this.year.selectedYear,
             showSetCurrentDate: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && showSetCurrentDate,
-            showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty
+            showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
+            calendarDisplay: Utilities.FormatDateTime({year: this.year.numericRepresentation, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear),
+            selectedDisplay: Utilities.FormatDateTime({year: this.year.selectedYear, month: sMonth, day: sDay, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.date),
+            timeDisplay: Utilities.FormatDateTime({year: 0, month: 0, day: 0, ...this.year.time.getCurrentTime()}, this.generalSettings.dateFormat.time)
         };
     }
 

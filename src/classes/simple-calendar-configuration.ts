@@ -46,6 +46,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
         defaultPlayerNoteVisibility: true
     }
 
+    private dateFormatTableExpanded: boolean = false;
+
     /**
      * The Calendar configuration constructor
      * @param {Calendar} data The year data used to populate the configuration dialog
@@ -113,6 +115,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
         let data = {
             ...super.getData(options),
+            showDateFormatTokens: this.dateFormatTableExpanded,
             defaultPlayerNoteVisibility: this.generalSettings.defaultPlayerNoteVisibility,
             currentYear: (<Calendar>this.object).year,
             generalSettings: (<Calendar>this.object).generalSettings,
@@ -241,6 +244,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
         super.activateListeners(html);
         (<Calendar>this.object).year.seasons.forEach(s => s.activateDateSelectors());
         if(html.hasOwnProperty("length")) {
+            //Date Format Tokens Show/hide
+            (<JQuery>html).find('.date-format-token-show').on('click', this.dateFormatTableClick.bind(this));
+
             //Month advanced click
             (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));
 
@@ -292,6 +298,14 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".moon-settings input").on('change', this.inputChange.bind(this));
             (<JQuery>html).find(".moon-settings select").on('change', this.inputChange.bind(this));
         }
+    }
+
+    /**
+     * When the date format table header is clicked, will expand/collapse the table of information
+     */
+    private dateFormatTableClick(){
+        this.dateFormatTableExpanded = !this.dateFormatTableExpanded;
+        this.updateApp();
     }
 
     /**
@@ -518,6 +532,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Calendar>this.object).generalSettings.showClock = checked;
             } else if(id === 'scPF2ESync'){
                 (<Calendar>this.object).generalSettings.pf2eSync = checked;
+            } else if(id === 'scDateFormatsDate'){
+                (<Calendar>this.object).generalSettings.dateFormat.date = value;
+            } else if(id === 'scDateFormatsTime'){
+                (<Calendar>this.object).generalSettings.dateFormat.time = value;
+            } else if(id === 'scDateFormatsMonthYear'){
+                (<Calendar>this.object).generalSettings.dateFormat.monthYear = value;
             }
             //Permission Settings
             else if(id === 'scCalendarVisibleP'){
@@ -646,7 +666,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     }
                     else if(cssClass === 'month-name' && (<Calendar>this.object).year.months.length > index){
                         (<Calendar>this.object).year.months[index].name = value;
-                    } else if(cssClass === 'month-days' && (<Calendar>this.object).year.months.length > index){
+                        (<Calendar>this.object).year.months[index].abbreviation = value.substring(0, 3);
+                    } else if(cssClass === 'month-abbreviation'){
+                        (<Calendar>this.object).year.months[index].abbreviation = value;
+                    }else if(cssClass === 'month-days' && (<Calendar>this.object).year.months.length > index){
                         let days = parseInt(value);
                         if(!isNaN(days) && days !== (<Calendar>this.object).year.months[index].days.length){
                             (<Calendar>this.object).year.months[index].numberOfDays = days;
@@ -683,6 +706,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
                     //Weekday Setting Inputs
                     else if(cssClass === 'weekday-name' && (<Calendar>this.object).year.weekdays.length > index){
                         (<Calendar>this.object).year.weekdays[index].name = value;
+                        (<Calendar>this.object).year.weekdays[index].abbreviation = value.substring(0, 2);
+                    }
+                    else if(cssClass === 'weekday-abbreviation' && (<Calendar>this.object).year.weekdays.length > index){
+                        (<Calendar>this.object).year.weekdays[index].abbreviation = value;
                     }
                     //Leap Year Setting Inputs
                     else if(cssClass === 'month-leap-days' && (<Calendar>this.object).year.months.length > index){

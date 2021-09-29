@@ -1,11 +1,7 @@
 import {Logger} from "./logging";
 import Month from "./month";
 import Note from "./note";
-import {
-    SCDateSelector,
-    SimpleCalendarSocket,
-    SimpleCalendarTemplate
-} from "../interfaces";
+import {SCDateSelector, SimpleCalendarSocket, SimpleCalendarTemplate} from "../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {GameSettings} from "./game-settings";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
@@ -232,6 +228,11 @@ export default class SimpleCalendar extends Application{
             }
         } else if(data.type === SocketTypes.noteReminders){
             this.checkNoteReminders((<SimpleCalendarSocket.SimpleCalendarNoteReminder>data.data).justTimeChange);
+        } else if(data.type === SocketTypes.emitHook){
+            const hook = (<SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).hook
+            if(hook){
+                Hook.emit(hook);
+            }
         }
     }
 
@@ -1116,7 +1117,7 @@ export default class SimpleCalendar extends Application{
         const activeScene = scenes? scenes.active? scenes.active.id : null : null;
         if(combats && combats.size > 0 && combats.find(g => g.started && ((activeScene !== null && g.scene && g.scene.id === activeScene) || activeScene === null))){
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
-        } else if(this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
+        } else if(this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
             this.activeCalendar.year.time.timeKeeper.start();
         }
     }
@@ -1198,8 +1199,8 @@ export default class SimpleCalendar extends Application{
             const currentMonth = this.activeCalendar.year.getMonth();
             const currentDay = currentMonth? currentMonth.getDay() : this.activeCalendar.year.months[0].days[0];
             const time = this.activeCalendar.year.time.getCurrentTime();
-            const currentHour = parseInt(time.hour);
-            const currentMinute = parseInt(time.minute);
+            const currentHour = time.hour;
+            const currentMinute = time.minute;
 
             const currentDate: SCDateSelector.Date = {
                 year: this.activeCalendar.year.numericRepresentation,

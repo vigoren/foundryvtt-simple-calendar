@@ -1,5 +1,5 @@
 import {GameSettings} from "./game-settings";
-import {DateRangeMatch, MoonIcons} from "../constants";
+import {DateRangeMatch, GameSystems, MoonIcons} from "../constants";
 import FirstQuarterIcon from "../icons/moon-first-quarter.svg";
 import FullMoonIcon from "../icons/moon-full.svg";
 import LastQuarterIcon from "../icons/moon-last-quarter.svg";
@@ -10,6 +10,8 @@ import WaxingCrescentIcon from "../icons/moon-waxing-crescent.svg";
 import WaxingGibbousIcon from "../icons/moon-waxing-gibbous.svg";
 import {DateTimeParts, SCDateSelector} from "../interfaces";
 import SimpleCalendar from "./simple-calendar";
+import PF2E from "./systems/pf2e";
+import Year from "./year";
 
 export default class Utilities{
 
@@ -71,35 +73,6 @@ export default class Utilities{
     }
 
     /**
-     * Formats an hour, minute and optionally second to include pre padded 0's
-     * @param {Number} hour
-     * @param {Number} minute
-     * @param {Number|Boolean} second
-     */
-    public static FormatTime(hour: number, minute: number, second: number | false){
-        let text = '';
-        let sHour = hour.toString();
-        let sMinute = minute.toString()
-        if(hour < 10){
-            sHour = `0${hour}`;
-        }
-        if(minute < 10){
-            sMinute = `0${minute}`;
-        }
-
-        if(second !== false){
-            let sSecond = second.toString();
-            if(second < 10){
-                sSecond = `0${second}`;
-            }
-            text = `${sHour}:${sMinute}:${sSecond}`;
-        } else {
-            text = `${sHour}:${sMinute}`;
-        }
-        return text;
-    }
-
-    /**
      * Gets the SVG icon for the specific moon phase
      * @param {MoonIcons} icon The phase of the moon
      * @param {string} color The color of the moon
@@ -136,6 +109,114 @@ export default class Utilities{
     }
 
     /**
+     * Adds zero padding to the front of numbers
+     * @param num
+     * @param zeroPadding
+     */
+    public static PadNumber(num: number, zeroPadding: number = 1){
+        if(num < Math.pow(10, zeroPadding)){
+            const zeros = zeroPadding - (Math.log(num) * Math.LOG10E | 0);
+            return `${'0'.repeat(zeros)}${num}`;
+        } else {
+            return `${num}`;
+        }
+    }
+
+    /**
+     * Formats the passed in date/time to match the passed in mask
+     * @param {DateTimeParts} date The date/time to change into a formatted string
+     * @param {string} mask The mask that is used to change the date/time to match the mask
+     */
+    public static FormatDateTime(date: DateTimeParts, mask: string){
+        const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|S{1,3}|ZZ|Z|([HhMmsD])\1?|[aA]/g;
+        const literal = /\[([^]*?)\]/gm;
+        const formatFlags: Record<string, (dateObj: DateTimeParts) => string> = {
+            "D": (dateObj: DateTimeParts) => String(dateObj.day),
+            "DD": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.day),
+            "DO": (dateObj: DateTimeParts) => `${dateObj.day}${Utilities.ordinalSuffix(dateObj.day)}`,
+            "d": (dateObj: DateTimeParts) => String(SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
+            "dd": (dateObj: DateTimeParts) => Utilities.PadNumber(SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
+            "ddd": (dateObj: DateTimeParts) => `${SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name.substring(0, 3)}`,
+            "dddd": (dateObj: DateTimeParts) => `${SimpleCalendar.instance.activeCalendar.year.weekdays[SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name}`,
+            "M": (dateObj: DateTimeParts) => String(dateObj.month),
+            "MM": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.month),
+            "MMM": (dateObj: DateTimeParts) => {
+                const month = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === dateObj.month);
+                return month? month.abbreviation : '';
+            },
+            "MMMM": (dateObj: DateTimeParts) => {
+                const month = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === dateObj.month);
+                return month? month.name : '';
+            },
+            "YN": (dateObj: DateTimeParts) => SimpleCalendar.instance.activeCalendar.year.getYearName(dateObj.year),
+            "YA": (dateObj: DateTimeParts) => SimpleCalendar.instance.activeCalendar.year.prefix,
+            "YZ": (dateObj: DateTimeParts) => SimpleCalendar.instance.activeCalendar.year.postfix,
+            "YY": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.year, 2).substring(2),
+            "YYYY": (dateObj: DateTimeParts) => String(dateObj.year),
+            "H": (dateObj: DateTimeParts) => String(dateObj.hour),
+            "HH": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.hour),
+            "h": (dateObj: DateTimeParts) => {
+                const halfDay = Math.floor(SimpleCalendar.instance.activeCalendar.year.time.hoursInDay / 2);
+                const hour = dateObj.hour % halfDay || halfDay;
+                return String(hour);
+            },
+            "hh": (dateObj: DateTimeParts) => {
+                const halfDay = Math.floor(SimpleCalendar.instance.activeCalendar.year.time.hoursInDay / 2);
+                const hour = dateObj.hour % halfDay || halfDay;
+                return Utilities.PadNumber(hour);
+            },
+            "m": (dateObj: DateTimeParts) => String(dateObj.minute),
+            "mm": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.minute),
+            "s": (dateObj: DateTimeParts) => String(dateObj.seconds),
+            "ss": (dateObj: DateTimeParts) => Utilities.PadNumber(dateObj.seconds),
+            "A": (dateObj: DateTimeParts) => {
+                const halfDay = Math.floor(SimpleCalendar.instance.activeCalendar.year.time.hoursInDay / 2);
+                return dateObj.hour >= halfDay? "PM" : "AM";
+            },
+            "a": (dateObj: DateTimeParts) => {
+                const halfDay = Math.floor(SimpleCalendar.instance.activeCalendar.year.time.hoursInDay / 2);
+                return dateObj.hour >= halfDay? "pm" : "am";
+            }
+        };
+        const literals: string[] = [];
+        // Make literals inactive by replacing them with @@@
+        mask = mask.replace(literal, function($0, $1) {
+            literals.push($1);
+            return "@@@";
+        });
+        // Apply formatting rules
+        mask = mask.replace(token, key => formatFlags[key](date) );
+        // Inline literal values back into the formatted value
+        return mask.replace(/@@@/g, () => <string>literals.shift());
+
+    }
+
+    /**
+     * Converts that year, month and day numbers into a total number of seconds for the current active calendar
+     * @param {number} year The year number
+     * @param {number} month The month number
+     * @param {number} day The day number
+     * @param {boolean} [includeToday=true] If to include today's seconds in the calculation
+     * @param {Year} [yearClass=SimpleCalendar.instance.activeCalendar.year] The year class to use for the seconds calculations
+     */
+    public static ToSeconds(year: number, month: number, day: number, includeToday: boolean = true, yearClass: Year = SimpleCalendar.instance.activeCalendar.year){
+        //Get the days so for and add one to include the current day
+        let daysSoFar = yearClass.dateToDays(year, month, day, true, true);
+        let totalSeconds = yearClass.time.getTotalSeconds(daysSoFar, includeToday);
+        // If this is a Pathfinder 2E game, subtract the world creation seconds
+        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
+            const newYZ = PF2E.newYearZero();
+            if(newYZ !== undefined){
+                SimpleCalendar.instance.activeCalendar.year.yearZero = 1875;
+                daysSoFar = yearClass.dateToDays(year, month, day, true, true);
+            }
+            daysSoFar++;
+            totalSeconds =  yearClass.time.getTotalSeconds(daysSoFar, includeToday) - PF2E.getWorldCreateSeconds(false);
+        }
+        return totalSeconds;
+    }
+
+    /**
      * Gets the formatted display date for the passed in start and end date.
      * @param {SCDateSelector.Date} startDate The starting datetime
      * @param {SCDateSelector.Date} endDate The ending datetime
@@ -144,44 +225,33 @@ export default class Utilities{
      * @param {string} [delimiter='-'] The delimiter to use between the 2 dates
      */
     public static GetDisplayDate(startDate: SCDateSelector.Date, endDate: SCDateSelector.Date, dontIncludeSameDate: boolean = false, showYear: boolean = true, delimiter: string = '-'){
-        let startDateTimeText = '', endDateTimeText = '', startingMonthName = '', endingMonthName = '';
-        const startingMonth = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === startDate.month);
-        const endingMonth = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === endDate.month);
-        if(startingMonth){
-            startingMonthName = startingMonth.name;
+        const timeMask = SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time.replace(/:?[s]/g, '');
+        let dateMask = SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.date;
+        if(!showYear){
+            dateMask = dateMask.replace(/[,.\/\\\s]*?(YN|YA|YZ|YY(?:YY)?)/g, '');
         }
-        if(endingMonth){
-            endingMonthName = endingMonth.name;
-        }
+        let startDateMask = ``;
+        let endDateMask = ``;
 
         if(!Utilities.DateTheSame(startDate, endDate) && endDate.month !== 0 && endDate.day !== 0){
-            startDateTimeText += `${startingMonthName} ${startDate.day}`;
-            endDateTimeText += `${endingMonthName} ${endDate.day}`;
-            if(!dontIncludeSameDate || (dontIncludeSameDate && startDate.year !== endDate.year)){
-                startDateTimeText += `, ${startDate.year}`;
-                endDateTimeText += `, ${endDate.year}`;
-            }
+            startDateMask = `${dateMask}`;
+            endDateMask = `${dateMask}`;
         } else if(!dontIncludeSameDate){
-            if(showYear){
-                startDateTimeText += `${startingMonthName} ${startDate.day}, ${startDate.year}`;
-            } else {
-                startDateTimeText += `${startingMonthName} ${startDate.day}`;
-            }
+            startDateMask = `${dateMask}`;
         }
 
-        let startTimeText = `00:00`;
-        let endTimeText = `00:00`;
         if(!startDate.allDay){
-            startTimeText = ' ' + Utilities.FormatTime(startDate.hour, startDate.minute, false);
-            startDateTimeText += startTimeText;
+            startDateMask += ` ${timeMask}`;
         }
-        if(!endDate.allDay){
-            endTimeText = ' ' + Utilities.FormatTime(endDate.hour, endDate.minute, false);
-            if(endDateTimeText !== '' || (endDateTimeText === '' && startTimeText !== endTimeText)){
-                endDateTimeText += endTimeText;
-            }
+        if(!endDate.allDay && !(startDate.hour === endDate.hour && startDate.minute === endDate.minute)){
+            endDateMask += ` ${timeMask}`;
         }
-        return `${startDateTimeText}${endDateTimeText? ` ${delimiter} ` + endDateTimeText: ''}`;
+
+        if(endDateMask !== ''){
+            endDateMask = ` ${delimiter} ${endDateMask}`;
+        }
+
+        return `${Utilities.FormatDateTime({year: startDate.year, month: startDate.month, day: startDate.day, hour: startDate.hour, minute: startDate.minute, seconds: 0}, startDateMask)}${Utilities.FormatDateTime({year: endDate.year, month: endDate.month, day: endDate.day, hour: endDate.hour, minute: endDate.minute, seconds: 0}, endDateMask)}`;
     }
 
     /**
@@ -213,13 +283,6 @@ export default class Utilities{
      */
     public static IsDayBetweenDates(checkDate: SCDateSelector.Date, startDate: SCDateSelector.Date, endDate: SCDateSelector.Date){
         let between = DateRangeMatch.None;
-        let checkMonthIndex = checkDate.month;
-        let checkDayIndex = checkDate.day;
-        let startMonthIndex = startDate.month;
-        let startDayIndex = startDate.day;
-        let endMonthIndex = endDate.month;
-        let endDayIndex = endDate.day;
-
         let checkSeconds = 0;
         let startSeconds = 0;
         let endSeconds = 0;
@@ -227,29 +290,15 @@ export default class Utilities{
         const sMonth = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === startDate.month);
         const cMonth = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === checkDate.month);
         const eMonth = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === endDate.month);
-        let clone = SimpleCalendar.instance.activeCalendar.year.clone();//TODO: This results in a lot of data being cloned, it should be reduced down
-        clone.time.setTime(0, 0, 0);
 
         if(sMonth > -1){
-            startMonthIndex = sMonth;
-            startDayIndex = SimpleCalendar.instance.activeCalendar.year.months[startMonthIndex].days.findIndex(d => d.numericRepresentation === startDate.day);
-            clone.updateMonth(startMonthIndex, 'current', true, startDayIndex);
-            clone.numericRepresentation = startDate.year;
-            startSeconds = clone.toSeconds();
+            startSeconds = Utilities.ToSeconds(startDate.year, startDate.month, startDate.day, false);
         }
         if(cMonth > -1){
-            checkMonthIndex = cMonth;
-            checkDayIndex = SimpleCalendar.instance.activeCalendar.year.months[checkMonthIndex].days.findIndex(d => d.numericRepresentation === checkDate.day);
-            clone.updateMonth(checkMonthIndex, 'current', true, checkDayIndex);
-            clone.numericRepresentation = checkDate.year;
-            checkSeconds = clone.toSeconds();
+            checkSeconds = Utilities.ToSeconds(checkDate.year, checkDate.month, checkDate.day, false);
         }
         if(eMonth > -1){
-            endMonthIndex = eMonth;
-            endDayIndex = SimpleCalendar.instance.activeCalendar.year.months[endMonthIndex].days.findIndex(d => d.numericRepresentation === endDate.day);
-            clone.updateMonth(endMonthIndex, 'current', true, endDayIndex);
-            clone.numericRepresentation = endDate.year;
-            endSeconds = clone.toSeconds();
+            endSeconds = Utilities.ToSeconds(endDate.year, endDate.month, endDate.day, false);
         }
 
         if(cMonth === -1 || sMonth === -1 || eMonth === -1){

@@ -102,7 +102,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load General Settings', () => {
-        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes: {player:false, trustedPlayer: false, assistantGameMaster: false}}});
+        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, dateFormat: {date: 'MMMM DD, YYYY', time: 'HH:mm:ss', monthYear: 'MMMM YAYYYYYZ'}, permissions: {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes: {player:false, trustedPlayer: false, assistantGameMaster: false}}});
         expect((<Game>game).settings.get).toHaveBeenCalled();
     });
 
@@ -117,7 +117,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Month Data', () => {
-        expect(GameSettings.LoadMonthData()).toStrictEqual([{id:'', name: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]);
+        expect(GameSettings.LoadMonthData()).toStrictEqual([{id:'', name: '', abbreviation: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadMonthData()).toStrictEqual([]);
@@ -128,7 +128,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Weekday Data', () => {
-        expect(GameSettings.LoadWeekdayData()).toStrictEqual([{id:'', numericRepresentation: 0, name: ''}]);
+        expect(GameSettings.LoadWeekdayData()).toStrictEqual([{id:'', abbreviation: '', numericRepresentation: 0, name: ''}]);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
@@ -194,7 +194,7 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         game.user.isGM = false;
         let up: UserPermissionsConfig = {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false}};
-        let gs: GeneralSettingsConfig = {id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: up};
+        let gs: GeneralSettingsConfig = {id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, dateFormat: {date: 'MMMM DD, YYYY', time: 'HH:mm:ss', monthYear: 'MMMM YAYYYYYZ'}, permissions: up};
         await expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
@@ -283,6 +283,7 @@ describe('Game Settings Class Tests', () => {
         await expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(true);
         expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
         month.name = '';
+        month.abbreviation = '';
         month.numericRepresentation = 1;
         month.numberOfDays = 2;
         month.numberOfLeapYearDays = 2;

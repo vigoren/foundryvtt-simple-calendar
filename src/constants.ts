@@ -90,7 +90,8 @@ export enum SocketTypes {
     journal = 'journal',
     dateTime = 'date-time',
     date = 'date',
-    noteReminders = 'note-reminder'
+    noteReminders = 'note-reminder',
+    emitHook = 'emit-hook'
 }
 
 /**

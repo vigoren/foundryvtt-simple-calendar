@@ -12,7 +12,7 @@ import "../../__mocks__/hooks";
 
 import TimeKeeper from "./time-keeper";
 import SimpleCalendar from "./simple-calendar";
-import {TimeKeeperStatus} from "../constants";
+import {GameWorldTimeIntegrations, TimeKeeperStatus} from "../constants";
 import Year from "./year";
 import Month from "./month";
 
@@ -173,6 +173,10 @@ describe('Time Keeper Class Tests', () => {
         //@ts-ignore
         tk.interval();
 
+        SimpleCalendar.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
+
+        //@ts-ignore
+        tk.interval();
 
         tk.stop();
         //@ts-ignore
@@ -193,5 +197,10 @@ describe('Time Keeper Class Tests', () => {
 
         //@ts-ignore
         tk.saveInterval();
+
+        SimpleCalendar.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
+
+        //@ts-ignore
+        tk.interval();
     });
 });

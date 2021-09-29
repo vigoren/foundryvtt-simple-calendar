@@ -17,8 +17,18 @@ Simple Calendar exposes a variable called `SimpleCalendar`, all of these API fun
 - [clockStatus](#simplecalendarapiclockstatus)
 - [configureCalendar](#simplecalendarapiconfigurecalendarconfig)
 - [dateToTimestamp](#simplecalendarapidatetotimestampdate)
+- [formatDateTime](#simplecalendarapiformatdatetimedate)
+- [getAllMonths](#simplecalendarapigetallmonths)
+- [getAllMoons](#simplecalendarapigetallmoons)
 - [getAllSeasons](#simplecalendarapigetallseasons)
+- [getAllWeekdays](#simplecalendarapigetallweekdays)
+- [getCurrentDay](#simplecalendarapigetcurrentday)
+- [getCurrentMonth](#simplecalendarapigetcurrentmonth)
 - [getCurrentSeason](#simplecalendarapigetcurrentseason)
+- [getCurrentWeekday](#simplecalendarapigetcurrentweekday)
+- [getCurrentYear](#simplecalendarapigetcurrentyear)
+- [getLeapYearConfiguration](#simplecalendarapigetleapyearconfiguration)
+- [getTimeConfiguration](#simplecalendarapigettimeconfiguration)
 - [isPrimaryGM](#simplecalendarapiisprimarygm)
 - [secondsToInterval](#simplecalendarapisecondstointervalseconds)
 - [setDate](#simplecalendarapisetdatedate)
@@ -35,6 +45,7 @@ Simple Calendar exposes a variable called `SimpleCalendar`, all of these API fun
 - [Date Object](#date-object)
 - [Date Display Object](#date-display-object)
 - [Date Time Object](#date-time-object)
+- [Day Object](#day-object)
 - [First New Moon Object](#first-new-moon-object)
 - [Interval Time Object](#interval-time-object)
 - [Leap Year Object](#leap-year-object)
@@ -115,6 +126,8 @@ SimpleCalendar.api.changeDate({year: 1, month: 1, day: 1, hour: 1, minute: 1, se
 SimpleCalendar.api.changeDate({second: 3600}); // Will set the new date to June 1, 2021 11:00:00
 ```
 
+<hr/>
+
 ## `SimpleCalendar.api.chooseRandomDate(startDate, endDate)`
 
 Will choose a random date between the 2 passed in dates, or if no dates are passed in will choose a random date.
@@ -178,6 +191,8 @@ SimpleCalendar.api.chooseRandomDate();
  */
 ```
 
+<hr/>
+
 ## `SimpleCalendar.api.clockStatus()`
 
 Will get the current status of the built-in clock in Simple Calendar
@@ -198,6 +213,8 @@ paused|Boolean|If the clock has paused. The clock will be paused when the game i
 const status = SimpleCalendar.api.clockStatus();
 console.log(status); // {started: false, stopped: true, paused: false}
 ```
+
+<hr/>
 
 ## `SimpleCalendar.api.configureCalendar(config)`
 
@@ -228,6 +245,8 @@ const result = await SimpleCalendar.api.configureCalendar(custom);
 
 ```
 
+<hr/>
+
 ## `SimpleCalendar.api.dateToTimestamp(date)`
 
 Will convert that passed in date object to a timestamp.
@@ -251,9 +270,301 @@ SimpleCalendar.api.dateToTimestamp({}); //Returns the timestamp for the current 
 SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, second: 0}); //Returns 1609462860
 ```
 
+<hr/>
+
+## `SimpleCalendar.api.formatDateTime(date)`
+
+Converts the passed in date into formatted date and time strings that match the configured date and time formats.
+
+### Parameters
+
+Parameter|Type|Default Value|Description
+---------|-----|-------------|-----------
+date|[Date Time Ojbect](#date-time-object) or null|null|A date object (eg `{year:2021, month: 4, day: 12, hour: 0, mintue: 0, second: 0}`) with the parameters set to the date and time that should be formatted.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+
+- Any missing date/time parameters will default to a value of 0.
+- If the date/time parameters are negative, their value will be set to 0. The exception to this is the year parameter, it can be negative.
+- If the date/time parameters are set to a value greater than possible (eg. the 20th month in a calendar that only has 12 months, or the 34th hour when a day can only have 24 hours) the max value will be used.
+
+### Returns
+
+Returns an object that contains a formatted date string and a formatted time string.
+
+### Examples
+```javascript
+// Assuming that the default date and time formats are in place
+// Date: Full Month Name Day, Year
+// Time: 24Hour:Minute:Second
+
+SimpleCalendar.api.formatDate({year: 2021, month: 11, day: 24, hour: 12, minute: 13, second: 14});
+// Returns {date: 'December 25, 2021', time: '12:13:14'}
+
+SimpleCalendar.api.formatDate({year: -2021, month: -11, day: 24, hour: 12, minute: 13, second: 14})
+// Returns {date: 'January 25, -2021', time: '12:13:14'}
+
+SimpleCalendar.api.formatDate({year: 2021, month: 111, day: 224, hour: 44, minute: 313, second: 314})
+// Returns {date: 'December 31, 2021', time: '23:59:59'}
+```
+
+<hr/>
+
+## `SimpleCalendar.api.getAllMonths()`
+
+Gets the details for all the months of the calendar.
+
+### Returns
+
+This function returns an array of [Month Objects](#month-object).
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getAllMonths();
+/* Returns an array like this, assuming the Gregorian Calendar
+[
+    {
+        "id": "13390ed",
+        "name": "January",
+        "abbreviation": "Jan",
+        "numericRepresentation": 1,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 31,
+        "numberOfLeapYearDays": 31,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "effafeee",
+        "name": "February",
+        "abbreviation": "Feb",
+        "numericRepresentation": 2,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 29,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "25b48251",
+        "name": "March",
+        "abbreviation": "Mar",
+        "numericRepresentation": 3,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 31,
+        "numberOfLeapYearDays": 31,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "e5e9782f",
+        "name": "April",
+        "abbreviation": "Apr",
+        "numericRepresentation": 4,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 30,
+        "numberOfLeapYearDays": 30,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "93f626f6",
+        "name": "May",
+        "abbreviation": "May",
+        "numericRepresentation": 5,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 31,
+        "numberOfLeapYearDays": 31,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "22b4b204",
+        "name": "June",
+        "abbreviation": "Jun",
+        "numericRepresentation": 6,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 30,
+        "numberOfLeapYearDays": 30,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "adc0a7ca",
+        "name": "July",
+        "abbreviation": "Jul",
+        "numericRepresentation": 7,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 31,
+        "numberOfLeapYearDays": 31,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "58197d71",
+        "name": "August",
+        "abbreviation": "Aug",
+        "numericRepresentation": 8,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 31,
+        "numberOfLeapYearDays": 31,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "eca76bbd",
+        "name": "September",
+        "abbreviation": "Sep",
+        "numericRepresentation": 9,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 30,
+        "numberOfLeapYearDays": 30,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "6b0da33e",
+        "name": "October",
+        "abbreviation": "Oct",
+        "numericRepresentation": 10,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 31,
+        "numberOfLeapYearDays": 31,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "150f5519",
+        "name": "November",
+        "abbreviation": "Nov",
+        "numericRepresentation": 11,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 30,
+        "numberOfLeapYearDays": 30,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    },
+    {
+        "id": "b67bc3ee",
+        "name": "December",
+        "abbreviation": "Dec",
+        "numericRepresentation": 12,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 31,
+        "numberOfLeapYearDays": 31,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+    }
+]
+ */
+```
+
+<hr/>
+
+## `SimpleCalendar.api.getAllMoons()`
+
+Gets the details for all the moons of the calendar.
+
+### Returns
+
+This function returns an array of [Moon Objects](#moon-object).
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getAllMoons();
+/* Returns an array like this, assuming the Gregorian Calendar
+[
+    {
+        "id": "2c26abfa",
+        "name": "Moon",
+        "color": "#ffffff",
+        "cycleLength": 29.53059,
+        "cycleDayAdjust": 0.5,
+        "firstNewMoon": {
+            "year": 2000,
+            "month": 1,
+            "day": 6,
+            "yearX": 0,
+            "yearReset": "none"
+        },
+        "phases": [
+            {
+                "name": "New Moon",
+                "length": 1,
+                "icon": "new",
+                "singleDay": true
+            },
+            {
+                "name": "Waxing Crescent",
+                "length": 6.3826,
+                "icon": "waxing-crescent",
+                "singleDay": false
+            },
+            {
+                "name": "First Quarter",
+                "length": 1,
+                "icon": "first-quarter",
+                "singleDay": true
+            },
+            {
+                "name": "Waxing Gibbous",
+                "length": 6.3826,
+                "icon": "waxing-gibbous",
+                "singleDay": false
+            },
+            {
+                "name": "Full Moon",
+                "length": 1,
+                "icon": "full",
+                "singleDay": true
+            },
+            {
+                "name": "Waning Gibbous",
+                "length": 6.3826,
+                "icon": "waning-gibbous",
+                "singleDay": false
+            },
+            {
+                "name": "Last Quarter",
+                "length": 1,
+                "icon": "last-quarter",
+                "singleDay": true
+            },
+            {
+                "name": "Waning Crescent",
+                "length": 6.3826,
+                "icon": "waning-crescent",
+                "singleDay": false
+            }
+        ],
+        "currentPhase": {
+            "name": "Waning Crescent",
+            "length": 6.3826,
+            "icon": "waning-crescent",
+            "singleDay": false
+        }
+    }
+]
+ */
+```
+
+<hr/>
+
 ## `SimpleCalendar.api.getAllSeasons()`
 
-Gets all the seasons for the calendar.
+Gets the details for all the seasons for the calendar.
 
 ### Returns
 
@@ -262,36 +573,157 @@ This function returns an array of [Season objects](#season-object).
 ### Examples
 ```javascript
 SimpleCalendar.api.getAllSeasons();
-/*
-    Returns an array like this, assuming the Gregorian Calendar
-    [
-        {
-            color: "#fffce8",
-            name: "Spring",
-            startingDay: 19,
-            startingMonth: 2
-        },
-        {
-            color: "#f3fff3",
-            name: "Summer",
-            startingDay: 19,
-            startingMonth: 5
-        },
-        {
-            color: "#fff7f2",
-            name: "Fall",
-            startingDay: 21,
-            startingMonth: 8
-        },
-        {
-            color: "#f2f8ff",
-            name: "Winter",
-            startingDay: 20,
-            startingMonth: 11
-        }
-    ]
+/* Returns an array like this, assuming the Gregorian Calendar
+[
+    {
+        color: "#fffce8",
+        id: "4916a231",
+        name: "Spring",
+        startingDay: 20,
+        startingMonth: 3,
+        sunriseTime: 21600,
+        sunsetTime: 64800
+    },
+    {
+        color: "#f3fff3",
+        id: "e596489",
+        name: "Summer",
+        startingDay: 20,
+        startingMonth: 6,
+        sunriseTime: 21600,
+        sunsetTime: 64800
+    },
+    {
+        color: "#fff7f2",
+        id: "3f137ee5",
+        name: "Fall",
+        startingDay: 22,
+        startingMonth: 9,
+        sunriseTime: 21600,
+        sunsetTime: 64800
+    },
+    {
+        color: "#f2f8ff",
+        id: "92f919a2",
+        name: "Winter",
+        startingDay: 21,
+        startingMonth: 12,
+        sunriseTime: 21600,
+        sunsetTime: 64800
+    }
+]
  */
 ```
+
+<hr/>
+
+## `SimpleCalendar.api.getAllWeekdays`
+
+Gets the details about all the weekdays for the calendar.
+
+### Returns
+
+This function returns an array of [Weekday Object](#weekday-object).
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getAllWeekdays();
+/* Returns an array like this, assuming the Gregorian Calendar
+[
+    {
+        id: "dafbfd4",
+        name: "Sunday",
+        numericRepresentation: 1
+    },
+    {
+        id: "8648c7e9",
+        name: "Monday",
+        numericRepresentation: 2
+    }
+    {
+        id: "b40f3a20",
+        name: "Tuesday",
+        numericRepresentation: 3
+    },
+    {
+        id: "6c20a99e",
+        name: "Wednesday",
+        numericRepresentation: 4
+    },
+    {
+        id: "56c14ec7",
+        name: "Thursday",
+        numericRepresentation: 5
+    },
+    {
+        id: "2c732d04",
+        name: "Friday",
+        numericRepresentation: 6
+    },
+    {
+        id: "c8f72e3d",
+        name: "Saturday",
+        numericRepresentation: 7
+    }
+]
+ */
+```
+
+<hr/>
+
+## `SimpleCalendar.api.getCurrentDay()`
+
+Gets the details about the current day.
+
+### Returns
+
+This function returns a [Day Object](#day-object).
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getCurrentDay();
+/* Returns an object like this:
+{
+    id: "cbdb31cb",
+    name: "8",
+    numericRepresentation: 8
+}
+ */
+```
+
+<hr/>
+
+## `SimpleCalendar.api.getCurrentMonth()`
+
+Gets the details about the current month.
+
+### Returns
+
+This function returns a [Month Object](#month-object).
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getCurrentMonth();
+/* Returns an object like this:
+{
+    abbreviation: "Jun",
+    id: "22b4b204",
+    intercalary: false,
+    intercalaryInclude: false,
+    name: "June",
+    numberOfDays: 30,
+    numberOfLeapYearDays: 30,
+    numericRepresentation: 6,
+    numericRepresentationOffset: 0,
+    startingWeekday: null
+}
+ */
+```
+
+<hr/>
 
 ## `SimpleCalendar.api.getCurrentSeason()`
 
@@ -307,13 +739,122 @@ This function returns a [Season Object](#season-object).
 SimpleCalendar.api.getCurrentSeason();
 /* Returns an object like this
 {
-    name: "Summer",
-    color:"#f3fff3",
+    color: "#fffce8",
+    id: "4916a231",
+    name: "Spring",
     startingDay: 19,
-    startingMonth: 5
+    startingMonth: 2,
+    sunriseTime: 21600,
+    sunsetTime: 64800
 }
 */
 ```
+
+<hr/>
+
+## `SimpleCalendar.api.getCurrentWeekday()`
+
+Gets the details about the current weekday.
+
+### Returns
+
+This function returns a [Weekday Object](#weekday-object).
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getCurrentWeekday();
+/* Returns an object like this
+{
+    id: "b40f3a20",
+    name: "Tuesday",
+    numericRepresentation: 3
+}
+*/
+```
+
+<hr/>
+
+## `SimpleCalendar.api.getCurrentYear()`
+
+Gets the details about the current year.
+
+### Returns
+
+This function returns a [Year Object](#year-object).
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getCurrentYear();
+/* Returns an object like this
+{
+    firstWeekday: 4,
+    id: "bbe5385c",
+    numericRepresentation: 2021,
+    postfix: "",
+    prefix: "",
+    showWeekdayHeadings: true,
+    yearNames: [],
+    yearNamesStart: 0,
+    yearNamingRule: "default",
+    yearZero: 1970
+}
+*/
+```
+
+<hr/>
+
+## `SimpleCalendar.api.getLeapYearConfiguration()`
+
+Gets the details about how leap years are configured for the calendar.
+
+### Returns
+
+This function returns a [Leap Year Object](#leap-year-object).
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getLeapYearConfiguration();
+/* Returns an object like this
+{
+    customMod: 0,
+    id: "1468d034",
+    rule: "gregorian"
+}
+*/
+```
+
+<hr/>
+
+## `SimpleCalendar.api.getTimeConfiguration()`
+
+Get the details about how time is configured for the calendar.
+
+### Returns
+
+This function returns a [Time Object](#time-object).
+
+### Examples
+
+```javascript
+SimpleCalendar.api.getTimeConfiguration();
+/* Returns an object like this
+{
+    gameTimeRatio: 1,
+    hoursInDay: 24,
+    id: "d4791796",
+    minutesInHour: 60,
+    secondsInCombatRound: 6,
+    secondsInMinute: 60,
+    unifyGameAndClockPause: true,
+    updateFrequency: 1
+}
+*/
+```
+
+<hr/>
 
 ## `SimpleCalendar.api.isPrimaryGM()`
 
@@ -326,6 +867,8 @@ Returns if the current user is considered the primary GM or not.
 SimpleCalendar.api.isPrimaryGM(); //True or Flase depending on if the current user is primary gm
 
 ```
+
+<hr/>
 
 ## `SimpleCalendar.api.secondsToInterval(seconds)`
 
@@ -353,6 +896,8 @@ SimpleCalendar.api.secondsToInterval(2629743); //Returns {year: 0, month: 1, day
 SimpleCalendar.api.secondsToInterval(31556926); //Returns {year: 1, month: 0, day: 0, hour: 5, minute: 48, second: 46}
 ```
 
+<hr/>
+
 ## `SimpleCalendar.api.setDate(date)`
 
 Will set the current date to the passed in date.
@@ -379,6 +924,8 @@ SimpleCalendar.setDateTime(1999, 11, 24);
 SimpleCalendar.setDateTime(1999, 11, 30, 23, 59, 59);
 ```
 
+<hr/>
+
 ## `SimpleCalendar.api.showCalendar(date, compact)`
 
 Will open up Simple Calendar to the current date, or the passed in date.
@@ -398,15 +945,7 @@ SimpleCalendar.api.showCalendar({year: 1999, month: 11, day: 25}); // Will open 
 SimpleCalendar.api.showCalendar(null, true); // Will opent the calendar to the current date in compact mode.
 ```
 
-## `SimpleCalendar.api.timestamp()`
-
-Return the timestamp (in seconds) of the calendars currently set date.
-
-### Examples
-```javascript
-const timestamp = SimpleCalendar.api.timestamp();
-console.log(timestamp); // This will be a number representing the current number of seconds passed in the calendar.
-```
+<hr/>
 
 ## `SimpleCalendar.api.startClock()`
 
@@ -422,6 +961,8 @@ Will return true if the clock started, false if it did not.
 SimpleCalendar.api.startClock();
 ```
 
+<hr/>
+
 ## `SimpleCalendar.api.stopClock()`
 
 Stops the real time clock of Simple Calendar.
@@ -435,6 +976,20 @@ Will return true if the clock stopped, false if it did not.
 ```javascript
 SimpleCalendar.api.stopClock();
 ```
+
+<hr/>
+
+## `SimpleCalendar.api.timestamp()`
+
+Return the timestamp (in seconds) of the calendars currently set date.
+
+### Examples
+```javascript
+const timestamp = SimpleCalendar.api.timestamp();
+console.log(timestamp); // This will be a number representing the current number of seconds passed in the calendar.
+```
+
+<hr/>
 
 ## `SimpleCalendar.api.timestampPlusInterval(timestamp, interval)`
 
@@ -457,6 +1012,8 @@ console.log(newTime); // this will be 0 + the number of seconds in 1 day. For mo
 newTime = SimpleCalendar.api.timestampPlusInterval(1622505600, {month: 1, day: 1});
 console.log(newTime); // This will be the number of seconds that equal July 2nd 2021
 ```
+
+<hr/>
 
 ## `SimpleCalendar.api.timestampToDate(timestamp)`
 
@@ -488,11 +1045,12 @@ console.log(scDate);
     dayOfTheWeek: 2,
     dayOffset: 0,
     display: {
+        date: "June 01, 2021",
         day: "1",
         daySuffix: "st",
         month: "6",
         monthName: "June",
-        time: "21:03:35",
+        time: "00:00:00",
         weekday: "Tuesday",
         year: "2021",
         yearName: "",
@@ -505,7 +1063,7 @@ console.log(scDate);
     monthName: "June",
     second: 0,
     showWeekdayHeadings: true,
-    weekdays: (7) ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     year: 2021,
     yearName: "",
     yearPostfix: "",
@@ -579,11 +1137,12 @@ This type contains the formatted strings used to display the current date and ti
 
 Property|Type|Default Value|Description
 ---------|-----|-------------|-----------
+date|String|""|The formatted date string based on the format set in the configuration for the date.
 day|String|""|How the day is displayed, generally its number on the calendar.
 daySuffix|String|""|The Ordinal Suffix associated with the day number (st, nd, rd or th)
 month|String|""|The month number.
 monthName|String|""|The name of the month.
-time|String|''|The hour, minute and seconds.
+time|String|''|The formatted time string based on the format set in the configuration for the time.
 weekday|String|""|The name of the weekday this date falls on.
 year|String|""|The year number
 yearName|String|""|The name of the year, if year names have been set up.
@@ -603,6 +1162,16 @@ hour|Number|Yes|0|The hour for the date time.
 minute|Number|Yes|0|The minute for the date time.
 second|Number|Yes|0|The second for the date time.
 
+## Day Object
+
+This object contains information about a day
+
+Property|Type|Optional|Default|Description
+--------|-----|-------|------|-----------
+id|String|No|""|The unique ID associated with this day object.
+name|String|No|""|The name of the day, at the moment it is just the day number in string form.
+numericRepresentation|Number|No|1|The number associated with the day
+
 ## First New Moon Object
 
 This type is used to configure when the first new moon for a moon was.
@@ -621,6 +1190,7 @@ This type contains information about leap year rules.
 
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
+id|String|Yes|""|The unique ID associated with the leap year configuration.
 rule|[LeapYearRules](#simplecalendarapileapyearrules)|No|`SimpleCalendar.api.LeapYearRules.None`|This is the leap year rule to follow.
 customMod|Number|No|0|The number of years that a leap year happens when the rule is set to 'custom'.
 
@@ -643,6 +1213,8 @@ This type contains information about a month.
 
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
+abbreviation|String|Yes|""|The abbreviated name of the month.
+id|String|Yes|""|The unique ID associated with this month.
 name|String|No|""|The name of the month.
 numericRepresentation|Number|No|1|The number associated with the display of this month.
 numericRepresentationOffset|Number|No|0|The amount to offset day numbers by for this month.
@@ -658,8 +1230,9 @@ This type contains information about a moon.
 
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
+id|String|Yes|""|The unique ID associated with this season.
 color|String|No|"#FFFFFF"|The color associated with the moon.
-currentPhase|[Moon Phase Object](#moon-phase-object)|Yes|{}|The moon phase for the current date. This option is present only in results from the [DateTimeChange hook](Hooks.md#datetime-change)
+currentPhase|[Moon Phase Object](#moon-phase-object)|Yes|{}|The moon phase for the current date.
 cycleDayAdjust|Number|No|0|A way to nudge the cycle calculations to align with correct dates.
 cycleLength|Number|No|0|How many days it takes the moon to complete 1 cycle.
 firstNewMoon|[First New Moon Object](#first-new-moon-object)|Yes|{}|When the first new moon was. This is used to calculate the current phase for a given day.
@@ -694,8 +1267,9 @@ This type contains information about a season.
 
 Property|Type|Default Value|Description
 ---------|-----|-------------|-----------
-name|String|''|The name of the season.
 color|String|#ffffff|The color associated with this season.
+id|String|""|The unique ID associated with this season.
+name|String|""|The name of the season.
 startingDay|Number|1|The day index of the month that the season starts on.
 startingMonth|Number|1|The month index that the season starts on.
 sunrise|Number|0|The number of seconds into the starting day of the season that the sun rises. EG. a value of 3600 would be 1:00am in a Gregorian Calendar.
@@ -707,6 +1281,7 @@ This type contains information about how time is configured.
 
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
+id|String|Yes|""|The unique ID associated with the time configuration.
 hoursInDay|Number|No|24|The number of hours in a single day.
 minutesInHour|Number|No|60|The number of minutes in a single hour.
 secondsInMinute|Number|No|60|The number of seconds in a single minute.
@@ -720,6 +1295,7 @@ This type contains information about a weekday.
 
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
+id|String|Yes|""|The unique ID associated with this weekday.
 name|String|No|""|The name of the weekday.
 numericRepresentation|Number|No|0|The number representing the weekday.
 
@@ -729,6 +1305,7 @@ This type contains information about a year.
 
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
+id|String|Yes|""|The unique ID associated with the year.
 numericRepresentation|Number|No|0|The number representing the year.
 prefix|String|No|""|A string to append to the beginning of a year's number.
 postfix|String|No|""|A string to append to the end of a year's number.

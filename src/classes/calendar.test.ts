@@ -88,8 +88,19 @@ describe('Calendar Class Tests', () => {
 
     test('To Template', () => {
         const cal = Calendar.LoadCalendars()[0];
+        cal.year.resetMonths();
+        cal.year.resetMonths('visible');
         let calTemp = cal.toTemplate();
         expect(calTemp.id).toBeDefined();
+
+        cal.year.months[0].current = true;
+        cal.year.months[0].visible = true;
+        calTemp = cal.toTemplate();
+        expect(calTemp.showSetCurrentDate).toBe(false);
+
+        cal.year.months[0].days[1].current = true;
+        calTemp = cal.toTemplate();
+        expect(calTemp.showSetCurrentDate).toBe(false);
 
         cal.year.months[0].selected = true;
         calTemp = cal.toTemplate();

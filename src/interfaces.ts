@@ -7,7 +7,7 @@ import {
     GameWorldTimeIntegrations,
     SocketTypes,
     MoonIcons,
-    MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus
+    MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus, SimpleCalendarHooks
 } from "./constants";
 import Note from "./classes/note";
 import DateSelector from "./classes/date-selector";
@@ -63,7 +63,10 @@ export interface CalendarTemplate extends IConfigurationItemBaseTemplate {
     showTimeControls: boolean;
     showSelectedDay: boolean;
     showSetCurrentDate: boolean;
+    calendarDisplay: string;
     name: string;
+    selectedDisplay: string;
+    timeDisplay: string;
     currentYear: YearTemplate;
     gameSystem: GameSystems;
     notes: NoteTemplate[];
@@ -76,6 +79,12 @@ export interface GeneralSettingsConfig extends IConfigurationItemBaseConfig{
     showClock: boolean;
     /** If the Pathfinder 2e world clock sync is turned on */
     pf2eSync: boolean;
+    /** Formats used for display date and time information */
+    dateFormat: {
+        date: string;
+        time: string;
+        monthYear: string;
+    };
     /** The user permissions for the calendar */
     permissions: UserPermissionsConfig;
     /** @deprecated Old Players can add notes permission, only used for very old setting files */
@@ -89,6 +98,12 @@ export interface GeneralSettingsTemplate extends IConfigurationItemBaseTemplate{
     showClock: boolean;
     /** If the Pathfinder 2e world clock sync is turned on */
     pf2eSync: boolean;
+    /** Formats used for display date and time information */
+    dateFormat: {
+        date: string;
+        time: string;
+        monthYear: string;
+    };
     /** The user permissions for the calendar */
     permissions: UserPermissionsConfig;
 }
@@ -126,15 +141,6 @@ export interface PermissionMatrix {
  * Interface for the year template that is passed to the HTML for rendering
  */
 export interface YearTemplate extends IConfigurationItemBaseTemplate {
-    /** The display text of the year */
-    display: string;
-    /** The display text for the selected, or current, year */
-    selectedDisplayYear: string;
-    /** The display text for the selected, or current, month */
-    selectedDisplayMonth: string;
-    /** The display text for the selected, or current, day */
-    selectedDisplayDay: string;
-    selectedDayOfWeek: string;
     selectedDayMoons: any[];
     selectedDayNotes: { reminders: number; normal: number; };
     yearZero: number;
@@ -147,7 +153,6 @@ export interface YearTemplate extends IConfigurationItemBaseTemplate {
     /** The days of the week */
     weekdays: WeekdayTemplate[];
     firstWeekday: number;
-    currentTime: TimeTemplate;
     currentSeasonName: string;
     currentSeasonColor: string;
     weeks: (boolean | DayTemplate)[][];
@@ -175,6 +180,7 @@ export interface YearConfig extends IConfigurationItemBaseConfig {
  * Interface for the month template that is passed to the HTML for rendering
  */
 export interface  MonthTemplate extends IConfigurationItemBaseTemplate {
+    abbreviation: string;
     display: string;
     name: string;
     numericRepresentation: number;
@@ -195,6 +201,7 @@ export interface  MonthTemplate extends IConfigurationItemBaseTemplate {
  * Interface for the data saved to the game settings for a month class
  */
 export interface MonthConfig extends IConfigurationItemBaseConfig {
+    abbreviation: string;
     name: string;
     numericRepresentation: number;
     numericRepresentationOffset: number;
@@ -288,15 +295,16 @@ export interface NoteCategory {
  * Interface for the weekday template that is passed to the HTML for rendering
  */
 export interface WeekdayTemplate extends IConfigurationItemBaseTemplate{
+    abbreviation: string;
     name: string;
     numericRepresentation: number;
-    firstCharacter: string;
 }
 
 /**
  * Interface for the data saved to the game settings for each weekday class
  */
 export interface WeekdayConfig extends IConfigurationItemBaseConfig{
+    abbreviation: string;
     name: string;
     numericRepresentation: number;
 }
@@ -331,9 +339,9 @@ export interface TimeConfig extends IConfigurationItemBaseConfig{
  * Interface for displaying the time information
  */
 export interface TimeTemplate {
-    hour: string;
-    minute: string;
-    second: string;
+    hour: number;
+    minute: number;
+    seconds: number;
 }
 
 /**
@@ -388,6 +396,7 @@ export interface FirstNewMoonDate {
 export interface MoonConfiguration extends IConfigurationItemBaseConfig {
     name: string;
     cycleLength: number;
+    currentPhase?: MoonPhase;
     phases: MoonPhase[];
     firstNewMoon: FirstNewMoonDate;
     color: string;
@@ -442,7 +451,7 @@ export namespace SimpleCalendarSocket{
      */
     export interface Data {
         type: SocketTypes;
-        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate|SimpleCalendarNoteReminder;
+        data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate|SimpleCalendarNoteReminder|SimpleCalendarEmitHook;
     }
 
     export interface SimpleCalendarSocketDateTime{
@@ -482,6 +491,10 @@ export namespace SimpleCalendarSocket{
 
     export interface SimpleCalendarNoteReminder{
         justTimeChange?: boolean;
+    }
+
+    export interface SimpleCalendarEmitHook{
+        hook?: SimpleCalendarHooks;
     }
 }
 

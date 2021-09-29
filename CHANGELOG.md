@@ -1,5 +1,67 @@
 # Change Log
 
+## v1.3.62 - Custom Date Formats, Quality of Life Improvements, API Changes and Bug Fixes
+
+### Custom Date Formats
+
+You can now customize how the date and time is displayed in Simple Calendar with custom date/time formats!
+
+- New General Settings for specifying custom date/time formats to customize how dates and times are displayed in the calendar.
+  - **Date Format**: This indicates how all dates will appear within Simple Calendar. The dates that are affected by this format are:
+    - _**Full View**_: The note list heading, "Notes for [date]".
+    - _**Compact View**_: The displayed date.
+    - _**Date Selector**_: The date portion of the Date Selector text box.
+    - _**Notes**_: The Date/Time pill in the note list and in the note display will use this format to display the date portion.
+  - **Time Format**: This indicates how all times will be displayed within Simple Calendar. The times that are affected by this format are:
+    - _**Full View**_: The clock below the calendar.
+    - _**Compact View**_: The clock below the date.
+    - _**Date Selector**_: The time portion of the Date Selector text box as well as the time selection text boxes.
+    - _**Notes**_: The Date/Time pill in the note list and in the note display will use this format to display the time portion.
+  - **Month/Year Format**: This indicates how the month and year are displayed at the top of the calendar in the Full View and the Date Selector.
+- Above the new date format settings is a table that contains a list of all the tokens that can be used in the formats. This table is large so by default it is collapsed, but clicking the header will expand it. A detailed list of all the tokens is also available in the [configuration documentation](./docs/Configuration.md#datetime-formats).
+
+### Quality of Life Improvements
+
+- Added a new month configuration option to set the abbreviated name of the month. By default, the first 3 letters of the name are used.
+  - This abbreviated text is used by the new date formatting.
+  - The setting is under the advanced options.
+- Added a new weekday configuration option to set the abbreviated name of the weekday. By default, the first 2 letters of the name are used.
+  - This abbreviated text is sued by the new date formatting and as the heading for each weekday in the calendar view.
+
+
+### Bug Fixes
+
+- Improved the performance of drawing calendars with a large number of days and/or a calendar with a large number of notes.
+- Fixed a bug where the `SimpleCalendar.Hooks.DateTimeChange` Hook would not fire for players when the date/time was changed.
+- Fixed a bug where the real time clock would not run if the Game World Time Integration was set to None.
+
+### API Changes
+
+- Added a `date` property to the [Date Display Object](./docs/API.md#date-display-object) that contains the formatted date string for the date. This object is part of the return from the `SimpleCalendar.api.timestampToDate` function.
+- Updated the `time` property of the [Date Display Object](./docs/API.md#date-display-object) so that it contains the formatted time string for the date.
+- Added a new function to the API, `SimpleCalendar.api.formatDateTime(date)`. This takes in a DateTime object and will format it to the currently configured date and time formats. Check out the [API Docs](./docs/API.md#simplecalendarapiformatdatetimedate) for more details!
+- Added a new function to the API, `SimpleCalendar.api.getAllMonths()`. This function will return configuration details for all months in the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getAllMoons()`. This function will return configuration details for all moons of the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getAllWeekdays()`. This function will return configuration details for all weekdays in the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getCurrentDay()`. This function returns details for the current day of the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getCurrentMonth()`. This function returns details for the current month of the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getCurrentWeekday()`. This function returns details for the current weekday.
+- Added a new function to the API, `SimpleCalendar.api.getCurrentYear()`. This function returns details for the current year of the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getLeapYearConfiguration()`. This function returns details for how leap years are configured for the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getTimeConfiguration()`. This function returns details for how time is configured for the calendar.
+
+
+### Language Updates
+- An update to the korean language file thanks to drdwing!
+
+### Patreon
+
+I have started up my own Patreon for those of you who are interested in supporting me as I develop this and other modules. There is zero pressure to do so as I create this module for fun but any contributions to get me a coffee are very much appreciated.
+
+I will not tie any functionality of Simple Calendar to being a patron, Simple Calendar will always remain free for everyone. My plan for any patrons is to provide update posts with more detail on what I am working on and maybe some polls about features or functionality.
+
+If you are interested is becoming a patron please check out [my page here](https://www.patreon.com/vigorator) and thank you!
+
 ## v1.3.44 - Bug Fixes
 
 ### Bug Fixes

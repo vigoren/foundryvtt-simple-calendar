@@ -130,30 +130,35 @@ export default class Year extends ConfigurationItemBase {
     }
 
     /**
+     * Returns the configuration object for the year
+     */
+    toConfig(): YearConfig {
+        return {
+          id: this.id,
+          numericRepresentation: this.numericRepresentation,
+          prefix: this.prefix,
+          postfix: this.postfix,
+          showWeekdayHeadings: this.showWeekdayHeadings,
+          firstWeekday: this.firstWeekday,
+          yearZero: this.yearZero,
+          yearNames: this.yearNames,
+          yearNamingRule: this.yearNamingRule,
+          yearNamesStart: this.yearNamesStart
+        };
+    }
+
+    /**
      * Returns an object that is used to display the year in the HTML template
      * @returns {YearTemplate}
      */
     toTemplate(): YearTemplate{
         const currentMonth = this.getMonth();
-        const selectedMonth = this.getMonth('selected');
         const visibleMonth = this.getMonth('visible');
 
-        let sMonth = '', sDay = '', sDayOfWeek = '', sMoonsPhase = [], sNotes: Note[] = [], remNotes: Note[] = [];
-        if(selectedMonth){
-            sMonth = selectedMonth.name;
-            const d = selectedMonth.getDay('selected');
-            if(d){
-                sDay = d.name;
-            }
-        } else if(currentMonth){
-            sMonth = currentMonth.name;
+        let sMoonsPhase = [], sNotes: Note[] = [], remNotes: Note[] = [];
+        if(currentMonth){
             const d = currentMonth.getDay();
             if(d){
-                sDay = d.name;
-                if(this.showWeekdayHeadings && this.weekdays.length){
-                    const weekday = this.dayOfTheWeek(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation);
-                    sDayOfWeek = this.weekdays[weekday].name;
-                }
                 if(this.moons.length){
                     for(let i = 0; i < this.moons.length; i++){
                         const phase = this.moons[i].getMoonPhase(this, 'current');
@@ -181,16 +186,10 @@ export default class Year extends ConfigurationItemBase {
         }
         return {
             ...super.toTemplate(),
-            currentTime: this.time.getCurrentTime(),
             currentSeasonName: currentSeason.name,
             currentSeasonColor: currentSeason.color,
-            display: this.getDisplayName(),
             firstWeekday: this.firstWeekday,
             numericRepresentation: this.numericRepresentation,
-            selectedDisplayYear: this.getDisplayName(true),
-            selectedDisplayMonth: sMonth,
-            selectedDisplayDay: sDay,
-            selectedDayOfWeek: sDayOfWeek,
             selectedDayMoons: sMoonsPhase,
             selectedDayNotes: {
                 reminders: remNotes.length,
@@ -689,25 +688,12 @@ export default class Year extends ConfigurationItemBase {
     /**
      * Converts the years current date into seconds
      */
-    toSeconds(addLeapYearDiff: boolean = true){
+    toSeconds(){
         let totalSeconds = 0;
         const month = this.getMonth();
         if(month){
             const day = month.getDay();
-            //Get the days so for and add one to include the current day
-            let daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
-            totalSeconds = this.time.getTotalSeconds(daysSoFar);
-
-            // If this is a Pathfinder 2E game, subtract the world creation seconds
-            if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
-                const newYZ = PF2E.newYearZero();
-                if(newYZ !== undefined){
-                    this.yearZero = 1875;
-                    daysSoFar = this.dateToDays(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, addLeapYearDiff, true);
-                }
-                daysSoFar++;
-                totalSeconds =  this.time.getTotalSeconds(daysSoFar) - PF2E.getWorldCreateSeconds(false);
-            }
+            totalSeconds = Utilities.ToSeconds(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, this);
         }
         return totalSeconds;
     }

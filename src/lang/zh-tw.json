@@ -268,11 +268,9 @@
   "FSC.Module.Import": "匯入簡易日曆",
   "FSC.Module.NoChanges": "沒有改變",
   "FSC.Module.CalendarWeather.Title": "偵測到Calendar/Weather模組",
-  "FSC.Module.CalendarWeather.Message": "檢測到該遊戲已啟用了Calendar/Weather模組。<br/> <br/>如果要將Calendar/Weather的日曆設定匯入到簡易日曆中，請選擇 \"導入到簡易日曆 \" ，這將使簡易日曆與about-time設定同步。<br/> <br/>如果要使Calendar/Weather的設定遵從簡易日曆，請選擇 \"導出到Calendar/Weather  \"，這將使Calendar/Weather和簡易日曆的設定同步。<br/> <br/>如果以上兩個例子都不是，你可以選擇 \" 不做改變  \"，所有內容將保持不變。如果您以後要進行匯入/匯出，則該選項可用在簡易日曆一般設定中。",
   "FSC.Module.CalendarWeather.Configuration.Message": "檢測到該遊戲已啟用了Calendar/Weather模組。<br/><br/>如果要將Calendar/Weather的日曆設定匯入到簡易日曆中，請選擇 \"導入到簡易日曆 \" ， 這會使簡易日曆的設定和Calendar/Weather相同。<br/><br/>如果要使Calendar/Weather的設定遵從簡易日曆，請選擇 \"導出到Calendar/Weather \"，這將使Calendar/Weather和簡易日曆的設定同步。<br/>",
   "FSC.Module.CalendarWeather.Export": "匯出到 Calendar/Weather模組",
   "FSC.Module.AboutTime.Title": "已偵測到About-Time模組",
-  "FSC.Module.AboutTime.Message": "檢測到該遊戲已啟用了about-time模組。<br/> <br/>如果要將about-time的日曆設定匯入到簡易日曆中，請選擇 \"導入到簡易日曆 \" ，這將使簡易日曆與about-time設定同步。<br/> <br/>如果要使about-time的設定遵從簡易日曆，請選擇 \"導出到about-time  \"，這將使about-time和簡易日曆的設定同步。<br/> <br/>如果以上兩個例子都不是，你可以選擇 \" 不做改變  \"，所有內容將保持不變。如果您以後要進行匯入/匯出，則該選項可用在簡易日曆一般設定中。",
   "FSC.Module.AboutTime.Configuration.Message": "檢測到該遊戲已啟用了about-time模組。<br/><br/>如果要將about-time的日曆設定匯入到簡易日曆中，請選擇 \"導入到簡易日曆 \" ， 這會使簡易日曆的設定和about-time相同。<br/><br/>如果要使about-time的設定遵從簡易日曆，請選擇 \"導出到about-time  \"，這將使about-time和簡易日曆的設定同步。<br/>",
   "FSC.Module.AboutTime.Export": "匯出到About-Time"
 }

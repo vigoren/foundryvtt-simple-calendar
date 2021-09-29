@@ -145,7 +145,6 @@
       padding: 0.25rem;
 
       .time-selector{
-        max-width: 60px;
         position: relative;
 
         .time-dropdown {
@@ -174,8 +173,9 @@
       }
 
       .time-option{
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 0.25rem;
         cursor: pointer;
+        border-bottom: 1px solid #d8d8d8;
 
         &:hover, &.selected{
           background-color: #d8d8d8;

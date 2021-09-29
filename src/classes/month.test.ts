@@ -30,13 +30,14 @@ describe('Month Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(month).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(month).length).toBe(15); //Make sure no new properties have been added
         expect(month.days).toStrictEqual([]);
         expect(month.numberOfDays).toBe(0);
         expect(month.numberOfLeapYearDays).toBe(0);
         expect(month.numericRepresentation).toBe(0);
         expect(month.numericRepresentationOffset).toBe(0);
         expect(month.name).toBe('Test');
+        expect(month.abbreviation).toBe('Tes');
         expect(month.intercalary).toBe(false);
         expect(month.intercalaryInclude).toBe(false);
         expect(month.current).toBe(false);
@@ -74,9 +75,22 @@ describe('Month Class Tests', () => {
         expect(month2.getDisplayName()).toBe("0");
     });
 
+    test('To Config', () => {
+        const t = month.toConfig();
+        expect(Object.keys(t).length).toBe(10); //Make sure no new properties have been added
+        expect(t.name).toBe('Test');
+        expect(t.numericRepresentation).toBe(0);
+        expect(t.numericRepresentationOffset).toBe(0);
+        expect(t.numberOfDays).toBe(0);
+        expect(t.numberOfLeapYearDays).toBe(0);
+        expect(t.intercalary).toBe(false);
+        expect(t.intercalaryInclude).toBe(false);
+        expect(t.startingWeekday).toBe(null);
+    });
+
     test('To Template', () => {
         const t = month.toTemplate();
-        expect(Object.keys(t).length).toBe(15); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(16); //Make sure no new properties have been added
         expect(t.display).toBe('Test (0)');
         expect(t.name).toBe('Test');
         expect(t.numericRepresentation).toBe(0);
@@ -117,6 +131,7 @@ describe('Month Class Tests', () => {
         month.loadFromSettings({
             id: '',
             name: 'Jan',
+            abbreviation: 'J',
             numericRepresentation: 1,
             numericRepresentationOffset: 0,
             numberOfDays: 20,

@@ -95,6 +95,21 @@ export default class Moon extends ConfigurationItemBase{
     }
 
     /**
+     * Returns the configuration for the moon
+     */
+    toConfig(): MoonConfiguration {
+        return {
+            id: this.id,
+            name: this.name,
+            cycleLength: this.cycleLength,
+            firstNewMoon: {yearReset: this.firstNewMoon.yearReset, yearX: this.firstNewMoon.yearX, year: this.firstNewMoon.year, month: this.firstNewMoon.month, day: this.firstNewMoon.day, },
+            phases: this.phases.map(p => { return { name: p.name, length: p.length, icon: p.icon, singleDay: p.singleDay };}),
+            color: this.color,
+            cycleDayAdjust: this.cycleDayAdjust
+        };
+    }
+
+    /**
      * Converts this moon into a template used for displaying the moon in HTML
      * @param {Year} year The year to use for getting the days and months
      */

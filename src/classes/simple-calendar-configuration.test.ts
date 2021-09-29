@@ -161,6 +161,13 @@ describe('Simple Calendar Configuration Tests', () => {
         expect(SimpleCalendarConfiguration.instance._updateObject()).resolves.toBeUndefined();
     });
 
+    test('Date Format Table Click', () => {
+        //@ts-ignore
+        SimpleCalendarConfiguration.instance.dateFormatTableClick();
+        //@ts-ignore
+        expect(SimpleCalendarConfiguration.instance.dateFormatTableExpanded).toBe(true);
+    });
+
     test('Activate Listeners', () => {
         const onFunc = jest.fn();
         const fakeQuery = {
@@ -174,8 +181,8 @@ describe('Simple Calendar Configuration Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendarConfiguration.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(36);
-        expect(onFunc).toHaveBeenCalledTimes(36);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(37);
+        expect(onFunc).toHaveBeenCalledTimes(37);
     });
 
     test('Rebase Month Numbers', () => {
@@ -672,6 +679,21 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         //@ts-ignore
         expect((<Calendar>SimpleCalendarConfiguration.instance.object).generalSettings.pf2eSync ).toBe(true);
+
+        (<HTMLInputElement>event.currentTarget).id = "scDateFormatsDate";
+        (<HTMLInputElement>event.currentTarget).value = 'MMMM';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Calendar>SimpleCalendarConfiguration.instance.object).generalSettings.dateFormat.date).toBe('MMMM');
+
+        (<HTMLInputElement>event.currentTarget).id = "scDateFormatsTime";
+        (<HTMLInputElement>event.currentTarget).value = 'HH';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Calendar>SimpleCalendarConfiguration.instance.object).generalSettings.dateFormat.time).toBe('HH');
+
+        (<HTMLInputElement>event.currentTarget).id = "scDateFormatsMonthYear";
+        (<HTMLInputElement>event.currentTarget).value = 'M YY';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Calendar>SimpleCalendarConfiguration.instance.object).generalSettings.dateFormat.monthYear).toBe('M YY');
     });
 
     test('Permission Input Change', () => {
@@ -834,8 +856,15 @@ describe('Simple Calendar Configuration Tests', () => {
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.months[0].name).toBe('X');
 
-        //Test clicking show advanced
+        //Abbreviation
         (<HTMLElement>event.currentTarget).classList.remove('month-name');
+        (<HTMLElement>event.currentTarget).classList.add('month-abbreviation');
+        (<HTMLInputElement>event.currentTarget).value = 'A';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.months[0].abbreviation).toBe('A');
+
+        //Test clicking show advanced
+        (<HTMLElement>event.currentTarget).classList.remove('month-abbreviation');
         (<HTMLElement>event.currentTarget).classList.add('month-show-advanced');
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.months[0].showAdvanced).toBe(true);
@@ -908,7 +937,7 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLElement>event.currentTarget).classList.remove('month-starting-weekday');
         (<HTMLElement>event.currentTarget).classList.add('no');
         SimpleCalendarConfiguration.instance.inputChange(event);
-        expect(console.debug).toHaveBeenCalledTimes(56);
+        expect(console.debug).toHaveBeenCalledTimes(59);
 
     });
 
@@ -1000,6 +1029,12 @@ describe('Simple Calendar Configuration Tests', () => {
         (<HTMLElement>event.currentTarget).setAttribute('data-index', '0');
         SimpleCalendarConfiguration.instance.inputChange(event);
         expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.weekdays[0].name).toBe('X');
+
+        (<HTMLElement>event.currentTarget).classList.remove('weekday-name');
+        (<HTMLElement>event.currentTarget).classList.add('weekday-abbreviation');
+        (<HTMLInputElement>event.currentTarget).value = 'A';
+        SimpleCalendarConfiguration.instance.inputChange(event);
+        expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.weekdays[0].abbreviation).toBe('A');
     });
 
     test('Leap Year Rule Change', () => {

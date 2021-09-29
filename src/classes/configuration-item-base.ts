@@ -37,6 +37,17 @@ export default class ConfigurationItemBase{
     }
 
     /**
+     * Creates a configuration object for the item base
+     */
+    toConfig(): IConfigurationItemBaseConfig{
+        return {
+            id: this.id,
+            name: this.name,
+            numericRepresentation: this.numericRepresentation
+        }
+    }
+
+    /**
      * Creates a template for the configuration item base
      * @param {Year|null} [year=null] The year object to use when generating the template
      */
