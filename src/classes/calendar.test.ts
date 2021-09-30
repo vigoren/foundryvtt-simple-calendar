@@ -174,6 +174,32 @@ describe('Calendar Class Tests', () => {
         expect(Calendar.dayNoteSort(n1, n2)).toBe(0);
     });
 
+    test('Search Notes', () => {
+        const cal = Calendar.LoadCalendars()[0];
+        const n = new Note();
+        n.title = 'New Note';
+        n.content = 'Content about everything';
+        n.year = 0;
+        n.month = 1;
+        n.day = 3;
+        n.endDate.year = 0;
+        n.endDate.month = 1;
+        n.endDate.day = 3;
+        cal.notes.push(n);
+
+        expect(cal.searchNotes('xyz').length).toBe(0);
+
+        cal.notes[0].title = 'This is a title!';
+        cal.notes[0].content = 'This is content!';
+
+        expect(cal.searchNotes('This').length).toBe(1);
+        expect(cal.searchNotes('coNteNt').length).toBe(2);
+        expect(cal.searchNotes('tent').length).toBe(2);
+        expect(cal.searchNotes('ote').length).toBe(1);
+        expect(cal.searchNotes('1').length).toBe(2);
+        expect(cal.searchNotes('3').length).toBe(1);
+    });
+
     test('Sync Time', () => {
         const cal = Calendar.LoadCalendars()[0];
         const month = new Month('M2', 2, 0, 30);

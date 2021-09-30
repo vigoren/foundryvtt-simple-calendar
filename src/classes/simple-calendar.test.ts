@@ -30,6 +30,7 @@ import {
 } from "../constants";
 import Mock = jest.Mock;
 import SpyInstance = jest.SpyInstance;
+import SimpleCalendarSearch from "./simple-calendar-search";
 
 //jest.mock('./importer');
 
@@ -575,8 +576,8 @@ describe('Simple Calendar Class Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(19);
-        expect(onFunc).toHaveBeenCalledTimes(13);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(20);
+        expect(onFunc).toHaveBeenCalledTimes(14);
 
         fakeQuery.find = jest.fn()
             .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
@@ -589,8 +590,8 @@ describe('Simple Calendar Class Tests', () => {
 
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(19);
-        expect(onFunc).toHaveBeenCalledTimes(26);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(20);
+        expect(onFunc).toHaveBeenCalledTimes(28);
 
         SimpleCalendar.instance.compactView = true;
         fakeQuery.find = jest.fn()
@@ -603,7 +604,7 @@ describe('Simple Calendar Class Tests', () => {
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
         expect(fakeQuery.find).toHaveBeenCalledTimes(12);
-        expect(onFunc).toHaveBeenCalledTimes(33);
+        expect(onFunc).toHaveBeenCalledTimes(35);
     });
 
     test('Show Compact Notes', () => {
@@ -1049,6 +1050,14 @@ describe('Simple Calendar Class Tests', () => {
         expect((<Game>game).socket?.emit).toHaveBeenCalled();
         //@ts-ignore
         game.users.find = orig;
+    });
+
+    test('Search Click', () => {
+        const event = new Event('click');
+        SimpleCalendar.instance.searchClick(event);
+        // @ts-ignore
+        SimpleCalendarSearch.instance.rendered = true;
+        SimpleCalendar.instance.searchClick(event);
     });
 
     test('Configuration Click', () => {

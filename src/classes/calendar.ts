@@ -196,6 +196,69 @@ export default class Calendar extends ConfigurationItemBase{
     }
 
     /**
+     * Searches the title and content of all notes to get a list that matches the passed in term. The results are sorted by relevancy
+     * @param {String} term
+     */
+    public searchNotes(term: string): Note[] {
+        const results: {match: number, note: Note}[] = [];
+        term = term.toLowerCase();
+
+        this.notes.forEach((note) => {
+            let match = 0;
+            const noteFormattedDate = Utilities.GetDisplayDate({year: note.year, month: note.month, day: note.day, hour: note.hour, minute: note.minute, allDay: note.allDay}, {...note.endDate, allDay: note.allDay}).toLowerCase();
+            const noteTitle = note.title.toLowerCase();
+            const noteContent = note.content.toLowerCase();
+
+            //Search for the direct term match in the formatted date and give that a heavy weight (equivalent to 500 matches)
+            if(RegExp(term).test(noteFormattedDate)){
+                match += 1000;
+            }
+            //Search for the direct term match in the title and give that a heavy weight (equivalent to 500 matches)
+            if(RegExp(term).test(noteTitle)){
+                match += 500;
+            }
+            //Search for the direct term match in the content and give that a medium weight (equivalent to 100 matches)
+            if(RegExp(term).test(noteContent)){
+                match += 100;
+            }
+            const terms = term.split(' ');
+            for(var i = 0; i < terms.length; i++){
+                //Check to see if the term exists anywhere as its own word, give that a weight of 2
+                if(RegExp('\\b'+terms[i]+'\\b').test(noteFormattedDate)){
+                    match += 50;
+                }
+                //Check to see if the term appears anywhere (even in other words). give that a weight of 1
+                else if(noteFormattedDate.indexOf(terms[i]) > -1){
+                    match+=30;
+                }
+                //Check to see if the term exists anywhere as its own word, give that a weight of 2
+                if(RegExp('\\b'+terms[i]+'\\b').test(noteTitle)){
+                    match += 20;
+                }
+                //Check to see if the term appears anywhere (even in other words). give that a weight of 1
+                else if(noteTitle.indexOf(terms[i]) > -1){
+                    match+=10;
+                }
+                //Check to see if the term exists anywhere as its own word, give that a weight of 2
+                if(RegExp('\\b'+terms[i]+'\\b').test(noteContent)){
+                    match += 2;
+                }
+                //Check to see if the term appears anywhere (even in other words). give that a weight of 1
+                else if(noteContent.indexOf(terms[i]) > -1){
+                    match++;
+                }
+            }
+
+            if(match > 0){
+                results.push({match: match, note: note});
+            }
+        });
+        results.sort((a: {match: number, note: Note}, b: {match: number, note: Note}) => b.match - a.match);
+
+        return results.map(r => r.note);
+    }
+
+    /**
      * Sets the current game world time to match what our current time is
      */
     async syncTime(force: boolean = false){

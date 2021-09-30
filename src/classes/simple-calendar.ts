@@ -12,6 +12,7 @@ import Hook from "./hook";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import GameSockets from "./game-sockets";
 import Calendar from "./calendar";
+import SimpleCalendarSearch from "./simple-calendar-search";
 
 
 /**
@@ -563,6 +564,9 @@ export default class SimpleCalendar extends Application{
                 //Configuration Button Click
                 (<JQuery>html).find(".calendar-controls .configure-button").on('click', SimpleCalendar.instance.configurationClick.bind(this));
 
+                //Search button click
+                (<JQuery>html).find(".calendar-controls .search").on('click', SimpleCalendar.instance.searchClick.bind(this));
+
                 // Add new note click
                 (<JQuery>html).find(".date-notes .add-note").on('click', SimpleCalendar.instance.addNote.bind(this));
 
@@ -934,6 +938,16 @@ export default class SimpleCalendar extends Application{
             GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
             this.activeCalendar.syncTime().catch(Logger.error);
+        }
+    }
+
+    public searchClick(e: Event) {
+        e.stopPropagation();
+        if(!SimpleCalendarSearch.instance || (SimpleCalendarSearch.instance && !SimpleCalendarSearch.instance.rendered)){
+            SimpleCalendarSearch.instance = new SimpleCalendarSearch(this.activeCalendar);
+            SimpleCalendarSearch.instance.showApp();
+        } else {
+            SimpleCalendarSearch.instance.bringToTop();
         }
     }
 

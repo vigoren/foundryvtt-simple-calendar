@@ -247,6 +247,10 @@
   flex-direction: row;
   margin: -0.5rem auto 0.5rem;
 
+  .search{
+    margin-left: 0.25rem;
+  }
+
   .spacer{
     flex: 1;
     margin: 0 0.25rem;
@@ -522,4 +526,25 @@
 @keyframes dial {
   0%   {transform: rotate(0deg);}
   100% {transform: rotate(360deg);}
+}
+
+.search-box{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid gray;
+
+  input{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right-width: 0;
+  }
+  .control{
+    width: 35px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: 0;
+  }
 }

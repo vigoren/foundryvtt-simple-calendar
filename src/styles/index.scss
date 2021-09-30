@@ -1,8 +1,8 @@
 .simple-calendar{
   @import "control";
+  @import "calendar";
   #simpleCalendar {
     @import "gm-controls";
-    @import "calendar";
     @import "date-notes";
   }
 }
