@@ -30,6 +30,7 @@ import {
 } from "../constants";
 import Mock = jest.Mock;
 import SpyInstance = jest.SpyInstance;
+import SimpleCalendarSearch from "./simple-calendar-search";
 
 //jest.mock('./importer');
 
@@ -112,14 +113,14 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.initializeSockets();
         // @ts-ignore
         expect(SimpleCalendar.instance.primaryCheckTimeout).toBeUndefined();
-        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(0);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(1);
         // @ts-ignore
         game.user.isGM = true;
         SimpleCalendar.instance.activeCalendar.year = y;
         SimpleCalendar.instance.initializeSockets();
         // @ts-ignore
         expect(SimpleCalendar.instance.primaryCheckTimeout).toBeDefined();
-        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(1);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(3);
         // @ts-ignore
         game.user.isGM = false;
     });
@@ -162,6 +163,22 @@ describe('Simple Calendar Class Tests', () => {
         //@ts-ignore
         SimpleCalendar.instance.element = orig;
 
+        d.type = SocketTypes.checkClockRunning;
+        d.data = {};
+        await SimpleCalendar.instance.processSocket(d);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(0);
+
+        // @ts-ignore
+        game.user.isGM = true;
+        SimpleCalendar.instance.primary = true;
+        await SimpleCalendar.instance.processSocket(d);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(1);
+
+        // @ts-ignore
+        game.user.isGM = false;
+        SimpleCalendar.instance.primary = false;
+
+
         d.type = SocketTypes.journal;
         d.data = {notes: []};
         await SimpleCalendar.instance.processSocket(d);
@@ -179,7 +196,7 @@ describe('Simple Calendar Class Tests', () => {
         };
         await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(0);
-        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(1);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(2);
         d.data = {
             amPrimary: true
         };
@@ -559,8 +576,8 @@ describe('Simple Calendar Class Tests', () => {
         fakeQuery.length = 1;
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(19);
-        expect(onFunc).toHaveBeenCalledTimes(13);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(20);
+        expect(onFunc).toHaveBeenCalledTimes(14);
 
         fakeQuery.find = jest.fn()
             .mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(250), outerWidth: jest.fn().mockReturnValue(250)})
@@ -573,8 +590,8 @@ describe('Simple Calendar Class Tests', () => {
 
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
-        expect(fakeQuery.find).toHaveBeenCalledTimes(19);
-        expect(onFunc).toHaveBeenCalledTimes(26);
+        expect(fakeQuery.find).toHaveBeenCalledTimes(20);
+        expect(onFunc).toHaveBeenCalledTimes(28);
 
         SimpleCalendar.instance.compactView = true;
         fakeQuery.find = jest.fn()
@@ -587,7 +604,7 @@ describe('Simple Calendar Class Tests', () => {
         //@ts-ignore
         SimpleCalendar.instance.activateListeners(fakeQuery);
         expect(fakeQuery.find).toHaveBeenCalledTimes(12);
-        expect(onFunc).toHaveBeenCalledTimes(33);
+        expect(onFunc).toHaveBeenCalledTimes(35);
     });
 
     test('Show Compact Notes', () => {
@@ -1033,6 +1050,14 @@ describe('Simple Calendar Class Tests', () => {
         expect((<Game>game).socket?.emit).toHaveBeenCalled();
         //@ts-ignore
         game.users.find = orig;
+    });
+
+    test('Search Click', () => {
+        const event = new Event('click');
+        SimpleCalendar.instance.searchClick(event);
+        // @ts-ignore
+        SimpleCalendarSearch.instance.rendered = true;
+        SimpleCalendar.instance.searchClick(event);
     });
 
     test('Configuration Click', () => {

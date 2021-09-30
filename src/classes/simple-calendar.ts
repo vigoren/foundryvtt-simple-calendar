@@ -12,6 +12,7 @@ import Hook from "./hook";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import GameSockets from "./game-sockets";
 import Calendar from "./calendar";
+import SimpleCalendarSearch from "./simple-calendar-search";
 
 
 /**
@@ -130,6 +131,7 @@ export default class SimpleCalendar extends Application{
             this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
             GameSockets.emit(socket).catch(Logger.error);
         }
+        GameSockets.emit({type: SocketTypes.checkClockRunning, data: {}}).catch(Logger.error);
     }
 
     /**
@@ -161,6 +163,10 @@ export default class SimpleCalendar extends Application{
             this.activeCalendar.year.time.timeKeeper.setStatus((<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);
             this.clockClass = this.activeCalendar.year.time.timeKeeper.getStatus();
             this.activeCalendar.year.time.timeKeeper.setClockTime(this.activeCalendar.year.time.toString());
+        } else if (data.type === SocketTypes.checkClockRunning){
+            if(GameSettings.IsGm() && this.primary){
+                GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.time, data: { timeKeeperStatus: this.activeCalendar.year.time.timeKeeper.getStatus() } }).catch(Logger.error);
+            }
         } else if (data.type === SocketTypes.journal){
             // If user is a GM and the primary GM then save the journal requests, otherwise do nothing
             if(GameSettings.IsGm() && this.primary){
@@ -558,6 +564,9 @@ export default class SimpleCalendar extends Application{
                 //Configuration Button Click
                 (<JQuery>html).find(".calendar-controls .configure-button").on('click', SimpleCalendar.instance.configurationClick.bind(this));
 
+                //Search button click
+                (<JQuery>html).find(".calendar-controls .search").on('click', SimpleCalendar.instance.searchClick.bind(this));
+
                 // Add new note click
                 (<JQuery>html).find(".date-notes .add-note").on('click', SimpleCalendar.instance.addNote.bind(this));
 
@@ -929,6 +938,16 @@ export default class SimpleCalendar extends Application{
             GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
             this.activeCalendar.syncTime().catch(Logger.error);
+        }
+    }
+
+    public searchClick(e: Event) {
+        e.stopPropagation();
+        if(!SimpleCalendarSearch.instance || (SimpleCalendarSearch.instance && !SimpleCalendarSearch.instance.rendered)){
+            SimpleCalendarSearch.instance = new SimpleCalendarSearch(this.activeCalendar);
+            SimpleCalendarSearch.instance.showApp();
+        } else {
+            SimpleCalendarSearch.instance.bringToTop();
         }
     }
 

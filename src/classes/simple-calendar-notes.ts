@@ -1,7 +1,6 @@
 import Note from './note';
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
-import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import DateSelector from "./date-selector";
 import {NoteRepeats, SCDateSelector} from "../interfaces";
