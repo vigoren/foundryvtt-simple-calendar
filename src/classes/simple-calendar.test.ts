@@ -112,14 +112,14 @@ describe('Simple Calendar Class Tests', () => {
         SimpleCalendar.instance.initializeSockets();
         // @ts-ignore
         expect(SimpleCalendar.instance.primaryCheckTimeout).toBeUndefined();
-        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(0);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(1);
         // @ts-ignore
         game.user.isGM = true;
         SimpleCalendar.instance.activeCalendar.year = y;
         SimpleCalendar.instance.initializeSockets();
         // @ts-ignore
         expect(SimpleCalendar.instance.primaryCheckTimeout).toBeDefined();
-        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(1);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(3);
         // @ts-ignore
         game.user.isGM = false;
     });
@@ -162,6 +162,22 @@ describe('Simple Calendar Class Tests', () => {
         //@ts-ignore
         SimpleCalendar.instance.element = orig;
 
+        d.type = SocketTypes.checkClockRunning;
+        d.data = {};
+        await SimpleCalendar.instance.processSocket(d);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(0);
+
+        // @ts-ignore
+        game.user.isGM = true;
+        SimpleCalendar.instance.primary = true;
+        await SimpleCalendar.instance.processSocket(d);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(1);
+
+        // @ts-ignore
+        game.user.isGM = false;
+        SimpleCalendar.instance.primary = false;
+
+
         d.type = SocketTypes.journal;
         d.data = {notes: []};
         await SimpleCalendar.instance.processSocket(d);
@@ -179,7 +195,7 @@ describe('Simple Calendar Class Tests', () => {
         };
         await SimpleCalendar.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(0);
-        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(1);
+        expect((<Game>game).socket?.emit).toHaveBeenCalledTimes(2);
         d.data = {
             amPrimary: true
         };

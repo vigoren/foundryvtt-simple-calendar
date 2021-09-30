@@ -87,6 +87,7 @@ export enum YearNamingRules{
 export enum SocketTypes {
     primary = 'primary',
     time = 'time',
+    checkClockRunning = 'check-clock-running',
     journal = 'journal',
     dateTime = 'date-time',
     date = 'date',

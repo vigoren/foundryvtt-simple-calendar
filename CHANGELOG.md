@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.3.65 - Bug Fixes
+
+- Fixed a bug where the Pathfinder 2E World Time Sync option would not display in the configuration window for PF2E games. This was just a display bug not a functionality bug.
+- Fixed a bug where the clock would not use the custom time format while running.
+- Fixed a bug where if the clock was running and a player joins, the clock would not run for the player until the GM stopped and started it again.
+
 ## v1.3.62 - Custom Date Formats, Quality of Life Improvements, API Changes and Bug Fixes
 
 ### Custom Date Formats

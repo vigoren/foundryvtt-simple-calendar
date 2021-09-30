@@ -130,6 +130,7 @@ export default class SimpleCalendar extends Application{
             this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
             GameSockets.emit(socket).catch(Logger.error);
         }
+        GameSockets.emit({type: SocketTypes.checkClockRunning, data: {}}).catch(Logger.error);
     }
 
     /**
@@ -161,6 +162,10 @@ export default class SimpleCalendar extends Application{
             this.activeCalendar.year.time.timeKeeper.setStatus((<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);
             this.clockClass = this.activeCalendar.year.time.timeKeeper.getStatus();
             this.activeCalendar.year.time.timeKeeper.setClockTime(this.activeCalendar.year.time.toString());
+        } else if (data.type === SocketTypes.checkClockRunning){
+            if(GameSettings.IsGm() && this.primary){
+                GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.time, data: { timeKeeperStatus: this.activeCalendar.year.time.timeKeeper.getStatus() } }).catch(Logger.error);
+            }
         } else if (data.type === SocketTypes.journal){
             // If user is a GM and the primary GM then save the journal requests, otherwise do nothing
             if(GameSettings.IsGm() && this.primary){

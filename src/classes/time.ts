@@ -3,6 +3,7 @@ import {TimeConfig, TimeTemplate} from "../interfaces";
 import TimeKeeper from "./time-keeper";
 import ConfigurationItemBase from "./configuration-item-base";
 import Utilities from "./utilities";
+import SimpleCalendar from "./simple-calendar";
 
 /**
  * Class representing the time of day
@@ -167,7 +168,7 @@ export default class Time extends ConfigurationItemBase{
      */
     toString(): string{
         const t = this.getCurrentTime();
-        return `${Utilities.PadNumber(t.hour)}:${Utilities.PadNumber(t.minute)}:${Utilities.PadNumber(t.seconds)}`;
+        return Utilities.FormatDateTime({year: 0, month: 1, day: 1, ...t}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time);
     }
 
     /**

@@ -117,6 +117,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             ...super.getData(options),
             showDateFormatTokens: this.dateFormatTableExpanded,
             defaultPlayerNoteVisibility: this.generalSettings.defaultPlayerNoteVisibility,
+            gameSystem: (<Calendar>this.object).gameSystem,
             currentYear: (<Calendar>this.object).year,
             generalSettings: (<Calendar>this.object).generalSettings,
             months: (<Calendar>this.object).year.months.map(m => m.toTemplate()),
