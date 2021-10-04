@@ -21,8 +21,8 @@ export default class PF2E {
                 worldCreateTimeStamp += 62167219200;
             }
             seconds += worldCreateTimeStamp;
-            if(adjustByDay && SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-                seconds -= SimpleCalendar.instance.currentYear.time.secondsPerDay;
+            if(adjustByDay && SimpleCalendar.instance){
+                seconds -= SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay;
             }
         }
         return seconds;

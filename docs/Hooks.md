@@ -15,32 +15,35 @@ The current hooks that are emitted are:
 
 Hook Name|Value|Description
 ---------|------|----------
-DateTimeChange|`"simple-calendar-date-time-change"`|This hook is emitted any time the current date is updated.
-ClockStartStop|`"simple-calendar-clock-start-stop"`|This hook is emitted any time the clock is started/stopped or paused.
+[DateTimeChange](#datetime-change)|`"simple-calendar-date-time-change"`|This hook is emitted any time the current date is updated.
+[ClockStartStop](#clock-startstop)|`"simple-calendar-clock-start-stop"`|This hook is emitted any time the clock is started/stopped or paused.
+[PrimaryGM](#is-primary-gm)|`"simple-calendar-primary-gm"`|This hook is emitted when the current user is promoted to the primary GM role.
 
 ## Date/Time Change
 
 ### When it is emitted
 This hook is emitted any time the current date is updated. The current date can be updated by several means:
 
-- When the GM clicks on the "[Set Current Date](./docs/UpdatingDateTime.md#date-controls)" button after adjusting the current date.
-- When the [Set Date/Time macro](./docs/Macros.md#set-date-and-time) is called.
-- When the [Change Date/Time macro](./docs/Macros.md#change-date-time) is called.
-- When importing settings from [about-time](./docs/Configuration.md#about-time) or [Calendar/Weather](./docs/Configuration.md#calendarweather).
-- When the [game world time](./docs/Configuration.md#game-world-time-integration) has changed and Simple Calendar is configured to update when that changes.
+- When the GM clicks on the "[Set Current Date](UpdatingDateTime.md#date-controls)" button after adjusting the current date.
+- When the [clock](UsingTheCalendar.md#simple-calendars-clock) is running every interval update.
+- When the [Set Date/Time API function](API.md#simplecalendarapisetdatedate) is called.
+- When the [Change Date/Time API function](API.md#simplecalendarapichangedateinterval) is called.
+- When the [game world time](Configuration.md#game-world-time-integration) has changed and Simple Calendar is configured to update when that changes.
 
 ### What is passed
 
 When this hook is emitted it will pass a data object that contains information about the new current day. The object will have these top level properties:
 
-Property Name|Default Value|Description
--------------|-------------|------------
-year|`{}` - Empty Object|This property will contain all information about the current year.<br/>For a breakdown of that information [see below](#year-properties).
-month|`{}` - Empty Object|This property will contain all information about the current month.<br/>For a breakdown of that information [see below](#month-properties).
-day|`{}` - Empty Object|This property will contain all information about the current day.<br/>For a breakdown of that information [see below](#day-properties).
-time|`{}` - Empty Object|This property will contain all information about the current time.<br/>For a breakdown of that information [see below](#time-properties).
-season|`{}` - Empty Object|This property will contain all information about the current season.<br/>For a breakdown of that information [see below](#season-properties).
-moons|`[]` - Empty Array|This property will contain all information about the current moons.<br/>For a breakdown of that information [see below](#moon-properties).
+Property Name|Type|Default Value|Description
+-------------|----|---------|------------
+date|[Date Object](API.md#date-object)|`{}`|This contains information about the current date of the calendar.
+moons|Array<[Moon Object](API.md#moon-object)>|`[]`|This contains information about the moon(s) phases for the current date.
+year|[Year Object](#year-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+month|[Month Object](#month-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+day|[Day Object](#day-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+time|[Time Object](#time-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+season|[Season Object](#season-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+
 
 
 #### Year Properties
@@ -83,28 +86,6 @@ Property Name|Value Type|Description
 name|string|The name of the season.
 color|string|The hex color representation of the season.
 
-#### Moon Properties
-
-The moon properties is an array of moon objects, one for every moon in the calendar. The moon object is detailed below:
-
-Property Name|Value Type|Description
--------------|-------------|------------
-name|string|The name of the moon.
-color|string|The hex color representation of the moon.
-cycleLength|number|The number of calendar days for 1 cycle of the moon.
-cycleDayAdjust|number|A entered adjustment used when calculating the current day of a cycle.
-currentPhase|object|An object containing details about the phase the moon is in on this day.
-
-#### Moon Phase Properties
-
-Property Name|Value Type|Description
--------------|-------------|------------
-name|string|The name of this moon phase.
-icon|string|The css class associated with this moons phase to give the proper icon.
-length|number|How many days of the cycle this phase lasts.
-singleDay|boolean|If this phase should only happen on one day.
-
-
 ### Examples
 
 #### Hooking to
@@ -123,52 +104,97 @@ This is an example of the data that is passed with this hook:
 
 ```json
 {
-    "year": {
-        "number": 2021,
-        "prefix": "",
-        "postfix": "",
-        "isLeapYear": false
+  "date": {
+    "year": 2021,
+    "month": 6,
+    "dayOffset": 0,
+    "day": 8,
+    "dayOfTheWeek": 5,
+    "hour": 0,
+    "minute": 15,
+    "second": 30,
+    "yearZero": 1970,
+    "weekdays": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "showWeekdayHeadings": true,
+    "currentSeason": {
+      "color": "#f3fff3",
+      "startingMonth": 5,
+      "startingDay": 19,
+      "name": "Summer"
     },
-    "month": {
-        "name": "April",
-        "number": 4,
-        "intercalary": false,
-        "numberOfDays": 30,
-        "numberOfLeapYearDays": 30
-    },
-    "day": {
-        "number": 13
-    },
-    "time": {
-        "hour": "00",
-        "minute": "00",
-        "second": "56"
-    },
-    "season": {
-        "name": "Spring",
-        "color": "#fffce8"
-    },
-    "moons": [
-        {
-            "name": "Moon",
-            "color": "#ffffff",
-            "cycleLength": 29.53059,
-            "cycleDayAdjust": 0.5,
-            "currentPhase": {
-                "name": "Waxing Crescent",
-                "length": 6.3826,
-                "icon": "waxing-crescent",
-                "singleDay": false
-            }
-        }
-    ]
+    "isLeapYear": false,
+    "monthName": "July",
+    "dayDisplay": "9",
+    "yearName": "",
+    "yearPrefix": "",
+    "yearPostfix": "",
+    "display": {
+      "day": "9",
+      "daySuffix": "th",
+      "weekday": "Friday",
+      "monthName": "July",
+      "month": "7",
+      "year": "2021",
+      "yearName": "",
+      "yearPrefix": "",
+      "yearPostfix": "",
+      "time": "00:15:30"
+    }
+  },
+  "moons": [
+    {
+      "name": "Moon",
+      "color": "#ffffff",
+      "cycleLength": 29.53059,
+      "cycleDayAdjust": 0.5,
+      "currentPhase": {
+        "name": "New Moon",
+        "length": 1,
+        "icon": "new",
+        "singleDay": true
+      }
+    }
+  ],
+  "season": {
+    "name": "Summer",
+    "color": "#f3fff3"
+  },
+  "month": {
+    "name": "July",
+    "number": 7,
+    "intercalary": false,
+    "numberOfDays": 31,
+    "numberOfLeapYearDays": 31
+  },
+  "day": {
+    "number": 9
+  },
+  "time": {
+    "hour": "00",
+    "minute": "15",
+    "second": "30"
+  },
+  "year": {
+    "number": 2021,
+    "prefix": "",
+    "postfix": "",
+    "isLeapYear": false
+  }
 }
 ```
 ## Clock Start/Stop
 
 ### When it is emitted
 
-This event is emitted in the followin cases:
+This event is emitted in the following cases:
 
 - When the clock is started.
 - When the clock is stopped.
@@ -215,7 +241,7 @@ This is an example of the data that is passed with this hook:
 
 ### When it is emitted
 
-This eventn is emitted when the current users is promoted to the primary GM role. 
+This event is emitted when the current users is promoted to the primary GM role. 
 
 This will happen 5 seconds after loading the game if no other GM is currently in the primary role.
 

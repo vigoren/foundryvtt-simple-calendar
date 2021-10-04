@@ -1,28 +1,34 @@
-import {WeekdayTemplate} from "../interfaces";
+import {WeekdayConfig, WeekdayTemplate} from "../interfaces";
+import ConfigurationItemBase from "./configuration-item-base";
 
 /**
  * Class for representing a weekday
  */
-export class Weekday {
+export class Weekday extends ConfigurationItemBase{
     /**
-     * The numeric representation of this weekday
-     * @type {number}
+     * The abbreviated name of the weekday
      */
-    numericRepresentation: number;
-    /**
-     * The name of the weekday
-     * @type {string}
-     */
-    name: string;
-
+    abbreviation: string = '';
     /**
      * The weekday constructor
      * @param {number} numericRepresentation he numeric representation of this weekday
      * @param {string} name The name of the weekday
      */
-    constructor(numericRepresentation: number, name: string) {
-        this.numericRepresentation = numericRepresentation;
-        this.name = name;
+    constructor(numericRepresentation: number = NaN, name: string = '') {
+        super(name, numericRepresentation);
+        this.abbreviation = name.substring(0, 2);
+    }
+
+    /**
+     * Returns the configuration data for the Weekday
+     */
+    toConfig(): WeekdayConfig {
+        return {
+            abbreviation: this.abbreviation,
+            id: this.id,
+            name: this.name,
+            numericRepresentation: this.numericRepresentation
+        }
     }
 
     /**
@@ -30,15 +36,12 @@ export class Weekday {
      * @return {WeekdayTemplate}
      */
     toTemplate(): WeekdayTemplate{
-        let abbrv = this.name.substring(0,1).toUpperCase();
-        if(this.name.length > 1){
-            abbrv += this.name.substring(1,2).toLowerCase();
-        }
         return {
+            ...super.toTemplate(),
+            abbreviation: this.abbreviation,
             name: this.name,
-            firstCharacter: abbrv,
             numericRepresentation: this.numericRepresentation
-        };
+        }
     }
 
     /**
@@ -46,6 +49,29 @@ export class Weekday {
      * @return {Weekday}
      */
     clone(): Weekday {
-        return new Weekday(this.numericRepresentation, this.name);
+        const w = new Weekday(this.numericRepresentation, this.name);
+        w.id = this.id;
+        w.abbreviation = this.abbreviation;
+        return w;
+    }
+
+    /**
+     * Loads the weekday data from the config object.
+     * @param {WeekdayConfig} config The configuration object for this class
+     */
+    loadFromSettings(config: WeekdayConfig) {
+        if(config && Object.keys(config).length){
+            if(config.hasOwnProperty('id')){
+                this.id = config.id;
+            }
+            this.name = config.name;
+            this.numericRepresentation = config.numericRepresentation;
+
+            if(config.hasOwnProperty('abbreviation')){
+                this.abbreviation = config.abbreviation;
+            } else {
+                this.abbreviation = this.name.substring(0, 2);
+            }
+        }
     }
 }

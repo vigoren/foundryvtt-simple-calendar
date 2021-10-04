@@ -23,10 +23,26 @@ export enum SettingNames {
     LeapYearRule = 'leap-year-rule',
     TimeConfiguration = 'time-configuration',
     GeneralConfiguration = 'general-configuration',
-    ImportRan = 'import-ran',
     SeasonConfiguration = 'season-configuration',
     MoonConfiguration = 'moon-configuration',
     NoteCategories = 'note-categories'
+}
+
+/**
+ * The different predefined calendars that come with the calendar
+ */
+export enum PredefinedCalendars{
+    Gregorian = 'gregorian',
+    DarkSun = 'darksun',
+    Eberron = 'eberron',
+    Exandrian = 'exandrian',
+    ForbiddenLands = 'forbidden-lands',
+    Harptos = 'harptos',
+    GolarianPF1E = 'golarianpf1e',
+    GolarianPF2E = 'golarianpf2e',
+    Greyhawk = 'greyhawk',
+    TravellerImperialCalendar = 'traveller-ic',
+    WarhammerImperialCalendar = 'warhammer'
 }
 
 /**
@@ -71,9 +87,12 @@ export enum YearNamingRules{
 export enum SocketTypes {
     primary = 'primary',
     time = 'time',
+    checkClockRunning = 'check-clock-running',
     journal = 'journal',
     dateTime = 'date-time',
-    date = 'date'
+    date = 'date',
+    noteReminders = 'note-reminder',
+    emitHook = 'emit-hook'
 }
 
 /**

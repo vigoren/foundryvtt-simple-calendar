@@ -1,7 +1,6 @@
-import {Note} from './note';
+import Note from './note';
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
-import {NoteRepeat} from "../constants";
 import SimpleCalendar from "./simple-calendar";
 import DateSelector from "./date-selector";
 import {NoteRepeats, SCDateSelector} from "../interfaces";
@@ -56,11 +55,13 @@ export class SimpleCalendarNotes extends FormApplication {
         this.dateSelector = DateSelector.GetSelector(this.dateSelectorId, {
             onDateSelect: this.dateSelectorClick.bind(this),
             placeHolderText: '',
-            rangeSelect: true,
+            dateRangeSelect: true,
             showDate: true,
-            showTime: true
+            showTime: true,
+            startDate: {year: data.year, month: data.month, day: data.day, hour: data.hour, minute: data.minute, seconds: 0},
+            endDate: data.endDate,
+            allDay: data.allDay
         });
-        this.dateSelector.updateSelectedDate(data);
     }
 
     /**
@@ -102,14 +103,15 @@ export class SimpleCalendarNotes extends FormApplication {
             repeatOptions: <NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             repeats: (<Note>this.object).repeats,
             repeatsText: '',
+            reminder: (<Note>this.object).remindUsers.indexOf(GameSettings.UserID()) > -1,
             authDisplay: {
                 name: '',
                 color: '',
                 textColor: ''
             },
             dateSelectorId: this.dateSelectorId,
-            categories: SimpleCalendar.instance.noteCategories.filter(nc => (<Note>this.object).categories.includes(nc.name)),
-            allCategories: SimpleCalendar.instance.noteCategories.map(nc => {
+            categories: SimpleCalendar.instance.activeCalendar.noteCategories.filter(nc => (<Note>this.object).categories.includes(nc.name)),
+            allCategories: SimpleCalendar.instance.activeCalendar.noteCategories.map(nc => {
                 return {
                     name: nc.name,
                     color : nc.color,
@@ -119,16 +121,14 @@ export class SimpleCalendarNotes extends FormApplication {
             })
         };
 
-        if(SimpleCalendar.instance.currentYear){
-            const daysBetween = DateSelector.DaysBetweenDates({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, allDay: true},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, allDay: true});
+        const daysBetween = Utilities.DaysBetweenDates({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, seconds: 0},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, seconds: 0});
 
-            if(daysBetween >= SimpleCalendar.instance.currentYear.totalNumberOfDays(false, true)){
-                data.repeatOptions = {0: 'FSC.Notes.Repeat.Never'};
-            } else if(daysBetween >= SimpleCalendar.instance.currentYear.months[0].days.length){
-                data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 3: 'FSC.Notes.Repeat.Yearly'};
-            }else if(daysBetween >= SimpleCalendar.instance.currentYear.weekdays.length){
-                data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'};
-            }
+        if(daysBetween >= SimpleCalendar.instance.activeCalendar.year.totalNumberOfDays(false, true)){
+            data.repeatOptions = {0: 'FSC.Notes.Repeat.Never'};
+        } else if(daysBetween >= SimpleCalendar.instance.activeCalendar.year.months[0].days.length){
+            data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 3: 'FSC.Notes.Repeat.Yearly'};
+        }else if(daysBetween >= SimpleCalendar.instance.activeCalendar.year.weekdays.length){
+            data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'};
         }
 
         data.displayDate = (<Note>this.object).display();
@@ -170,6 +170,7 @@ export class SimpleCalendarNotes extends FormApplication {
         if(this.hasBeenResized){
             return;
         }
+        let halfWidth  = window.innerWidth / 2;
         let height = 0;
         let width = 16;
 
@@ -181,10 +182,17 @@ export class SimpleCalendarNotes extends FormApplication {
             width += w? w : 0;
         }
 
+        if(width > halfWidth){
+            width = halfWidth;
+        }
+
         if(width< 440){
             width = 440;
         }
         height += 46;
+        if(height < 250){
+            height = 250;
+        }
 
         this.setPosition({width: width, height: height});
     }
@@ -204,6 +212,7 @@ export class SimpleCalendarNotes extends FormApplication {
             (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteDateAllDay').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('input[name="scNoteCategories"]').on('change', this.inputChanged.bind(this));
+            (<JQuery>this.element).find('h1 .reminder input').on('change', this.reminderChange.bind(this));
 
             (<JQuery>html).find('#scSubmit').on('click', this.saveButtonClick.bind(this));
             (<JQuery>html).find('#scNoteEdit').on('click', this.editButtonClick.bind(this));
@@ -257,8 +266,8 @@ export class SimpleCalendarNotes extends FormApplication {
             Logger.debug(`Input Name "${name}" change found`);
             if(name === 'scNoteCategories'){
                 if(checked){
-                    const nc = SimpleCalendar.instance.noteCategories.findIndex(nc => nc.name === value);
-                    (<Note>this.object).categories.push(SimpleCalendar.instance.noteCategories[nc].name);
+                    const nc = SimpleCalendar.instance.activeCalendar.noteCategories.findIndex(nc => nc.name === value);
+                    (<Note>this.object).categories.push(SimpleCalendar.instance.activeCalendar.noteCategories[nc].name);
                 } else {
                     const nci = (<Note>this.object).categories.findIndex(nc => nc === value);
                     (<Note>this.object).categories.splice(nci, 1);
@@ -268,6 +277,29 @@ export class SimpleCalendarNotes extends FormApplication {
         this.updateApp();
     }
 
+    /**
+     * Triggers when the remind me button is clicks for a note.
+     * @param e
+     */
+    public reminderChange(e: Event){
+        const userId = GameSettings.UserID();
+        const userIndex = (<Note>this.object).remindUsers.indexOf(userId);
+        if(userId !== '' && userIndex === -1){
+            (<Note>this.object).remindUsers.push(userId);
+        } else if(userId !== '' && userIndex !== -1) {
+            (<Note>this.object).remindUsers.splice(userIndex, 1);
+        }
+        if(this.viewMode){
+            let currentNotes = GameSettings.LoadNotes().map(n => {
+                const note = new Note();
+                note.loadFromSettings(n);
+                return note;
+            });
+            currentNotes = currentNotes.map(n => n.id === (<Note>this.object).id? (<Note>this.object) : n);
+            GameSettings.SaveNotes(currentNotes).catch(Logger.error);
+        }
+        this.updateApp();
+    }
     /**
      * Called when the date selector date has been selected
      * @param selectedDate
@@ -288,11 +320,9 @@ export class SimpleCalendarNotes extends FormApplication {
             seconds: 0
         };
 
-        if(SimpleCalendar.instance && SimpleCalendar.instance.currentYear){
-            const monthObj = SimpleCalendar.instance.currentYear.months.find(m => m.numericRepresentation === selectedDate.startDate.month);
-            if(monthObj){
-                (<Note>this.object).monthDisplay = monthObj.name;
-            }
+        const monthObj = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === selectedDate.startDate.month);
+        if(monthObj){
+            (<Note>this.object).monthDisplay = monthObj.name;
         }
         this.updateApp();
     }
@@ -383,7 +413,7 @@ export class SimpleCalendarNotes extends FormApplication {
     public async deleteConfirm(){
         const currentNotes = GameSettings.LoadNotes().map(n => {
             const note = new Note();
-            note.loadFromConfig(n);
+            note.loadFromSettings(n);
             return note;
         });
         const indexToDelete = currentNotes.map(n => n.id).indexOf((<Note>this.object).id);
@@ -410,7 +440,7 @@ export class SimpleCalendarNotes extends FormApplication {
         if((<Note>this.object).title){
             let currentNotes = GameSettings.LoadNotes().map(n => {
                 const note = new Note();
-                note.loadFromConfig(n);
+                note.loadFromSettings(n);
                 return note;
             });
             if(this.updateNote){

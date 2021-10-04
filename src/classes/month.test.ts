@@ -1,3 +1,17 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__mocks__/game";
+import "../../__mocks__/form-application";
+import "../../__mocks__/application";
+import "../../__mocks__/handlebars";
+import "../../__mocks__/event";
+import "../../__mocks__/crypto";
+import "../../__mocks__/dialog";
+import "../../__mocks__/hooks";
+import "../../__mocks__/chat-message";
+
+import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 
 describe('Month Class Tests', () => {
@@ -5,22 +19,25 @@ describe('Month Class Tests', () => {
     let month2: Month;
     let monthLy: Month;
     let monthIc: Month;
+    SimpleCalendar.instance = new SimpleCalendar();
 
     beforeEach(() => {
         month = new Month("Test", 0, 0, 0);
         month2 = new Month("", 0, 0, 30);
         monthLy = new Month("LY", 2, 0, 30, 31);
         monthIc = new Month("IC", -1, 0, 1, 1);
+        const m = new Month();
     });
 
     test('Properties', () => {
-        expect(Object.keys(month).length).toBe(13); //Make sure no new properties have been added
+        expect(Object.keys(month).length).toBe(15); //Make sure no new properties have been added
         expect(month.days).toStrictEqual([]);
         expect(month.numberOfDays).toBe(0);
         expect(month.numberOfLeapYearDays).toBe(0);
         expect(month.numericRepresentation).toBe(0);
         expect(month.numericRepresentationOffset).toBe(0);
         expect(month.name).toBe('Test');
+        expect(month.abbreviation).toBe('Tes');
         expect(month.intercalary).toBe(false);
         expect(month.intercalaryInclude).toBe(false);
         expect(month.current).toBe(false);
@@ -58,9 +75,22 @@ describe('Month Class Tests', () => {
         expect(month2.getDisplayName()).toBe("0");
     });
 
+    test('To Config', () => {
+        const t = month.toConfig();
+        expect(Object.keys(t).length).toBe(10); //Make sure no new properties have been added
+        expect(t.name).toBe('Test');
+        expect(t.numericRepresentation).toBe(0);
+        expect(t.numericRepresentationOffset).toBe(0);
+        expect(t.numberOfDays).toBe(0);
+        expect(t.numberOfLeapYearDays).toBe(0);
+        expect(t.intercalary).toBe(false);
+        expect(t.intercalaryInclude).toBe(false);
+        expect(t.startingWeekday).toBe(null);
+    });
+
     test('To Template', () => {
         const t = month.toTemplate();
-        expect(Object.keys(t).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(16); //Make sure no new properties have been added
         expect(t.display).toBe('Test (0)');
         expect(t.name).toBe('Test');
         expect(t.numericRepresentation).toBe(0);
@@ -79,6 +109,10 @@ describe('Month Class Tests', () => {
         //Intercalary days are represented by negative numbers, the template spits them out as 0
         const t2 = monthIc.toTemplate();
         expect(t2.numericRepresentation).toBe(-1);
+
+        const t3 = SimpleCalendar.instance.activeCalendar.year.months[0].toTemplate(SimpleCalendar.instance.activeCalendar.year);
+        expect(t3.name).toBe('1');
+
     });
 
     test('Clone', () => {
@@ -86,6 +120,42 @@ describe('Month Class Tests', () => {
         expect(month2.clone()).toStrictEqual(month2);
         expect(monthLy.clone()).toStrictEqual(monthLy);
         expect(monthIc.clone()).toStrictEqual(monthIc);
+    });
+
+    test('Load From Settings', () => {
+        const month = new Month();
+        //@ts-ignore
+        month.loadFromSettings({});
+        expect(month.numericRepresentation).toBeNaN();
+
+        month.loadFromSettings({
+            id: '',
+            name: 'Jan',
+            abbreviation: 'J',
+            numericRepresentation: 1,
+            numericRepresentationOffset: 0,
+            numberOfDays: 20,
+            numberOfLeapYearDays: 20,
+            intercalary: false,
+            intercalaryInclude: false,
+            startingWeekday: null
+        });
+        expect(month.id).toBe('');
+        expect(month.name).toBe('Jan');
+
+        //@ts-ignore
+        month.loadFromSettings({ name: 'Jan', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 'a', numberOfLeapYearDays: 'a', intercalary: false, intercalaryInclude: false });
+        expect(month.id).toBeDefined();
+        expect(month.numberOfDays).toBe(1);
+        expect(month.numberOfLeapYearDays).toBe(1);
+
+        //@ts-ignore
+        month.loadFromSettings({ name: 'Jan', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 1, intercalary: false, intercalaryInclude: false });
+        expect(month.days.length).toBe(1);
+
+        //@ts-ignore
+        month.loadFromSettings({ name: 'Jan', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 1, numberOfLeapYearDays: 10, intercalary: false, intercalaryInclude: false });
+        expect(month.days.length).toBe(10);
     });
 
     test('Get Current Day', () => {

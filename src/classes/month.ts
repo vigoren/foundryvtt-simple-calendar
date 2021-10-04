@@ -1,11 +1,13 @@
 import Day from "./day";
-import {DayTemplate, MonthTemplate} from "../interfaces";
+import {DayTemplate, MonthConfig, MonthTemplate} from "../interfaces";
 import {Logger} from "./logging";
+import ConfigurationItemBase from "./configuration-item-base";
+import Year from "./year";
 
 /**
  * Class representing a month
  */
-export default class Month {
+export default class Month extends ConfigurationItemBase {
     /**
      * A list of all the days in this month
      * @type {Array<Day>}
@@ -21,16 +23,6 @@ export default class Month {
      * @type {number}
      */
     numberOfLeapYearDays: number = 0;
-    /**
-     * The month name
-     * @type {string}
-     */
-    name: string;
-    /**
-     * The number representing the month, so all months are in numeric order
-     * @type {number}
-     */
-    numericRepresentation: number;
     /**
      * How much to offset the numeric representation of days by when generating them
      * @type {number}
@@ -71,6 +63,8 @@ export default class Month {
      */
     startingWeekday: number | null = null;
 
+    abbreviation: string = '';
+
     /**
      * Month class constructor
      * @param {string} name The name of the month
@@ -79,13 +73,13 @@ export default class Month {
      * @param {number} numberOfDays The number of days in this month
      * @param {number} numberOfLeapYearDays The number of days in this month on a leap year
      */
-    constructor(name: string, numericRepresentation: number, numericRepresentationOffset: number = 0, numberOfDays: number = 0, numberOfLeapYearDays: number | null = null) {
-        this.name = name.trim();
-        this.numericRepresentation = numericRepresentation;
+    constructor(name: string = '', numericRepresentation: number = NaN, numericRepresentationOffset: number = 0, numberOfDays: number = 0, numberOfLeapYearDays: number | null = null) {
+        super(name, numericRepresentation);
         this.numericRepresentationOffset = numericRepresentationOffset;
         if(this.name === ''){
             this.name = numericRepresentation.toString();
         }
+        this.abbreviation = this.name.substring(0,3);
         this.numberOfLeapYearDays = numberOfLeapYearDays === null? numberOfDays : numberOfLeapYearDays;
         this.numberOfDays = numberOfDays;
         this.populateDays(this.numberOfLeapYearDays > this.numberOfDays? this.numberOfLeapYearDays : this.numberOfDays);
@@ -119,12 +113,36 @@ export default class Month {
     }
 
     /**
+     * Returns the configuration data for the month
+     */
+    toConfig(): MonthConfig{
+        return {
+            id: this.id,
+            name: this.name,
+            abbreviation: this.abbreviation,
+            numericRepresentation: this.numericRepresentation,
+            numericRepresentationOffset: this.numericRepresentationOffset,
+            numberOfDays: this.numberOfDays,
+            numberOfLeapYearDays: this.numberOfLeapYearDays,
+            intercalary: this.intercalary,
+            intercalaryInclude: this.intercalaryInclude,
+            startingWeekday: this.startingWeekday
+        };
+    }
+
+    /**
      * Creates a month template to be used when rendering the month in HTML
-     * @param {boolean} [isLeapYear=false] If the year is a leap year
+     * @param {Year} [year=null] The year object
      * @return {MonthTemplate}
      */
-    toTemplate(isLeapYear: boolean = false): MonthTemplate {
+    toTemplate(year: Year | null = null): MonthTemplate {
+        let isLeapYear = false;
+        if(year){
+            isLeapYear = year.leapYearRule.isLeapYear(year.visibleYear);
+        }
         return {
+            ...super.toTemplate(),
+            abbreviation: this.abbreviation,
             display: this.getDisplayName(),
             name: this.name,
             numericRepresentation: this.numericRepresentation,
@@ -148,6 +166,9 @@ export default class Month {
      */
     clone(): Month {
         const m = new Month(this.name, this.numericRepresentation, this.numericRepresentationOffset);
+        m.id = this.id;
+        m.name = this.name;
+        m.abbreviation = this.abbreviation;
         m.current = this.current;
         m.selected = this.selected;
         m.visible = this.visible;
@@ -159,6 +180,44 @@ export default class Month {
         m.showAdvanced = this.showAdvanced;
         m.startingWeekday = this.startingWeekday;
         return m;
+    }
+
+    /**
+     * Loads the month data from the config object.
+     * @param {MonthConfig} config The configuration object for this class
+     */
+    loadFromSettings(config: MonthConfig) {
+        if(config && Object.keys(config).length){
+            if(config.hasOwnProperty('id')){
+                this.id = config.id;
+            }
+            this.name = config.name;
+            this.numericRepresentation = config.numericRepresentation;
+            this.numericRepresentationOffset = config.numericRepresentationOffset;
+
+            let numDays = parseInt(config.numberOfDays.toString());
+            let numLeapDays = config.numberOfLeapYearDays === undefined? 0 : parseInt(config.numberOfLeapYearDays.toString());
+            if(isNaN(numDays)){
+                numDays = 1;
+            }
+            if(isNaN(numLeapDays)){
+                numLeapDays = 1;
+            }
+            this.numberOfDays = numDays;
+            this.numberOfLeapYearDays = numLeapDays;
+            this.intercalary = config.intercalary;
+            this.intercalaryInclude = config.intercalaryInclude;
+            if(config.hasOwnProperty('startingWeekday')){
+                this.startingWeekday = config.startingWeekday;
+            }
+            if(config.hasOwnProperty('abbreviation')){
+                this.abbreviation = config.abbreviation;
+            } else {
+                this.abbreviation = this.name.substring(0, 3);
+            }
+            this.days = [];
+            this.populateDays(this.numberOfLeapYearDays > this.numberOfDays? this.numberOfLeapYearDays : this.numberOfDays);
+        }
     }
 
     /**

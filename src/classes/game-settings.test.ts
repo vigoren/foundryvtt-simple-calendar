@@ -5,31 +5,39 @@ import "../../__mocks__/game";
 import "../../__mocks__/form-application";
 import "../../__mocks__/application";
 import "../../__mocks__/crypto";
+import "../../__mocks__/hooks"
 
 import {GameSettings} from "./game-settings";
 import SimpleCalendar from "./simple-calendar";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {Note} from "./note";
+import Note from "./note";
 import LeapYear from "./leap-year";
 import {GameWorldTimeIntegrations, LeapYearRules} from "../constants";
-import {GeneralSettings} from "../interfaces";
 import Mock = jest.Mock;
 import Time from "./time";
 import Season from "./season";
 import Moon from "./moon";
+import {GeneralSettingsConfig, UserPermissionsConfig} from "../interfaces";
 
 describe('Game Settings Class Tests', () => {
 
     beforeEach(()=>{
         (<Mock>(<Game>game).settings.get).mockClear();
         (<Mock>(<Game>game).settings.set).mockClear();
+        (<Mock>(<Game>game).socket?.emit).mockClear();
     });
 
     test('Localize', () => {
         expect(GameSettings.Localize('test')).toBe('');
         expect((<Game>game).i18n.localize).toHaveBeenCalled();
+
+        const orig = (<Game>game).i18n;
+        // @ts-ignore
+        (<Game>game).i18n = null;
+        expect(GameSettings.Localize('test')).toBe('test');
+        (<Game>game).i18n = orig;
     });
 
     test( 'Is GM', () => {
@@ -85,12 +93,7 @@ describe('Game Settings Class Tests', () => {
         SimpleCalendar.instance = new SimpleCalendar();
         GameSettings.RegisterSettings();
         expect((<Game>game).settings.register).toHaveBeenCalled();
-        expect((<Game>game).settings.register).toHaveBeenCalledTimes(14);
-    });
-
-    test('Get Import Ran', () => {
-        expect(GameSettings.GetImportRan()).toBe(false);
-        expect((<Game>game).settings.get).toHaveBeenCalled();
+        expect((<Game>game).settings.register).toHaveBeenCalledTimes(13);
     });
 
     test('Get Default Note Visibility', () => {
@@ -99,12 +102,12 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load General Settings', () => {
-        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes: {player:false, trustedPlayer: false, assistantGameMaster: false}}});
+        expect(GameSettings.LoadGeneralSettings()).toStrictEqual({id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, dateFormat: {date: 'MMMM DD, YYYY', time: 'HH:mm:ss', monthYear: 'MMMM YAYYYYYZ'}, permissions: {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes: {player:false, trustedPlayer: false, assistantGameMaster: false}}});
         expect((<Game>game).settings.get).toHaveBeenCalled();
     });
 
     test('Load Year Data', () => {
-        expect(GameSettings.LoadYearData()).toStrictEqual({numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: 'default', yearNamesStart: 0});
+        expect(GameSettings.LoadYearData()).toStrictEqual({id:'', numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: 'default', yearNamesStart: 0});
         expect((<Game>game).settings.get).toHaveBeenCalled();
     });
 
@@ -114,7 +117,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Month Data', () => {
-        expect(GameSettings.LoadMonthData()).toStrictEqual([{name: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]);
+        expect(GameSettings.LoadMonthData()).toStrictEqual([{id:'', name: '', abbreviation: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadMonthData()).toStrictEqual([]);
@@ -125,7 +128,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Weekday Data', () => {
-        expect(GameSettings.LoadWeekdayData()).toStrictEqual([{numericRepresentation: 0, name: ''}]);
+        expect(GameSettings.LoadWeekdayData()).toStrictEqual([{id:'', abbreviation: '', numericRepresentation: 0, name: ''}]);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadWeekdayData()).toStrictEqual([]);
@@ -136,7 +139,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Season Data', () => {
-        expect(GameSettings.LoadSeasonData()).toStrictEqual([{name:'', startingMonth: 1, startingDay: 1, color: '#ffffff'}]);
+        expect(GameSettings.LoadSeasonData()).toStrictEqual([{id:'', name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', sunriseTime: 0, sunsetTime: 0}]);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadSeasonData()).toStrictEqual([]);
@@ -147,7 +150,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Moon Data', () => {
-        expect(GameSettings.LoadMoonData()).toStrictEqual([{"name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]);
+        expect(GameSettings.LoadMoonData()).toStrictEqual([{id:'', "name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
         expect(GameSettings.LoadMoonData()).toStrictEqual([]);
@@ -158,12 +161,12 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Load Leap Year Rule', () => {
-        expect(GameSettings.LoadLeapYearRules()).toStrictEqual({rule: 'none', customMod: 0});
+        expect(GameSettings.LoadLeapYearRules()).toStrictEqual({id:'', rule: 'none', customMod: 0});
         expect((<Game>game).settings.get).toHaveBeenCalled();
     });
 
     test('Load Time Data', () => {
-        expect(GameSettings.LoadTimeData()).toStrictEqual({hoursInDay:0, minutesInHour: 1, secondsInMinute: 2, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1});
+        expect(GameSettings.LoadTimeData()).toStrictEqual({id:'', hoursInDay:24, minutesInHour: 60, secondsInMinute: 60, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1, secondsInCombatRound: 6});
         expect((<Game>game).settings.get).toHaveBeenCalled();
     });
 
@@ -187,20 +190,11 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.LoadNoteCategories()).toStrictEqual([{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]);
     });
 
-    test('Set Import Ran', async () => {
-        // @ts-ignore
-        game.user.isGM = false;
-        await expect(GameSettings.SetImportRan(true)).resolves.toBe(false);
-        // @ts-ignore
-        game.user.isGM = true;
-        await expect(GameSettings.SetImportRan(true)).resolves.toBe(true);
-        expect((<Game>game).settings.set).toHaveBeenCalled();
-    });
-
     test('Save General Settings', async () => {
         // @ts-ignore
         game.user.isGM = false;
-        let gs: GeneralSettings = {gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, permissions: {viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false}}};
+        let up: UserPermissionsConfig = {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false}};
+        let gs: GeneralSettingsConfig = {id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, dateFormat: {date: 'MMMM DD, YYYY', time: 'HH:mm:ss', monthYear: 'MMMM YAYYYYYZ'}, permissions: up};
         await expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
@@ -238,12 +232,28 @@ describe('Game Settings Class Tests', () => {
         await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         expect((<Game>game).settings.set).toHaveBeenCalled();
+
+        year.time.seconds = 300;
+        (<Mock>(<Game>game).settings.get).mockClear();
+        await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
+        expect((<Game>game).settings.get).toHaveBeenCalled();
+        expect((<Game>game).settings.set).toHaveBeenCalled();
+
+        year.time.seconds = 301;
+        await expect(GameSettings.SaveCurrentDate(year, false)).resolves.toBe(true);
+
+        //@ts-ignore
+        SimpleCalendar.instance = null;
+        await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
+        expect((<Game>game).settings.get).toHaveBeenCalled();
+        expect((<Game>game).settings.set).toHaveBeenCalled();
     });
 
     test('Save Year Configuration', async () => {
         // @ts-ignore
         game.user.isGM = false;
         const year = new Year(0);
+        year.id = '';
         await expect(GameSettings.SaveYearConfiguration(year)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
@@ -266,12 +276,14 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         game.user.isGM = false;
         const month = new Month('', 0, 0, 1);
+        month.id = '';
         await expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
         await expect(GameSettings.SaveMonthConfiguration([month])).resolves.toBe(true);
         expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
         month.name = '';
+        month.abbreviation = '';
         month.numericRepresentation = 1;
         month.numberOfDays = 2;
         month.numberOfLeapYearDays = 2;
@@ -283,6 +295,7 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         game.user.isGM = false;
         const weekday = new Weekday(0, '');
+        weekday.id = '';
         await expect(GameSettings.SaveWeekdayConfiguration([weekday])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
@@ -297,6 +310,7 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         game.user.isGM = false;
         const season = new Season('', 1, 1);
+        season.id = '';
         await expect(GameSettings.SaveSeasonConfiguration([season])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
@@ -311,6 +325,7 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         game.user.isGM = false;
         const moon = new Moon('', 0);
+        moon.id = '';
         await expect(GameSettings.SaveMoonConfiguration([moon])).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;
@@ -325,6 +340,7 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         game.user.isGM = false;
         const lr = new LeapYear();
+        lr.id = '';
         await expect(GameSettings.SaveLeapYearRules(lr)).resolves.toBe(false);
         expect((<Game>game).settings.set).toHaveBeenCalledTimes(0);
         // @ts-ignore
@@ -339,7 +355,8 @@ describe('Game Settings Class Tests', () => {
     test('Save Time Configuration', async () => {
         // @ts-ignore
         game.user.isGM = false;
-        let gs = new Time(0, 1, 2);
+        let gs = new Time(24, 60, 60);
+        gs.id = '';
         gs.gameTimeRatio = 3;
         await expect(GameSettings.SaveTimeConfiguration(gs)).resolves.toBe(false);
         // @ts-ignore

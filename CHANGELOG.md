@@ -1,5 +1,210 @@
 # Change Log
 
+## v1.3.66 - Note Searching and Bug Fixes
+
+### Note Searching
+
+You can now search for notes!
+
+- A new button has been added below the calendar called search. Click that will open a new dialog where you will be able to search for notes.
+- All notes are searched using the following note fields are searched:
+  - Title
+  - Content
+  - Date
+- The list is sorted by relevancy to what was typed in.
+- The search does not account for spelling errors or similar meaning words. It is a fairly basic search at the moment.
+
+### Bug Fixes
+
+- Fixed a bug where the Pathfinder 2E World Time Sync option would not display in the configuration window for PF2E games. This was just a display bug not a functionality bug.
+- Fixed a bug where the clock would not use the custom time format while running.
+- Fixed a bug where if the clock was running and a player joins, the clock would not run for the player until the GM stopped and started it again.
+
+## v1.3.62 - Custom Date Formats, Quality of Life Improvements, API Changes and Bug Fixes
+
+### Custom Date Formats
+
+You can now customize how the date and time is displayed in Simple Calendar with custom date/time formats!
+
+- New General Settings for specifying custom date/time formats to customize how dates and times are displayed in the calendar.
+  - **Date Format**: This indicates how all dates will appear within Simple Calendar. The dates that are affected by this format are:
+    - _**Full View**_: The note list heading, "Notes for [date]".
+    - _**Compact View**_: The displayed date.
+    - _**Date Selector**_: The date portion of the Date Selector text box.
+    - _**Notes**_: The Date/Time pill in the note list and in the note display will use this format to display the date portion.
+  - **Time Format**: This indicates how all times will be displayed within Simple Calendar. The times that are affected by this format are:
+    - _**Full View**_: The clock below the calendar.
+    - _**Compact View**_: The clock below the date.
+    - _**Date Selector**_: The time portion of the Date Selector text box as well as the time selection text boxes.
+    - _**Notes**_: The Date/Time pill in the note list and in the note display will use this format to display the time portion.
+  - **Month/Year Format**: This indicates how the month and year are displayed at the top of the calendar in the Full View and the Date Selector.
+- Above the new date format settings is a table that contains a list of all the tokens that can be used in the formats. This table is large so by default it is collapsed, but clicking the header will expand it. A detailed list of all the tokens is also available in the [configuration documentation](./docs/Configuration.md#datetime-formats).
+
+### Quality of Life Improvements
+
+- Added a new month configuration option to set the abbreviated name of the month. By default, the first 3 letters of the name are used.
+  - This abbreviated text is used by the new date formatting.
+  - The setting is under the advanced options.
+- Added a new weekday configuration option to set the abbreviated name of the weekday. By default, the first 2 letters of the name are used.
+  - This abbreviated text is sued by the new date formatting and as the heading for each weekday in the calendar view.
+
+
+### Bug Fixes
+
+- Improved the performance of drawing calendars with a large number of days and/or a calendar with a large number of notes.
+- Fixed a bug where the `SimpleCalendar.Hooks.DateTimeChange` Hook would not fire for players when the date/time was changed.
+- Fixed a bug where the real time clock would not run if the Game World Time Integration was set to None.
+
+### API Changes
+
+- Added a `date` property to the [Date Display Object](./docs/API.md#date-display-object) that contains the formatted date string for the date. This object is part of the return from the `SimpleCalendar.api.timestampToDate` function.
+- Updated the `time` property of the [Date Display Object](./docs/API.md#date-display-object) so that it contains the formatted time string for the date.
+- Added a new function to the API, `SimpleCalendar.api.formatDateTime(date)`. This takes in a DateTime object and will format it to the currently configured date and time formats. Check out the [API Docs](./docs/API.md#simplecalendarapiformatdatetimedate) for more details!
+- Added a new function to the API, `SimpleCalendar.api.getAllMonths()`. This function will return configuration details for all months in the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getAllMoons()`. This function will return configuration details for all moons of the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getAllWeekdays()`. This function will return configuration details for all weekdays in the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getCurrentDay()`. This function returns details for the current day of the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getCurrentMonth()`. This function returns details for the current month of the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getCurrentWeekday()`. This function returns details for the current weekday.
+- Added a new function to the API, `SimpleCalendar.api.getCurrentYear()`. This function returns details for the current year of the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getLeapYearConfiguration()`. This function returns details for how leap years are configured for the calendar.
+- Added a new function to the API, `SimpleCalendar.api.getTimeConfiguration()`. This function returns details for how time is configured for the calendar.
+
+
+### Language Updates
+- An update to the korean language file thanks to drdwing!
+
+### Patreon
+
+I have started up my own Patreon for those of you who are interested in supporting me as I develop this and other modules. There is zero pressure to do so as I create this module for fun but any contributions to get me a coffee are very much appreciated.
+
+I will not tie any functionality of Simple Calendar to being a patron, Simple Calendar will always remain free for everyone. My plan for any patrons is to provide update posts with more detail on what I am working on and maybe some polls about features or functionality.
+
+If you are interested is becoming a patron please check out [my page here](https://www.patreon.com/vigorator) and thank you!
+
+## v1.3.44 - Bug Fixes
+
+### Bug Fixes
+
+- Fixed a bug where the Date/Time change hook would be fired multiple times while the clock was running.
+- Fixed a bug where creating an empty combat would not pause the real clock when a combatant was added in.
+- Fixed a bug where ending a combat in a scene that is not the active scene could restart the real time clock while a combat was running in the active scene.
+- Fixed a bug where seasons that start on an Intercalary Month would not be sorted properly, this would cause the seasons to not be selected correctly.
+  - This fix also applies to the Sunrise/Sunset calculation for seasons that start on an intercalary month.
+
+### Pre-work for Multi-calendar Support
+
+There have been a few requests to support more than one calendar and the ability to switch between them. 
+Simple Calendar was built with only one calendar in mind, as such support for adding more than one calendar requires some backend code changes.
+This update includes some of that work.
+
+The changes in this update involved creating some new classes and moving functionality from other classes into those new classes. 
+Since functionality has only been moved around and not changed there should be **no changes to how calendars or the API currently work**. 
+All functionality will be exactly the same as the previous version, with the exception of the bug fixes above. 
+
+This portion of the update is just informative to let everyone know where I am at with the multi-calendar support and that there have been some changes to the backend of the codebase.
+If any bugs do crop up in your game I am sorry and please let me know with a bug report and I will fix it up right away.
+
+
+## v1.3.39 - Season Changes, QoL Improvements, API Changes and Bug Fixing
+
+### Season Changes
+
+- Updated the Starting Month and Starting Day fields to be one field "Starting Date" that uses the built-in Date Selector to choose a month and day.
+- Added the ability to set the Sunrise and Sunset times for the first day of the season:
+  - The setting of the times uses the built-in Time Selector to ensure that only times that work with your calendar can be chosen and that the sunset is always after the sunrise.
+- Sunrise and sunset times slowly change as days progress to meet the sunrise/sunset time of the next season. This is to add a smooth transition between seasons sunrise and sunset times.
+- Added buttons to the time control to advance to the next dawn, midday, dusk or midnight.
+  - Dawn will advance to the next sunrise.
+  - Midday will advance to the next middle of the day. The midday is calculated as the exact middle of the day, for most calendars this will be 12:00pm but for calendars with different hours per day it will calculate correctly.
+  - Dusk will advance to the next sunset.
+  - Midnight will advance to the next beginning of the day, time 00:00.
+- Set up default sunrise/sunset times for predefined calendars. Where information was available used that otherwise they will default to a 6am sunrise and a 6pm sunset.
+
+### Quality of Life Improvements
+
+- Added a new time setting to specify how long a round of combat lasts in seconds. This is to address the issue where the clock did not advance as combat rounds passed when using systems that do not increment time during combat.
+- Removed the Import/Export dialog for about-time and Calendar/Weather that appears on the first load of a world. This dialog was causing issues for some users and is no longer needed as these options can be reached through the calendar configuration dialog.
+
+### API Changes
+
+- Functions that return season information (`SimpleCalendar.api.getCurrentSeason`, `SimpleCalendar.api.getAllSeasons` and `SimpleCalendar.api.timstampToDate`) now includes the sunrise and sunset times for the season, as set through the new season options. The times are represented as seconds passed for that day eg. 3600 would be 1:00am in a Gregorian calendar.
+- The function `SimpleCalendar.api.timestampToDate` has 2 new properties, sunrise and sunset. These values represent the timestamps for the sunrise and sunset times parsed from the passed in timestamp.
+- Fixed a bug with the `SimpleCalendar.api.timestampToDate` function where the display time was always returning as the current time not the time from the passed in timestamp.
+
+
+### Bug Fixes
+
+- Fixed a bug with seasons always showing the last season for all, or most months. Seasons were expecting to be in order, now order does not matter.
+- Improvements to the built-in date/time selector to ensure a better user experience.
+- Fixed a bug where setting a different hours per day could cause the clock to not advance days properly.
+
+### Foundry 0.8.9
+
+- Made sure that Simple Calendar works as expected with Foundry version 0.8.9!
+
+### Translations
+
+- I am happy to say that Simple Calendar has been translated to French thanks to [JDR-Ninja](https://github.com/JDR-Ninja) with input from [Julien Stébenne](https://github.com/TheBird956)!
+- Updates to the Spanish translation thanks to [lozalojo](https://github.com/lozalojo)!
+
+## v1.3.28 - API Changes
+
+- Updated the [DateTimeChange hook](./docs/Hooks.md#datetime-change) to have a new property in its returned value called "date". This property contains the same contents as the [API timestampToDate function](./docs/API.md#simplecalendarapitimestamptodatetimestamp) with the current timestamp passed in. This is to have the exact same data available in the hook as the API function. As a result some existing properties will be removed as stated below:
+  - **Future Breaking**: The property "year" will be removed when Foundry v10 Stable is released. Please use the year information from the new "date" property.
+  - **Future Breaking**: The property "month" will be removed when Foundry v10 Stable is released. Please use the month information from the new "date" property.
+  - **Future Breaking**: The property "day" will be removed when Foundry v10 Stable is released. Please use the day information from the new "date" property.
+  - **Future Breaking**: The property "time" will be removed when Foundry v10 Stable is released. Please use the time information from the new "date" property.
+  - **Future Breaking**: The property "season" will be removed when Foundry v10 Stable is released. Please use the season information from the new "date" property.
+- Updated the [Clock Start/Stop hook](./docs/Hooks.md#clock-startstop) so that it uses the same function as the [API clockStatus function](./docs/API.md#simplecalendarapiclockstatus). No change to returned values, this is to keep consistency between those functions.
+- Updated the [PrimaryGM hook](./docs/Hooks.md#is-primary-gm) so that it uses the same function as the [API isPrimaryGM function](./docs/API.md#simplecalendarapiisprimarygm). No change to returned values, this is to keep consistency between those functions.
+- Changed when the DateTimeChange hook is fired to include every tick of the clock.
+- Added the "isLeapYear" property to the [Date Object](./docs/API.md#date-object) returned by [timeStampToDate API function](./docs/API.md#simplecalendarapitimestamptodatetimestamp) that indicates if the date falls on a leap year or not.
+
+## v1.3.23 - Note Reminders, API Changes, Bug Fixing and Translations
+
+### Note Reminders
+
+GMs and players can select notes to be reminded of when the current calendar date and time read the date and time of the note.
+
+- When viewing or adding a new note there is a "Remind Me!" button in the top right of the dialog. Clicking that will register you to be reminded about this note (the button will change green when registered).
+- In the note list a green bell icon will appear next to the note(s) that you will be reminded of on that day.
+- Days that have reminder notes for the player will have an additional blue indicator showing the number of notes they wanted to be reminded of on that day.
+- When the current date changes to a day with a note reminder, all users who have registered to be reminded will receive a whispered chat message with the date, title of the note and the content of the note.
+  - For notes with a set time they will be sent when the current time equals or is greater than the notes start time.
+  - When a user first logs in any notes on the current day will be whispered to them.
+  - These whispers are only sent once so if you move the day forward, whispers will be sent out then if you move back to that date whispers will not be re-sent.
+    - This setting on persists per session, so if you re-load the page the whispers will be resent.
+    - This is set up so that if the time is advanced past the starting time note reminders will still be sent but will not be continually sent as time changes.
+  - If you skip a day with reminders those days reminders are not sent.
+    - This is to prevent advancing the clock by a year and getting a year's worth of reminders all in one go.
+
+### Quality of Life Improvements
+
+- Added the Forbidden Lands calendar as a predefined calendar.
+
+### API Changes
+
+- Added a new enum `SimpleCalendar.api.Calendars`. This enum contains a list of all available predefined calendars in Simple Calendar.
+- Added a new enum `SimpleCalendar.api.LeapYearRules`. This enum contains a list of all rules that can be used when calculating leap years.
+- Added a new enum `SimpleCalendar.api.MoonIcons`. This enum contains a list of all available moon icons.
+- Added a new enum `SimpleCalendar.api.MoonYearResetOptions`. This is an enum that contains the options for when a moons first new moon year should be reset.
+- Added a new enum `SimpleCalendar.api.YearNamingRules`. This enum contains a list of all rules that can be used when determining what name a given year gets.
+- Added a new function `SimpleCalendar.api.configureCalendar`. This function will set up the calendar configuration to be one of the predefined calendars (if an option from the new Calendars enum is passed in) or can take in a JSON object to configure the calendar in a custom way. The JSON object will look the same as the contents of a configuration export file.
+
+### Bug Fixes
+
+- Updated the styling around the note list to work better on systems with darker backgrounds.
+- Changed the rules of determining the initial size of the note dialog to have a minimum height and a maximum width.
+- Fixed a bug where calendars would get a scrollbar in Firefox when a moon icon was visible on the last week of that month.
+
+### Translations
+
+- Simple Calendar has been translated to Portuguese thanks to [castanhocorreia](https://github.com/castanhocorreia), thank you!
+- Simple Calendar has been translated to Czech thanks to [robertjunek](https://github.com/robertjunek), thank you!
+- Updates to the German translation thanks to [Fallayn](https://github.com/Fallayn)!
+- Updates to the Korean translation thanks to [drdwing](https://github.com/drdwing)!
+
 ## v1.3.8 - Bug Fixes
 
 ### Quality of Life Improvements

@@ -2,10 +2,11 @@ import Year from "./year";
 import {Logger} from "./logging";
 import {
     CurrentDateConfig,
-    GeneralSettings,
+    GeneralSettingsConfig,
     LeapYearConfig,
     MonthConfig,
-    MoonConfiguration, NoteCategory,
+    MoonConfiguration,
+    NoteCategory,
     NoteConfig,
     SeasonConfiguration,
     SimpleCalendarSocket,
@@ -17,7 +18,7 @@ import {ModuleName, SettingNames, SimpleCalendarHooks, SocketTypes} from "../con
 import SimpleCalendar from "./simple-calendar";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {Note} from "./note";
+import Note from "./note";
 import LeapYear from "./leap-year";
 import Time from "./time";
 import Season from "./season";
@@ -67,7 +68,13 @@ export class GameSettings {
      * @param {string} key The localization string key
      */
     static Localize(key: string): string {
-        return (<Game>game).i18n.localize(key);
+        if((<Game>game).i18n){
+            return (<Game>game).i18n.localize(key);
+        } else {
+            const parts = key.split('.');
+            return parts[parts.length-1];
+        }
+
     }
 
     /**
@@ -139,7 +146,7 @@ export class GameSettings {
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.loadNotes.bind(SimpleCalendar.instance, true)
+            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'notes')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.TimeConfiguration, {
             name: "Time",
@@ -148,13 +155,6 @@ export class GameSettings {
             type: Object,
             default: {},
             onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'time')
-        });
-        (<Game>game).settings.register(ModuleName, SettingNames.ImportRan, {
-            name: "Import",
-            scope: "world",
-            config: false,
-            type: Boolean,
-            default: false
         });
         (<Game>game).settings.register(ModuleName, SettingNames.SeasonConfiguration, {
             name: "Season Configuration",
@@ -193,13 +193,6 @@ export class GameSettings {
     }
 
     /**
-     * Gets if the import question has been run for modules
-     */
-    static GetImportRan(){
-        return <boolean>(<Game>game).settings.get(ModuleName, SettingNames.ImportRan);
-    }
-
-    /**
      * Gets the default note visibility setting
      * @return {boolean}
      */
@@ -210,8 +203,8 @@ export class GameSettings {
     /**
      * Loads the general settings from the game world settings
      */
-    static LoadGeneralSettings(): GeneralSettings {
-        return <GeneralSettings>(<Game>game).settings.get(ModuleName, SettingNames.GeneralConfiguration);
+    static LoadGeneralSettings(): GeneralSettingsConfig {
+        return <GeneralSettingsConfig>(<Game>game).settings.get(ModuleName, SettingNames.GeneralConfiguration);
     }
 
     /**
@@ -348,22 +341,10 @@ export class GameSettings {
     }
 
     /**
-     * Sets the import ran setting
-     * @param {boolean} ran If the import was ran/asked about
-     */
-    static async SetImportRan(ran: boolean){
-        if(GameSettings.IsGm()){
-            await (<Game>game).settings.set(ModuleName, SettingNames.ImportRan, ran);
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Saves the general settings to the world settings
-     * @param {GeneralSettings} settings The settings to save
+     * @param {GeneralSettingsConfig} settings The settings to save
      */
-    static async SaveGeneralSettings(settings: GeneralSettings): Promise<boolean> {
+    static async SaveGeneralSettings(settings: GeneralSettingsConfig): Promise<boolean> {
         if(GameSettings.IsGm()){
             Logger.debug('Saving General Settings.');
             const currentSettings = GameSettings.LoadGeneralSettings();
@@ -379,8 +360,9 @@ export class GameSettings {
     /**
      * Saves the current date to the world settings
      * @param {Year} year The year that has the current date
+     * @param {boolean} emitHook If to emit the hook or not
      */
-    static async SaveCurrentDate(year: Year): Promise<boolean>{
+    static async SaveCurrentDate(year: Year, emitHook: boolean = true): Promise<boolean>{
         if(GameSettings.IsGm()){
             Logger.debug(`Saving current date.`);
             const currentMonth = year.getMonth();
@@ -396,7 +378,14 @@ export class GameSettings {
                     };
                     if(currentDate.year !== newDate.year || currentDate.month !== newDate.month || currentDate.day !== newDate.day || currentDate.seconds !== newDate.seconds){
                         await (<Game>game).settings.set(ModuleName, SettingNames.CurrentDate, newDate);
-                        Hook.emit(SimpleCalendarHooks.DateTimeChange);
+                        if(emitHook && SimpleCalendar.instance){
+                            await GameSockets.emit(<SimpleCalendarSocket.Data>{type: SocketTypes.emitHook, data: <SimpleCalendarSocket.SimpleCalendarEmitHook>{hook: SimpleCalendarHooks.DateTimeChange}});
+                            Hook.emit(SimpleCalendarHooks.DateTimeChange);
+                        }
+                        await GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.noteReminders, data: { justTimeChange: currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day }});
+                        if(SimpleCalendar.instance){
+                            SimpleCalendar.instance.checkNoteReminders(currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day);
+                        }
                         return true;
                     } else {
                         Logger.debug('Current Date data has not changed, not updating settings');
@@ -424,17 +413,7 @@ export class GameSettings {
             if(!currentYearConfig.hasOwnProperty('showWeekdayHeadings')){
                 currentYearConfig.showWeekdayHeadings = true;
             }
-            const yc: YearConfig = {
-                numericRepresentation: year.numericRepresentation,
-                prefix: year.prefix,
-                postfix: year.postfix,
-                showWeekdayHeadings: year.showWeekdayHeadings,
-                firstWeekday: year.firstWeekday,
-                yearZero: year.yearZero,
-                yearNames: year.yearNames,
-                yearNamingRule: year.yearNamingRule,
-                yearNamesStart: year.yearNamesStart
-            };
+            const yc: YearConfig = year.toConfig();
             if(JSON.stringify(currentYearConfig) !== JSON.stringify(yc)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.YearConfiguration, yc).then(() => { return true }); //Return true because if no error was thrown then the save was successful and we don't need the returned data.
             } else {
@@ -452,16 +431,7 @@ export class GameSettings {
         if(GameSettings.IsGm()) {
             Logger.debug(`Saving month configuration.`);
             const currentMonthConfig = JSON.stringify(GameSettings.LoadMonthData());
-            const newConfig: MonthConfig[] = months.map(m => { return {
-                name: m.name,
-                numericRepresentation: m.numericRepresentation,
-                numericRepresentationOffset: m.numericRepresentationOffset,
-                numberOfDays: m.numberOfDays,
-                numberOfLeapYearDays: m.numberOfLeapYearDays,
-                intercalary: m.intercalary,
-                intercalaryInclude: m.intercalaryInclude,
-                startingWeekday: m.startingWeekday
-            }; });
+            const newConfig: MonthConfig[] = months.map(m => m.toConfig());
             if(currentMonthConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.MonthConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -479,7 +449,7 @@ export class GameSettings {
         if(GameSettings.IsGm()) {
             Logger.debug(`Saving weekday configuration.`);
             const currentWeekdayConfig = JSON.stringify(GameSettings.LoadWeekdayData());
-            const newConfig: WeekdayConfig[] = weekdays.map(w => {return {name: w.name, numericRepresentation: w.numericRepresentation}; });
+            const newConfig: WeekdayConfig[] = weekdays.map(w => w.toConfig());
             if(currentWeekdayConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.WeekdayConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -498,7 +468,7 @@ export class GameSettings {
         if(GameSettings.IsGm()){
             Logger.debug('Saving season configuration.');
             const currentConfig = JSON.stringify(GameSettings.LoadSeasonData());
-            const newConfig: SeasonConfiguration[] = seasons.map(s => {return {name: s.name, startingMonth: s.startingMonth, startingDay: s.startingDay, color: s.color}});
+            const newConfig: SeasonConfiguration[] = seasons.map(s => s.toConfig());
             if(currentConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.SeasonConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -516,14 +486,7 @@ export class GameSettings {
         if(GameSettings.IsGm()){
             Logger.debug('Saving moon configuration.');
             const currentConfig = JSON.stringify(GameSettings.LoadMoonData());
-            const newConfig: MoonConfiguration[] = moons.map(m => {return {
-                name: m.name,
-                cycleLength: m.cycleLength,
-                firstNewMoon: m.firstNewMoon,
-                phases: m.phases,
-                color: m.color,
-                cycleDayAdjust: m.cycleDayAdjust
-            };});
+            const newConfig: MoonConfiguration[] = moons.map(m => m.toConfig());
             if(currentConfig !== JSON.stringify(newConfig)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.MoonConfiguration, newConfig).then(() => {return true;});
             } else {
@@ -541,10 +504,7 @@ export class GameSettings {
         if(GameSettings.IsGm()) {
             Logger.debug(`Saving leap year configuration.`);
             const current = GameSettings.LoadLeapYearRules();
-            const newlyc: LeapYearConfig = {
-                rule: leapYear.rule,
-                customMod: leapYear.customMod
-            };
+            const newlyc: LeapYearConfig = leapYear.toConfig();
             if(current.rule !== newlyc.rule || current.customMod !== newlyc.customMod){
                 return (<Game>game).settings.set(ModuleName, SettingNames.LeapYearRule, newlyc);
             } else {
@@ -563,14 +523,7 @@ export class GameSettings {
         if(GameSettings.IsGm()) {
             Logger.debug(`Saving time configuration.`);
             const current = GameSettings.LoadTimeData();
-            const newtc: TimeConfig = {
-                hoursInDay: time.hoursInDay,
-                minutesInHour: time.minutesInHour,
-                secondsInMinute: time.secondsInMinute,
-                gameTimeRatio: time.gameTimeRatio,
-                unifyGameAndClockPause: time.unifyGameAndClockPause,
-                updateFrequency: time.updateFrequency
-            };
+            const newtc: TimeConfig = time.toConfig();
             if(JSON.stringify(current) !== JSON.stringify(newtc)){
                 return (<Game>game).settings.set(ModuleName, SettingNames.TimeConfiguration, newtc).then(() => { return true });
             } else {
@@ -615,7 +568,8 @@ export class GameSettings {
             minute: w.minute,
             endDate: w.endDate,
             order: w.order,
-            categories: w.categories
+            categories: w.categories,
+            remindUsers: w.remindUsers
         };});
         if(GameSettings.IsGm()){
             return (<Game>game).settings.set(ModuleName, SettingNames.Notes, newConfig).then(() => {return true;});

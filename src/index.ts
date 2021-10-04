@@ -19,11 +19,15 @@ Hooks.on('init', () => {
 Hooks.on('ready', () => {
     //Initialize the Simple Calendar Sockets
     SimpleCalendar.instance.initializeSockets();
+    SimpleCalendar.instance.checkNoteReminders();
 });
 Hooks.on('getSceneControlButtons', SimpleCalendar.instance.getSceneControlButtons.bind(SimpleCalendar.instance));
 Hooks.on("updateWorldTime", SimpleCalendar.instance.worldTimeUpdate.bind(SimpleCalendar.instance));
+Hooks.on('createCombatant', SimpleCalendar.instance.createCombatant.bind(SimpleCalendar.instance));
 Hooks.on("updateCombat", SimpleCalendar.instance.combatUpdate.bind(SimpleCalendar.instance));
 Hooks.on("deleteCombat", SimpleCalendar.instance.combatDelete.bind(SimpleCalendar.instance));
 Hooks.on("pauseGame", SimpleCalendar.instance.gamePaused.bind(SimpleCalendar.instance));
 
 Logger.debugMode = false;
+
+//Hooks.on(SimpleCalendarHooks.DateTimeChange, (...args: any) => {console.log(...args);});

@@ -1,7 +1,10 @@
 <div id="simpleCalendarNotes">
     <form autocomplete="off">
         {{#if viewMode}}
-        <h1>{{object.title}}</h1>
+        <h1>
+            {{object.title}}
+            <span class="reminder note-category {{#if reminder}}selected{{/if}}"><label><input type="checkbox" /><span class="fa fa-bell"></span>{{localize 'FSC.Notes.Reminder'}}</label></span>
+        </h1>
         <div class="note-details">
             {{#if isGM}}
             {{#if object.playerVisible}}
@@ -39,7 +42,10 @@
         </div>
         {{/if}}
         {{else}}
-        <h1>{{localize 'FSC.Notes.NewFor'}} {{object.monthDisplay}} {{object.day}}, {{object.year}}</h1>
+        <h1>
+            {{localize 'FSC.Notes.NewFor'}} {{object.monthDisplay}} {{object.day}}, {{object.year}}
+            <span class="reminder note-category {{#if reminder}}selected{{/if}}"><label><input type="checkbox" /><span class="fa fa-bell"></span>{{localize 'FSC.Notes.Reminder'}}</label></span>
+        </h1>
         <div class="form-group">
             <label for="scNoteTitle">{{localize 'FSC.Notes.Title'}}</label>
             <div class="form-fields">

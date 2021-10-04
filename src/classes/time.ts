@@ -1,11 +1,14 @@
 import {Logger} from "./logging";
-import {TimeTemplate} from "../interfaces";
+import {TimeConfig, TimeTemplate} from "../interfaces";
 import TimeKeeper from "./time-keeper";
+import ConfigurationItemBase from "./configuration-item-base";
+import Utilities from "./utilities";
+import SimpleCalendar from "./simple-calendar";
 
 /**
  * Class representing the time of day
  */
-export default class Time {
+export default class Time extends ConfigurationItemBase{
     /**
      * How many hours are in a day
      * @type {number}
@@ -21,6 +24,11 @@ export default class Time {
      * @type {number}
      */
     secondsInMinute: number;
+    /**
+     * How many seconds pass during a single round of combat
+     * @type {number}
+     */
+    secondsInCombatRound: number;
     /**
      * The ratio at which to advance game time while real time passes, ratio of 1 is the same, ratio of 2 is twice as fast
      * @type {number}
@@ -60,9 +68,11 @@ export default class Time {
      * @param {number} [secondsInMinute=60] How many seconds in a minute
      */
     constructor(hoursInDay: number = 24, minutesInHour: number = 60, secondsInMinute: number = 60) {
+        super();
         this.hoursInDay = hoursInDay;
         this.minutesInHour = minutesInHour;
         this.secondsInMinute = secondsInMinute;
+        this.secondsInCombatRound = 6;
         this.gameTimeRatio = 1;
 
         this.secondsPerDay = this.hoursInDay * this.minutesInHour * this.secondsInMinute;
@@ -71,16 +81,64 @@ export default class Time {
     }
 
     /**
+     * Returns the configuration for time in the calendar
+     */
+    toConfig(): TimeConfig {
+        return {
+            id: this.id,
+            hoursInDay: this.hoursInDay,
+            minutesInHour: this.minutesInHour,
+            secondsInMinute: this.secondsInMinute,
+            secondsInCombatRound: this.secondsInCombatRound,
+            gameTimeRatio: this.gameTimeRatio,
+            unifyGameAndClockPause: this.unifyGameAndClockPause,
+            updateFrequency: this.updateFrequency
+        };
+    }
+
+    /**
      * Makes a clone of this class with all the same settings
      */
     clone() {
         const t = new Time(this.hoursInDay, this.minutesInHour, this.secondsInMinute);
+        t.id = this.id;
+        t.secondsInCombatRound = this.secondsInCombatRound;
         t.seconds = this.seconds;
         t.gameTimeRatio = this.gameTimeRatio;
         t.combatRunning = this.combatRunning;
         t.unifyGameAndClockPause = this.unifyGameAndClockPause;
         t.updateFrequency = this.updateFrequency;
         return t;
+    }
+
+    /**
+     * Sets the properties for this class to options set in the passed in configuration object
+     * @param {TimeConfig} config The configuration object for this class
+     */
+    loadFromSettings(config: TimeConfig) {
+        if(config && Object.keys(config).length){
+            if(config.hasOwnProperty('id')){
+                this.id = config.id;
+            }
+            this.hoursInDay = config.hoursInDay;
+            this.minutesInHour = config.minutesInHour;
+            this.secondsInMinute = config.secondsInMinute;
+            this.gameTimeRatio = config.gameTimeRatio;
+            this.secondsPerDay = this.hoursInDay * this.minutesInHour * this.secondsInMinute;
+
+            if(config.hasOwnProperty('unifyGameAndClockPause')){
+                this.unifyGameAndClockPause = config.unifyGameAndClockPause;
+            }
+
+            if(config.hasOwnProperty('updateFrequency')){
+                this.updateFrequency = config.updateFrequency;
+                this.timeKeeper.updateFrequency = config.updateFrequency;
+            }
+
+            if(config.hasOwnProperty('secondsInCombatRound')){
+                this.secondsInCombatRound = config.secondsInCombatRound;
+            }
+        }
     }
 
     /**
@@ -99,9 +157,9 @@ export default class Time {
         }
         s = Math.floor(s);
         return {
-            hour: h < 10? `0${h}` : h.toString(),
-            minute: m < 10? `0${m}` : m.toString(),
-            second: s < 10? `0${s}` : s.toString()
+            hour: h,
+            minute: m,
+            seconds: s
         };
     }
 
@@ -110,7 +168,7 @@ export default class Time {
      */
     toString(): string{
         const t = this.getCurrentTime();
-        return `${t.hour}:${t.minute}:${t.second}`;
+        return Utilities.FormatDateTime({year: 0, month: 1, day: 1, ...t}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time);
     }
 
     /**

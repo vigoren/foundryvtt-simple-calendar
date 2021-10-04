@@ -2,7 +2,7 @@ import {
     CalendarTemplate,
     CurrentDateConfig,
     DayTemplate,
-    FirstNewMoonDate,
+    FirstNewMoonDate, IConfigurationItemBaseConfig, IConfigurationItemBaseTemplate,
     LeapYearConfig,
     MonthConfig,
     MonthTemplate,
@@ -13,7 +13,7 @@ import {
     NoteTemplate,
     SeasonConfiguration,
     SeasonTemplate,
-    SimpleCalendarSocket,
+    SimpleCalendarSocket, SimpleCalendarTemplate,
     TimeConfig,
     TimeTemplate,
     WeekdayConfig,
@@ -32,11 +32,13 @@ import {
 } from "./constants";
 
 describe('Interface Tests', () => {
-    const tt: TimeTemplate = {hour: '', minute: '', second: ''};
-    const dt: DayTemplate = {selected: false, current: false, name: '', numericRepresentation: 0};
-    const wt: WeekdayTemplate = {firstCharacter:'', name:'', numericRepresentation:0};
+    const tt: TimeTemplate = {hour: 0, minute: 0, seconds: 0};
+    const dt: DayTemplate = {id: '', selected: false, current: false, name: '', numericRepresentation: 0};
+    const wt: WeekdayTemplate = {id: '', abbreviation:'', name:'', numericRepresentation:0};
     const mt: MonthTemplate = {
+        id: '',
         display: '',
+        abbreviation: '',
         name: '',
         numericRepresentation: 0,
         numericRepresentationOffset: 0,
@@ -52,52 +54,63 @@ describe('Interface Tests', () => {
         startingWeekday: null
     };
     const yt: YearTemplate = {
-        display: '',
-        selectedDisplayYear: '',
-        selectedDisplayMonth: '',
-        selectedDisplayDay: '',
-        selectedDayOfWeek: '',
+        id: '',
         selectedDayMoons: [],
-        selectedDayNotes: [],
+        selectedDayNotes: {
+            normal: 0,
+            reminders: 0
+        },
         numericRepresentation: 0,
         visibleMonth: mt,
         weekdays: [wt],
         showWeekdayHeaders: false,
         firstWeekday: 0,
-        showClock: false,
-        clockClass: '',
-        showDateControls: false,
-        showTimeControls: false,
-        currentTime: tt,
         currentSeasonColor: '',
         currentSeasonName: '',
         weeks: [],
         yearZero: 0,
-        gameSystem: GameSystems.Other,
         yearNames: [],
         yearNamingRule: YearNamingRules.Default,
         yearNamesStart: 0
     };
     const ct: CalendarTemplate = {
+        id: '',
         isGM: false,
         changeDateTime: false,
         addNotes: false,
-        isPrimary: false,
         currentYear: yt,
         showSelectedDay: false,
         showCurrentDay: false,
         showSetCurrentDate: false,
         notes: [],
-        clockClass: '',
-        timeUnits: {},
-        compactView: false,
-        compactViewShowNotes: false,
-        reorderNotes: false
+        reorderNotes: false,
+        name: '',
+        gameSystem: GameSystems.Other,
+        showClock: true,
+        showDateControls: true,
+        showTimeControls: true,
+        calendarDisplay: '',
+        selectedDisplay: '',
+        timeDisplay: ''
     };
 
+    test('Configuration Item Base Config', () => {
+        const t: IConfigurationItemBaseConfig = {id: '', name: '', numericRepresentation: 0};
+        expect(Object.keys(t).length).toBe(3); //Make sure no new properties have been added
+    });
+
+    test('Configuration Item Base Template', () => {
+        const t: IConfigurationItemBaseTemplate= {id: '', name: '', numericRepresentation: 0};
+        expect(Object.keys(t).length).toBe(3); //Make sure no new properties have been added
+    });
+
+    test('Simple Calendar Template', () => {
+        const t: SimpleCalendarTemplate= {calendar: {id: '', name: ''}, compactView: false, compactViewShowNotes: false, clockClass: '', timeUnits: {}, isPrimary: false};
+        expect(Object.keys(t).length).toBe(6); //Make sure no new properties have been added
+    });
 
     test('Day Template', () => {
-        expect(Object.keys(dt).length).toBe(4); //Make sure no new properties have been added
+        expect(Object.keys(dt).length).toBe(5); //Make sure no new properties have been added
         expect(dt.selected).toBe(false);
         expect(dt.current).toBe(false);
         expect(dt.name).toBe("");
@@ -105,7 +118,7 @@ describe('Interface Tests', () => {
     });
 
     test('Month Template', () => {
-        expect(Object.keys(mt).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(mt).length).toBe(16); //Make sure no new properties have been added
         expect(mt.display).toBe("");
         expect(mt.name).toBe("");
         expect(mt.numericRepresentation).toBe(0);
@@ -123,60 +136,44 @@ describe('Interface Tests', () => {
     });
 
     test('Weekday Template', () => {
-        expect(wt.firstCharacter).toBe("");
+        expect(wt.abbreviation).toBe("");
         expect(wt.name).toBe("");
         expect(wt.numericRepresentation).toBe(0);
     });
 
     test('Year Template', () => {
-        expect(Object.keys(yt).length).toBe(25); //Make sure no new properties have been added
-        expect(yt.display).toBe('');
-        expect(yt.selectedDisplayYear).toBe('');
-        expect(yt.selectedDisplayMonth).toBe('');
-        expect(yt.selectedDisplayDay).toBe('');
-        expect(yt.selectedDayOfWeek).toBe('');
+        expect(Object.keys(yt).length).toBe(15); //Make sure no new properties have been added
         expect(yt.selectedDayMoons).toStrictEqual([]);
-        expect(yt.selectedDayNotes).toStrictEqual([]);
+        expect(yt.selectedDayNotes).toStrictEqual({normal: 0, reminders: 0});
         expect(yt.numericRepresentation).toBe(0);
         expect(yt.visibleMonth).toStrictEqual(mt);
         expect(yt.weeks).toStrictEqual([]);
         expect(yt.weekdays).toStrictEqual([wt]);
         expect(yt.showWeekdayHeaders).toStrictEqual(false);
         expect(yt.firstWeekday).toStrictEqual(0);
-        expect(yt.showClock).toStrictEqual(false);
-        expect(yt.showTimeControls).toStrictEqual(false);
-        expect(yt.showDateControls).toStrictEqual(false);
-        expect(yt.clockClass).toStrictEqual('');
-        expect(yt.currentTime).toStrictEqual(tt);
         expect(yt.currentSeasonName).toStrictEqual('');
         expect(yt.currentSeasonColor).toStrictEqual('');
         expect(yt.yearZero).toBe(0);
-        expect(yt.gameSystem).toBe(GameSystems.Other);
         expect(yt.yearNames).toStrictEqual([]);
         expect(yt.yearNamingRule).toBe(YearNamingRules.Default);
         expect(yt.yearNamesStart).toBe(0);
     });
 
     test('Calendar Template', () => {
-        expect(Object.keys(ct).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(ct).length).toBe(18); //Make sure no new properties have been added
         expect(ct.isGM).toBe(false);
         expect(ct.changeDateTime).toBe(false);
         expect(ct.addNotes).toBe(false);
-        expect(ct.isPrimary).toBe(false);
         expect(ct.currentYear).toStrictEqual(yt);
         expect(ct.showSelectedDay).toBe(false);
         expect(ct.showCurrentDay).toBe(false);
         expect(ct.showSetCurrentDate).toBe(false);
         expect(ct.notes).toStrictEqual([]);
-        expect(ct.clockClass).toStrictEqual('');
-        expect(ct.timeUnits).toStrictEqual({});
-        expect(ct.compactView).toBe(false);
-        expect(ct.compactViewShowNotes).toBe(false);
     });
 
     test('Year Config', () => {
-        const yc: YearConfig = {postfix: '', prefix: '', numericRepresentation: 0, showWeekdayHeadings: false, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: YearNamingRules.Default, yearNamesStart: 0};
-        expect(Object.keys(yc).length).toBe(9); //Make sure no new properties have been added
+        const yc: YearConfig = {id: '', postfix: '', prefix: '', numericRepresentation: 0, showWeekdayHeadings: false, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: YearNamingRules.Default, yearNamesStart: 0};
+        expect(Object.keys(yc).length).toBe(10); //Make sure no new properties have been added
         expect(yc.postfix).toBe('');
         expect(yc.prefix).toBe('');
         expect(yc.numericRepresentation).toBe(0);
@@ -189,8 +186,8 @@ describe('Interface Tests', () => {
     });
 
     test('Month Config', () => {
-        const yc: MonthConfig = {numberOfDays: 0, numericRepresentation: 0, numericRepresentationOffset: 0, name: '',intercalaryInclude: false, intercalary: false, numberOfLeapYearDays: 0, startingWeekday: null};
-        expect(Object.keys(yc).length).toBe(8); //Make sure no new properties have been added
+        const yc: MonthConfig = {id: '', numberOfDays: 0, numericRepresentation: 0, numericRepresentationOffset: 0, name: '', abbreviation: '',intercalaryInclude: false, intercalary: false, numberOfLeapYearDays: 0, startingWeekday: null};
+        expect(Object.keys(yc).length).toBe(10); //Make sure no new properties have been added
         expect(yc.name).toBe('');
         expect(yc.numberOfDays).toBe(0);
         expect(yc.numberOfLeapYearDays).toBe(0);
@@ -202,8 +199,8 @@ describe('Interface Tests', () => {
     });
 
     test('Weekday Config', () => {
-        const wc: WeekdayConfig = {name: '', numericRepresentation: 0};
-        expect(Object.keys(wc).length).toBe(2); //Make sure no new properties have been added
+        const wc: WeekdayConfig = {abbreviation: '', id: '', name: '', numericRepresentation: 0};
+        expect(Object.keys(wc).length).toBe(4); //Make sure no new properties have been added
         expect(wc.name).toBe('');
         expect(wc.numericRepresentation).toBe(0);
     });
@@ -218,8 +215,8 @@ describe('Interface Tests', () => {
     });
 
     test('Notes Template', () => {
-        const nt: NoteTemplate = {title: '', content: '', author: '', monthDisplay: '', id: '', minute: 0, hour: 0, categories: [], displayDate: '', order: 0, allDay: false, authorDisplay: '', playerVisible: true, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}};
-        expect(Object.keys(nt).length).toBe(14); //Make sure no new properties have been added
+        const nt: NoteTemplate = {title: '', content: '', author: '', monthDisplay: '', id: '', minute: 0, hour: 0, categories: [], displayDate: '', order: 0, allDay: false, authorDisplay: '', playerVisible: true, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, reminder: false};
+        expect(Object.keys(nt).length).toBe(15); //Make sure no new properties have been added
         expect(nt.title).toBe('');
         expect(nt.content).toBe('');
         expect(nt.author).toBe('');
@@ -237,8 +234,8 @@ describe('Interface Tests', () => {
     });
 
     test('Notes Config', () => {
-        const nc: NoteConfig = {year: 0, month:0, day:0, title: '', content: '', author: '', playerVisible: false, monthDisplay: '', id: '', repeats: 0, hour: 0, minute: 0, allDay: true, order: 0, categories: [], endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}};
-        expect(Object.keys(nc).length).toBe(16); //Make sure no new properties have been added
+        const nc: NoteConfig = {year: 0, month:0, day:0, title: '', content: '', author: '', playerVisible: false, monthDisplay: '', id: '', repeats: 0, hour: 0, minute: 0, allDay: true, order: 0, categories: [], endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, remindUsers: []};
+        expect(Object.keys(nc).length).toBe(17); //Make sure no new properties have been added
         expect(nc.title).toBe('');
         expect(nc.content).toBe('');
         expect(nc.author).toBe('');
@@ -259,41 +256,41 @@ describe('Interface Tests', () => {
     });
 
     test('Leap Year Config', () => {
-        const lyc: LeapYearConfig = {customMod: 0, rule: LeapYearRules.None};
-        expect(Object.keys(lyc).length).toBe(2); //Make sure no new properties have been added
+        const lyc: LeapYearConfig = {id: '', customMod: 0, rule: LeapYearRules.None};
+        expect(Object.keys(lyc).length).toBe(3); //Make sure no new properties have been added
         expect(lyc.customMod).toBe(0);
         expect(lyc.rule).toBe(LeapYearRules.None);
     });
 
     test('Time Configuration', () => {
-        const tc: TimeConfig = {gameTimeRatio:1, secondsInMinute: 0, minutesInHour: 0, hoursInDay: 0, unifyGameAndClockPause: false, updateFrequency: 1};
-        expect(Object.keys(tc).length).toBe(6); //Make sure no new properties have been added
+        const tc: TimeConfig = {id:'', gameTimeRatio:1, secondsInMinute: 0, minutesInHour: 0, hoursInDay: 0, secondsInCombatRound: 6, unifyGameAndClockPause: false, updateFrequency: 1};
+        expect(Object.keys(tc).length).toBe(8); //Make sure no new properties have been added
         expect(tc.gameTimeRatio).toBe(1);
         expect(tc.secondsInMinute).toBe(0);
         expect(tc.minutesInHour).toBe(0);
         expect(tc.hoursInDay).toBe(0);
         expect(tc.updateFrequency).toBe(1);
         expect(tc.unifyGameAndClockPause).toBe(false);
+        expect(tc.secondsInCombatRound).toBe(6);
     });
 
     test('Time Template', () => {
         expect(Object.keys(tt).length).toBe(3); //Make sure no new properties have been added
-        expect(tt.hour).toBe('');
-        expect(tt.minute).toBe('');
-        expect(tt.second).toBe('');
+        expect(tt.hour).toBe(0);
+        expect(tt.minute).toBe(0);
+        expect(tt.seconds).toBe(0);
     });
 
     test('Season Template', () => {
-        const st: SeasonTemplate = {name: '', startingMonth: 1, startingDay: 1, color: '', dayList: []};
+        const st: SeasonTemplate = {id:'', name: '', startingMonth: 1, startingDay: 1, color: '', startDateSelectorId: '', sunriseSelectorId: ''};
         expect(st.name).toBe('');
         expect(st.color).toBe('');
         expect(st.startingMonth).toBe(1);
         expect(st.startingDay).toBe(1);
-        expect(st.dayList).toStrictEqual([]);
     });
 
     test('Season Configuration', () => {
-        const sc: SeasonConfiguration = {name: '', startingMonth: 1, startingDay: 1, color: '', customColor: ''};
+        const sc: SeasonConfiguration = {id:'', name: '', startingMonth: 1, startingDay: 1, color: '', customColor: '', sunriseTime: 0, sunsetTime: 0};
         expect(sc.name).toBe('');
         expect(sc.color).toBe('');
         expect(sc.customColor).toBe('');
@@ -319,7 +316,7 @@ describe('Interface Tests', () => {
     });
 
     test('Moon Configuration', () => {
-        const mp: MoonConfiguration = {name: '', cycleLength: 0, cycleDayAdjust: 0, color: '', phases: [], firstNewMoon: {yearReset: MoonYearResetOptions.None, yearX: 0, year: 0, month: 0, day: 0}};
+        const mp: MoonConfiguration = {id:'', name: '', cycleLength: 0, cycleDayAdjust: 0, color: '', phases: [], firstNewMoon: {yearReset: MoonYearResetOptions.None, yearX: 0, year: 0, month: 0, day: 0}};
         expect(mp.name).toBe('');
         expect(mp.cycleLength).toBe(0);
         expect(mp.cycleDayAdjust).toBe(0);
@@ -329,7 +326,7 @@ describe('Interface Tests', () => {
     });
 
     test('Moon Template', () => {
-        const mp: MoonTemplate = {name: '', cycleLength: 0, cycleDayAdjust: 0, color: '', phases: [], firstNewMoon: {yearReset: MoonYearResetOptions.None, yearX: 0, year: 0, month: 0, day: 0}, dayList: []};
+        const mp: MoonTemplate = {id:'', name: '', cycleLength: 0, cycleDayAdjust: 0, color: '', phases: [], firstNewMoon: {yearReset: MoonYearResetOptions.None, yearX: 0, year: 0, month: 0, day: 0}, dayList: []};
         expect(mp.name).toBe('');
         expect(mp.cycleLength).toBe(0);
         expect(mp.cycleDayAdjust).toBe(0);

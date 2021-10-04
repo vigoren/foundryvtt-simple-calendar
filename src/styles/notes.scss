@@ -62,6 +62,20 @@
     }
   }
 
+  .reminder{
+    float: right;
+    background-color: #ffffff;
+
+    &.selected{
+      color: #ffffff;
+      background-color: #2f581d;
+    }
+
+    input{
+      display: none;
+    }
+  }
+
   .note-category{
     display: flex;
     flex-direction: row;

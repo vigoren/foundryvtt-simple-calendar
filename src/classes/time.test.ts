@@ -6,8 +6,10 @@ import "../../__mocks__/form-application";
 import "../../__mocks__/application";
 import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
+import "../../__mocks__/crypto";
 import "../../__mocks__/hooks";
 import Time from "./time";
+import SimpleCalendar from "./simple-calendar";
 
 describe('Time Tests', () => {
     let t: Time;
@@ -17,7 +19,7 @@ describe('Time Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(t).length).toBe(10); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(14); //Make sure no new properties have been added
         expect(t.hoursInDay).toBe(24);
         expect(t.minutesInHour).toBe(60);
         expect(t.secondsInMinute).toBe(60);
@@ -28,6 +30,7 @@ describe('Time Tests', () => {
         expect(t.combatRunning).toBe(false);
         expect(t.updateFrequency).toBe(1);
         expect(t.unifyGameAndClockPause).toBe(false)
+        expect(t.secondsInCombatRound).toBe(6);
     });
 
     test('Clone', () => {
@@ -35,13 +38,39 @@ describe('Time Tests', () => {
         expect(temp).toStrictEqual(t);
     });
 
+    test('To Config', () => {
+        const c = t.toConfig();
+        expect(c.id).toBeDefined();
+    });
+
+    test('Load From Settings', () => {
+        //@ts-ignore
+        t.loadFromSettings({});
+        expect(t.id).toBeDefined();
+        expect(t.hoursInDay).toBe(24);
+
+        //@ts-ignore
+        t.loadFromSettings({hoursInDay:2, minutesInHour: 3, secondsInMinute: 4, gameTimeRatio: 1});
+        expect(t.id).toBeDefined();
+        expect(t.hoursInDay).toBe(2);
+
+        //@ts-ignore
+        t.loadFromSettings({id: 'id', hoursInDay:2, minutesInHour: 3, secondsInMinute: 4, gameTimeRatio: 1, unifyGameAndClockPause: false, updateFrequency: 1, secondsInCombatRound: 5});
+        expect(t.id).toBe('id');
+        expect(t.hoursInDay).toBe(2);
+        expect(t.unifyGameAndClockPause).toBe(false);
+        expect(t.updateFrequency).toBe(1);
+        expect(t.secondsInCombatRound).toBe(5);
+    });
+
     test('Get Current Time', () => {
-        expect(t.getCurrentTime()).toStrictEqual({"hour": "00", "minute": "00", "second": "00"});
+        expect(t.getCurrentTime()).toStrictEqual({"hour": 0, "minute": 0, "seconds": 0});
         t.seconds = t.secondsPerDay - 1;
-        expect(t.getCurrentTime()).toStrictEqual({"hour": "23", "minute": "59", "second": "59"});
+        expect(t.getCurrentTime()).toStrictEqual({"hour": 23, "minute": 59, "seconds": 59});
     });
 
     test('To String', () => {
+        SimpleCalendar.instance = new SimpleCalendar();
         expect(t.toString()).toBe('00:00:00');
     });
 

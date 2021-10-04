@@ -37,14 +37,13 @@ describe('API Class Tests', () => {
     });
 
     test('Timestamp', () => {
-        expect(API.timestamp()).toBe(0);
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
         expect(API.timestamp()).toBe(5184000);
     });
 
     test('Timestamp Plus Interval', () => {
         expect(API.timestampPlusInterval(0, {})).toBe(0);
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
         year.yearZero = 0;
         expect(API.timestampPlusInterval(0, {second: 1})).toBe(1);
         expect(API.timestampPlusInterval(0, {minute: 1})).toBe(60);
@@ -69,32 +68,40 @@ describe('API Class Tests', () => {
         expect(API.timestampPlusInterval(0, {second: 7862400})).toBe(7862400);
         expect(API.timestampPlusInterval(86399, {second: 1})).toBe(86400);
 
-        year.gameSystem = GameSystems.PF2E;
-        year.generalSettings.pf2eSync = true;
-        expect(API.timestampPlusInterval(0, {day: 0})).toBe(0);
-        expect(API.timestampPlusInterval(0, {})).toBe(0);
-        expect(API.timestampPlusInterval(0, {day: 1})).toBe(86400);
+        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync = true;
+        expect(API.timestampPlusInterval(0, {day: 0})).toBe(86400);
+        expect(API.timestampPlusInterval(0, {})).toBe(86400);
+        expect(API.timestampPlusInterval(0, {day: 1})).toBe(172800);
     });
 
     test('Timestamp to Date', () => {
-        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "", yearName: "", yearZero: 0, weekdays: [], currentSeason: {}, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '', "display": {"day": "", "daySuffix": "", "month": "", "monthName": "", "weekday": "", "year": "", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:""}});
-        SimpleCalendar.instance.currentYear = year;
+        year.seasons.push(new Season('', 1, 1));
+        let tstd = API.timestampToDate(3600);
+        expect(tstd.year).toBe(1970);
+        expect(tstd.month).toBe(0);
+        expect(tstd.day).toBe(0);
+        expect(tstd.hour).toBe(1);
+        expect(tstd.minute).toBe(0);
+        expect(tstd.second).toBe(0);
+        SimpleCalendar.instance.activeCalendar.year = year;
         year.weekdays.push(new Weekday(1, 'W1'));
-        const season = new Season('', 0 ,0);
-        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "0", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
-        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
-        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '2', "display": {"day": "2", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
+        const season = year.seasons[0].clone();
+        season.startingMonth = 0;
+        season.startingDay = 0;
+        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, sunrise: 0, sunset: 0, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"date": "M1 01, 0", "day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "0", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"01:00:00"}});
+        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, sunrise: 5184000, sunset: 5184000, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"date": "M1 01, 1", "day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
+        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, sunrise: 5270400, sunset: 5270400, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '2', "display": {"date": "M1 02, 1", "day": "2", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
 
-        year.gameSystem = GameSystems.PF2E;
-        year.generalSettings.pf2eSync = true;
-        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "0", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
-        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
-        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '2', "display": {"day": "2", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
+        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync = true;
+        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, sunrise: 86400, sunset: 86400, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"date": "M1 01, 0", "day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "0", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"01:00:00"}});
+        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, sunrise: 5270400, sunset: 5270400, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"date": "M1 01, 1", "day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
+        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, sunrise: 5356800, sunset: 5356800, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '2', "display": {"date": "M1 02, 1", "day": "2", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
     });
 
     test('Date to Timestamp', () => {
-        expect(API.dateToTimestamp({})).toBe(0);
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
 
         expect(API.dateToTimestamp({})).toBe(API.timestamp());
         expect(API.dateToTimestamp({year: 2021, month: 5, day: 10, hour: 15, minute: 54, second: 29})).toBe(10480377269);
@@ -106,22 +113,14 @@ describe('API Class Tests', () => {
     });
 
     test('Seconds To Interval', () => {
-        expect(API.secondsToInterval(3600)).toStrictEqual({ year: 0, month: 0, day: 0, hour: 0, minute: 0, second: 0});
-        SimpleCalendar.instance.currentYear = year;
         expect(API.secondsToInterval(3600)).toStrictEqual({ year: 0, month: 0, day: 0, hour: 1, minute: 0, second: 0});
     });
 
     test('Clock Status', () => {
         expect(API.clockStatus()).toStrictEqual({ started: false, stopped: true, paused: false });
-        SimpleCalendar.instance.currentYear = year;
-        expect(API.clockStatus()).toStrictEqual({ started: false, stopped: true, paused: false });
     });
 
     test('Show Calendar', () => {
-        API.showCalendar();
-        expect(renderSpy).toHaveBeenCalledTimes(0);
-
-        SimpleCalendar.instance.currentYear = year;
         API.showCalendar();
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
@@ -140,19 +139,20 @@ describe('API Class Tests', () => {
         API.showCalendar({year: 0, month: 0, day: 1});
         expect(renderSpy).toHaveBeenCalledTimes(5);
 
-        year.leapYearRule.rule = LeapYearRules.Gregorian
+        SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule = LeapYearRules.Gregorian
         API.showCalendar({year: 4, month: -1, day: -1});
         expect(renderSpy).toHaveBeenCalledTimes(6);
 
-        year.months[0].days[0].current = false;
+        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
         API.showCalendar({year: 0, month: 0, day: 0});
         expect(renderSpy).toHaveBeenCalledTimes(7);
 
-        year.months[0].current = false;
+        SimpleCalendar.instance.activeCalendar.year.resetMonths();
         API.showCalendar({year: 0, month: 0, day: 0});
         expect(renderSpy).toHaveBeenCalledTimes(8);
 
-        year.months[0].current = false;
+        SimpleCalendar.instance.activeCalendar.year.resetMonths();
         API.showCalendar({year: 0, month: 10, day: 0});
         expect(renderSpy).toHaveBeenCalledTimes(9);
     });
@@ -163,7 +163,7 @@ describe('API Class Tests', () => {
 
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
 
         API.changeDate({});
         expect(renderSpy).toHaveBeenCalledTimes(0);
@@ -199,7 +199,7 @@ describe('API Class Tests', () => {
 
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
         API.setDate({year: 2021});
         expect(year.numericRepresentation).toBe(2021);
 
@@ -219,14 +219,10 @@ describe('API Class Tests', () => {
     });
 
     test('Choose Random Date', () => {
-        expect(API.chooseRandomDate()).toStrictEqual({year: 0, month: 0, day: 0, hour: 0, minute: 0, second: 0});
-
-        SimpleCalendar.instance.currentYear = year;
         expect(API.chooseRandomDate()).toBeDefined();
-
         expect(API.chooseRandomDate({year: 2000, month: 1, day: 0, hour: 0, minute: 0, second: 0},{year: 2021, month: 2, day: 1, hour: 12, minute:20, second:30})).toBeDefined();
         expect(API.chooseRandomDate({year: 2000, month: 1, day: 3, hour: 0, minute: 0, second: 0},{year: 2000, month: 1, day: 3, hour: 0, minute: 0, second: 0})).toStrictEqual({year: 2000, month: 1, day: 3, hour: 0, minute: 0, second: 0});
-        expect(API.chooseRandomDate({year: 2000, month: -1, day: -3, hour: 0, minute: 0, second: 0},{year: 2000, month: -1, day: -3, hour: 0, minute: 0, second: 0})).toStrictEqual({year: 2000, month: 1, day: 30, hour: 0, minute: 0, second: 0});
+        expect(API.chooseRandomDate({year: 2000, month: -1, day: -3, hour: 0, minute: 0, second: 0},{year: 2000, month: -1, day: -3, hour: 0, minute: 0, second: 0})).toStrictEqual({year: 2000, month: 11, day: 30, hour: 0, minute: 0, second: 0});
     });
 
     test('Is Primary GM', () => {
@@ -238,23 +234,57 @@ describe('API Class Tests', () => {
 
     test('Start Clock', () => {
         expect(API.startClock()).toBe(false);
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
         SimpleCalendar.instance.primary = true;
         expect(API.startClock()).toBe(true);
     });
 
     test('Stop Clock', () => {
-        expect(API.stopClock()).toBe(false);
-        SimpleCalendar.instance.currentYear = year;
         expect(API.stopClock()).toBe(true);
     });
 
+    test('Format Date Time', () => {
+        expect(API.formatDateTime({})).toStrictEqual({date: '1 01, 0', time: '00:00:00'});
+        expect(API.formatDateTime({year: 2021, month: 11, day: 24, hour: 10, minute: 20, second: 30})).toStrictEqual({date: '12 25, 2021', time: '10:20:30'});
+        expect(API.formatDateTime({year: 2021, month: 111, day: 124, hour: 110, minute: 120, second: 130})).toStrictEqual({date: '12 31, 2021', time: '23:59:59'});
+    });
+
+    test('Get Current Day', () => {
+        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        expect(API.getCurrentDay()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        expect(API.getCurrentDay()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current = true;
+        expect(API.getCurrentDay()).not.toBeNull();
+    });
+
+    test('Get Leap Year Configuration', () => {
+        expect(API.getLeapYearConfiguration()).toBeDefined();
+    });
+
+    test('Get Current Month', () => {
+        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        expect(API.getCurrentMonth()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        expect(API.getCurrentMonth()).not.toBeNull();
+    });
+
+    test('Get All Months', () => {
+        expect(API.getAllMonths().length).toBeGreaterThan(0);
+    });
+
+    test('Get All Moons', () => {
+        expect(API.getAllMoons().length).toBeGreaterThan(0);
+    });
+
     test('Get Current Season', () => {
-        expect(API.getCurrentSeason()).toStrictEqual({name:'', color: ''});
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
         year.seasons.push(new Season('s1', 1, 1));
-        const s = new Season('s1', 0 ,0);
-        expect(API.getCurrentSeason()).toStrictEqual(s);
+        const s = API.getCurrentSeason();
+        expect(s.name).toBe(year.seasons[0].name);
         year.months[0].days[0].current = false;
         expect(API.getCurrentSeason()).toStrictEqual({name:'', color: ''});
         year.months[0].current = false;
@@ -262,17 +292,65 @@ describe('API Class Tests', () => {
     });
 
     test('Get All Seasons', () => {
-        expect(API.getAllSeasons().length).toBe(0);
-        SimpleCalendar.instance.currentYear = year;
+        SimpleCalendar.instance.activeCalendar.year = year;
         year.seasons.push(new Season('s1', 1, 1));
         year.seasons.push(new Season('s1', 122, 1));
         expect(API.getAllSeasons().length).toBe(2);
     });
 
-    test('Calendar Weather Import', async () => {
-        let r = await API.calendarWeatherImport();
+    test('Get Time Configuration', () => {
+        expect(API.getTimeConfiguration()).toBeDefined();
+    });
+
+    test('Get Current Weekday', () => {
+        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        expect(API.getCurrentWeekday()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        expect(API.getCurrentWeekday()).toBeNull();
+
+        SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current = true;
+        expect(API.getCurrentWeekday()).not.toBeNull();
+    });
+
+    test('Get All Weekdays', () => {
+        expect(API.getAllWeekdays().length).toBeGreaterThan(0);
+    });
+
+    test('Get Current Year', () => {
+        expect(API.getCurrentYear()).toBeDefined();
+    });
+
+    test('Configure Calendar', async () => {
+        //@ts-ignore
+        game.user.isGM = false;
+        let r = await API.configureCalendar(API.Calendars.Harptos);
         expect(r).toBe(false);
 
+        SimpleCalendar.instance.activeCalendar.year = year;
+        r = await API.configureCalendar(API.Calendars.Harptos);
+        expect(r).toBe(false);
+
+        //@ts-ignore
+        game.user.isGM = true;
+        r = await API.configureCalendar(123);
+        expect(r).toBe(false);
+
+        r = await API.configureCalendar(API.Calendars.Harptos);
+        expect(r).toBe(true);
+        expect((<Game>game).settings.set).toHaveBeenCalledTimes(16);
+
+        r = await API.configureCalendar({asd: 1});
+        expect(r).toBe(true);
+
+        r = await API.configureCalendar({"currentDate":{"year":811,"month":4,"day":13,"seconds":5400},"generalSettings":{"gameWorldTimeIntegration":"mixed","showClock":true,"pf2eSync":true,"permissions":{"viewCalendar":{"player":true,"trustedPlayer":true,"assistantGameMaster":true},"addNotes":{"player":false,"trustedPlayer":false,"assistantGameMaster":false},"reorderNotes":{"player":false,"trustedPlayer":false,"assistantGameMaster":false},"changeDateTime":{"player":false,"trustedPlayer":false,"assistantGameMaster":false}}},"leapYearSettings":{"rule":"none","customMod":0},"monthSettings":[{"name":"Torsmånad","numericRepresentation":1,"numericRepresentationOffset":0,"numberOfDays":29,"numberOfLeapYearDays":29,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Göjemånad","numericRepresentation":2,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Ugglemånad","numericRepresentation":3,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Gräsmånad","numericRepresentation":4,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Blomstermånad","numericRepresentation":5,"numericRepresentationOffset":0,"numberOfDays":28,"numberOfLeapYearDays":28,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Sommarmånad","numericRepresentation":6,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Hömånad","numericRepresentation":7,"numericRepresentationOffset":0,"numberOfDays":32,"numberOfLeapYearDays":32,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Skördemånad","numericRepresentation":8,"numericRepresentationOffset":0,"numberOfDays":29,"numberOfLeapYearDays":29,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Höstmånad","numericRepresentation":9,"numericRepresentationOffset":0,"numberOfDays":27,"numberOfLeapYearDays":27,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Slakmånad","numericRepresentation":10,"numericRepresentationOffset":0,"numberOfDays":29,"numberOfLeapYearDays":29,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"Vintermånad","numericRepresentation":11,"numericRepresentationOffset":0,"numberOfDays":32,"numberOfLeapYearDays":32,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null}],"moonSettings":[{"name":"Selia","cycleLength":33,"firstNewMoon":{"yearReset":"none","yearX":0,"year":810,"month":1,"day":4},"phases":[{"name":"Nymåne","length":1,"icon":"new","singleDay":true},{"name":"Första kvarten","length":7.25,"icon":"waxing-crescent","singleDay":false},{"name":"Halvmåne","length":1,"icon":"first-quarter","singleDay":true},{"name":"Andra kvarten","length":7.25,"icon":"waxing-gibbous","singleDay":false},{"name":"Fullmåne","length":1,"icon":"full","singleDay":true},{"name":"Tredje kvarten","length":7.25,"icon":"waning-gibbous","singleDay":false},{"name":"Halvmåne","length":1,"icon":"last-quarter","singleDay":true},{"name":"Sista kvarten","length":7.25,"icon":"waning-crescent","singleDay":false}],"color":"#ffffff","cycleDayAdjust":0},{"name":"Demira","cycleLength":328,"firstNewMoon":{"yearReset":"none","yearX":0,"year":810,"month":3,"day":22},"phases":[{"name":"Nymåne","length":1,"icon":"new","singleDay":true},{"name":"Första kvarten","length":81,"icon":"waxing-crescent","singleDay":false},{"name":"Halvmåne","length":1,"icon":"first-quarter","singleDay":true},{"name":"Andra kvarten","length":81,"icon":"waxing-gibbous","singleDay":false},{"name":"Fullmåne","length":1,"icon":"full","singleDay":true},{"name":"Tredje kvarten","length":81,"icon":"waning-gibbous","singleDay":false},{"name":"Halvmåne","length":1,"icon":"last-quarter","singleDay":true},{"name":"Sista kvarten","length":81,"icon":"waning-crescent","singleDay":false}],"color":"#ff0d00","cycleDayAdjust":0}],"noteCategories":[{"name":"Helgdag","color":"#148e94","textColor":"#FFFFFF"}],"seasonSettings":[{"name":"Sommar","startingMonth":5,"startingDay":5,"color":"#f3fff3"},{"name":"Höst","startingMonth":9,"startingDay":9,"color":"#fff7f2"},{"name":"Vinter","startingMonth":11,"startingDay":10,"color":"#f2f8ff"},{"name":"Vår","startingMonth":3,"startingDay":14,"color":"#fffce8"}],"timeSettings":{"hoursInDay":24,"minutesInHour":60,"secondsInMinute":60,"gameTimeRatio":5,"unifyGameAndClockPause":false,"updateFrequency":1},"weekdaySettings":[{"name":"Manadagher","numericRepresentation":1},{"name":"Tirsdagher","numericRepresentation":2},{"name":"Óðinsdagher","numericRepresentation":3},{"name":"Torsdagher","numericRepresentation":4},{"name":"Frejdagher","numericRepresentation":5},{"name":"Rûndagher","numericRepresentation":6},{"name":"Soldagher","numericRepresentation":7}],"yearSettings":{"numericRepresentation":811,"prefix":"","postfix":"E.C","showWeekdayHeadings":true,"firstWeekday":0,"yearZero":0,"yearNames":[],"yearNamingRule":"default","yearNamesStart":0}});
+        expect(r).toBe(true);
+
+        //@ts-ignore
+        game.user.isGM = false;
+    });
+
+    test('Calendar Weather Import', async () => {
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce({
             months: [{
                 name: 'Month 1',
@@ -299,8 +377,8 @@ describe('API Class Tests', () => {
             events: [],
             reEvents: []
         });
-        SimpleCalendar.instance.currentYear = year;
-        r = await API.calendarWeatherImport();
+        SimpleCalendar.instance.activeCalendar.year = year;
+        const r = await API.calendarWeatherImport();
         expect(r).toBe(true);
     });
 
