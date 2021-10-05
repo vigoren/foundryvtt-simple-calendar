@@ -1,5 +1,19 @@
 # Change Log
 
+##v1.3.68 - Translation Updates and Bug Fixes
+
+### Bug Fixes
+
+- Fixed some styling issues with dialogs in the Warhammer Fantasy 4E system.
+
+### Translation Updates
+
+- Updates to the Korean translation thanks to [drdwing](https://github.com/drdwing)!
+- Updates to the Traditional Chinese translation thanks to [benwater12](https://github.com/benwater12)!
+- Updates to the Spanish translation thanks to [lozalojo](https://github.com/lozalojo)!
+- Updates to the Czech translation thanks to [robertjunek](https://github.com/robertjunek)!
+- Updates to the French translation thanks to [JDR-Ninja](https://github.com/JDR-Ninja)!
+
 ## v1.3.66 - Note Searching and Bug Fixes
 
 ### Note Searching
