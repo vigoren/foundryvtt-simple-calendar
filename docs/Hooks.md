@@ -18,7 +18,7 @@ Hook Name|Value|Description
 [DateTimeChange](#datetime-change)|`"simple-calendar-date-time-change"`|This hook is emitted any time the current date is updated.
 [ClockStartStop](#clock-startstop)|`"simple-calendar-clock-start-stop"`|This hook is emitted any time the clock is started/stopped or paused.
 [PrimaryGM](#is-primary-gm)|`"simple-calendar-primary-gm"`|This hook is emitted when the current user is promoted to the primary GM role.
-[Ready]()|`"simple-calendar-ready"`|This hook is emitted when Simple Calendar is fully initialized and ready to take commands.<br/>**Note**: For GM's this can take a little longer as some additional checks are done to see which GM will be considered the primary GM
+[Ready](#ready)|`"simple-calendar-ready"`|This hook is emitted when Simple Calendar is fully initialized and ready to take commands.<br/>**Note**: For GM's this can take a little longer as some additional checks are done to see which GM will be considered the primary GM
 
 ## Date/Time Change
 
