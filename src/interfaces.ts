@@ -495,6 +495,7 @@ export namespace SimpleCalendarSocket{
 
     export interface SimpleCalendarEmitHook{
         hook?: SimpleCalendarHooks;
+        param?: any;
     }
 }
 

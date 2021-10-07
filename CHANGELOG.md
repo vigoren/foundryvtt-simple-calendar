@@ -1,6 +1,6 @@
 # Change Log
 
-##v1.3.68 - Translation Updates and Bug Fixes
+##v1.3.73 - Translation Updates, Bug Fixes, API Changes
 
 ### Bug Fixes
 
@@ -12,7 +12,19 @@
 - Updates to the Traditional Chinese translation thanks to [benwater12](https://github.com/benwater12)!
 - Updates to the Spanish translation thanks to [lozalojo](https://github.com/lozalojo)!
 - Updates to the Czech translation thanks to [robertjunek](https://github.com/robertjunek)!
+- Updates to the Protugues (Brasil) translation thanks to [castanhocorreia](https://github.com/castanhocorreia)!
 - Updates to the French translation thanks to [JDR-Ninja](https://github.com/JDR-Ninja)!
+
+### API Changes
+
+- Added a new hook `SimpleCalendar.Hooks.Ready` that is emitted when Simple Calendar is ready to go.
+  - This hook can take a little longer for GM's to emit as there are some additional checks done to see which GM will be considered the primary GM.
+- Updated the passed parameter for the hook `SimpleCalendar.Hooks.DateTimeChange` to include a new property, `diff`. This property contains the difference, in seconds, from the previous date and time to the new date and time.
+- The function `SimpleCalendar.api.timestampToDate` has 1 new property `midday`. This value represents the timestamp for midday of the day from the passed in timestamp.
+- Added a new property `SimpleCalendar.api.PresetTimeOfDay`. This property is used to set the time of day based on a list of preset times. Right now the options are: Midnight, Sunrise, Midday, Sunset.
+- Added a new functions `SimpleCalendar.api.advanceTimeToPreset(preset)`. This function allows you to advance to the time and date of the next preset time of day. Examples:
+  - Current time is 11am, advancing to the next sunset would change the time be 6pm the same day.
+  - Current Time is 11am, advancing to the next sunrise would change the time and date to 6am the next day.
 
 ## v1.3.66 - Note Searching and Bug Fixes
 

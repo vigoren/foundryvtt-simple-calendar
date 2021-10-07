@@ -146,6 +146,13 @@ export enum MoonYearResetOptions {
     XYears = 'x-years'
 }
 
+export enum PresetTimeOfDay {
+    Midnight = 'midnight',
+    Sunrise = 'sunrise',
+    Midday = 'midday',
+    Sunset = 'sunset'
+}
+
 /**
  * Common Game Systems that can be used for system specific integrations
  */
@@ -160,7 +167,8 @@ export enum GameSystems {
 export enum SimpleCalendarHooks {
     DateTimeChange = 'simple-calendar-date-time-change',
     ClockStartStop = 'simple-calendar-clock-start-stop',
-    PrimaryGM = 'simple-calendar-primary-gm'
+    PrimaryGM = 'simple-calendar-primary-gm',
+    Ready = 'simple-calendar-ready'
 }
 
 export enum TimeKeeperStatus {

@@ -295,7 +295,7 @@ export default class Month extends ConfigurationItemBase {
         this.resetDays(setting);
         if(day < 0 || day >= numberOfDays){
             this.days[numberOfDays - 1][verifiedSetting] = true;
-        } else {
+        } else if(this.days[day]){
             this.days[day][verifiedSetting] = true;
         }
     }

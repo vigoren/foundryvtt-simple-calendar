@@ -1,4 +1,4 @@
-# Hooks
+ # Hooks
 
 Here are all the hooks that Simple Calendar emits and when they are emitted.
 
@@ -18,6 +18,7 @@ Hook Name|Value|Description
 [DateTimeChange](#datetime-change)|`"simple-calendar-date-time-change"`|This hook is emitted any time the current date is updated.
 [ClockStartStop](#clock-startstop)|`"simple-calendar-clock-start-stop"`|This hook is emitted any time the clock is started/stopped or paused.
 [PrimaryGM](#is-primary-gm)|`"simple-calendar-primary-gm"`|This hook is emitted when the current user is promoted to the primary GM role.
+[Ready]()|`"simple-calendar-ready"`|This hook is emitted when Simple Calendar is fully initialized and ready to take commands.<br/>**Note**: For GM's this can take a little longer as some additional checks are done to see which GM will be considered the primary GM
 
 ## Date/Time Change
 
@@ -37,6 +38,7 @@ When this hook is emitted it will pass a data object that contains information a
 Property Name|Type|Default Value|Description
 -------------|----|---------|------------
 date|[Date Object](API.md#date-object)|`{}`|This contains information about the current date of the calendar.
+diff|Number|0|This contains the difference in seconds from the previous date and time to this new date and time.
 moons|Array<[Moon Object](API.md#moon-object)>|`[]`|This contains information about the moon(s) phases for the current date.
 year|[Year Object](#year-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
 month|[Month Object](#month-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
@@ -149,6 +151,7 @@ This is an example of the data that is passed with this hook:
       "time": "00:15:30"
     }
   },
+  "diff": 1,
   "moons": [
     {
       "name": "Moon",
@@ -271,4 +274,28 @@ This is an example of the data that is passed with this hook:
 {
   "isPrimaryGM": true
 }
+```
+
+# Ready
+
+### When it is emitted
+
+This event is emitted when Simple Calendar is fully initialized and ready to use.
+
+For GMs this will happen up to 5 seconds after loading the game as additional checks are done to see which GM is to be considered the primary GM.
+
+### What is passed
+
+No data is passed when this hook is fired.
+
+### Examples
+
+#### Hooking to
+
+This is an example of how to listen for the hook:
+
+```javascript
+Hooks.on(SimpleCalendar.Hooks.Ready, () => {
+    console.log(`Simple Calendar is ready!`);
+});
 ```

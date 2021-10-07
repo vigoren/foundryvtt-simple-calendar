@@ -294,10 +294,10 @@ describe('Simple Calendar Class Tests', () => {
         d.type = SocketTypes.emitHook;
         d.data = {hook: SimpleCalendarHooks.DateTimeChange};
         await SimpleCalendar.instance.processSocket(d);
-        expect(Hooks.callAll).toHaveBeenCalledTimes(13);
+        expect(Hooks.callAll).toHaveBeenCalledTimes(17);
         d.data = {};
         await SimpleCalendar.instance.processSocket(d);
-        expect(Hooks.callAll).toHaveBeenCalledTimes(13);
+        expect(Hooks.callAll).toHaveBeenCalledTimes(17);
     });
 
     test('Get Data', async () => {

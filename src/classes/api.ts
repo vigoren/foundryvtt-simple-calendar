@@ -13,10 +13,14 @@ import {GameSettings} from "./game-settings";
 import {
     GameSystems,
     LeapYearRules,
-    ModuleName, MoonIcons, MoonYearResetOptions,
+    ModuleName,
+    MoonIcons,
+    MoonYearResetOptions,
     PredefinedCalendars,
     SettingNames,
-    TimeKeeperStatus, YearNamingRules
+    PresetTimeOfDay,
+    TimeKeeperStatus,
+    YearNamingRules
 } from "../constants";
 import PF2E from "./systems/pf2e";
 import Utilities from "./utilities";
@@ -52,6 +56,10 @@ export default class API{
      * The year naming rules
      */
     public static YearNamingRules = YearNamingRules;
+    /**
+     * The sun positions
+     */
+    public static PresetTimeOfDay = PresetTimeOfDay;
 
     /**
      * Get the timestamp for the current year
@@ -128,6 +136,7 @@ export default class API{
             yearZero: 0,
             sunrise: 0,
             sunset: 0,
+            midday: 0,
             weekdays: <string[]>[],
             showWeekdayHeadings: true,
             currentSeason: {},
@@ -175,6 +184,7 @@ export default class API{
         result.isLeapYear = SimpleCalendar.instance.activeCalendar.year.leapYearRule.isLeapYear(result.year);
         result.sunrise = SimpleCalendar.instance.activeCalendar.year.getSunriseSunsetTime(result.year, month, day, true);
         result.sunset = SimpleCalendar.instance.activeCalendar.year.getSunriseSunsetTime(result.year, month, day, false);
+        result.midday = this.dateToTimestamp({ year: result.year, month: result.month, day: result.day, hour: 0, minute: 0, second: 0 }) + Math.floor(SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay / 2);
 
         // Display Stuff
         // Legacy - Depreciated first stable release of Foundry 9
@@ -378,6 +388,49 @@ export default class API{
             GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
         }
         return false;
+    }
+
+    /**
+     * Advances to the next time that matches the preset time of day (same day or next)
+     * @param preset
+     */
+    public static advanceTimeToPreset(preset: PresetTimeOfDay){
+        if(SimpleCalendar.instance.activeCalendar.canUser((<Game>game).user, SimpleCalendar.instance.activeCalendar.generalSettings.permissions.changeDateTime)) {
+            let timeOfDay = 0;
+
+            if (preset === PresetTimeOfDay.Sunrise || preset === PresetTimeOfDay.Sunset) {
+                let month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+                if (month) {
+                    let day = month.getDay();
+                    if (day) {
+                        timeOfDay = SimpleCalendar.instance.activeCalendar.year.getSunriseSunsetTime(SimpleCalendar.instance.activeCalendar.year.numericRepresentation, month, day, preset === PresetTimeOfDay.Sunrise, false);
+                        if (SimpleCalendar.instance.activeCalendar.year.time.seconds >= timeOfDay) {
+                            SimpleCalendar.instance.activeCalendar.year.changeDay(1, 'current');
+                            month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+                            if (month) {
+                                day = month.getDay();
+                                if (day) {
+                                    timeOfDay = SimpleCalendar.instance.activeCalendar.year.getSunriseSunsetTime(SimpleCalendar.instance.activeCalendar.year.numericRepresentation, month, day, preset === PresetTimeOfDay.Sunrise, false);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (preset === PresetTimeOfDay.Midday) {
+                timeOfDay = Math.floor(SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay / 2);
+                if (SimpleCalendar.instance.activeCalendar.year.time.seconds >= timeOfDay) {
+                    SimpleCalendar.instance.activeCalendar.year.changeDay(1, 'current');
+                }
+            } else if (preset === PresetTimeOfDay.Midnight) {
+                SimpleCalendar.instance.activeCalendar.year.changeDay(1, 'current');
+            }
+            SimpleCalendar.instance.activeCalendar.year.time.seconds = timeOfDay;
+            GameSettings.SaveCurrentDate(SimpleCalendar.instance.activeCalendar.year).catch(Logger.error);
+            SimpleCalendar.instance.activeCalendar.syncTime(true).catch(Logger.error);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
