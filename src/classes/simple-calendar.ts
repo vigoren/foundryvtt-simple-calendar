@@ -130,6 +130,8 @@ export default class SimpleCalendar extends Application{
             };
             this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
             GameSockets.emit(socket).catch(Logger.error);
+        } else {
+            Hook.emit(SimpleCalendarHooks.Ready);
         }
         GameSockets.emit({type: SocketTypes.checkClockRunning, data: {}}).catch(Logger.error);
     }
@@ -150,6 +152,7 @@ export default class SimpleCalendar extends Application{
         await this.timeKeepingCheck();
         this.updateApp();
         Hook.emit(SimpleCalendarHooks.PrimaryGM);
+        Hook.emit(SimpleCalendarHooks.Ready);
     }
 
     /**
@@ -192,6 +195,7 @@ export default class SimpleCalendar extends Application{
                         Logger.debug('A primary GM is all ready present.');
                         window.clearTimeout(this.primaryCheckTimeout);
                         this.primary = false;
+                        Hook.emit(SimpleCalendarHooks.Ready);
                     } else {
                         Logger.debug('We are all ready waiting to take over as primary.');
                     }
@@ -237,7 +241,7 @@ export default class SimpleCalendar extends Application{
         } else if(data.type === SocketTypes.emitHook){
             const hook = (<SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).hook
             if(hook){
-                Hook.emit(hook);
+                Hook.emit(hook, (<SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).param);
             }
         }
     }

@@ -9,9 +9,11 @@ Simple Calendar exposes a variable called `SimpleCalendar`, all of these API fun
 - [LeapYearRules](#simplecalendarapileapyearrules)
 - [MoonIcons](#simplecalendarapimoonicons)
 - [MoonYearResetOptions](#simplecalendarapimoonyearresetoptions)
+- [PresetTimeOfDay](#simplecalendarapipresettimeofday)
 - [YearNamingRules](#simplecalendarapiyearnamingrules)
 
 ## Functions
+- [advanceTimeToPreset](#simplecalendarapiadvancetimetopresetpreset)
 - [changeDate](#simplecalendarapichangedateinterval)
 - [chooseRandomDate](#simplecalendarapichooserandomdatestartdate-enddate)
 - [clockStatus](#simplecalendarapiclockstatus)
@@ -85,6 +87,15 @@ This is an enum that contains the options for when a moons first new moon year s
 - **Leap Year**: The moons first new moon year is reset every leap year.
 - **X Years**: The moons first new moon year is reset every X years.
 
+## `SimpleCalendar.api.PresetTimeOfDay`
+
+This is an enum that contains the different preset times that can be used to set the time of day. Options are:
+
+- **Midnight**: The beginning of the day. Equates to time 0.
+- **Sunrise**: When the sun rises above the horizon. Equates to the sunrise time as defined by the seasons.
+- **Midday**: The middle of the day. Equates to the middle of the day, 12 for most calendars.
+- **Sunset**: When the sun sets below the horizon. Equates to the sunset time as defined by the seasons.
+
 ## `SimpleCalendar.api.YearNamingRules`
 
 This is an enum that contains the options for how year names are applied to years. Options are:
@@ -94,6 +105,36 @@ This is an enum that contains the options for how year names are applied to year
 - **Random**: Every year will be giving a random year name from the list.
 
 # Functions
+
+## `SimpleCalendar.api.advanceTimeToPreset(preset)`
+
+Advance the date and time to match the next preset time.
+
+**Important**: This function can only be run by users who have permission to change the date in Simple Calendar.
+
+### Parameters
+
+Parameter|Type|Default Value|Description
+---------|-----|-------------|-----------
+preset|[PresetTimeOfDay](#simplecalendarapipresettimeofday)|undefined|The preset time that is used to set the time of day.
+
+### Returns
+
+This function will return true if the date was set successfully, false if it was not.
+
+### Examples
+
+```javascript
+//Assuming the curent time is 11am, set the time to the next sunset
+//Will result in the date staying the same but the time changing to 6pm
+SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunset);
+
+//Assuming the current time is 11am, set the time to the next sunrise
+//Will result in the date advancing by 1 day and the time changing to 6am
+SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunrise);
+```
+
+<hr/>
 
 ## `SimpleCalendar.api.changeDate(interval)`
 
@@ -1116,6 +1157,7 @@ dayOffset|Number|0|The number of days that the months days are offset by.
 display|[Date Display Object](#date-display-object)|{}|All of the strings associated with displaying the date are put here
 hour|Number|0|The hour represented in the timestamp.
 isLeapYear|Boolean|false|If this date falls on a leap year.
+midday|Number|0|The timestamp of when midday occurs for this date.
 minute|Number|0|The minute represented in the timestamp.
 month|Number|0|The index of the month represented in the timestamp.
 monthName|String|""|**Depreciated** Please use display.monthName instead. This will be removed when Foundry v9 Stable is released.

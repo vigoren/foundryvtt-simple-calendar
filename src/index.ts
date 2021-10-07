@@ -31,3 +31,4 @@ Hooks.on("pauseGame", SimpleCalendar.instance.gamePaused.bind(SimpleCalendar.ins
 Logger.debugMode = false;
 
 //Hooks.on(SimpleCalendarHooks.DateTimeChange, (...args: any) => {console.log(...args);});
+//Hooks.on(SimpleCalendarHooks.Ready, (...args: any) => {console.log('SC Ready!');});

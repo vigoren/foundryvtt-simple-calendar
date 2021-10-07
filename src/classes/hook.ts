@@ -8,12 +8,14 @@ export default class Hook{
     /**
      * Emit a specific hook for other things to listen too. Data is put together within this function.
      * @param {SimpleCalendarHooks} hook The hook to emit
+     * @param param
      */
-    public static emit(hook: SimpleCalendarHooks){
+    public static emit(hook: SimpleCalendarHooks, param: any = undefined){
         let data: any = {};
         if(SimpleCalendar.instance){
             if(hook === SimpleCalendarHooks.DateTimeChange){
                 data['date'] = API.timestampToDate(SimpleCalendar.instance.activeCalendar.year.toSeconds());
+                data['diff'] = param;
                 data['moons'] = [];
 
                 data['season'] = {};

@@ -122,7 +122,8 @@ export default class TimeKeeper{
     private interval(){
         this.updateStatus();
         if(this.status === TimeKeeperStatus.Started){
-            const dayChange = SimpleCalendar.instance.activeCalendar.year.time.changeTime(0, 0, SimpleCalendar.instance.activeCalendar.year.time.gameTimeRatio * this.updateFrequency);
+            const changeAmount = SimpleCalendar.instance.activeCalendar.year.time.gameTimeRatio * this.updateFrequency;
+            const dayChange = SimpleCalendar.instance.activeCalendar.year.time.changeTime(0, 0, changeAmount);
             if(dayChange !== 0){
                 SimpleCalendar.instance.activeCalendar.year.changeDay(dayChange);
                 SimpleCalendar.instance.updateApp();
@@ -135,7 +136,7 @@ export default class TimeKeeper{
                     SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
                 }
             }
-            Hook.emit(SimpleCalendarHooks.DateTimeChange);
+            Hook.emit(SimpleCalendarHooks.DateTimeChange, changeAmount);
         }
     }
 

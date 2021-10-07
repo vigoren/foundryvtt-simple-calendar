@@ -286,5 +286,8 @@ describe('Month Class Tests', () => {
         monthLy.updateDay(0, false, 'selected');
         expect(monthLy.days[29].current).toBe(true);
         expect(monthLy.days[0].selected).toBe(true);
+
+        monthLy.days = [];
+        monthLy.updateDay(0, false, 'selected');
     });
 });

@@ -26,6 +26,7 @@ import Moon from "./moon";
 import Hook from "./hook";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import GameSockets from "./game-sockets";
+import Utilities from "./utilities";
 
 export class GameSettings {
     /**
@@ -379,8 +380,9 @@ export class GameSettings {
                     if(currentDate.year !== newDate.year || currentDate.month !== newDate.month || currentDate.day !== newDate.day || currentDate.seconds !== newDate.seconds){
                         await (<Game>game).settings.set(ModuleName, SettingNames.CurrentDate, newDate);
                         if(emitHook && SimpleCalendar.instance){
-                            await GameSockets.emit(<SimpleCalendarSocket.Data>{type: SocketTypes.emitHook, data: <SimpleCalendarSocket.SimpleCalendarEmitHook>{hook: SimpleCalendarHooks.DateTimeChange}});
-                            Hook.emit(SimpleCalendarHooks.DateTimeChange);
+                            const diff = year.toSeconds() - (Utilities.ToSeconds(currentDate.year, currentDate.month, currentDate.day, false) + currentDate.seconds);
+                            await GameSockets.emit(<SimpleCalendarSocket.Data>{type: SocketTypes.emitHook, data: <SimpleCalendarSocket.SimpleCalendarEmitHook>{hook: SimpleCalendarHooks.DateTimeChange, param: diff}});
+                            Hook.emit(SimpleCalendarHooks.DateTimeChange, diff);
                         }
                         await GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.noteReminders, data: { justTimeChange: currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day }});
                         if(SimpleCalendar.instance){
