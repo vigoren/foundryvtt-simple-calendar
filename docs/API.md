@@ -127,11 +127,11 @@ This function will return true if the date was set successfully, false if it was
 ```javascript
 //Assuming the curent time is 11am, set the time to the next sunset
 //Will result in the date staying the same but the time changing to 6pm
-SimpleCalendar.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunset);
+SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunset);
 
 //Assuming the current time is 11am, set the time to the next sunrise
 //Will result in the date advancing by 1 day and the time changing to 6am
-SimpleCalendar.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunrise);
+SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunrise);
 ```
 
 <hr/>
