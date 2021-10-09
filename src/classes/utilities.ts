@@ -178,17 +178,20 @@ export default class Utilities{
                 return dateObj.hour >= halfDay? "pm" : "am";
             }
         };
-        const literals: string[] = [];
-        // Make literals inactive by replacing them with @@@
-        mask = mask.replace(literal, function($0, $1) {
-            literals.push($1);
-            return "@@@";
-        });
-        // Apply formatting rules
-        mask = mask.replace(token, key => formatFlags[key](date) );
-        // Inline literal values back into the formatted value
-        return mask.replace(/@@@/g, () => <string>literals.shift());
-
+        try{
+            const literals: string[] = [];
+            // Make literals inactive by replacing them with @@@
+            mask = mask.replace(literal, function($0, $1) {
+                literals.push($1);
+                return "@@@";
+            });
+            // Apply formatting rules
+            mask = mask.replace(token, key => formatFlags[key](date) );
+            // Inline literal values back into the formatted value
+            return mask.replace(/@@@/g, () => <string>literals.shift());
+        } catch (e: any){
+            return '';
+        }
     }
 
     /**
@@ -207,7 +210,7 @@ export default class Utilities{
         if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
             const newYZ = PF2E.newYearZero();
             if(newYZ !== undefined){
-                SimpleCalendar.instance.activeCalendar.year.yearZero = 1875;
+                SimpleCalendar.instance.activeCalendar.year.yearZero = newYZ;
                 daysSoFar = yearClass.dateToDays(year, month, day, true, true);
             }
             daysSoFar++;
