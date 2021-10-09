@@ -19,16 +19,14 @@ A couple of issues with keeping Simple Calendar and the Pathfinder 2E World Time
 There were 2 main issues with keeping this date theme and Simple Calendar in sync.
 
 - The PF2E World Clock uses the Gregorian leap year rules, which Simple Calendar also uses for this calendar. Pathfinder 2E uses the Julian leap year system (leap year every 4 years). This means that both Calendars were calculating leap years incorrectly.
-- The PF2E World Clock also stores time differently (they use a smaller year then add 2700 to it when displaying), this was causing the 2 calendars to think leap years were happening at different times causing the sync to be out by a day in specific scenarios.
+- The PF2E World Clock also stores time differently (they use a smaller year then add 2700 to it when displaying), this is causing the 2 calendars to think leap years were happening at different times causing the sync to be out by a day in specific scenarios.
 
 
 **PF2E Earth Date Theme**
 
 This date theme suffers similar issues as the Golarian Date theme
 
-- The PF2E World Clock also stores time differently (they use a larger year then subtract 95 from it when displaying), this was causing the 2 calendars to think leap years were happening at different times causing the sync to be out by a day in specific scenarios.
-- Since the leap year rules are the same but the calendars think the leap years are different, there are instances where using the PF2E world clock to advance the day can cause March 1st to repeat then skip March 2nd. There isn't anything I can do about this, so I recommend adjusting the date with Simple Calendar rather than the world clock.
-- When adjusting the date there are instances where the PF2E clock thinks it is a leap year when it is not and Feb 29th is skipped in the PF2E World clock, this is great for visual changes but may cause 2 days worth of time to pass which could mess up timed status effects.
+- The PF2E World Clock also stores time differently (they use a larger year then subtract 95 from it when displaying), this is causing the 2 calendars to think leap years were happening at different times causing the sync to be out by a day in specific scenarios.
 
 
 **PF2E Unthemed Date Theme**
@@ -56,6 +54,15 @@ In the meantime, these are the changes I have implemented to create a "close as 
     - **_PF2E Golarion Date Theme_**: _Starting Weekday_ will be set to Fireday.
     - **_PF2E Earth Date Theme_**: _Starting Weekday_ is not adjusted from the default Moonday. It is too complicated to ensure the day of the week is always the same. 
     - **_PF2E Unthemed Date Theme_**: _Starting Weekday_ will be set to Thursday.
+
+#### Issues Without a Solution
+
+Even after these changes there are still scenarios where issues will arise that I can not currently fix, fortunately they are all in one PF2E Date Theme so the impact should be small.
+
+- For the PF2E Date Theme Earth (Gregorian):
+  - On occasion when advancing the day with the PF2E World Clock controls, sometimes March 1st will repeat itself.
+  - On occasion when advancing the day with the Simple Calendar controls, Feb 29th will be skipped in the PF2E world clock which may cause timed status effects to register that 2 days have passed.
+  - The day of the week that dates fall on will never match between the two calendars.
 
 #### TLDR;
 
