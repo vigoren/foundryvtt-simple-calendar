@@ -1,6 +1,7 @@
 import SimpleCalendar from "../simple-calendar";
 import LeapYear from "../leap-year";
 import {GameSystems, LeapYearRules} from "../../constants";
+import Utilities from "../utilities";
 
 /**
  * System specific functionality for Pathfinder 2E
@@ -37,10 +38,10 @@ export default class PF2E {
                     seconds += (SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay * (changeFromSC? 15 : 16));
                 }
                 //@ts-ignore
-                else if((<Game>game).pf2e.worldClock.dateTheme === 'CE' && !changeFromSC){
+                else if(((<Game>game).pf2e.worldClock.dateTheme === 'CE' || (<Game>game).pf2e.worldClock.dateTheme === 'AD') && !changeFromSC){
                     seconds += SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay;
                 }
-                // @ts-ignore
+                /*// @ts-ignore
                 else if((<Game>game).pf2e.worldClock.dateTheme === 'AD'){
                     const currentYear = SimpleCalendar.instance.activeCalendar.year.numericRepresentation;
                     //Check to see if the PF2E World clock thinks that this year is a leap year or not
@@ -82,7 +83,7 @@ export default class PF2E {
                         seconds += SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay;
                     }
 
-                }
+                }*/
             }
         }
         return seconds;
@@ -106,7 +107,7 @@ export default class PF2E {
             }
             // @ts-ignore
             else if(game.pf2e.worldClock.dateTheme === 'AR'){
-                yearZero = 2700;
+                yearZero = Utilities.compareSemanticVersions((<Game>game).system.data.version, "2.14.4.8167") > 0 ? 0 : 2700;
             }
         }
         return yearZero;

@@ -49,6 +49,22 @@ export default class Utilities{
         return [undefined,GameSettings.Localize('FSC.OrdinalSuffix.st'),GameSettings.Localize('FSC.OrdinalSuffix.nd'),GameSettings.Localize('FSC.OrdinalSuffix.rd')][n%100>>3^1&&n%10]||GameSettings.Localize('FSC.OrdinalSuffix.th');
     }
 
+    public static compareSemanticVersions(v1: string, v2: string){
+        const a = v1.split('.'),
+            b = v2.split('.'),
+            len = Math.max(a.length, b.length);
+
+        for (let i = 0; i < len; i++) {
+            if ((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) {
+                return 1;
+            } else if ((b[i] && !a[i] && parseInt(b[i]) > 0) || (parseInt(a[i]) < parseInt(b[i]))) {
+                return -1;
+            }
+        }
+
+        return 0;
+    }
+
     /**
      * Finds the "best" contrast color for the passed in color
      * @param color
