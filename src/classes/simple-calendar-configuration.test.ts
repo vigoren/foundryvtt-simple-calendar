@@ -610,7 +610,7 @@ describe('Simple Calendar Configuration Tests', () => {
         expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.numericRepresentation).toBe(4710);
         expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.months.length).toBe(12);
         expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.weekdays.length).toBe(7);
-        expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.leapYearRule.rule).toBe(LeapYearRules.Gregorian);
+        expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.leapYearRule.rule).toBe(LeapYearRules.Custom);
 
         select.value = 'greyhawk';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);

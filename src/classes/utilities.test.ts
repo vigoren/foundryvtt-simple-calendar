@@ -76,6 +76,15 @@ describe('Utilities Class Tests', () => {
         (<Game>game).i18n.localize = orig;
     });
 
+    test('Compare Semantic Versions', () => {
+        expect(Utilities.compareSemanticVersions('1.2.3', '1.2.3')).toBe(0);
+        expect(Utilities.compareSemanticVersions('1.2.3', '1.2.4')).toBe(-1);
+        expect(Utilities.compareSemanticVersions('1.2.3', '1.2.2')).toBe(1);
+
+        expect(Utilities.compareSemanticVersions('1.2.3', '1.2')).toBe(1);
+        expect(Utilities.compareSemanticVersions('1.2', '1.2.2')).toBe(-1);
+    });
+
     test('Get Contrast Color', () => {
         expect(Utilities.GetContrastColor('#ffffff')).toBe('#000000');
         expect(Utilities.GetContrastColor('#000000')).toBe('#FFFFFF');
@@ -134,12 +143,17 @@ describe('Utilities Class Tests', () => {
 
     test('To Seconds', () => {
         SimpleCalendar.instance = new SimpleCalendar();
+        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.DnD5E;
         expect(Utilities.ToSeconds(1970, 1, 1, false)).toBe(0);
 
         SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         //@ts-ignore
-        delete game['pf2e'];
+        game.pf2e = {worldClock:{dateTheme: "AA", worldCreatedOn: 0}};
         expect(Utilities.ToSeconds(1970, 1, 1, false)).toBe(86400);
+
+        //@ts-ignore
+        game.pf2e = {worldClock:{dateTheme: "AR", worldCreatedOn: 0}};
+        expect(Utilities.ToSeconds(4670, 1, 1, false)).toBe(86400);
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AD", worldCreatedOn: 0}};
         expect(Utilities.ToSeconds(1875, 1, 1)).toBe(86400);

@@ -587,6 +587,11 @@ export default class Year extends ConfigurationItemBase {
      */
     dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
+            const pf2eAdjust = PF2E.weekdayAdjust();
+            if(pf2eAdjust !== undefined){
+                this.firstWeekday = pf2eAdjust;
+            }
+
             const month = this.months.find(m => m.numericRepresentation === targetMonth);
             let daysSoFar;
             if(month && month.startingWeekday !== null){

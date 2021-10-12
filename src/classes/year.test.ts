@@ -592,6 +592,11 @@ describe('Year Class Tests', () => {
 
         year.months[0].startingWeekday = 3;
         expect(year.dayOfTheWeek(year.numericRepresentation, 1, 1)).toBe(2);
+
+        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        //@ts-ignore
+        game.pf2e = {worldClock:{dateTheme: "AR", worldCreatedOn: 0}};
+        expect(year.dayOfTheWeek(year.numericRepresentation, 1, 1)).toBe(2);
     });
 
     test('Date to Days', () => {
@@ -630,6 +635,8 @@ describe('Year Class Tests', () => {
         expect(year.toSeconds()).toBe(2592000);
 
         SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        //@ts-ignore
+        game.pf2e = {worldClock:{dateTheme: "AA", worldCreatedOn: 0}};
         expect(year.toSeconds()).toBe(2678400);
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AD", worldCreatedOn: 0}};
@@ -638,7 +645,7 @@ describe('Year Class Tests', () => {
         expect(year.toSeconds()).toBe(-4857321600);
         //@ts-ignore
         game.pf2e.worldClock.dateTheme = "AR";
-        expect(year.toSeconds()).toBe(-67024540800);
+        expect(year.toSeconds()).toBe(-69162940800);
 
     });
 

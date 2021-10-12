@@ -612,8 +612,8 @@ export default class PredefinedCalendar{
                 year.time.minutesInHour = 60;
                 year.time.secondsInMinute = 60;
                 year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.Gregorian;
-                year.leapYearRule.customMod = 0;
+                year.leapYearRule.rule = LeapYearRules.Custom;
+                year.leapYearRule.customMod = 4;
                 year.months[0].current = true;
                 year.months[0].days[0].current = true;
                 year.seasons[0].color = "#fffce8";

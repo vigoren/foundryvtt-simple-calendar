@@ -1,6 +1,12 @@
 # Change Log
 
-##v1.3.73 - Translation Updates, Bug Fixes, API Changes
+## v1.3.75 - Bug Fixes
+
+  - Fixed a rare issue where date formats would throw an exception and cause the calendar and the configuration to not open.
+  - Updated the Pathfinder 2E World Clock Sync to work properly with the updates World Clock in Pathfinder 2E System version 2.15.0 
+
+
+## v1.3.73 - Translation Updates, Bug Fixes, API Changes
 
 ### Bug Fixes
 

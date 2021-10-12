@@ -50,6 +50,28 @@ export default class Utilities{
     }
 
     /**
+     * Compares 2 Semantic version strings to see which one is greater than the other.
+     * @param {string} v1 The first version string
+     * @param {string} v2 The second version string
+     * @returns {number} 1: v1 > v2; 0: v1 = v2; -1: v1 < v2
+     */
+    public static compareSemanticVersions(v1: string, v2: string){
+        const a = v1.split('.'),
+            b = v2.split('.'),
+            len = Math.max(a.length, b.length);
+
+        for (let i = 0; i < len; i++) {
+            if ((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) {
+                return 1;
+            } else if ((b[i] && !a[i] && parseInt(b[i]) > 0) || (parseInt(a[i]) < parseInt(b[i]))) {
+                return -1;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
      * Finds the "best" contrast color for the passed in color
      * @param color
      * @constructor
@@ -128,7 +150,7 @@ export default class Utilities{
      * @param {string} mask The mask that is used to change the date/time to match the mask
      */
     public static FormatDateTime(date: DateTimeParts, mask: string){
-        const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|S{1,3}|ZZ|Z|([HhMmsD])\1?|[aA]/g;
+        const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|ZZ|Z|([HhMmsD])\1?|[aA]/g;
         const literal = /\[([^]*?)\]/gm;
         const formatFlags: Record<string, (dateObj: DateTimeParts) => string> = {
             "D": (dateObj: DateTimeParts) => String(dateObj.day),
@@ -188,7 +210,6 @@ export default class Utilities{
         mask = mask.replace(token, key => formatFlags[key](date) );
         // Inline literal values back into the formatted value
         return mask.replace(/@@@/g, () => <string>literals.shift());
-
     }
 
     /**
@@ -207,7 +228,7 @@ export default class Utilities{
         if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
             const newYZ = PF2E.newYearZero();
             if(newYZ !== undefined){
-                SimpleCalendar.instance.activeCalendar.year.yearZero = 1875;
+                SimpleCalendar.instance.activeCalendar.year.yearZero = newYZ;
                 daysSoFar = yearClass.dateToDays(year, month, day, true, true);
             }
             daysSoFar++;

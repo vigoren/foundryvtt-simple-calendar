@@ -1,9 +1,18 @@
 import SimpleCalendar from "../simple-calendar";
+import LeapYear from "../leap-year";
+import {GameSystems, LeapYearRules} from "../../constants";
+import Utilities from "../utilities";
 
 /**
  * System specific functionality for Pathfinder 2E
  */
 export default class PF2E {
+
+    /**
+     * The version that the world clock changed from having incorrect years and then adding years to the final display to using the correct years in the calculations.
+     * @private
+     */
+    private static worldClockCodeChangeVersion = "2.14.4.8167";
     /**
      * Gets the world creation time in seconds
      * @return {number}
@@ -21,8 +30,16 @@ export default class PF2E {
                 worldCreateTimeStamp += 62167219200;
             }
             seconds += worldCreateTimeStamp;
-            if(adjustByDay && SimpleCalendar.instance){
-                seconds -= SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay;
+
+
+            // the PF2E System all calendars are based off of the gregorian calendar.
+            // Now with update 2.15.0 all calendars are no longer adding arbitrary numbers to the display of the year but instead using the correct year
+            if(SimpleCalendar.instance){
+                if(!adjustByDay && Utilities.compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0){
+                    seconds += SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay;
+                } else if( adjustByDay && Utilities.compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) <= 0){
+                    seconds -= SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay;
+                }
             }
         }
         return seconds;
@@ -38,9 +55,49 @@ export default class PF2E {
             //If we are using the Gregorian Calendar that ties into the pathfinder world we need to set the year zero to 1875
             // @ts-ignore
             if(game.pf2e.worldClock.dateTheme === 'AD'){
-                yearZero = 1875;
+                yearZero = Utilities.compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0? 1970 : 1875;
+            }
+            // @ts-ignore
+            else if(game.pf2e.worldClock.dateTheme === 'CE'){
+                yearZero = 1970;
+            }
+            // @ts-ignore
+            else if(game.pf2e.worldClock.dateTheme === 'AR'){
+                yearZero = Utilities.compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 ? 0 : 2700;
             }
         }
         return yearZero;
+    }
+
+    /**
+     * Checks and updates the leap year rules for the PF2E system and if the PF2E World Clock sync setting is enabled
+     * @param {LeapYear} leapYear the leap year class to update
+     */
+    public static checkLeapYearRules(leapYear: LeapYear){
+        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
+            //The Golarian and Gregorian based calendars need to use the gregorian rule
+            // @ts-ignore
+            if(game.pf2e.worldClock.dateTheme === 'AD' || game.pf2e.worldClock.dateTheme === 'CE' || game.pf2e.worldClock.dateTheme === 'AR'){
+                leapYear.rule = LeapYearRules.Gregorian;
+            }
+        }
+    }
+
+    /**
+     * Adjust the starting weekday
+     */
+    public static weekdayAdjust(){
+        let adjust: number | undefined;
+        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
+            // @ts-ignore
+            if(game.pf2e.worldClock.dateTheme === 'CE' || game.pf2e.worldClock.dateTheme === 'AD'){
+                adjust = 4;
+            }
+            // @ts-ignore
+            else if(game.pf2e.worldClock.dateTheme === 'AR'){
+                adjust = 5;
+            }
+        }
+        return adjust
     }
 }

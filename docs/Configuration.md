@@ -57,6 +57,20 @@ For games running the Pathfinder 2E system, this setting will attempt to keep Si
 - For the Golarion (Absalom Reckoning) Date Theme in PF2E's world clock use Simple Calendars Golarian: Pathfinder 2E predefined calendar.
 - For the Earth (Gregorian) or Unthemed (Gregorian) Date Theme in PF2E's world clock use Simple Calendars Gregorian predefined calendar
 
+This setting also forces certain Simple Calendar settings to certain values to ensure the two clocks are in sync.
+
+Setting|PF2E Date Theme|Value Up To Pathfinder 2E 2.14.4|Value for Pathfinder 2E 2.15.0 and Later
+-------|---------------|--------------------------------|---------------------------------
+Leap Year Settings -> Leap Year Rule|Golarion (Absalom Reckoning)|Gregorian|Gregorian
+&nbsp;|Earth (Gregorian)|Gregorian|Gregorian
+&nbsp;|Unthemed (Gregorian)|Gregorian|Gregorian
+Year Settings -> Year Zero|Golarion (Absalom Reckoning)|2700|0
+&nbsp;|Earth (Gregorian)|1985|1970
+&nbsp;|Unthemed (Gregorian)|1970|1970
+Weekday Settings -> Starting Week Day|Golarion (Absalom Reckoning)|Starday|Starday
+&nbsp;|Earth (Gregorian)|Thursday|Thursday
+&nbsp;|Unthemed (Gregorian)|Thursday|Thursday
+
 ### Display Options
 
 Configure how different aspects of Simple Calendar are displayed here!
