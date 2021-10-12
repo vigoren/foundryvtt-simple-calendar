@@ -49,6 +49,12 @@ export default class Utilities{
         return [undefined,GameSettings.Localize('FSC.OrdinalSuffix.st'),GameSettings.Localize('FSC.OrdinalSuffix.nd'),GameSettings.Localize('FSC.OrdinalSuffix.rd')][n%100>>3^1&&n%10]||GameSettings.Localize('FSC.OrdinalSuffix.th');
     }
 
+    /**
+     * Compares 2 Semantic version strings to see which one is greater than the other.
+     * @param {string} v1 The first version string
+     * @param {string} v2 The second version string
+     * @returns {number} 1: v1 > v2; 0: v1 = v2; -1: v1 < v2
+     */
     public static compareSemanticVersions(v1: string, v2: string){
         const a = v1.split('.'),
             b = v2.split('.'),
@@ -144,7 +150,7 @@ export default class Utilities{
      * @param {string} mask The mask that is used to change the date/time to match the mask
      */
     public static FormatDateTime(date: DateTimeParts, mask: string){
-        const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|S{1,3}|ZZ|Z|([HhMmsD])\1?|[aA]/g;
+        const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|ZZ|Z|([HhMmsD])\1?|[aA]/g;
         const literal = /\[([^]*?)\]/gm;
         const formatFlags: Record<string, (dateObj: DateTimeParts) => string> = {
             "D": (dateObj: DateTimeParts) => String(dateObj.day),
@@ -194,20 +200,16 @@ export default class Utilities{
                 return dateObj.hour >= halfDay? "pm" : "am";
             }
         };
-        try{
-            const literals: string[] = [];
-            // Make literals inactive by replacing them with @@@
-            mask = mask.replace(literal, function($0, $1) {
-                literals.push($1);
-                return "@@@";
-            });
-            // Apply formatting rules
-            mask = mask.replace(token, key => formatFlags[key](date) );
-            // Inline literal values back into the formatted value
-            return mask.replace(/@@@/g, () => <string>literals.shift());
-        } catch (e: any){
-            return '';
-        }
+        const literals: string[] = [];
+        // Make literals inactive by replacing them with @@@
+        mask = mask.replace(literal, function($0, $1) {
+            literals.push($1);
+            return "@@@";
+        });
+        // Apply formatting rules
+        mask = mask.replace(token, key => formatFlags[key](date) );
+        // Inline literal values back into the formatted value
+        return mask.replace(/@@@/g, () => <string>literals.shift());
     }
 
     /**

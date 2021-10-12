@@ -114,7 +114,10 @@ const game = {
     },
     scenes: null,
     system: {
-        id: ''
+        id: '',
+        data: {
+            version: "1.2.3"
+        }
     },
     togglePause: jest.fn()
 };

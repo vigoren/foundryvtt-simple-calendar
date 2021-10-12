@@ -1,72 +1,10 @@
 # Change Log
 
-## v1.3.75 - Pathfinder 2E Sync Fixes, Bug Fixes
-
-### Bug Fixes
+## v1.3.75 - Bug Fixes
 
   - Fixed a rare issue where date formats would throw an exception and cause the calendar and the configuration to not open.
+  - Updated the Pathfinder 2E World Clock Sync to work properly with the updates World Clock in Pathfinder 2E System version 2.15.0 
 
-### Pathfinder 2E Sync
-
-This only applies to the Pathfinder 2E system and if the Pathfinder 2E World Time Sync option is enabled in the Simple Calendar configuration.
-
-A couple of issues with keeping Simple Calendar and the Pathfinder 2E World Time clock in sync with one another have been found and this update attempts to resolve them all.
-
-#### The Issues
-
-**PF2E Golarion Date Theme**
-
-There were 2 main issues with keeping this date theme and Simple Calendar in sync.
-
-- The PF2E World Clock uses the Gregorian leap year rules, which Simple Calendar also uses for this calendar. Pathfinder 2E uses the Julian leap year system (leap year every 4 years). This means that both Calendars were calculating leap years incorrectly.
-- The PF2E World Clock also stores time differently (they use a smaller year then add 2700 to it when displaying), this is causing the 2 calendars to think leap years were happening at different times causing the sync to be out by a day in specific scenarios.
-
-
-**PF2E Earth Date Theme**
-
-This date theme suffers similar issues as the Golarian Date theme
-
-- The PF2E World Clock also stores time differently (they use a larger year then subtract 95 from it when displaying), this is causing the 2 calendars to think leap years were happening at different times causing the sync to be out by a day in specific scenarios.
-
-
-**PF2E Unthemed Date Theme**
-
-- If using this PF2E date theme for the World Clock make sure Simple Calendar is set to the standard Gregorian Calendar and the 2 should stay in sync without any issues.
-
-#### The Changes
-
-While these are fairly niche edge cases that won't affect most users it has affected some. To adjust the PF2E world clock to address these issues would be a large amount of work, so I have decided to try and address these issues within Simple Calendar. My solution is not perfect and can't be perfect with the differences between the two clocks but this is a lot closer.
-
-I have opened up a [ticket with the PF2E system](https://gitlab.com/hooking/foundry-vtt---pathfinder-2e/-/issues/1772) to highlight these issues, but I don't expect the devs to tackle this anytime soon (they have more pressing issues and features to deal with).
-
-In the meantime, these are the changes I have implemented to create a "close as possible" solution:
-
-- I have updated the "_Golarian: Pathfinder 2E_" preset calendar to use the Julian leap years instead of gregorian, to keep it inline with how the Pathfinder 2E system does its time. **Note**: This change will only affect calendars that apply this preset after this update.
-- Increased the strictness of the setting "_Pathfinder 2E: World Time Sync_", which means:
-  - Regardless of the leap year settings set in Simple Calendars configuration this setting will always override them to match the date theme selected in the Pathfinder 2E World Clock.
-    - **_PF2E Golarion Date Theme_**: _Leap Year Rule_ is set to custom and When _Leap Years Happen_ is set to 4.
-    - **_PF2E Earth and Unthemed Date Themes_**: The _Leap Year Rule_ is set to Gregorian.
-  - Regardless of the Year Settings -> Year Zero setting in Simple Calendars configuration this setting will always override it to match the date theme selected in the Pathfinder 2E World Clock.
-    - **_PF2E Golarion Date Theme_**: _Year Zero_ will be set to 2700.
-    - **_PF2E Earth Date Theme_**: _Year Zero_ will be set to 1875.
-    - **_PF2E Unthemed Date Theme_**: _Year Zero_ will be set to 1970.
-  - Regardless of the Weekday Settings -> Starting Weekday setting in Simple Calendars configuration this setting will always override it to match the date theme selected in the Pathfinder 2E World Clock.
-    - **_PF2E Golarion Date Theme_**: _Starting Weekday_ will be set to Fireday.
-    - **_PF2E Earth Date Theme_**: _Starting Weekday_ is not adjusted from the default Moonday. It is too complicated to ensure the day of the week is always the same. 
-    - **_PF2E Unthemed Date Theme_**: _Starting Weekday_ will be set to Thursday.
-
-#### Issues Without a Solution
-
-Even after these changes there are still scenarios where issues will arise that I can not currently fix, fortunately they are all in one PF2E Date Theme so the impact should be small.
-
-- For the PF2E Date Theme Earth (Gregorian):
-  - On occasion when advancing the day with the PF2E World Clock controls, sometimes March 1st will repeat itself.
-  - On occasion when advancing the day with the Simple Calendar controls, Feb 29th will be skipped in the PF2E world clock which may cause timed status effects to register that 2 days have passed.
-  - The day of the week that dates fall on will never match between the two calendars.
-
-#### TLDR;
-
-There are some edge cases where Simple Calendar and the Pathfinder 2E world clock don't agree on a date. This update helps make it so the 2 calendars are as close as they can be. These issues shouldn't affect most users.
 
 ## v1.3.73 - Translation Updates, Bug Fixes, API Changes
 

@@ -72,7 +72,7 @@ describe('Predefined Calendar Tests', () => {
         expect(y.numericRepresentation).toBe(4710);
         expect(y.months.length).toBe(12);
         expect(y.weekdays.length).toBe(7);
-        expect(y.leapYearRule.rule).toBe(LeapYearRules.Gregorian);
+        expect(y.leapYearRule.rule).toBe(LeapYearRules.Custom);
         
         PredefinedCalendar.setToPredefined(y, PredefinedCalendars.Greyhawk);
         expect(y.numericRepresentation).toBe(591);

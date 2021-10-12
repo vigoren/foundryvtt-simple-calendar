@@ -15,10 +15,12 @@ import Year from "./year";
 import API from "./api";
 import Month from "./month";
 import {Weekday} from "./weekday";
-import {GameSystems, LeapYearRules, PresetTimeOfDay} from "../constants";
+import {GameSystems, LeapYearRules, PredefinedCalendars, PresetTimeOfDay} from "../constants";
 import Season from "./season";
+import PredefinedCalendar from "./predefined-calendar";
 import SpyInstance = jest.SpyInstance;
 import Mock = jest.Mock;
+import PF2E from "./systems/pf2e";
 
 jest.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -71,9 +73,11 @@ describe('API Class Tests', () => {
 
         SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync = true;
-        expect(API.timestampPlusInterval(0, {day: 0})).toBe(86400);
-        expect(API.timestampPlusInterval(0, {})).toBe(86400);
-        expect(API.timestampPlusInterval(0, {day: 1})).toBe(172800);
+        //@ts-ignore
+        game.pf2e = {worldClock: {dateTheme: "AR", worldCreatedOn: 0}};
+        expect(API.timestampPlusInterval(0, {day: 0})).toBe(0);
+        expect(API.timestampPlusInterval(0, {})).toBe(0);
+        expect(API.timestampPlusInterval(0, {day: 1})).toBe(86400);
     });
 
     test('Timestamp to Date', () => {
@@ -87,7 +91,7 @@ describe('API Class Tests', () => {
         expect(tstd.second).toBe(0);
         SimpleCalendar.instance.activeCalendar.year = year;
         year.weekdays.push(new Weekday(1, 'W1'));
-        const season = year.seasons[0].clone();
+        let season = year.seasons[0].clone();
         season.startingMonth = 0;
         season.startingDay = 0;
         expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, midday: 43200, sunrise: 0, sunset: 0, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"date": "M1 01, 0", "day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "0", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"01:00:00"}});
@@ -96,9 +100,25 @@ describe('API Class Tests', () => {
 
         SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync = true;
-        expect(API.timestampToDate(3600)).toStrictEqual({year: 0, month: 0, day: 0, dayOfTheWeek: 0, hour: 1, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, midday: 129600, sunrise: 86400, sunset: 86400, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"date": "M1 01, 0", "day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "0", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"01:00:00"}});
-        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, midday: 5313600, sunrise: 5270400, sunset: 5270400, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"date": "M1 01, 1", "day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
-        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, midday: 5400000, sunrise: 5356800, sunset: 5356800, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '2', "display": {"date": "M1 02, 1", "day": "2", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
+        (<Game>game).system.data.version = '2.15.0';
+        PredefinedCalendar.setToPredefined(year, PredefinedCalendars.GolarianPF2E);
+        PF2E.checkLeapYearRules(year.leapYearRule);
+        year.yearZero = PF2E.newYearZero() || 0;
+        year.firstWeekday = PF2E.weekdayAdjust()|| 0;
+        year.numericRepresentation = 4710;
+        season = year.seasons[3].clone();
+        season.startingMonth = 11;
+        season.startingDay = 0;
+        const spring = year.seasons[0].clone();
+        spring.startingDay = 0;
+        spring.startingMonth = 2;
+        //@ts-ignore
+        game.pf2e = {worldClock: {dateTheme: "AR", worldCreatedOn: 1620777600}};
+        expect(API.timestampToDate(3600)).toStrictEqual({year: 1970, month: 0, day: 18, dayOfTheWeek: 0, hour: 19, minute: 12, second: 57, monthName: "Abadius", yearName: "", yearZero: 0, weekdays: ["Moonday","Toilday","Wealday","Oathday","Fireday","Starday","Sunday"], currentSeason: season, midday: -22377, sunrise: -43977, sunset: -777, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: ' AR', yearPrefix: '', dayOffset: 0, dayDisplay: '19', "display": {"date": "Abadius 19, 1970", "day": "19", "daySuffix": "", "month": "1", "monthName": "Abadius", "weekday": "Moonday", "year": "1970", "yearName": "", "yearPostfix": " AR", "yearPrefix": "", time:"19:12:57"}});
+        expect(API.timestampToDate(5184000)).toStrictEqual({year: 1970, month: 2, day: 19, dayOfTheWeek: 4, hour: 18, minute: 12, second: 57, monthName: "Pharast", yearName: "", yearZero: 0, weekdays: ["Moonday","Toilday","Wealday","Oathday","Fireday","Starday","Sunday"], currentSeason: spring, midday: 5161623, sunrise: 5140023, sunset: 5183223, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: ' AR', yearPrefix: '', dayOffset: 0, dayDisplay: '20', "display": {"date": "Pharast 20, 1970", "day": "20", "daySuffix": "", "month": "3", "monthName": "Pharast", "weekday": "Fireday", "year": "1970", "yearName": "", "yearPostfix": " AR", "yearPrefix": "", time:"18:12:57"}});
+        expect(API.timestampToDate(5270400)).toStrictEqual({year: 1970, month: 2, day: 20, dayOfTheWeek: 5, hour: 18, minute: 12, second: 57, monthName: "Pharast", yearName: "", yearZero: 0, weekdays: ["Moonday","Toilday","Wealday","Oathday","Fireday","Starday","Sunday"], currentSeason: spring, midday: 5248023, sunrise: 5226423, sunset: 5269623, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: ' AR', yearPrefix: '', dayOffset: 0, dayDisplay: '21', "display": {"date": "Pharast 21, 1970", "day": "21", "daySuffix": "", "month": "3", "monthName": "Pharast", "weekday": "Starday", "year": "1970", "yearName": "", "yearPostfix": " AR", "yearPrefix": "", time:"18:12:57"}});
+
+        (<Game>game).system.data.version = '1.2.3';
     });
 
     test('Date to Timestamp', () => {

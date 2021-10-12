@@ -59,29 +59,17 @@ For games running the Pathfinder 2E system, this setting will attempt to keep Si
 
 This setting also forces certain Simple Calendar settings to certain values to ensure the two clocks are in sync.
 
-Setting|PF2E Date Theme|Value
--------|---------------|-----
-Leap Year Settings -> Leap Year Rule|Golarion (Absalom Reckoning)|Custom
-&nbsp;|Earth (Gregorian)|Gregorian
-&nbsp;|Unthemed (Gregorian)|Gregorian
-Leap Year Settings -> When Leap Years Happen|Golarion (Absalom Reckoning)|4
-&nbsp;|Earth (Gregorian)|N/A
-&nbsp;|Unthemed (Gregorian)|N/A
-Year Settings -> Year Zero|Golarion (Absalom Reckoning)|2700
-&nbsp;|Earth (Gregorian)|1875
-&nbsp;|Unthemed (Gregorian)|1970
-Weekday Settings -> Starting Week Day|Golarion (Absalom Reckoning)|Fireday
-&nbsp;|Earth (Gregorian)|Thursday
-&nbsp;|Unthemed (Gregorian)|Thursday
-
-#### Known Issues
-
-These are the known issues with the sync between the two calendars and currently do not have a solution I can implement:
-
-- For the PF2E Date Theme Earth (Gregorian), due to how the PF2E world clock calculates leap years they will never match Simple Calendars leap years. This results in:
-  - On occasion when advancing the day with the PF2E World Clock controls, sometimes March 1st will repeat itself.
-  - On occasion when advancing the day with the Simple Calendar controls, Feb 29th will be skipped in the PF2E world clock which may cause timed status effects to register that 2 days have passed.
-  - The day of the week that dates fall on will never match between the two calendars.
+Setting|PF2E Date Theme|Value Up To Pathfinder 2E 2.14.4|Value for Pathfinder 2E 2.15.0 and Later
+-------|---------------|--------------------------------|---------------------------------
+Leap Year Settings -> Leap Year Rule|Golarion (Absalom Reckoning)|Gregorian|Gregorian
+&nbsp;|Earth (Gregorian)|Gregorian|Gregorian
+&nbsp;|Unthemed (Gregorian)|Gregorian|Gregorian
+Year Settings -> Year Zero|Golarion (Absalom Reckoning)|2700|0
+&nbsp;|Earth (Gregorian)|1985|1970
+&nbsp;|Unthemed (Gregorian)|1970|1970
+Weekday Settings -> Starting Week Day|Golarion (Absalom Reckoning)|Starday|Starday
+&nbsp;|Earth (Gregorian)|Thursday|Thursday
+&nbsp;|Unthemed (Gregorian)|Thursday|Thursday
 
 ### Display Options
 
