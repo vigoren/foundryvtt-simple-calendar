@@ -184,6 +184,56 @@ export default class Moon extends ConfigurationItemBase{
     /**
      * Returns the current phase of the moon based on a year month and day.
      * This phase will be within + or - 1 days of when the phase actually begins
+     * @param {Year} year The year class to get the information from
+     * @param {number} yearNum The year to use
+     * @param {number} monthNum The month to use
+     * @param {number} dayNum The day to use
+     */
+    getDateMoonPhase(year: Year, yearNum: number, monthNum: number, dayNum: number): MoonPhase{
+        let firstNewMoonDays = year.dateToDays(this.firstNewMoon.year, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
+        let resetYearAdjustment = 0;
+        if(this.firstNewMoon.yearReset === MoonYearResetOptions.LeapYear){
+            let lyYear = year.leapYearRule.previousLeapYear(yearNum);
+            if(lyYear !== null){
+                Logger.debug(`Resetting moon calculation first day to year: ${lyYear}`);
+                firstNewMoonDays = year.dateToDays(lyYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
+                if(yearNum !== lyYear){
+                    resetYearAdjustment += year.leapYearRule.fraction(yearNum);
+                }
+            }
+        } else if(this.firstNewMoon.yearReset === MoonYearResetOptions.XYears){
+            const resetMod = yearNum % this.firstNewMoon.yearX;
+            if(resetMod !== 0){
+                let resetYear = yearNum - resetMod;
+                firstNewMoonDays = year.dateToDays(resetYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
+                resetYearAdjustment += resetMod / this.firstNewMoon.yearX;
+            }
+        }
+
+        const daysSoFar = year.dateToDays(yearNum, monthNum, dayNum, true, true);
+        const daysSinceReferenceMoon = daysSoFar - firstNewMoonDays + resetYearAdjustment;
+        const moonCycles = daysSinceReferenceMoon / this.cycleLength;
+        let daysIntoCycle = ((moonCycles - Math.floor(moonCycles)) * this.cycleLength) + this.cycleDayAdjust;
+
+        let phaseDays = 0;
+        let phase: MoonPhase | null = null;
+        for(let i = 0; i < this.phases.length; i++){
+            const newPhaseDays = phaseDays + this.phases[i].length;
+            if(daysIntoCycle >= phaseDays && daysIntoCycle < newPhaseDays){
+                phase = this.phases[i];
+                break;
+            }
+            phaseDays = newPhaseDays;
+        }
+        if(phase !== null){
+            return phase;
+        }else {
+            return this.phases[0];
+        }
+    }
+
+    /**
+     * Gets the moon phase based on the current, selected or visible date
      * @param {Year} year The year class used to get the year, month and day to use
      * @param {string} property Which property to use when getting the year, month and day. Can be current, selected or visible
      * @param {DayTemplate|null} [dayToUse=null] The day to use instead of the day associated with the property
@@ -191,51 +241,12 @@ export default class Moon extends ConfigurationItemBase{
     getMoonPhase(year: Year, property = 'current', dayToUse: DayTemplate | null = null): MoonPhase{
         property = property.toLowerCase() as 'current' | 'selected' | 'visible';
         let yearNum = property === 'current'? year.numericRepresentation : property === 'selected'? year.selectedYear : year.visibleYear;
-        let firstNewMoonDays = year.dateToDays(this.firstNewMoon.year, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
-
         const month = year.getMonth(property);
         if(month){
             const day = property !== 'visible'? month.getDay(property) : dayToUse;
             let monthNum = month.numericRepresentation;
             let dayNum = day? day.numericRepresentation : 1;
-            let resetYearAdjustment = 0;
-
-            if(this.firstNewMoon.yearReset === MoonYearResetOptions.LeapYear){
-                let lyYear = year.leapYearRule.previousLeapYear(yearNum);
-                if(lyYear !== null){
-                    Logger.debug(`Resetting moon calculation first day to year: ${lyYear}`);
-                    firstNewMoonDays = year.dateToDays(lyYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
-                    if(yearNum !== lyYear){
-                        resetYearAdjustment += year.leapYearRule.fraction(yearNum);
-                    }
-                }
-            } else if(this.firstNewMoon.yearReset === MoonYearResetOptions.XYears){
-                const resetMod = yearNum % this.firstNewMoon.yearX;
-                if(resetMod !== 0){
-                    let resetYear = yearNum - resetMod;
-                    firstNewMoonDays = year.dateToDays(resetYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
-                    resetYearAdjustment += resetMod / this.firstNewMoon.yearX;
-                }
-            }
-
-            const daysSoFar = year.dateToDays(yearNum, monthNum, dayNum, true, true);
-            const daysSinceReferenceMoon = daysSoFar - firstNewMoonDays + resetYearAdjustment;
-            const moonCycles = daysSinceReferenceMoon / this.cycleLength;
-            let daysIntoCycle = ((moonCycles - Math.floor(moonCycles)) * this.cycleLength) + this.cycleDayAdjust;
-
-            let phaseDays = 0;
-            let phase: MoonPhase | null = null;
-            for(let i = 0; i < this.phases.length; i++){
-                const newPhaseDays = phaseDays + this.phases[i].length;
-                if(daysIntoCycle >= phaseDays && daysIntoCycle < newPhaseDays){
-                    phase = this.phases[i];
-                    break;
-                }
-                phaseDays = newPhaseDays;
-            }
-            if(phase !== null){
-                return phase;
-            }
+            return this.getDateMoonPhase(year, yearNum, monthNum, dayNum);
         }
         return this.phases[0];
     }

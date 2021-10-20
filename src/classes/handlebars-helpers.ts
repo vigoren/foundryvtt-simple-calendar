@@ -1,8 +1,7 @@
-import SimpleCalendar from "./simple-calendar";
-import {GameSettings} from "./game-settings";
 import DateSelector from "./date-selector";
-import Utilities from "./utilities";
-import Note from "./note";
+import Renderer from "./renderer";
+import SimpleCalendar from "./simple-calendar";
+import {SCRenderer} from "../interfaces";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -14,8 +13,7 @@ export default class HandlebarsHelpers{
      */
     static Register(){
         Handlebars.registerHelper("sc-date-selector", HandlebarsHelpers.DateSelector);
-        Handlebars.registerHelper("day-has-note", HandlebarsHelpers.DayHasNotes);
-        Handlebars.registerHelper("day-moon-phase", HandlebarsHelpers.DayMoonPhase);
+        Handlebars.registerHelper("sc-full-calendar", HandlebarsHelpers.FullCalendar);
     }
 
     /**
@@ -32,79 +30,35 @@ export default class HandlebarsHelpers{
     }
 
     /**
-     * Checks if a specific day has any notes the user can see associated with it
-     * @param {*} options The options object passed from Handlebars
-     * @return {string}
+     * Renders the full calendar display
+     * @param options
      */
-    static DayHasNotes(options: any){
-        if(options.hash.hasOwnProperty('day')){
-            const day = options.hash['day'].numericRepresentation;
-            const month = SimpleCalendar.instance.activeCalendar.year.getMonth('visible');
-            const year = SimpleCalendar.instance.activeCalendar.year.visibleYear;
-            if(month){
-                const notes = SimpleCalendar.instance.activeCalendar.notes.filter(n => n.isVisible(year, month.numericRepresentation, day));
-                if(notes.length){
-                    const userId = GameSettings.UserID();
-                    const regularNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
-                    const reminderNotes = notes.filter(n => n.remindUsers.indexOf(userId) !== -1);
-                    let r = '';
-                    if(regularNotes.length){
-                        const rCount = regularNotes.length < 100? regularNotes.length : 99;
-                        let rTitle = HandlebarsHelpers.GenerateNoteIconTitle(rCount, regularNotes);
-                        r = `<span class="note-count" title="${rTitle}">${rCount}</span>`;
-                    }
-                    if(reminderNotes.length){
-                        const remCount = reminderNotes.length < 100? reminderNotes.length : 99;
-                        let remTitle = HandlebarsHelpers.GenerateNoteIconTitle(remCount, reminderNotes);
-                        r += `<span class="note-count reminders" title="${remTitle}">${remCount}</span>`;
-                    }
-
-                    return new Handlebars.SafeString(r);
-                }
-            }
+    static FullCalendar(options: any){
+        const renderOptions: SCRenderer.Options = {id:''};
+        if(options.hash.hasOwnProperty('colorToMatchSeason')){
+            renderOptions.colorToMatchSeason = options.hash['colorToMatchSeason'];
         }
-        return '';
-    }
-
-    /**
-     * Generates the title for the note indicator
-     * @param {number} count How many notes there are
-     * @param {Note[]} notes The notes for the indicator
-     * @private
-     */
-    private static GenerateNoteIconTitle(count: number, notes: Note[]){
-        let rTitle = `${count} ${GameSettings.Localize('FSC.Configuration.General.Notes')}`;
-        if(notes.length < 3){
-            rTitle = GameSettings.Localize('FSC.Configuration.General.Notes') + ':\n';
-            for(let i = 0; i < notes.length; i++){
-                if(i !== 0){
-                    rTitle += '\n';
-                }
-                const nTitle = notes[i].title.replace(/"/g,'&quot;');
-                rTitle += `${nTitle}`;
-            }
+        if(options.hash.hasOwnProperty('cssClasses')){
+            renderOptions.cssClasses = options.hash['cssClasses'];
         }
-        return rTitle;
-    }
-
-    /**
-     * Checks to see the current phase of the moon for the given day
-     * @param {*} options The options object passed from Handlebars
-     * @return {string}
-     */
-    static DayMoonPhase(options: any){
-        if(options.hash.hasOwnProperty('day')){
-            const day = options.hash['day'];
-            let html = ''
-            for(let i = 0; i < SimpleCalendar.instance.activeCalendar.year.moons.length; i++){
-                const mp = SimpleCalendar.instance.activeCalendar.year.moons[i].getMoonPhase(SimpleCalendar.instance.activeCalendar.year, 'visible', day);
-                if(mp && (mp.singleDay || day.selected || day.current)){
-                    let moon = Utilities.GetMoonPhaseIcon(mp.icon, SimpleCalendar.instance.activeCalendar.year.moons[i].color);
-                    html += `<span class="moon-phase ${mp.icon}" title="${SimpleCalendar.instance.activeCalendar.year.moons[i].name} - ${mp.name}">${moon}</span>`;
-                }
-            }
-            return new Handlebars.SafeString(html);
+        if(options.hash.hasOwnProperty('date')){
+            renderOptions.date = Object.assign({}, options.hash['date']);
         }
-        return '';
+        if(options.hash.hasOwnProperty('id')){
+            renderOptions.id = options.hash['id'];
+        }
+        if(options.hash.hasOwnProperty('showSeasonName')){
+            renderOptions.showSeasonName = options.hash['showSeasonName'];
+        }
+        if(options.hash.hasOwnProperty('showNoteCount')){
+            renderOptions.showNoteCount = options.hash['showNoteCount'];
+        }
+        if(options.hash.hasOwnProperty('showMoonPhases')){
+            renderOptions.showMoonPhases = options.hash['showMoonPhases'];
+        }
+        if(options.hash.hasOwnProperty('showYear')){
+            renderOptions.showYear = options.hash['showYear'];
+        }
+        return new Handlebars.SafeString(Renderer.CalendarFull(SimpleCalendar.instance.activeCalendar, renderOptions));
     }
 }

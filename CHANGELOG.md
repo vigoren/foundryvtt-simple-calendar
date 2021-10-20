@@ -1,5 +1,16 @@
 # Change Log
 
+## v1.3.78 - API Changes and Bug Fixes
+
+### Bug Fixes
+
+- Fixed a bug where the display year in the calendar header would not update properly if the year being viewed was different from the current year.
+
+### API Changes
+
+- Removed 2 Handlebar helpers, day-has-note and day-moon-phase. These were used internally and are no longer required.
+- Added a new Handlebar helper [sc-full-calendar](./docs/API.md#sc-full-calendar) that can be used to render a full calendar view of the current date or passed in date.
+
 ## v1.3.75 - Bug Fixes
 
   - Fixed a rare issue where date formats would throw an exception and cause the calendar and the configuration to not open.

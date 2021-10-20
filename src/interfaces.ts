@@ -58,10 +58,8 @@ export interface CalendarTemplate extends IConfigurationItemBaseTemplate {
     isGM: boolean;
     reorderNotes: boolean;
     showClock: boolean;
-    showCurrentDay: boolean;
     showDateControls: boolean;
     showTimeControls: boolean;
-    showSelectedDay: boolean;
     showSetCurrentDate: boolean;
     calendarDisplay: string;
     name: string;
@@ -496,6 +494,30 @@ export namespace SimpleCalendarSocket{
     export interface SimpleCalendarEmitHook{
         hook?: SimpleCalendarHooks;
         param?: any;
+    }
+}
+
+export namespace SCRenderer {
+    export interface Date {
+        year: number,
+        month: number,
+        day?: number
+    }
+
+    export interface Options {
+        colorToMatchSeason?: boolean;
+        cssClasses?: string;
+        date?: Date;
+        id: string;
+        selectedDates?: {
+            start: Date,
+            end: Date
+        };
+        showCurrentDay?: boolean;
+        showMoonPhases?: boolean;
+        showNoteCount?: boolean;
+        showSeasonName?: boolean;
+        showYear?: boolean;
     }
 }
 

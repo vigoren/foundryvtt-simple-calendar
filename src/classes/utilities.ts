@@ -41,6 +41,28 @@ export default class Utilities{
         return hash;
     }
 
+    public static isObject(item: any): boolean {
+        return (item && typeof item === 'object' && !Array.isArray(item));
+    }
+
+    public static deepMerge(target: any, ...sources: any): any{
+        if (!sources.length) return target;
+        const source = sources.shift();
+
+        if (this.isObject(target) && this.isObject(source)) {
+            for (const key in source) {
+                if (this.isObject(source[key])) {
+                    if (!target[key]) Object.assign(target, { [key]: {} });
+                    this.deepMerge(target[key], source[key]);
+                } else {
+                    Object.assign(target, { [key]: source[key] });
+                }
+            }
+        }
+
+        return this.deepMerge(target, ...sources);
+    }
+
     /**
      * Returns the ordinal suffix for the passed in number
      * @param {number} n The number to get the suffix for

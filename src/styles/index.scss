@@ -7,11 +7,9 @@
   }
 }
 .simple-calendar-configuration{
-  @import "control";
   @import "configuration";
 }
 .simple-calendar-note {
-  @import "control";
   @import "notes";
 }
 @import "date-selector";

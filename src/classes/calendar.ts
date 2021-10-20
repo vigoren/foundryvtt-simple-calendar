@@ -1,5 +1,5 @@
 import Year from "./year";
-import {CalendarConfiguration, CalendarTemplate, NoteCategory, PermissionMatrix} from "../interfaces";
+import {CalendarConfiguration, CalendarTemplate, DayTemplate, NoteCategory, PermissionMatrix} from "../interfaces";
 import {GameSystems, GameWorldTimeIntegrations, PredefinedCalendars, TimeKeeperStatus} from "../constants";
 import Note from "./note";
 import Month from "./month";
@@ -14,6 +14,8 @@ import GeneralSettings from "./general-settings";
 import ConfigurationItemBase from "./configuration-item-base";
 import Utilities from "./utilities";
 import PF2E from "./systems/pf2e";
+import HandlebarsHelpers from "./handlebars-helpers";
+import Renderer from "./renderer";
 
 export default class Calendar extends ConfigurationItemBase{
 
@@ -151,12 +153,10 @@ export default class Calendar extends ConfigurationItemBase{
             notes: this.getNotesForDay().map(n => n.toTemplate()),
             reorderNotes: this.canUser((<Game>game).user, this.generalSettings.permissions.reorderNotes),
             showClock: this.generalSettings.showClock,
-            showCurrentDay: this.year.visibleYear === this.year.numericRepresentation,
             showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
-            showSelectedDay: this.year.visibleYear === this.year.selectedYear,
             showSetCurrentDate: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && showSetCurrentDate,
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
-            calendarDisplay: Utilities.FormatDateTime({year: this.year.numericRepresentation, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear),
+            calendarDisplay: Utilities.FormatDateTime({year: this.year.visibleYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear),
             selectedDisplay: Utilities.FormatDateTime({year: this.year.selectedYear, month: sMonth, day: sDay, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.date),
             timeDisplay: Utilities.FormatDateTime({year: 0, month: 0, day: 0, ...this.year.time.getCurrentTime()}, this.generalSettings.dateFormat.time)
         };

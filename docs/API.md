@@ -41,6 +41,9 @@ Simple Calendar exposes a variable called `SimpleCalendar`, all of these API fun
 - [timestampPlusInterval](#simplecalendarapitimestampplusintervaltimestamp-interval)
 - [timestampToDate](#simplecalendarapitimestamptodatetimestamp)
 
+## Handlebar Helpers
+- [sc-full-calendar](#sc-full-calendar)
+
 ## Types
 - [Calendar Configuration Object](#calendar-configuration-object)
 - [Current Date Object](#current-date-object)
@@ -1113,6 +1116,59 @@ console.log(scDate);
 }
 */
 ```
+
+# Handlebar Helpers
+
+## sc-full-calendar
+
+This handlebar helper is used to generate the HTML for displaying a full calendar view for the current date or a passed in date.
+
+
+### Parameters
+
+The following parameters can be passed in with the handlebar helper to customize how the full view looks
+
+Parameter|Type|Default Value|Description
+---------|-----|-------------|-----------
+colorToMatchSeason|Boolean|`true`|If to color the background of the calendar to match the color of the season the date falls on.
+cssClasses|String|`""`|Any custom CSS classes to add to the wrapper div around the calendar.
+date|`{year: number, month: number}`|Current Date| The year and the month index to display for the full calendar view.
+id|String|`""`|The unique ID to set to the calendar HTML.
+showSeasonName|Boolean|`true`|If to show the season name in the calendar view.
+showNoteCount|Boolean|`true`|If to show the indicator for notes on the days being displayed.
+showMoonPhases|Boolean|`true`|If to show the moon phases for the days being displayed.
+showYear|Boolean|`true`|If to show the year in the header text of the full calendar.
+
+### Styling
+
+To use the default styles for the full calendar be sure to add the class `simple-calendar` to the div that contains this handlebar helper. If this is not included then you will be responsible for creating the styles for the calendar.
+
+### Examples
+
+Assuming the Gregorian calendar with a current date of December 15th, 2021 for all examples
+
+```html
+{{sc-full-calendar id='custom_id'}}
+```
+![Default Example](../docs/images/sc-full-calendar-example-default.png)
+
+```html
+{{sc-full-calendar id='custom_id' colorToMatchSeason=false showSeasonName=false showNoteCount=false showMoonPhases= false showYear=false}}
+```
+
+![All Disabled Example](../docs/images/sc-full-calendar-example-all-disabled.png)
+
+Assumes that there is a variable called newDate that looks like this:
+```javascript
+let newDate = {
+    year: 1999,
+    month: 5
+};
+```
+```html
+{{sc-full-calendar id='custom_id' date=newDate }}
+```
+![Specific Date Example](../docs/images/sc-full-calendar-example-set-date.png)
 
 # Types
 

@@ -3,6 +3,7 @@ import SimpleCalendar from "./simple-calendar";
 import {DateRangeMatch} from "../constants";
 import {GameSettings} from "./game-settings";
 import Utilities from "./utilities";
+import Renderer from "./renderer";
 
 export default class DateSelector {
 
@@ -230,72 +231,32 @@ export default class DateSelector {
         const timeMask = SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time.replace(/:?[s]/g, '');
 
         if(this.showDate){
-            let weeks: (boolean | DayTemplate)[][] = [[false]],
-                vMonth: number = 1,
-                weekdays = SimpleCalendar.instance.activeCalendar.year.showWeekdayHeadings? SimpleCalendar.instance.activeCalendar.year.weekdays : [];
-            const visibleMonth = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === this.selectedDate.visibleDate.month);
-            if(visibleMonth){
-                weeks = SimpleCalendar.instance.activeCalendar.year.daysIntoWeeks(visibleMonth, this.selectedDate.startDate.year, SimpleCalendar.instance.activeCalendar.year.weekdays.length);
-                vMonth = visibleMonth.numericRepresentation;
-            }
-
-            if(!weeks.length){
-                return '';
-            }
-            const monthYearDisplay = this.showYear? Utilities.FormatDateTime({year: this.selectedDate.visibleDate.year, month: vMonth, day: 1, hour: 0, minute: 0, seconds:0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.monthYear) : Utilities.FormatDateTime({year: this.selectedDate.visibleDate.year, month: vMonth, day: 1, hour: 0, minute: 0, seconds:0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.monthYear.replace(/YN|YA|YZ|YY(?:YY)?/g, ''));
-            calendarWidth = (10 + (weeks[0].length * 40));
-            calendar = `<div class="header"><div class="current"><a class="prev fa fa-chevron-left"></a><span class="month-year" data-visible="${this.selectedDate.visibleDate.month}/${this.selectedDate.visibleDate.year}">${monthYearDisplay}</span><a class="next fa fa-chevron-right"></a></div>`;
-
-
-            if(weekdays.length){
-                let weekdayRow = '<div class="weekdays">';
-                for(let i = 0; i < weekdays.length; i++){
-                    const wd = weekdays[i].toTemplate();
-                    weekdayRow += `<div class="weekday" title="${wd.name}">${wd.abbreviation}</div>`;
-                }
-                weekdayRow += '</div>';
-                calendar += weekdayRow;
-            }
-            calendar += `</div>`;
-
-            let dayContainer = '<div class="days">';
-            for(let i = 0; i < weeks.length; i++){
-                dayContainer += `<div class="week">`;
-                for(let d = 0; d < weeks[i].length; d++){
-                    if(weeks[i][d] === false){
-                        dayContainer += `<div class="empty-day"></div>`;
-                    } else {
-                        let selected = '';
-                        const checkDate = {
-                            year: this.selectedDate.visibleDate.year,
-                            month: this.selectedDate.visibleDate.month,
-                            day: (<DayTemplate>weeks[i][d]).numericRepresentation,
-                            allDay: true,
-                            hour: 0,
-                            minute: 0
-                        };
-                        const inBetween = Utilities.IsDayBetweenDates(checkDate, this.selectedDate.startDate, this.selectedDate.endDate);
-                        switch (inBetween){
-                            case DateRangeMatch.Exact:
-                                selected = 'selected';
-                                break;
-                            case DateRangeMatch.Start:
-                                selected = 'selected selected-range-start';
-                                break;
-                            case DateRangeMatch.Middle:
-                                selected = 'selected selected-range-mid';
-                                break;
-                            case DateRangeMatch.End:
-                                selected = 'selected selected-range-end';
-                                break;
-                        }
-                        dayContainer += `<div class='day ${selected}' data-day='${(<DayTemplate>weeks[i][d]).numericRepresentation}'>${(<DayTemplate>weeks[i][d]).name}</div>`;
+            calendar = Renderer.CalendarFull(SimpleCalendar.instance.activeCalendar, {
+                id: `${this.id}_calendar`,
+                cssClasses: `sc-date-selector-calendar`,
+                colorToMatchSeason: false,
+                showCurrentDay: false,
+                showMoonPhases: false,
+                showNoteCount: false,
+                showSeasonName: false,
+                showYear: this.showYear,
+                date: {
+                    month: SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.visibleDate.month),
+                    year: this.selectedDate.visibleDate.year
+                },
+                selectedDates: {
+                    start: {
+                        year: this.selectedDate.startDate.year,
+                        month: SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.startDate.month),
+                        day: this.selectedDate.startDate.day
+                    },
+                    end: {
+                        year: this.selectedDate.endDate.year,
+                        month: SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.endDate.month),
+                        day: this.selectedDate.endDate.day
                     }
                 }
-                dayContainer += '</div>';
-            }
-            dayContainer += '</div>';
-            calendar += `${dayContainer}`;
+            });
         }
         if(this.showTime){
 
@@ -360,7 +321,7 @@ export default class DateSelector {
         }
         const displayDate = Utilities.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate, (this.showTime && !this.showDate), this.showYear, this.timeDelimiter);
         if(!justCalendar){
-            returnHtml = `${wrapper}<input class="display-input" style="${calendarWidth && this.setInputWidth? "width:"+calendarWidth+"px;" : ''}" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar${this.showTime && !this.showDate? ' just-time' : ''}" style="display:none;${calendarWidth? "width:"+calendarWidth+"px;" : ''}">${calendar}</div></div>`;
+            returnHtml = `${wrapper}<input class="display-input" style="${calendarWidth && this.setInputWidth? "width:"+calendarWidth+"px;" : ''}" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar-wrapper${this.showTime && !this.showDate? ' just-time' : ''}" style="display:none;">${calendar}</div></div>`;
         } else {
             returnHtml = calendar;
             const displayInput = (<HTMLInputElement>document.querySelector(`#${this.id} .display-input`));
@@ -376,7 +337,7 @@ export default class DateSelector {
      */
     update(){
         const newData = this.build(true);
-        const ds = document.querySelector(`#${this.id} .sc-date-selector-calendar`);
+        const ds = document.querySelector(`#${this.id} .sc-date-selector-calendar-wrapper`);
         if(ds){
             ds.innerHTML = newData;
             this.activateListeners(ds.parentElement, true);
@@ -407,11 +368,11 @@ export default class DateSelector {
                 if(cal){
                     cal.addEventListener('click', this.calendarClick.bind(this));
                 }
-                const prev = <HTMLElement>html.querySelector('.header .current .prev');
+                const prev = <HTMLElement>html.querySelector('.calendar-header .current-date .fa-chevron-left');
                 if(prev){
                     prev.addEventListener('click', this.prevClick.bind(this));
                 }
-                const next = <HTMLElement>html.querySelector('.header .current .next');
+                const next = <HTMLElement>html.querySelector('.calendar-header .current-date .fa-chevron-right');
                 if(next){
                     next.addEventListener('click', this.nextClick.bind(this));
                 }
@@ -449,7 +410,7 @@ export default class DateSelector {
      */
     toggleCalendar(html: HTMLElement, event: Event){
         event.stopPropagation();
-        const cal = <HTMLElement> html.querySelector('.sc-date-selector-calendar');
+        const cal = <HTMLElement> html.querySelector('.sc-date-selector-calendar-wrapper');
         if(cal){
             if(cal.style.display === 'none'){
                 cal.style.display = 'block';
@@ -465,7 +426,7 @@ export default class DateSelector {
      */
     hideCalendar(html: HTMLElement){
         this.secondDaySelect = false;
-        const cal = <HTMLElement>html.querySelector('.sc-date-selector-calendar');
+        const cal = <HTMLElement>html.querySelector('.sc-date-selector-calendar-wrapper');
         if(cal && !!( cal.offsetWidth || cal.offsetHeight || cal.getClientRects().length )){
             cal.style.display = 'none';
             if(this.onDateSelect){
@@ -501,6 +462,7 @@ export default class DateSelector {
         let target = <HTMLElement>event.target;
         const dataDate = target.getAttribute('data-day');
         const currentMonthYear = <HTMLElement>html.querySelector('.month-year');
+
         if(currentMonthYear && dataDate){
             const dataVis = currentMonthYear.getAttribute('data-visible');
             if(dataVis){

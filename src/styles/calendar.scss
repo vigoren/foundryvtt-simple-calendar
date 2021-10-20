@@ -114,6 +114,17 @@
             background-color: #40a94d;
           }
         }
+        &.selected-range-start{
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        &.selected-range-mid{
+          border-radius: 0;
+        }
+        &.selected-range-end{
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
 
         .day-notes{
           position: absolute;

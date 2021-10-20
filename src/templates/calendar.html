@@ -116,46 +116,7 @@
     {{else}}
     <div class="calendar-row">
         <div class="calendar-display">
-            <div class="calendar" style="{{#if calendar.currentYear.currentSeasonColor }}background-color:{{calendar.currentYear.currentSeasonColor}};{{/if}}">
-                <div class="calendar-header" style="{{#if calendar.currentYear.currentSeasonColor }}background-color:{{calendar.currentYear.currentSeasonColor}};{{/if}}">
-                    <div class="current-date">
-                        <a class="fa fa-chevron-left" title="{{localize 'FSC.ChangePreviousMonth'}}"></a>
-                        <span>{{calendar.calendarDisplay}}</span>
-                        <a class="fa fa-chevron-right" title="{{localize 'FSC.ChangeNextMonth'}}"></a>
-                    </div>
-                    {{#if calendar.currentYear.currentSeasonName }}
-                    <div class="season">{{calendar.currentYear.currentSeasonName}}</div>
-                    {{/if}}
-                    {{#if calendar.currentYear.showWeekdayHeaders}}
-                    <div class="weekdays">
-                        {{#each calendar.currentYear.weekdays}}
-                        <div class="weekday" title="{{name}}">{{abbreviation}}</div>
-                        {{/each}}
-                    </div>
-                    {{/if}}
-                </div>
-                <div class="days">
-                    {{#each calendar.currentYear.weeks}}
-                    <div class="week">
-                        {{#each this}}
-                        {{#unless this}}
-                        <div class="empty-day"></div>
-                        {{else}}
-                        <div class="day {{#if ../../calendar.showCurrentDay}}{{#if this.current}}current{{/if}}{{/if}} {{#if ../../calendar.showSelectedDay}}{{#if this.selected}}selected{{/if}}{{/if}}" data-day="{{this.numericRepresentation}}">
-                            <div class="day-notes">
-                            {{day-has-note day=this}}
-                            </div>
-                            {{this.name}}
-                            <div class="moons">
-                                {{day-moon-phase day=this}}
-                            </div>
-                        </div>
-                        {{/unless}}
-                        {{/each}}
-                    </div>
-                    {{/each}}
-                </div>
-            </div>
+            {{sc-full-calendar id='sc_calendar' showNoteCount=true showMoonPhases=true}}
             {{#if calendar.showClock}}
             <div class="time-display">
                 <span class="clock {{clockClass}}"></span>

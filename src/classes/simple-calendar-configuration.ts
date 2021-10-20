@@ -79,7 +79,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/calendar-config.html";
         options.title = "FSC.Configuration.Title";
-        options.classes = ["simple-calendar-configuration"];
+        options.classes = ["simple-calendar", "simple-calendar-configuration"];
         options.resizable = true;
         options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
         options.height = 700;
