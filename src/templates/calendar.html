@@ -7,7 +7,7 @@
                 {{#if (gt calendar.currentYear.selectedDayNotes.reminders 0)}}
                 <button class="control notes {{#unless calendar.currentYear.selectedDayNotes.reminders}}none{{/unless}} fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}"> {{calendar.currentYear.selectedDayNotes.reminders}}</button>
                 {{/if}}
-                {{#if addNotes}}
+                {{#if calendar.addNotes}}
                 <button class="fa fa-plus control save add-note" title="{{localize 'FSC.Notes.AddNew'}}"></button>
                 {{/if}}
             </div>
@@ -116,7 +116,7 @@
     {{else}}
     <div class="calendar-row">
         <div class="calendar-display">
-            {{sc-full-calendar id='sc_calendar' showNoteCount=true showMoonPhases=true}}
+            {{sc-full-calendar id=calendar.calendarId date=calendar.visibleDate}}
             {{#if calendar.showClock}}
             <div class="time-display">
                 <span class="clock {{clockClass}}"></span>

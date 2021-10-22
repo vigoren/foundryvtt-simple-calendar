@@ -3,7 +3,8 @@ import {DayTemplate, SCRenderer} from "../../interfaces";
 import {GameSettings} from "../game-settings";
 import Utilities from "../utilities";
 import RendererUtilities from "./utilities";
-import {DateRangeMatch} from "../../constants";
+import {CalendarClickEvents, DateRangeMatch} from "../../constants";
+import SimpleCalendar from "../simple-calendar";
 
 export default class Renderer{
 
@@ -13,9 +14,11 @@ export default class Renderer{
      */
     private static fullCalendarDefaultOptions: SCRenderer.Options = {
         id: '',
+        allowChangeMonth: true,
+        allowSelectDateRange: false,
         colorToMatchSeason: true,
         cssClasses: '',
-        showCurrentDay: true,
+        showCurrentDate: true,
         showSeasonName: true,
         showNoteCount: true,
         showMoonPhases: true,
@@ -29,8 +32,6 @@ export default class Renderer{
      */
     public static CalendarFull(calendar: Calendar, options: SCRenderer.Options = {id: ''}): string {
         options = Utilities.deepMerge({}, this.fullCalendarDefaultOptions, options);
-        //TODO: Add a way to activate all of the listeners so the calendar can be interactive
-        //TODO: Add an option so that if interactivity is disabled the CSS hover states and the month change buttons are disabled
 
         let monthYearFormat = calendar.generalSettings.dateFormat.monthYear;
         if(!options.showYear){
@@ -41,8 +42,10 @@ export default class Renderer{
         if(options.date){
             if(options.date.month > 0 && options.date.month < calendar.year.months.length){
                 vMonth = calendar.year.months[options.date.month].numericRepresentation;
+                vMonthIndex = options.date.month;
             } else {
                 vMonth = calendar.year.months[0].numericRepresentation;
+                vMonthIndex = 0;
             }
             vYear = options.date.year;
             const visibleMonth = calendar.year.months[options.date.month]
@@ -56,6 +59,7 @@ export default class Renderer{
                 vMonth = visibleMonth.numericRepresentation;
                 weeks = calendar.year.daysIntoWeeks(visibleMonth, vYear, calendar.year.weekdays.length);
             }
+            vMonthIndex = calendar.year.months.findIndex(m => m.numericRepresentation === vMonth);
         }
 
         if(options.selectedDates){
@@ -78,17 +82,28 @@ export default class Renderer{
         }
 
         if(options.showSeasonName || options.colorToMatchSeason){
-            vMonthIndex = calendar.year.months.findIndex(m => m.numericRepresentation === vMonth);
             const season = calendar.year.getSeason(vMonthIndex, ssDay? ssDay : 1);
             seasonName = season.name;
             calendarStyle = `background-color:${season.color};`;
         }
 
-        let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}">`;
+
+
+        let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${SimpleCalendar.instance.calendars.findIndex(c => c.id === calendar.id)}">`;
+        //Hidden Options
+        html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
         //Put the header together
         html += `<div class="calendar-header" style="${options.colorToMatchSeason?calendarStyle:''}">`;
         //Visible date change and current date
-        html += `<div class="current-date"><a class="fa fa-chevron-left" title="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a><span class="month-year" data-visible="${vMonth}/${vYear}">${Utilities.FormatDateTime({year: vYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, monthYearFormat)}</span><a class="fa fa-chevron-right" title="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a></div>`;
+        html += `<div class="current-date">`;
+        if(options.allowChangeMonth){
+            html += `<a class="fa fa-chevron-left" title="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
+        }
+        html += `<span class="month-year" data-visible="${vMonthIndex}/${vYear}">${Utilities.FormatDateTime({year: vYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, monthYearFormat)}</span>`;
+        if(options.allowChangeMonth){
+            html += `<a class="fa fa-chevron-right" title="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
+        }
+        html += '</div>';
         //Season Name
         if(options.showSeasonName){
             html += `<div class="season">${seasonName}</div>`;
@@ -123,6 +138,7 @@ export default class Renderer{
                             switch (inBetween){
                                 case DateRangeMatch.Exact:
                                     dayClass += ' selected';
+                                    (<DayTemplate>weeks[i][x]).selected = true;
                                     break;
                                 case DateRangeMatch.Start:
                                     dayClass += ' selected selected-range-start';
@@ -136,7 +152,7 @@ export default class Renderer{
                             }
                         }
                         //Check for current date to highlight
-                        if(options.showCurrentDay && vYear === calendar.year.numericRepresentation && (<DayTemplate>weeks[i][x]).current){
+                        if(options.showCurrentDate && vYear === calendar.year.numericRepresentation && (<DayTemplate>weeks[i][x]).current){
                             dayClass += ' current';
                         }
 
@@ -162,6 +178,166 @@ export default class Renderer{
         //Close main div
         html += '</div>';
         return html;
+    }
+
+    /**
+     * Activates listeners for month change and day clicks on the specified rendered calendar
+     * @param {string} calendarId The ID of the HTML element representing the calendar to activate listeners for
+     * @param {Function|null} onMonthChange Function to call when the month is changed
+     * @param {Function|null} onDayClick Function to call when a day is clicked
+     */
+    public static ActivateFullCalendarListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null){
+        const calendarElement = document.getElementById(calendarId);
+        if(calendarElement){
+            const prev = <HTMLElement>calendarElement.querySelector('.calendar-header .current-date .fa-chevron-left');
+            if(prev){
+                prev.addEventListener('click', Renderer.CalendarFullEventListener.bind(Renderer, calendarId, CalendarClickEvents.previous, onMonthChange, onDayClick));
+            }
+            const next = <HTMLElement>calendarElement.querySelector('.calendar-header .current-date .fa-chevron-right');
+            if(next){
+                next.addEventListener('click', Renderer.CalendarFullEventListener.bind(Renderer, calendarId, CalendarClickEvents.next, onMonthChange, onDayClick));
+            }
+            calendarElement.querySelectorAll('.days .day').forEach(el => {
+                el.addEventListener('click', Renderer.CalendarFullEventListener.bind(Renderer, calendarId, CalendarClickEvents.day, onMonthChange, onDayClick));
+            });
+        }
+    }
+
+    /**
+     * Updates the rendered calendars view to change to the next or previous month
+     * @param {string} calendarId The ID of the HTML element making up the calendar
+     * @param {CalendarClickEvents} clickType If true the previous button was clicked, otherwise next was clicked
+     * @param {Function|null} onMonthChange The custom function to call when the month is changed.
+     * @param {Function|null} onDayClick The custom function to call when a day is clicked.
+     * @param {Event} event The click event
+     */
+    public static CalendarFullEventListener(calendarId: string, clickType: CalendarClickEvents, onMonthChange: Function | null, onDayClick: Function | null, event: Event){
+        event.stopPropagation();
+        const calendarElement = document.getElementById(calendarId);
+        if(calendarElement){
+            const calendarIndex = parseInt(calendarElement.getAttribute('data-calendar') || '');
+            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < SimpleCalendar.instance.calendars.length){
+                const calendar = SimpleCalendar.instance.calendars[calendarIndex];
+                let options: SCRenderer.Options = {id:''};
+                const optionsInput = calendarElement.querySelector('.render-options');
+                if(optionsInput){
+                    options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));
+                }
+                const currentMonthYear = <HTMLElement>calendarElement.querySelector('.month-year');
+                if(currentMonthYear){
+                    const dataVis = currentMonthYear.getAttribute('data-visible');
+                    if(dataVis){
+                        const my = dataVis.split('/');
+                        if(my.length === 2){
+                            let monthIndex = parseInt(my[0]);
+                            let yearNumber = parseInt(my[1]);
+                            if(!isNaN(yearNumber) && !isNaN(monthIndex)){
+                                if(clickType === CalendarClickEvents.previous || clickType === CalendarClickEvents.next){
+                                    let loop = true;
+                                    let loopCount = 0;
+                                    while(loop){
+                                        if(clickType === CalendarClickEvents.previous){
+                                            if(monthIndex === 0){
+                                                monthIndex = calendar.year.months.length - 1;
+                                                yearNumber--;
+                                            } else {
+                                                monthIndex--;
+                                            }
+                                        } else {
+                                            if(monthIndex === (calendar.year.months.length - 1)){
+                                                monthIndex = 0;
+                                                yearNumber++;
+                                            }else {
+                                                monthIndex++;
+                                            }
+                                        }
+                                        const isLeapYear = calendar.year.leapYearRule.isLeapYear(yearNumber);
+                                        if((isLeapYear && calendar.year.months[monthIndex].numberOfLeapYearDays > 0) || (!isLeapYear && calendar.year.months[monthIndex].numberOfDays > 0)){
+                                            loop = false;
+                                        }
+                                        loopCount++;
+                                        if(loopCount === calendar.year.months.length){
+                                            loop = false;
+                                        }
+                                    }
+                                } else if(clickType === CalendarClickEvents.day){
+                                    let target = <HTMLElement>event.target;
+                                    //If a child of the day div is clicked get the closest day
+                                    const closestDay = target.closest('.day');
+                                    if(closestDay){
+                                        target = <HTMLElement>closestDay;
+                                    }
+                                    console.log(closestDay);
+                                    const dataDate = target.getAttribute('data-day');
+                                    if(dataDate){
+                                        const dayNumber = parseInt(dataDate);
+                                        if(!isNaN(dayNumber)){
+                                            const start = {year: 0, month: 0, day: 0};
+                                            const end = {year: 0, month: 0, day: 0};
+
+                                            if(options.allowSelectDateRange){
+                                                if(!options.selectedDates || options.selectedDates.end.year !== null){
+                                                    start.year = yearNumber;
+                                                    start.month = monthIndex;
+                                                    start.day = dayNumber;
+                                                    end.year = NaN;
+                                                    end.month = NaN;
+                                                    end.day = NaN;
+                                                } else {
+                                                    start.year = options.selectedDates.start.year;
+                                                    start.month = options.selectedDates.start.month;
+                                                    start.day = options.selectedDates.start.day || 1;
+                                                    end.year = yearNumber;
+                                                    end.month = monthIndex;
+                                                    end.day = dayNumber;
+
+                                                    // End date is less than start date
+                                                    if((start.day > dayNumber && start.month  === monthIndex  && start.year === yearNumber) || (start.month > monthIndex && start.year === yearNumber) || start.year > yearNumber){
+                                                        end.year = options.selectedDates.start.year;
+                                                        end.month = options.selectedDates.start.month;
+                                                        end.day = options.selectedDates.start.day || 1;
+                                                        start.year = yearNumber;
+                                                        start.month = monthIndex;
+                                                        start.day = dayNumber;
+                                                    }
+                                                }
+                                            } else {
+                                                start.year = yearNumber;
+                                                start.month = monthIndex;
+                                                start.day = dayNumber;
+                                                end.year = yearNumber;
+                                                end.month = monthIndex;
+                                                end.day = dayNumber;
+                                            }
+                                            options.selectedDates = {
+                                                start: start,
+                                                end: end
+                                            };
+                                        }
+                                    }
+                                }
+                                options.date = {
+                                    year: yearNumber,
+                                    month: monthIndex
+                                };
+                            }
+                        }
+                    }
+                }
+                const newHTML = Renderer.CalendarFull(calendar, options);
+                const temp = document.createElement('div');
+                temp.innerHTML = newHTML;
+                if(temp.firstChild) {
+                    calendarElement.replaceWith(temp.firstChild);
+                    Renderer.ActivateFullCalendarListeners(options.id, onMonthChange, onDayClick);
+                }
+                if(onMonthChange !== null && (clickType === CalendarClickEvents.previous || clickType === CalendarClickEvents.next)){
+                    onMonthChange(clickType, options);
+                } else if(onDayClick !== null && clickType === CalendarClickEvents.day){
+                    onDayClick(options);
+                }
+            }
+        }
     }
 
     /**

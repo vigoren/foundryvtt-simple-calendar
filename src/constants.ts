@@ -176,3 +176,9 @@ export enum TimeKeeperStatus {
     Stopped = 'stopped',
     Paused = 'paused'
 }
+
+export enum CalendarClickEvents{
+    previous = 'previous',
+    next = 'next',
+    day = 'day'
+}

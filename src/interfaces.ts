@@ -62,12 +62,14 @@ export interface CalendarTemplate extends IConfigurationItemBaseTemplate {
     showTimeControls: boolean;
     showSetCurrentDate: boolean;
     calendarDisplay: string;
+    calendarId: string;
     name: string;
     selectedDisplay: string;
     timeDisplay: string;
     currentYear: YearTemplate;
     gameSystem: GameSystems;
     notes: NoteTemplate[];
+    visibleDate: {year: number, month: number};
 }
 
 export interface GeneralSettingsConfig extends IConfigurationItemBaseConfig{
@@ -498,6 +500,7 @@ export namespace SimpleCalendarSocket{
 }
 
 export namespace SCRenderer {
+
     export interface Date {
         year: number,
         month: number,
@@ -505,6 +508,8 @@ export namespace SCRenderer {
     }
 
     export interface Options {
+        allowChangeMonth?: boolean;
+        allowSelectDateRange?: boolean;
         colorToMatchSeason?: boolean;
         cssClasses?: string;
         date?: Date;
@@ -513,7 +518,7 @@ export namespace SCRenderer {
             start: Date,
             end: Date
         };
-        showCurrentDay?: boolean;
+        showCurrentDate?: boolean;
         showMoonPhases?: boolean;
         showNoteCount?: boolean;
         showSeasonName?: boolean;

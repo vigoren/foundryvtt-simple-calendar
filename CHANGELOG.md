@@ -1,15 +1,28 @@
 # Change Log
 
-## v1.3.78 - API Changes and Bug Fixes
+## v1.3.81 - API Changes and Bug Fixes
 
 ### Bug Fixes
 
 - Fixed a bug where the display year in the calendar header would not update properly if the year being viewed was different from the current year.
+- Fixed a bug where the "Add Notes" button disappeared from the compact view.
+- Fixed a bug where clicking on a moon icon or note indicator would not select the day properly.
 
 ### API Changes
 
 - Removed 2 Handlebar helpers, day-has-note and day-moon-phase. These were used internally and are no longer required.
 - Added a new Handlebar helper [sc-full-calendar](./docs/API.md#sc-full-calendar) that can be used to render a full calendar view of the current date or passed in date.
+  - These calendars support basic interactivity, change which month is being viewed and selecting a day when it is clicked, with the option to pass in your own function to extend this functionality.
+  - These calendars can use the default Simple Calendar styling or be customized.
+- Added a new function `SimpleCalendar.api.activateFullCalendarListeners()` ([docs](./docs/API.md#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick)) that is used to activate all the basic interactivity for calendars rendered with the [sc-full-calendar](./docs/API.md#sc-full-calendar) Handlebar helper.
+
+### Structural Changes for Multi Calendar Support
+
+This change includes a large back end change to how calendars are rendered. All generation of full calendar displays (main application, the date/time selectors and the new Handlebar helper) have been updated to use a brand-new rendering class. This change makes it very easy for Simple Calendar to display 1 or more calendar views at the same time or switch the calendar being shown, which will be very important when multi calendar support is introduced.
+
+Users should not notice any real change to how the different calendars function. Overall the different calendars should feel more consistent with one another for interactivity. 
+
+I have taken a lot of time and care to ensure that no functionality was broken in this update, but as with any big change the introduction of bugs could be possible so please let me know if you find any!
 
 ## v1.3.75 - Bug Fixes
 

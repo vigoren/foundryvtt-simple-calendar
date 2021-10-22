@@ -35,6 +35,9 @@ export default class HandlebarsHelpers{
      */
     static FullCalendar(options: any){
         const renderOptions: SCRenderer.Options = {id:''};
+        if(options.hash.hasOwnProperty('allowChangeMonth')){
+            renderOptions.allowChangeMonth = options.hash['allowChangeMonth'];
+        }
         if(options.hash.hasOwnProperty('colorToMatchSeason')){
             renderOptions.colorToMatchSeason = options.hash['colorToMatchSeason'];
         }
@@ -46,6 +49,9 @@ export default class HandlebarsHelpers{
         }
         if(options.hash.hasOwnProperty('id')){
             renderOptions.id = options.hash['id'];
+        }
+        if(options.hash.hasOwnProperty('showCurrentDate')){
+            renderOptions.showCurrentDate = options.hash['showCurrentDate'];
         }
         if(options.hash.hasOwnProperty('showSeasonName')){
             renderOptions.showSeasonName = options.hash['showSeasonName'];

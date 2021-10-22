@@ -16,6 +16,29 @@
   overflow-y: auto;
   position: relative;
 
+  &.display-only{
+    .calendar-header{
+      .current-date{
+        a:first-child, a:last-child{
+          cursor: default;
+          &:hover{
+            text-shadow: unset;
+          }
+        }
+      }
+    }
+    .days{
+      .week{
+        .day{
+          cursor: default;
+          &:hover{
+            background-color: unset;
+          }
+        }
+      }
+    }
+  }
+
   .calendar-header{
     position: sticky;
     top: 0;
@@ -27,7 +50,7 @@
     .current-date{
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: space-around;
       font-size: 1.25rem;
       margin-bottom: 10px;
 

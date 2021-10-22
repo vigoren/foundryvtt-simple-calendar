@@ -4,6 +4,7 @@ import {
     LeapYearConfig,
     MonthConfig,
     MoonConfiguration,
+    NoteConfig,
     TimeConfig,
     WeekdayConfig,
     YearConfig
@@ -11,14 +12,15 @@ import {
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {
+    CalendarClickEvents,
     GameSystems,
     LeapYearRules,
     ModuleName,
     MoonIcons,
     MoonYearResetOptions,
     PredefinedCalendars,
-    SettingNames,
     PresetTimeOfDay,
+    SettingNames,
     TimeKeeperStatus,
     YearNamingRules
 } from "../constants";
@@ -26,6 +28,7 @@ import PF2E from "./systems/pf2e";
 import Utilities from "./utilities";
 import DateSelector from "./date-selector";
 import PredefinedCalendar from "./predefined-calendar";
+import Renderer from "./renderer";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
@@ -60,6 +63,17 @@ export default class API{
      * The sun positions
      */
     public static PresetTimeOfDay = PresetTimeOfDay;
+
+
+    /**
+     * Activates listeners for month change and day clicks on the specified rendered calendar
+     * @param {string} calendarId The ID of the HTML element representing the calendar to activate listeners for
+     * @param {Function|null} onMonthChange Function to call when the month is changed
+     * @param {Function|null} onDayClick Function to call when a day is clicked
+     */
+    public static activateFullCalendarListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null){
+        Renderer.ActivateFullCalendarListeners(calendarId, onMonthChange, onDayClick);
+    }
 
     /**
      * Get the timestamp for the current year

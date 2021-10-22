@@ -13,6 +13,7 @@ Simple Calendar exposes a variable called `SimpleCalendar`, all of these API fun
 - [YearNamingRules](#simplecalendarapiyearnamingrules)
 
 ## Functions
+- [activateFullCalendarListeners](#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick)
 - [advanceTimeToPreset](#simplecalendarapiadvancetimetopresetpreset)
 - [changeDate](#simplecalendarapichangedateinterval)
 - [chooseRandomDate](#simplecalendarapichooserandomdatestartdate-enddate)
@@ -108,6 +109,26 @@ This is an enum that contains the options for how year names are applied to year
 - **Random**: Every year will be giving a random year name from the list.
 
 # Functions
+
+## `SimpleCalendar.api.activateFullCalendarListeners(calendarId, onMonthChange, onDayClick)`
+
+This function is used to activate event listeners for calendars displayed with the [sc-full-calendar](#sc-full-calendar) Handlebar helper.
+
+If being used in a FoundryVTT application or FormApplication it is best called in the activateListeners function.
+
+### Parameters
+
+Parameter|Type|Default Value|Description
+---------|-----|-------------|-----------
+calendarId|String|N/A|The ID of the HTML element of the calendar to activate listeners for. This is the same ID used in the [sc-full-calendar](#sc-full-calendar) Handlebar helper.
+onMonthChange|Function or Null|null|Optional function to be called when the month being viewed has changed. Returned parameters to the function are:<br/> - The direction moved, previous or next.<br/> - The options used to render the calendar, which includes the date being shown.
+onDayClick|Function or Null|null|Optional function to be called when a day is clicked. Returned parameters to the function are:<br/>- The options used to render the calendar, which includes the selected date.
+
+### Examples
+
+```javascript
+SimpleCalendar.api.activateFullCalendarListeners('example_1');
+```
 
 ## `SimpleCalendar.api.advanceTimeToPreset(preset)`
 
@@ -1123,6 +1144,9 @@ console.log(scDate);
 
 This handlebar helper is used to generate the HTML for displaying a full calendar view for the current date or a passed in date.
 
+Don't forget to call the [SimpleCalendar.api.activateFullCalendarListeners](#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick) function for any calendars added with this Handlebar helper. Doing so will add all the needed interactivity!
+
+A unique ID is required to ensure proper functionality of a Calendar added with this Handlebar helper.
 
 ### Parameters
 
@@ -1130,10 +1154,12 @@ The following parameters can be passed in with the handlebar helper to customize
 
 Parameter|Type|Default Value|Description
 ---------|-----|-------------|-----------
+allowChangeMonth|Boolean|`true`|If to allow months to be changed on this display
 colorToMatchSeason|Boolean|`true`|If to color the background of the calendar to match the color of the season the date falls on.
 cssClasses|String|`""`|Any custom CSS classes to add to the wrapper div around the calendar.
 date|`{year: number, month: number}`|Current Date| The year and the month index to display for the full calendar view.
 id|String|`""`|The unique ID to set to the calendar HTML.
+showCurrentDate|Boolean|`true`|If to highlight the current date on the calendar.
 showSeasonName|Boolean|`true`|If to show the season name in the calendar view.
 showNoteCount|Boolean|`true`|If to show the indicator for notes on the days being displayed.
 showMoonPhases|Boolean|`true`|If to show the moon phases for the days being displayed.
@@ -1142,6 +1168,12 @@ showYear|Boolean|`true`|If to show the year in the header text of the full calen
 ### Styling
 
 To use the default styles for the full calendar be sure to add the class `simple-calendar` to the div that contains this handlebar helper. If this is not included then you will be responsible for creating the styles for the calendar.
+
+Inspecting the calendar output is the best way to start customizing the styling!
+
+Default Styles|Custom Style Example
+--------------|--------------------
+![Default Example](../docs/images/sc-full-calendar-example-default.png)|![Custom Style Example](../docs/images/sc-full-calendar-example-custom-style.png)
 
 ### Examples
 
@@ -1153,7 +1185,7 @@ Assuming the Gregorian calendar with a current date of December 15th, 2021 for a
 ![Default Example](../docs/images/sc-full-calendar-example-default.png)
 
 ```html
-{{sc-full-calendar id='custom_id' colorToMatchSeason=false showSeasonName=false showNoteCount=false showMoonPhases= false showYear=false}}
+{{sc-full-calendar id='custom_id' colorToMatchSeason=false showCurrentDate=false showSeasonName=false showNoteCount=false showMoonPhases= false showYear=false}}
 ```
 
 ![All Disabled Example](../docs/images/sc-full-calendar-example-all-disabled.png)

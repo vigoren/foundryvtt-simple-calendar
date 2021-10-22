@@ -41,10 +41,19 @@ export default class Utilities{
         return hash;
     }
 
+    /**
+     * If the passed in item is an object
+     * @param item
+     */
     public static isObject(item: any): boolean {
         return (item && typeof item === 'object' && !Array.isArray(item));
     }
 
+    /**
+     * Preforms a light deep merge of any number of source objects into the target object
+     * @param target
+     * @param sources
+     */
     public static deepMerge(target: any, ...sources: any): any{
         if (!sources.length) return target;
         const source = sources.shift();

@@ -1,5 +1,5 @@
 import Year from "./year";
-import {CalendarConfiguration, CalendarTemplate, DayTemplate, NoteCategory, PermissionMatrix} from "../interfaces";
+import {CalendarConfiguration, CalendarTemplate, NoteCategory, PermissionMatrix} from "../interfaces";
 import {GameSystems, GameWorldTimeIntegrations, PredefinedCalendars, TimeKeeperStatus} from "../constants";
 import Note from "./note";
 import Month from "./month";
@@ -14,8 +14,6 @@ import GeneralSettings from "./general-settings";
 import ConfigurationItemBase from "./configuration-item-base";
 import Utilities from "./utilities";
 import PF2E from "./systems/pf2e";
-import HandlebarsHelpers from "./handlebars-helpers";
-import Renderer from "./renderer";
 
 export default class Calendar extends ConfigurationItemBase{
 
@@ -117,7 +115,7 @@ export default class Calendar extends ConfigurationItemBase{
      */
     toTemplate(): CalendarTemplate{
         let showSetCurrentDate = false;
-        let vMonth = 1, sMonth = 1, sDay = 1;
+        let vMonth = 1, vMonthIndex = 0, vYear = this.year.visibleYear, sMonth = 1, sDay = 1;
         const currentMonth = this.year.getMonth();
         const selectedMonth = this.year.getMonth('selected');
         const visibleMonth = this.year.getMonth('visible');
@@ -140,11 +138,13 @@ export default class Calendar extends ConfigurationItemBase{
 
         if(visibleMonth){
             vMonth = visibleMonth.numericRepresentation;
+            vMonthIndex = this.year.months.findIndex(m => m.numericRepresentation === vMonth);
         }
 
         return {
             ...super.toTemplate(),
             addNotes: this.canUser((<Game>game).user, this.generalSettings.permissions.addNotes),
+            calendarId: `sc_${this.id}_calendar`,
             changeDateTime: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime),
             currentYear: this.year.toTemplate(),
             gameSystem: this.gameSystem,
@@ -158,7 +158,8 @@ export default class Calendar extends ConfigurationItemBase{
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             calendarDisplay: Utilities.FormatDateTime({year: this.year.visibleYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear),
             selectedDisplay: Utilities.FormatDateTime({year: this.year.selectedYear, month: sMonth, day: sDay, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.date),
-            timeDisplay: Utilities.FormatDateTime({year: 0, month: 0, day: 0, ...this.year.time.getCurrentTime()}, this.generalSettings.dateFormat.time)
+            timeDisplay: Utilities.FormatDateTime({year: 0, month: 0, day: 0, ...this.year.time.getCurrentTime()}, this.generalSettings.dateFormat.time),
+            visibleDate: {year: vYear, month: vMonthIndex}
         };
     }
 

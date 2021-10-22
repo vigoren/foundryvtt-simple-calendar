@@ -1,9 +1,9 @@
-import {DayTemplate, SCDateSelector} from "../interfaces";
+import {SCDateSelector, SCRenderer} from "../interfaces";
 import SimpleCalendar from "./simple-calendar";
-import {DateRangeMatch} from "../constants";
 import {GameSettings} from "./game-settings";
 import Utilities from "./utilities";
 import Renderer from "./renderer";
+import {CalendarClickEvents} from "../constants";
 
 export default class DateSelector {
 
@@ -224,24 +224,25 @@ export default class DateSelector {
      * @param {boolean} [justCalendar=false] If we should just be rendering the calendar HTML or the full inputs HTML
      */
     build(justCalendar = false){
-        let returnHtml = '';
+        let returnHtml;
         let wrapper = `<div id="${this.id}" class="sc-date-selector">`;
-        let calendarWidth = 0;
         let calendar = '';
         const timeMask = SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time.replace(/:?[s]/g, '');
 
         if(this.showDate){
             calendar = Renderer.CalendarFull(SimpleCalendar.instance.activeCalendar, {
                 id: `${this.id}_calendar`,
+                allowChangeMonth: true,
+                allowSelectDateRange: true,
                 cssClasses: `sc-date-selector-calendar`,
                 colorToMatchSeason: false,
-                showCurrentDay: false,
+                showCurrentDate: false,
                 showMoonPhases: false,
                 showNoteCount: false,
                 showSeasonName: false,
                 showYear: this.showYear,
                 date: {
-                    month: SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.visibleDate.month),
+                    month: this.selectedDate.visibleDate.month,
                     year: this.selectedDate.visibleDate.year
                 },
                 selectedDates: {
@@ -259,7 +260,7 @@ export default class DateSelector {
             });
         }
         if(this.showTime){
-
+//TODO: Redo how the time component is built and added in
             let startTimeText = `00:00`;
             let endTimeText = `00:00`;
             if(!this.selectedDate.startDate.allDay){
@@ -321,7 +322,7 @@ export default class DateSelector {
         }
         const displayDate = Utilities.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate, (this.showTime && !this.showDate), this.showYear, this.timeDelimiter);
         if(!justCalendar){
-            returnHtml = `${wrapper}<input class="display-input" style="${calendarWidth && this.setInputWidth? "width:"+calendarWidth+"px;" : ''}" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar-wrapper${this.showTime && !this.showDate? ' just-time' : ''}" style="display:none;">${calendar}</div></div>`;
+            returnHtml = `${wrapper}<input class="display-input" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar-wrapper${this.showTime && !this.showDate? ' just-time' : ''}" style="display:none;">${calendar}</div></div>`;
         } else {
             returnHtml = calendar;
             const displayInput = (<HTMLInputElement>document.querySelector(`#${this.id} .display-input`));
@@ -355,30 +356,23 @@ export default class DateSelector {
             html = document.querySelector(`#${this.id}`);
         }
         if(html){
-            const dateSelector = html;
             if(!justCalendar){
                 document.addEventListener('click', this.hideCalendar.bind(this,html));
                 const di = <HTMLElement>html.querySelector('.display-input');
                 if(di){
-                    di.addEventListener('click', this.toggleCalendar.bind(this, dateSelector));
+                    di.addEventListener('click', this.toggleCalendar.bind(this, html));
+                }
+
+                if(this.showDate){
+                    Renderer.ActivateFullCalendarListeners(`${this.id}_calendar`, this.changeMonthClick.bind(this), this.dayClick.bind(this));
                 }
             }
+
             if(this.showDate){
                 const cal = <HTMLElement>html.querySelector('.sc-date-selector-calendar');
                 if(cal){
                     cal.addEventListener('click', this.calendarClick.bind(this));
                 }
-                const prev = <HTMLElement>html.querySelector('.calendar-header .current-date .fa-chevron-left');
-                if(prev){
-                    prev.addEventListener('click', this.prevClick.bind(this));
-                }
-                const next = <HTMLElement>html.querySelector('.calendar-header .current-date .fa-chevron-right');
-                if(next){
-                    next.addEventListener('click', this.nextClick.bind(this));
-                }
-                html.querySelectorAll('.days .day').forEach(el => {
-                    el.addEventListener('click', this.dayClick.bind(this, dateSelector));
-                });
             }
 
             if(this.showTime){
@@ -454,156 +448,46 @@ export default class DateSelector {
 
     /**
      * Processes the selecting of a day on the calendar
-     * @param {HTMLElement} html The HTMLElement for the date selector
-     * @param {Event} event The click event that triggered this call
+     * @param {SCRenderer.Options} options The renderer options returned from the click event
      */
-    dayClick(html: HTMLElement, event: Event){
-        event.stopPropagation();
-        let target = <HTMLElement>event.target;
-        const dataDate = target.getAttribute('data-day');
-        const currentMonthYear = <HTMLElement>html.querySelector('.month-year');
+    dayClick(options: SCRenderer.Options){
+        if(options.selectedDates){
+            let hideCalendar = true;
+            if(!this.secondDaySelect){
+                this.selectedDate.startDate.year = options.selectedDates.start.year;
+                this.selectedDate.startDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.start.month].numericRepresentation;
+                this.selectedDate.startDate.day = options.selectedDates.start.day || 1;
+                this.secondDaySelect = true;
+                hideCalendar = false;
+            }else{
+                this.selectedDate.startDate.year = options.selectedDates.start.year;
+                this.selectedDate.startDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.start.month].numericRepresentation;
+                this.selectedDate.startDate.day = options.selectedDates.start.day || 1;
+                this.selectedDate.endDate.year = options.selectedDates.end.year;
+                this.selectedDate.endDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.end.month].numericRepresentation;
+                this.selectedDate.endDate.day = options.selectedDates.end.day || 1;
+            }
 
-        if(currentMonthYear && dataDate){
-            const dataVis = currentMonthYear.getAttribute('data-visible');
-            if(dataVis){
-                const my = dataVis.split('/');
-                if(my.length === 2){
-                    const dayNumber = parseInt(dataDate);
-                    const monthNumber = parseInt(my[0]);
-                    const yearNumber = parseInt(my[1]);
-                    if(!isNaN(yearNumber) && !isNaN(monthNumber) && !isNaN(dayNumber)){
-                        let hideCalendar = true;
-                        if(this.dateRange){
-                            if(!this.secondDaySelect){
-                                this.selectedDate.startDate.year = yearNumber;
-                                this.selectedDate.startDate.month = monthNumber;
-                                this.selectedDate.startDate.day = dayNumber;
-                                this.selectedDate.endDate.year = yearNumber;
-                                this.selectedDate.endDate.month = monthNumber;
-                                this.selectedDate.endDate.day = dayNumber;
-                                this.secondDaySelect = true;
-                                hideCalendar = false;
-                            } else {
-                                let sMonthIndex = this.selectedDate.startDate.month;
-                                let newMonthIndex = monthNumber;
-                                const sMonth = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.startDate.month);
-                                const nMonth = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === monthNumber);
-                                if(sMonth > -1){
-                                    sMonthIndex = sMonth;
-                                }
-                                if(nMonth > -1){
-                                    newMonthIndex = nMonth;
-                                }
-                                // End date is less than start date
-                                if(
-                                    (this.selectedDate.startDate.day > dayNumber && sMonthIndex === newMonthIndex  && this.selectedDate.startDate.year === yearNumber) ||
-                                    (sMonthIndex > newMonthIndex && this.selectedDate.startDate.year === yearNumber) ||
-                                    this.selectedDate.startDate.year > yearNumber)
-                                {
-                                    const newSDate = {
-                                        year: yearNumber,
-                                        month: monthNumber,
-                                        day: dayNumber,
-                                        allDay: this.selectedDate.endDate.allDay,
-                                        hour: this.selectedDate.endDate.hour,
-                                        minute: this.selectedDate.endDate.minute
-                                    };
-                                    this.selectedDate.endDate = {
-                                        year: this.selectedDate.startDate.year,
-                                        month: this.selectedDate.startDate.month,
-                                        day: this.selectedDate.startDate.day,
-                                        allDay: this.selectedDate.startDate.allDay,
-                                        hour: this.selectedDate.startDate.hour,
-                                        minute: this.selectedDate.startDate.minute
-                                    };
-                                    this.selectedDate.startDate = newSDate;
-                                }
-                                else {
-                                    this.selectedDate.endDate.year = yearNumber;
-                                    this.selectedDate.endDate.month = monthNumber;
-                                    this.selectedDate.endDate.day = dayNumber;
-                                }
-                                this.secondDaySelect = false;
-                            }
-                        } else {
-                            this.selectedDate.startDate.year = yearNumber;
-                            this.selectedDate.startDate.month = monthNumber;
-                            this.selectedDate.startDate.day = dayNumber;
-                            this.selectedDate.endDate.year = yearNumber;
-                            this.selectedDate.endDate.month = monthNumber;
-                            this.selectedDate.endDate.day = dayNumber;
-                        }
-                        if(hideCalendar){
-                            this.update();
-                            this.hideCalendar(html);
-                        } else {
-                            this.update();
-                        }
-
-                    }
+            if(hideCalendar){
+                const html = document.getElementById(this.id);
+                if(html){
+                    this.hideCalendar(html);
                 }
             }
         }
-
     }
 
     /**
-     * When the next month button is clicked
-     * @param {Event} event The click event that triggered this call
+     * Processes the callback from the Calendar Renderer's month change click
+     * @param clickType
+     * @param options
      */
-    nextClick(event: Event){
-        event.stopPropagation();
-        this.changeMonth(true);
-    }
-
-    /**
-     * When the previous month button is clicked
-     * @param {Event} event The click event that triggered this call
-     */
-    prevClick(event: Event){
-        event.stopPropagation();
-        this.changeMonth(false);
-    }
-
-    /**
-     * Changes the actual month being shown on the calendar
-     * @param {boolean} next If to go to the next month or the previous month
-     */
-    changeMonth(next: boolean){
-        let monthIndex = 0;
-        for(let i = 0; i < SimpleCalendar.instance.activeCalendar.year.months.length; i++){
-            if(SimpleCalendar.instance.activeCalendar.year.months[i].numericRepresentation === this.selectedDate.visibleDate.month){
-                monthIndex = i;
-                if(next){
-                    if(i === SimpleCalendar.instance.activeCalendar.year.months.length - 1){
-                        monthIndex = 0;
-                        this.selectedDate.visibleDate.month = SimpleCalendar.instance.activeCalendar.year.months[monthIndex].numericRepresentation;
-                        this.selectedDate.visibleDate.year++;
-                    } else {
-                        monthIndex = i + 1;
-                        this.selectedDate.visibleDate.month = SimpleCalendar.instance.activeCalendar.year.months[monthIndex].numericRepresentation;
-                    }
-
-                } else{
-                    if(!next && i === 0){
-                        monthIndex = SimpleCalendar.instance.activeCalendar.year.months.length - 1;
-                        this.selectedDate.visibleDate.month = SimpleCalendar.instance.activeCalendar.year.months[monthIndex].numericRepresentation;
-                        this.selectedDate.visibleDate.year--;
-                    } else {
-                        monthIndex = i - 1;
-                        this.selectedDate.visibleDate.month = SimpleCalendar.instance.activeCalendar.year.months[monthIndex].numericRepresentation;
-                    }
-                }
-                const isLeapYear = SimpleCalendar.instance.activeCalendar.year.leapYearRule.isLeapYear(this.selectedDate.visibleDate.year);
-                const skipMonth = (isLeapYear && SimpleCalendar.instance.activeCalendar.year.months[monthIndex].numberOfLeapYearDays === 0) || (!isLeapYear && SimpleCalendar.instance.activeCalendar.year.months[monthIndex].numberOfDays === 0);
-                if(skipMonth){
-                    this.changeMonth(next);
-                    return;
-                }
-                break;
-            }
+    changeMonthClick(clickType: CalendarClickEvents, options: SCRenderer.Options){
+        if(options.date){
+            this.selectedDate.visibleDate.year = options.date.year;
+            this.selectedDate.visibleDate.month = options.date.month;
         }
-        this.update();
+        this.activateListeners(null, true);
     }
 
     /**

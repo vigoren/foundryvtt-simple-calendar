@@ -1,18 +1,26 @@
 import {Logger} from "./logging";
 import Month from "./month";
 import Note from "./note";
-import {SCDateSelector, SimpleCalendarSocket, SimpleCalendarTemplate} from "../interfaces";
+import {SCDateSelector, SCRenderer, SimpleCalendarSocket, SimpleCalendarTemplate} from "../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {GameSettings} from "./game-settings";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
 import HandlebarsHelpers from "./handlebars-helpers";
-import {GameWorldTimeIntegrations, NoteRepeat, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../constants";
+import {
+    CalendarClickEvents,
+    GameWorldTimeIntegrations,
+    NoteRepeat,
+    SimpleCalendarHooks,
+    SocketTypes,
+    TimeKeeperStatus
+} from "../constants";
 import Day from "./day";
 import Hook from "./hook";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import GameSockets from "./game-sockets";
 import Calendar from "./calendar";
 import SimpleCalendarSearch from "./simple-calendar-search";
+import Renderer from "./renderer";
 
 
 /**
@@ -28,9 +36,8 @@ export default class SimpleCalendar extends Application{
     /**
      * A list of all calendars
      * @type {Calendar[]}
-     * @private
      */
-    private calendars: Calendar[] = [];
+    public calendars: Calendar[] = [];
 
     /**
      * Gets the current active calendar
@@ -544,17 +551,9 @@ export default class SimpleCalendar extends Application{
                 this.element.find('.window-resizable-handle').show();
                 this.element.find('.compact-view').empty().append(`<i class='fa fa-compress'></i> ` + GameSettings.Localize('FSC.Compact'));
                 this.ensureCurrentDateIsVisible(html);
-                // Change the month that is being viewed
-                const nextPrev = (<JQuery>html).find(".current-date .fa");
-                for (let i = 0; i < nextPrev.length; i++) {
-                    if (nextPrev[i].classList.contains('fa-chevron-left')) {
-                        nextPrev[i].addEventListener('click', SimpleCalendar.instance.viewPreviousMonth.bind(this));
-                    } else if (nextPrev[i].classList.contains('fa-chevron-right')) {
-                        nextPrev[i].addEventListener('click', SimpleCalendar.instance.viewNextMonth.bind(this));
-                    }
-                }
-                // Listener for when a day is clicked
-                (<JQuery>html).find(".calendar .days .day").on('click', SimpleCalendar.instance.dayClick.bind(this));
+
+                // Activate the full calendar display listeners
+                Renderer.ActivateFullCalendarListeners(`sc_${this.activeCalendar.id}_calendar`, this.changeMonth.bind(this), this.dayClick.bind(this));
 
                 // Today button click
                 (<JQuery>html).find(".calendar-controls .today").on('click', SimpleCalendar.instance.todayClick.bind(this));
@@ -588,6 +587,15 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
+     * Processes the callback from the Calendar Renderer's month change click
+     * @param {CalendarClickEvents} clickType What was clicked, previous or next
+     * @param {SCRenderer.Options} options The renderer's options associated with the calendar
+     */
+    public changeMonth(clickType: CalendarClickEvents, options: SCRenderer.Options){
+        this.activeCalendar.year.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
+    }
+
+    /**
      * Toggles the showing of the notes for a day in the compact view
      * @param {Event} e
      */
@@ -598,65 +606,31 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
-     * Click Event to change the month the user is currently viewing to the previous
-     * @param {Event} e The click event
-     */
-    public viewPreviousMonth(e: Event){
-        Logger.debug('Changing view to previous month');
-        e.stopPropagation()
-        this.activeCalendar.year.changeMonth(-1);
-        this.updateApp();
-    }
-
-    /**
-     * Click Event to change the month the user is currently viewing to the next
-     * @param {Event} e The click event
-     */
-    public viewNextMonth(e: Event){
-        Logger.debug('Changing view to next month');
-        e.stopPropagation()
-        this.activeCalendar.year.changeMonth(1);
-        this.updateApp();
-    }
-
-    /**
      * Click event when a users clicks on a day
-     * @param {Event} e The click event
+     * @param {SCRenderer.Options} options The renderer options for the calendar who's day was clicked
      */
-    public dayClick(e: Event){
-        Logger.debug('Day Clicked');
-        e.stopPropagation();
-        let target = <HTMLElement>e.target;
-        if(target.parentElement){
-            if(target.classList.contains('note-count')){
-                target = target.parentElement;
-            } else if(target.classList.contains('moon-phase') && target.parentElement.parentElement){
-                target = target.parentElement.parentElement;
+    public dayClick(options: SCRenderer.Options){
+        console.log(options);
+        if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month > 0 && options.selectedDates.start.month < this.activeCalendar.year.months.length){
+            const selectedDay = options.selectedDates.start.day;
+            let allReadySelected = false;
+            const currentlySelectedMonth = this.activeCalendar.year.getMonth('selected');
+            if(currentlySelectedMonth){
+                const currentlySelectedDay = currentlySelectedMonth.getDay('selected');
+                allReadySelected = currentlySelectedDay !== undefined && currentlySelectedDay.numericRepresentation === selectedDay;
             }
-        }
-        const dataDate = target.getAttribute('data-day');
-        if(dataDate){
-            const dayNumber = parseInt(dataDate);
-            const isSelected = target.classList.contains('selected');
-            if(dayNumber > -1){
-                this.activeCalendar.year.resetMonths('selected');
-                if(!isSelected){
-                    const visibleMonth = this.activeCalendar.year.getMonth('visible');
-                    if(visibleMonth){
-                        const dayIndex = visibleMonth.days.findIndex(d => d.numericRepresentation === dayNumber);
-                        if(dayIndex > -1){
-                            visibleMonth.selected = true;
-                            visibleMonth.days[dayIndex].selected = true;
-                            this.activeCalendar.year.selectedYear = this.activeCalendar.year.visibleYear;
-                        }
-                    }
+
+            this.activeCalendar.year.resetMonths('selected');
+            if(!allReadySelected){
+                const month = this.activeCalendar.year.months[options.selectedDates.start.month];
+                const dayIndex = month.days.findIndex(d => d.numericRepresentation === selectedDay);
+                if(dayIndex > -1){
+                    month.selected = true;
+                    month.days[dayIndex].selected = true;
+                    this.activeCalendar.year.selectedYear = this.activeCalendar.year.visibleYear;
                 }
-                this.updateApp();
-            } else {
-                Logger.error('Day has invalid data attribute!');
             }
-        } else {
-            Logger.error('Day is missing data attribute!');
+            this.updateApp();
         }
     }
 
