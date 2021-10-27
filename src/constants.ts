@@ -182,3 +182,9 @@ export enum CalendarClickEvents{
     next = 'next',
     day = 'day'
 }
+
+export enum TimeSelectorEvents{
+    wheel = 'wheel',
+    change = 'change',
+    dropdownClick = 'dropdown-click'
+}

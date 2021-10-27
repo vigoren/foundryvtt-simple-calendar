@@ -72,7 +72,7 @@ export default class API{
      * @param {Function|null} onDayClick Function to call when a day is clicked
      */
     public static activateFullCalendarListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null){
-        Renderer.ActivateFullCalendarListeners(calendarId, onMonthChange, onDayClick);
+        Renderer.CalendarFull.ActivateListeners(calendarId, onMonthChange, onDayClick);
     }
 
     /**

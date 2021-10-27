@@ -1,0 +1,84 @@
+.time-selector{
+  display: flex;
+  justify-content: space-evenly;
+  margin: 0.5rem 0;
+  .sc-ts-inputs{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-bottom: 5px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+
+    input{
+      width: 2rem;
+      background-color: #f1f1f1;
+      border: unset;
+      border-radius: 5px;
+      margin: 0 2px;
+      text-align: center;
+      &:hover, &:focus{
+        background-color: #c3c3c3;
+      }
+    }
+
+    .dropdown{
+      position: absolute;
+      bottom: 23px;
+      width: 3rem;
+      max-height: 150px;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+      border: 1px solid #c3c3c3;
+      box-shadow: 2px 2px 2px #c3c3c3;
+      z-index: 100;
+      overflow-y: scroll;
+
+      &.hide{
+        display: none;
+      }
+
+
+      &.sc-ts-hour-list{
+        left: 2px;
+      }
+      &.sc-ts-minute-list{
+        left: 3.75rem;
+      }
+
+      li{
+        list-style: none;
+        padding: 0.25rem 0.5rem;
+        &:nth-child(even){
+          background-color: #efefef;
+        }
+        &:hover{
+          background-color: #d0d0d0;
+        }
+      }
+    }
+  }
+
+  .time-spacer{
+    font-size: 1.5rem;
+    margin-top: -4px;
+    padding: 0 0.25rem
+  }
+
+  .fa-clock{
+    font-size: 1.25rem;
+    margin-top: 3px;
+    margin-right: 0.25rem;
+  }
+}
+
+.add-time, .remove-time{
+  display: flex;
+  justify-content: space-evenly;
+  margin: 1rem 0;
+  button{
+    flex: 0 1 50% !important;
+  }
+}

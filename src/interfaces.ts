@@ -507,22 +507,56 @@ export namespace SCRenderer {
         day?: number
     }
 
-    export interface Options {
+    export interface CalendarOptions {
+        // If to add in the arrows for changing the visible month
         allowChangeMonth?: boolean;
+        //If to allow for the selecting of more than 1 day
         allowSelectDateRange?: boolean;
+        //If to color the background to match the current seasons color
         colorToMatchSeason?: boolean;
+        //Any custom css classes to add to the containing div
         cssClasses?: string;
+        //The currently visible date
         date?: Date;
+        //The ID of the HTML element being added
         id: string;
+        //The dates that are currently selected, if just single date mode use start
         selectedDates?: {
             start: Date,
             end: Date
         };
+        //If to highlight the current date for the calendar
         showCurrentDate?: boolean;
+        //If to show the different moon phases on the calendar
         showMoonPhases?: boolean;
+        //If to show any note counts on the calendar
         showNoteCount?: boolean;
+        //If to show the season name
         showSeasonName?: boolean;
+        //If to show the year
         showYear?: boolean;
+    }
+
+    export interface TimeSelectorOptions {
+        //The ID of the HTML element being added
+        id: string;
+        //If to allow the selection of a range of time
+        allowTimeRange?: boolean;
+        //This will disable the renderer's self updating after change. Will require the time selector to be updated externally to view changes.
+        disableSelfUpdate?: boolean;
+        //The selected time to show, if not using the time range just use the start
+        selectedTime?: {
+            start: {
+                hour: number;
+                minute: number;
+            },
+            end: {
+                hour: number;
+                minute: number;
+            }
+        }
+        //The custom string to use as the delimiter between the time range inputs and display
+        timeDelimiter?: string;
     }
 }
 
@@ -537,14 +571,12 @@ export namespace SCDateSelector {
         dateRangeSelect?: boolean;
         timeRangeSelect?: boolean;
         showYear?: boolean;
-        inputMatchCalendarWidth?: boolean;
         showDate: boolean;
         showTime: boolean;
         startDate?: DateTimeParts,
         endDate?: DateTimeParts,
         allDay?: boolean
         timeDelimiter?: string;
-        showTimeLabel?: boolean;
     }
 
     export interface Date{

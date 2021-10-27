@@ -13,6 +13,7 @@
 
   &.just-time{
     overflow-y: visible;
+    padding: 0 0.5rem;
   }
 
   .sc-date-selector-calendar{
@@ -33,90 +34,6 @@
         }
       }
     }
-  }
-
-  .time-container{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin: 0.5rem 0;
-    padding-top: 0.5rem;
-    border-top: 1px solid #ccc;
-
-    &.just-time{
-      overflow-y: auto;
-    }
-
-    .add-time{
-      text-align: center;
-      margin: 0.5rem 0;
-
-      button{
-        width: 150px;
-      }
-    }
-
-    h3{
-      font-weight: 600;
-      margin: 0 5px;
-    }
-
-    &>button{
-      &.delete{
-        display: flex;
-        align-content: flex-start;
-        justify-content: center;
-        flex-wrap: nowrap;
-        line-height: 1rem;
-      }
-    }
-
-    .time-selectors{
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      padding: 0.25rem;
-
-      .time-selector{
-        position: relative;
-
-        .time-dropdown {
-          position: absolute;
-          bottom: 25px;
-          right: 0;
-          z-index: 100;
-          overflow: auto;
-          background-color: #ffffff;
-          color: #000000;
-          border: 1px solid #c3c3c3;
-          box-shadow: 2px 2px 2px #c3c3c3;
-        }
-      }
-
-      &>span{
-        text-align: center;
-        width: 30px;
-      }
-    }
-
-    .time-dropdown{
-      max-height: 100px;
-      &.hide{
-        display: none;
-      }
-
-      .time-option{
-        padding: 0.5rem 0.25rem;
-        cursor: pointer;
-        border-bottom: 1px solid #d8d8d8;
-
-        &:hover, &.selected{
-          background-color: #d8d8d8;
-        }
-      }
-    }
-
   }
 }
 

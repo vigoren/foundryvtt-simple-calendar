@@ -25,6 +25,7 @@
   "FSC.Forward": "Forward",
   "FSC.Back": "Back",
   "FSC.Clear": "Clear",
+  "FSC.RemoveTime": "Remove Time",
   "FSC.Random": "Random",
   "FSC.Midnight": "Midnight",
   "FSC.Dawn": "Dawn",

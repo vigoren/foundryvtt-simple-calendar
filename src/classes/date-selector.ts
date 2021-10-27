@@ -64,11 +64,6 @@ export default class DateSelector {
      */
     addTime: boolean = false;
     /**
-     * If to set the input box width to match the calendars width
-     * @type {boolean}
-     */
-    setInputWidth: boolean = true;
-    /**
      * Any place holder text for the Date Select input box
      * @type {string}
      */
@@ -89,11 +84,6 @@ export default class DateSelector {
      */
     timeRange: boolean = true;
     /**
-     * If to show the time label next to the time inputs
-     * @type {boolean}
-     */
-    showTimeLabel: boolean = true;
-    /**
      * Used internally to determine if the second day of a range has been selected.
      * @type {boolean}
      */
@@ -109,6 +99,11 @@ export default class DateSelector {
      */
     onDateSelect: Function | null = null;
 
+
+    calendarId: string;
+
+    timeSelectorId: string;
+
     /**
      * Constructor for a new Date Selector
      * @param {string} id The unique ID of the selector to add
@@ -116,6 +111,8 @@ export default class DateSelector {
      */
     constructor(id: string, options: SCDateSelector.Options) {
         this.id = id;
+        this.calendarId = `${this.id}_calendar`;
+        this.timeSelectorId = `${this.id}_time_selector`;
         this.showDate = options.showDate;
         this.showTime = options.showTime;
         this.selectedDate = {
@@ -147,9 +144,6 @@ export default class DateSelector {
         if(options.showYear !== undefined){
             this.showYear = options.showYear;
         }
-        if(options.inputMatchCalendarWidth !== undefined){
-            this.setInputWidth = options.inputMatchCalendarWidth;
-        }
         if(options.placeHolderText){
             this.placeHolderText = options.placeHolderText;
         }
@@ -163,9 +157,6 @@ export default class DateSelector {
         }
         if(options.timeRangeSelect !== undefined){
             this.timeRange = options.timeRangeSelect;
-        }
-        if(options.showTimeLabel !== undefined){
-            this.showTimeLabel = options.showTimeLabel;
         }
         if(options.timeDelimiter !== undefined){
             this.timeDelimiter = options.timeDelimiter;
@@ -221,19 +212,19 @@ export default class DateSelector {
 
     /**
      * Builds the HTML string for the Date Select input
-     * @param {boolean} [justCalendar=false] If we should just be rendering the calendar HTML or the full inputs HTML
+     * @param {boolean} [hideCalendar=false] If we should just be rendering the calendar HTML or the full inputs HTML
      */
-    build(justCalendar = false){
+    build(hideCalendar = true){
         let returnHtml;
         let wrapper = `<div id="${this.id}" class="sc-date-selector">`;
         let calendar = '';
-        const timeMask = SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time.replace(/:?[s]/g, '');
+        let timeSelectors = '';
 
         if(this.showDate){
-            calendar = Renderer.CalendarFull(SimpleCalendar.instance.activeCalendar, {
-                id: `${this.id}_calendar`,
+            calendar = Renderer.CalendarFull.Render(SimpleCalendar.instance.activeCalendar, {
+                id: this.calendarId,
                 allowChangeMonth: true,
-                allowSelectDateRange: true,
+                allowSelectDateRange: this.dateRange,
                 cssClasses: `sc-date-selector-calendar`,
                 colorToMatchSeason: false,
                 showCurrentDate: false,
@@ -242,7 +233,7 @@ export default class DateSelector {
                 showSeasonName: false,
                 showYear: this.showYear,
                 date: {
-                    month: this.selectedDate.visibleDate.month,
+                    month: SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.visibleDate.month),
                     year: this.selectedDate.visibleDate.year
                 },
                 selectedDates: {
@@ -260,76 +251,33 @@ export default class DateSelector {
             });
         }
         if(this.showTime){
-//TODO: Redo how the time component is built and added in
-            let startTimeText = `00:00`;
-            let endTimeText = `00:00`;
-            if(!this.selectedDate.startDate.allDay){
-                startTimeText = ' ' + Utilities.FormatDateTime({year: 0, month: 1, day: 1, hour: this.selectedDate.startDate.hour, minute: this.selectedDate.startDate.minute, seconds: 0}, timeMask);
-            }
-            if(!this.selectedDate.endDate.allDay){
-                endTimeText = ' ' + Utilities.FormatDateTime({year: 0, month: 1, day: 1, hour: this.selectedDate.endDate.hour, minute: this.selectedDate.endDate.minute, seconds: 0}, timeMask);
-            }
-
-            let timeWrapper = `<div class='time-container'>`;
-
             if(this.addTime){
-                let startTimePicker = ``;
-                let endTimePicker = ``;
-                const halfHour = Math.floor(SimpleCalendar.instance.activeCalendar.year.time.minutesInHour / 2);
-                for(let i = 0; i < SimpleCalendar.instance.activeCalendar.year.time.hoursInDay; i++){
-                    let startSelected = '', startHalfSelected = '', endSelected = '', endHalfSelected = '';
-                    if(this.selectedDate.startDate.hour === i || this.selectedDate.endDate.hour === i){
-                        if(this.selectedDate.startDate.hour === i && this.selectedDate.startDate.minute === 0){
-                            startSelected = 'selected';
-                        } else if(this.selectedDate.startDate.hour === i && this.selectedDate.startDate.minute === halfHour){
-                            startHalfSelected = 'selected';
-                        } else if(this.selectedDate.endDate.minute === 0){
-                            endSelected = 'selected';
-                        } else if(this.selectedDate.endDate.minute === halfHour){
-                            endHalfSelected = 'selected';
+                timeSelectors = Renderer.TimeSelector.Render(SimpleCalendar.instance.activeCalendar, {
+                    id: this.timeSelectorId,
+                    allowTimeRange: this.timeRange,
+                    disableSelfUpdate: true,
+                    selectedTime: {
+                        start: {
+                            hour: this.selectedDate.startDate.hour,
+                            minute: this.selectedDate.startDate.minute
+                        },
+                        end: {
+                            hour: this.selectedDate.endDate.hour,
+                            minute: this.selectedDate.endDate.minute
                         }
-                    }
-                    const hourStartDisp = Utilities.FormatDateTime({year: 0, month: 0, day: 0, hour: i, minute: 0, seconds: 0}, timeMask);
-                    const hourMidDisp = Utilities.FormatDateTime({year: 0, month: 0, day: 0, hour: i, minute: halfHour, seconds: 0}, timeMask)
-                    startTimePicker += `<div class="time-option ${startSelected}" data-hour="${i}" data-minute="0">${hourStartDisp}</div>`;
-                    startTimePicker += `<div class="time-option ${startHalfSelected}" data-hour="${i}" data-minute="${halfHour}">${hourMidDisp}</div>`;
-                    endTimePicker += `<div class="time-option ${endSelected}" data-hour="${i}" data-minute="0">${hourStartDisp}</div>`;
-                    endTimePicker += `<div class="time-option ${endHalfSelected}" data-hour="${i}" data-minute="${halfHour}">${hourMidDisp}</div>`;
+                    },
+                    timeDelimiter: this.timeDelimiter
+                });
 
-                }
-                if(this.showDate || this.timeRange){
-                    const startTime = `<div class="time-selector"><input class="start-time" type="text" value="${startTimeText}" /><div class="time-dropdown hide">${startTimePicker}</div></div>`;
-                    const endTime = `<div class="time-selector"><input class="end-time" type="text" value="${endTimeText}" /><div class="time-dropdown hide">${endTimePicker}</div></div>`;
-                    if(this.showTimeLabel){
-                        timeWrapper += `<h3>${GameSettings.Localize('FSC.Notes.Time')}</h3>`;
-                    }
-                    if(this.timeRange){
-                        timeWrapper += `<div class="time-selectors">${startTime}<span>${this.timeDelimiter}</span>${endTime}</div>`;
-                    } else {
-                        timeWrapper += `<div class="time-selectors">${startTime}</div>`;
-                    }
-
-                    if(this.showDate){
-                        timeWrapper += `<button class="control delete"><i class="fa fa-times"></i> ${GameSettings.Localize('FSC.Clear')}</button>`;
-                    }
-                } else{
-                    timeWrapper = `<div class='time-container just-time'><input class="start-time" type="hidden" value="${startTimeText}" /><div class="time-dropdown">${startTimePicker}</div>`;
+                if(this.showDate){
+                    timeSelectors += `<div class="remove-time"><button class="control delete"><i class="fa fa-times"></i> ${GameSettings.Localize('FSC.RemoveTime')}</button></div>`;
                 }
             } else {
-                timeWrapper += `<div class="add-time"><button class="control"><i class="fa fa-clock"></i> ${GameSettings.Localize('FSC.Notes.DateTime.AllDay')}</button></div>`;
+                timeSelectors += `<div class="add-time"><button class="control"><i class="fa fa-clock"></i> ${GameSettings.Localize('FSC.Notes.DateTime.AllDay')}</button></div>`;
             }
-            calendar += `${timeWrapper}</div>`;
         }
         const displayDate = Utilities.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate, (this.showTime && !this.showDate), this.showYear, this.timeDelimiter);
-        if(!justCalendar){
-            returnHtml = `${wrapper}<input class="display-input" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar-wrapper${this.showTime && !this.showDate? ' just-time' : ''}" style="display:none;">${calendar}</div></div>`;
-        } else {
-            returnHtml = calendar;
-            const displayInput = (<HTMLInputElement>document.querySelector(`#${this.id} .display-input`));
-            if(displayInput){
-                displayInput.value = displayDate;
-            }
-        }
+        returnHtml = `${wrapper}<input class="display-input" value="${displayDate}" placeholder="${this.placeHolderText}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar-wrapper${this.showTime && !this.showDate? ' just-time' : ''}" style="display:${hideCalendar? 'none' : 'block'};">${calendar}${timeSelectors}</div></div>`;
         return returnHtml;
     }
 
@@ -337,11 +285,11 @@ export default class DateSelector {
      * Updates the current calendar display for showing a new month
      */
     update(){
-        const newData = this.build(true);
-        const ds = document.querySelector(`#${this.id} .sc-date-selector-calendar-wrapper`);
+        const newData = this.build(false);
+        const ds = document.querySelector(`#${this.id}`);
         if(ds){
             ds.innerHTML = newData;
-            this.activateListeners(ds.parentElement, true);
+            this.activateListeners(ds.parentElement, false);
             (<HTMLElement>ds).style.display = "block";
         }
     }
@@ -362,9 +310,11 @@ export default class DateSelector {
                 if(di){
                     di.addEventListener('click', this.toggleCalendar.bind(this, html));
                 }
-
                 if(this.showDate){
-                    Renderer.ActivateFullCalendarListeners(`${this.id}_calendar`, this.changeMonthClick.bind(this), this.dayClick.bind(this));
+                    Renderer.CalendarFull.ActivateListeners(this.calendarId, this.changeMonthClick.bind(this), this.dayClick.bind(this));
+                }
+                if(this.showTime){
+                    Renderer.TimeSelector.ActivateListeners(this.timeSelectorId, this.timeChange.bind(this));
                 }
             }
 
@@ -380,19 +330,10 @@ export default class DateSelector {
                 if(atb){
                     atb.addEventListener('click', this.addTimeClick.bind(this));
                 }
-                const cb = html.querySelector('.time-container button.control.delete');
+                const cb = html.querySelector('.remove-time button');
                 if(cb){
                     cb.addEventListener('click', this.removeTimeClick.bind(this));
                 }
-                html.querySelectorAll('.time-container input').forEach(el => {
-                    el.addEventListener('click', this.timeClick.bind(this));
-                });
-                html.querySelectorAll('.time-container .time-dropdown .time-option').forEach(el => {
-                    el.addEventListener('click', this.timeDropdownClick.bind(this));
-                });
-                html.querySelectorAll('.time-container input').forEach(el => {
-                    el.addEventListener('change', this.timeUpdate.bind(this));
-                });
             }
         }
     }
@@ -435,6 +376,7 @@ export default class DateSelector {
      */
     calendarClick(event: Event){
         event.stopPropagation();
+        Renderer.TimeSelector.HideTimeDropdown(this.timeSelectorId);
 
         // Hide all time dropdowns
         const wrapper = document.getElementById(this.id);
@@ -448,17 +390,21 @@ export default class DateSelector {
 
     /**
      * Processes the selecting of a day on the calendar
-     * @param {SCRenderer.Options} options The renderer options returned from the click event
+     * @param {SCRenderer.CalendarOptions} options The renderer options returned from the click event
      */
-    dayClick(options: SCRenderer.Options){
+    dayClick(options: SCRenderer.CalendarOptions){
         if(options.selectedDates){
             let hideCalendar = true;
             if(!this.secondDaySelect){
                 this.selectedDate.startDate.year = options.selectedDates.start.year;
                 this.selectedDate.startDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.start.month].numericRepresentation;
                 this.selectedDate.startDate.day = options.selectedDates.start.day || 1;
+                this.selectedDate.endDate.year = options.selectedDates.start.year;
+                this.selectedDate.endDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.start.month].numericRepresentation;
+                this.selectedDate.endDate.day = options.selectedDates.start.day || 1;
                 this.secondDaySelect = true;
-                hideCalendar = false;
+                hideCalendar = !this.dateRange;
+
             }else{
                 this.selectedDate.startDate.year = options.selectedDates.start.year;
                 this.selectedDate.startDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.start.month].numericRepresentation;
@@ -473,6 +419,8 @@ export default class DateSelector {
                 if(html){
                     this.hideCalendar(html);
                 }
+            } else if(this.showTime){
+                Renderer.TimeSelector.HideTimeDropdown(this.timeSelectorId);
             }
         }
     }
@@ -482,12 +430,15 @@ export default class DateSelector {
      * @param clickType
      * @param options
      */
-    changeMonthClick(clickType: CalendarClickEvents, options: SCRenderer.Options){
+    changeMonthClick(clickType: CalendarClickEvents, options: SCRenderer.CalendarOptions){
         if(options.date){
             this.selectedDate.visibleDate.year = options.date.year;
             this.selectedDate.visibleDate.month = options.date.month;
         }
         this.activateListeners(null, true);
+        if(this.showTime){
+            Renderer.TimeSelector.HideTimeDropdown(this.timeSelectorId);
+        }
     }
 
     /**
@@ -523,122 +474,27 @@ export default class DateSelector {
         this.update();
     }
 
-    /**
-     * When a time input is clicked, show the selector list
-     * @param event
-     */
-    timeClick(event: Event){
-        event.stopPropagation();
-        this.calendarClick(event);
-        const parent = (<HTMLElement>event.currentTarget).parentElement;
-        if(parent !== null){
-            const dropdown = parent.getElementsByClassName('time-dropdown');
-            if(dropdown.length){
-                dropdown[0].classList.remove('hide');
-            }
-        }
-    }
-
-    /**
-     * When an option of the time dropdown is clicked
-     * @param event
-     */
-    timeDropdownClick(event: Event){
-        event.stopPropagation();
-        const clickedHour = (<HTMLElement>event.currentTarget).getAttribute('data-hour');
-        const clickedMinute= (<HTMLElement>event.currentTarget).getAttribute('data-minute');
-
-        let hour = 0;
-        let minute = 0;
-
-        if(clickedHour && clickedMinute){
-            const parsedHour = parseInt(clickedHour);
-            const parsedMinute = parseInt(clickedMinute);
-            if(!isNaN(parsedHour)){
-                hour = parsedHour;
-            }
-            if(!isNaN(parsedMinute)){
-                minute = parsedMinute;
-            }
-        }
-
-        const input = (<HTMLElement>event.currentTarget).parentElement?.parentElement?.getElementsByTagName('input');
-        if(input && input.length){
-            input[0].value = `${hour}:${minute}`;
-            const e = new Event('change');
-            input[0].dispatchEvent(e);
-        }
-
-    }
-
-    /**
-     * When any of the time text boxes are updated.
-     * @param {Event} event
-     */
-    timeUpdate(event: Event){
-        event.stopPropagation();
-        const cssClass = (<HTMLElement>event.currentTarget).getAttribute('class');
-        let value = (<HTMLInputElement>event.currentTarget).value;
-
-        let hour, minute = 0;
-        const vParts = value.split(':');
-        if(vParts.length === 2){
-            hour = parseInt(vParts[0]);
-            minute = parseInt(vParts[1]);
-        } else {
-            hour = parseInt(vParts[0]);
-        }
-
-        if(isNaN(hour)){
-            hour = 0;
-        }
-
-        if(isNaN(minute)){
-            minute = 0;
-        }
-
-        if(hour > SimpleCalendar.instance.activeCalendar.year.time.hoursInDay - 1){
-            hour = SimpleCalendar.instance.activeCalendar.year.time.hoursInDay - 1;
-        } else if (hour < 0){
-            hour = 0;
-        }
-        if(minute > SimpleCalendar.instance.activeCalendar.year.time.minutesInHour - 1){
-            minute = SimpleCalendar.instance.activeCalendar.year.time.minutesInHour -1;
-        } else if(minute < 0) {
-            minute = 0;
-        }
-        if(cssClass === 'start-time'){
-            if(hour >= this.selectedDate.endDate.hour){
-                this.selectedDate.endDate.hour = hour;
-                this.selectedDate.endDate.hour = hour + 1;
-                if(this.selectedDate.endDate.hour > SimpleCalendar.instance.activeCalendar.year.time.hoursInDay - 1){
-                    this.selectedDate.endDate.hour = SimpleCalendar.instance.activeCalendar.year.time.hoursInDay - 1;
-                }
-
-                if(minute > this.selectedDate.endDate.minute){
-                    this.selectedDate.endDate.minute = minute;
-                }
-            }
-
-            this.selectedDate.startDate.hour = hour;
-            this.selectedDate.startDate.minute = minute;
-
-        } else if(cssClass === 'end-time'){
+    timeChange(options: SCRenderer.TimeSelectorOptions){
+        if(options.selectedTime){
+            //If the day is the same, make sure that the end time is not before the start time
             if(Utilities.DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
-                if(hour <= this.selectedDate.startDate.hour){
-                    hour = this.selectedDate.startDate.hour;
+                if(options.selectedTime.end.hour <= options.selectedTime.start.hour){
+                    options.selectedTime.end.hour = options.selectedTime.start.hour;
 
-                    if(minute < this.selectedDate.startDate.minute){
-                        minute = this.selectedDate.startDate.minute;
+                    if(options.selectedTime.end.minute < options.selectedTime.start.minute){
+                        options.selectedTime.end.minute = options.selectedTime.start.minute;
                     }
                 }
             }
-            this.selectedDate.endDate.hour = hour;
-            this.selectedDate.endDate.minute = minute;
-        }
-        this.update();
-        if(this.showTime && !this.showDate && this.onDateSelect){
-            this.onDateSelect(this.selectedDate);
+
+            this.selectedDate.startDate.hour = options.selectedTime.start.hour;
+            this.selectedDate.startDate.minute = options.selectedTime.start.minute;
+            this.selectedDate.endDate.hour = options.selectedTime.end.hour;
+            this.selectedDate.endDate.minute = options.selectedTime.end.minute;
+            this.update();
+            if(this.showTime && !this.showDate && this.onDateSelect){
+                this.onDateSelect(this.selectedDate);
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ export default class HandlebarsHelpers{
      * @param options
      */
     static FullCalendar(options: any){
-        const renderOptions: SCRenderer.Options = {id:''};
+        const renderOptions: SCRenderer.CalendarOptions = {id:''};
         if(options.hash.hasOwnProperty('allowChangeMonth')){
             renderOptions.allowChangeMonth = options.hash['allowChangeMonth'];
         }
@@ -65,6 +65,6 @@ export default class HandlebarsHelpers{
         if(options.hash.hasOwnProperty('showYear')){
             renderOptions.showYear = options.hash['showYear'];
         }
-        return new Handlebars.SafeString(Renderer.CalendarFull(SimpleCalendar.instance.activeCalendar, renderOptions));
+        return new Handlebars.SafeString(Renderer.CalendarFull.Render(SimpleCalendar.instance.activeCalendar, renderOptions));
     }
 }

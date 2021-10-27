@@ -1,7 +1,6 @@
 import {SCDateSelector, SeasonConfiguration, SeasonTemplate} from "../interfaces";
 import Year from "./year";
 import DateSelector from "./date-selector";
-import Utilities from "./utilities";
 import SimpleCalendar from "./simple-calendar";
 import ConfigurationItemBase from "./configuration-item-base";
 
@@ -98,7 +97,6 @@ export default class Season extends ConfigurationItemBase{
             showYear: false,
             showTime: false,
             dateRangeSelect: false,
-            inputMatchCalendarWidth: false,
             startDate:{year: 0, month: this.startingMonth, day: this.startingDay, hour: 0, minute: 0, seconds: 0},
             allDay: true,
             onDateSelect: this.startDateChange.bind(this)
@@ -122,9 +120,7 @@ export default class Season extends ConfigurationItemBase{
             showTime: true,
             dateRangeSelect: false,
             timeRangeSelect: true,
-            showTimeLabel: false,
             timeDelimiter: '/',
-            inputMatchCalendarWidth: false,
             startDate:{year: 0, month: 1, day: 1, hour: sunriseHour, minute: sunriseMinute, seconds: 0},
             endDate:{year: 0, month: 1, day: 1, hour: sunsetHour, minute: sunsetMinute, seconds: 0},
             allDay: false,

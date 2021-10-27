@@ -553,7 +553,7 @@ export default class SimpleCalendar extends Application{
                 this.ensureCurrentDateIsVisible(html);
 
                 // Activate the full calendar display listeners
-                Renderer.ActivateFullCalendarListeners(`sc_${this.activeCalendar.id}_calendar`, this.changeMonth.bind(this), this.dayClick.bind(this));
+                Renderer.CalendarFull.ActivateListeners(`sc_${this.activeCalendar.id}_calendar`, this.changeMonth.bind(this), this.dayClick.bind(this));
 
                 // Today button click
                 (<JQuery>html).find(".calendar-controls .today").on('click', SimpleCalendar.instance.todayClick.bind(this));
@@ -589,9 +589,9 @@ export default class SimpleCalendar extends Application{
     /**
      * Processes the callback from the Calendar Renderer's month change click
      * @param {CalendarClickEvents} clickType What was clicked, previous or next
-     * @param {SCRenderer.Options} options The renderer's options associated with the calendar
+     * @param {SCRenderer.CalendarOptions} options The renderer's options associated with the calendar
      */
-    public changeMonth(clickType: CalendarClickEvents, options: SCRenderer.Options){
+    public changeMonth(clickType: CalendarClickEvents, options: SCRenderer.CalendarOptions){
         this.activeCalendar.year.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
     }
 
@@ -607,10 +607,9 @@ export default class SimpleCalendar extends Application{
 
     /**
      * Click event when a users clicks on a day
-     * @param {SCRenderer.Options} options The renderer options for the calendar who's day was clicked
+     * @param {SCRenderer.CalendarOptions} options The renderer options for the calendar who's day was clicked
      */
-    public dayClick(options: SCRenderer.Options){
-        console.log(options);
+    public dayClick(options: SCRenderer.CalendarOptions){
         if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month > 0 && options.selectedDates.start.month < this.activeCalendar.year.months.length){
             const selectedDay = options.selectedDates.start.day;
             let allReadySelected = false;
