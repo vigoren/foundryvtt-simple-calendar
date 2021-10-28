@@ -39,6 +39,34 @@ describe('API Class Tests', () => {
         year.months[0].days[0].current = true;
     });
 
+    test('Activate Full Calendar Listeners', () => {
+        const docGEBI = jest.spyOn(document, 'getElementById');
+        const mockCal = document.createElement('div');
+        const mockPrev = document.createElement('div');
+        const mockNext= document.createElement('div');
+        const mockDay= document.createElement('div');
+
+        API.activateFullCalendarListeners('');
+        expect(docGEBI).toHaveBeenCalledTimes(1);
+
+        docGEBI.mockReturnValue(mockCal);
+        API.activateFullCalendarListeners('');
+        expect(docGEBI).toHaveBeenCalledTimes(2);
+
+        const mockCalQS = jest.spyOn(mockCal, 'querySelector');
+        mockCalQS.mockReturnValueOnce(mockPrev).mockReturnValueOnce(mockNext);
+        const mockCalQSA = jest.spyOn(mockCal, 'querySelectorAll');
+        // @ts-ignore
+        mockCalQSA.mockReturnValue([mockDay]);
+
+        API.activateFullCalendarListeners('');
+        expect(docGEBI).toHaveBeenCalledTimes(3);
+        expect(mockCalQS).toHaveBeenCalledTimes(2);
+        expect(mockCalQSA).toHaveBeenCalledTimes(1);
+
+        docGEBI.mockRestore();
+    });
+
     test('Timestamp', () => {
         SimpleCalendar.instance.activeCalendar.year = year;
         expect(API.timestamp()).toBe(5184000);

@@ -43,6 +43,7 @@ Simple Calendar exposes a variable called `SimpleCalendar`, all of these API fun
 - [timestampToDate](#simplecalendarapitimestamptodatetimestamp)
 
 ## Handlebar Helpers
+- [sc-date-selector](#sc-date-selector)
 - [sc-full-calendar](#sc-full-calendar)
 
 ## Types
@@ -1139,6 +1140,30 @@ console.log(scDate);
 ```
 
 # Handlebar Helpers
+
+## sc-date-selector
+
+This handlebar helper is used to generate the interactive date/time selector tool used throughout Simple Calendar. The date selector will match the configured calendar allowing for a very easy time in choosing a date and/or time.
+
+### Parameters
+
+The following parameters can be passed in with the handlebar helper to customize how the date selector functions
+
+Parameter|Type|Default Value|Description
+---------|-----|-------------|-----------
+allowDateRangeSelection|Boolean|`false`|If true will allow a range of dates to be selected on the calendar. If false only a single date can be chosen.
+allowTimeRangeSelection|Boolean|`false`|If true will allow a start and end time to be chosen, if false only a single time will be able to be selected.
+onDateSelect|Function or null|`null`|This is the function to call with the results of a date/time being selected in the date selector. The function will be passed an object that contains the selected start and end dates as well as the currently visible date.
+placeHolderText|String|`''`|This the text that appears in the input before a date has been selected.
+selectedEndDate|[DateTime](#date-time-object)|`{year: 0, month: 1, day: 1, hour: 0, minute: 0}`|This is used for the ending date and/or time that is selected for the date selector. In single date/time mode this value will match the startDate value.
+selectedStartDate|[DateTime](#date-time-object)|`{year: 0, month: 1, day: 1, hour: 0, minute: 0}`|This is used for the starting date and/or time that is selected for the date selector.
+showCalendarYear|Boolean|`true`|If true the year will be shown at the top of the calendar display for the date selector, if false the year will not be shown.
+showDateSelector|Boolean|`true`|If true the calendar will be shown to allow for the selection of one or more dates. If false the calendar will not be shown.
+showTimeSelector|Boolean|`true`|If true the inputs for selecting a time or range of time will be shown. If false  the time selection inputs will not be shown.
+timeDelimiter|String|`'-'`|This is the text that is used between the start and end time of a time range.
+timeSelected|Boolean|`true`|If a time or time range have been selected. If true the "Add Time" button will appear, if false the time inputs will appear.
+
+### Examples
 
 ## sc-full-calendar
 

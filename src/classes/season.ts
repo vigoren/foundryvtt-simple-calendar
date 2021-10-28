@@ -82,25 +82,6 @@ export default class Season extends ConfigurationItemBase{
     toTemplate(year: Year): SeasonTemplate{
         const startDateSelectorId = `sc_season_start_date_${this.id}`;
         const sunriseSelectorId = `sc_season_sunrise_time_${this.id}`;
-        const data: SeasonTemplate =  {
-            ...super.toTemplate(),
-            name: this.name,
-            startingMonth: this.startingMonth,
-            startingDay: this.startingDay,
-            color: this.color,
-            startDateSelectorId: startDateSelectorId,
-            sunriseSelectorId: sunriseSelectorId
-        };
-
-        DateSelector.GetSelector(startDateSelectorId, {
-            showDate: true,
-            showYear: false,
-            showTime: false,
-            dateRangeSelect: false,
-            startDate:{year: 0, month: this.startingMonth, day: this.startingDay, hour: 0, minute: 0, seconds: 0},
-            allDay: true,
-            onDateSelect: this.startDateChange.bind(this)
-        });
 
         let sunriseHour = 0, sunriseMinute = 0, sunsetHour = 0, sunsetMinute = 0;
         if(SimpleCalendar.instance){
@@ -115,17 +96,21 @@ export default class Season extends ConfigurationItemBase{
                 sunsetMinute = sunsetMinute - (sunsetHour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
             }
         }
-        DateSelector.GetSelector(sunriseSelectorId, {
-            showDate: false,
-            showTime: true,
-            dateRangeSelect: false,
-            timeRangeSelect: true,
-            timeDelimiter: '/',
-            startDate:{year: 0, month: 1, day: 1, hour: sunriseHour, minute: sunriseMinute, seconds: 0},
-            endDate:{year: 0, month: 1, day: 1, hour: sunsetHour, minute: sunsetMinute, seconds: 0},
-            allDay: false,
-            onDateSelect: this.sunriseSunsetChange.bind(this)
-        });
+
+        const data: SeasonTemplate =  {
+            ...super.toTemplate(),
+            name: this.name,
+            startingMonth: this.startingMonth,
+            startingDay: this.startingDay,
+            color: this.color,
+            startDateSelectorId: startDateSelectorId,
+            startDateSelectedDate: {year: 0, month: this.startingMonth, day: this.startingDay, hour: 0, minute: 0, seconds: 0},
+            sunriseSelectorId: sunriseSelectorId,
+            sunriseSelectorSelectedDates: {
+                start: {year: 0, month: 1, day: 1, hour: sunriseHour, minute: sunriseMinute, seconds: 0},
+                end: {year: 0, month: 1, day: 1, hour: sunsetHour, minute: sunsetMinute, seconds: 0}
+            }
+        };
         return data;
     }
 
@@ -150,33 +135,5 @@ export default class Season extends ConfigurationItemBase{
                 this.sunsetTime = config.sunsetTime;
             }
         }
-    }
-
-    /**
-     * Handles the start date selector changes
-     * @param {SCDateSelector.SelectedDate} selectedDate The date that was selected from the date selector
-     */
-    startDateChange(selectedDate: SCDateSelector.SelectedDate){
-        this.startingMonth = selectedDate.startDate.month;
-        this.startingDay = selectedDate.startDate.day;
-    }
-
-    /**
-     * Handles the Sunrise and Sunset date selector changes
-     * @param {SCDateSelector.SelectedDate} selectedDate The date/time that was selected from the date selector
-     */
-    sunriseSunsetChange(selectedDate: SCDateSelector.SelectedDate){
-        if(SimpleCalendar.instance){
-            this.sunriseTime = (selectedDate.startDate.hour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + (selectedDate.startDate.minute * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
-            this.sunsetTime = (selectedDate.endDate.hour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + (selectedDate.endDate.minute * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
-        }
-    }
-
-    /**
-     * Activates the listeners for the date selectors used by the season.
-     */
-    activateDateSelectors(){
-        DateSelector.GetSelector(`sc_season_start_date_${this.id}`, {showDate: true, showTime: false}).activateListeners();
-        DateSelector.GetSelector( `sc_season_sunrise_time_${this.id}`, {showDate: false, showTime: true}).activateListeners();
     }
 }

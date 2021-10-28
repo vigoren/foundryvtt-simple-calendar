@@ -353,7 +353,12 @@ export interface SeasonTemplate extends IConfigurationItemBaseTemplate {
     startingDay: number;
     color: string;
     startDateSelectorId: string;
+    startDateSelectedDate: DateTimeParts;
     sunriseSelectorId: string;
+    sunriseSelectorSelectedDates: {
+        start: DateTimeParts,
+        end: DateTimeParts
+    };
 }
 
 /**
@@ -568,14 +573,14 @@ export namespace SCDateSelector {
     export interface Options {
         placeHolderText?: string;
         onDateSelect?: Function;
-        dateRangeSelect?: boolean;
-        timeRangeSelect?: boolean;
-        showYear?: boolean;
-        showDate: boolean;
-        showTime: boolean;
-        startDate?: DateTimeParts,
-        endDate?: DateTimeParts,
-        allDay?: boolean
+        allowDateRangeSelection?: boolean;
+        allowTimeRangeSelection?: boolean;
+        showCalendarYear?: boolean;
+        showDateSelector?: boolean;
+        showTimeSelector?: boolean;
+        selectedStartDate?: DateTimeParts,
+        selectedEndDate?: DateTimeParts,
+        timeSelected?: boolean
         timeDelimiter?: string;
     }
 

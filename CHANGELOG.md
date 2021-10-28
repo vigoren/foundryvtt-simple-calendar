@@ -1,6 +1,16 @@
 # Change Log
 
-## v1.3.81 - API Changes and Bug Fixes
+## v1.3.84 - Improved Date/Time Selector, Bug Fixes and API Changes 
+
+### Improved Date/Time Selector
+
+The date/time selector that is used when choosing a date for notes or specifying the month of a Season or the sunrise/sunset time of a season has been improved.
+
+Specifically the time selection portion has been re-designed and improved with the following improvement:
+
+- The design of the interface has been improved with better looking and easier to interact with text boxes and dropdowns for the text boxes.
+- Added the ability to use the scroll wheel to change the number up or down in any of the text boxes.
+- Validation and changes are more consistent, they worked fine before but just feel better now.
 
 ### Bug Fixes
 
@@ -15,6 +25,8 @@
   - These calendars support basic interactivity, change which month is being viewed and selecting a day when it is clicked, with the option to pass in your own function to extend this functionality.
   - These calendars can use the default Simple Calendar styling or be customized.
 - Added a new function `SimpleCalendar.api.activateFullCalendarListeners()` ([docs](./docs/API.md#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick)) that is used to activate all the basic interactivity for calendars rendered with the [sc-full-calendar](./docs/API.md#sc-full-calendar) Handlebar helper.
+- Added a new Handlebar helper [sc-date-selector](./docs/API.md#sc-date-selector) that can be used to render the custom date selector interface that Simple Calendar uses for picking the date(s) for notes, seasons starting month and seasons sunrise/sunset times.
+- Added a new section `SimpleCalendar.api.DateSelector` ([docs](./docs/API.md#simplecalendarapidateselector)) that contains functions for creating, removing and enabling interactivity for date selectors.
 
 ### Structural Changes for Multi Calendar Support
 
@@ -23,6 +35,10 @@ This change includes a large back end change to how calendars are rendered. All 
 Users should not notice any real change to how the different calendars function. Overall the different calendars should feel more consistent with one another for interactivity. 
 
 I have taken a lot of time and care to ensure that no functionality was broken in this update, but as with any big change the introduction of bugs could be possible so please let me know if you find any!
+
+### Translation Updates
+
+- Updates to the German translation thanks to [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird)!
 
 ## v1.3.75 - Bug Fixes
 

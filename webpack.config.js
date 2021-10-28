@@ -1,17 +1,28 @@
-import * as webpack from 'webpack';
-import * as path from 'path'
+const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 
-const config: webpack.Configuration = {
+module.exports = {
     mode: "production",
     entry: {
         "index": './src/index.ts',
         "styles/calendar": './src/styles/index.scss'
     },
     optimization: {
-        removeEmptyChunks: true
+        removeEmptyChunks: true,
+        minimize: true,
+        minimizer: [new TerserPlugin({
+            extractComments: false, // To avoid separate file with licenses.
+            terserOptions: {
+                mangle: true,
+                sourceMap: false,
+                //keep_classnames: /^SCNoteCollection$|^SCNoteSheetShim$|^SCNoteSheet$|^SCNote$/,
+                keep_fnames: false,
+                toplevel: true,
+            },
+        })]
     },
     plugins: [
         new CopyPlugin({
@@ -45,7 +56,7 @@ const config: webpack.Configuration = {
                     {
                         loader: 'css-loader',
                         options: {
-                            url: { filter: (url: string, resourcePath: string) => {return url.indexOf('/systems') !== 0;}
+                            url: { filter: (url, resourcePath) => {return url.indexOf('/systems') !== 0;}
                             }
                         }
                     },
@@ -68,5 +79,3 @@ const config: webpack.Configuration = {
         clean: true
     },
 };
-
-export default config;

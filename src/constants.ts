@@ -188,3 +188,8 @@ export enum TimeSelectorEvents{
     change = 'change',
     dropdownClick = 'dropdown-click'
 }
+
+export enum ConfigurationDateSelectors{
+    seasonStartingDate = 'ssd',
+    seasonSunriseSunsetTime = 'ssst'
+}

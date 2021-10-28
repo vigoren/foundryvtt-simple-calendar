@@ -26,11 +26,6 @@ export class SimpleCalendarNotes extends FormApplication {
      * @type {string}
      */
     dateSelectorId: string = '';
-    /**
-     * The date selector object
-     * @type {DateSelector | null}
-     */
-    dateSelector: DateSelector | null = null;
 
     initialLoad: boolean = true;
 
@@ -52,16 +47,6 @@ export class SimpleCalendarNotes extends FormApplication {
             (<Note>this.object).playerVisible = true;
         }
         this.dateSelectorId = `scNoteDate_${data.id}`;
-        this.dateSelector = DateSelector.GetSelector(this.dateSelectorId, {
-            onDateSelect: this.dateSelectorClick.bind(this),
-            placeHolderText: '',
-            dateRangeSelect: true,
-            showDate: true,
-            showTime: true,
-            startDate: {year: data.year, month: data.month, day: data.day, hour: data.hour, minute: data.minute, seconds: 0},
-            endDate: data.endDate,
-            allDay: data.allDay
-        });
     }
 
     /**
@@ -110,6 +95,11 @@ export class SimpleCalendarNotes extends FormApplication {
                 textColor: ''
             },
             dateSelectorId: this.dateSelectorId,
+            dateSelectorSelectedDate: {
+                start: {year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: (<Note>this.object).hour, minute: (<Note>this.object).minute, seconds: 0},
+                end: (<Note>this.object).endDate
+            },
+            dateSelectorClick: this.dateSelectorClick.bind(this),
             categories: SimpleCalendar.instance.activeCalendar.noteCategories.filter(nc => (<Note>this.object).categories.includes(nc.name)),
             allCategories: SimpleCalendar.instance.activeCalendar.noteCategories.map(nc => {
                 return {
@@ -206,7 +196,7 @@ export class SimpleCalendarNotes extends FormApplication {
         super.activateListeners(html);
         this.setWidthHeight(html);
         if(html.hasOwnProperty("length")) {
-            this.dateSelector?.activateListeners();
+            DateSelector.ActivateSelector(this.dateSelectorId);
             (<JQuery>this.element).find('#scNoteTitle').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteRepeats').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));

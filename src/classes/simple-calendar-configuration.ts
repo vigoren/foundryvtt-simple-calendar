@@ -3,11 +3,14 @@ import {GameSettings} from "./game-settings";
 import Month from "./month";
 import {Weekday} from "./weekday";
 import {
+    ConfigurationDateSelectors,
     GameWorldTimeIntegrations,
     LeapYearRules,
     ModuleName,
     MoonIcons,
-    MoonYearResetOptions, PredefinedCalendars, SettingNames,
+    MoonYearResetOptions,
+    PredefinedCalendars,
+    SettingNames,
     YearNamingRules
 } from "../constants";
 import Importer from "./importer";
@@ -15,10 +18,11 @@ import Season from "./season";
 import Moon from "./moon";
 import SimpleCalendar from "./simple-calendar";
 import {saveAs} from "file-saver";
-import {NoteCategory} from "../interfaces";
+import {NoteCategory, SCDateSelector} from "../interfaces";
 import Utilities from "./utilities";
 import PredefinedCalendar from "./predefined-calendar";
 import Calendar from "./calendar";
+import DateSelector from "./date-selector";
 
 export class SimpleCalendarConfiguration extends FormApplication {
 
@@ -99,6 +103,18 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public closeApp(){
         this.close().catch(Logger.error);
+    }
+
+    /**
+     * When closing the app make sure all date selectors are removed from the list so we don't keep around what we don't need
+     * @param options
+     */
+    close(options?: FormApplication.CloseOptions): Promise<void> {
+        (<Calendar>this.object).year.seasons.forEach(s => {
+            DateSelector.RemoveSelector(`sc_season_start_date_${s.id}`);
+            DateSelector.RemoveSelector(`sc_season_sunrise_time_${s.id}`);
+        });
+        return super.close(options);
     }
 
     /**
@@ -243,7 +259,10 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     public activateListeners(html: JQuery<HTMLElement>) {
         super.activateListeners(html);
-        (<Calendar>this.object).year.seasons.forEach(s => s.activateDateSelectors());
+        (<Calendar>this.object).year.seasons.forEach(s => {
+            DateSelector.GetSelector(`sc_season_start_date_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonStartingDate)}).activateListeners();
+            DateSelector.GetSelector( `sc_season_sunrise_time_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonSunriseSunsetTime)}).activateListeners();
+        });
         if(html.hasOwnProperty("length")) {
             //Date Format Tokens Show/hide
             (<JQuery>html).find('.date-format-token-show').on('click', this.dateFormatTableClick.bind(this));
@@ -799,6 +818,26 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 }
             }
             this.updateApp();
+        }
+    }
+
+    /**
+     * Function called when ever a date selector in the configuration dialog is changed.
+     * @param {string} seasonId The ID of the item changed
+     * @param {ConfigurationDateSelectors} dateSelectorType The type of date selector that was changed
+     * @param {SCDateSelector.SelectedDate} selectedDate The returned data from the date selector
+     */
+    public dateSelectorChange(seasonId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SCDateSelector.SelectedDate){
+        //Season Changes
+        const season = (<Calendar>this.object).year.seasons.find(s => s.id === seasonId);
+        if(season){
+            if(dateSelectorType === ConfigurationDateSelectors.seasonStartingDate){
+                season.startingMonth = selectedDate.startDate.month;
+                season.startingDay = selectedDate.startDate.day;
+            } else if(dateSelectorType === ConfigurationDateSelectors.seasonSunriseSunsetTime){
+                season.sunriseTime = (selectedDate.startDate.hour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + (selectedDate.startDate.minute * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
+                season.sunsetTime = (selectedDate.endDate.hour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + (selectedDate.endDate.minute * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
+            }
         }
     }
 
