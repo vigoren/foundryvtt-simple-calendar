@@ -1141,23 +1141,25 @@ console.log(scDate);
 
 # Handlebar Helpers
 
+Simple Calendar registers Handlebar Helpers that can be used by other modules or systems. Please make sure Simple Calendar has finished being initialized before attempting to use these helpers.
+
 ## sc-date-selector
 
-This handlebar helper is used to generate the interactive date/time selector tool used throughout Simple Calendar. The date selector will match the configured calendar allowing for a very easy time in choosing a date and/or time.
+This handlebar helper is used to generate the interactive date/time selector tool used throughout Simple Calendar. The date selector will match the configured calendar allowing for a very easy way to choose a date and/or time.
 
 ### Parameters
 
-The following parameters can be passed in with the handlebar helper to customize how the date selector functions
+The following parameters can be passed in with the handlebar helper to customize how the date selector functions:
 
 Parameter|Type|Default Value|Description
 ---------|-----|-------------|-----------
 allowDateRangeSelection|Boolean|`false`|If true will allow a range of dates to be selected on the calendar. If false only a single date can be chosen.
-allowTimeRangeSelection|Boolean|`false`|If true will allow a start and end time to be chosen, if false only a single time will be able to be selected.
-onDateSelect|Function or null|`null`|This is the function to call with the results of a date/time being selected in the date selector. The function will be passed an object that contains the selected start and end dates as well as the currently visible date.
+allowTimeRangeSelection|Boolean|`false`|If true will allow a start and end time to be chosen. If false only a single time can be selected.
+onDateSelect|Function or null|`null`|This is the function to call with the results of a date/time being selected in the date selector. The function will be passed a [Date Selector Result](#date-selector-result) object with the selected date(s) set. 
 placeHolderText|String|`''`|This the text that appears in the input before a date has been selected.
-selectedEndDate|[DateTime](#date-time-object)|`{year: 0, month: 1, day: 1, hour: 0, minute: 0}`|This is used for the ending date and/or time that is selected for the date selector. In single date/time mode this value will match the startDate value.
-selectedStartDate|[DateTime](#date-time-object)|`{year: 0, month: 1, day: 1, hour: 0, minute: 0}`|This is used for the starting date and/or time that is selected for the date selector.
-showCalendarYear|Boolean|`true`|If true the year will be shown at the top of the calendar display for the date selector, if false the year will not be shown.
+selectedEndDate|[DateTime](#date-time-object)|`{year: 0, month: 1, day: 1, hour: 0, minute: 0}`|This is used for the ending date and/or time that is selected in the date selector. In single date/time mode this value is ignored.
+selectedStartDate|[DateTime](#date-time-object)|`{year: 0, month: 1, day: 1, hour: 0, minute: 0}`|This is used for the starting date and/or time that is selected in the date selector.
+showCalendarYear|Boolean|`true`|If true the year will be shown at the top of the calendar display for the date selector. If false the year will not be shown.
 showDateSelector|Boolean|`true`|If true the calendar will be shown to allow for the selection of one or more dates. If false the calendar will not be shown.
 showTimeSelector|Boolean|`true`|If true the inputs for selecting a time or range of time will be shown. If false  the time selection inputs will not be shown.
 timeDelimiter|String|`'-'`|This is the text that is used between the start and end time of a time range.
@@ -1169,7 +1171,7 @@ timeSelected|Boolean|`true`|If a time or time range have been selected. If true 
 
 This handlebar helper is used to generate the HTML for displaying a full calendar view for the current date or a passed in date.
 
-Don't forget to call the [SimpleCalendar.api.activateFullCalendarListeners](#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick) function for any calendars added with this Handlebar helper. Doing so will add all the needed interactivity!
+Don't forget to call the [SimpleCalendar.api.activateFullCalendarListeners](#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick) function for any calendars that should be interactive. Static displays do not need to call this function.
 
 A unique ID is required to ensure proper functionality of a Calendar added with this Handlebar helper.
 
@@ -1204,16 +1206,22 @@ Default Styles|Custom Style Example
 
 Assuming the Gregorian calendar with a current date of December 15th, 2021 for all examples
 
+#### Default
+
 ```html
 {{sc-full-calendar id='custom_id'}}
 ```
 ![Default Example](../docs/images/sc-full-calendar-example-default.png)
+
+#### All Options Disabled
 
 ```html
 {{sc-full-calendar id='custom_id' colorToMatchSeason=false showCurrentDate=false showSeasonName=false showNoteCount=false showMoonPhases= false showYear=false}}
 ```
 
 ![All Disabled Example](../docs/images/sc-full-calendar-example-all-disabled.png)
+
+#### Specific Date Set
 
 Assumes that there is a variable called newDate that looks like this:
 ```javascript
@@ -1303,6 +1311,13 @@ year|String|""|The year number
 yearName|String|""|The name of the year, if year names have been set up.
 yearPostfix|String|""|The postfix value for the year
 yearPrefix|String|""|The prefix value for the year
+
+## Date Selector Result
+
+This type represents the results object returned when date/time has been selected using a date selector.
+
+Property|Type|Optional|Default|Description
+--------|-----|-------|------|-----------
 
 ## Date Time Object
 
