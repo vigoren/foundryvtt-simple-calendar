@@ -1,9 +1,9 @@
 import {DateTimeParts, DayTemplate, NoteConfig, NoteTemplate} from "../interfaces";
-import {GameSettings} from "./game-settings"
+import {GameSettings} from "./foundry-interfacing/game-settings"
 import {DateRangeMatch, NoteRepeat} from "../constants";
-import SimpleCalendar from "./simple-calendar";
+import SimpleCalendar from "./applications/simple-calendar";
 import Utilities from "./utilities";
-import ConfigurationItemBase from "./configuration-item-base";
+import ConfigurationItemBase from "./configuration/configuration-item-base";
 
 /**
  * All content around a calendar note

@@ -8,13 +8,13 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 
-import SimpleCalendar from "./simple-calendar";
+import SimpleCalendar from "./applications/simple-calendar";
 import Note from "./note";
 import {NoteConfig} from "../interfaces";
 import {LeapYearRules, NoteRepeat} from "../constants";
-import Year from "./year";
-import Month from "./month";
-import {Weekday} from "./weekday";
+import Year from "./calendar/year";
+import Month from "./calendar/month";
+import {Weekday} from "./calendar/weekday";
 
 
 describe('Note Tests', () => {

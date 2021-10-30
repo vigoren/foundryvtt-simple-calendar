@@ -9,11 +9,11 @@ import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import DateSelector from "./date-selector";
-import SimpleCalendar from "./simple-calendar";
-import Year from "./year";
+import SimpleCalendar from "./applications/simple-calendar";
+import Year from "./calendar/year";
 import {LeapYearRules} from "../constants";
-import Month from "./month";
-import {Weekday} from "./weekday";
+import Month from "./calendar/month";
+import {Weekday} from "./calendar/weekday";
 
 describe('Date Selector Class Tests', () => {
 

@@ -1,6 +1,6 @@
 import {SCDateSelector, SCRenderer} from "../interfaces";
-import SimpleCalendar from "./simple-calendar";
-import {GameSettings} from "./game-settings";
+import SimpleCalendar from "./applications/simple-calendar";
+import {GameSettings} from "./foundry-interfacing/game-settings";
 import Utilities from "./utilities";
 import Renderer from "./renderer";
 import {CalendarClickEvents, DateSelectorPositions} from "../constants";

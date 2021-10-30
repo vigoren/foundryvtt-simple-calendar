@@ -10,14 +10,14 @@ import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 import "../../__mocks__/crypto";
 
-import SimpleCalendar from "./simple-calendar";
-import Year from "./year";
-import Month from "./month";
+import SimpleCalendar from "./applications/simple-calendar";
+import Year from "./calendar/year";
+import Month from "./calendar/month";
 import Importer from "./importer";
 import {GameSystems, LeapYearRules} from "../constants";
-import {Weekday} from "./weekday";
-import Season from "./season";
-import Moon from "./moon";
+import {Weekday} from "./calendar/weekday";
+import Season from "./calendar/season";
+import Moon from "./calendar/moon";
 import Mock = jest.Mock;
 
 describe('Importer Class Tests', () => {

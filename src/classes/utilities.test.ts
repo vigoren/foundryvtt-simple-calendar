@@ -14,10 +14,10 @@ import "../../__mocks__/crypto";
 import Utilities from "./utilities";
 import {DateTimeParts, SCDateSelector} from "../interfaces";
 import {DateRangeMatch, GameSystems, MoonIcons, PredefinedCalendars} from "../constants";
-import SimpleCalendar from "./simple-calendar";
-import Month from "./month";
-import Year from "./year";
-import PredefinedCalendar from "./predefined-calendar";
+import SimpleCalendar from "./applications/simple-calendar";
+import Month from "./calendar/month";
+import Year from "./calendar/year";
+import PredefinedCalendar from "./configuration/predefined-calendar";
 
 describe('Utilities Class Tests', () => {
 

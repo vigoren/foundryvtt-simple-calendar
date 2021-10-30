@@ -1,4 +1,4 @@
-import {GameSettings} from "./game-settings";
+import {GameSettings} from "./foundry-interfacing/game-settings";
 import {DateRangeMatch, GameSystems, MoonIcons} from "../constants";
 import FirstQuarterIcon from "../icons/moon-first-quarter.svg";
 import FullMoonIcon from "../icons/moon-full.svg";
@@ -9,9 +9,9 @@ import WaningGibbousIcon from "../icons/moon-waning-gibbous.svg";
 import WaxingCrescentIcon from "../icons/moon-waxing-crescent.svg";
 import WaxingGibbousIcon from "../icons/moon-waxing-gibbous.svg";
 import {DateTimeParts, SCDateSelector} from "../interfaces";
-import SimpleCalendar from "./simple-calendar";
+import SimpleCalendar from "./applications/simple-calendar";
 import PF2E from "./systems/pf2e";
-import Year from "./year";
+import Year from "./calendar/year";
 
 export default class Utilities{
 

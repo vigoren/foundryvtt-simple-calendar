@@ -1,5 +1,5 @@
 import Note from "../note";
-import {GameSettings} from "../game-settings";
+import {GameSettings} from "../foundry-interfacing/game-settings";
 
 export default class RendererUtilities{
     /**

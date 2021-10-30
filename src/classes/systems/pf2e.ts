@@ -1,5 +1,5 @@
-import SimpleCalendar from "../simple-calendar";
-import LeapYear from "../leap-year";
+import SimpleCalendar from "../applications/simple-calendar";
+import LeapYear from "../calendar/leap-year";
 import {GameSystems, LeapYearRules} from "../../constants";
 import Utilities from "../utilities";
 

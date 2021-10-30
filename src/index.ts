@@ -1,4 +1,4 @@
-import SimpleCalendar from "./classes/simple-calendar";
+import SimpleCalendar from "./classes/applications/simple-calendar";
 import Macros from "./classes/macros";
 import API from "./classes/api";
 import {Logger} from "./classes/logging";

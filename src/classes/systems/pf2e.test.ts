@@ -10,7 +10,7 @@ import "../../../__mocks__/crypto";
 import "../../../__mocks__/dialog";
 import "../../../__mocks__/hooks";
 import PF2E from "./pf2e";
-import SimpleCalendar from "../simple-calendar";
+import SimpleCalendar from "../applications/simple-calendar";
 import {GameSystems, LeapYearRules} from "../../constants";
 
 describe('Systems/PF2E Class Tests', () => {

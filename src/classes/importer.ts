@@ -1,13 +1,13 @@
-import Year from "./year";
+import Year from "./calendar/year";
 import {AboutTimeImport, CalendarWeatherImport} from "../interfaces";
-import {Weekday} from "./weekday";
-import Month from "./month";
+import {Weekday} from "./calendar/weekday";
+import Month from "./calendar/month";
 import {GameSystems, LeapYearRules, MoonIcons, NoteRepeat} from "../constants";
-import {GameSettings} from "./game-settings";
-import Season from "./season";
-import Moon from "./moon";
+import {GameSettings} from "./foundry-interfacing/game-settings";
+import Season from "./calendar/season";
+import Moon from "./calendar/moon";
 import Note from "./note";
-import SimpleCalendar from "./simple-calendar";
+import SimpleCalendar from "./applications/simple-calendar";
 
 export default class Importer{
 

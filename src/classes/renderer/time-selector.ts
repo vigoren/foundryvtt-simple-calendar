@@ -1,7 +1,7 @@
 import {SCRenderer} from "../../interfaces";
 import Calendar from "../calendar";
 import Utilities from "../utilities";
-import SimpleCalendar from "../simple-calendar";
+import SimpleCalendar from "../applications/simple-calendar";
 import {TimeSelectorEvents} from "../../constants";
 
 export default class TimeSelector {

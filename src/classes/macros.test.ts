@@ -8,10 +8,10 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 import "../../__mocks__/dialog";
-import SimpleCalendar from "./simple-calendar";
-import Year from "./year";
+import SimpleCalendar from "./applications/simple-calendar";
+import Year from "./calendar/year";
 import SpyInstance = jest.SpyInstance;
-import Month from "./month";
+import Month from "./calendar/month";
 import Macros from "./macros";
 import Mock = jest.Mock;
 
