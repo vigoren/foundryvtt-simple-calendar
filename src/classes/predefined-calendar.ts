@@ -935,10 +935,10 @@ export default class PredefinedCalendar{
                     new Weekday(8, 'Festag')
                 ];
                 year.seasons = [
-                    new Season('Spring', 3, 20),
-                    new Season('Summer', 6, 20),
-                    new Season('Fall', 9, 22),
-                    new Season('Winter', 12, 21)
+                    new Season('Spring', 1, 17),
+                    new Season('Summer', 4, 18),
+                    new Season('Fall', 7, 17),
+                    new Season('Winter', 10, 18)
                 ];
                 year.seasons[0].color = "#fffce8";
                 year.seasons[1].color = "#f3fff3";

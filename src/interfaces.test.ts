@@ -79,8 +79,6 @@ describe('Interface Tests', () => {
         changeDateTime: false,
         addNotes: false,
         currentYear: yt,
-        showSelectedDay: false,
-        showCurrentDay: false,
         showSetCurrentDate: false,
         notes: [],
         reorderNotes: false,
@@ -160,13 +158,11 @@ describe('Interface Tests', () => {
     });
 
     test('Calendar Template', () => {
-        expect(Object.keys(ct).length).toBe(18); //Make sure no new properties have been added
+        expect(Object.keys(ct).length).toBe(16); //Make sure no new properties have been added
         expect(ct.isGM).toBe(false);
         expect(ct.changeDateTime).toBe(false);
         expect(ct.addNotes).toBe(false);
         expect(ct.currentYear).toStrictEqual(yt);
-        expect(ct.showSelectedDay).toBe(false);
-        expect(ct.showCurrentDay).toBe(false);
         expect(ct.showSetCurrentDate).toBe(false);
         expect(ct.notes).toStrictEqual([]);
     });

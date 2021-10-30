@@ -108,7 +108,8 @@ export class SimpleCalendarNotes extends FormApplication {
                     textColor: nc.textColor,
                     selected: (<Note>this.object).categories.find(c => c === nc.name) !== undefined
                 }
-            })
+            }),
+            timeSelected: !(<Note>this.object).allDay
         };
 
         const daysBetween = Utilities.DaysBetweenDates({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, seconds: 0},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, seconds: 0});
@@ -294,25 +295,30 @@ export class SimpleCalendarNotes extends FormApplication {
      * Called when the date selector date has been selected
      * @param selectedDate
      */
-    dateSelectorClick(selectedDate: SCDateSelector.SelectedDate){
-        (<Note>this.object).year = selectedDate.startDate.year;
-        (<Note>this.object).month = selectedDate.startDate.month;
-        (<Note>this.object).day = selectedDate.startDate.day;
-        (<Note>this.object).allDay = selectedDate.startDate.allDay;
-        (<Note>this.object).hour = selectedDate.startDate.hour;
-        (<Note>this.object).minute = selectedDate.startDate.minute;
+    dateSelectorClick(selectedDate: SCDateSelector.Result){
+        const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
+        const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
+        const eMonthIndex = !selectedDate.endDate.month || selectedDate.endDate.month < 0? 0 : selectedDate.endDate.month;
+        const eDayIndex = !selectedDate.endDate.day || selectedDate.endDate.day < 0? 0 : selectedDate.endDate.day;
+        const startMonthObj = SimpleCalendar.instance.activeCalendar.year.months[sMonthIndex];
+        const endMonthObj = SimpleCalendar.instance.activeCalendar.year.months[eMonthIndex];
+        (<Note>this.object).year = selectedDate.startDate.year || 0;
+        (<Note>this.object).month = startMonthObj.numericRepresentation;
+        (<Note>this.object).day = startMonthObj.days[sDayIndex].numericRepresentation;
+        (<Note>this.object).allDay = !selectedDate.timeSelected;
+        (<Note>this.object).hour = selectedDate.startDate.hour || 0;
+        (<Note>this.object).minute = selectedDate.startDate.minute || 0;
         (<Note>this.object).endDate = {
-            year: selectedDate.endDate.year,
-            month: selectedDate.endDate.month,
-            day: selectedDate.endDate.day,
-            hour: selectedDate.endDate.hour,
-            minute: selectedDate.endDate.minute,
+            year: selectedDate.endDate.year || 0,
+            month: endMonthObj.numericRepresentation,
+            day: endMonthObj.days[eDayIndex].numericRepresentation,
+            hour: selectedDate.endDate.hour || 0,
+            minute: selectedDate.endDate.minute || 0,
             seconds: 0
         };
 
-        const monthObj = SimpleCalendar.instance.activeCalendar.year.months.find(m => m.numericRepresentation === selectedDate.startDate.month);
-        if(monthObj){
-            (<Note>this.object).monthDisplay = monthObj.name;
+        if(startMonthObj){
+            (<Note>this.object).monthDisplay = startMonthObj.name;
         }
         this.updateApp();
     }

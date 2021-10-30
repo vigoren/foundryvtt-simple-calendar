@@ -1,22 +1,23 @@
 # Change Log
 
-## v1.3.84 - Improved Date/Time Selector, Bug Fixes and API Changes 
+## v1.3.85 - Improved Date/Time Selector, Bug Fixes and API Changes 
 
 ### Improved Date/Time Selector
 
 The date/time selector that is used when choosing a date for notes or specifying the month of a Season or the sunrise/sunset time of a season has been improved.
 
-Specifically the time selection portion has been re-designed and improved with the following improvement:
-
-- The design of the interface has been improved with better looking and easier to interact with text boxes and dropdowns for the text boxes.
-- Added the ability to use the scroll wheel to change the number up or down in any of the text boxes.
-- Validation and changes are more consistent, they worked fine before but just feel better now.
+- The date selector will now attempt to intelligently place itself so that it doesn't disappear outside the window.
+- The time selection portion has been re-designed and improved with the following improvement:
+  - The design of the interface has been improved with better looking and easier to interact with text boxes and dropdowns for the text boxes.
+  - Added the ability to use the scroll wheel to change the number up or down in any of the text boxes.
+  - Validation and changes are more consistent, they worked fine before but just feel better now.
 
 ### Bug Fixes
 
 - Fixed a bug where the display year in the calendar header would not update properly if the year being viewed was different from the current year.
 - Fixed a bug where the "Add Notes" button disappeared from the compact view.
 - Fixed a bug where clicking on a moon icon or note indicator would not select the day properly.
+- Fixed a bug with the Warhammer predefined calendar where the season starts were set to the wrong dates.
 
 ### API Changes
 

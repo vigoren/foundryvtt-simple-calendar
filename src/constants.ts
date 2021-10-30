@@ -193,3 +193,11 @@ export enum ConfigurationDateSelectors{
     seasonStartingDate = 'ssd',
     seasonSunriseSunsetTime = 'ssst'
 }
+
+export enum DateSelectorPositions{
+    Auto = 'auto',
+    LeftDown = 'left-down',
+    LeftUp = 'left-up',
+    RightDown = 'right-down',
+    RightUp = 'right-up'
+}

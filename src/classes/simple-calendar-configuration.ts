@@ -827,16 +827,18 @@ export class SimpleCalendarConfiguration extends FormApplication {
      * @param {ConfigurationDateSelectors} dateSelectorType The type of date selector that was changed
      * @param {SCDateSelector.SelectedDate} selectedDate The returned data from the date selector
      */
-    public dateSelectorChange(seasonId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SCDateSelector.SelectedDate){
+    public dateSelectorChange(seasonId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SCDateSelector.Result){
         //Season Changes
         const season = (<Calendar>this.object).year.seasons.find(s => s.id === seasonId);
         if(season){
             if(dateSelectorType === ConfigurationDateSelectors.seasonStartingDate){
-                season.startingMonth = selectedDate.startDate.month;
-                season.startingDay = selectedDate.startDate.day;
+                const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
+                const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
+                season.startingMonth = (<Calendar>this.object).year.months[sMonthIndex].numericRepresentation;
+                season.startingDay = (<Calendar>this.object).year.months[sMonthIndex].days[sDayIndex].numericRepresentation;
             } else if(dateSelectorType === ConfigurationDateSelectors.seasonSunriseSunsetTime){
-                season.sunriseTime = (selectedDate.startDate.hour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + (selectedDate.startDate.minute * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
-                season.sunsetTime = (selectedDate.endDate.hour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + (selectedDate.endDate.minute * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
+                season.sunriseTime = ((selectedDate.startDate.hour || 0) * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + ((selectedDate.startDate.minute || 0) * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
+                season.sunsetTime = ((selectedDate.endDate.hour || 0) * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + ((selectedDate.endDate.minute || 0) * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
             }
         }
     }

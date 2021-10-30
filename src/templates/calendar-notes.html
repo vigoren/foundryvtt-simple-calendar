@@ -56,7 +56,7 @@
         <div class="form-group">
             <label for="{{dateSelectorId}}">{{localize 'FSC.Notes.DateTime.Title'}}</label>
             <div class="form-fields">
-                {{sc-date-selector id=dateSelectorId showDateSelector=true showTimeSelector=true placeholderText='' allowDateRangeSelection=true timeSelected=object.allDay selectedStartDate=dateSelectorSelectedDate.start selectedEndDate=dateSelectorSelectedDate.end onDateSelect=dateSelectorClick }}
+                {{sc-date-selector id=dateSelectorId showDateSelector=true showTimeSelector=true placeholderText='' allowDateRangeSelection=true timeSelected=timeSelected selectedStartDate=dateSelectorSelectedDate.start selectedEndDate=dateSelectorSelectedDate.end onDateSelect=dateSelectorClick }}
             </div>
             <p class="notes">{{localize 'FSC.Notes.DateTime.Help'}}</p>
         </div>

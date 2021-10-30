@@ -23,40 +23,40 @@ export default class HandlebarsHelpers{
     static DateSelector(options: any){
         if(options.hash.hasOwnProperty('id') ){
             const dsOptions: SCDateSelector.Options = {};
-            if(options.hash.hasOwnProperty('timeSelected')){
-                dsOptions.timeSelected= options.hash['timeSelected'];
-            }
-            if(options.hash.hasOwnProperty('showDateSelector')){
-                dsOptions.showDateSelector= options.hash['showDateSelector'];
-            }
-            if(options.hash.hasOwnProperty('showTimeSelector')){
-                dsOptions.showTimeSelector = options.hash['showTimeSelector'];
-            }
-            if(options.hash.hasOwnProperty('showCalendarYear')){
-                dsOptions.showCalendarYear = options.hash['showCalendarYear'];
-            }
-            if(options.hash.hasOwnProperty('placeHolderText')){
-                dsOptions.placeHolderText = options.hash['placeHolderText'];
-            }
             if(options.hash.hasOwnProperty('allowDateRangeSelection')){
                 dsOptions.allowDateRangeSelection = options.hash['allowDateRangeSelection'];
             }
             if(options.hash.hasOwnProperty('allowTimeRangeSelection')){
                 dsOptions.allowTimeRangeSelection = options.hash['allowTimeRangeSelection'];
             }
-            if(options.hash.hasOwnProperty('timeDelimiter')){
-                dsOptions.timeDelimiter = options.hash['timeDelimiter'];
+            if(options.hash.hasOwnProperty('onDateSelect')){
+                dsOptions.onDateSelect = options.hash['onDateSelect'];
             }
-            if(options.hash.hasOwnProperty('selectedStartDate')){
-                dsOptions.selectedStartDate = options.hash['selectedStartDate'];
+            if(options.hash.hasOwnProperty('position')){
+                dsOptions.position = options.hash['position'];
+            }
+            if(options.hash.hasOwnProperty('showCalendarYear')){
+                dsOptions.showCalendarYear = options.hash['showCalendarYear'];
+            }
+            if(options.hash.hasOwnProperty('showDateSelector')){
+                dsOptions.showDateSelector= options.hash['showDateSelector'];
             }
             if(options.hash.hasOwnProperty('selectedEndDate')){
                 dsOptions.selectedEndDate = options.hash['selectedEndDate'];
             }
-            if(options.hash.hasOwnProperty('onDateSelect')){
-                dsOptions.onDateSelect = options.hash['onDateSelect'];
+            if(options.hash.hasOwnProperty('timeSelected')){
+                dsOptions.timeSelected= options.hash['timeSelected'];
+            }
+            if(options.hash.hasOwnProperty('selectedStartDate')){
+                dsOptions.selectedStartDate = options.hash['selectedStartDate'];
             }
 
+            if(options.hash.hasOwnProperty('showTimeSelector')){
+                dsOptions.showTimeSelector = options.hash['showTimeSelector'];
+            }
+            if(options.hash.hasOwnProperty('timeDelimiter')){
+                dsOptions.timeDelimiter = options.hash['timeDelimiter'];
+            }
             const id = options.hash['id'];
             const ds = DateSelector.GetSelector(id, dsOptions);
             return new Handlebars.SafeString(ds.build());

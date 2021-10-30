@@ -610,7 +610,7 @@ export default class SimpleCalendar extends Application{
      * @param {SCRenderer.CalendarOptions} options The renderer options for the calendar who's day was clicked
      */
     public dayClick(options: SCRenderer.CalendarOptions){
-        if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month > 0 && options.selectedDates.start.month < this.activeCalendar.year.months.length){
+        if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.activeCalendar.year.months.length){
             const selectedDay = options.selectedDates.start.day;
             let allReadySelected = false;
             const currentlySelectedMonth = this.activeCalendar.year.getMonth('selected');

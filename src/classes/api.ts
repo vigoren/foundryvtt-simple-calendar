@@ -4,7 +4,6 @@ import {
     LeapYearConfig,
     MonthConfig,
     MoonConfiguration,
-    NoteConfig,
     TimeConfig,
     WeekdayConfig,
     YearConfig
@@ -12,7 +11,7 @@ import {
 import {Logger} from "./logging";
 import {GameSettings} from "./game-settings";
 import {
-    CalendarClickEvents,
+    DateSelectorPositions,
     GameSystems,
     LeapYearRules,
     ModuleName,
@@ -37,8 +36,16 @@ export default class API{
     /**
      * The Date selector class used to create date selector inputs based on the calendar
      */
-    public static DateSelector = DateSelector;
+    public static DateSelector = {
+        Activate: DateSelector.ActivateSelector.bind(DateSelector),
+        Get: DateSelector.GetSelector.bind(DateSelector),
+        Remove: DateSelector.RemoveSelector.bind(DateSelector)
+    };
 
+    /**
+     * The different date selector positions available
+     */
+    public static DateSelectorPositions = DateSelectorPositions;
     /**
      * The predefined calendars packaged with the calendar
      */

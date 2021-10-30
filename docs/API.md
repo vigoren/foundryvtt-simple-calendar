@@ -6,6 +6,7 @@ Simple Calendar exposes a variable called `SimpleCalendar`, all of these API fun
 
 ## Properties
 - [Calendars](#simplecalendarapicalendars)
+- [DateSelectorPositions](#simplecalendarapidateselectorpositions)
 - [LeapYearRules](#simplecalendarapileapyearrules)
 - [MoonIcons](#simplecalendarapimoonicons)
 - [MoonYearResetOptions](#simplecalendarapimoonyearresetoptions)
@@ -72,6 +73,16 @@ Simple Calendar exposes a variable called `SimpleCalendar`, all of these API fun
 This is an enum that contains a list of all available predefined calendars within Simple Calendar.
 
 **Important**: This is a list of keys used internally to determine which Predefined calendar should be used it does not return an object containing the configuration for a predefined calendar.
+
+## `SimpleCalendar.api.DateSelectorPositions`
+
+This is an enum that contains a list of all the position settings that can be used for the date selector input.
+
+- **Auto**: Let the Date Selector choose the best position. This is the default option.
+- **LeftDown**: The Date Selector will have its left edge inline with the left edge of the input and will open up below the input.
+- **LeftUp**: The Date Selector will have its left edge inline with the left edge of the input and will open up above the input.
+- **RightDown**: The Date Selector will have its right edge inline with the right edge of the input and will open up below the input.
+- **RightUp**: The Date Selector will have its right edge inline with the right edge of the input and will open up above the input.
 
 ## `SimpleCalendar.api.LeapYearRules`
 
@@ -1156,14 +1167,18 @@ Parameter|Type|Default Value|Description
 allowDateRangeSelection|Boolean|`false`|If true will allow a range of dates to be selected on the calendar. If false only a single date can be chosen.
 allowTimeRangeSelection|Boolean|`false`|If true will allow a start and end time to be chosen. If false only a single time can be selected.
 onDateSelect|Function or null|`null`|This is the function to call with the results of a date/time being selected in the date selector. The function will be passed a [Date Selector Result](#date-selector-result) object with the selected date(s) set. 
-placeHolderText|String|`''`|This the text that appears in the input before a date has been selected.
+position|[DateSelectorPositions](#simplecalendarapidateselectorpositions)|`SimpleCalendar.api.DateSelectorPositions.Auto`|How to position the date selector when it is opened from the input.
 selectedEndDate|[DateTime](#date-time-object)|`{year: 0, month: 1, day: 1, hour: 0, minute: 0}`|This is used for the ending date and/or time that is selected in the date selector. In single date/time mode this value is ignored.
 selectedStartDate|[DateTime](#date-time-object)|`{year: 0, month: 1, day: 1, hour: 0, minute: 0}`|This is used for the starting date and/or time that is selected in the date selector.
 showCalendarYear|Boolean|`true`|If true the year will be shown at the top of the calendar display for the date selector. If false the year will not be shown.
 showDateSelector|Boolean|`true`|If true the calendar will be shown to allow for the selection of one or more dates. If false the calendar will not be shown.
 showTimeSelector|Boolean|`true`|If true the inputs for selecting a time or range of time will be shown. If false  the time selection inputs will not be shown.
 timeDelimiter|String|`'-'`|This is the text that is used between the start and end time of a time range.
-timeSelected|Boolean|`true`|If a time or time range have been selected. If true the "Add Time" button will appear, if false the time inputs will appear.
+timeSelected|Boolean|`true`|If a time or time range have been selected. If true the time inputs will appear filled with the selected times. If false the "Add Time" button will appear.
+
+### Styling
+
+To use the default styles for the date selector be sure to add the class `simple-calendar` to the div that contains this handlebar helper. If this is not included then you will be responsible for creating the styles for the date selector.
 
 ### Examples
 
@@ -1318,6 +1333,9 @@ This type represents the results object returned when date/time has been selecte
 
 Property|Type|Optional|Default|Description
 --------|-----|-------|------|-----------
+endDate|[Date Time Object](#date-time-object)|No|N/A|The end date and/or time that was selected from the date selector. In single date/time mode this value will be the same as the start date.
+startDate|[Date Time Object](#date-time-object)|No|N/A|The start date and/or time that was selected from the date selector.
+timeSelected|Boolean|No|N/A|If a time was selected in the date selector.
 
 ## Date Time Object
 

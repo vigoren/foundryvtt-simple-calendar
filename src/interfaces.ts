@@ -7,7 +7,7 @@ import {
     GameWorldTimeIntegrations,
     SocketTypes,
     MoonIcons,
-    MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus, SimpleCalendarHooks
+    MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus, SimpleCalendarHooks, DateSelectorPositions
 } from "./constants";
 import Note from "./classes/note";
 import DateSelector from "./classes/date-selector";
@@ -571,10 +571,10 @@ export namespace SCDateSelector {
     }
 
     export interface Options {
-        placeHolderText?: string;
         onDateSelect?: Function;
         allowDateRangeSelection?: boolean;
         allowTimeRangeSelection?: boolean;
+        position?: DateSelectorPositions;
         showCalendarYear?: boolean;
         showDateSelector?: boolean;
         showTimeSelector?: boolean;
@@ -597,6 +597,12 @@ export namespace SCDateSelector {
         visibleDate: SCDateSelector.Date;
         startDate: SCDateSelector.Date;
         endDate: SCDateSelector.Date;
+    }
+
+    export interface Result {
+        startDate: DateTime;
+        endDate: DateTime;
+        timeSelected: boolean;
     }
 }
 
