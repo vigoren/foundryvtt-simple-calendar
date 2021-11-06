@@ -6,11 +6,17 @@ import {
     NoteRepeat,
     GameWorldTimeIntegrations,
     SocketTypes,
-    MoonIcons,
-    MoonYearResetOptions, GameSystems, YearNamingRules, TimeKeeperStatus, SimpleCalendarHooks, DateSelectorPositions
+    MoonYearResetOptions,
+    GameSystems,
+    YearNamingRules,
+    TimeKeeperStatus,
+    SimpleCalendarHooks,
+    DateSelectorPositions,
+    Icons, Themes
 } from "./constants";
 import Note from "./classes/note";
 import DateSelector from "./classes/date-selector";
+import Calendar from "./classes/calendar";
 
 /**
  * Interface for the Configuration Item Base Template
@@ -38,11 +44,14 @@ export interface IConfigurationItemBaseConfig{
 
 export interface SimpleCalendarTemplate{
     calendar: CalendarConfiguration;
+    calendarList: any[];
     clockClass: string;
     compactView: boolean;
     compactViewShowNotes: boolean;
+    uiElementStates: any;
     isPrimary: boolean;
     timeUnits: any;
+    theme: Themes;
 }
 
 export interface CalendarConfiguration extends IConfigurationItemBaseConfig {
@@ -64,6 +73,7 @@ export interface CalendarTemplate extends IConfigurationItemBaseTemplate {
     calendarDisplay: string;
     calendarId: string;
     name: string;
+    id: string;
     selectedDisplay: string;
     timeDisplay: string;
     currentYear: YearTemplate;
@@ -381,7 +391,7 @@ export interface MoonPhase {
     name: string;
     length: number;
     singleDay: boolean;
-    icon: MoonIcons;
+    icon: Icons;
 }
 
 /**

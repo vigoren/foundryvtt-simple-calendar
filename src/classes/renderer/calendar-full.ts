@@ -379,7 +379,7 @@ export default class CalendarFull{
         for(let i = 0; i < calendar.year.moons.length; i++){
             const mp = calendar.year.moons[i].getDateMoonPhase(calendar.year, visibleYear, visibleMonth, day.numericRepresentation);
             if(mp && (mp.singleDay || day.selected || day.current)){
-                let moon = Utilities.GetMoonPhaseIcon(mp.icon, calendar.year.moons[i].color);
+                let moon = Utilities.GetIcon(mp.icon, "#000000", calendar.year.moons[i].color);
                 html += `<span class="moon-phase ${mp.icon}" title="${calendar.year.moons[i].name} - ${mp.name}">${moon}</span>`;
             }
         }

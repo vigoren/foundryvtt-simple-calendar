@@ -24,7 +24,7 @@ import {
 import {
     GameSystems,
     LeapYearRules,
-    MoonIcons,
+    Icons,
     MoonYearResetOptions,
     SocketTypes,
     TimeKeeperStatus,
@@ -295,11 +295,11 @@ describe('Interface Tests', () => {
     });
 
     test('Moon Phase', () => {
-        const mp: MoonPhase = {name: '', length: 1, singleDay: false, icon: MoonIcons.NewMoon};
+        const mp: MoonPhase = {name: '', length: 1, singleDay: false, icon: Icons.NewMoon};
         expect(mp.name).toBe('');
         expect(mp.length).toBe(1);
         expect(mp.singleDay).toBe(false);
-        expect(mp.icon).toBe(MoonIcons.NewMoon);
+        expect(mp.icon).toBe(Icons.NewMoon);
     });
 
     test('First New Moon Date', () => {

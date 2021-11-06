@@ -149,6 +149,7 @@ export default class Calendar extends ConfigurationItemBase{
             currentYear: this.year.toTemplate(),
             gameSystem: this.gameSystem,
             isGM: GameSettings.IsGm(),
+            id: this.id,
             name: this.name,
             notes: this.getNotesForDay().map(n => n.toTemplate()),
             reorderNotes: this.canUser((<Game>game).user, this.generalSettings.permissions.reorderNotes),

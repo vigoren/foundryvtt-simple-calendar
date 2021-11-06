@@ -15,7 +15,7 @@ import Year from "../calendar/year";
 import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
 import {Logger} from "../logging";
-import {LeapYearRules, MoonIcons, MoonYearResetOptions, YearNamingRules} from "../../constants";
+import {LeapYearRules, Icons, MoonYearResetOptions, YearNamingRules} from "../../constants";
 import Season from "../calendar/season";
 import Moon from "../calendar/moon";
 import SpyInstance = jest.SpyInstance;
@@ -1270,9 +1270,9 @@ describe('Simple Calendar Configuration Tests', () => {
 
         (<HTMLElement>event.currentTarget).classList.remove('moon-phase-single-day');
         (<HTMLElement>event.currentTarget).classList.add('moon-phase-icon');
-        (<HTMLInputElement>event.currentTarget).value = MoonIcons.LastQuarter;
+        (<HTMLInputElement>event.currentTarget).value = Icons.LastQuarter;
         SimpleCalendarConfiguration.instance.inputChange(event);
-        expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.moons[0].phases[0].icon).toBe(MoonIcons.LastQuarter);
+        expect((<Calendar>SimpleCalendarConfiguration.instance.object).year.moons[0].phases[0].icon).toBe(Icons.LastQuarter);
 
     });
 

@@ -1,7 +1,7 @@
 /**
  * This file mocks the FoundryVTT game global so that it can be used in testing
  */
-import {GameWorldTimeIntegrations, MoonIcons, MoonYearResetOptions, SettingNames} from "../src/constants";
+import {GameWorldTimeIntegrations, Icons, MoonYearResetOptions, SettingNames} from "../src/constants";
 
 //@ts-ignore
 const local: Localization = {

@@ -1,0 +1,19 @@
+@import "../variables";
+.simple-calendar{
+  &.window-app{
+    .sc-header-bar{
+      .sc-calendar-list{
+        &.animate{
+          transition: opacity 500ms;
+        }
+      }
+    }
+    .sc-main-wrapper{
+      .sc-note-list{
+        &.animate{
+          transition: left 500ms;
+        }
+      }
+    }
+  }
+}

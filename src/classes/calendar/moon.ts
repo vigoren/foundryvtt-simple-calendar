@@ -1,6 +1,6 @@
 import {DayTemplate, FirstNewMoonDate, MoonConfiguration, MoonPhase, MoonTemplate} from "../../interfaces";
 import Year from "./year";
-import {MoonIcons, MoonYearResetOptions} from "../../constants";
+import {Icons, MoonYearResetOptions} from "../../constants";
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
@@ -71,7 +71,7 @@ export default class Moon extends ConfigurationItemBase{
         this.phases.push({
             name: GameSettings.Localize('FSC.Moon.Phase.New'),
             length: 3.69,
-            icon: MoonIcons.NewMoon,
+            icon: Icons.NewMoon,
             singleDay: true
         });
     }

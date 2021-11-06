@@ -470,7 +470,6 @@ export default class DateSelector {
     hideCalendar(html: HTMLElement){
         this.secondDaySelect = false;
         const cal = <HTMLElement>html.querySelector('.sc-date-selector-calendar-wrapper');
-        console.log(cal);
         if(cal && !!( cal.offsetWidth || cal.offsetHeight || cal.getClientRects().length )){
             cal.style.display = 'none';
             this.callOnDateSelect();

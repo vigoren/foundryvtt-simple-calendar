@@ -11,7 +11,7 @@ import SimpleCalendar from "../applications/simple-calendar";
 import Year from "./year";
 import Month from "./month";
 import Moon from "./moon";
-import {LeapYearRules, MoonIcons, MoonYearResetOptions} from "../../constants";
+import {LeapYearRules, Icons, MoonYearResetOptions} from "../../constants";
 
 describe('Moon Tests', () => {
     let m :Moon;
@@ -72,7 +72,7 @@ describe('Moon Tests', () => {
         m.updatePhaseLength();
         expect(m.phases[0].length).toBe(1);
 
-        m.phases.push({name: 'p2', icon: MoonIcons.NewMoon, length: 0, singleDay: false});
+        m.phases.push({name: 'p2', icon: Icons.NewMoon, length: 0, singleDay: false});
         m.updatePhaseLength();
         expect(m.phases[0].length).toBe(1);
         expect(m.phases[1].length).toBe(28.5);
@@ -81,7 +81,7 @@ describe('Moon Tests', () => {
     test('Get Moon Phase', () => {
         const y = new Year(0);
         y.months.push(new Month("M", 1, 0, 10));
-        m.phases.push({name: 'p2', icon: MoonIcons.NewMoon, length: 0, singleDay: false});
+        m.phases.push({name: 'p2', icon: Icons.NewMoon, length: 0, singleDay: false});
         m.updatePhaseLength();
         expect(m.getMoonPhase(y)).toStrictEqual(m.phases[0]);
         y.months.push(new Month("Month 1", 1, 0, 10));

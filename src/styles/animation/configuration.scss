@@ -1,0 +1,17 @@
+@import "../variables";
+.simple-calendar-configuration{
+  &.window-app{
+    .window-content{
+      form{
+        opacity: 0;
+        transition: opacity 2s;
+      }
+
+      &.open{
+        form{
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

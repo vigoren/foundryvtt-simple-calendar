@@ -13,7 +13,7 @@ import "../../__mocks__/crypto";
 
 import Utilities from "./utilities";
 import {DateTimeParts, SCDateSelector} from "../interfaces";
-import {DateRangeMatch, GameSystems, MoonIcons, PredefinedCalendars} from "../constants";
+import {DateRangeMatch, GameSystems, Icons, PredefinedCalendars} from "../constants";
 import SimpleCalendar from "./applications/simple-calendar";
 import Month from "./calendar/month";
 import Year from "./calendar/year";
@@ -96,14 +96,14 @@ describe('Utilities Class Tests', () => {
     test('Get Moon Phase Icon', () => {
         //@ts-ignore
         expect(Utilities.GetMoonPhaseIcon()).toBe('');
-        expect(Utilities.GetMoonPhaseIcon(MoonIcons.FirstQuarter, '#ffffff')).toBeDefined();
-        expect(Utilities.GetMoonPhaseIcon(MoonIcons.Full, '#ffffff')).toBeDefined();
-        expect(Utilities.GetMoonPhaseIcon(MoonIcons.LastQuarter, '#ffffff')).toBeDefined();
-        expect(Utilities.GetMoonPhaseIcon(MoonIcons.NewMoon, '#ffffff')).toBeDefined();
-        expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaningCrescent, '#ffffff')).toBeDefined();
-        expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaningGibbous, '#ffffff')).toBeDefined();
-        expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaxingCrescent, '#ffffff')).toBeDefined();
-        expect(Utilities.GetMoonPhaseIcon(MoonIcons.WaxingGibbous, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(Icons.FirstQuarter, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(Icons.Full, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(Icons.LastQuarter, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(Icons.NewMoon, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(Icons.WaningCrescent, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(Icons.WaningGibbous, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(Icons.WaxingCrescent, '#ffffff')).toBeDefined();
+        expect(Utilities.GetMoonPhaseIcon(Icons.WaxingGibbous, '#ffffff')).toBeDefined();
     });
 
     test('Pad Number', () => {

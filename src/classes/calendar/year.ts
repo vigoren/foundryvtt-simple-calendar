@@ -166,7 +166,7 @@ export default class Year extends ConfigurationItemBase {
                             name: this.moons[i].name,
                             color: this.moons[i].color,
                             phase: this.moons[i].getMoonPhase(this, 'current'),
-                            iconSVG: Utilities.GetMoonPhaseIcon(phase.icon, this.moons[i].color)
+                            iconSVG: Utilities.GetIcon(phase.icon, "#000000", this.moons[i].color)
                         });
                     }
                 }

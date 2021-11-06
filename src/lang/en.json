@@ -1,10 +1,14 @@
 {
+  "FSC.Calendars": "Calendars",
+
+
   "FSC.Title": "Simple Calendar",
   "FSC.Compact": "Compact",
   "FSC.Full": "Full",
   "FSC.Help": "Help",
   "FSC.One": "1",
   "FSC.Five": "5",
+  "FSC.Fifteen": "15",
   "FSC.Thirty": "30",
   "FSC.OrdinalSuffix.st": "st",
   "FSC.OrdinalSuffix.nd": "nd",

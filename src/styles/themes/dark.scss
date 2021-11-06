@@ -1,0 +1,152 @@
+@import "../variables";
+.simple-calendar{
+  &.dark{
+    a{
+      color: $secondary;
+      &:hover, &:active, &:focus{
+        color: $secondary-800;
+        text-shadow: unset;
+      }
+    }
+
+    // All control button colors
+    .control{
+      border-color: $gray-600;
+      background-color: $gray-600;
+      color: $white;
+      &:hover {
+        text-shadow: unset;
+        color: $white;
+        background-color: $gray-500;
+      }
+      &.primary {
+        background-color: $primary-800;
+        border-color: $primary-800;
+
+        &:hover {
+          background-color: $primary;
+        }
+      }
+      &.secondary {
+        background-color: $secondary;
+        border-color: $secondary;
+        color: $fontColor;
+
+        &:hover {
+          background-color: $secondary-300;
+          color: $fontColor;
+        }
+      }
+      &.delete {
+        background-color: $danger-900;
+        border-color: $danger-900;
+
+        &:hover {
+          background-color: $danger;
+        }
+      }
+      &.save {
+        background-color: $success-900;
+        border-color: $success-900;
+
+        &:hover {
+          background-color: $success;
+        }
+      }
+    }
+
+    .control-group{
+      .control{
+        border-right-color: $gray-500;
+        &:first-child{
+          border-left-color: $gray-600;
+        }
+        &:last-child{
+          border-right-color: $gray-600;
+        }
+
+        &.primary{
+          border-right-color: $primary;
+          &:first-child{
+            border-left-color: $primary-800;
+          }
+          &:last-child{
+            border-right-color: $primary-800;
+          }
+        }
+        &.secondary{
+          border-right-color: $secondary-300;
+          &:first-child{
+            border-left-color: $secondary;
+          }
+          &:last-child{
+            border-right-color: $secondary;
+          }
+        }
+        &.delete{
+          border-right-color: $danger;
+          &:first-child{
+            border-left-color: $danger-900;
+          }
+          &:last-child{
+            border-right-color: $danger-900;
+          }
+        }
+        &.save{
+          border-right-color: $success;
+          &:first-child{
+            border-left-color: $success-900;
+          }
+          &:last-child{
+            border-right-color: $success-900;
+          }
+        }
+      }
+    }
+
+    header{
+      background: $primary-1000;
+      color: $white;
+      font-size: 1rem;
+      a{
+        color: $white;
+        &:hover, &:active, &:focus{
+          color: $secondary;
+          text-shadow: unset;
+        }
+      }
+    }
+    .window-content{
+      background: $primary-1100;
+      color: $white;
+      scrollbar-color: $primary $primary-600;
+
+      &::-webkit-scrollbar-thumb{
+        background: $primary;
+        border-color:$primary-600;
+      }
+    }
+
+    .sc-header-bar{
+      border-color: $gray-700;
+      background-color: $gray-800;
+
+      .sc-calendar-list{
+        background-color: $primary-800;
+        border-color: $primary-800;
+        scrollbar-color: $primary $primary-600;
+        &::-webkit-scrollbar-thumb{
+          background: $primary;
+          border-color:$primary-600;
+        }
+      }
+    }
+    .sc-main-wrapper{
+      .sc-note-list{
+        background-color: $primary-1000;
+        border-color: $primary-1100;
+
+      }
+    }
+  }
+}

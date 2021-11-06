@@ -2,7 +2,7 @@ import Year from "./calendar/year";
 import {AboutTimeImport, CalendarWeatherImport} from "../interfaces";
 import {Weekday} from "./calendar/weekday";
 import Month from "./calendar/month";
-import {GameSystems, LeapYearRules, MoonIcons, NoteRepeat} from "../constants";
+import {GameSystems, LeapYearRules, Icons, NoteRepeat} from "../constants";
 import {GameSettings} from "./foundry-interfacing/game-settings";
 import Season from "./calendar/season";
 import Moon from "./calendar/moon";
@@ -252,14 +252,14 @@ export default class Importer{
                 newMoon.firstNewMoon.day = year.months[currentTime.month].days[currentTime.day].numericRepresentation;
                 const phaseLength = Number(((newMoon.cycleLength - 4) / 4).toPrecision(5));
                 newMoon.phases = [
-                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: MoonIcons.NewMoon, singleDay: true},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: MoonIcons.WaxingCrescent, singleDay: false},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: MoonIcons.FirstQuarter, singleDay: true},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: MoonIcons.WaxingGibbous, singleDay: false},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: MoonIcons.Full, singleDay: true},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: MoonIcons.WaningGibbous, singleDay: false},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: MoonIcons.LastQuarter, singleDay: true},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: MoonIcons.WaningCrescent, singleDay: false}
+                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: Icons.NewMoon, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: Icons.FirstQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: Icons.WaxingGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: Icons.Full, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: Icons.WaningGibbous, singleDay: false},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: Icons.LastQuarter, singleDay: true},
+                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ]
                 year.moons.push(newMoon);
             }

@@ -29,7 +29,7 @@ export default class SimpleCalendarSearch extends FormApplication{
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/search.html";
         options.title = "FSC.Search";
-        options.classes = ["form","simple-calendar"];
+        options.classes = ["form","simple-calendar", "dark"];
         options.resizable = true;
         options.closeOnSubmit = false;
         options.width = 500;

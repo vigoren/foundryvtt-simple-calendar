@@ -1,0 +1,31 @@
+@import "../variables";
+.simple-calendar{
+  &.light{
+    a{
+      color: $secondary;
+      &:hover, &:active, &:focus{
+        color: $secondary-900;
+        text-shadow: unset;
+      }
+    }
+    header{
+      background: $primary-A100;
+      color: $fontColor;
+      a{
+        color:$fontColor;
+        &:hover, &:active, &:focus{
+          color: $secondary-700;
+          text-shadow: unset;
+        }
+      }
+    }
+    .window-content{
+      background: $primary-50;
+      scrollbar-color: $primary $primary-400;
+      &::-webkit-scrollbar-thumb{
+        background: $primary;
+        border-color:$primary-400;
+      }
+    }
+  }
+}

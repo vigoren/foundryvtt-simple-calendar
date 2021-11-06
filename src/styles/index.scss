@@ -1,5 +1,4 @@
 .simple-calendar{
-  @import "control";
   @import "calendar";
   @import "time-selector";
   #simpleCalendar {
@@ -7,12 +6,18 @@
     @import "date-notes";
   }
 }
-.simple-calendar-configuration{
-  @import "configuration";
-}
 .simple-calendar-note {
   @import "notes";
 }
+@import "configuration";
+
+@import "scaffolding/control";
+@import "scaffolding/foundry-window-app";
+@import "themes/light";
+@import "themes/dark";
+@import "animation/main";
+@import "animation/configuration";
+
 @import "date-selector";
 
 @import "systems/wfrp4e";

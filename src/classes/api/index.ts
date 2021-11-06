@@ -15,7 +15,7 @@ import {
     GameSystems,
     LeapYearRules,
     ModuleName,
-    MoonIcons,
+    Icons,
     MoonYearResetOptions,
     PredefinedCalendars,
     PresetTimeOfDay,
@@ -57,7 +57,7 @@ export default class API{
     /**
      * The Moon Icons
      */
-    public static MoonIcons = MoonIcons;
+    public static MoonIcons = Icons;
     /**
      * The moon year reset options
      */

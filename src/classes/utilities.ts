@@ -1,5 +1,6 @@
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {DateRangeMatch, GameSystems, MoonIcons} from "../constants";
+import {DateRangeMatch, GameSystems, Icons} from "../constants";
+import SCIcon from "../icons/logo.svg"
 import FirstQuarterIcon from "../icons/moon-first-quarter.svg";
 import FullMoonIcon from "../icons/moon-full.svg";
 import LastQuarterIcon from "../icons/moon-last-quarter.svg";
@@ -8,6 +9,10 @@ import WaningCrescentIcon from "../icons/moon-waning-crescent.svg";
 import WaningGibbousIcon from "../icons/moon-waning-gibbous.svg";
 import WaxingCrescentIcon from "../icons/moon-waxing-crescent.svg";
 import WaxingGibbousIcon from "../icons/moon-waxing-gibbous.svg";
+import MiddayIcon from "../icons/midday.svg";
+import MidnightIcon from "../icons/midnight.svg";
+import SunriseIcon from "../icons/sunrise.svg";
+import SunsetIcon from "../icons/sunset.svg";
 import {DateTimeParts, SCDateSelector} from "../interfaces";
 import SimpleCalendar from "./applications/simple-calendar";
 import PF2E from "./systems/pf2e";
@@ -126,39 +131,68 @@ export default class Utilities{
     }
 
     /**
-     * Gets the SVG icon for the specific moon phase
-     * @param {MoonIcons} icon The phase of the moon
-     * @param {string} color The color of the moon
+     * Gets the SVG icon string for the specified icon  type
+     * @param {Icons} icon The icon to get
+     * @param {string} strokeColor The color of the svg stroke
+     * @param {string} fillColor The color of the svg fill
      */
-    public static GetMoonPhaseIcon(icon: MoonIcons, color: string){
-        let moon = '';
+    public static GetIcon(icon: Icons, strokeColor: string = "#000000", fillColor: string = "#000000"){
+        let iString = '';
+        let fillSearch = /fill="#000000"/g;
+
         switch (icon){
-            case MoonIcons.FirstQuarter:
-                moon = FirstQuarterIcon;
+            case Icons.Logo:
+                iString = SCIcon;
                 break;
-            case MoonIcons.Full:
-                moon = FullMoonIcon;
+            case Icons.Midday:
+                iString = MiddayIcon;
                 break;
-            case MoonIcons.LastQuarter:
-                moon = LastQuarterIcon;
+            case Icons.Midnight:
+                iString = MidnightIcon;
                 break;
-            case MoonIcons.NewMoon:
-                moon = NewMoonIcon;
+            case Icons.Sunrise:
+                iString = SunriseIcon;
                 break;
-            case MoonIcons.WaningCrescent:
-                moon = WaningCrescentIcon;
+            case Icons.Sunset:
+                iString = SunsetIcon;
                 break;
-            case MoonIcons.WaningGibbous:
-                moon = WaningGibbousIcon;
+            case Icons.FirstQuarter:
+                iString = FirstQuarterIcon;
+                fillSearch = /fill="#FFFFFF"/g;
                 break;
-            case MoonIcons.WaxingCrescent:
-                moon = WaxingCrescentIcon;
+            case Icons.Full:
+                iString = FullMoonIcon;
+                fillSearch = /fill="#FFFFFF"/g;
                 break;
-            case MoonIcons.WaxingGibbous:
-                moon = WaxingGibbousIcon;
+            case Icons.LastQuarter:
+                iString = LastQuarterIcon;
+                fillSearch = /fill="#FFFFFF"/g;
+                break;
+            case Icons.NewMoon:
+                iString = NewMoonIcon;
+                fillSearch = /fill="#FFFFFF"/g;
+                break;
+            case Icons.WaningCrescent:
+                iString = WaningCrescentIcon;
+                fillSearch = /fill="#FFFFFF"/g;
+                break;
+            case Icons.WaningGibbous:
+                iString = WaningGibbousIcon;
+                fillSearch = /fill="#FFFFFF"/g;
+                break;
+            case Icons.WaxingCrescent:
+                iString = WaxingCrescentIcon;
+                fillSearch = /fill="#FFFFFF"/g;
+                break;
+            case Icons.WaxingGibbous:
+                iString = WaxingGibbousIcon;
+                fillSearch = /fill="#FFFFFF"/g;
                 break;
         }
-        return moon.replace(`fill="#ffffff"`, `fill="${color}"`);
+
+        iString = iString.replace(/stroke="#000000"/g, `stroke="${strokeColor}"`);
+        iString = iString.replace(fillSearch, `fill="${fillColor}"`);
+        return iString;
     }
 
     /**

@@ -2,6 +2,8 @@ import DateSelector from "../date-selector";
 import Renderer from "../renderer";
 import SimpleCalendar from "../applications/simple-calendar";
 import {SCDateSelector, SCRenderer} from "../../interfaces";
+import Utilities from "../utilities";
+import {Themes} from "../../constants";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -14,6 +16,7 @@ export default class HandlebarsHelpers{
     static Register(){
         Handlebars.registerHelper("sc-date-selector", HandlebarsHelpers.DateSelector);
         Handlebars.registerHelper("sc-full-calendar", HandlebarsHelpers.FullCalendar);
+        Handlebars.registerHelper("sc-icon", HandlebarsHelpers.Icon);
     }
 
     /**
@@ -101,5 +104,21 @@ export default class HandlebarsHelpers{
             renderOptions.showYear = options.hash['showYear'];
         }
         return new Handlebars.SafeString(Renderer.CalendarFull.Render(SimpleCalendar.instance.activeCalendar, renderOptions));
+    }
+
+    static Icon(options: any){
+        if(options.hash.hasOwnProperty('name') ){
+            let stroke = "#000000";
+            let fill = "#000000";
+
+            if(options.hash.hasOwnProperty('stroke')){
+                stroke = options.hash['stroke'];
+            }
+            if(options.hash.hasOwnProperty('fill')){
+                fill = options.hash['fill'];
+            }
+            return new Handlebars.SafeString(Utilities.GetIcon(options.hash['name'], stroke, fill));
+        }
+        return '';
     }
 }

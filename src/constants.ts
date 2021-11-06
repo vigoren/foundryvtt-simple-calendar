@@ -28,6 +28,11 @@ export enum SettingNames {
     NoteCategories = 'note-categories'
 }
 
+export enum Themes {
+    light = 'light',
+    dark = 'dark'
+}
+
 /**
  * The different predefined calendars that come with the calendar
  */
@@ -129,7 +134,12 @@ export enum GameWorldTimeIntegrations {
     Mixed = 'mixed'
 }
 
-export enum MoonIcons {
+export enum Icons {
+    Logo = 'logo',
+    Midday = 'midday',
+    Midnight = 'midnight',
+    Sunrise = 'sunrise',
+    Sunset = 'sunset',
     NewMoon = 'new',
     WaxingCrescent = 'waxing-crescent',
     FirstQuarter = 'first-quarter',
