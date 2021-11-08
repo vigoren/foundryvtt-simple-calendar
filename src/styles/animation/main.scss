@@ -9,6 +9,15 @@
       }
     }
     .sc-main-wrapper{
+      .controls{
+        &.unit-controls{
+          .control-group{
+            .unit-list{
+              transition: max-height 500ms;
+            }
+          }
+        }
+      }
       .sc-note-list{
         &.animate{
           transition: left 500ms;

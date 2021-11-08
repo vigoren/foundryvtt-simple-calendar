@@ -15,131 +15,141 @@
 </div>
 {{/if}}
 <div class="sc-main-wrapper">
-    <div class="calendar-display">
-        {{sc-full-calendar id=calendar.calendarId date=calendar.visibleDate}}
-        {{#if calendar.showClock}}
-        <div class="time-display">
-            <span class="clock {{clockClass}}"></span>
-            <span class="text">{{localize 'FSC.Time.Current'}}:</span>
-            <span class="time">{{calendar.timeDisplay}}</span>
+    <div class="section">
+        <div class="calendar-display">
+            {{sc-full-calendar id=calendar.calendarId date=calendar.visibleDate}}
         </div>
-        {{/if}}
-    </div>
-    <div class="sc-actions-list">
-        <button class="control {{#if (gt calendar.currentYear.selectedDayNotes.normal 0)}}secondary{{/if}} notes fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.normal}}</button>
-        {{#if (gt calendar.currentYear.selectedDayNotes.reminders 0)}}
-        <button class="control primary reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.reminders}}</button>
-        {{/if}}
-        {{#if calendar.addNotes}}
-        <button class="fa control save add-note" title="{{localize 'FSC.Notes.AddNew'}}"><span class="fa-sticky-note"></span>&nbsp;<span class="fa-plus"></span></button>
-        {{/if}}
-        <button class="fa fa-search control search" title="{{localize 'FSC.Search'}}"></button>
-        <span class="spacer"></span>
-        {{#if calendar.changeDateTime}}
-        {{#if calendar.showSetCurrentDate}}
-        <button class="control save btn-apply fa fa-calendar-check" title="{{localize 'FSC.SetCurrentDate'}}"></button>
-        {{/if}}
-        {{/if}}
-        <button class="fa fa-calendar-day control today" title="{{localize 'FSC.Today'}}"></button>
-        {{#if calendar.isGM}}
-        <button class="fa fa-cog control configure-button" title="{{localize 'FSC.Configure'}}"></button>
-        {{/if}}
-        <span class="spacer-small"></span>
-        {{#if calendar.showTimeControls}}
-        {{#if isPrimary}}
-        <div class="time-keeper-buttons">
-            <button class="control time-start fa {{#if (eq clockClass 'started')}}secondary fa-pause{{else}}save fa-play{{/if}}" title="{{localize 'FSC.Time.Start'}}"></button>
-            <button class="control time-stop {{#if (eq clockClass 'stopped')}} {{else}}delete{{/if}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></button>
+        <div class="sc-actions-list">
+            <button class="control {{#if (gt calendar.currentYear.selectedDayNotes.normal 0)}}secondary{{/if}} notes fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.normal}}</button>
+            {{#if (gt calendar.currentYear.selectedDayNotes.reminders 0)}}
+            <button class="control primary reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.reminders}}</button>
+            {{/if}}
+            {{#if calendar.addNotes}}
+            <button class="fa control save add-note" title="{{localize 'FSC.Notes.AddNew'}}"><span class="fa-sticky-note"></span>&nbsp;<span class="fa-plus"></span></button>
+            {{/if}}
+            <button class="fa fa-search control search" title="{{localize 'FSC.Search'}}"></button>
+            <span class="spacer"></span>
+            {{#if calendar.changeDateTime}}
+            {{#if calendar.showSetCurrentDate}}
+            <button class="control save btn-apply fa fa-calendar-check" title="{{localize 'FSC.SetCurrentDate'}}"></button>
+            {{/if}}
+            {{/if}}
+            <button class="fa fa-calendar-day control today" title="{{localize 'FSC.Today'}}"></button>
+            {{#if calendar.isGM}}
+            <button class="fa fa-cog control configure-button" title="{{localize 'FSC.Configure'}}"></button>
+            {{/if}}
         </div>
-
-        {{else}}
-        <div class="primary-loader"><i class="fas fa-spinner fa-spin"></i></div>
-        {{/if}}
-        {{/if}}
-    </div>
-    <div class="sc-note-list {{#if uiElementStates.noteDrawerOpen}}open{{else}}closed{{/if}}">
-        <h2>{{localize 'FSC.Notes.For'}} {{calendar.selectedDisplay}}</h2>
-        {{#if calendar.notes.length}}
-        <div class="note-list">
-            {{#each calendar.notes}}
-            <div class="note" data-index="{{id}}" {{#if ../calendar.reorderNotes}}draggable="true"{{/if}}>
-                <div class="note-details-wrapper">
-                    <h3 class="note-title">{{title}}</h3>
-                    <div class="note-details">
-                        {{#if ../calendar.isGM}}
-                        {{#if playerVisible}}
-                        <div class="note-category note-icon" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.PlayerVisible'}}">
-                            <span class="fa fa-eye"></span>
+        <div class="sc-note-list {{#if uiElementStates.noteDrawerOpen}}open{{else}}closed{{/if}}">
+            <h2>{{localize 'FSC.Notes.For'}} {{calendar.selectedDisplay}}</h2>
+            {{#if calendar.notes.length}}
+            <div class="note-list">
+                {{#each calendar.notes}}
+                <div class="note" data-index="{{id}}" {{#if ../calendar.reorderNotes}}draggable="true"{{/if}}>
+                    <div class="note-details-wrapper">
+                        <h3 class="note-title">{{title}}</h3>
+                        <div class="note-details">
+                            {{#if ../calendar.isGM}}
+                            {{#if playerVisible}}
+                            <div class="note-category note-icon" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.PlayerVisible'}}">
+                                <span class="fa fa-eye"></span>
+                            </div>
+                            {{else}}
+                            <div class="note-category note-icon" style="color:#ffffff;background-color:#922121" title="{{localize 'FSC.Notes.NotPlayerVisible'}}">
+                                <span class="fa fa-eye-slash"></span>
+                            </div>
+                            {{/if}}
+                            {{/if}}
+                            {{#if reminder}}
+                            <div class="note-category note-icon" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.ReminderHelp'}}">
+                                <span class="fa fa-bell"></span>
+                            </div>
+                            {{/if}}
+                            <div class="note-time note-category" title="{{localize 'FSC.Notes.Time'}}">
+                                <span class="fa fa-clock"></span>  {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+                            </div>
+                            {{#if authorDisplay}}
+                            <div class="note-category" title="{{localize 'FSC.Notes.Author'}}" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
+                                <span class="fa fa-pencil-alt"></span> {{authorDisplay.name}}
+                            </div>
+                            {{/if}}
+                            {{#each categories}}
+                            <div class="note-category" style="background-color:{{color}};color:{{textColor}};">
+                                {{name}}
+                            </div>
+                            {{/each}}
                         </div>
-                        {{else}}
-                        <div class="note-category note-icon" style="color:#ffffff;background-color:#922121" title="{{localize 'FSC.Notes.NotPlayerVisible'}}">
-                            <span class="fa fa-eye-slash"></span>
-                        </div>
-                        {{/if}}
-                        {{/if}}
-                        {{#if reminder}}
-                        <div class="note-category note-icon" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.ReminderHelp'}}">
-                            <span class="fa fa-bell"></span>
-                        </div>
-                        {{/if}}
-                        <div class="note-time note-category" title="{{localize 'FSC.Notes.Time'}}">
-                            <span class="fa fa-clock"></span>  {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
-                        </div>
-                        {{#if authorDisplay}}
-                        <div class="note-category" title="{{localize 'FSC.Notes.Author'}}" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
-                            <span class="fa fa-pencil-alt"></span> {{authorDisplay.name}}
-                        </div>
-                        {{/if}}
-                        {{#each categories}}
-                        <div class="note-category" style="background-color:{{color}};color:{{textColor}};">
-                            {{name}}
-                        </div>
-                        {{/each}}
                     </div>
+                    {{#if ../calendar.reorderNotes}}
+                    <div class="sorting-dragger"><span class="fa fa-arrows-alt-v"></span></div>
+                    {{/if}}
                 </div>
-                {{#if ../calendar.reorderNotes}}
-                <div class="sorting-dragger"><span class="fa fa-arrows-alt-v"></span></div>
-                {{/if}}
+                {{/each}}
             </div>
-            {{/each}}
+            {{else}}
+            <em>{{localize 'FSC.Notes.Empty'}}</em>
+            {{/if}}
         </div>
-        {{else}}
-        <em>{{localize 'FSC.Notes.Empty'}}</em>
-        {{/if}}
     </div>
-</div>
-<div class="sc-date-time-controls">
-    {{#if calendar.changeDateTime}}
-    {{#if calendar.showTimeControls}}
-    <div class="time-controls">
-        <div class="control-group">
-            <button class="control primary" data-type="second" data-amount="1">{{localize 'FSC.One'}}&nbsp;{{localize 'FSC.SecondShorthand'}}</button>
-            <button class="control primary" data-type="second" data-amount="30">{{localize 'FSC.Thirty'}}&nbsp;{{localize 'FSC.SecondShorthand'}}</button>
-            <button class="control primary" data-type="minute" data-amount="1">{{localize 'FSC.One'}}&nbsp;{{localize 'FSC.MinuteShorthand'}}</button>
-            <button class="control primary" data-type="minute" data-amount="5">{{localize 'FSC.Five'}}&nbsp;{{localize 'FSC.MinuteShorthand'}}</button>
-            <button class="control primary" data-type="minute" data-amount="15">{{localize 'FSC.Fifteen'}}&nbsp;{{localize 'FSC.MinuteShorthand'}}</button>
-            <button class="control primary" data-type="hour" data-amount="1">{{localize 'FSC.One'}}&nbsp;{{localize 'FSC.HourShorthand'}}</button>
+    {{#if calendar.showClock}}
+    <div class="section">
+        <div class="clock-display">
+            {{sc-clock id='sc-clock'}}
         </div>
-        <div class="control-group">
-            <button class="control secondary" data-type="dawn" title="{{localize 'FSC.Dawn'}}">{{sc-icon name='sunrise'}}</button>
-            <button class="control secondary" data-type="midday" title="{{localize 'FSC.Midday'}}">{{sc-icon name='midday'}}</button>
-            <button class="control secondary" data-type="dusk" title="{{localize 'FSC.Dusk'}}">{{sc-icon name='sunset'}}</button>
-            <button class="control secondary" data-type="midnight" title="{{localize 'FSC.Midnight'}}">{{sc-icon name='midnight'}}</button>
+        <div class="sc-actions-list">
+            {{#if calendar.changeDateTime}}
+            {{#if calendar.showTimeControls}}
+            {{#if isPrimary}}
+            <div class="time-keeper-buttons">
+                <button class="control time-start fa {{#if (eq clockClass 'started')}}secondary fa-pause{{else}}save fa-play{{/if}}" title="{{localize 'FSC.Time.Start'}}"></button>
+                <button class="control time-stop {{#if (eq clockClass 'stopped')}} {{else}}delete{{/if}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></button>
+            </div>
+
+            {{else}}
+            <div class="primary-loader"><i class="fas fa-spinner fa-spin"></i></div>
+            {{/if}}
+            {{/if}}
+            {{/if}}
         </div>
     </div>
     {{/if}}
-    {{#if calendar.showDateControls}}
-    <div class="date-controls">
-        <div class="control-group">
-            <button class="control primary" title="{{localize 'FSC.MoveDayForward'}}" data-type="day" data-amount="1">{{localize 'FSC.One'}}&nbsp;{{localize 'FSC.Day'}}</button>
-            <button class="control primary" title="{{localize 'FSC.MoveMonthForward'}}" data-type="month" data-amount="1">{{localize 'FSC.One'}}&nbsp;{{localize 'FSC.Month'}}</button>
-            <button class="control primary" title="{{localize 'FSC.MoveYearForward'}}" data-type="year" data-amount="1">{{localize 'FSC.One'}}&nbsp;{{localize 'FSC.Year'}}</button>
+    {{#if calendar.changeDateTime}}
+    <div class="section">
+        <div class="controls unit-controls">
+            <div class="control-group">
+                <button class="control primary fa fa-angle-double-left" title="{{localize 'FSC.MoveDayBack'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-5"></button>
+                <button class="control primary fa fa-angle-left" title="{{localize 'FSC.MoveDayBack'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-1"></button>
+                <button class="control primary selector" data-unit="time">{{localize uiElementStates.dateTimeUnitText}}&nbsp;</button>
+                <button class="control primary fa fa-angle-right" title="{{localize 'FSC.MoveDayForward'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="1"></button>
+                <button class="control primary fa fa-angle-double-right" title="{{localize 'FSC.MoveDayForward'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="5"></button>
+                <ul class="unit-list time-units {{#if uiElementStates.dateTimeUnitOpen}}open{{else}}closed{{/if}}">
+                    {{#if calendar.showTimeControls}}
+                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'second')}}selected{{/if}}" data-unit="second">{{localize 'FSC.Second'}}</li>
+                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'minute')}}selected{{/if}}" data-unit="minute">{{localize 'FSC.Minute'}}</li>
+                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'hour')}}selected{{/if}}" data-unit="hour">{{localize 'FSC.Hour'}}</li>
+                    {{/if}}
+                    {{#if calendar.showDateControls}}
+                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'day')}}selected{{/if}}" data-unit="day">{{localize 'FSC.Day'}}</li>
+                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'month')}}selected{{/if}}" data-unit="month">{{localize 'FSC.Month'}}</li>
+                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'year')}}selected{{/if}}" data-unit="year">{{localize 'FSC.Year'}}</li>
+                    {{/if}}
+                </ul>
+            </div>
         </div>
-        <div class="control-group">
-            <button class="control primary" title="{{localize 'FSC.MoveDayBack'}}" data-type="day" data-amount="-1">-{{localize 'FSC.One'}}&nbsp;{{localize 'FSC.Day'}}</button>
-            <button class="control primary" title="{{localize 'FSC.MoveMonthBack'}}" data-type="month" data-amount="-1">-{{localize 'FSC.One'}}&nbsp;{{localize 'FSC.Month'}}</button>
-            <button class="control primary" title="{{localize 'FSC.MoveYearBack'}}" data-type="year" data-amount="-1">-{{localize 'FSC.One'}}&nbsp;{{localize 'FSC.Year'}}</button>
+        <div class="sc-actions-list"></div>
+    </div>
+    {{/if}}
+    {{#if calendar.changeDateTime}}
+    {{#if calendar.showTimeControls}}
+    <div class="section">
+        <div class="controls">
+            <div class="control-group">
+                <button class="control secondary" data-type="dawn" title="{{localize 'FSC.Dawn'}}">{{sc-icon name='sunrise'}}</button>
+                <button class="control secondary" data-type="midday" title="{{localize 'FSC.Midday'}}">{{sc-icon name='midday'}}</button>
+                <button class="control secondary" data-type="dusk" title="{{localize 'FSC.Dusk'}}">{{sc-icon name='sunset'}}</button>
+                <button class="control secondary" data-type="midnight" title="{{localize 'FSC.Midnight'}}">{{sc-icon name='midnight'}}</button>
+            </div>
         </div>
+        <div class="sc-actions-list"></div>
     </div>
     {{/if}}
     {{/if}}

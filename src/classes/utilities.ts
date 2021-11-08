@@ -1,6 +1,7 @@
 import {GameSettings} from "./foundry-interfacing/game-settings";
 import {DateRangeMatch, GameSystems, Icons} from "../constants";
 import SCIcon from "../icons/logo.svg"
+import Clock from "../icons/clock.svg";
 import FirstQuarterIcon from "../icons/moon-first-quarter.svg";
 import FullMoonIcon from "../icons/moon-full.svg";
 import LastQuarterIcon from "../icons/moon-last-quarter.svg";
@@ -143,6 +144,9 @@ export default class Utilities{
         switch (icon){
             case Icons.Logo:
                 iString = SCIcon;
+                break;
+            case Icons.Clock:
+                iString = Clock;
                 break;
             case Icons.Midday:
                 iString = MiddayIcon;

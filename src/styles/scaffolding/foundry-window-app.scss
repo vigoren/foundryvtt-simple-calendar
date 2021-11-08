@@ -81,16 +81,113 @@
     }
     .sc-main-wrapper{
       display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
+      flex-direction: column;
+      padding: $spacer-half;
 
-      .sc-actions-list{
+      .section{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+
+        .clock-display, .calendar-display{
+          flex: 1;
+        }
+
+        &:last-child{
+          .controls {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      .controls{
+        flex: 1;
         display: flex;
         flex-direction: column;
+        margin-bottom: $spacer-half;
+
+        &.unit-controls{
+          flex-direction: row;
+          justify-content: center;
+
+          .control-group{
+            position: relative;
+            margin-right: $spacer-half*0.5;
+            &:last-child{
+              margin-right: 0;
+            }
+
+            .selector{
+              &::after{
+                font-family: "Font Awesome 5 Free";
+                content: "\f0d7";
+                -moz-osx-font-smoothing: grayscale;
+                -webkit-font-smoothing: antialiased;
+                font-size: 12px;
+                font-weight: 900;
+                font-style: normal;
+                font-variant: normal;
+                text-rendering: auto;
+              }
+            }
+
+            .unit-list{
+              margin: 0;
+              list-style: none;
+              position: absolute;
+              bottom: 100%;
+              overflow: hidden;
+              max-height: 0;
+              padding: 0;
+              border: 1px solid;
+
+              li{
+                cursor: pointer;
+                padding:.15rem .5rem;
+                border-bottom: 1px solid;
+
+                &:last-child{
+                  margin-bottom: 0;
+                  border-bottom-width: 0;
+                }
+              }
+
+              &.open{
+                visibility: visible;
+                max-height: 150px;
+              }
+              &.closed{
+                visibility: hidden;
+              }
+            }
+          }
+          .fa-minus, .fa-plus{
+            font-size: 10px;
+          }
+        }
+
+        .control-group{
+          justify-content: center;
+          margin-bottom: $spacer-half*0.5;
+        }
+
+        button{
+          svg{
+            height: 1.125rem;
+            margin-bottom: -4px;
+          }
+        }
+      }
+
+      .sc-actions-list{
+        flex: 0 0 62px;
+        display: flex;
+        flex-direction: column;
+        width: 62px;
         overflow-y: auto;
         overflow-x: hidden;
         margin-left: $spacer-half;
-        padding: $spacer-half;
+        padding: 0 $spacer-half;
 
         button{
           margin: 0 0 $spacer-half 0;
@@ -100,12 +197,13 @@
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
-          margin-bottom: $spacer-half;
+          margin: auto 0;
 
           .control{
             font-size: 12px;
             padding: 0.125rem 0;
             margin-right: 2px;
+            margin-bottom: 0;
 
             &:last-child{
               margin-right: 0;
@@ -115,7 +213,7 @@
 
         .primary-loader{
           text-align: center;
-          margin-bottom: $spacer-half;
+          margin: auto 0;
         }
       }
 
@@ -155,23 +253,6 @@
 
       .spacer-small{
         height: $spacer-half;
-      }
-    }
-    .sc-date-time-controls{
-      display: flex;
-      flex-direction: column;
-      margin-bottom: $spacer;
-
-      .control-group{
-        justify-content: center;
-        margin-bottom: $spacer-half*0.5;
-      }
-
-      button{
-        svg{
-          height: 1.125rem;
-          margin-bottom: -4px;
-        }
       }
     }
   }

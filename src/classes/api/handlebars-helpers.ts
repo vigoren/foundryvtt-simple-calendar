@@ -16,6 +16,7 @@ export default class HandlebarsHelpers{
     static Register(){
         Handlebars.registerHelper("sc-date-selector", HandlebarsHelpers.DateSelector);
         Handlebars.registerHelper("sc-full-calendar", HandlebarsHelpers.FullCalendar);
+        Handlebars.registerHelper("sc-clock", HandlebarsHelpers.Clock);
         Handlebars.registerHelper("sc-icon", HandlebarsHelpers.Icon);
     }
 
@@ -104,6 +105,18 @@ export default class HandlebarsHelpers{
             renderOptions.showYear = options.hash['showYear'];
         }
         return new Handlebars.SafeString(Renderer.CalendarFull.Render(SimpleCalendar.instance.activeCalendar, renderOptions));
+    }
+
+    /**
+     * Renders the clock interface
+     * @param options
+     */
+    static Clock(options: any){
+        const renderOptions: SCRenderer.ClockOptions = {id:''};
+        if(options.hash.hasOwnProperty('id')){
+            renderOptions.id = options.hash['id'];
+        }
+        return new Handlebars.SafeString(Renderer.Clock.Render(SimpleCalendar.instance.activeCalendar, renderOptions));
     }
 
     static Icon(options: any){

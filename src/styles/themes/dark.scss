@@ -75,7 +75,7 @@
           }
         }
         &.secondary{
-          border-right-color: $secondary-300;
+          border-right-color: $secondary-200;
           &:first-child{
             border-left-color: $secondary;
           }
@@ -142,6 +142,58 @@
       }
     }
     .sc-main-wrapper{
+
+      .controls{
+        &.unit-controls{
+          .control-group{
+            .unit-list{
+              background-color: $primary-800;
+              border-color: $primary;
+
+              li{
+                border-color: $primary;
+                &.selected, &:hover{
+                  background-color: $primary;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .sc-clock{
+        background-color: $primary-950;
+        border-color: $primary-200;
+        .animated-clock{
+          svg{
+            path{
+              fill: $danger-400;
+              stroke: $danger-400;
+            }
+          }
+        }
+        &.started{
+          .animated-clock{
+            svg{
+              path{
+                fill: $success-400;
+                stroke: $success-400;
+              }
+            }
+          }
+        }
+        &.paused{
+          .animated-clock{
+            svg{
+              path{
+                fill: $secondary-400;
+                stroke: $secondary-400;
+              }
+            }
+          }
+        }
+      }
+
       .sc-note-list{
         background-color: $primary-1000;
         border-color: $primary-1100;

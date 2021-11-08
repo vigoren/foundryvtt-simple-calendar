@@ -11,9 +11,7 @@
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dvigorator%26type%3Dpatrons&style=flat)](https://patreon.com/vigorator)
 [![ko-fi](https://img.shields.io/badge/%20-Support%20me%20on%20Ko--fi-%23FF5E5B?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/A0A546HOX)
 
-![Logo](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.png)
-
-# Simple Calendar
+# Simple Calendar ![Logo](./docs/images/logo.svg)
 
 A simple calendar module for [FoundryVTT](https://foundryvtt.com/) that is game system independent. 
 
@@ -111,4 +109,4 @@ If your language is missing from the list, and you would like to help translate 
 
 ## Credits
 
-Moon Icons by [Bas Milius](https://github.com/basmilius/weather-icons), modified by [vigorator](https://github.com/vigoren)
+Moon Phase, Sunrise, Sunset and Midday Icons by [Bas Milius](https://github.com/basmilius/weather-icons), modified by [vigorator](https://github.com/vigoren)

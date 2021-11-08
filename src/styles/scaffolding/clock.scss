@@ -1,0 +1,47 @@
+@import "../variables";
+.sc-clock{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid;
+  padding: ($spacer-half*0.5) 0;
+  margin-bottom: $spacer-half;
+
+  .animated-clock{
+    margin-right: $spacer-half;
+
+    &.animate{
+      svg{
+        #c_arm_s{
+          transform-origin: center;
+          animation: 2s linear infinite sc-clock-spin;
+        }
+        #c_arm_m{
+          transform-origin: center;
+          animation: 6s linear infinite sc-clock-spin;
+        }
+      }
+    }
+
+    svg{
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .current-time{
+    font-size: 1.25rem;
+  }
+}
+
+@keyframes sc-clock-spin
+{
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

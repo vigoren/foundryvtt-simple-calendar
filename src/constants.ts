@@ -136,6 +136,7 @@ export enum GameWorldTimeIntegrations {
 
 export enum Icons {
     Logo = 'logo',
+    Clock = 'clock',
     Midday = 'midday',
     Midnight = 'midnight',
     Sunrise = 'sunrise',
@@ -210,4 +211,13 @@ export enum DateSelectorPositions{
     LeftUp = 'left-up',
     RightDown = 'right-down',
     RightUp = 'right-up'
+}
+
+export enum DateTimeUnits{
+    Day = "day",
+    Month = "month",
+    Year = "year",
+    Hour = "hour",
+    Minute = "minute",
+    Second = "second"
 }

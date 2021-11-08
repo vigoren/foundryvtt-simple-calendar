@@ -740,34 +740,34 @@ describe('Simple Calendar Class Tests', () => {
     test('Compact Time Control Click', () => {
         let e = new Event('click');
         //No Current Year
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(0);
 
         //No Attributes
         SimpleCalendar.instance.activeCalendar.year = y;
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(0);
 
         //Garbage Attributes
         (<HTMLElement>e.currentTarget).setAttribute('data-type', 'asd');
         (<HTMLElement>e.currentTarget).setAttribute('data-amount', 'asd');
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(0);
 
         //Bad Type, Valid amount
         (<HTMLElement>e.currentTarget).setAttribute('data-amount', '1');
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(0);
 
         //Valid Type and amount not GM
         (<HTMLElement>e.currentTarget).setAttribute('data-type', 'second');
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(0);
 
         //@ts-ignore
         const orig = game.users.find;
         (<Game>game).users = undefined;
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect((<Game>game).socket?.emit).not.toHaveBeenCalled();
 
         //@ts-ignore
@@ -775,7 +775,7 @@ describe('Simple Calendar Class Tests', () => {
                 //@ts-ignore
                 return v.call(undefined, {isGM: true, active: true});
             })};
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect((<Game>game).socket?.emit).toHaveBeenCalled();
         //@ts-ignore
         game.users.find = orig;
@@ -785,24 +785,24 @@ describe('Simple Calendar Class Tests', () => {
         game.user.isGM = true;
         SimpleCalendar.instance.primary = true;
         (<HTMLElement>e.currentTarget).setAttribute('data-type', 'second');
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(1);
 
         (<HTMLElement>e.currentTarget).setAttribute('data-type', 'minute');
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(61);
 
         (<HTMLElement>e.currentTarget).setAttribute('data-type', 'hour');
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(3661);
 
         (<HTMLElement>e.currentTarget).setAttribute('data-type', 'asd');
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(3661);
 
         (<HTMLElement>e.currentTarget).setAttribute('data-type', 'midnight');
         (<HTMLElement>e.currentTarget).setAttribute('data-amount', '');
-        SimpleCalendar.instance.compactTimeControlClick(e);
+        SimpleCalendar.instance.timeUnitClick(e);
         expect(y.time.seconds).toBe(0);
 
         //@ts-ignore

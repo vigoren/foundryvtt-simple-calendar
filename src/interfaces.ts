@@ -50,7 +50,6 @@ export interface SimpleCalendarTemplate{
     compactViewShowNotes: boolean;
     uiElementStates: any;
     isPrimary: boolean;
-    timeUnits: any;
     theme: Themes;
 }
 
@@ -550,6 +549,13 @@ export namespace SCRenderer {
         showSeasonName?: boolean;
         //If to show the year
         showYear?: boolean;
+    }
+
+    export interface ClockOptions {
+        //The ID of the HTML element being added
+        id: string;
+        //Any custom css classes to add to the containing div
+        cssClasses?: string;
     }
 
     export interface TimeSelectorOptions {
