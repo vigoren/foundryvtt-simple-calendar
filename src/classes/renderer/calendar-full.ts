@@ -85,14 +85,14 @@ export default class CalendarFull{
         if(options.showSeasonName || options.colorToMatchSeason){
             const season = calendar.year.getSeason(vMonthIndex, ssDay? ssDay : 1);
             seasonName = season.name;
-            calendarStyle = `background-color:${season.color};`;
+            calendarStyle = `border-color: ${season.color};`;
         }
 
         let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${SimpleCalendar.instance.calendars.findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
         html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
         //Put the header together
-        html += `<div class="calendar-header" style="${options.colorToMatchSeason?calendarStyle:''}">`;
+        html += `<div class="calendar-header">`;
         //Visible date change and current date
         html += `<div class="current-date">`;
         if(options.allowChangeMonth){

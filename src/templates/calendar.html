@@ -22,7 +22,7 @@
         <div class="sc-actions-list">
             <button class="control {{#if (gt calendar.currentYear.selectedDayNotes.normal 0)}}secondary{{/if}} notes fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.normal}}</button>
             {{#if (gt calendar.currentYear.selectedDayNotes.reminders 0)}}
-            <button class="control primary reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.reminders}}</button>
+            <button class="control delete reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.reminders}}</button>
             {{/if}}
             {{#if calendar.addNotes}}
             <button class="fa control save add-note" title="{{localize 'FSC.Notes.AddNew'}}"><span class="fa-sticky-note"></span>&nbsp;<span class="fa-plus"></span></button>

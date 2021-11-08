@@ -1,0 +1,164 @@
+@import "../variables";
+.calendar {
+  border: 1px solid;
+  padding: 5px;
+  margin: 0 0 $spacer-half;
+  max-height: 500px;
+  overflow-y: auto;
+  position: relative;
+
+  &.display-only{
+    .calendar-header{
+      .current-date{
+        a:first-child, a:last-child{
+          cursor: default;
+          &:hover{
+            text-shadow: unset;
+          }
+        }
+      }
+    }
+    .days{
+      .week{
+        .day{
+          cursor: default;
+          &:hover{
+            background-color: unset;
+          }
+        }
+      }
+    }
+  }
+
+  .calendar-header{
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 5px 0;
+    margin-bottom: 5px;
+
+    .current-date{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      font-size: 1.25rem;
+      margin-bottom: 10px;
+
+      a:first-child{
+        margin: 2px 5px 0;
+      }
+
+      a:last-child{
+        margin: 2px 5px 0;
+      }
+
+      span{
+        text-align: center;
+      }
+
+    }
+
+    .season{
+      text-align: center;
+      margin: -8px auto 10px;
+      font-size: 12px;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .weekdays{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+
+      .weekday{
+        width: 40px;
+        text-align: center;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .days{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: nowrap;
+
+    .week{
+      display: flex;
+      flex-direction: row;
+      margin: 2px 0;
+
+      .empty-day{
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        padding-top: 12px;
+      }
+
+      .day{
+        position: relative;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        padding-top: 12px;
+        border-radius: 20px;
+        cursor: pointer;
+
+        &.selected-range-start{
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        &.selected-range-mid{
+          border-radius: 0;
+        }
+        &.selected-range-end{
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+
+        .day-notes{
+          position: absolute;
+          top: -3px;
+          right: 0;
+          display: flex;
+          .note-count{
+            width: 16px;
+            height: 16px;
+            font-size: 12px;
+            margin-right: 2px;
+            padding: 1px 1px 1px 2px;
+            border-radius: 8px;
+
+            &.reminders{
+              margin-right: 0;
+            }
+          }
+        }
+
+
+
+        .moons{
+          position: absolute;
+          right: 2px;
+          display: flex;
+          flex-direction: row;
+
+          .moon-phase{
+            svg{
+              width: 20px;
+              height: 20px;
+              margin-top: -5px;
+            }
+            width: 11px;
+            height: 11px;
+            margin-right: 2px;
+          }
+        }
+
+      }
+    }
+  }
+}
