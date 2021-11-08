@@ -23,6 +23,7 @@ import GameSockets from "../foundry-interfacing/game-sockets";
 import Calendar from "../calendar";
 import SimpleCalendarSearch from "./simple-calendar-search";
 import Renderer from "../renderer";
+import Utilities from "../utilities";
 
 
 /**
@@ -611,55 +612,33 @@ export default class SimpleCalendar extends Application{
      */
     public toggleNoteDrawer(){
         const noteList = document.querySelector(".sc-note-list");
-        if(noteList && !noteList.classList.contains('animate')){
-            if(noteList.classList.contains('open')){
-                noteList.classList.add('animate');
-                noteList.classList.remove('open');
-                this.uiElementStates.noteDrawerOpen = false;
-                setTimeout(((nl: Element) => { nl.classList.add('closed'); }).bind(this, noteList), 500);
-            } else {
-                noteList.classList.add('animate', 'open');
-                noteList.classList.remove('closed');
-                this.uiElementStates.noteDrawerOpen = true;
-            }
-            setTimeout(((nl: Element) => { nl.classList.remove('animate'); }).bind(this, noteList), 500);
+        if(noteList){
+            this.uiElementStates.noteDrawerOpen = Utilities.animateElement(noteList, 500);
         }
     }
 
     public toggleCalendarSelector(forceHide: boolean = false){
         const calList = document.querySelector(".sc-calendar-list");
-        if(calList && !calList.classList.contains('animate')){
-            if(calList.classList.contains('open') || forceHide){
-                calList.classList.add('animate');
-                calList.classList.remove('open');
-                this.uiElementStates.calendarListOpen = false;
-                setTimeout(((nl: Element) => { nl.classList.add('closed'); }).bind(this, calList), 500);
-            } else {
-                calList.classList.add('animate', 'open');
-                calList.classList.remove('closed');
-                this.uiElementStates.calendarListOpen = true;
-            }
-            setTimeout(((nl: Element) => { nl.classList.remove('animate'); }).bind(this, calList), 500);
+        if(calList){
+            this.uiElementStates.calendarListOpen = Utilities.animateElement(calList, 500, forceHide);
         }
     }
 
-    public toggleUnitSelector(forceHide: boolean = false, e: Event | null = null){
+    /**
+     * Opens and closes the date time unit selector dropdown
+     * @param forceHide
+     */
+    public toggleUnitSelector(forceHide: boolean = false){
         let unitList = document.querySelector(`.sc-main-wrapper .unit-list`);
-        if(unitList && !unitList.classList.contains('animate')){
-            if(unitList.classList.contains('open') || forceHide){
-                unitList.classList.add('animate');
-                unitList.classList.remove('open');
-                this.uiElementStates.dateTimeUnitOpen = false;
-                setTimeout(((nl: Element) => { nl.classList.add('closed'); }).bind(this, unitList), 500);
-            } else {
-                unitList.classList.add('animate', 'open');
-                unitList.classList.remove('closed');
-                this.uiElementStates.dateTimeUnitOpen = true;
-            }
-            setTimeout(((nl: Element) => { nl.classList.remove('animate'); }).bind(this, unitList), 500);
+        if(unitList){
+            this.uiElementStates.dateTimeUnitOpen = Utilities.animateElement(unitList, 500, forceHide);
         }
     }
 
+    /**
+     * Processes changing the selected time unit for the date/time input
+     * @param e
+     */
     public changeUnit(e: Event){
         const target = <HTMLElement>e.currentTarget;
         const dataUnit = target.getAttribute('data-unit');
@@ -703,6 +682,7 @@ export default class SimpleCalendar extends Application{
      */
     public changeMonth(clickType: CalendarClickEvents, options: SCRenderer.CalendarOptions){
         this.toggleCalendarSelector(true);
+        this.toggleUnitSelector(true);
         this.activeCalendar.year.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
     }
     
@@ -712,6 +692,7 @@ export default class SimpleCalendar extends Application{
      */
     public dayClick(options: SCRenderer.CalendarOptions){
         this.toggleCalendarSelector(true);
+        this.toggleUnitSelector(true);
         if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.activeCalendar.year.months.length){
             const selectedDay = options.selectedDates.start.day;
             let allReadySelected = false;

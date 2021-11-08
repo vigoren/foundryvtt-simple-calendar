@@ -407,4 +407,22 @@ export default class Utilities{
         }
         return between;
     }
+
+    public static animateElement(element: Element, duration: number, forceHide: boolean = false){
+        let openState = false;
+        if(element && !element.classList.contains('animate')){
+            if(element.classList.contains('open') || forceHide){
+                element.classList.add('animate');
+                element.classList.remove('open');
+                openState = false;
+                setTimeout(((nl: Element) => { nl.classList.add('closed'); }).bind(this, element), duration);
+            } else {
+                element.classList.add('animate', 'open');
+                element.classList.remove('closed');
+                openState = true;
+            }
+            setTimeout(((nl: Element) => { nl.classList.remove('animate'); }).bind(this, element), duration);
+        }
+        return openState;
+    }
 }
