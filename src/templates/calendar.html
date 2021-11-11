@@ -15,19 +15,31 @@
 </div>
 {{/if}}
 <div class="sc-main-wrapper">
-    <div class="section">
+    <div class="section calendar-section">
         <div class="calendar-display">
+            {{#if uiElementStates.compactView}}
+            <div class="date">
+            {{calendar.selectedDisplay}}
+            </div>
+            <div class="moons">
+                {{#each calendar.currentYear.selectedDayMoons}}
+                <div class="moon-phase {{phase.icon}}" title="{{name}} - {{phase.name}}">{{{iconSVG}}}</div>
+                {{/each}}
+            </div>
+            {{else}}
             {{sc-full-calendar id=calendar.calendarId date=calendar.visibleDate}}
+            {{/if}}
         </div>
         <div class="sc-actions-list">
             <button class="control {{#if (gt calendar.currentYear.selectedDayNotes.normal 0)}}secondary{{/if}} notes fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.normal}}</button>
             {{#if (gt calendar.currentYear.selectedDayNotes.reminders 0)}}
-            <button class="control delete reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.reminders}}</button>
+            <button class="control tertiary reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.reminders}}</button>
             {{/if}}
             {{#if calendar.addNotes}}
             <button class="fa control save add-note" title="{{localize 'FSC.Notes.AddNew'}}"><span class="fa-sticky-note"></span>&nbsp;<span class="fa-plus"></span></button>
             {{/if}}
-            <button class="fa fa-search control search" title="{{localize 'FSC.Search'}}"></button>
+            <button class="fa fa-search control search" title="{{localize 'FSC.Search.Title'}}"></button>
+            {{#unless uiElementStates.compactView}}
             <span class="spacer"></span>
             {{#if calendar.changeDateTime}}
             {{#if calendar.showSetCurrentDate}}
@@ -38,29 +50,30 @@
             {{#if calendar.isGM}}
             <button class="fa fa-cog control configure-button" title="{{localize 'FSC.Configure'}}"></button>
             {{/if}}
+            {{/unless}}
         </div>
-        <div class="sc-note-list {{#if uiElementStates.noteDrawerOpen}}open{{else}}closed{{/if}}">
+        <div class="sc-note-list sc-side-drawer {{#if uiElementStates.noteDrawerOpen}}open{{else}}closed{{/if}}">
             <h2>{{localize 'FSC.Notes.For'}} {{calendar.selectedDisplay}}</h2>
             {{#if calendar.notes.length}}
             <div class="note-list">
                 {{#each calendar.notes}}
-                <div class="note" data-index="{{id}}" {{#if ../calendar.reorderNotes}}draggable="true"{{/if}}>
+                <div class="note" data-index="{{id}}" draggable="{{#if ../calendar.reorderNotes}}true{{else}}false{{/if}}">
                     <div class="note-details-wrapper">
                         <h3 class="note-title">{{title}}</h3>
                         <div class="note-details">
                             {{#if ../calendar.isGM}}
                             {{#if playerVisible}}
-                            <div class="note-category note-icon" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.PlayerVisible'}}">
+                            <div class="note-category note-icon player-visible" title="{{localize 'FSC.Notes.PlayerVisible'}}">
                                 <span class="fa fa-eye"></span>
                             </div>
                             {{else}}
-                            <div class="note-category note-icon" style="color:#ffffff;background-color:#922121" title="{{localize 'FSC.Notes.NotPlayerVisible'}}">
+                            <div class="note-category note-icon not-player-visible" title="{{localize 'FSC.Notes.NotPlayerVisible'}}">
                                 <span class="fa fa-eye-slash"></span>
                             </div>
                             {{/if}}
                             {{/if}}
                             {{#if reminder}}
-                            <div class="note-category note-icon" style="color:#ffffff;background-color:#2f581d" title="{{localize 'FSC.Notes.ReminderHelp'}}">
+                            <div class="note-category note-icon reminder" title="{{localize 'FSC.Notes.ReminderHelp'}}">
                                 <span class="fa fa-bell"></span>
                             </div>
                             {{/if}}
@@ -88,6 +101,71 @@
             {{else}}
             <em>{{localize 'FSC.Notes.Empty'}}</em>
             {{/if}}
+        </div>
+        <div class="sc-note-search sc-side-drawer {{#if uiElementStates.searchDrawerOpen}}open{{else}}closed{{/if}}">
+            <h2>{{localize 'FSC.SearchNotes'}}</h2>
+            <div class="search-box">
+                <input id="simpleCalendarSearchBox" type="text" value="{{search.term}}" />
+                {{#if search.results.length}}
+                <buton class="control fa fa-times"></buton>
+                {{/if}}
+                <button class="control fa fa-search"></button>
+            </div>
+            <h3 class="search-options-header">{{localize 'FSC.Search.Options.Title'}} <span class="fa fa-caret-down"></span></h3>
+            <div class="search-options {{#if uiElementStates.searchOptionsOpen}}open{{else}}closed{{/if}}">
+                <p><strong>Fields:</strong>Select which fields to search on a note.</p>
+                <div class="search-fields">
+                    <label><input type="checkbox" data-field="date" {{checked search.options.fields.date}}> {{localize 'FSC.Search.Options.Fields.Date'}}</label>
+                    <label><input type="checkbox" data-field="title" {{checked search.options.fields.title}}> {{localize 'FSC.Search.Options.Fields.Title'}}</label>
+                    <label><input type="checkbox" data-field="details" {{checked search.options.fields.details}}> {{localize 'FSC.Search.Options.Fields.Details'}}</label>
+                    <label><input type="checkbox" data-field="author" {{checked search.options.fields.author}}> {{localize 'Author'}}</label>
+                    <label><input type="checkbox" data-field="categories" {{checked search.options.fields.categories}}> {{localize 'FSC.Search.Options.Fields.Categories'}}</label>
+                </div>
+            </div>
+            <div class="note-list">
+                {{#if search.results.length}}
+                {{#each search.results}}
+                <div class="note" data-index="{{id}}">
+                    <div class="note-details-wrapper">
+                        <h3 class="note-title">{{title}}</h3>
+                        <div class="note-details">
+                            {{#if ../calendar.isGM}}
+                            {{#if playerVisible}}
+                            <div class="note-category note-icon player-visible" title="{{localize 'FSC.Notes.PlayerVisible'}}">
+                                <span class="fa fa-eye"></span>
+                            </div>
+                            {{else}}
+                            <div class="note-category note-icon not-player-visible" title="{{localize 'FSC.Notes.NotPlayerVisible'}}">
+                                <span class="fa fa-eye-slash"></span>
+                            </div>
+                            {{/if}}
+                            {{/if}}
+                            {{#if reminder}}
+                            <div class="note-category note-icon reminder" title="{{localize 'FSC.Notes.ReminderHelp'}}">
+                                <span class="fa fa-bell"></span>
+                            </div>
+                            {{/if}}
+                            <div class="note-time note-category" title="{{localize 'FSC.Notes.Time'}}">
+                                <span class="fa fa-clock"></span>  {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
+                            </div>
+                            {{#if authorDisplay}}
+                            <div class="note-category" title="{{localize 'FSC.Notes.Author'}}" style="background-color:{{authorDisplay.color}};color:{{authorDisplay.textColor}};">
+                                <span class="fa fa-pencil-alt"></span> {{authorDisplay.name}}
+                            </div>
+                            {{/if}}
+                            {{#each categories}}
+                            <div class="note-category" style="background-color:{{color}};color:{{textColor}};">
+                                {{name}}
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+                {{else}}
+                <em>{{localize 'FSC.SearchEmpty'}}</em>
+                {{/if}}
+            </div>
         </div>
     </div>
     {{#if calendar.showClock}}
@@ -149,7 +227,9 @@
                 <button class="control secondary" data-type="midnight" title="{{localize 'FSC.Midnight'}}">{{sc-icon name='midnight'}}</button>
             </div>
         </div>
-        <div class="sc-actions-list"></div>
+        <div class="sc-actions-list sc-compact-toggle">
+            <div class="compact-toggle fa fa-flip-horizontal {{#if uiElementStates.compactView}}fa-expand-alt{{else}}fa-compress-alt{{/if}}"></div>
+        </div>
     </div>
     {{/if}}
     {{/if}}

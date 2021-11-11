@@ -1,5 +1,12 @@
 import Year from "./year";
-import {CalendarConfiguration, CalendarTemplate, NoteCategory, PermissionMatrix} from "../../interfaces";
+import {
+    CalendarConfiguration,
+    CalendarTemplate,
+    NoteCategory,
+    NoteTemplate,
+    PermissionMatrix,
+    SearchOptions
+} from "../../interfaces";
 import {GameSystems, GameWorldTimeIntegrations, PredefinedCalendars, TimeKeeperStatus} from "../../constants";
 import Note from "../note";
 import Month from "./month";
@@ -115,7 +122,7 @@ export default class Calendar extends ConfigurationItemBase{
      */
     toTemplate(): CalendarTemplate{
         let showSetCurrentDate = false;
-        let vMonth = 1, vMonthIndex = 0, vYear = this.year.visibleYear, sMonth = 1, sDay = 1;
+        let vMonth = 1, vMonthIndex = 0, vYear = this.year.visibleYear, sYear = this.year.selectedYear, sMonth = 1, sDay = 1;
         const currentMonth = this.year.getMonth();
         const selectedMonth = this.year.getMonth('selected');
         const visibleMonth = this.year.getMonth('visible');
@@ -129,6 +136,7 @@ export default class Calendar extends ConfigurationItemBase{
                 }
             }
         } else if(currentMonth){
+            sYear = this.year.numericRepresentation;
             sMonth = currentMonth.numericRepresentation;
             const currentDay = currentMonth.getDay();
             if(currentDay){
@@ -158,7 +166,7 @@ export default class Calendar extends ConfigurationItemBase{
             showSetCurrentDate: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && showSetCurrentDate,
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             calendarDisplay: Utilities.FormatDateTime({year: this.year.visibleYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear),
-            selectedDisplay: Utilities.FormatDateTime({year: this.year.selectedYear, month: sMonth, day: sDay, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.date),
+            selectedDisplay: Utilities.FormatDateTime({year: sYear, month: sMonth, day: sDay, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.date),
             timeDisplay: Utilities.FormatDateTime({year: 0, month: 0, day: 0, ...this.year.time.getCurrentTime()}, this.generalSettings.dateFormat.time),
             visibleDate: {year: vYear, month: vMonthIndex}
         };
@@ -200,64 +208,123 @@ export default class Calendar extends ConfigurationItemBase{
     /**
      * Searches the title and content of all notes to get a list that matches the passed in term. The results are sorted by relevancy
      * @param {String} term
+     * @param {SearchOptions.Fields} options
      */
-    public searchNotes(term: string): Note[] {
+    public searchNotes(term: string, options: SearchOptions.Fields): NoteTemplate[] {
         const results: {match: number, note: Note}[] = [];
         term = term.toLowerCase();
 
         this.notes.forEach((note) => {
-            let match = 0;
-            const noteFormattedDate = Utilities.GetDisplayDate({year: note.year, month: note.month, day: note.day, hour: note.hour, minute: note.minute, allDay: note.allDay}, {...note.endDate, allDay: note.allDay}).toLowerCase();
-            const noteTitle = note.title.toLowerCase();
-            const noteContent = note.content.toLowerCase();
+            if((GameSettings.IsGm() || (!GameSettings.IsGm() && note.playerVisible))){
+                let match = 0;
+                const noteFormattedDate = Utilities.GetDisplayDate({year: note.year, month: note.month, day: note.day, hour: note.hour, minute: note.minute, allDay: note.allDay}, {...note.endDate, allDay: note.allDay}).toLowerCase();
+                const noteTitle = note.title.toLowerCase();
+                const noteContent = note.content.toLowerCase();
+                const author = GameSettings.GetUser(note.author);
+                const authorName = author? author.name? author.name.toLowerCase() : '' : '';
+                const categories = note.categories.map(c=> c.toLowerCase());
 
-            //Search for the direct term match in the formatted date and give that a heavy weight (equivalent to 500 matches)
-            if(RegExp(term).test(noteFormattedDate)){
-                match += 1000;
-            }
-            //Search for the direct term match in the title and give that a heavy weight (equivalent to 500 matches)
-            if(RegExp(term).test(noteTitle)){
-                match += 500;
-            }
-            //Search for the direct term match in the content and give that a medium weight (equivalent to 100 matches)
-            if(RegExp(term).test(noteContent)){
-                match += 100;
-            }
-            const terms = term.split(' ');
-            for(var i = 0; i < terms.length; i++){
-                //Check to see if the term exists anywhere as its own word, give that a weight of 2
-                if(RegExp('\\b'+terms[i]+'\\b').test(noteFormattedDate)){
-                    match += 50;
+                //Search for the direct term match in the formatted date and give that a heavy weight (equivalent to 1000 matches)
+                if(options.date){
+                    if(RegExp(term).test(noteFormattedDate)){
+                        match += 1000;
+                    }
                 }
-                //Check to see if the term appears anywhere (even in other words). give that a weight of 1
-                else if(noteFormattedDate.indexOf(terms[i]) > -1){
-                    match+=30;
-                }
-                //Check to see if the term exists anywhere as its own word, give that a weight of 2
-                if(RegExp('\\b'+terms[i]+'\\b').test(noteTitle)){
-                    match += 20;
-                }
-                //Check to see if the term appears anywhere (even in other words). give that a weight of 1
-                else if(noteTitle.indexOf(terms[i]) > -1){
-                    match+=10;
-                }
-                //Check to see if the term exists anywhere as its own word, give that a weight of 2
-                if(RegExp('\\b'+terms[i]+'\\b').test(noteContent)){
-                    match += 2;
-                }
-                //Check to see if the term appears anywhere (even in other words). give that a weight of 1
-                else if(noteContent.indexOf(terms[i]) > -1){
-                    match++;
-                }
-            }
 
-            if(match > 0){
-                results.push({match: match, note: note});
+                //Search for the direct term match in the title and give that a heavy weight (equivalent to 500 matches)
+                if(options.title){
+                    if(RegExp(term).test(noteTitle)){
+                        match += 500;
+                    }
+                }
+
+                //Search for the direct term match in the content and give that a medium weight (equivalent to 100 matches)
+                if(options.details){
+                    if(RegExp(term).test(noteContent)){
+                        match += 100;
+                    }
+                }
+
+                //Search for the direct term match in the authors name and give it a heavy weight
+                if(options.author){
+                    if(author && RegExp(term).test(authorName)){
+                        match += 500;
+                    }
+                }
+
+                if(options.categories){
+                    if(categories.indexOf(term) > -1){
+                        match += 500;
+                    }
+                }
+
+                const terms = term.split(' ');
+                for(var i = 0; i < terms.length; i++){
+                    if(options.date){
+                        //Check to see if the term exists anywhere as its own word, give that a weight of 2
+                        if(RegExp('\\b'+terms[i]+'\\b').test(noteFormattedDate)){
+                            match += 50;
+                        }
+                        //Check to see if the term appears anywhere (even in other words). give that a weight of 1
+                        else if(noteFormattedDate.indexOf(terms[i]) > -1){
+                            match+=30;
+                        }
+                    }
+
+                    if(options.title){
+                        //Check to see if the term exists anywhere as its own word, give that a weight of 2
+                        if(RegExp('\\b'+terms[i]+'\\b').test(noteTitle)){
+                            match += 20;
+                        }
+                        //Check to see if the term appears anywhere (even in other words). give that a weight of 1
+                        else if(noteTitle.indexOf(terms[i]) > -1){
+                            match+=10;
+                        }
+                    }
+
+                    if(options.author){
+                        //Check to see if the term exists anywhere as its own word, give that a weight of 2
+                        if(author && RegExp('\\b'+terms[i]+'\\b').test(authorName)){
+                            match += 20;
+                        }
+                        //Check to see if the term appears anywhere (even in other words). give that a weight of 1
+                        else if(author && authorName.indexOf(terms[i]) > -1){
+                            match+=10;
+                        }
+                    }
+
+                    if(options.details){
+                        //Check to see if the term exists anywhere as its own word, give that a weight of 2
+                        if(RegExp('\\b'+terms[i]+'\\b').test(noteContent)){
+                            match += 2;
+                        }
+                        //Check to see if the term appears anywhere (even in other words). give that a weight of 1
+                        else if(noteContent.indexOf(terms[i]) > -1){
+                            match++;
+                        }
+                    }
+
+                    if(options.categories){
+                        categories.forEach(c => {
+                            //Check to see if the term exists anywhere as its own word, give that a weight of 2
+                            if(RegExp('\\b'+terms[i]+'\\b').test(c)){
+                                match += 20;
+                            }
+                            //Check to see if the term appears anywhere (even in other words). give that a weight of 1
+                            else if(c.indexOf(terms[i]) > -1){
+                                match++;
+                            }
+                        });
+                    }
+                }
+                if(match > 0){
+                    results.push({match: match, note: note});
+                }
             }
         });
         results.sort((a: {match: number, note: Note}, b: {match: number, note: Note}) => b.match - a.match);
 
-        return results.map(r => r.note);
+        return results.map(r => r.note.toTemplate());
     }
 
     /**

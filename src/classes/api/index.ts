@@ -350,7 +350,7 @@ export default class API{
                 Logger.error('SimpleCalendar.api.showCalendar: Invalid date passed in.');
             }
         }
-        SimpleCalendar.instance.compactView = compact;
+        SimpleCalendar.instance.uiElementStates.compactView = compact;
         SimpleCalendar.instance.showApp();
     }
 

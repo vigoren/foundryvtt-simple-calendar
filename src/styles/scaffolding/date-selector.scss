@@ -5,9 +5,7 @@
 .sc-date-selector-calendar-wrapper{
   position: absolute;
   z-index: 100;
-  background-color: white;
-  border: 1px solid #c3c3c3;
-  box-shadow: 2px 2px 2px #c3c3c3;
+  border: 1px solid;
 
   &.just-time{
     overflow-y: visible;
@@ -34,22 +32,6 @@
 
   .sc-date-selector-calendar{
     border: unset;
-    box-shadow: unset;
-
-    .days {
-      .week {
-        .day {
-          &.selected{
-            box-shadow: inset 0 0 5px #696969;
-            background-color: #d0d0d0;
-            &:hover{
-              background-color: #696969;
-              color: #ffffff;
-            }
-          }
-        }
-      }
-    }
   }
 }
 

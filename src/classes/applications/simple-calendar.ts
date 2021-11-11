@@ -1,7 +1,14 @@
 import {Logger} from "../logging";
 import Month from "../calendar/month";
 import Note from "../note";
-import {SCDateSelector, SCRenderer, SimpleCalendarSocket, SimpleCalendarTemplate} from "../../interfaces";
+import {
+    NoteTemplate,
+    SCDateSelector,
+    SCRenderer,
+    SearchOptions,
+    SimpleCalendarSocket,
+    SimpleCalendarTemplate
+} from "../../interfaces";
 import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {SimpleCalendarNotes} from "./simple-calendar-notes";
@@ -21,7 +28,6 @@ import Hook from "../api/hook";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Calendar from "../calendar";
-import SimpleCalendarSearch from "./simple-calendar-search";
 import Renderer from "../renderer";
 import Utilities from "../utilities";
 
@@ -76,24 +82,31 @@ export default class SimpleCalendar extends Application{
      */
     newNote: SimpleCalendarNotes | undefined;
 
-    /**
-     * If to show the compact view of the calendar
-     * @type {boolean}
-     */
-    compactView: boolean = false;
-    /**
-     * If to show the notes section of the compact view
-     * @type {boolean}
-     */
-    compactViewShowNotes: boolean = false;
-
 
     uiElementStates = {
-        noteDrawerOpen: false,
-        calendarListOpen: false,
+        compactView: false,
         dateTimeUnitOpen: false,
         dateTimeUnit: DateTimeUnits.Day,
-        dateTimeUnitText: 'FSC.Day'
+        dateTimeUnitText: 'FSC.Day',
+        noteDrawerOpen: false,
+        searchDrawerOpen: false,
+        searchOptionsOpen: false,
+        calendarListOpen: false,
+
+    };
+
+    search = {
+        term: '',
+        results: <NoteTemplate[]>[],
+        options: {
+            fields: <SearchOptions.Fields>{
+                date: true,
+                title: true,
+                details: true,
+                author: true,
+                categories: true
+            }
+        }
     };
     /**
      * Simple Calendar constructor
@@ -265,38 +278,12 @@ export default class SimpleCalendar extends Application{
         return {
             calendar: this.activeCalendar.toTemplate(),
             calendarList: this.calendars.map(c => {return {id: c.id, name: c.name}}),
+            clockClass: this.clockClass,
             isPrimary: this.primary,
             theme: Themes.dark, //TODO: Update this when we have the theme being stored,
             uiElementStates: this.uiElementStates,
-
-            clockClass: this.clockClass,
-            compactView: this.compactView,
-            compactViewShowNotes: this.compactViewShowNotes
+            search: this.search
         };
-    }
-
-    /**
-     * Adding to the get header buttons
-     * @protected
-     */
-    protected _getHeaderButtons(): Application.HeaderButton[] {
-        const buttons: Application.HeaderButton[] = [];
-        if(!this.compactView){
-            buttons.push({
-                label: 'FSC.Compact',
-                class: 'compact-view',
-                icon: 'fa fa-compress',
-                onclick: this.minimize.bind(this)
-            });
-        } else {
-            buttons.push({
-                label: 'FSC.Full',
-                class: 'compact-view',
-                icon: 'fa fa-expand',
-                onclick: this.minimize.bind(this)
-            });
-        }
-        return buttons.concat(super._getHeaderButtons());
     }
 
     /**
@@ -341,8 +328,7 @@ export default class SimpleCalendar extends Application{
      * If the calendar is all ready in the compact form, restore to the full form
      */
     async minimize(){
-        this.compactViewShowNotes = false;
-        this.compactView = !this.compactView;
+        this.uiElementStates.compactView = !this.uiElementStates.compactView;
         this.activeCalendar.year.resetMonths('selected');
         this.render(true);
     }
@@ -351,146 +337,44 @@ export default class SimpleCalendar extends Application{
      * Overwrite the maximize function to set the calendar to its full form
      */
     async maximize(){
-        this.compactView = false;
+        this.uiElementStates.compactView = false;
         this.render(true);
     }
 
     /**
-     * When the window is resized
-     * @param event
-     * @protected
-     */
-    protected _onResize(event: Event) {
-        super._onResize(event);
-        this.hasBeenResized = true;
-    }
-
-    /**
      * Sets the width and height of the calendar window so that it is sized to show the calendar, the controls and space for 2 notes.
-     * @param {JQuery} html
      */
-    setWidthHeight(html: JQuery){
-        if(this.hasBeenResized){
-            return;
-        }
-        let height = 1;
-        let width = 1;
+    setWidthHeight(){
+        let width = 0, height = 0;
+        const main = <HTMLElement>document.querySelector('#simple-calendar-application');
+        if(main){
+            const header = <HTMLElement>main.querySelector('.window-header');
+            if(header){
+                height += header.offsetHeight;
+            }
+            const wrapper = <HTMLElement>main.querySelector('.sc-main-wrapper');
+            if(wrapper){
+                if(this.uiElementStates.compactView){
 
-        // Get the height of the header and adjust by that amount
-        const header = (<JQuery>this.element).find('.window-header');
-        if(header){
-            const h = header.outerHeight(true);
-            height += h? h : 32;
-        } else {
-            height += 32;
-        }
-
-        // Get the width and height of the border, margins and padding of the content area to be added
-        const contentArea = (<JQuery>this.element).find('.window-content');
-        if(contentArea){
-            const h = contentArea.height();
-            const oh = contentArea.outerHeight(true);
-            height += (h && oh)? oh - h : 0;
-            const w = contentArea.width();
-            const ow = contentArea.outerWidth(true);
-            width += (w && ow)? ow - w : 0;
-        }
-
-        if(this.compactView){
-            let weekDayNameLength = 0, monthNameLength = 0, yearNameLength;
-            if(this.activeCalendar.year.showWeekdayHeadings){
-                for(let i = 0; i < this.activeCalendar.year.weekdays.length; i++){
-                    if(this.activeCalendar.year.weekdays[i].name.length > weekDayNameLength){
-                        weekDayNameLength = this.activeCalendar.year.weekdays[i].name.length;
+                } else {
+                    wrapper.querySelectorAll(".section").forEach((s, index) => {
+                        height += (<HTMLElement>s).offsetHeight;
+                    });
+                    const cal = <HTMLElement>wrapper.querySelector(".section .calendar-display");
+                    const al = <HTMLElement>wrapper.querySelector(".section .sc-actions-list");
+                    if(cal){
+                        width += cal.offsetWidth;
                     }
-                }
-            }
-            for(let i = 0; i < this.activeCalendar.year.months.length; i++){
-                if(this.activeCalendar.year.months[i].name.length > monthNameLength){
-                    monthNameLength = this.activeCalendar.year.months[i].name.length;
-                }
-            }
-            yearNameLength = this.activeCalendar.year.getDisplayName().length + 1;
-
-            const totalCharacterLength = weekDayNameLength + monthNameLength + yearNameLength + 7;
-            width = (totalCharacterLength * 7) + 62;
-            const seasonMoon = (<JQuery>html).find('.compact-calendar .season-moon-info');
-            const currentDate = (<JQuery>html).find('.compact-calendar .current-date .date');
-            const currentTime = (<JQuery>html).find('.compact-calendar .current-time');
-            const timeControls = (<JQuery>html).find('.compact-calendar .time-controls');
-            const noteListNote = (<JQuery>html).find('.compact-calendar .note-list .note');
-
-            if(seasonMoon){
-                const h = seasonMoon.outerHeight(true);
-                height += h? h : 0;
-            }
-
-            if(currentDate){
-                const h = currentDate.outerHeight(true);
-                let w = currentDate.outerWidth(false);
-                height += h? h : 0;
-                if(w){
-                    w += 16 + 16 // Prev & Next buttons
-                    w += 25 // Padding on left and right
-                    if(w > width){
-                        width = w;
+                    if(al){
+                        width += al.offsetWidth;
+                        width += 8; // Margin
                     }
+                    height += 16; // Padding
+                    width += 16; // Padding
                 }
             }
-            if(currentTime){
-                const h = currentTime.outerHeight(true);
-                height += h? h : 0;
-            }
-            if(timeControls){
-                const h = timeControls.outerHeight(true);
-                height += h? h * 2 : 0;
-            }
-
-            if(noteListNote){
-                const h = noteListNote.outerHeight(true);
-                height += h? h * 2 : 0;
-            }
-            if(width < 250){
-                width = 250;
-            }
-        } else {
-            const calendar = (<JQuery>html).find('.calendar-row .calendar-display');
-            const controls = (<JQuery>html).find('.calendar-row .controls');
-            const noteHeader = (<JQuery>html).find('.date-notes-header h2');
-            const addNote = (<JQuery>html).find('.date-notes-header .add-note');
-
-            if(calendar){
-                const h = calendar.outerHeight(true);
-                const w = calendar.outerWidth(true);
-                height += h? h : 0;
-                width += w? w : 0;
-            }
-
-            if(controls){
-                const h = controls.outerHeight(true);
-                const w = controls.outerWidth(true);
-                if(h && h > height){
-                    height = h;
-                }
-                width += w? w : 0;
-            }
-
-            if(noteHeader && addNote){
-                const nh = noteHeader.outerHeight(true);
-                const nw = noteHeader.outerWidth(true);
-                const w = addNote.outerWidth(true);
-
-                const headerW = (nw? nw : 0) + (w?  w: 0);
-                if(headerW > width){
-                    width = headerW;
-                }
-                height += (nh? nh : 0) + 24;
-            }
-
-            width += 16;
-            height += (60 * 2) + 46;
+            this.setPosition({width: width, height: height});
         }
-        this.setPosition({width: width, height: height});
     }
 
     /**
@@ -534,89 +418,141 @@ export default class SimpleCalendar extends Application{
     public activateListeners(html: JQuery<HTMLElement>) {
         Logger.debug('Simple-Calendar activateListeners()');
         if(html.hasOwnProperty("length")) {
-            //this.setWidthHeight(html);
+            this.setWidthHeight();
+            this.ensureCurrentDateIsVisible(html);
 
-            if(this.compactView){
-                this.element.find('.compact-view').empty().append(`<i class='fa fa-expand'></i> ` + GameSettings.Localize('FSC.Full'));
-            } else {
-                this.element.find('.compact-view').empty().append(`<i class='fa fa-compress'></i> ` + GameSettings.Localize('FSC.Compact'));
-                this.ensureCurrentDateIsVisible(html);
+            const appWindow = document.getElementById('simple-calendar-application');
+            if(appWindow){
+                // Click anywhere in the app
+                appWindow.addEventListener('click', () => {
+                    this.toggleCalendarSelector(true);
+                    this.toggleUnitSelector(true);
+                });
 
-                // Activate the full calendar display listeners
-                Renderer.CalendarFull.ActivateListeners(`sc_${this.activeCalendar.id}_calendar`, this.changeMonth.bind(this), this.dayClick.bind(this));
-
-                const appWindow = document.getElementById('simple-calendar-application');
-                if(appWindow){
-                    // Click anywhere in the app
-                    appWindow.addEventListener('click', () => {
-                        this.toggleCalendarSelector(true);
-                        this.toggleUnitSelector(true);
-                    });
-
-                    //-----------------------
-                    // Header
-                    //-----------------------
-                    // Calendar List Click
-                    appWindow.querySelector(".sc-header-bar .calendar-list-toggle")?.addEventListener('click', SimpleCalendar.instance.toggleCalendarSelector.bind(this, false));
-
-                    //-----------------------
-                    // Calendar Action List
-                    //-----------------------
-                    //Configuration Button Click
-                    appWindow.querySelector(".sc-actions-list .configure-button")?.addEventListener('click', SimpleCalendar.instance.configurationClick.bind(this));
-                    //Search button click
-                    appWindow.querySelector(".sc-actions-list .search")?.addEventListener('click', SimpleCalendar.instance.searchClick.bind(this));
-                    // Add new note click
-                    appWindow.querySelector(".sc-actions-list .add-note")?.addEventListener('click', SimpleCalendar.instance.addNote.bind(this));
-                    // Note Drawer Toggle
-                    appWindow.querySelector(".sc-actions-list .notes")?.addEventListener('click', SimpleCalendar.instance.toggleNoteDrawer.bind(this));
-                    appWindow.querySelector(".sc-actions-list .reminder-notes")?.addEventListener('click', SimpleCalendar.instance.toggleNoteDrawer.bind(this));
-                    // Today button click
-                    appWindow.querySelector('.sc-actions-list .today')?.addEventListener('click', SimpleCalendar.instance.todayClick.bind(this));
-                    // Set Current Date
-                    appWindow.querySelector('.sc-actions-list .btn-apply')?.addEventListener('click', SimpleCalendar.instance.dateControlApply.bind(this));
-                    // Real Time Clock
-                    appWindow.querySelector(".time-start")?.addEventListener('click', SimpleCalendar.instance.startTime.bind(this));
-                    appWindow.querySelector(".time-stop")?.addEventListener('click', SimpleCalendar.instance.stopTime.bind(this));
-
-
-                    //-----------------------
-                    // Note Drawer
-                    //-----------------------
-                    // Note Click
-                    appWindow.querySelector(".sc-note-list .note")?.addEventListener('click', SimpleCalendar.instance.viewNote.bind(this));
-                    //Note Drag
-                    appWindow.querySelector(".sc-note-list .note")?.addEventListener('drag', SimpleCalendar.instance.noteDrag.bind(this));
-                    appWindow.querySelector(".sc-note-list .note")?.addEventListener('dragend', SimpleCalendar.instance.noteDragEnd.bind(this));
-
-                    //-----------------------
-                    // Date/Time Controls
-                    //-----------------------
-                    appWindow.querySelectorAll(".unit-controls .selector").forEach(s => {
-                        s.addEventListener('click', SimpleCalendar.instance.toggleUnitSelector.bind(this, false));
-                    });
-                    appWindow.querySelectorAll(".unit-controls .unit-list li").forEach(c => {
-                       c.addEventListener('click', SimpleCalendar.instance.changeUnit.bind(this));
-                    });
-                    appWindow.querySelectorAll(".controls .control").forEach(c => {
-                        c.addEventListener('click', SimpleCalendar.instance.timeUnitClick.bind(this));
-                    });
-
+                if(this.uiElementStates.compactView){
+                    appWindow.classList.add('compact-view');
+                } else {
+                    appWindow.classList.remove('compact-view');
+                    // Activate the full calendar display listeners
+                    Renderer.CalendarFull.ActivateListeners(`sc_${this.activeCalendar.id}_calendar`, this.changeMonth.bind(this), this.dayClick.bind(this));
                 }
+
+
+                //-----------------------
+                // Header
+                //-----------------------
+                // Calendar List Click
+                appWindow.querySelector(".sc-header-bar .calendar-list-toggle")?.addEventListener('click', SimpleCalendar.instance.toggleCalendarSelector.bind(this, false));
+
+                //-----------------------
+                // Calendar Action List
+                //-----------------------
+                //Configuration Button Click
+                appWindow.querySelector(".sc-actions-list .configure-button")?.addEventListener('click', SimpleCalendar.instance.configurationClick.bind(this));
+                //Search button click
+                appWindow.querySelector(".sc-actions-list .search")?.addEventListener('click', SimpleCalendar.instance.toggleSearchDrawer.bind(this, false));
+                // Add new note click
+                appWindow.querySelector(".sc-actions-list .add-note")?.addEventListener('click', SimpleCalendar.instance.addNote.bind(this));
+                // Note Drawer Toggle
+                appWindow.querySelector(".sc-actions-list .notes")?.addEventListener('click', SimpleCalendar.instance.toggleNoteDrawer.bind(this, false));
+                appWindow.querySelector(".sc-actions-list .reminder-notes")?.addEventListener('click', SimpleCalendar.instance.toggleNoteDrawer.bind(this, false));
+                // Today button click
+                appWindow.querySelector('.sc-actions-list .today')?.addEventListener('click', SimpleCalendar.instance.todayClick.bind(this));
+                // Set Current Date
+                appWindow.querySelector('.sc-actions-list .btn-apply')?.addEventListener('click', SimpleCalendar.instance.dateControlApply.bind(this));
+                // Real Time Clock
+                appWindow.querySelector(".time-start")?.addEventListener('click', SimpleCalendar.instance.startTime.bind(this));
+                appWindow.querySelector(".time-stop")?.addEventListener('click', SimpleCalendar.instance.stopTime.bind(this));
+
+
+                //-----------------------
+                // Note/Search Drawer
+                //-----------------------
+                // Note Click/Drag
+                appWindow.querySelectorAll(".sc-note-list .note").forEach(n => {
+                    n.addEventListener('click', SimpleCalendar.instance.viewNote.bind(this));
+                    n.addEventListener('drag', SimpleCalendar.instance.noteDrag.bind(this));
+                    n.addEventListener('dragend', SimpleCalendar.instance.noteDragEnd.bind(this));
+                });
+                appWindow.querySelectorAll(".sc-note-search .note-list .note").forEach(n => {
+                    n.addEventListener('click', SimpleCalendar.instance.viewNote.bind(this));
+                });
+                //Search Click
+                appWindow.querySelector(".sc-note-search .search-box .fa-search")?.addEventListener('click', SimpleCalendar.instance.searchClick.bind(this));
+                //Search Clear Click
+                appWindow.querySelector(".sc-note-search .search-box .fa-times")?.addEventListener('click', SimpleCalendar.instance.searchClearClick.bind(this));
+                //Search Input Key Up
+                appWindow.querySelector(".sc-note-search .search-box input")?.addEventListener('keyup', SimpleCalendar.instance.searchBoxChange.bind(this));
+                //Search Options Header Click
+                appWindow.querySelector(".sc-note-search .search-options-header")?.addEventListener('click', SimpleCalendar.instance.searchOptionsToggle.bind(this, false));
+                //Search Options Fields Change
+                appWindow.querySelectorAll(".sc-note-search .search-fields input").forEach(n => {
+                    n.addEventListener('change', SimpleCalendar.instance.searchOptionsFieldsChange.bind(this));
+                });
+
+                //-----------------------
+                // Date/Time Controls
+                //-----------------------
+                appWindow.querySelectorAll(".unit-controls .selector").forEach(s => {
+                    s.addEventListener('click', SimpleCalendar.instance.toggleUnitSelector.bind(this, false));
+                });
+                appWindow.querySelectorAll(".unit-controls .unit-list li").forEach(c => {
+                    c.addEventListener('click', SimpleCalendar.instance.changeUnit.bind(this));
+                });
+                appWindow.querySelectorAll(".controls .control").forEach(c => {
+                    c.addEventListener('click', SimpleCalendar.instance.timeUnitClick.bind(this));
+                });
+
+                //-----------------------
+                // Compact View
+                //-----------------------
+                appWindow.querySelector(".sc-compact-toggle .compact-toggle")?.addEventListener('click', SimpleCalendar.instance.toggleCompactView.bind(this));
+
             }
         }
     }
 
     /**
-     * Opens and closes the note drawer
+     * Toggles the compact main view
      */
-    public toggleNoteDrawer(){
+    public toggleCompactView(){
+        this.uiElementStates.compactView = !this.uiElementStates.compactView;
+        this.updateApp();
+    }
+
+    /**
+     * Opens and closes the note drawer
+     * @param forceHide Force the drawer to hide
+     */
+    public toggleNoteDrawer(forceHide: boolean = false){
+        if(!forceHide){
+            this.toggleSearchDrawer(true);
+        }
         const noteList = document.querySelector(".sc-note-list");
         if(noteList){
-            this.uiElementStates.noteDrawerOpen = Utilities.animateElement(noteList, 500);
+            this.uiElementStates.noteDrawerOpen = Utilities.animateElement(noteList, 500, forceHide);
         }
     }
 
+    /**
+     * Opens and closes the search drawer
+     * @param forceHide Force the drawer to hide
+     */
+    public toggleSearchDrawer(forceHide: boolean = false){
+        if(!forceHide){
+            this.toggleNoteDrawer(true);
+        }
+        this.searchOptionsToggle(true);
+        const noteList = document.querySelector(".sc-note-search");
+        if(noteList){
+            this.uiElementStates.searchDrawerOpen = Utilities.animateElement(noteList, 500, forceHide);
+        }
+    }
+
+    /**
+     * Opens and closes the calendar selector
+     * @param forceHide Force the selector to hide
+     */
     public toggleCalendarSelector(forceHide: boolean = false){
         const calList = document.querySelector(".sc-calendar-list");
         if(calList){
@@ -684,6 +620,7 @@ export default class SimpleCalendar extends Application{
         this.toggleCalendarSelector(true);
         this.toggleUnitSelector(true);
         this.activeCalendar.year.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
+        this.setWidthHeight();
     }
     
     /**
@@ -699,7 +636,7 @@ export default class SimpleCalendar extends Application{
             const currentlySelectedMonth = this.activeCalendar.year.getMonth('selected');
             if(currentlySelectedMonth){
                 const currentlySelectedDay = currentlySelectedMonth.getDay('selected');
-                allReadySelected = currentlySelectedDay !== undefined && currentlySelectedDay.numericRepresentation === selectedDay;
+                allReadySelected = currentlySelectedDay !== undefined && currentlySelectedDay.numericRepresentation === selectedDay && this.activeCalendar.year.selectedYear === options.selectedDates.start.year;
             }
 
             this.activeCalendar.year.resetMonths('selected');
@@ -748,7 +685,7 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
-     * When the compact time controls are clicked
+     * When the change time unit buttons are clicked
      * @param e
      */
     public timeUnitClick(e: Event){
@@ -796,7 +733,11 @@ export default class SimpleCalendar extends Application{
             this.activeCalendar.syncTime(true).catch(Logger.error);
         }
     }
-    
+
+    /**
+     * Processes the clicking to advance the calendar to the next defined time of day
+     * @param type
+     */
     public timeOfDayControlClick(type: string){
         let month = this.activeCalendar.year.getMonth();
         let day: Day | undefined;
@@ -855,6 +796,7 @@ export default class SimpleCalendar extends Application{
                 break;
         }
     }
+
     /**
      * Click event for when a gm user clicks on the apply button for the current date controls
      * Will attempt to save the new current date to the world settings.
@@ -929,12 +871,65 @@ export default class SimpleCalendar extends Application{
         }
     }
 
-    public searchClick(e: Event) {
-        if(!SimpleCalendarSearch.instance || (SimpleCalendarSearch.instance && !SimpleCalendarSearch.instance.rendered)){
-            SimpleCalendarSearch.instance = new SimpleCalendarSearch(this.activeCalendar);
-            SimpleCalendarSearch.instance.showApp();
+    /**
+     * When the search button next to the search box is clicked, or the enter key is used on the search input
+     */
+    public searchClick() {
+        const searchInput = <HTMLInputElement>document.getElementById('simpleCalendarSearchBox');
+        if(searchInput){
+            this.search.term = searchInput.value;
+            this.search.results = [];
+            if(this.search.term){
+
+                this.search.results = this.activeCalendar.searchNotes(this.search.term, this.search.options.fields);
+            }
+            this.updateApp();
+        }
+    }
+
+    /**
+     * Clears the search terms and results.
+     */
+    public searchClearClick(){
+        this.search.term = '';
+        this.search.results = [];
+        this.updateApp();
+    }
+
+    /**
+     * Processes text input into the search box.
+     * @param e
+     */
+    public searchBoxChange(e: Event){
+        if((<KeyboardEvent>e).key === "Enter"){
+            this.searchClick();
         } else {
-            SimpleCalendarSearch.instance.bringToTop();
+            this.search.term = (<HTMLInputElement>e.target).value;
+        }
+    }
+
+    /**
+     * Opens and closes the search options area
+     * @param forceClose
+     */
+    public searchOptionsToggle(forceClose: boolean = false){
+        let so = document.querySelector(`.sc-note-search .search-options`);
+        if(so){
+            this.uiElementStates.searchOptionsOpen = Utilities.animateElement(so, 500, forceClose);
+        }
+    }
+
+    /**
+     * Processes the checking/unchecking of search options fields inputs
+     * @param e
+     */
+    public searchOptionsFieldsChange(e: Event){
+        const element = <HTMLInputElement>e.target;
+        if(element){
+            const field = element.getAttribute('data-field');
+            if(field && this.search.options.fields.hasOwnProperty(field)){
+                this.search.options.fields[field as keyof SearchOptions.Fields] = element.checked;
+            }
         }
     }
 
@@ -1031,6 +1026,10 @@ export default class SimpleCalendar extends Application{
         }
     }
 
+    //---------------------------
+    // Foundry Hooks
+    //---------------------------
+
     /**
      * Triggered when the games pause state is changed.
      * @param paused
@@ -1112,6 +1111,10 @@ export default class SimpleCalendar extends Application{
             this.activeCalendar.year.time.combatRunning = false;
         }
     }
+
+    //---------------------------
+    // Time Keeper
+    //---------------------------
 
     /**
      * Starts the built in time keeper

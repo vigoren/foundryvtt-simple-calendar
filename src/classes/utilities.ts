@@ -162,35 +162,35 @@ export default class Utilities{
                 break;
             case Icons.FirstQuarter:
                 iString = FirstQuarterIcon;
-                fillSearch = /fill="#FFFFFF"/g;
+                fillSearch = /fill="#ffffff"/g;
                 break;
             case Icons.Full:
                 iString = FullMoonIcon;
-                fillSearch = /fill="#FFFFFF"/g;
+                fillSearch = /fill="#ffffff"/g;
                 break;
             case Icons.LastQuarter:
                 iString = LastQuarterIcon;
-                fillSearch = /fill="#FFFFFF"/g;
+                fillSearch = /fill="#ffffff"/g;
                 break;
             case Icons.NewMoon:
                 iString = NewMoonIcon;
-                fillSearch = /fill="#FFFFFF"/g;
+                fillSearch = /fill="#ffffff"/g;
                 break;
             case Icons.WaningCrescent:
                 iString = WaningCrescentIcon;
-                fillSearch = /fill="#FFFFFF"/g;
+                fillSearch = /fill="#ffffff"/g;
                 break;
             case Icons.WaningGibbous:
                 iString = WaningGibbousIcon;
-                fillSearch = /fill="#FFFFFF"/g;
+                fillSearch = /fill="#ffffff"/g;
                 break;
             case Icons.WaxingCrescent:
                 iString = WaxingCrescentIcon;
-                fillSearch = /fill="#FFFFFF"/g;
+                fillSearch = /fill="#ffffff"/g;
                 break;
             case Icons.WaxingGibbous:
                 iString = WaxingGibbousIcon;
-                fillSearch = /fill="#FFFFFF"/g;
+                fillSearch = /fill="#ffffff"/g;
                 break;
         }
 
@@ -408,6 +408,12 @@ export default class Utilities{
         return between;
     }
 
+    /**
+     * Processes opening and closing animations for HTML elements
+     * @param element
+     * @param duration
+     * @param forceHide
+     */
     public static animateElement(element: Element, duration: number, forceHide: boolean = false){
         let openState = false;
         if(element && !element.classList.contains('animate')){

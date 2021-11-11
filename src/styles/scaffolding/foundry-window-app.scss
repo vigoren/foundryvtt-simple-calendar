@@ -2,7 +2,7 @@
 .simple-calendar{
   font-family: Roboto, sans-serif;
   &.window-app{
-    box-shadow: unset;
+    box-shadow: 2px 2px 10px #000000ab;
     background: unset;
     header{
       font-size: 1rem;
@@ -12,6 +12,7 @@
     .window-content{
       padding: 0;
       overflow-x: visible;
+      overflow-y: visible;
       scrollbar-color: $primary $primary-600;
       &::-webkit-scrollbar-thumb{
         background: $primary;
@@ -99,160 +100,268 @@
           }
         }
       }
-
-      .controls{
+      .spacer{
+        margin: 0 0 $spacer-half 0;
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        margin-bottom: $spacer-half;
+      }
+      .spacer-small{
+        height: $spacer-half;
+      }
+    }
+    .controls{
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: $spacer-half;
 
-        &.unit-controls{
-          flex-direction: row;
-          justify-content: center;
-
-          .control-group{
-            position: relative;
-            margin-right: $spacer-half*0.5;
-            &:last-child{
-              margin-right: 0;
-            }
-
-            .selector{
-              &::after{
-                font-family: "Font Awesome 5 Free";
-                content: "\f0d7";
-                -moz-osx-font-smoothing: grayscale;
-                -webkit-font-smoothing: antialiased;
-                font-size: 12px;
-                font-weight: 900;
-                font-style: normal;
-                font-variant: normal;
-                text-rendering: auto;
-              }
-            }
-
-            .unit-list{
-              margin: 0;
-              list-style: none;
-              position: absolute;
-              bottom: 100%;
-              overflow: hidden;
-              max-height: 0;
-              padding: 0;
-              border: 1px solid;
-
-              li{
-                cursor: pointer;
-                padding:.15rem .5rem;
-                border-bottom: 1px solid;
-
-                &:last-child{
-                  margin-bottom: 0;
-                  border-bottom-width: 0;
-                }
-              }
-
-              &.open{
-                visibility: visible;
-                max-height: 150px;
-              }
-              &.closed{
-                visibility: hidden;
-              }
-            }
-          }
-          .fa-minus, .fa-plus{
-            font-size: 10px;
-          }
-        }
+      &.unit-controls{
+        flex-direction: row;
+        justify-content: center;
 
         .control-group{
-          justify-content: center;
-          margin-bottom: $spacer-half*0.5;
-        }
-
-        button{
-          svg{
-            height: 1.125rem;
-            margin-bottom: -4px;
+          position: relative;
+          margin-right: $spacer-half*0.5;
+          &:last-child{
+            margin-right: 0;
           }
-        }
-      }
 
-      .sc-actions-list{
-        flex: 0 0 62px;
-        display: flex;
-        flex-direction: column;
-        width: 62px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        margin-left: $spacer-half;
-        padding: 0 $spacer-half;
+          .selector{
+            &::after{
+              font-family: "Font Awesome 5 Free";
+              content: "\f0d7";
+              -moz-osx-font-smoothing: grayscale;
+              -webkit-font-smoothing: antialiased;
+              font-size: 12px;
+              font-weight: 900;
+              font-style: normal;
+              font-variant: normal;
+              text-rendering: auto;
+            }
+          }
 
-        button{
-          margin: 0 0 $spacer-half 0;
-        }
+          .unit-list{
+            margin: 0;
+            list-style: none;
+            position: absolute;
+            bottom: 100%;
+            overflow: hidden;
+            max-height: 0;
+            padding: 0;
+            border: 1px solid;
 
-        .time-keeper-buttons{
-          display: flex;
-          flex-direction: row;
-          flex-wrap: nowrap;
-          margin: auto 0;
+            li{
+              cursor: pointer;
+              padding:.15rem .5rem;
+              border-bottom: 1px solid;
 
-          .control{
-            font-size: 12px;
-            padding: 0.125rem 0;
-            margin-right: 2px;
-            margin-bottom: 0;
+              &:last-child{
+                margin-bottom: 0;
+                border-bottom-width: 0;
+              }
+            }
 
-            &:last-child{
-              margin-right: 0;
+            &.open{
+              visibility: visible;
+              max-height: 150px;
+            }
+            &.closed{
+              visibility: hidden;
             }
           }
         }
-
-        .primary-loader{
-          text-align: center;
-          margin: auto 0;
+        .fa-minus, .fa-plus{
+          font-size: 10px;
         }
       }
 
-      .sc-note-list{
-        position: absolute;
-        top: 30px;
-        left: 25%;
-        border-top: 1px solid;
+      .control-group{
+        justify-content: center;
+        margin-bottom: $spacer-half*0.5;
+      }
+
+      button{
+        svg{
+          height: 1.125rem;
+          margin-bottom: -4px;
+        }
+      }
+    }
+
+    .sc-actions-list{
+      flex: 0 0 62px;
+      display: flex;
+      flex-direction: column;
+      width: 62px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin-left: $spacer-half;
+      padding: 0 $spacer-half;
+
+      button{
+        margin: 0 0 $spacer-half 0;
+      }
+
+      .time-keeper-buttons{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        margin: auto 0;
+
+        .control{
+          font-size: 12px;
+          padding: 0.125rem 0;
+          margin-right: 2px;
+          margin-bottom: 0;
+
+          &:last-child{
+            margin-right: 0;
+          }
+        }
+      }
+
+      .primary-loader{
+        text-align: center;
+        margin: auto 0;
+      }
+    }
+
+    .sc-side-drawer{
+      position: absolute;
+      top: 30px;
+      left: 25%;
+      border-top: 1px solid;
+      border-right: 1px solid;
+      border-bottom: 1px solid;
+      height: 75%;
+      min-width: 300px;
+      z-index: -1;
+      box-shadow: 2px 2px 10px #000000ab;
+      &.closed{
+        visibility: hidden;
+      }
+      &.open{
+        visibility: visible;
+        left: 100%;
+      }
+      h2{
+        padding: $spacer-half $spacer-half 0;
+      }
+      em{
+        padding: 0 $spacer-half;
+      }
+    }
+
+    .sc-note-list{
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sc-note-search{
+      display: flex;
+      flex-direction: column;
+
+      .search-box{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        padding: $spacer-half;
+
+        input{
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          border-right-width: 0;
+        }
+        .control{
+          width: 35px;
+          border-radius: 0;
+          margin-left: 0;
+          border-left-width: 0;
+          border-right-width: 0;
+          border-top: 1px solid;
+          border-bottom: 1px solid;
+
+          &.fa-search{
+            border-right-width: 1px;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+          }
+          &.fa-times{
+            padding-top: 4px;
+          }
+        }
+      }
+
+      .search-options-header{
+        padding: 0 $spacer-half ($spacer-half * 0.25);
+        margin: 0;
+        border-bottom: 1px solid;
+        cursor: pointer;
+      }
+
+      .search-options{
+        padding: 0 $spacer-half $spacer-half;
+        overflow: hidden;
+        border-left: 1px solid;
         border-right: 1px solid;
         border-bottom: 1px solid;
-        height: 75%;
-        min-width: 300px;
-        z-index: -1;
+        max-height: 0;
+
         &.closed{
           visibility: hidden;
         }
         &.open{
           visibility: visible;
-          left: 100%;
+          max-height: 200px;
         }
 
-        h2{
-          padding: $spacer-half $spacer-half 0;
-          border-bottom-color: $secondary;
+        p{
+          font-size: 0.75rem;
+          strong{
+            margin-right: $spacer-half * 0.5;
+          }
         }
 
-        em{
-          padding: 0 $spacer-half;
-        }
+        .search-fields{
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          font-size: 0.75rem;
 
+          label{
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+            margin: 0 ($spacer-half * 0.5);
+            input[type="checkbox"]{
+              width: 12px;
+              height: 12px;
+              filter: unset;
+            }
+          }
+
+        }
       }
 
-      .spacer{
-        margin: 0 0 $spacer-half 0;
-        flex: 1;
+      .note-list{
+        padding-top: $spacer-half;
       }
+    }
 
-      .spacer-small{
-        height: $spacer-half;
+    .sc-compact-toggle{
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding: 0;
+      overflow: visible;
+
+      .compact-toggle{
+        cursor: pointer;
+        padding: ($spacer-half * 0.5);
+        border: 1px solid;
+        border-radius: 3px;
+        margin: 0 (-$spacer-half) (-$spacer-half) 0;
       }
     }
   }

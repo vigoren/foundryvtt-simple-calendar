@@ -8,19 +8,15 @@
     flex-direction: row;
     flex-wrap: nowrap;
     margin-bottom: 5px;
-    background-color: #f1f1f1;
     border-radius: 5px;
+    border: 1px solid;
 
     input{
       width: 2rem;
-      background-color: #f1f1f1;
       border: unset;
       border-radius: 5px;
       margin: 0 2px;
       text-align: center;
-      &:hover, &:focus{
-        background-color: #c3c3c3;
-      }
     }
 
     .dropdown{
@@ -28,11 +24,9 @@
       bottom: 23px;
       width: 3rem;
       max-height: 150px;
-      background-color: #ffffff;
       margin: 0;
       padding: 0;
-      border: 1px solid #c3c3c3;
-      box-shadow: 2px 2px 2px #c3c3c3;
+      border: 1px solid;
       z-index: 100;
       overflow-y: scroll;
 
@@ -45,18 +39,12 @@
         left: 2px;
       }
       &.sc-ts-minute-list{
-        left: 3.75rem;
+        right: 0;
       }
 
       li{
         list-style: none;
         padding: 0.25rem 0.5rem;
-        &:nth-child(even){
-          background-color: #efefef;
-        }
-        &:hover{
-          background-color: #d0d0d0;
-        }
       }
     }
   }

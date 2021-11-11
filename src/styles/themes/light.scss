@@ -4,27 +4,349 @@
     a{
       color: $secondary;
       &:hover, &:active, &:focus{
-        color: $secondary-900;
+        color: $secondary-800;
         text-shadow: unset;
       }
     }
+    //Dialog Header
     header{
       background: $primary-A100;
       color: $fontColor;
+      font-size: 1rem;
       a{
-        color:$fontColor;
+        color: $fontColor;
         &:hover, &:active, &:focus{
           color: $secondary-700;
           text-shadow: unset;
         }
       }
     }
+    //Scrollbar Styling
     .window-content{
       background: $primary-50;
-      scrollbar-color: $primary $primary-400;
+      color: $fontColor;
+      scrollbar-color: $primary $primary-600;
+
       &::-webkit-scrollbar-thumb{
         background: $primary;
-        border-color:$primary-400;
+        border-color:$primary-600;
+      }
+    }
+
+    //Calendar Styling
+    .calendar{
+      background-color: $primary-100;
+      border-color: $primary-950;
+      color: $fontColor;
+
+      .calendar-header{
+        background-color: $primary-100;
+      }
+
+      .days{
+        .week{
+          .day{
+            &:hover{
+              background-color: $gray-300;
+            }
+            &.current{
+              box-shadow: inset 0 0 5px $primary-900;
+              background-color: $primary-300;
+              &:hover{
+                background-color: $primary;
+              }
+            }
+            &.selected{
+              box-shadow: inset 0 0 5px $success-900;
+              background-color: $success-300;
+              &:hover{
+                background-color: $success;
+              }
+            }
+            .day-notes{
+              .note-count{
+                background-color: $secondary;
+                color: $fontColor;
+                &.reminders{
+                  background-color: $tertiary-300;
+                }
+              }
+            }
+            .moons{
+              .moon-phase {
+                svg {
+                  filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.4));
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // All control button colors
+    .control{
+      border-color: $gray-500;
+      background-color: $gray-500;
+      color: $fontColor;
+      &:hover {
+        text-shadow: unset;
+        background-color: $gray-400;
+        border-color: $gray-400;
+      }
+      &.primary {
+        background-color: $primary-300;
+        border-color: $primary-300;
+
+        &:hover {
+          background-color: $primary-200;
+          border-color: $primary-200;
+        }
+      }
+      &.secondary {
+        background-color: $secondary-400;
+        border-color: $secondary-400;
+
+        &:hover {
+          background-color: $secondary-300;
+          border-color: $secondary-300;
+        }
+      }
+      &.tertiary{
+        background-color: $tertiary-200;
+        border-color: $tertiary-200;
+
+        &:hover {
+          background-color: $tertiary-100;
+          border-color: $tertiary-100;
+        }
+      }
+      &.delete {
+        background-color: $danger-400;
+        border-color: $danger-400;
+
+        &:hover {
+          background-color: $danger-300;
+          border-color: $danger-300;
+        }
+      }
+      &.save {
+        background-color: $success-400;
+        border-color: $success-400;
+
+        &:hover {
+          background-color: $success-300;
+          border-color: $success-300;
+        }
+      }
+    }
+    .control-group{
+      .control{
+        border-right-color: $gray-700;
+        &:first-child{
+          border-left-color: $gray-500;
+        }
+        &:last-child{
+          border-right-color: $gray-500;
+        }
+
+        &.primary{
+          border-right-color: $primary-600;
+          &:first-child{
+            border-left-color: $primary-300;
+          }
+          &:last-child{
+            border-right-color: $primary-300;
+          }
+        }
+        &.secondary{
+          border-right-color: $secondary-800;
+          &:first-child{
+            border-left-color: $secondary-300;
+          }
+          &:last-child{
+            border-right-color: $secondary-300;
+          }
+        }
+        &.delete{
+          border-right-color: $danger-800;
+          &:first-child{
+            border-left-color: $danger-400;
+          }
+          &:last-child{
+            border-right-color: $danger-400;
+          }
+        }
+        &.save{
+          border-right-color: $success-800;
+          &:first-child{
+            border-left-color: $success-400;
+          }
+          &:last-child{
+            border-right-color: $success-400;
+          }
+        }
+      }
+    }
+    .controls.unit-controls{
+      .control-group{
+        .unit-list{
+          background-color: $primary-200;
+          border-color: $primary;
+          color: $fontColor;
+
+          li{
+            border-color: $primary;
+            &.selected, &:hover{
+              background-color: $primary-400;
+            }
+          }
+        }
+      }
+    }
+
+    //Clock Styling
+    .sc-clock{
+      background-color: $primary-100;
+      border-color: $primary-950;
+      .animated-clock{
+        svg{
+          filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
+          path{
+            fill: $danger-800;
+            stroke: $danger-800;
+          }
+        }
+      }
+      &.started{
+        .animated-clock{
+          svg{
+            path{
+              fill: $success-800;
+              stroke: $success-800;
+            }
+          }
+        }
+      }
+      &.paused{
+        .animated-clock{
+          svg{
+            path{
+              fill: $secondary-800;
+              stroke: $secondary-800;
+            }
+          }
+        }
+      }
+    }
+
+    //Date Selector Styling
+    .sc-date-selector-calendar-wrapper{
+      background-color: $primary-100;
+      border-color: $primary-100;
+      box-shadow: 2px 2px 2px $boxShadowColor;
+    }
+
+    //Time Selector Styling
+    .time-selector{
+      color: $fontColor;
+      .sc-ts-inputs{
+        background-color: $gray-500;
+        input{
+          color: $fontColor;
+          background-color: $gray-500;
+          &:hover, &:focus{
+            background-color: $gray-400;
+          }
+        }
+        .dropdown{
+          background-color: $gray-500;
+          border-color: $gray-500;
+          box-shadow: 2px 2px 2px $boxShadowColor;
+          scrollbar-color: $primary $primary-600;
+          &::-webkit-scrollbar-thumb{
+            background: $primary;
+            border-color:$primary-600;
+          }
+
+          li{
+            &:nth-child(even){
+              background-color: $gray-400;
+            }
+            &:hover{
+              background-color: $gray-300;
+            }
+          }
+        }
+      }
+    }
+
+    //Note List Styling
+    .sc-note-list{
+      background-color: $primary-100;
+      border-color: $primary-900;
+
+      .note-list{
+        scrollbar-color: $primary $primary-600;
+        &::-webkit-scrollbar-thumb{
+          background: $primary;
+          border-color:$primary-600;
+        }
+        .note{
+          border-color: $primary-200;
+          &:hover {
+            background-color: $primary-300;
+          }
+          &.drag-active{
+            background-color: $primary-300;
+          }
+
+          .note-details-wrapper{
+            .note-details{
+              .note-category{
+                box-shadow: 1px 1px 5px $fontColor;
+
+                &.player-visible{
+                  background-color: $success-400;
+                  border-color: $success-400;
+                }
+                &.not-player-visible{
+                  background-color: $danger-400;
+                  border-color: $danger-400;
+                }
+                &.reminder{
+                  background-color: $tertiary-200;
+                  border-color: $tertiary-200;
+                }
+                &.note-time{
+                  border-color: $gray-500;
+                  background-color: $gray-500;
+                }
+              }
+            }
+          }
+
+          .sorting-dragger{
+            border-color: $gray-500;
+            background-color: $gray-500;
+            box-shadow: 1px 1px 5px $fontColor;
+          }
+        }
+      }
+    }
+
+    .sc-header-bar{
+      border-color: $gray-700;
+      background-color: $gray-800;
+
+      .sc-calendar-list{
+        background-color: $primary-800;
+        border-color: $primary-800;
+        scrollbar-color: $primary $primary-600;
+        &::-webkit-scrollbar-thumb{
+          background: $primary;
+          border-color:$primary-600;
+        }
       }
     }
   }

@@ -46,11 +46,10 @@ export interface SimpleCalendarTemplate{
     calendar: CalendarConfiguration;
     calendarList: any[];
     clockClass: string;
-    compactView: boolean;
-    compactViewShowNotes: boolean;
     uiElementStates: any;
     isPrimary: boolean;
     theme: Themes;
+    search: any;
 }
 
 export interface CalendarConfiguration extends IConfigurationItemBaseConfig {
@@ -454,6 +453,17 @@ export interface DateTime{
     minute?: number;
     second?: number;
 }
+
+export namespace SearchOptions{
+    export interface Fields {
+        date: boolean;
+        title: boolean;
+        details: boolean;
+        author: boolean;
+        categories: boolean;
+    }
+}
+
 
 /**
  * Namespace for our own socket information

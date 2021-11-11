@@ -1,6 +1,37 @@
 # Change Log
 
-## v1.3.85 - Improved Date/Time Selector, Bug Fixes and API Changes 
+##v2.0.0 - Changes, Changes Everywhere
+
+I am very happy to announce the release of version 2 of Simple Calendar! This update is big and covers many improvements and changes. Be sure to check out the full notes for all the details.
+
+### Visual Redesign / Themes
+
+I am happy to say that Simple Calendar has finally had a big visual update. This touches on every aspect of the calendar, configuration and notes.
+
+#### Main Calendar
+
+This section of the module has been 100% redesigned so that the full version is much more compact and easy to use. It features:
+
+- A refreshed calendar display.
+  - Seasons no longer change the full background color of the calendar but instead change the color of the border around the calendar.
+- A refreshed clock display.
+  - The clock icon has been updated to a better looking version.
+  - The "Current Time" text has been removed to simplify the view
+- The controls for changing the date/time have been compacted into 1 control where users can choose which time unit (year, month, day, hour, minute, second) they wish to change.
+- Simplified buttons for advancing to the next dawn, midday, dusk or midnight with new icons.
+- All other buttons have been moved to the right of the calendar and have been simplified with just an icon instead of an icon and text.
+- The notes list will now slide out to the right of the window when the notes button is clicked. This makes viewing notes easier and less intrusive to the calendar view.
+- Search has been changed so that it also slides out to the right of the window (rather than its own window) where a search can be preformed.
+
+#### Configuration Dialog
+
+#### Notes Dialog
+
+#### Themes
+
+There are now different themes that can be applied to Simple Calendar to change how it looks! This release includes a Light and Dark theme. Additional themes or system specific themes may be added as time goes on.
+
+I have tried to make sure that the light and dark themes are still easily usable for individuals with color blindness.
 
 ### Improved Date/Time Selector
 
@@ -12,10 +43,18 @@ The date/time selector that is used when choosing a date for notes or specifying
   - Added the ability to use the scroll wheel to change the number up or down in any of the text boxes.
   - Validation and changes are more consistent, they worked fine before but just feel better now.
 
+### Note Search Updates
+
+The searching for notes has been improved since the initial quick search added. The improvements are:
+
+- Hitting enter on the search text box will now trigger a search.
+- Note author is now also searched against. 
+- Note categories are now also searched against.
+- Added options to choose which fields on a note to search.
+
 ### Bug Fixes
 
 - Fixed a bug where the display year in the calendar header would not update properly if the year being viewed was different from the current year.
-- Fixed a bug where the "Add Notes" button disappeared from the compact view.
 - Fixed a bug where clicking on a moon icon or note indicator would not select the day properly.
 - Fixed a bug with the Warhammer predefined calendar where the season starts were set to the wrong dates.
 

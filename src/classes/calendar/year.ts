@@ -153,6 +153,7 @@ export default class Year extends ConfigurationItemBase {
      */
     toTemplate(): YearTemplate{
         const currentMonth = this.getMonth();
+        const selectedMonth = this.getMonth('selected');
         const visibleMonth = this.getMonth('visible');
 
         let sMoonsPhase = [], sNotes: Note[] = [], remNotes: Note[] = [];
@@ -178,6 +179,19 @@ export default class Year extends ConfigurationItemBase {
                 }
             }
         }
+
+        if(selectedMonth){
+            const d = selectedMonth.getDay('selected');
+            if(d){
+                const notes = SimpleCalendar.instance.activeCalendar.notes.filter(n => n.isVisible(this.selectedYear, selectedMonth.numericRepresentation, d.numericRepresentation));
+                const userId = GameSettings.UserID();
+                if(notes.length){
+                    sNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
+                    remNotes = notes.filter(n => n.remindUsers.indexOf(userId) !== -1);
+                }
+            }
+        }
+
         const currentSeason = this.getCurrentSeason();
 
         let weeks: (boolean | DayTemplate)[][] = [];

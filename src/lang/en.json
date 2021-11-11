@@ -1,5 +1,10 @@
 {
   "FSC.Calendars": "Calendars",
+  "FSC.Search.Options.Title": "Search Options",
+  "FSC.Search.Options.Fields.Date": "Date",
+  "FSC.Search.Options.Fields.Title": "Title",
+  "FSC.Search.Options.Fields.Details": "Details",
+  "FSC.Search.Options.Fields.Categories": "Categories",
 
 
   "FSC.Title": "Simple Calendar",
@@ -114,7 +119,7 @@
   "FSC.Apply": "Apply",
   "FSC.AdvancedOptions": "Advanced Options",
   "FSC.Today": "Today",
-  "FSC.Search": "Search",
+  "FSC.Search.Title": "Search",
   "FSC.SearchNotes": "Search Notes",
   "FSC.SearchEmpty": "No results found.",
   "FSC.Configure": "Configure",

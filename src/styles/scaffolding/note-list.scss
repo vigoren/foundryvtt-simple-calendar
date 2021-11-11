@@ -1,0 +1,64 @@
+@import "../variables";
+
+.note-list {
+  overflow-x: hidden;
+  overflow-y: auto;
+  .note{
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    border-bottom: 1px solid;
+
+    .note-details-wrapper{
+      display: block;
+      .note-title{
+        margin: 0 0 0.5rem;
+        font-size: 1.25rem;
+      }
+
+      .note-details{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .note-category{
+          font-size: 0.625rem;
+          border-radius: 7px;
+          padding: .2rem .4rem;
+          margin-right: 5px;
+          margin-bottom: 5px;
+
+          span{
+            margin-right: 0.15rem;
+          }
+        }
+
+        .note-icon{
+          span{
+            margin-right: 0;
+          }
+        }
+      }
+    }
+
+    .sorting-dragger{
+      padding: 0.5rem;
+      margin: auto 0;
+      border: 1px solid;
+      border-radius: 3px;
+      cursor: move;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.drag-active{
+      .note-details-wrapper{
+        visibility: hidden;
+      }
+    }
+  }
+}

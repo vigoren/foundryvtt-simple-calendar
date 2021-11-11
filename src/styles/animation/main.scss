@@ -18,9 +18,16 @@
           }
         }
       }
-      .sc-note-list{
+      .sc-side-drawer{
         &.animate{
           transition: left 500ms;
+        }
+      }
+      .sc-note-search{
+        .search-options{
+          &.animate{
+            transition: max-height 500ms;
+          }
         }
       }
     }

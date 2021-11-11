@@ -38,6 +38,11 @@
       background-color: $primary-950;
       border-color: $primary-200;
       color: $white;
+      scrollbar-color: $primary $primary-600;
+      &::-webkit-scrollbar-thumb{
+        background: $primary;
+        border-color:$primary-600;
+      }
 
       .calendar-header{
         background-color: $primary-950;
@@ -68,17 +73,14 @@
                 background-color: $secondary;
                 color: $fontColor;
                 &.reminders{
-                  background-color: $danger-900;
-                  color: $white;
+                  background-color: $tertiary-300;
                 }
               }
             }
             .moons{
               .moon-phase {
                 svg {
-                  circle{
-                    stroke: $white;
-                  }
+                  filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
                 }
               }
             }
@@ -112,6 +114,16 @@
 
         &:hover {
           background-color: $secondary-300;
+          color: $fontColor;
+        }
+      }
+      &.tertiary{
+        background-color: $tertiary-300;
+        border-color: $tertiary-300;
+        color: $fontColor;
+
+        &:hover {
+          background-color: $tertiary-200;
           color: $fontColor;
         }
       }
@@ -180,7 +192,7 @@
         }
       }
     }
-    .unit-controls{
+    .controls.unit-controls{
       .control-group{
         .unit-list{
           background-color: $primary-800;
@@ -193,6 +205,16 @@
             }
           }
         }
+      }
+    }
+
+    //Inputs
+    input{
+      background-color: $gray-700;
+      border-color: $gray-500;
+      color: $white;
+      &:focus{
+        box-shadow: unset;
       }
     }
 
@@ -230,10 +252,123 @@
       }
     }
 
+    //Date Selector Styling
+    .sc-date-selector-calendar-wrapper{
+      background-color: $primary-950;
+      border-color: $primary-950;
+      box-shadow: 2px 2px 2px $boxShadowColor;
+    }
+
+    //Time Selector Styling
+    .time-selector{
+      color: $white;
+      .sc-ts-inputs{
+        background-color: $gray-700;
+        border-color: $gray-500;
+        input{
+          color: $white;
+          background-color: $gray-700;
+          &:hover, &:focus{
+            background-color: $gray-600;
+          }
+        }
+        .dropdown{
+          background-color: $gray-700;
+          border-color: $gray-700;
+          box-shadow: 2px 2px 2px $boxShadowColor;
+          scrollbar-color: $primary $primary-600;
+          &::-webkit-scrollbar-thumb{
+            background: $primary;
+            border-color:$primary-600;
+          }
+
+          li{
+            &:nth-child(even){
+              background-color: $gray-600;
+            }
+            &:hover{
+              background-color: $primary-600;
+            }
+          }
+        }
+      }
+    }
+
     //Note List Styling
-    .sc-note-list{
+    .sc-side-drawer{
       background-color: $primary-1000;
       border-color: $primary-1100;
+
+      h2{
+        border-bottom-color: $secondary;
+      }
+      .note-list{
+        scrollbar-color: $primary $primary-600;
+        &::-webkit-scrollbar-thumb{
+          background: $primary;
+          border-color:$primary-600;
+        }
+        .note{
+          border-color: $primary-200;
+          &:hover {
+            background-color: $primary-800;
+          }
+          &.drag-active{
+            background-color: $primary-800;
+          }
+
+          .note-details-wrapper{
+            .note-details{
+              .note-category{
+                box-shadow: 1px 1px 5px $fontColor;
+
+                &.player-visible{
+                  background-color: $success-900;
+                  border-color: $success-900;
+                }
+                &.not-player-visible{
+                  background-color: $danger-900;
+                  border-color: $danger-900;
+                }
+                &.reminder{
+                  background-color: $tertiary-300;
+                  border-color: $tertiary-300;
+                  color: $fontColor;
+                }
+                &.note-time{
+                  border-color: $gray-600;
+                  background-color: $gray-600;
+                }
+              }
+            }
+          }
+
+          .sorting-dragger{
+            border-color: $gray-600;
+            background-color: $gray-600;
+            box-shadow: 1px 1px 5px $fontColor;
+          }
+        }
+      }
+    }
+
+    .sc-note-search{
+      .search-box{
+        .control{
+          box-shadow: unset;
+          background-color: $gray-700;
+          border-color: $gray-500;
+        }
+      }
+    }
+
+    .sc-compact-toggle{
+      .compact-toggle{
+        border-color: $gray-700;
+        &:hover{
+          background-color: $gray-800;
+        }
+      }
     }
 
     .sc-header-bar{

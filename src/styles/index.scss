@@ -1,11 +1,3 @@
-.simple-calendar{
-  @import "calendar";
-  @import "time-selector";
-  #simpleCalendar {
-    @import "gm-controls";
-    @import "date-notes";
-  }
-}
 .simple-calendar-note {
   @import "notes";
 }
@@ -14,13 +6,17 @@
 @import "scaffolding/calendar";
 @import "scaffolding/clock";
 @import "scaffolding/control";
+@import "scaffolding/date-selector";
 @import "scaffolding/foundry-window-app";
+@import "scaffolding/foundry-window-app-compact";
+@import "scaffolding/note-list";
+@import "scaffolding/time-selector";
 @import "themes/light";
 @import "themes/dark";
 @import "animation/main";
 @import "animation/configuration";
 
-@import "date-selector";
+
 
 @import "systems/wfrp4e";
 @import "systems/dsa5";

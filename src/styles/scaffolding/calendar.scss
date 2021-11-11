@@ -1,7 +1,7 @@
 @import "../variables";
 .calendar {
   border: 1px solid;
-  padding: 5px;
+  padding: 0 5px 5px;
   margin: 0 0 $spacer-half;
   max-height: 500px;
   overflow-y: auto;
@@ -128,9 +128,11 @@
             width: 16px;
             height: 16px;
             font-size: 12px;
+            font-weight: 600;
             margin-right: 2px;
             padding: 1px 1px 1px 2px;
             border-radius: 8px;
+            box-shadow: 1px 1px 5px;
 
             &.reminders{
               margin-right: 0;
