@@ -1,6 +1,6 @@
 # Change Log
 
-##v2.0.0 - Changes, Changes Everywhere
+## v2.0.0 - Changes, Changes Everywhere
 
 I am very happy to announce the release of version 2 of Simple Calendar! This update is big and covers many improvements and changes. Be sure to check out the full notes for all the details.
 

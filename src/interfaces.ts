@@ -70,6 +70,7 @@ export interface CalendarTemplate extends IConfigurationItemBaseTemplate {
     showSetCurrentDate: boolean;
     calendarDisplay: string;
     calendarId: string;
+    clockId: string;
     name: string;
     id: string;
     selectedDisplay: string;

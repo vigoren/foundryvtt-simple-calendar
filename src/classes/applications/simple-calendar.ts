@@ -84,6 +84,7 @@ export default class SimpleCalendar extends Application{
 
 
     uiElementStates = {
+        calendarDrawerOpen: false,
         compactView: false,
         dateTimeUnitOpen: false,
         dateTimeUnit: DateTimeUnits.Day,
@@ -188,8 +189,10 @@ export default class SimpleCalendar extends Application{
         if(data.type === SocketTypes.time){
             // This is processed by all players to update the animated clock
             this.activeCalendar.year.time.timeKeeper.setStatus((<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);
-            this.clockClass = this.activeCalendar.year.time.timeKeeper.getStatus();
-            this.activeCalendar.year.time.timeKeeper.setClockTime(this.activeCalendar.year.time.toString());
+            this.clockClass = (<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus;
+            if(this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
+                Renderer.Clock.UpdateListener(`sc_${this.activeCalendar.id}_clock`, (<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);
+            }
         } else if (data.type === SocketTypes.checkClockRunning){
             if(GameSettings.IsGm() && this.primary){
                 GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.time, data: { timeKeeperStatus: this.activeCalendar.year.time.timeKeeper.getStatus() } }).catch(Logger.error);
@@ -425,7 +428,6 @@ export default class SimpleCalendar extends Application{
             if(appWindow){
                 // Click anywhere in the app
                 appWindow.addEventListener('click', () => {
-                    this.toggleCalendarSelector(true);
                     this.toggleUnitSelector(true);
                 });
 
@@ -436,17 +438,19 @@ export default class SimpleCalendar extends Application{
                     // Activate the full calendar display listeners
                     Renderer.CalendarFull.ActivateListeners(`sc_${this.activeCalendar.id}_calendar`, this.changeMonth.bind(this), this.dayClick.bind(this));
                 }
-
+                // Activate the clock listeners
+                Renderer.Clock.ActivateListeners(`sc_${this.activeCalendar.id}_clock`);
 
                 //-----------------------
                 // Header
                 //-----------------------
-                // Calendar List Click
-                appWindow.querySelector(".sc-header-bar .calendar-list-toggle")?.addEventListener('click', SimpleCalendar.instance.toggleCalendarSelector.bind(this, false));
+
 
                 //-----------------------
                 // Calendar Action List
                 //-----------------------
+                // Calendar List Click
+                appWindow.querySelector(".sc-actions-list .calendar-list")?.addEventListener('click', SimpleCalendar.instance.toggleCalendarDrawer.bind(this, false));
                 //Configuration Button Click
                 appWindow.querySelector(".sc-actions-list .configure-button")?.addEventListener('click', SimpleCalendar.instance.configurationClick.bind(this));
                 //Search button click
@@ -524,9 +528,25 @@ export default class SimpleCalendar extends Application{
      * Opens and closes the note drawer
      * @param forceHide Force the drawer to hide
      */
+    public toggleCalendarDrawer(forceHide: boolean = false){
+        if(!forceHide){
+            this.toggleSearchDrawer(true);
+            this.toggleNoteDrawer(true);
+        }
+        const cList = document.querySelector(".sc-calendar-list");
+        if(cList){
+            this.uiElementStates.calendarDrawerOpen = Utilities.animateElement(cList, 500, forceHide);
+        }
+    }
+
+    /**
+     * Opens and closes the note drawer
+     * @param forceHide Force the drawer to hide
+     */
     public toggleNoteDrawer(forceHide: boolean = false){
         if(!forceHide){
             this.toggleSearchDrawer(true);
+            this.toggleCalendarDrawer(true);
         }
         const noteList = document.querySelector(".sc-note-list");
         if(noteList){
@@ -541,22 +561,12 @@ export default class SimpleCalendar extends Application{
     public toggleSearchDrawer(forceHide: boolean = false){
         if(!forceHide){
             this.toggleNoteDrawer(true);
+            this.toggleCalendarDrawer(true);
         }
         this.searchOptionsToggle(true);
         const noteList = document.querySelector(".sc-note-search");
         if(noteList){
             this.uiElementStates.searchDrawerOpen = Utilities.animateElement(noteList, 500, forceHide);
-        }
-    }
-
-    /**
-     * Opens and closes the calendar selector
-     * @param forceHide Force the selector to hide
-     */
-    public toggleCalendarSelector(forceHide: boolean = false){
-        const calList = document.querySelector(".sc-calendar-list");
-        if(calList){
-            this.uiElementStates.calendarListOpen = Utilities.animateElement(calList, 500, forceHide);
         }
     }
 
@@ -617,7 +627,6 @@ export default class SimpleCalendar extends Application{
      * @param {SCRenderer.CalendarOptions} options The renderer's options associated with the calendar
      */
     public changeMonth(clickType: CalendarClickEvents, options: SCRenderer.CalendarOptions){
-        this.toggleCalendarSelector(true);
         this.toggleUnitSelector(true);
         this.activeCalendar.year.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
         this.setWidthHeight();
@@ -628,7 +637,6 @@ export default class SimpleCalendar extends Application{
      * @param {SCRenderer.CalendarOptions} options The renderer options for the calendar who's day was clicked
      */
     public dayClick(options: SCRenderer.CalendarOptions){
-        this.toggleCalendarSelector(true);
         this.toggleUnitSelector(true);
         if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.activeCalendar.year.months.length){
             const selectedDay = options.selectedDates.start.day;
@@ -1127,6 +1135,7 @@ export default class SimpleCalendar extends Application{
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
         } else if(this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
             this.activeCalendar.year.time.timeKeeper.start();
+            this.updateApp();
         }
     }
 

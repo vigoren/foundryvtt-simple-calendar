@@ -21,6 +21,7 @@ import GeneralSettings from "../configuration/general-settings";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import Utilities from "../utilities";
 import PF2E from "../systems/pf2e";
+import Renderer from "../renderer";
 
 export default class Calendar extends ConfigurationItemBase{
 
@@ -153,6 +154,7 @@ export default class Calendar extends ConfigurationItemBase{
             ...super.toTemplate(),
             addNotes: this.canUser((<Game>game).user, this.generalSettings.permissions.addNotes),
             calendarId: `sc_${this.id}_calendar`,
+            clockId: `sc_${this.id}_clock`,
             changeDateTime: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime),
             currentYear: this.year.toTemplate(),
             gameSystem: this.gameSystem,
@@ -363,7 +365,8 @@ export default class Calendar extends ConfigurationItemBase{
                 Logger.debug(`Tracking Rule: Self/Mixed\nClock Is Running, no need to update the date.`)
                 const parsedDate = this.year.secondsToDate(newTime);
                 this.year.updateTime(parsedDate);
-                this.year.time.timeKeeper.setClockTime(this.year.time.toString());
+                Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.year.time.timeKeeper.getStatus());
+                //Something else has changed the world time and we need to update everything to reflect that.
                 if((this.year.time.updateFrequency * this.year.time.gameTimeRatio) !== changeAmount){
                     SimpleCalendar.instance.updateApp();
                 }

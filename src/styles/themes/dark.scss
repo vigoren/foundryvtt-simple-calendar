@@ -370,20 +370,5 @@
         }
       }
     }
-
-    .sc-header-bar{
-      border-color: $gray-700;
-      background-color: $gray-800;
-
-      .sc-calendar-list{
-        background-color: $primary-800;
-        border-color: $primary-800;
-        scrollbar-color: $primary $primary-600;
-        &::-webkit-scrollbar-thumb{
-          background: $primary;
-          border-color:$primary-600;
-        }
-      }
-    }
   }
 }

@@ -34,8 +34,16 @@ export default class TimeKeeper{
      * @private
      */
     private pauseClicked: boolean = false;
-
+    /**
+     * How often (in seconds) to have the time keeper process an interval
+     * @type {number}
+     */
     public updateFrequency: number;
+    /**
+     * A list of functions that listen for intervals or status changes from the time keeper and are then called.
+     * @private
+     */
+    private updateListeners: {key: string, func: Function}[] = [];
 
     constructor(updateFrequency: number) {
         this.updateFrequency = updateFrequency;
@@ -102,17 +110,7 @@ export default class TimeKeeper{
      * @param {TimeKeeperStatus} newStatus
      */
     public setStatus(newStatus: TimeKeeperStatus){
-        this.status = newStatus;
-        SimpleCalendar.instance.element.find('.time-display .clock, .time-controls .time-start, .time-controls .time-stop, .current-time .clock').removeClass('stopped started paused').addClass(this.status);
-        if(this.status === TimeKeeperStatus.Started){
-            SimpleCalendar.instance.element.find('.time-controls .time-start').removeClass('fa-play').addClass('fa-pause');
-        } else {
-            SimpleCalendar.instance.element.find('.time-controls .time-start').removeClass('fa-pause').addClass('fa-play');
-        }
-    }
-
-    public setClockTime(time: string){
-        SimpleCalendar.instance.element.find('.time-display .time, .current-time .time').text(time);
+        this.updateStatus(newStatus);
     }
 
     /**
@@ -130,13 +128,14 @@ export default class TimeKeeper{
             }
             if (GameSettings.IsGm() && SimpleCalendar.instance.primary) {
                 if(SimpleCalendar.instance.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
-                    SimpleCalendar.instance.updateApp();
+                    //SimpleCalendar.instance.updateApp();
                     GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.time, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
                 } else {
                     SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
                 }
             }
             Hook.emit(SimpleCalendarHooks.DateTimeChange, changeAmount);
+            this.callListeners();
         }
     }
 
@@ -178,6 +177,7 @@ export default class TimeKeeper{
         if(oldStatus !== this.status){
             Logger.debug(`Updating Timer Status from ${oldStatus} to ${this.status}`);
             Hook.emit(SimpleCalendarHooks.ClockStartStop);
+            this.callListeners();
             this.emitSocket();
         }
     }
@@ -196,6 +196,30 @@ export default class TimeKeeper{
             };
             GameSockets.emit(socketData).catch(Logger.error);
             SimpleCalendar.instance.processSocket(socketData).catch(Logger.error);
+        }
+    }
+
+    /**
+     * Registers a function to listen for updates from the timekeeper
+     * @param key
+     * @param func
+     */
+    public registerUpdateListener(key: string, func: Function){
+        const existing = this.updateListeners.findIndex(l => l.key === key);
+        if(existing === -1){
+            this.updateListeners.push({key: key, func: func});
+        } else {
+            this.updateListeners[existing].func = func;
+        }
+    }
+
+    /**
+     * Calls all registered update listeners
+     * @private
+     */
+    private callListeners(){
+        for(let i = 0; i < this.updateListeners.length; i++){
+            this.updateListeners[i].func(this.status);
         }
     }
 }
