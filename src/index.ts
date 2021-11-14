@@ -2,7 +2,9 @@ import SimpleCalendar from "./classes/applications/simple-calendar";
 import Macros from "./classes/macros";
 import API from "./classes/api";
 import {Logger} from "./classes/logging";
-import {SimpleCalendarHooks} from "./constants";
+import {SettingNames, SimpleCalendarHooks} from "./constants";
+import {GameSettings} from "./classes/foundry-interfacing/game-settings";
+
 SimpleCalendar.instance = new SimpleCalendar();
 Hooks.on('init', () => {
     //Initialize the Simple Calendar
@@ -20,6 +22,9 @@ Hooks.on('ready', () => {
     //Initialize the Simple Calendar Sockets
     SimpleCalendar.instance.initializeSockets();
     SimpleCalendar.instance.checkNoteReminders();
+    if(GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad)){
+        SimpleCalendar.instance.showApp();
+    }
 });
 Hooks.on('getSceneControlButtons', SimpleCalendar.instance.getSceneControlButtons.bind(SimpleCalendar.instance));
 Hooks.on("updateWorldTime", SimpleCalendar.instance.worldTimeUpdate.bind(SimpleCalendar.instance));

@@ -82,6 +82,44 @@ export class GameSettings {
      * Register the settings this module needs to use with the game
      */
     static RegisterSettings(){
+        // -------------------
+        // Client Settings
+        // -------------------
+        (<Game>game).settings.register(ModuleName, SettingNames.OpenOnLoad, {
+            name: "FSC.Configuration.Client.OpenOnLoad.Title",
+            hint: "FSC.Configuration.Client.OpenOnLoad.Description",
+            scope: "client",
+            config: true,
+            type: Boolean,
+            default: true
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.OpenCompact, {
+            name: "FSC.Configuration.Client.OpenCompact.Title",
+            hint: "FSC.Configuration.Client.OpenCompact.Description",
+            scope: "client",
+            config: true,
+            type: Boolean,
+            default: false
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.RememberPosition, {
+            name: "FSC.Configuration.Client.RememberPosition.Title",
+            hint: "FSC.Configuration.Client.RememberPosition.Description",
+            scope: "client",
+            config: true,
+            type: Boolean,
+            default: true
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.AppPosition, {
+            name: "Application Position",
+            hint: "",
+            scope: "client",
+            config: false,
+            type: Object,
+            default: {}
+        });
+        // -------------------
+        // Configuration Button
+        // -------------------
         (<Game>game).settings.registerMenu(ModuleName, SettingNames.CalendarConfigurationMenu, {
             name: "",
             label: "FSC.Configuration.Title",
@@ -90,6 +128,9 @@ export class GameSettings {
             type: SimpleCalendarConfiguration,
             restricted: true
         });
+        // -------------------
+        // Core Settings
+        // -------------------
         (<Game>game).settings.register(ModuleName, SettingNames.GeneralConfiguration, {
             name: "General Configuration",
             scope: "world",
@@ -191,6 +232,31 @@ export class GameSettings {
             config: false
         });
 
+    }
+
+    /**
+     * Will return the value for the passed in boolean setting
+     * @param {SettingNames} setting The name of the setting to get
+     */
+    static GetBooleanSettings(setting: SettingNames): boolean{
+        return <boolean>(<Game>game).settings.get(ModuleName, setting);
+    }
+
+    /**
+     * Will return the value for the passed in object setting
+     * @param {SettingNames} setting The name of the setting to get
+     */
+    static GetObjectSettings(setting: SettingNames): object{
+        return <object>(<Game>game).settings.get(ModuleName, setting);
+    }
+
+    /**
+     * Save the passed in object to the passed in setting
+     * @param setting
+     * @param data
+     */
+    static async SaveObjectSetting(setting: SettingNames, data: object){
+        return await (<Game>game).settings.set(ModuleName, setting, data).then(() => {return true;});
     }
 
     /**

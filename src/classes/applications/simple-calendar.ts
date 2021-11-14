@@ -2,6 +2,7 @@ import {Logger} from "../logging";
 import Month from "../calendar/month";
 import Note from "../note";
 import {
+    AppPosition,
     NoteTemplate,
     SCDateSelector,
     SCRenderer,
@@ -18,6 +19,7 @@ import {
     DateTimeUnits,
     GameWorldTimeIntegrations,
     NoteRepeat,
+    SettingNames,
     SimpleCalendarHooks,
     SocketTypes,
     Themes,
@@ -313,9 +315,21 @@ export default class SimpleCalendar extends Application{
      */
     public showApp(){
         if(this.activeCalendar.canUser((<Game>game).user, this.activeCalendar.generalSettings.permissions.viewCalendar)){
-            this.hasBeenResized = false;
             this.activeCalendar.year.setCurrentToVisible();
-            this.render(true, {});
+            this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
+
+            const options:  Application.RenderOptions<Application.Options> = {}
+            if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
+                const pos = <AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
+                console.log(pos);
+                if(pos.top){
+                    options.top = pos.top;
+                }
+                if(pos.left){
+                    options.left = pos.left;
+                }
+            }
+            this.render(true, options);
         }
     }
 
@@ -333,6 +347,7 @@ export default class SimpleCalendar extends Application{
     async minimize(){
         this.uiElementStates.compactView = !this.uiElementStates.compactView;
         this.activeCalendar.year.resetMonths('selected');
+        this.setWidthHeight();
         this.render(true);
     }
 
@@ -341,6 +356,7 @@ export default class SimpleCalendar extends Application{
      */
     async maximize(){
         this.uiElementStates.compactView = false;
+        this.setWidthHeight();
         this.render(true);
     }
 
@@ -358,27 +374,40 @@ export default class SimpleCalendar extends Application{
             const wrapper = <HTMLElement>main.querySelector('.sc-main-wrapper');
             if(wrapper){
                 if(this.uiElementStates.compactView){
-
+                    height += 24; //Height of top bar
+                    height += 8; // Window Padding
+                    width = 300;
                 } else {
                     wrapper.querySelectorAll(".section").forEach((s, index) => {
                         height += (<HTMLElement>s).offsetHeight;
                     });
-                    const cal = <HTMLElement>wrapper.querySelector(".section .calendar-display");
-                    const al = <HTMLElement>wrapper.querySelector(".section .sc-actions-list");
-                    if(cal){
-                        width += cal.offsetWidth;
+                    const currentDate = <HTMLElement>wrapper.querySelector('.calendar .calendar-header .current-date');
+                    const week = <HTMLElement>wrapper.querySelector('.calendar .days .week');
+                    const clock = <HTMLElement>wrapper.querySelector('.clock-display .sc-clock');
+                    let currentDateWidth = 0, weekWidth = 0, clockWidth = 0;
+
+                    if(currentDate){
+                        Array.from(currentDate.children).forEach(c => {currentDateWidth += (<HTMLElement>c).offsetWidth;});
+                        currentDateWidth += 20; //Margins on prev/next buttons
                     }
-                    if(al){
-                        width += al.offsetWidth;
-                        width += 8; // Margin
+                    if(week){
+                        weekWidth = week.offsetWidth;
                     }
-                    height += 16; // Padding
-                    width += 16; // Padding
+                    if(clock){
+                        Array.from(clock.children).forEach(c => {clockWidth += (<HTMLElement>c).offsetWidth;});
+                        clockWidth += 8; //Clock Icon Margin
+                    }
+                    width = Math.max(currentDateWidth, weekWidth, clockWidth);
+                    width += 10; //Calendar Padding
+                    width += 70; //Action list width + Margin
+                    width += 16; // Window Padding
+                    height += 16; // Window Padding
                 }
             }
             this.setPosition({width: width, height: height});
         }
     }
+
 
     /**
      * Keeps the current/selected date centered in the list of days for a month on calendars that have very long day lists
@@ -414,6 +443,22 @@ export default class SimpleCalendar extends Application{
     }
 
     /**
+     * Process the drag end of the application moving around
+     * @param e
+     */
+    public appDragEnd(e: Event){
+        //@ts-ignore
+        this._onDragMouseUp(e);
+        const app = document.getElementById('simple-calendar-application');
+        if(app){
+            const appPos: AppPosition = {};
+            appPos.top = parseFloat(app.style.top);
+            appPos.left = parseFloat(app.style.left);
+            GameSettings.SaveObjectSetting(SettingNames.AppPosition, appPos).catch(Logger.error);
+        }
+    }
+
+    /**
      * Adds any event listeners to the application DOM
      * @param {JQuery<HTMLElement>} html The root HTML of the application window
      * @protected
@@ -426,6 +471,14 @@ export default class SimpleCalendar extends Application{
 
             const appWindow = document.getElementById('simple-calendar-application');
             if(appWindow){
+                //Window Drag Listener
+                const header = appWindow.querySelector('header');
+                if(header){
+                    const drag = new Draggable(this, jQuery(appWindow), header, this.options.resizable);
+                    drag.handlers["dragMove"] = ["mousemove", e => {}, false];
+                    drag.handlers["dragUp"] = ["mouseup", this.appDragEnd.bind(drag), false];
+                }
+
                 // Click anywhere in the app
                 appWindow.addEventListener('click', () => {
                     this.toggleUnitSelector(true);
@@ -440,11 +493,6 @@ export default class SimpleCalendar extends Application{
                 }
                 // Activate the clock listeners
                 Renderer.Clock.ActivateListeners(`sc_${this.activeCalendar.id}_clock`);
-
-                //-----------------------
-                // Header
-                //-----------------------
-
 
                 //-----------------------
                 // Calendar Action List
@@ -506,22 +554,8 @@ export default class SimpleCalendar extends Application{
                 appWindow.querySelectorAll(".controls .control").forEach(c => {
                     c.addEventListener('click', SimpleCalendar.instance.timeUnitClick.bind(this));
                 });
-
-                //-----------------------
-                // Compact View
-                //-----------------------
-                appWindow.querySelector(".sc-compact-toggle .compact-toggle")?.addEventListener('click', SimpleCalendar.instance.toggleCompactView.bind(this));
-
             }
         }
-    }
-
-    /**
-     * Toggles the compact main view
-     */
-    public toggleCompactView(){
-        this.uiElementStates.compactView = !this.uiElementStates.compactView;
-        this.updateApp();
     }
 
     /**

@@ -1,5 +1,11 @@
 {
   "FSC.Calendars": "Calendars",
+  "FSC.Configuration.Client.OpenOnLoad.Title": "Open On Load",
+  "FSC.Configuration.Client.OpenOnLoad.Description": "Will open up the Simple Calendar application when foundry is loaded.",
+  "FSC.Configuration.Client.OpenCompact.Title": "Open In Compact View",
+  "FSC.Configuration.Client.OpenCompact.Description": "When the Simple Calendar application is opened it will open in the compact view by default.",
+  "FSC.Configuration.Client.RememberPosition.Title": "Remember Position",
+  "FSC.Configuration.Client.RememberPosition.Description": "Simple Calendar will remember where it was last positioned and place itself there.",
   "FSC.Search.Options.Title": "Search Options",
   "FSC.Search.Options.Fields.Date": "Date",
   "FSC.Search.Options.Fields.Title": "Title",

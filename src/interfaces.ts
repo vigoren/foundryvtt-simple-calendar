@@ -16,7 +16,11 @@ import {
 } from "./constants";
 import Note from "./classes/note";
 import DateSelector from "./classes/date-selector";
-import Calendar from "./classes/calendar";
+
+export interface AppPosition{
+    top?: number;
+    left?: number;
+}
 
 /**
  * Interface for the Configuration Item Base Template

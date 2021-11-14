@@ -2,22 +2,29 @@
     <div class="section calendar-section">
         <div class="calendar-display">
             {{#if uiElementStates.compactView}}
-            <div class="date">
-            {{calendar.selectedDisplay}}
+            <div class="season">
+                {{#if calendar.currentYear.currentSeasonName }}
+                <div class="season-text">{{calendar.currentYear.currentSeasonName}}</div>
+                {{/if}}
+                <div class="moons">
+                    {{#each calendar.currentYear.selectedDayMoons}}
+                    <div class="moon-phase {{phase.icon}}" title="{{name}} - {{phase.name}}">{{{iconSVG}}}</div>
+                    {{/each}}
+                </div>
             </div>
-            <div class="moons">
-                {{#each calendar.currentYear.selectedDayMoons}}
-                <div class="moon-phase {{phase.icon}}" title="{{name}} - {{phase.name}}">{{{iconSVG}}}</div>
-                {{/each}}
+            <div class="date">
+                <div class="date-text">{{calendar.selectedDisplay}}</div>
             </div>
             {{else}}
             {{sc-full-calendar id=calendar.calendarId date=calendar.visibleDate}}
             {{/if}}
         </div>
         <div class="sc-actions-list">
+            {{#unless uiElementStates.compactView}}
             {{#if (gt calendarList.length 1)}}
             <button class="control primary calendar-list fa fa-calendar" title="{{localize 'FSC.Calendars'}}"></button>
             {{/if}}
+            {{/unless}}
             <button class="control {{#if (gt calendar.currentYear.selectedDayNotes.normal 0)}}secondary{{/if}} notes fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.normal}}</button>
             {{#if (gt calendar.currentYear.selectedDayNotes.reminders 0)}}
             <button class="control tertiary reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.reminders}}</button>
@@ -25,8 +32,8 @@
             {{#if calendar.addNotes}}
             <button class="fa control save add-note" title="{{localize 'FSC.Notes.AddNew'}}"><span class="fa-sticky-note"></span>&nbsp;<span class="fa-plus"></span></button>
             {{/if}}
-            <button class="fa fa-search control search" title="{{localize 'FSC.Search.Title'}}"></button>
             {{#unless uiElementStates.compactView}}
+            <button class="fa fa-search control search" title="{{localize 'FSC.Search.Title'}}"></button>
             <span class="spacer"></span>
             {{#if calendar.changeDateTime}}
             {{#if calendar.showSetCurrentDate}}
@@ -186,9 +193,9 @@
     </div>
     {{/if}}
     {{#if calendar.changeDateTime}}
-    {{#if calendar.showDateControls}}
     <div class="section">
         <div class="controls unit-controls">
+            {{#if calendar.showDateControls}}
             <div class="control-group">
                 <button class="control primary fa fa-angle-double-left" title="{{localize 'FSC.MoveDayBack'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-5"></button>
                 <button class="control primary fa fa-angle-left" title="{{localize 'FSC.MoveDayBack'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-1"></button>
@@ -208,27 +215,20 @@
                     {{/if}}
                 </ul>
             </div>
-        </div>
-        <div class="sc-actions-list"></div>
-    </div>
-    {{/if}}
-    {{/if}}
-    {{#if calendar.changeDateTime}}
-    {{#if calendar.showTimeControls}}
-    <div class="section">
-        <div class="controls">
+            {{/if}}
+            {{#if calendar.showTimeControls}}
             <div class="control-group">
                 <button class="control secondary" data-type="dawn" title="{{localize 'FSC.Dawn'}}">{{sc-icon name='sunrise'}}</button>
                 <button class="control secondary" data-type="midday" title="{{localize 'FSC.Midday'}}">{{sc-icon name='midday'}}</button>
                 <button class="control secondary" data-type="dusk" title="{{localize 'FSC.Dusk'}}">{{sc-icon name='sunset'}}</button>
                 <button class="control secondary" data-type="midnight" title="{{localize 'FSC.Midnight'}}">{{sc-icon name='midnight'}}</button>
             </div>
+            {{/if}}
         </div>
-        <div class="sc-actions-list sc-compact-toggle">
-            <div class="compact-toggle fa fa-flip-horizontal {{#if uiElementStates.compactView}}fa-expand-alt{{else}}fa-compress-alt{{/if}}"></div>
-        </div>
+        {{#unless uiElementStates.compactView}}
+        <div class="sc-actions-list"></div>
+        {{/unless}}
     </div>
-    {{/if}}
     {{/if}}
 </div>
 

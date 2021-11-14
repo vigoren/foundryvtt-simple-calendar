@@ -1,6 +1,16 @@
 @import "../variables";
 .simple-calendar{
   &.window-app{
+    &.compact-view{
+      .sc-main-wrapper {
+        .sc-side-drawer {
+          &.animate {
+            transition: left 500ms, height 500ms;
+          }
+        }
+      }
+    }
+
     .sc-header-bar{
       .sc-calendar-list{
         &.animate{

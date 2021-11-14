@@ -1,6 +1,27 @@
 @import "../variables";
 .simple-calendar{
   &.dark{
+
+    &.compact-view{
+      .sc-clock{
+        background-color: $primary-1100;
+      }
+      .time-keeper-buttons{
+        .save{
+          color: $success-900;
+        }
+        .secondary{
+          color: $secondary;
+          &:hover{
+            color: $secondary;
+          }
+        }
+        .delete{
+          color: $danger-900;
+        }
+      }
+    }
+
     a{
       color: $secondary;
       &:hover, &:active, &:focus{
@@ -358,15 +379,6 @@
           box-shadow: unset;
           background-color: $gray-700;
           border-color: $gray-500;
-        }
-      }
-    }
-
-    .sc-compact-toggle{
-      .compact-toggle{
-        border-color: $gray-700;
-        &:hover{
-          background-color: $gray-800;
         }
       }
     }

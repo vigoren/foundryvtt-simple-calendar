@@ -1,53 +1,97 @@
 @import "src/styles/variables";
 .simple-calendar{
-  &.window-app.compact-view{
-    header{
+  &.window-app.compact-view {
+    header {
       flex: 0 0 10px;
-      *{
+
+      * {
         display: none;
       }
     }
     .sc-main-wrapper{
-      .calendar-section{
-        flex-direction: column-reverse;
-        .calendar-display{
-          display: flex;
-          flex-direction: row;
-          flex-wrap: nowrap;
-          align-items: center;
-          justify-content: space-between;
-          margin: $spacer-half 0;
-          .moons{
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            svg{
-              height: 20px;
-              width: 20px;
-              filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
-            }
-          }
-        }
-        .sc-actions-list{
-          flex: 0 0 26px;
-          flex-direction: row;
-          width: unset;
-          margin: 0;
-          padding: 0 0 ($spacer-half * 0.5);
-          border-bottom: 1px solid;
-
-          button{
-            font-size: 0.75rem;
-            width: unset;
-            margin-right: $spacer-half * 0.5;
-            margin-bottom: 0;
-            &:last-of-type{
-              margin-right: 0;
-            }
-          }
-
+      padding: $spacer-half * 0.5;
+      button{
+        font-size: 0.625rem;
+        line-height: 0.625rem;
+        margin-bottom: 0.25rem;
+        svg{
+          height: 0.875rem;
         }
       }
+      .season{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        .season-text{
+          flex: 1;
+          text-align: center;
+        }
+      }
+      .date{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+        .date-text{
+          flex: 1;
+          text-align: center;
+        }
+      }
+      .moons{
+        flex: 0;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        svg{
+          height: 20px;
+          width: 20px;
+          filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
+        }
+      }
+      .sc-clock{
+        border: unset;
+        padding: 0;
+        margin: 0 $spacer-half $spacer-half 0;
+
+        .animated-clock{
+          svg{
+            width: 20px;
+            height: 20px;
+            margin-bottom: -4px;
+          }
+        }
+
+        .current-time{
+          font-size: 0.875rem;
+        }
+      }
+      .time-keeper-buttons{
+        .control{
+          background: unset;
+          border: unset;
+          box-shadow: unset;
+        }
+      }
+      .unit-controls{
+        .control{
+          margin-bottom: 0;
+        }
+      }
+
+      .sc-side-drawer{
+        top: 10px;
+        height: calc(100% - 10px);
+
+        &.open{
+          height: 200px;
+        }
+      }
+    }
+    .sc-actions-list{
+      padding: 0;
+      flex-basis: 35px;
     }
   }
 }

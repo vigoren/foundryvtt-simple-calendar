@@ -1,12 +1,17 @@
 @import "src/styles/variables";
 .simple-calendar{
   .control {
+    font-family: Roboto, sans-serif;
     border: 1px solid;
     padding: 0.15rem 0.5rem;
     border-radius: 3px;
     line-height: 1rem;
     box-shadow: 1px 1px 5px $boxShadowColor;
     cursor: pointer;
+
+    &.fa, .far, .fas {
+      font-family: "Font Awesome 5 Free";
+    }
   }
   .control-group{
     display: flex;
