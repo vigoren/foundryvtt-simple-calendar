@@ -195,7 +195,7 @@ export default class TimeKeeper{
                 }
             };
             GameSockets.emit(socketData).catch(Logger.error);
-            SimpleCalendar.instance.processSocket(socketData).catch(Logger.error);
+            SimpleCalendar.instance.sockets.processSocket(socketData).catch(Logger.error);
         }
     }
 

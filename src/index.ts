@@ -20,7 +20,8 @@ Hooks.on('init', () => {
 });
 Hooks.on('ready', () => {
     //Initialize the Simple Calendar Sockets
-    SimpleCalendar.instance.initializeSockets();
+    SimpleCalendar.instance.sockets.initializeSockets();
+    //SimpleCalendar.instance.initializeSockets();
     SimpleCalendar.instance.checkNoteReminders();
     if(GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad)){
         SimpleCalendar.instance.showApp();

@@ -32,6 +32,7 @@ import GameSockets from "../foundry-interfacing/game-sockets";
 import Calendar from "../calendar";
 import Renderer from "../renderer";
 import Utilities from "../utilities";
+import Sockets from "../sockets";
 
 
 /**
@@ -111,12 +112,15 @@ export default class SimpleCalendar extends Application{
             }
         }
     };
+
+    sockets: Sockets;
     /**
      * Simple Calendar constructor
      */
     constructor() {
         super();
         this.calendars.push(new Calendar({id: '', name: 'Gregorian'}));
+        this.sockets = new Sockets();
     }
 
     /**
@@ -139,140 +143,6 @@ export default class SimpleCalendar extends Application{
         HandlebarsHelpers.Register();
         GameSettings.RegisterSettings();
         this.calendars = Calendar.LoadCalendars();
-    }
-
-    /**
-     * Initializes all of the sockets and begins the primary check
-     */
-    public initializeSockets(){
-        //Set up the socket we use to forward data between players and the GM
-        GameSockets.on(this.processSocket.bind(this));
-
-        if(GameSettings.IsGm()){
-            const socket = <SimpleCalendarSocket.Data>{
-                type: SocketTypes.primary,
-                data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
-                    primaryCheck: true
-                }
-            };
-            this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
-            GameSockets.emit(socket).catch(Logger.error);
-        } else {
-            Hook.emit(SimpleCalendarHooks.Ready);
-        }
-        GameSockets.emit({type: SocketTypes.checkClockRunning, data: {}}).catch(Logger.error);
-    }
-
-    /**
-     * Called after the timeout delay set to see if another GM account has been set as the primary
-     */
-    async primaryCheckTimeoutCall(){
-        Logger.debug('No primary GM found, taking over as primary');
-        this.primary = true;
-        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: this.primary}};
-        await GameSockets.emit(socketData);
-        const timeKeeperSocketData = <SimpleCalendarSocket.Data>{type: SocketTypes.time, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}};
-        await GameSockets.emit(timeKeeperSocketData);
-        if(this.activeCalendar.year.time.unifyGameAndClockPause){
-            (<Game>game).togglePause(true, true);
-        }
-        await this.timeKeepingCheck();
-        this.updateApp();
-        Hook.emit(SimpleCalendarHooks.PrimaryGM);
-        Hook.emit(SimpleCalendarHooks.Ready);
-    }
-
-    /**
-     * Process any data received over our socket
-     * @param {SimpleCalendarSocket.Data} data The data received
-     */
-    async processSocket(data: SimpleCalendarSocket.Data){
-        Logger.debug(`Processing ${data.type} socket emit`);
-        if(data.type === SocketTypes.time){
-            // This is processed by all players to update the animated clock
-            this.activeCalendar.year.time.timeKeeper.setStatus((<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);
-            this.clockClass = (<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus;
-            if(this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
-                Renderer.Clock.UpdateListener(`sc_${this.activeCalendar.id}_clock`, (<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);
-            }
-        } else if (data.type === SocketTypes.checkClockRunning){
-            if(GameSettings.IsGm() && this.primary){
-                GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.time, data: { timeKeeperStatus: this.activeCalendar.year.time.timeKeeper.getStatus() } }).catch(Logger.error);
-            }
-        } else if (data.type === SocketTypes.journal){
-            // If user is a GM and the primary GM then save the journal requests, otherwise do nothing
-            if(GameSettings.IsGm() && this.primary){
-                Logger.debug(`Saving notes from user.`);
-                await GameSettings.SaveNotes((<SimpleCalendarSocket.SimpleCalendarSocketJournal>data.data).notes)
-            }
-        } else if (data.type === SocketTypes.primary){
-            if(GameSettings.IsGm()){
-                // Another client is asking if anyone is the primary GM, respond accordingly
-                if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).primaryCheck){
-                    Logger.debug(`Checking if I am the primary`);
-                    await GameSockets.emit(<SimpleCalendarSocket.Data>{
-                        type: SocketTypes.primary,
-                        data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
-                            amPrimary: this.primary
-                        }
-                    });
-                }
-                // Another client has emitted that they are the primary, stop my check and set myself to not being the primary
-                // This CAN lead to no primary if 2 GMs finish their primary check at the same time. This is best resolved by 1 gm reloading the page.
-                else if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary !== undefined){
-                    if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary){
-                        Logger.debug('A primary GM is all ready present.');
-                        window.clearTimeout(this.primaryCheckTimeout);
-                        this.primary = false;
-                        Hook.emit(SimpleCalendarHooks.Ready);
-                    } else {
-                        Logger.debug('We are all ready waiting to take over as primary.');
-                    }
-                }
-            }
-        } else if(data.type === SocketTypes.dateTime){
-            if(GameSettings.IsGm() && this.primary){
-                Logger.debug(`Processing Date/Time Change Request.`);
-                if((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).dataType){
-                    switch ((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).dataType){
-                        case 'time':
-                            if(!isNaN((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).amount)){
-                                this.activeCalendar.year.changeTime((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).isNext, (<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).unit, (<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).amount);
-                            }
-                            break;
-                        case 'day':
-                            this.activeCalendar.year.changeDay((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).isNext? 1 : -1, 'current');
-                            break;
-                        case 'month':
-                            this.activeCalendar.year.changeMonth((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).isNext? 1 : -1, 'current');
-                            break;
-                        case 'year':
-                            this.activeCalendar.year.changeYear((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).isNext? 1 : -1, false, "current");
-                            break;
-                    }
-                    GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
-                    //Sync the current time on apply, this will propagate to other modules
-                    this.activeCalendar.syncTime().catch(Logger.error);
-                }
-            }
-        } else if(data.type === SocketTypes.date){
-            if(GameSettings.IsGm() && this.primary){
-                const month = this.activeCalendar.year.months.find(m => m.numericRepresentation === (<SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).month);
-                if(month){
-                    const day = month.days.find(d => d.numericRepresentation === (<SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).day);
-                    if(day){
-                        this.setCurrentDate((<SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).year, month, day);
-                    }
-                }
-            }
-        } else if(data.type === SocketTypes.noteReminders){
-            this.checkNoteReminders((<SimpleCalendarSocket.SimpleCalendarNoteReminder>data.data).justTimeChange);
-        } else if(data.type === SocketTypes.emitHook){
-            const hook = (<SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).hook
-            if(hook){
-                Hook.emit(hook, (<SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).param);
-            }
-        }
     }
 
     /**
@@ -321,7 +191,6 @@ export default class SimpleCalendar extends Application{
             const options:  Application.RenderOptions<Application.Options> = {}
             if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
                 const pos = <AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
-                console.log(pos);
                 if(pos.top){
                     options.top = pos.top;
                 }
