@@ -1,4 +1,4 @@
-import SimpleCalendar from "../applications/simple-calendar";
+import SimpleCalendar from "../simple-calendar";
 import {
     DateTime,
     LeapYearConfig,
@@ -24,8 +24,8 @@ import {
     YearNamingRules
 } from "../../constants";
 import PF2E from "../systems/pf2e";
-import Utilities from "../utilities";
-import DateSelector from "../date-selector";
+import {DateToTimestamp, FormatDateTime, TimestampToDate} from "../utilities/date-time";
+import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Renderer from "../renderer";
 
@@ -37,9 +37,9 @@ export default class API{
      * The Date selector class used to create date selector inputs based on the calendar
      */
     public static DateSelector = {
-        Activate: DateSelector.ActivateSelector.bind(DateSelector),
-        Get: DateSelector.GetSelector.bind(DateSelector),
-        Remove: DateSelector.RemoveSelector.bind(DateSelector)
+        Activate: DateSelectorManager.ActivateSelector.bind(DateSelectorManager),
+        Get: DateSelectorManager.GetSelector.bind(DateSelectorManager),
+        Remove: DateSelectorManager.RemoveSelector.bind(DateSelectorManager)
     };
 
     /**
@@ -98,7 +98,7 @@ export default class API{
         const clone = SimpleCalendar.instance.activeCalendar.year.clone();
         // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
         if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
-            currentSeconds += PF2E.getWorldCreateSeconds();
+            currentSeconds += PF2E.getWorldCreateSeconds(SimpleCalendar.instance.activeCalendar);
         }
 
         const dateTime = clone.secondsToDate(currentSeconds);
@@ -145,90 +145,7 @@ export default class API{
      * @param seconds
      */
     public static timestampToDate(seconds: number){
-        const result = {
-            year: 0,
-            month: 0,
-            dayOffset: 0,
-            day: 0,
-            dayOfTheWeek: 0,
-            hour: 0,
-            minute: 0,
-            second: 0,
-            yearZero: 0,
-            sunrise: 0,
-            sunset: 0,
-            midday: 0,
-            weekdays: <string[]>[],
-            showWeekdayHeadings: true,
-            currentSeason: {},
-            isLeapYear: false,
-            monthName: "",
-            dayDisplay: '',
-            yearName: "",
-            yearPrefix: '',
-            yearPostfix: '',
-            display: {
-                date: '',
-                day: '',
-                daySuffix: '',
-                weekday: '',
-                monthName: '',
-                month: '',
-                year: '',
-                yearName: '',
-                yearPrefix: '',
-                yearPostfix: '',
-                time: ''
-            }
-        };
-        // If this is a Pathfinder 2E game, add the world creation seconds
-        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
-            seconds += PF2E.getWorldCreateSeconds();
-        }
-
-        const dateTime = SimpleCalendar.instance.activeCalendar.year.secondsToDate(seconds);
-        result.year = dateTime.year;
-        result.month = dateTime.month;
-        result.day = dateTime.day;
-        result.hour = dateTime.hour;
-        result.minute = dateTime.minute;
-        result.second = dateTime.seconds;
-
-        const month = SimpleCalendar.instance.activeCalendar.year.months[dateTime.month];
-        const day = month.days[dateTime.day];
-        result.dayOffset = month.numericRepresentationOffset;
-        result.yearZero = SimpleCalendar.instance.activeCalendar.year.yearZero;
-        result.dayOfTheWeek = SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(result.year, month.numericRepresentation, day.numericRepresentation);
-        result.currentSeason = SimpleCalendar.instance.activeCalendar.year.getSeason(dateTime.month, dateTime.day + 1);
-        result.weekdays = SimpleCalendar.instance.activeCalendar.year.weekdays.map(w => w.name);
-        result.showWeekdayHeadings = SimpleCalendar.instance.activeCalendar.year.showWeekdayHeadings;
-        result.isLeapYear = SimpleCalendar.instance.activeCalendar.year.leapYearRule.isLeapYear(result.year);
-        result.sunrise = SimpleCalendar.instance.activeCalendar.year.getSunriseSunsetTime(result.year, month, day, true);
-        result.sunset = SimpleCalendar.instance.activeCalendar.year.getSunriseSunsetTime(result.year, month, day, false);
-        result.midday = this.dateToTimestamp({ year: result.year, month: result.month, day: result.day, hour: 0, minute: 0, second: 0 }) + Math.floor(SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay / 2);
-
-        // Display Stuff
-        // Legacy - Depreciated first stable release of Foundry 9
-        result.monthName = month.name;
-        result.yearName = SimpleCalendar.instance.activeCalendar.year.getYearName(result.year);
-        result.yearPrefix = SimpleCalendar.instance.activeCalendar.year.prefix;
-        result.yearPostfix = SimpleCalendar.instance.activeCalendar.year.postfix;
-        result.dayDisplay = day.numericRepresentation.toString();
-
-        result.display.year = dateTime.year.toString();
-        result.display.yearName = SimpleCalendar.instance.activeCalendar.year.getYearName(result.year);
-        result.display.yearPrefix = SimpleCalendar.instance.activeCalendar.year.prefix;
-        result.display.yearPostfix = SimpleCalendar.instance.activeCalendar.year.postfix;
-        result.display.month = month.numericRepresentation.toString();
-        result.display.monthName = month.name;
-        if(SimpleCalendar.instance.activeCalendar.year.weekdays.length > result.dayOfTheWeek){
-            result.display.weekday = SimpleCalendar.instance.activeCalendar.year.weekdays[result.dayOfTheWeek].name;
-        }
-        result.display.day = day.numericRepresentation.toString();
-        result.display.daySuffix = Utilities.ordinalSuffix(day.numericRepresentation);
-        result.display.time = Utilities.FormatDateTime({year: 0, month: 0, day: 0, hour: result.hour, minute: result.minute, seconds: result.second}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time);
-        result.display.date = Utilities.FormatDateTime({year: result.year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds: 0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.date);
-        return result;
+        return TimestampToDate(seconds, SimpleCalendar.instance.activeCalendar);
     }
 
     /**
@@ -236,47 +153,7 @@ export default class API{
      * @param {DateTime} date
      */
     public static dateToTimestamp(date: DateTime): number{
-        let ts = 0;
-        const clone = SimpleCalendar.instance.activeCalendar.year.clone();
-        const currentMonth = clone.getMonth();
-        const currentTime = clone.time.getCurrentTime();
-        if(date.second === undefined){
-            date.second = currentTime.seconds;
-        }
-
-        if(date.minute === undefined){
-            date.minute = currentTime.minute;
-        }
-
-        if(date.hour === undefined){
-            date.hour = currentTime.hour;
-        }
-
-        // If not year is passed in, set to the current year
-        if(date.year === undefined){
-            date.year = clone.numericRepresentation;
-        }
-        if(date.month === undefined){
-            if(currentMonth){
-                date.month = clone.months.findIndex(m => m.numericRepresentation === currentMonth.numericRepresentation);
-            } else {
-                date.month = 0;
-            }
-        }
-        if(date.day === undefined){
-            date.day = 0;
-            if(currentMonth){
-                const currDay = currentMonth.getDay();
-                if(currDay){
-                    date.day = currentMonth.days.findIndex(d => d.numericRepresentation === currDay.numericRepresentation);
-                }
-            }
-        }
-        clone.updateMonth(date.month, 'current', true, date.day);
-        clone.numericRepresentation = date.year;
-        clone.time.setTime(date.hour, date.minute, date.second);
-        ts = clone.toSeconds();
-        return ts;
+        return DateToTimestamp(date, SimpleCalendar.instance.activeCalendar);
     }
 
     /**
@@ -347,11 +224,13 @@ export default class API{
                 SimpleCalendar.instance.activeCalendar.year.months[date.month].selected = true;
                 SimpleCalendar.instance.activeCalendar.year.selectedYear = SimpleCalendar.instance.activeCalendar.year.visibleYear;
             } else {
-                Logger.error('SimpleCalendar.api.showCalendar: Invalid date passed in.');
+                Logger.error('Main.api.showCalendar: Invalid date passed in.');
             }
         }
-        SimpleCalendar.instance.uiElementStates.compactView = compact;
-        SimpleCalendar.instance.showApp();
+        if(SimpleCalendar.instance.mainApp){
+            SimpleCalendar.instance.mainApp.uiElementStates.compactView = compact;
+            SimpleCalendar.instance.mainApp.showApp();
+        }
     }
 
     /**
@@ -382,9 +261,9 @@ export default class API{
             }
 
             if(change){
-                GameSettings.SaveCurrentDate(SimpleCalendar.instance.activeCalendar.year).catch(Logger.error);
+                SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
                 SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
-                SimpleCalendar.instance.updateApp();
+                SimpleCalendar.instance.mainApp?.updateApp();
             }
             return true;
         } else {
@@ -401,9 +280,9 @@ export default class API{
         if(SimpleCalendar.instance.activeCalendar.canUser((<Game>game).user, SimpleCalendar.instance.activeCalendar.generalSettings.permissions.changeDateTime)){
             const seconds = this.dateToTimestamp(date);
             SimpleCalendar.instance.activeCalendar.year.updateTime(SimpleCalendar.instance.activeCalendar.year.secondsToDate(seconds));
-            GameSettings.SaveCurrentDate(SimpleCalendar.instance.activeCalendar.year).catch(Logger.error);
+            SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
             SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
-            SimpleCalendar.instance.updateApp();
+            SimpleCalendar.instance.mainApp?.updateApp();
             return true;
         } else {
             GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
@@ -446,7 +325,7 @@ export default class API{
                 SimpleCalendar.instance.activeCalendar.year.changeDay(1, 'current');
             }
             SimpleCalendar.instance.activeCalendar.year.time.seconds = timeOfDay;
-            GameSettings.SaveCurrentDate(SimpleCalendar.instance.activeCalendar.year).catch(Logger.error);
+            SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
             SimpleCalendar.instance.activeCalendar.syncTime(true).catch(Logger.error);
             return true;
         } else {
@@ -562,17 +441,14 @@ export default class API{
      * Returns if the current user is the primary GM
      */
     public static isPrimaryGM(){
-        if(SimpleCalendar.instance){
-            return SimpleCalendar.instance.primary;
-        }
-        return  false;
+        return SimpleCalendar.instance.activeCalendar.primary;
     }
 
     /**
      * Starts the built in clock - if the user is the primary gm
      */
     public static startClock(){
-        if(SimpleCalendar.instance.primary){
+        if(SimpleCalendar.instance.activeCalendar.primary){
             SimpleCalendar.instance.activeCalendar.year.time.timeKeeper.start();
             return true;
         }
@@ -616,8 +492,8 @@ export default class API{
             second = SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute - 1;
         }
         return {
-            date: Utilities.FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds:0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.date),
-            time: Utilities.FormatDateTime({year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds:second}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time)
+            date: FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds:0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.date, SimpleCalendar.instance.activeCalendar),
+            time: FormatDateTime({year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds:second}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time, SimpleCalendar.instance.activeCalendar)
         };
     }
 
@@ -743,14 +619,15 @@ export default class API{
             if(typeof o === "string"){
                 const clone = SimpleCalendar.instance.activeCalendar.year.clone();
                 const res = PredefinedCalendar.setToPredefined(clone, <PredefinedCalendars>o);
-                await GameSettings.SaveYearConfiguration(clone);
-                await GameSettings.SaveMonthConfiguration(clone.months);
-                await GameSettings.SaveWeekdayConfiguration(clone.weekdays);
-                await GameSettings.SaveLeapYearRules(clone.leapYearRule);
-                await GameSettings.SaveTimeConfiguration(clone.time);
-                await GameSettings.SaveSeasonConfiguration(clone.seasons);
-                await GameSettings.SaveMoonConfiguration(clone.moons);
-                await GameSettings.SaveCurrentDate(clone);
+                await GameSettings.SaveObjectSetting(SettingNames.YearConfiguration, clone.toConfig());
+                await GameSettings.SaveObjectSetting(SettingNames.MonthConfiguration, clone.months.map(m => m.toConfig()));
+                await GameSettings.SaveObjectSetting(SettingNames.WeekdayConfiguration, clone.weekdays.map(w => w.toConfig()));
+                await GameSettings.SaveObjectSetting(SettingNames.LeapYearRule, clone.leapYearRule.toConfig());
+                await GameSettings.SaveObjectSetting(SettingNames.TimeConfiguration, clone.time.toConfig());
+                await GameSettings.SaveObjectSetting(SettingNames.SeasonConfiguration, clone.seasons.map(s => s.toConfig()));
+                await GameSettings.SaveObjectSetting(SettingNames.MoonConfiguration, clone.moons.map(m => m.toConfig()));
+
+                SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
                 return res;
             } else if(Object.keys(o).length) {
                 if(o.hasOwnProperty('yearSettings')){
@@ -787,17 +664,5 @@ export default class API{
             }
         }
         return false;
-    }
-
-    /**
-     * This is only here until Calendar Weather has finished their migration from about-time functions to Simple Calendar functions. At which point it will be removed.
-     * Runs the import calendar weather settings into Simple Calendar
-     */
-    public static async calendarWeatherImport(): Promise<boolean>{
-        //if(SimpleCalendar.instance && SimpleCalendar.instance.activeCalendar.year){
-            //await Importer.importCalendarWeather(SimpleCalendar.instance.activeCalendar.year, true);
-            return true;
-        //}
-        //return false;
     }
 }

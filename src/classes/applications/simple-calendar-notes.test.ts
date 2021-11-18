@@ -10,11 +10,11 @@ import "../../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import "../../__mocks__/merge-object";
 import "../../__mocks__/text-editor";
-import {SimpleCalendarNotes} from "./simple-calendar-notes";
+import {NotesApp} from "./notes-app";
 import Note from "../note";
 import SpyInstance = jest.SpyInstance;
 import Mock = jest.Mock;
-import SimpleCalendar from "./simple-calendar";
+import MainApp from "./main-app";
 import Year from "../calendar/year";
 import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
@@ -37,13 +37,13 @@ describe('Simple Calendar Notes Tests', () => {
         note.endDate.month = 1;
         note.endDate.day = 2;
 
-        SimpleCalendarNotes.instance = new SimpleCalendarNotes(note);
+        NotesApp.instance = new NotesApp(note);
 
         //Spy on console.error calls
         jest.spyOn(console, 'error').mockImplementation();
         //Spy on the inherited render function of the new instance
         //@ts-ignore
-        renderSpy = jest.spyOn(SimpleCalendarNotes.instance, 'render');
+        renderSpy = jest.spyOn(NotesApp.instance, 'render');
         (<Mock>console.error).mockClear();
         renderSpy.mockClear();
         (<Mock>(<Game>game).settings.get).mockClear();
@@ -51,18 +51,18 @@ describe('Simple Calendar Notes Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(SimpleCalendarNotes.instance).length).toBe(12); //Make sure no new properties have been added
-        expect(SimpleCalendarNotes.instance.updateNote).toBe(false);
-        expect(SimpleCalendarNotes.instance.viewMode).toBe(false);
-        expect(SimpleCalendarNotes.instance.hasBeenResized).toBe(false);
-        expect(SimpleCalendarNotes.instance.dateSelectorId).toBeDefined();
-        expect(SimpleCalendarNotes.instance.dateSelector).toBeDefined();
-        expect(SimpleCalendarNotes.instance.object).toStrictEqual(note);
+        expect(Object.keys(NotesApp.instance).length).toBe(12); //Make sure no new properties have been added
+        expect(NotesApp.instance.updateNote).toBe(false);
+        expect(NotesApp.instance.viewMode).toBe(false);
+        expect(NotesApp.instance.hasBeenResized).toBe(false);
+        expect(NotesApp.instance.dateSelectorId).toBeDefined();
+        expect(NotesApp.instance.dateSelector).toBeDefined();
+        expect(NotesApp.instance.object).toStrictEqual(note);
     });
 
     test('Default Options', () => {
         const spy = jest.spyOn(FormApplication, 'defaultOptions', 'get');
-        const opts = SimpleCalendarNotes.defaultOptions;
+        const opts = NotesApp.defaultOptions;
         expect(Object.keys(opts).length).toBe(6); //Make sure no new properties have been added
         //@ts-ignore
         expect(opts.template).toBe('modules/foundryvtt-simple-calendar/templates/calendar-notes.html');
@@ -79,20 +79,20 @@ describe('Simple Calendar Notes Tests', () => {
     });
 
     test('Check for Third Party Markdown Editors', () => {
-        expect(SimpleCalendarNotes.instance.checkForThirdPartyMarkdownEditors()).toBe(false);
+        expect(NotesApp.instance.checkForThirdPartyMarkdownEditors()).toBe(false);
         const orig = (<Game>game).modules.get;
         (<Game>game).modules.get = jest.fn().mockReturnValue({active: true});
-        expect(SimpleCalendarNotes.instance.checkForThirdPartyMarkdownEditors()).toBe(true);
+        expect(NotesApp.instance.checkForThirdPartyMarkdownEditors()).toBe(true);
         (<Game>game).modules.get = orig;
     });
 
     test('Get Data', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.noteCategories.push({name: 'a', color: 'a', textColor: 'a'});
-        SimpleCalendar.instance.activeCalendar.noteCategories.push({name: 'b', color: 'b', textColor: 'b'});
-        (<Note>SimpleCalendarNotes.instance.object).categories.push('a');
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.noteCategories.push({name: 'a', color: 'a', textColor: 'a'});
+        MainApp.instance.activeCalendar.noteCategories.push({name: 'b', color: 'b', textColor: 'b'});
+        (<Note>NotesApp.instance.object).categories.push('a');
 
-        let data = SimpleCalendarNotes.instance.getData();
+        let data = NotesApp.instance.getData();
         //@ts-ignore
         expect(data.isGM).toBe(false);
         //@ts-ignore
@@ -116,53 +116,53 @@ describe('Simple Calendar Notes Tests', () => {
         //@ts-ignore
         expect(data.allCategories).toStrictEqual([{"color": "a", "name": "a", "selected": true, "textColor": "a"}, {"color": "b", "name": "b", "selected": false, "textColor": "b"}]);
 
-        SimpleCalendar.instance.activeCalendar.year = new Year(0);
-        SimpleCalendar.instance.activeCalendar.year.months.push(new Month('M1', 1, 0, 30));
-        SimpleCalendar.instance.activeCalendar.year.months.push(new Month('M2', 2, 0, 30));
-        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(1, 'W1'));
-        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(2, 'W2'));
-        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
-        SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current = true;
-        (<Note>SimpleCalendarNotes.instance.object).repeats = 12;
-        data = SimpleCalendarNotes.instance.getData();
+        MainApp.instance.activeCalendar.year = new Year(0);
+        MainApp.instance.activeCalendar.year.months.push(new Month('M1', 1, 0, 30));
+        MainApp.instance.activeCalendar.year.months.push(new Month('M2', 2, 0, 30));
+        MainApp.instance.activeCalendar.year.weekdays.push(new Weekday(1, 'W1'));
+        MainApp.instance.activeCalendar.year.weekdays.push(new Weekday(2, 'W2'));
+        MainApp.instance.activeCalendar.year.months[0].current = true;
+        MainApp.instance.activeCalendar.year.months[0].days[0].current = true;
+        (<Note>NotesApp.instance.object).repeats = 12;
+        data = NotesApp.instance.getData();
         //@ts-ignore
         expect(data.repeatsText).toBe('');
 
-        (<Note>SimpleCalendarNotes.instance.object).endDate.year = 1;
-        (<Note>SimpleCalendarNotes.instance.object).endDate.month = 2;
-        data = SimpleCalendarNotes.instance.getData();
+        (<Note>NotesApp.instance.object).endDate.year = 1;
+        (<Note>NotesApp.instance.object).endDate.month = 2;
+        data = NotesApp.instance.getData();
         //@ts-ignore
         expect(data.repeatOptions).toStrictEqual({"0": "FSC.Notes.Repeat.Never"});
 
-        (<Note>SimpleCalendarNotes.instance.object).endDate.year = 0;
-        (<Note>SimpleCalendarNotes.instance.object).endDate.month = 2;
-        (<Note>SimpleCalendarNotes.instance.object).endDate.day = 2;
-        data = SimpleCalendarNotes.instance.getData();
+        (<Note>NotesApp.instance.object).endDate.year = 0;
+        (<Note>NotesApp.instance.object).endDate.month = 2;
+        (<Note>NotesApp.instance.object).endDate.day = 2;
+        data = NotesApp.instance.getData();
         //@ts-ignore
         expect(data.repeatOptions).toStrictEqual({0: 'FSC.Notes.Repeat.Never', 3: 'FSC.Notes.Repeat.Yearly'});
 
-        (<Note>SimpleCalendarNotes.instance.object).endDate.year = 0;
-        (<Note>SimpleCalendarNotes.instance.object).endDate.month = 1;
-        (<Note>SimpleCalendarNotes.instance.object).endDate.day = 5;
-        data = SimpleCalendarNotes.instance.getData();
+        (<Note>NotesApp.instance.object).endDate.year = 0;
+        (<Note>NotesApp.instance.object).endDate.month = 1;
+        (<Note>NotesApp.instance.object).endDate.day = 5;
+        data = NotesApp.instance.getData();
         //@ts-ignore
         expect(data.repeatOptions).toStrictEqual({0: 'FSC.Notes.Repeat.Never', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'});
 
         //@ts-ignore
         (<Mock>game.users.get).mockReturnValueOnce({data:{}});
-        data = SimpleCalendarNotes.instance.getData();
+        data = NotesApp.instance.getData();
         //@ts-ignore
         expect(data.authDisplay.name).toBe('');
 
         //@ts-ignore
         (<Mock>game.users.get).mockReturnValueOnce({name:"asd", data:{color:"asd"}});
-        data = SimpleCalendarNotes.instance.getData();
+        data = NotesApp.instance.getData();
         //@ts-ignore
         expect(data.authDisplay.name).toBe('asd');
 
         const tusers = (<Game>game).users;
         (<Game>game).users = undefined;
-        data = SimpleCalendarNotes.instance.getData();
+        data = NotesApp.instance.getData();
         //@ts-ignore
         expect(data.authDisplay.name).toBe('');
 
@@ -171,56 +171,56 @@ describe('Simple Calendar Notes Tests', () => {
     });
 
     test('On Resize',() => {
-        expect(SimpleCalendarNotes.instance.hasBeenResized).toBe(false);
+        expect(NotesApp.instance.hasBeenResized).toBe(false);
         //@ts-ignore
-        SimpleCalendarNotes.instance._onResize(new Event('click'));
-        expect(SimpleCalendarNotes.instance.hasBeenResized).toBe(true);
+        NotesApp.instance._onResize(new Event('click'));
+        expect(NotesApp.instance.hasBeenResized).toBe(true);
     });
 
     test('Set Width Height', () => {
         //@ts-ignore
-        const orig = SimpleCalendarNotes.instance.setPosition;
+        const orig = NotesApp.instance.setPosition;
         //@ts-ignore
-        SimpleCalendarNotes.instance.setPosition = jest.fn();
+        NotesApp.instance.setPosition = jest.fn();
 
         const fakeQuery = {
             find: jest.fn().mockReturnValue({outerHeight: jest.fn().mockReturnValue(false), outerWidth: jest.fn().mockReturnValue(false)})
         };
 
-        SimpleCalendarNotes.instance.hasBeenResized = true;
+        NotesApp.instance.hasBeenResized = true;
         //@ts-ignore
-        SimpleCalendarNotes.instance.setWidthHeight(fakeQuery);
+        NotesApp.instance.setWidthHeight(fakeQuery);
         //@ts-ignore
-        expect(SimpleCalendarNotes.instance.setPosition).not.toHaveBeenCalled();
+        expect(NotesApp.instance.setPosition).not.toHaveBeenCalled();
 
 
-        SimpleCalendarNotes.instance.hasBeenResized = false;
+        NotesApp.instance.hasBeenResized = false;
         //@ts-ignore
-        SimpleCalendarNotes.instance.setWidthHeight(fakeQuery);
+        NotesApp.instance.setWidthHeight(fakeQuery);
         expect(fakeQuery.find).toHaveBeenCalledTimes(1);
         //@ts-ignore
-        expect(SimpleCalendarNotes.instance.setPosition).toHaveBeenCalledTimes(1);
+        expect(NotesApp.instance.setPosition).toHaveBeenCalledTimes(1);
 
         fakeQuery.find.mockReturnValueOnce(false);
         //@ts-ignore
-        SimpleCalendarNotes.instance.setWidthHeight(fakeQuery);
+        NotesApp.instance.setWidthHeight(fakeQuery);
         expect(fakeQuery.find).toHaveBeenCalledTimes(2);
         //@ts-ignore
-        expect(SimpleCalendarNotes.instance.setPosition).toHaveBeenCalledTimes(2);
+        expect(NotesApp.instance.setPosition).toHaveBeenCalledTimes(2);
 
         fakeQuery.find.mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(441), outerWidth: jest.fn().mockReturnValue(441)});
         //@ts-ignore
-        SimpleCalendarNotes.instance.setWidthHeight(fakeQuery);
+        NotesApp.instance.setWidthHeight(fakeQuery);
         expect(fakeQuery.find).toHaveBeenCalledTimes(3);
         //@ts-ignore
-        expect(SimpleCalendarNotes.instance.setPosition).toHaveBeenCalledTimes(3);
+        expect(NotesApp.instance.setPosition).toHaveBeenCalledTimes(3);
 
         fakeQuery.find.mockReturnValueOnce({outerHeight: jest.fn().mockReturnValue(441), outerWidth: jest.fn().mockReturnValue(2000)});
         //@ts-ignore
-        SimpleCalendarNotes.instance.setWidthHeight(fakeQuery);
+        NotesApp.instance.setWidthHeight(fakeQuery);
 
         //@ts-ignore;
-        SimpleCalendarNotes.instance.setPosition = orig;
+        NotesApp.instance.setPosition = orig;
     });
 
     test('Activate Listeners', () => {
@@ -228,42 +228,42 @@ describe('Simple Calendar Notes Tests', () => {
             find: jest.fn().mockReturnValue({on: jest.fn(), outerHeight: jest.fn(), outerWidth: jest.fn()})
         };
         //@ts-ignore
-        SimpleCalendarNotes.instance.activateListeners(fakeQuery);
+        NotesApp.instance.activateListeners(fakeQuery);
         expect(fakeQuery.find).toHaveBeenCalledTimes(1);
         //@ts-ignore
         fakeQuery.length = 1;
         //@ts-ignore
-        const el = SimpleCalendarNotes.instance.element;
+        const el = NotesApp.instance.element;
         //@ts-ignore
-        SimpleCalendarNotes.instance.element = {
+        NotesApp.instance.element = {
             find: jest.fn().mockReturnValue({on: jest.fn()})
         }
         //@ts-ignore
-        SimpleCalendarNotes.instance.activateListeners(fakeQuery);
+        NotesApp.instance.activateListeners(fakeQuery);
         //@ts-ignore
-        expect(SimpleCalendarNotes.instance.element.find).toHaveBeenCalledTimes(6);
+        expect(NotesApp.instance.element.find).toHaveBeenCalledTimes(6);
 
-        SimpleCalendarNotes.instance.dateSelector = null;
+        NotesApp.instance.dateSelector = null;
         //@ts-ignore
-        SimpleCalendarNotes.instance.activateListeners(fakeQuery);
+        NotesApp.instance.activateListeners(fakeQuery);
 
         //@ts-ignore
-        SimpleCalendarNotes.instance.element = el;
+        NotesApp.instance.element = el;
     });
 
     test('Focus Title Input', () => {
         //@ts-ignore
-        const el = SimpleCalendarNotes.instance.element;
+        const el = NotesApp.instance.element;
         const focusFun = jest.fn();
         //@ts-ignore
-        SimpleCalendarNotes.instance.element = {
+        NotesApp.instance.element = {
             find: jest.fn().mockReturnValue({focus: focusFun})
         }
-        SimpleCalendarNotes.instance.focusTitleInput();
+        NotesApp.instance.focusTitleInput();
         expect(focusFun).toHaveBeenCalled();
 
         //@ts-ignore
-        SimpleCalendarNotes.instance.element = el;
+        NotesApp.instance.element = el;
     });
 
     test('Input Change', () => {
@@ -273,81 +273,81 @@ describe('Simple Calendar Notes Tests', () => {
         (<HTMLInputElement>event.currentTarget).value = '';
         (<HTMLInputElement>event.currentTarget).checked = true;
 
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
         (<HTMLElement>event.currentTarget).id = 'scNoteTitle';
         (<HTMLInputElement>event.currentTarget).value = 'qwe';
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect((<Note>SimpleCalendarNotes.instance.object).title).toBe('qwe');
+        expect((<Note>NotesApp.instance.object).title).toBe('qwe');
 
         (<HTMLElement>event.currentTarget).id = 'scNoteRepeats';
         (<HTMLInputElement>event.currentTarget).value = 'a';
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Note>SimpleCalendarNotes.instance.object).repeats).toBe(0);
+        expect((<Note>NotesApp.instance.object).repeats).toBe(0);
         (<HTMLInputElement>event.currentTarget).value = '1';
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(4);
-        expect((<Note>SimpleCalendarNotes.instance.object).repeats).toBe(1);
+        expect((<Note>NotesApp.instance.object).repeats).toBe(1);
 
         (<HTMLElement>event.currentTarget).id = 'scNoteVisibility';
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(5);
-        expect((<Note>SimpleCalendarNotes.instance.object).playerVisible ).toBe(true);
+        expect((<Note>NotesApp.instance.object).playerVisible ).toBe(true);
 
         (<HTMLElement>event.currentTarget).id = 'scNoteDateAllDay';
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(6);
-        expect((<Note>SimpleCalendarNotes.instance.object).allDay ).toBe(false);
+        expect((<Note>NotesApp.instance.object).allDay ).toBe(false);
 
         (<HTMLElement>event.currentTarget).id = 'scNotReal';
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(7);
 
         (<HTMLElement>event.currentTarget).id = '-scNotReal';
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(8);
 
         (<HTMLInputElement>event.currentTarget).name = 'scNoteCategories';
         (<HTMLInputElement>event.currentTarget).value = 'a';
         (<HTMLInputElement>event.currentTarget).checked = true;
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.noteCategories.push({name: 'a', color: 'a', textColor: 'a'});
-        SimpleCalendar.instance.activeCalendar.noteCategories.push({name: 'b', color: 'b', textColor: 'b'});
-        SimpleCalendarNotes.instance.inputChanged(event);
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.noteCategories.push({name: 'a', color: 'a', textColor: 'a'});
+        MainApp.instance.activeCalendar.noteCategories.push({name: 'b', color: 'b', textColor: 'b'});
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(9);
-        expect((<Note>SimpleCalendarNotes.instance.object).categories ).toStrictEqual(['a']);
+        expect((<Note>NotesApp.instance.object).categories ).toStrictEqual(['a']);
         (<HTMLInputElement>event.currentTarget).checked = false;
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(10);
-        expect((<Note>SimpleCalendarNotes.instance.object).categories ).toStrictEqual([]);
+        expect((<Note>NotesApp.instance.object).categories ).toStrictEqual([]);
 
         (<HTMLInputElement>event.currentTarget).name = 'scNotReal';
-        SimpleCalendarNotes.instance.inputChanged(event);
+        NotesApp.instance.inputChanged(event);
         expect(renderSpy).toHaveBeenCalledTimes(11);
     });
 
     test('Reminder Click', () => {
         const e = new Event('click');
-        SimpleCalendarNotes.instance.reminderChange(e);
+        NotesApp.instance.reminderChange(e);
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         game.user.id = 'asd';
-        SimpleCalendarNotes.instance.reminderChange(e);
+        NotesApp.instance.reminderChange(e);
         expect(renderSpy).toHaveBeenCalledTimes(2);
         expect(note.remindUsers).toStrictEqual(['asd']);
 
-        SimpleCalendarNotes.instance.reminderChange(e);
+        NotesApp.instance.reminderChange(e);
         expect(renderSpy).toHaveBeenCalledTimes(3);
         expect(note.remindUsers).toStrictEqual([]);
 
 
-        SimpleCalendarNotes.instance.viewMode = true;
+        NotesApp.instance.viewMode = true;
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce([new Note(), note]);
-        SimpleCalendarNotes.instance.reminderChange(e);
+        NotesApp.instance.reminderChange(e);
         expect(renderSpy).toHaveBeenCalledTimes(4);
         expect((<Game>game).settings.get).toHaveBeenCalledTimes(1);
 
@@ -362,62 +362,62 @@ describe('Simple Calendar Notes Tests', () => {
             visibleDate: {year: 0, month: 1, day: 1, hour: 0, minute: 0, allDay: true}
         };
 
-        SimpleCalendarNotes.instance.dateSelectorClick(selectedDate);
+        NotesApp.instance.dateSelectorClick(selectedDate);
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = new Year(0);
-        SimpleCalendarNotes.instance.dateSelectorClick(selectedDate);
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = new Year(0);
+        NotesApp.instance.dateSelectorClick(selectedDate);
         expect(renderSpy).toHaveBeenCalledTimes(2);
-        expect((<Note>SimpleCalendarNotes.instance.object).monthDisplay).toBe("1");
+        expect((<Note>NotesApp.instance.object).monthDisplay).toBe("1");
 
-        SimpleCalendar.instance.activeCalendar.year.months.push(new Month("M1", 1, 0, 30));
-        SimpleCalendarNotes.instance.dateSelectorClick(selectedDate);
+        MainApp.instance.activeCalendar.year.months.push(new Month("M1", 1, 0, 30));
+        NotesApp.instance.dateSelectorClick(selectedDate);
         expect(renderSpy).toHaveBeenCalledTimes(3);
-        expect((<Note>SimpleCalendarNotes.instance.object).monthDisplay).toBe("M1");
+        expect((<Note>NotesApp.instance.object).monthDisplay).toBe("M1");
     });
 
     test('Update Object', async () => {
         const event = new Event('click');
         const formData: any = {content: 'asd'};
         //@ts-ignore
-        await expect(SimpleCalendarNotes.instance._updateObject(event, formData)).resolves.toBe(false);
+        await expect(NotesApp.instance._updateObject(event, formData)).resolves.toBe(false);
         //@ts-ignore
-        expect(SimpleCalendarNotes.instance.object.content).toBe('asd');
+        expect(NotesApp.instance.object.content).toBe('asd');
     });
 
     test('Show App', () => {
-        SimpleCalendarNotes.instance.showApp();
+        NotesApp.instance.showApp();
         expect(renderSpy).toHaveBeenCalled();
     });
 
     test('Close App', () => {
-        jest.spyOn(SimpleCalendarNotes.instance, 'close').mockImplementation(() => {return Promise.resolve();});
-        SimpleCalendarNotes.instance.closeApp();
-        expect(SimpleCalendarNotes.instance.close).toHaveBeenCalled();
-        (<Mock>SimpleCalendarNotes.instance.close).mockResolvedValueOnce(Promise.reject("a"));
-        SimpleCalendarNotes.instance.closeApp();
+        jest.spyOn(NotesApp.instance, 'close').mockImplementation(() => {return Promise.resolve();});
+        NotesApp.instance.closeApp();
+        expect(NotesApp.instance.close).toHaveBeenCalled();
+        (<Mock>NotesApp.instance.close).mockResolvedValueOnce(Promise.reject("a"));
+        NotesApp.instance.closeApp();
         //expect(console.error).toHaveBeenCalledTimes(1);
     });
 
     test('Update App', () => {
         expect(renderSpy).not.toHaveBeenCalled();
-        SimpleCalendarNotes.instance.updateApp();
+        NotesApp.instance.updateApp();
         expect(renderSpy).toHaveBeenCalled();
     });
 
     test('Edit Button Click', () => {
         const event = new Event('click');
-        expect(SimpleCalendarNotes.instance.viewMode).toBe(false);
-        expect(SimpleCalendarNotes.instance.updateNote).toBe(false);
-        SimpleCalendarNotes.instance.editButtonClick(event);
-        expect(SimpleCalendarNotes.instance.viewMode).toBe(false);
-        expect(SimpleCalendarNotes.instance.updateNote).toBe(true);
+        expect(NotesApp.instance.viewMode).toBe(false);
+        expect(NotesApp.instance.updateNote).toBe(false);
+        NotesApp.instance.editButtonClick(event);
+        expect(NotesApp.instance.viewMode).toBe(false);
+        expect(NotesApp.instance.updateNote).toBe(true);
         expect(renderSpy).toHaveBeenCalled();
     });
 
     test('Delete Button Click', () => {
-        SimpleCalendarNotes.instance.deleteButtonClick(new Event('click'));
+        NotesApp.instance.deleteButtonClick(new Event('click'));
         //@ts-ignore
         expect(DialogRenderer).toHaveBeenCalled();
     });
@@ -425,13 +425,13 @@ describe('Simple Calendar Notes Tests', () => {
     test('Delete Confirm', () => {
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendarNotes.instance.deleteConfirm();
+        NotesApp.instance.deleteConfirm();
         expect((<Game>game).settings.get).toHaveBeenCalledTimes(1);
         expect((<Game>game).settings.set).not.toHaveBeenCalled();
 
         //@ts-ignore
-        SimpleCalendarNotes.instance.object.id = "abc123";
-        SimpleCalendarNotes.instance.deleteConfirm();
+        NotesApp.instance.object.id = "abc123";
+        NotesApp.instance.deleteConfirm();
         expect((<Game>game).settings.get).toHaveBeenCalledTimes(2);
         expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
 
@@ -439,29 +439,29 @@ describe('Simple Calendar Notes Tests', () => {
 
     test('Save Button Click', () => {
         const event = new Event('click');
-        SimpleCalendarNotes.instance.saveButtonClick(event);
+        NotesApp.instance.saveButtonClick(event);
         //@ts-ignore
         expect(ui.notifications.error).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        SimpleCalendarNotes.instance.editors['content'] = {mce: {getContent: ()=>{return '';},isNotDirty: false}};
-        (<Note>SimpleCalendarNotes.instance.object).title = 'Title';
-        SimpleCalendarNotes.instance.saveButtonClick(event);
+        NotesApp.instance.editors['content'] = {mce: {getContent: ()=>{return '';},isNotDirty: false}};
+        (<Note>NotesApp.instance.object).title = 'Title';
+        NotesApp.instance.saveButtonClick(event);
         //@ts-ignore
         expect(ui.notifications.error).toHaveBeenCalledTimes(1);
         expect((<Game>game).settings.get).toHaveBeenCalledTimes(1);
         expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        SimpleCalendarNotes.instance.editors['content'].mce = {getContent: ()=>{return 'a';},isNotDirty: false};
-        SimpleCalendarNotes.instance.updateNote = true;
-        SimpleCalendarNotes.instance.saveButtonClick(event);
+        NotesApp.instance.editors['content'].mce = {getContent: ()=>{return 'a';},isNotDirty: false};
+        NotesApp.instance.updateNote = true;
+        NotesApp.instance.saveButtonClick(event);
         expect((<Game>game).settings.get).toHaveBeenCalledTimes(2);
         expect((<Game>game).settings.set).toHaveBeenCalledTimes(2);
 
         //@ts-ignore
-        SimpleCalendarNotes.instance.object.id = "abc123";
-        SimpleCalendarNotes.instance.saveButtonClick(event);
+        NotesApp.instance.object.id = "abc123";
+        NotesApp.instance.saveButtonClick(event);
         expect((<Game>game).settings.get).toHaveBeenCalledTimes(3);
         expect((<Game>game).settings.set).toHaveBeenCalledTimes(3);
     });

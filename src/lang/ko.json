@@ -219,7 +219,6 @@
   "FSC.Configuration.General.ImportExport.Title": "가져오기/내보내기",
   "FSC.Configuration.General.ImportExport.SCConfig": "달력 가져오기/내보내기 설정",
   "FSC.Configuration.General.ImportExport.SCConfigHelp": "Simple Calendar의 현재 설정이나 다른 월드내 설정을 가져오기/내보내기 하여 공유합니다.",
-  "FSC.Configuration.General.ThirdPartyModule": "서드 파티 모듈 가져오기/내보내기",
   "FSC.Configuration.General.Permissions.Note": "여기서는 Simple Calendar과의 다양한 상호작용에 대한 권한을 파운드리 역할에 따라 조정할 수 있습니다. GM은 항상 모든 권한을 가집니다.",
   "FSC.Configuration.General.CalendarPlayerVisible": "달력 보기",
   "FSC.Configuration.General.CalendarPlayerVisibleHelp": "선택한 역할이 Simple Calendar를 열 수 있습니다.",
@@ -390,12 +389,6 @@
   "FSC.Error.Calendar.GMCurrent": "현재 날짜를 변경하려면 GM이어야 합니다.",
   "FSC.Module.Import": "Simple Calendar로 가져오기",
   "FSC.Module.NoChanges": "변경 중지",
-  "FSC.Module.CalendarWeather.Title": "Calendar/Weather 모듈이 감지되었습니다!",
-  "FSC.Module.CalendarWeather.Configuration.Message": "Calendar/Weather 모듈이 월드에서 감지되었습니다.<br/><br/>Calendar/Weather 달력 설정을 Simple Calendar로 가져오려면 \"Simple Calendar로 가져오기\"를 선택합니다, 이 기능은 Simple Calendar를 Calendar/Weather 설정에 일치시킵니다.<br/><br/>Calendar/Weather를 Simple Calendar에 일치시키려면 \"Calendar/Weather로 내보내기\"를 선택하십시오, Calendar/Weather 설정이 Simple Calendars에 적용됩니다.<br/>",
-  "FSC.Module.CalendarWeather.Export": "Calendar/Weather로 내보내기",
-  "FSC.Module.AboutTime.Title": "About-Time 모듈 감지됨",
-  "FSC.Module.AboutTime.Configuration.Message": "About-time 모듈이 월드에서 감지되었습니다.<br/><br/>About-time 달력 설정을 Simple Calendar로 가져오려면 \"Simple Calendar로 가져오기\"를 선택합니다, 이 기능은 Simple Calendar를 About-time 설정에 일치시킵니다.<br/><br/>About-time를 Simple Calendar에 일치시키려면 \"About-time으로 내보내기\"를 선택하십시오, About-time 설정이 Simple Calendars에 적용됩니다.<br/>",
-  "FSC.Module.AboutTime.Export": "About-Time로 내보내기",
   "FSC.Importer.NoFile": "가져올 파일을 선택해주십시오.",
   "FSC.Importer.InvalidSCConfig": "잘못된 파일이 업로드되었습니다. Simple Calendar에서 내보낸 JSON 파일을 업로드하여주십시오."
 }

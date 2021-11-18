@@ -8,7 +8,7 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../../__mocks__/crypto";
 
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import LeapYear from "./leap-year";
 import {LeapYearRules} from "../../constants";
 import Mock = jest.Mock;
@@ -16,7 +16,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 
 describe('Leap Year Tests', () => {
     let lr: LeapYear;
-    SimpleCalendar.instance = new SimpleCalendar();
+    MainApp.instance = new MainApp();
 
     beforeEach(() => {
         lr = new LeapYear();

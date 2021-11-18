@@ -1,8 +1,9 @@
 import {SCRenderer} from "../../interfaces";
 import Calendar from "../calendar";
-import Utilities from "../utilities";
+import {deepMerge} from "../utilities/object";
+import {GetIcon} from "../utilities/visual";
 import {Icons, TimeKeeperStatus} from "../../constants";
-import SimpleCalendar from "../applications/simple-calendar";
+import CalendarManager from "../calendar/calendar-manager";
 
 export default class Clock {
     private static defaultOptions: SCRenderer.ClockOptions = {
@@ -16,14 +17,14 @@ export default class Clock {
      * @param options
      */
     public static Render(calendar: Calendar, options: SCRenderer.ClockOptions = {id: ''}): string {
-        options = Utilities.deepMerge({}, this.defaultOptions, options);
+        options = deepMerge({}, this.defaultOptions, options);
         const status = calendar.year.time.timeKeeper.getStatus();
         options.cssClasses += ` ${status}`;
 
-        let html = `<div id="${options.id}" class="sc-clock ${options.cssClasses} ${status === TimeKeeperStatus.Started? 'animate': ''}" data-calendar="${SimpleCalendar.instance.calendars.findIndex(c => c.id === calendar.id)}">`;
+        let html = `<div id="${options.id}" class="sc-clock ${options.cssClasses} ${status === TimeKeeperStatus.Started? 'animate': ''}" data-calendar="${CalendarManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
         html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
-        html += `<div class="animated-clock">${Utilities.GetIcon(Icons.Clock)}</div>`;
+        html += `<div class="animated-clock">${GetIcon(Icons.Clock)}</div>`;
         html += this.RenderTime(calendar, options);
         html += `</div>`;
         return html;
@@ -46,8 +47,9 @@ export default class Clock {
         const clockElement = document.getElementById(clockId);
         if(clockElement){
             const calendarIndex = parseInt(clockElement.getAttribute('data-calendar') || '');
-            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < SimpleCalendar.instance.calendars.length){
-                const calendar = SimpleCalendar.instance.calendars[calendarIndex];
+            const calendars = CalendarManager.getAllCalendars();
+            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
+                const calendar = calendars[calendarIndex];
                 calendar.year.time.timeKeeper.registerUpdateListener(clockId, Clock.UpdateListener.bind(Clock, clockId))
             }
         }
@@ -63,8 +65,9 @@ export default class Clock {
         const clockElement = document.getElementById(clockId);
         if(clockElement){
             const calendarIndex = parseInt(clockElement.getAttribute('data-calendar') || '');
-            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < SimpleCalendar.instance.calendars.length){
-                const calendar = SimpleCalendar.instance.calendars[calendarIndex];
+            const calendars = CalendarManager.getAllCalendars();
+            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
+                const calendar = calendars[calendarIndex];
                 let options: SCRenderer.ClockOptions = {id:''};
                 const optionsInput = clockElement.querySelector('.render-options');
                 if(optionsInput){

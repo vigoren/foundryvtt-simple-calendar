@@ -1,10 +1,12 @@
 import Calendar from "../calendar";
 import {DayTemplate, SCRenderer} from "../../interfaces";
-import Utilities from "../utilities";
-import SimpleCalendar from "../applications/simple-calendar";
+import {deepMerge} from "../utilities/object";
+import {FormatDateTime, IsDayBetweenDates} from "../utilities/date-time";
+import {GetIcon} from "../utilities/visual";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {CalendarClickEvents, DateRangeMatch} from "../../constants";
 import RendererUtilities from "./utilities";
+import CalendarManager from "../calendar/calendar-manager";
 
 export default class CalendarFull{
 
@@ -31,7 +33,7 @@ export default class CalendarFull{
      * @param options
      */
     public static Render(calendar: Calendar, options: SCRenderer.CalendarOptions = {id: ''}): string {
-        options = Utilities.deepMerge({}, this.defaultOptions, options);
+        options = deepMerge({}, this.defaultOptions, options);
 
         let monthYearFormat = calendar.generalSettings.dateFormat.monthYear;
         if(!options.showYear){
@@ -88,7 +90,7 @@ export default class CalendarFull{
             calendarStyle = `border-color: ${season.color};`;
         }
 
-        let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${SimpleCalendar.instance.calendars.findIndex(c => c.id === calendar.id)}">`;
+        let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${CalendarManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
         html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
         //Put the header together
@@ -98,7 +100,7 @@ export default class CalendarFull{
         if(options.allowChangeMonth){
             html += `<a class="fa fa-chevron-left" title="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
         }
-        html += `<span class="month-year" data-visible="${vMonthIndex}/${vYear}">${Utilities.FormatDateTime({year: vYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, monthYearFormat)}</span>`;
+        html += `<span class="month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar)}</span>`;
         if(options.allowChangeMonth){
             html += `<a class="fa fa-chevron-right" title="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
         }
@@ -133,7 +135,7 @@ export default class CalendarFull{
                                 hour: 0,
                                 minute: 0
                             }
-                            const inBetween = Utilities.IsDayBetweenDates(checkDate, {year: ssYear, month: ssMonth, day: ssDay, allDay: true, minute: 0, hour: 0}, {year: seYear, month: seMonth, day: seDay, allDay: true, minute: 0, hour: 0});
+                            const inBetween = IsDayBetweenDates(calendar, checkDate, {year: ssYear, month: ssMonth, day: ssDay, allDay: true, minute: 0, hour: 0}, {year: seYear, month: seMonth, day: seDay, allDay: true, minute: 0, hour: 0});
                             switch (inBetween){
                                 case DateRangeMatch.Exact:
                                     dayClass += ' selected';
@@ -215,8 +217,9 @@ export default class CalendarFull{
         const calendarElement = document.getElementById(calendarId);
         if(calendarElement){
             const calendarIndex = parseInt(calendarElement.getAttribute('data-calendar') || '');
-            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < SimpleCalendar.instance.calendars.length){
-                const calendar = SimpleCalendar.instance.calendars[calendarIndex];
+            const calendars = CalendarManager.getAllCalendars();
+            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
+                const calendar = calendars[calendarIndex];
                 let options: SCRenderer.CalendarOptions = {id:''};
                 const optionsInput = calendarElement.querySelector('.render-options');
                 if(optionsInput){
@@ -379,7 +382,7 @@ export default class CalendarFull{
         for(let i = 0; i < calendar.year.moons.length; i++){
             const mp = calendar.year.moons[i].getDateMoonPhase(calendar.year, visibleYear, visibleMonth, day.numericRepresentation);
             if(mp && (mp.singleDay || day.selected || day.current)){
-                let moon = Utilities.GetIcon(mp.icon, "#000000", calendar.year.moons[i].color);
+                let moon = GetIcon(mp.icon, "#000000", calendar.year.moons[i].color);
                 html += `<span class="moon-phase ${mp.icon}" title="${calendar.year.moons[i].name} - ${mp.name}">${moon}</span>`;
             }
         }

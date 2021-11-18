@@ -11,7 +11,7 @@ import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 import "../../__mocks__/chat-message";
 
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import Calendar from "./index";
 import {GameSystems, GameWorldTimeIntegrations, SettingNames, TimeKeeperStatus} from "../../constants";
 import Note from "../note";
@@ -21,7 +21,7 @@ import Mock = jest.Mock;
 describe('Calendar Class Tests', () => {
 
     beforeEach(() => {
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
     });
 
     test('Properties', () => {
@@ -242,7 +242,7 @@ describe('Calendar Class Tests', () => {
         const cal = Calendar.LoadCalendars()[0];
         const month = new Month('M2', 2, 0, 30);
         //@ts-ignore
-        SimpleCalendar.instance.calendars = [cal];
+        MainApp.instance.calendars = [cal];
         cal.year.months.push(month);
         month.current = true;
         //@ts-ignore
@@ -275,9 +275,9 @@ describe('Calendar Class Tests', () => {
         cal.year.time.seconds = 60;
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = cal.year;
-        SimpleCalendar.instance.primary = true;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = cal.year;
+        MainApp.instance.primary = true;
         cal.setFromTime(120, 60);
         expect(cal.year.time.seconds).toBe(120);
         expect((<Game>game).settings.set).toHaveBeenCalledTimes(1);
@@ -308,9 +308,9 @@ describe('Calendar Class Tests', () => {
         cal.setFromTime(240, 60);
         expect(cal.year.time.seconds).toBe(240);
 
-        const o = SimpleCalendar.instance.element;
+        const o = MainApp.instance.element;
         //@ts-ignore
-        SimpleCalendar.instance.element = {
+        MainApp.instance.element = {
             find: jest.fn().mockReturnValue({
                 removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
                 text: jest.fn()
@@ -331,17 +331,17 @@ describe('Calendar Class Tests', () => {
         expect(cal.year.time.seconds).toBe(240);
 
         //@ts-ignore
-        SimpleCalendar.instance.element = o;
+        MainApp.instance.element = o;
 
         //@ts-ignore
         game.user.isGM = false;
     });
 
     test('Setting Update', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.settingUpdate('all');
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.settingUpdate('all');
 
-        SimpleCalendar.instance.activeCalendar.settingUpdate('a');
+        MainApp.instance.activeCalendar.settingUpdate('a');
 
         (<Game>game).settings.get = (moduleName: string, settingName: string) => {
             switch (settingName){
@@ -353,12 +353,12 @@ describe('Calendar Class Tests', () => {
                 default:
                     return null;
             }};
-        SimpleCalendar.instance.activeCalendar.settingUpdate('all');
+        MainApp.instance.activeCalendar.settingUpdate('all');
     });
 
     test('Load Current Date', () => {
         jest.spyOn(console, 'error').mockImplementation();
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         const orig = (<Game>game).settings.get;
         (<Game>game).settings.get = (moduleName: string, settingName: string) => {
             switch (settingName){
@@ -377,10 +377,10 @@ describe('Calendar Class Tests', () => {
                 default:
                     return null;
             }};
-        SimpleCalendar.instance.activeCalendar.loadCurrentDate();
-        expect(SimpleCalendar.instance.activeCalendar.year.numericRepresentation).toBe(0);
-        expect(SimpleCalendar.instance.activeCalendar.year.months[0].current).toBe(true);
-        expect(SimpleCalendar.instance.activeCalendar.year.months[0].days[1].current).toBe(true);
+        MainApp.instance.activeCalendar.loadCurrentDate();
+        expect(MainApp.instance.activeCalendar.year.numericRepresentation).toBe(0);
+        expect(MainApp.instance.activeCalendar.year.months[0].current).toBe(true);
+        expect(MainApp.instance.activeCalendar.year.months[0].days[1].current).toBe(true);
 
         (<Game>game).settings.get = (moduleName: string, settingName: string) => {
             switch (settingName){
@@ -399,10 +399,10 @@ describe('Calendar Class Tests', () => {
                 default:
                     return null;
             }};
-        SimpleCalendar.instance.activeCalendar.loadCurrentDate();
-        expect(SimpleCalendar.instance.activeCalendar.year.numericRepresentation).toBe(0);
-        expect(SimpleCalendar.instance.activeCalendar.year.months[0].current).toBe(true);
-        expect(SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current).toBe(true);
+        MainApp.instance.activeCalendar.loadCurrentDate();
+        expect(MainApp.instance.activeCalendar.year.numericRepresentation).toBe(0);
+        expect(MainApp.instance.activeCalendar.year.months[0].current).toBe(true);
+        expect(MainApp.instance.activeCalendar.year.months[0].days[0].current).toBe(true);
         expect(console.error).toHaveBeenCalledTimes(1);
 
         (<Game>game).settings.get = (moduleName: string, settingName: string) => {
@@ -422,19 +422,19 @@ describe('Calendar Class Tests', () => {
                 default:
                     return null;
             }};
-        SimpleCalendar.instance.activeCalendar.loadCurrentDate();
-        expect(SimpleCalendar.instance.activeCalendar.year.numericRepresentation).toBe(0);
-        expect(SimpleCalendar.instance.activeCalendar.year.months[0].current).toBe(true);
-        expect(SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current).toBe(true);
+        MainApp.instance.activeCalendar.loadCurrentDate();
+        expect(MainApp.instance.activeCalendar.year.numericRepresentation).toBe(0);
+        expect(MainApp.instance.activeCalendar.year.months[0].current).toBe(true);
+        expect(MainApp.instance.activeCalendar.year.months[0].days[0].current).toBe(true);
         expect(console.error).toHaveBeenCalledTimes(2);
 
         (<Game>game).settings.get = (moduleName: string, settingName: string) => {return null;};
-        SimpleCalendar.instance.activeCalendar.loadCurrentDate();
-        expect(SimpleCalendar.instance.activeCalendar.year.months[0].current).toBe(true);
-        expect(SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current).toBe(true);
+        MainApp.instance.activeCalendar.loadCurrentDate();
+        expect(MainApp.instance.activeCalendar.year.months[0].current).toBe(true);
+        expect(MainApp.instance.activeCalendar.year.months[0].days[0].current).toBe(true);
 
-        SimpleCalendar.instance.activeCalendar.year.months = [];
-        SimpleCalendar.instance.activeCalendar.loadCurrentDate();
+        MainApp.instance.activeCalendar.year.months = [];
+        MainApp.instance.activeCalendar.loadCurrentDate();
         expect(console.error).toHaveBeenCalledTimes(3);
 
         (<Game>game).settings.get = orig;

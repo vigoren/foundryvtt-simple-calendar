@@ -222,7 +222,6 @@
   "FSC.Configuration.General.ImportExport.Title": "Importar/exportar",
   "FSC.Configuration.General.ImportExport.SCConfig": "Importar/exportar configuración de calendario",
   "FSC.Configuration.General.ImportExport.SCConfigHelp": "Para exportar la configuración actual del calendario Simple Calendar y compartirlo o importarlo en otro mundo",
-  "FSC.Configuration.General.ThirdPartyModule": "Importación/exportación de módulos de terceros",
   "FSC.Configuration.General.Permissions.Note": "Aquí se pueden ajustar los permisos para varias interacciones con Simple Calendar en función de los roles de Foundry. Los Game Masters siempre tendrán estos permisos",
   "FSC.Configuration.General.CalendarPlayerVisible": "Ver calendario",
   "FSC.Configuration.General.CalendarPlayerVisibleHelp": "Los roles marcados podrán abrir Simple Calendar",
@@ -393,12 +392,6 @@
   "FSC.Error.Calendar.GMCurrent": "Debe ser un GM para cambiar la fecha actual",
   "FSC.Module.Import": "Importar a Simple Calendar",
   "FSC.Module.NoChanges": "Sin cambios",
-  "FSC.Module.CalendarWeather.Title": "¡Módulo Calendar/Weather detectado!",
-  "FSC.Module.CalendarWeather.Configuration.Message": "Hemos detectado que el módulo Calendar/Weather está habilitado para este mundo.<br/><br/>Si desea importar la configuración del calendario seleccione \"Importar a Simple Calendar\", esto hará que el Simple Calendar importe la configuración del Calendar/Weather.<br/><br/>Si desea hacer que Calendar/Weather coincida con Simple Calendar elija \"Exportar a Calendar/Weather\", esto hará que exporte la  configuración de Simple Calendars a Calendar/Weather<br/>",
-  "FSC.Module.CalendarWeather.Export": "Exportar a Calendar/Weather",
-  "FSC.Module.AboutTime.Title": "¡Módulo About-Time detectado!",
-  "FSC.Module.AboutTime.Configuration.Message": "Hemos detectado que el módulo About-Time está o ha sido habilitado para este mundo.<br/><br/>Si desea importar la configuración del calendario About-Time a Simple Calendar elija \"Importar a Simple Calendar\", esto hará que el Simple Calendar coincida con la configuración de About-Time.<br/><br/>Si desea que About-Time coincida con Simple Calendar seleccione \"Exportar a About-Time\", esto hará que los ajustes de About-Time coincidan con la configuración de Simple Calendars<br/>",
-  "FSC.Module.AboutTime.Export": "Exportar a About-Time",
   "FSC.Importer.NoFile": "Por favor, seleccione un fichero a importar",
   "FSC.Importer.InvalidSCConfig": "Fichero no válido, por favor, seleccione un fichero JSON de exportación de Simple Calendar"
 }

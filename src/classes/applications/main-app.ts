@@ -1,89 +1,48 @@
 import {Logger} from "../logging";
 import Month from "../calendar/month";
-import Note from "../note";
 import {
     AppPosition,
     NoteTemplate,
-    SCDateSelector,
     SCRenderer,
     SearchOptions,
     SimpleCalendarSocket,
     SimpleCalendarTemplate
 } from "../../interfaces";
-import {SimpleCalendarConfiguration} from "./simple-calendar-configuration";
+import {ConfigurationApp} from "./configuration-app";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {SimpleCalendarNotes} from "./simple-calendar-notes";
-import HandlebarsHelpers from "../api/handlebars-helpers";
+import {NotesApp} from "./notes-app";
 import {
     CalendarClickEvents,
     DateTimeUnits,
     GameWorldTimeIntegrations,
-    NoteRepeat,
     SettingNames,
-    SimpleCalendarHooks,
     SocketTypes,
-    Themes,
-    TimeKeeperStatus
+    Themes
 } from "../../constants";
 import Day from "../calendar/day";
-import Hook from "../api/hook";
-import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Calendar from "../calendar";
 import Renderer from "../renderer";
-import Utilities from "../utilities";
-import Sockets from "../sockets";
+import SimpleCalendar from "../simple-calendar";
+import {animateElement} from "../utilities/visual";
+import CalendarManager from "../calendar/calendar-manager";
 
 
 /**
  * Contains all functionality for displaying/updating the simple calendar
  */
-export default class SimpleCalendar extends Application{
-
-    /**
-     * Used to store a globally accessible copy of the Simple calendar class for access from event functions.
-     */
-    static instance: SimpleCalendar;
-
-    /**
-     * A list of all calendars
-     * @type {Calendar[]}
-     */
-    public calendars: Calendar[] = [];
-
-    /**
-     * Gets the current active calendar
-     */
-    public get activeCalendar(){
-        return this.calendars[0];
-    }
-
+export default class MainApp extends Application{
+    
+    private activeCalendar: Calendar;
     /**
      * The CSS class associated with the animated clock
      */
     clockClass = 'stopped';
-
-    /**
-     * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
-     * @type {boolean}
-     */
-    public primary: boolean = false;
-    /**
-     * The primary check timeout number used when checking if this user is the GM
-     * @type{number|undefined}
-     * @private
-     */
-    private primaryCheckTimeout: number | undefined;
     /**
      * If the dialog has been resized
      * @type {boolean}
      */
     hasBeenResized: boolean = false;
-    /**
-     * The new note dialog
-     * @type {SimpleCalendarNotes | undefined}
-     */
-    newNote: SimpleCalendarNotes | undefined;
 
 
     uiElementStates = {
@@ -112,15 +71,16 @@ export default class SimpleCalendar extends Application{
             }
         }
     };
-
-    sockets: Sockets;
     /**
      * Simple Calendar constructor
      */
-    constructor() {
+    constructor(calendar: Calendar) {
         super();
-        this.calendars.push(new Calendar({id: '', name: 'Gregorian'}));
-        this.sockets = new Sockets();
+        this.activeCalendar = calendar;
+    }
+
+    public updateActiveCalendar(calendar: Calendar){
+        this.activeCalendar = calendar;
     }
 
     /**
@@ -128,21 +88,12 @@ export default class SimpleCalendar extends Application{
      */
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.template = "modules/foundryvtt-simple-calendar/templates/calendar.html";
+        options.template = "modules/foundryvtt-simple-calendar/templates/main.html";
         options.title = "FSC.Title";
         options.classes = ["simple-calendar", "dark"];
         options.id = "simple-calendar-application"
         options.resizable = false;
         return options;
-    }
-
-    /**
-     * Initializes the dialogs once foundry is ready to go
-     */
-    public init(){
-        HandlebarsHelpers.Register();
-        GameSettings.RegisterSettings();
-        this.calendars = Calendar.LoadCalendars();
     }
 
     /**
@@ -152,32 +103,13 @@ export default class SimpleCalendar extends Application{
     getData(options?: Application.RenderOptions): SimpleCalendarTemplate | Promise<SimpleCalendarTemplate> {
         return {
             calendar: this.activeCalendar.toTemplate(),
-            calendarList: this.calendars.map(c => {return {id: c.id, name: c.name}}),
+            calendarList: CalendarManager.getAllCalendars().map(c => {return {id: c.id, name: c.name}}),
             clockClass: this.clockClass,
-            isPrimary: this.primary,
+            isPrimary: this.activeCalendar.primary,
             theme: Themes.dark, //TODO: Update this when we have the theme being stored,
             uiElementStates: this.uiElementStates,
             search: this.search
         };
-    }
-
-    /**
-     * Adds the calendar button to the token button list
-     * @param controls
-     */
-    public getSceneControlButtons(controls: any[]){
-        if(this.activeCalendar.canUser((<Game>game).user, this.activeCalendar.generalSettings.permissions.viewCalendar)){
-            let tokenControls = controls.find(c => c.name === "token" );
-            if(tokenControls && tokenControls.hasOwnProperty('tools')){
-                tokenControls.tools.push({
-                    name: "calendar",
-                    title: "FSC.ButtonTitle",
-                    icon: "fas fa-calendar",
-                    button: true,
-                    onClick: SimpleCalendar.instance.showApp.bind(SimpleCalendar.instance)
-                });
-            }
-        }
     }
 
     /**
@@ -277,7 +209,6 @@ export default class SimpleCalendar extends Application{
         }
     }
 
-
     /**
      * Keeps the current/selected date centered in the list of days for a month on calendars that have very long day lists
      * @param {JQuery} html
@@ -323,7 +254,7 @@ export default class SimpleCalendar extends Application{
             const appPos: AppPosition = {};
             appPos.top = parseFloat(app.style.top);
             appPos.left = parseFloat(app.style.left);
-            GameSettings.SaveObjectSetting(SettingNames.AppPosition, appPos).catch(Logger.error);
+            GameSettings.SaveObjectSetting(SettingNames.AppPosition, appPos, false).catch(Logger.error);
         }
     }
 
@@ -367,23 +298,23 @@ export default class SimpleCalendar extends Application{
                 // Calendar Action List
                 //-----------------------
                 // Calendar List Click
-                appWindow.querySelector(".sc-actions-list .calendar-list")?.addEventListener('click', SimpleCalendar.instance.toggleCalendarDrawer.bind(this, false));
+                appWindow.querySelector(".sc-actions-list .calendar-list")?.addEventListener('click', this.toggleCalendarDrawer.bind(this, false));
                 //Configuration Button Click
-                appWindow.querySelector(".sc-actions-list .configure-button")?.addEventListener('click', SimpleCalendar.instance.configurationClick.bind(this));
+                appWindow.querySelector(".sc-actions-list .configure-button")?.addEventListener('click', this.configurationClick.bind(this));
                 //Search button click
-                appWindow.querySelector(".sc-actions-list .search")?.addEventListener('click', SimpleCalendar.instance.toggleSearchDrawer.bind(this, false));
+                appWindow.querySelector(".sc-actions-list .search")?.addEventListener('click', this.toggleSearchDrawer.bind(this, false));
                 // Add new note click
-                appWindow.querySelector(".sc-actions-list .add-note")?.addEventListener('click', SimpleCalendar.instance.addNote.bind(this));
+                appWindow.querySelector(".sc-actions-list .add-note")?.addEventListener('click', this.addNote.bind(this));
                 // Note Drawer Toggle
-                appWindow.querySelector(".sc-actions-list .notes")?.addEventListener('click', SimpleCalendar.instance.toggleNoteDrawer.bind(this, false));
-                appWindow.querySelector(".sc-actions-list .reminder-notes")?.addEventListener('click', SimpleCalendar.instance.toggleNoteDrawer.bind(this, false));
+                appWindow.querySelector(".sc-actions-list .notes")?.addEventListener('click', this.toggleNoteDrawer.bind(this, false));
+                appWindow.querySelector(".sc-actions-list .reminder-notes")?.addEventListener('click', this.toggleNoteDrawer.bind(this, false));
                 // Today button click
-                appWindow.querySelector('.sc-actions-list .today')?.addEventListener('click', SimpleCalendar.instance.todayClick.bind(this));
+                appWindow.querySelector('.sc-actions-list .today')?.addEventListener('click', this.todayClick.bind(this));
                 // Set Current Date
-                appWindow.querySelector('.sc-actions-list .btn-apply')?.addEventListener('click', SimpleCalendar.instance.dateControlApply.bind(this));
+                appWindow.querySelector('.sc-actions-list .btn-apply')?.addEventListener('click', this.dateControlApply.bind(this));
                 // Real Time Clock
-                appWindow.querySelector(".time-start")?.addEventListener('click', SimpleCalendar.instance.startTime.bind(this));
-                appWindow.querySelector(".time-stop")?.addEventListener('click', SimpleCalendar.instance.stopTime.bind(this));
+                appWindow.querySelector(".time-start")?.addEventListener('click', this.startTime.bind(this));
+                appWindow.querySelector(".time-stop")?.addEventListener('click', this.stopTime.bind(this));
 
 
                 //-----------------------
@@ -391,37 +322,37 @@ export default class SimpleCalendar extends Application{
                 //-----------------------
                 // Note Click/Drag
                 appWindow.querySelectorAll(".sc-note-list .note").forEach(n => {
-                    n.addEventListener('click', SimpleCalendar.instance.viewNote.bind(this));
-                    n.addEventListener('drag', SimpleCalendar.instance.noteDrag.bind(this));
-                    n.addEventListener('dragend', SimpleCalendar.instance.noteDragEnd.bind(this));
+                    n.addEventListener('click', this.viewNote.bind(this));
+                    n.addEventListener('drag', this.noteDrag.bind(this));
+                    n.addEventListener('dragend', this.noteDragEnd.bind(this));
                 });
                 appWindow.querySelectorAll(".sc-note-search .note-list .note").forEach(n => {
-                    n.addEventListener('click', SimpleCalendar.instance.viewNote.bind(this));
+                    n.addEventListener('click', this.viewNote.bind(this));
                 });
                 //Search Click
-                appWindow.querySelector(".sc-note-search .search-box .fa-search")?.addEventListener('click', SimpleCalendar.instance.searchClick.bind(this));
+                appWindow.querySelector(".sc-note-search .search-box .fa-search")?.addEventListener('click', this.searchClick.bind(this));
                 //Search Clear Click
-                appWindow.querySelector(".sc-note-search .search-box .fa-times")?.addEventListener('click', SimpleCalendar.instance.searchClearClick.bind(this));
+                appWindow.querySelector(".sc-note-search .search-box .fa-times")?.addEventListener('click', this.searchClearClick.bind(this));
                 //Search Input Key Up
-                appWindow.querySelector(".sc-note-search .search-box input")?.addEventListener('keyup', SimpleCalendar.instance.searchBoxChange.bind(this));
+                appWindow.querySelector(".sc-note-search .search-box input")?.addEventListener('keyup', this.searchBoxChange.bind(this));
                 //Search Options Header Click
-                appWindow.querySelector(".sc-note-search .search-options-header")?.addEventListener('click', SimpleCalendar.instance.searchOptionsToggle.bind(this, false));
+                appWindow.querySelector(".sc-note-search .search-options-header")?.addEventListener('click', this.searchOptionsToggle.bind(this, false));
                 //Search Options Fields Change
                 appWindow.querySelectorAll(".sc-note-search .search-fields input").forEach(n => {
-                    n.addEventListener('change', SimpleCalendar.instance.searchOptionsFieldsChange.bind(this));
+                    n.addEventListener('change', this.searchOptionsFieldsChange.bind(this));
                 });
 
                 //-----------------------
                 // Date/Time Controls
                 //-----------------------
                 appWindow.querySelectorAll(".unit-controls .selector").forEach(s => {
-                    s.addEventListener('click', SimpleCalendar.instance.toggleUnitSelector.bind(this, false));
+                    s.addEventListener('click', this.toggleUnitSelector.bind(this, false));
                 });
                 appWindow.querySelectorAll(".unit-controls .unit-list li").forEach(c => {
-                    c.addEventListener('click', SimpleCalendar.instance.changeUnit.bind(this));
+                    c.addEventListener('click', this.changeUnit.bind(this));
                 });
                 appWindow.querySelectorAll(".controls .control").forEach(c => {
-                    c.addEventListener('click', SimpleCalendar.instance.timeUnitClick.bind(this));
+                    c.addEventListener('click', this.timeUnitClick.bind(this));
                 });
             }
         }
@@ -438,7 +369,7 @@ export default class SimpleCalendar extends Application{
         }
         const cList = document.querySelector(".sc-calendar-list");
         if(cList){
-            this.uiElementStates.calendarDrawerOpen = Utilities.animateElement(cList, 500, forceHide);
+            this.uiElementStates.calendarDrawerOpen = animateElement(cList, 500, forceHide);
         }
     }
 
@@ -453,7 +384,7 @@ export default class SimpleCalendar extends Application{
         }
         const noteList = document.querySelector(".sc-note-list");
         if(noteList){
-            this.uiElementStates.noteDrawerOpen = Utilities.animateElement(noteList, 500, forceHide);
+            this.uiElementStates.noteDrawerOpen = animateElement(noteList, 500, forceHide);
         }
     }
 
@@ -469,7 +400,7 @@ export default class SimpleCalendar extends Application{
         this.searchOptionsToggle(true);
         const noteList = document.querySelector(".sc-note-search");
         if(noteList){
-            this.uiElementStates.searchDrawerOpen = Utilities.animateElement(noteList, 500, forceHide);
+            this.uiElementStates.searchDrawerOpen = animateElement(noteList, 500, forceHide);
         }
     }
 
@@ -480,7 +411,7 @@ export default class SimpleCalendar extends Application{
     public toggleUnitSelector(forceHide: boolean = false){
         let unitList = document.querySelector(`.sc-main-wrapper .unit-list`);
         if(unitList){
-            this.uiElementStates.dateTimeUnitOpen = Utilities.animateElement(unitList, 500, forceHide);
+            this.uiElementStates.dateTimeUnitOpen = animateElement(unitList, 500, forceHide);
         }
     }
 
@@ -606,7 +537,7 @@ export default class SimpleCalendar extends Application{
         const dataAmount = target.getAttribute('data-amount');
         if(dataType && dataAmount){
             const amount = parseInt(dataAmount);
-            if(!GameSettings.IsGm() || !this.primary){
+            if(!GameSettings.IsGm() || !this.activeCalendar.primary){
                 if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                     GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
                 } else {
@@ -632,14 +563,14 @@ export default class SimpleCalendar extends Application{
                 }
 
                 if(change){
-                    GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
+                    this.activeCalendar.saveCurrentDate().catch(Logger.error);
                     //Sync the current time on apply, this will propagate to other modules
                     this.activeCalendar.syncTime(true).catch(Logger.error);
                 }
             }
         } else if(dataType && (dataType === 'dawn' || dataType === 'midday' || dataType === 'dusk' || dataType === 'midnight')){
             this.timeOfDayControlClick(dataType);
-            GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
+            this.activeCalendar.saveCurrentDate().catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
             this.activeCalendar.syncTime(true).catch(Logger.error);
         }
@@ -745,7 +676,7 @@ export default class SimpleCalendar extends Application{
                 }
             }
             if(!validSelection){
-                GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
+                this.activeCalendar.saveCurrentDate().catch(Logger.error);
                 //Sync the current time on apply, this will propagate to other modules
                 this.activeCalendar.syncTime().catch(Logger.error);
             }
@@ -761,7 +692,7 @@ export default class SimpleCalendar extends Application{
      * @param {Day} day They day object to set as current
      */
     public setCurrentDate(year: number, month: Month, day: Day){
-        if(!GameSettings.IsGm() || !this.primary){
+        if(!GameSettings.IsGm() || !this.activeCalendar.primary){
             if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                 GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
             } else {
@@ -776,7 +707,7 @@ export default class SimpleCalendar extends Application{
             month.selected = false;
             day.current = true;
             day.selected = false;
-            GameSettings.SaveCurrentDate(this.activeCalendar.year).catch(Logger.error);
+            this.activeCalendar.saveCurrentDate().catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
             this.activeCalendar.syncTime().catch(Logger.error);
         }
@@ -826,7 +757,7 @@ export default class SimpleCalendar extends Application{
     public searchOptionsToggle(forceClose: boolean = false){
         let so = document.querySelector(`.sc-note-search .search-options`);
         if(so){
-            this.uiElementStates.searchOptionsOpen = Utilities.animateElement(so, 500, forceClose);
+            this.uiElementStates.searchOptionsOpen = animateElement(so, 500, forceClose);
         }
     }
 
@@ -850,11 +781,11 @@ export default class SimpleCalendar extends Application{
      */
     public configurationClick(e: Event) {
         if(GameSettings.IsGm()){
-            if(!SimpleCalendarConfiguration.instance || (SimpleCalendarConfiguration.instance && !SimpleCalendarConfiguration.instance.rendered)){
-                SimpleCalendarConfiguration.instance = new SimpleCalendarConfiguration(this.activeCalendar.clone());
-                SimpleCalendarConfiguration.instance.showApp();
+            if(!ConfigurationApp.instance || (ConfigurationApp.instance && !ConfigurationApp.instance.rendered)){
+                ConfigurationApp.instance = new ConfigurationApp(this.activeCalendar.clone());
+                ConfigurationApp.instance.showApp();
             } else {
-                SimpleCalendarConfiguration.instance.bringToTop();
+                ConfigurationApp.instance.bringToTop();
             }
         } else {
             GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Calendar.GMConfigure"), 'warn');
@@ -870,30 +801,7 @@ export default class SimpleCalendar extends Application{
         if(!(<Game>game).users?.find(u => u.isGM && u.active)){
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
         } else {
-            const currentMonth = this.activeCalendar.year.getMonth('selected') || this.activeCalendar.year.getMonth();
-            if(currentMonth){
-                const currentDay = currentMonth.getDay('selected') || currentMonth.getDay();
-                if(currentDay){
-                    const year = this.activeCalendar.year.selectedYear || this.activeCalendar.year.numericRepresentation;
-                    const newNote = new Note();
-                    newNote.initialize(year, currentMonth.numericRepresentation, currentDay.numericRepresentation, currentMonth.name);
-                    if(this.newNote !== undefined && !this.newNote.rendered){
-                        this.newNote.closeApp();
-                        this.newNote = undefined;
-                    }
-                    if(this.newNote === undefined){
-                        this.newNote = new SimpleCalendarNotes(newNote);
-                        this.newNote.showApp();
-                    } else {
-                        this.newNote.bringToTop();
-                        this.newNote.maximize().catch(Logger.error);
-                    }
-                } else {
-                    GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedDay"), 'warn');
-                }
-            } else {
-                GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedMonth"), 'warn');
-            }
+            SimpleCalendar.instance.openNewNoteApp();
         }
     }
 
@@ -907,8 +815,8 @@ export default class SimpleCalendar extends Application{
         if(dataIndex){
             const note = this.activeCalendar.notes.find(n=> n.id === dataIndex);
             if(note){
-                SimpleCalendarNotes.instance = new SimpleCalendarNotes(note, true);
-                SimpleCalendarNotes.instance.showApp();
+                NotesApp.instance = new NotesApp(note, true);
+                NotesApp.instance.showApp();
             }
         } else {
             Logger.error('No Data index on note element found.');
@@ -922,104 +830,6 @@ export default class SimpleCalendar extends Application{
     public updateApp(){
         if(this.rendered){
             this.render(false, {});
-        }
-    }
-
-    /**
-     * Called when a setting is updated, refreshes the configurations for all types
-     * @param {boolean} [update=false] If to update the display
-     * @param {string} [type='all']
-     */
-    public settingUpdate(update: boolean = false, type: string = 'all'){
-        this.activeCalendar.settingUpdate(type);
-        if(update && this.activeCalendar.year.time.timeKeeper.getStatus() !== TimeKeeperStatus.Started ) {
-            this.updateApp();
-        }
-    }
-
-    //---------------------------
-    // Foundry Hooks
-    //---------------------------
-
-    /**
-     * Triggered when the games pause state is changed.
-     * @param paused
-     */
-    gamePaused(paused: boolean){
-        if(this.activeCalendar.year.time.unifyGameAndClockPause){
-            if(!(<Game>game).paused){
-                this.activeCalendar.year.time.timeKeeper.start(true);
-            } else {
-                this.activeCalendar.year.time.timeKeeper.setStatus(TimeKeeperStatus.Paused);
-            }
-        }
-    }
-
-    /**
-     * Triggered when anything updates the game world time
-     * @param {number} newTime The total time in seconds
-     * @param {number} delta How much the newTime has changed from the old time in seconds
-     */
-    worldTimeUpdate(newTime: number, delta: number){
-        Logger.debug(`World Time Update, new time: ${newTime}. Delta of: ${delta}.`);
-        this.activeCalendar.setFromTime(newTime, delta);
-    }
-
-    /**
-     * Triggered when a combatant is added to a combat.
-     * @param {Combatant} combatant The combatant details
-     * @param {object} options Options associated with creating the combatant
-     * @param {string} id The ID of the creation
-     */
-    createCombatant(combatant: Combatant, options: any, id: string){
-        const combatList = (<Game>game).combats;
-        //If combat is running or if the combat list is undefined, skip this check
-        if(!this.activeCalendar.year.time.combatRunning && combatList){
-            const combat = combatList.find(c => c.id === combatant.parent?.id);
-            const scenes = (<Game>game).scenes;
-            const activeScene = scenes? scenes.active? scenes.active.id : null : null;
-            //If the combat has started and the current active scene is the scene for the combat then set that there is a combat running.
-            if(combat && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
-                this.activeCalendar.year.time.combatRunning = true;
-            }
-        }
-    }
-
-    /**
-     * Triggered when a combat is create/started/turn advanced
-     * @param {Combat} combat The specific combat data
-     * @param {RoundData} round The current turns data
-     * @param {Object} time The amount of time that has advanced
-     */
-    combatUpdate(combat: Combat, round: RoundData, time: any){
-        Logger.debug('Combat Update');
-        const scenes = (<Game>game).scenes;
-        const activeScene = scenes? scenes.active? scenes.active.id : null : null;
-        if(combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
-            this.activeCalendar.year.time.combatRunning = true;
-
-            //If time does not have the advanceTime property the combat was just started
-            if(time && time.hasOwnProperty('advanceTime')){
-                if(time.advanceTime !== 0){
-                    Logger.debug('Combat Change Triggered');
-                    this.activeCalendar.year.combatChangeTriggered = true;
-                } else {
-                    // System does not advance time when combat rounds change, check our own settings
-                    this.activeCalendar.year.processOwnCombatRoundTime(combat);
-                }
-            }
-        }
-    }
-
-    /**
-     * Triggered when a combat is finished and removed
-     */
-    combatDelete(combat: Combat){
-        Logger.debug('Combat Ended');
-        const scenes = (<Game>game).scenes;
-        const activeScene = scenes? scenes.active? scenes.active.id : null : null;
-        if(activeScene !== null && combat.scene && combat.scene.id === activeScene){
-            this.activeCalendar.year.time.combatRunning = false;
         }
     }
 
@@ -1038,6 +848,7 @@ export default class SimpleCalendar extends Application{
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
         } else if(this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
             this.activeCalendar.year.time.timeKeeper.start();
+            this.clockClass = this.activeCalendar.year.time.timeKeeper.getStatus();
             this.updateApp();
         }
     }
@@ -1047,6 +858,8 @@ export default class SimpleCalendar extends Application{
      */
     stopTime(){
         this.activeCalendar.year.time.timeKeeper.stop();
+        this.clockClass = this.activeCalendar.year.time.timeKeeper.getStatus();
+        this.updateApp();
     }
 
     /**
@@ -1087,90 +900,14 @@ export default class SimpleCalendar extends Application{
             id = selectedItem.getAttribute('data-index');
         selectedItem.classList.remove('drag-active');
         if(id && list){
-            const dayNotes = this.activeCalendar.getNotesForDay();
+            const noteIDOrder: string[] = [];
             for(let i = 0; i < list.children.length; i++){
                 const cid = list.children[i].getAttribute('data-index');
-                const n = dayNotes.find(n => n.id === cid);
-                if(n){
-                    n.order = i;
+                if(cid){
+                    noteIDOrder.push(cid);
                 }
             }
-            let currentNotes = GameSettings.LoadNotes().map(n => {
-                const note = new Note();
-                note.loadFromSettings(n);
-                return note;
-            });
-            currentNotes = currentNotes.map(n => {
-                const dayNote = dayNotes.find(dn => dn.id === n.id);
-                return dayNote? dayNote : n;
-            });
-            GameSettings.SaveNotes(currentNotes).catch(Logger.error);
-        }
-    }
-
-    /**
-     * Checks to see if any note reminders needs to be sent to players for the current date.
-     * @param {boolean} [justTimeChange=false] If only the time (hour, minute, second) has changed or not
-     */
-    checkNoteReminders(justTimeChange: boolean = false){
-        const userID = GameSettings.UserID();
-        const noteRemindersForPlayer = this.activeCalendar.notes.filter(n => n.remindUsers.indexOf(userID) > -1);
-        if(noteRemindersForPlayer.length){
-            const currentMonth = this.activeCalendar.year.getMonth();
-            const currentDay = currentMonth? currentMonth.getDay() : this.activeCalendar.year.months[0].days[0];
-            const time = this.activeCalendar.year.time.getCurrentTime();
-            const currentHour = time.hour;
-            const currentMinute = time.minute;
-
-            const currentDate: SCDateSelector.Date = {
-                year: this.activeCalendar.year.numericRepresentation,
-                month: currentMonth? currentMonth.numericRepresentation : 1,
-                day: currentDay? currentDay.numericRepresentation : 1,
-                hour: currentHour,
-                minute: currentMinute,
-                allDay: false
-            };
-            const noteRemindersCurrentDay = noteRemindersForPlayer.filter(n => {
-                if(n.repeats !== NoteRepeat.Never && !justTimeChange){
-                    if(n.repeats === NoteRepeat.Yearly){
-                        if(n.year !== currentDate.year){
-                            n.reminderSent = false;
-                        }
-                    } else if(n.repeats === NoteRepeat.Monthly){
-                        if(n.year !== currentDate.year || n.month !== currentDate.month || (n.month === currentDate.month && n.year !== currentDate.year)){
-                            n.reminderSent = false;
-                        }
-                    } else if(n.repeats === NoteRepeat.Weekly){
-                        if(n.year !== currentDate.year || n.month !== currentDate.month || n.day !== currentDate.day || (n.day === currentDate.day && (n.month !== currentDate.month || n.year !== currentDate.year))){
-                            n.reminderSent = false;
-                        }
-                    }
-                }
-                //Check if the reminder has been sent or not and if the new day is between the notes start/end date
-                if(!n.reminderSent && n.isVisible(currentDate.year, currentDate.month, currentDate.day)){
-                    if(n.allDay){
-                        return true;
-                    } else if(currentDate.hour === n.hour){
-                        if(currentDate.minute >= n.minute){
-                            return true;
-                        }
-                    } else if(currentDate.hour > n.hour){
-                        return true;
-                    } else if(currentDate.year > n.year || currentDate.month > n.month || currentDate.day > n.day){
-                        return true;
-                    }
-                }
-                return false;
-            });
-            for(let i = 0; i < noteRemindersCurrentDay.length; i++){
-                const note = noteRemindersCurrentDay[i];
-                ChatMessage.create({
-                    speaker: {alias: "Simple Calendar Reminder"},
-                    whisper: [userID],
-                    content: `<div style="margin-bottom: 0.5rem;font-size:0.75rem">${note.display()}</div><h2>${note.title}</h2>${note.content}`
-                }).catch(Logger.error);
-                note.reminderSent = true;
-            }
+            this.activeCalendar.reorderNotesOnDay(noteIDOrder);
         }
     }
 

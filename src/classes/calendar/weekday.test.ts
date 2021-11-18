@@ -8,13 +8,13 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../../__mocks__/crypto";
 import "../../__mocks__/hooks";
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import {Weekday} from "./weekday";
 
 describe('Weekday Class Tests', () => {
     let weekday: Weekday;
     let weekday2: Weekday
-    SimpleCalendar.instance = new SimpleCalendar();
+    MainApp.instance = new MainApp();
 
     beforeEach(() => {
         weekday = new Weekday(0, '');

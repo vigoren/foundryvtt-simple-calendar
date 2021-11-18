@@ -9,7 +9,7 @@ import "../../__mocks__/event";
 import "../../../__mocks__/crypto";
 import "../../__mocks__/hooks";
 import Time from "./time";
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 
 describe('Time Tests', () => {
     let t: Time;
@@ -70,7 +70,7 @@ describe('Time Tests', () => {
     });
 
     test('To String', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         expect(t.toString()).toBe('00:00:00');
     });
 

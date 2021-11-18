@@ -11,13 +11,13 @@ import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 import "../../__mocks__/chat-message";
 
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import ConfigurationItemBase from "./configuration-item-base";
 
 describe('Configuration Item Base Class Tests', () => {
 
     beforeEach(() => {
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
     });
 
     test('Properties', () => {

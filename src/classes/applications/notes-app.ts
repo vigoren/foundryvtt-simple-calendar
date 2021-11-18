@@ -1,12 +1,14 @@
 import Note from '../note';
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import SimpleCalendar from "./simple-calendar";
-import DateSelector from "../date-selector";
-import {NoteRepeats, SCDateSelector} from "../../interfaces";
-import Utilities from "../utilities";
+import SimpleCalendar from "../simple-calendar";
+import DateSelectorManager from "../date-selector/date-selector-manager";
+import {NoteRepeats, NoteConfig, SCDateSelector} from "../../interfaces";
+import {SettingNames} from "../../constants";
+import {DaysBetweenDates} from "../utilities/date-time";
+import {GetContrastColor} from "../utilities/visual";
 
-export class SimpleCalendarNotes extends FormApplication {
+export class NotesApp extends FormApplication {
     /**
      * If we are editing an existing note
      * @type{boolean}
@@ -32,7 +34,7 @@ export class SimpleCalendarNotes extends FormApplication {
     /**
      * Used to store a globally accessible copy of the Simple calendar Notes class for access from event functions.
      */
-    static instance: SimpleCalendarNotes;
+    static instance: NotesApp;
 
     /**
      * The Calendar Notes constructor
@@ -112,7 +114,7 @@ export class SimpleCalendarNotes extends FormApplication {
             timeSelected: !(<Note>this.object).allDay
         };
 
-        const daysBetween = Utilities.DaysBetweenDates({year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, seconds: 0},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, seconds: 0});
+        const daysBetween = DaysBetweenDates(SimpleCalendar.instance.activeCalendar, {year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, seconds: 0},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, seconds: 0});
 
         if(daysBetween >= SimpleCalendar.instance.activeCalendar.year.totalNumberOfDays(false, true)){
             data.repeatOptions = {0: 'FSC.Notes.Repeat.Never'};
@@ -136,7 +138,7 @@ export class SimpleCalendarNotes extends FormApplication {
                 data.authDisplay = {
                     name: user.name? user.name : '',
                     color: user.data.color? user.data.color : '',
-                    textColor: Utilities.GetContrastColor(user.data.color? user.data.color : '')
+                    textColor: GetContrastColor(user.data.color? user.data.color : '')
                 }
             }
         }
@@ -197,7 +199,7 @@ export class SimpleCalendarNotes extends FormApplication {
         super.activateListeners(html);
         this.setWidthHeight(html);
         if(html.hasOwnProperty("length")) {
-            DateSelector.ActivateSelector(this.dateSelectorId);
+            DateSelectorManager.ActivateSelector(this.dateSelectorId);
             (<JQuery>this.element).find('#scNoteTitle').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteRepeats').on('change', this.inputChanged.bind(this));
             (<JQuery>this.element).find('#scNoteVisibility').on('change', this.inputChanged.bind(this));
@@ -281,13 +283,13 @@ export class SimpleCalendarNotes extends FormApplication {
             (<Note>this.object).remindUsers.splice(userIndex, 1);
         }
         if(this.viewMode){
-            let currentNotes = GameSettings.LoadNotes().map(n => {
+            let currentNotes = (<NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
                 const note = new Note();
                 note.loadFromSettings(n);
                 return note;
             });
             currentNotes = currentNotes.map(n => n.id === (<Note>this.object).id? (<Note>this.object) : n);
-            GameSettings.SaveNotes(currentNotes).catch(Logger.error);
+            GameSettings.SaveObjectSetting(SettingNames.Notes, currentNotes.map(n => n.toConfig())).catch(Logger.error);
         }
         this.updateApp();
     }
@@ -341,7 +343,7 @@ export class SimpleCalendarNotes extends FormApplication {
      * @param options
      */
     close(options?: FormApplication.CloseOptions): Promise<void> {
-        DateSelector.RemoveSelector(this.dateSelectorId);
+        DateSelectorManager.RemoveSelector(this.dateSelectorId);
         return super.close(options);
     }
 
@@ -407,7 +409,7 @@ export class SimpleCalendarNotes extends FormApplication {
      * Called when the user confirms the deletion of a note.
      */
     public async deleteConfirm(){
-        const currentNotes = GameSettings.LoadNotes().map(n => {
+        const currentNotes = (<NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
             const note = new Note();
             note.loadFromSettings(n);
             return note;
@@ -415,7 +417,7 @@ export class SimpleCalendarNotes extends FormApplication {
         const indexToDelete = currentNotes.map(n => n.id).indexOf((<Note>this.object).id);
         if(indexToDelete > -1 && indexToDelete < currentNotes.length){
             currentNotes.splice(indexToDelete, 1);
-            await GameSettings.SaveNotes(currentNotes).catch(Logger.error);
+            await GameSettings.SaveObjectSetting(SettingNames.Notes, currentNotes.map(n => n.toConfig())).catch(Logger.error);
             this.closeApp();
         }
     }
@@ -434,7 +436,7 @@ export class SimpleCalendarNotes extends FormApplication {
             }
         }
         if((<Note>this.object).title){
-            let currentNotes = GameSettings.LoadNotes().map(n => {
+            let currentNotes = (<NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
                 const note = new Note();
                 note.loadFromSettings(n);
                 return note;
@@ -444,7 +446,7 @@ export class SimpleCalendarNotes extends FormApplication {
             } else {
                 currentNotes.push(<Note>this.object);
             }
-            await GameSettings.SaveNotes(currentNotes).catch(Logger.error);
+            await GameSettings.SaveObjectSetting(SettingNames.Notes, currentNotes.map(n => n.toConfig())).catch(Logger.error);
             this.closeApp();
         } else {
             GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoTitle"), 'error');

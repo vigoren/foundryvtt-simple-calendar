@@ -2,6 +2,7 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 
 module.exports = {
@@ -16,15 +17,23 @@ module.exports = {
         minimizer: [new TerserPlugin({
             extractComments: false, // To avoid separate file with licenses.
             terserOptions: {
+                ecma: '2020',
                 mangle: true,
                 sourceMap: false,
+                module: true,
                 //keep_classnames: /^SCNoteCollection$|^SCNoteSheetShim$|^SCNoteSheet$|^SCNote$/,
+                keep_classnames: false,
                 keep_fnames: false,
                 toplevel: true,
             },
         })]
     },
     plugins: [
+        new CircularDependencyPlugin({
+            exclude: /__mocks__|docs|dist|node_modules|\.test\.ts/,
+            include: /src/,
+            failOnError: false,
+        }),
         new CopyPlugin({
             patterns: [
                 { context: './src/', from : '**/*.json', to : './' },
@@ -32,7 +41,8 @@ module.exports = {
                 { context: './', from : 'README.md', to : './' },
                 { context: './', from : 'LICENSE', to : './' },
                 { context: './docs', from : 'Configuration.md', to : './docs' },
-                { context: './docs', from : 'Macros.md', to : './docs' },
+                { context: './docs', from : 'API.md', to : './docs' },
+                { context: './docs', from : 'Hooks.md', to : './docs' },
                 { context: './docs', from : 'Notes.md', to : './docs' },
                 { context: './docs', from : 'UpdatingDateTime.md', to : './docs' },
             ]

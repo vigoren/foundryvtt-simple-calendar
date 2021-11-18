@@ -10,14 +10,14 @@ import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 import "../../../__mocks__/crypto";
 
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import Year from "../calendar/year";
 import PredefinedCalendar from "./predefined-calendar";
 import {LeapYearRules, PredefinedCalendars} from "../../constants";
 
 describe('Predefined Calendar Tests', () => {
     let y: Year;
-    SimpleCalendar.instance = new SimpleCalendar();
+    MainApp.instance = new MainApp();
 
 
     beforeEach(()=>{

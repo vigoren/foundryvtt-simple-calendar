@@ -1,9 +1,10 @@
+import SimpleCalendar from "../simple-calendar";
 import Month from "./month";
 import {
     DateTime,
     DateTimeParts,
     DayTemplate,
-    PermissionMatrix, YearConfig,
+    YearConfig,
     YearTemplate
 } from "../../interfaces";
 import {Logger} from "../logging";
@@ -15,12 +16,12 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import Season from "./season";
 import Moon from "./moon";
 import Note from "../note";
-import SimpleCalendar from "../applications/simple-calendar";
 import PF2E from "../systems/pf2e";
-import Utilities from "../utilities";
 import Day from "./day";
-import API from "../api";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
+import {randomHash} from "../utilities/string";
+import {ToSeconds, DaysBetweenDates, DateToTimestamp} from "../utilities/date-time";
+import {GetIcon} from "../utilities/visual";
 
 /**
  * Class for representing a year
@@ -167,7 +168,7 @@ export default class Year extends ConfigurationItemBase {
                             name: this.moons[i].name,
                             color: this.moons[i].color,
                             phase: this.moons[i].getMoonPhase(this, 'current'),
-                            iconSVG: Utilities.GetIcon(phase.icon, "#000000", this.moons[i].color)
+                            iconSVG: GetIcon(phase.icon, "#000000", this.moons[i].color)
                         });
                     }
                 }
@@ -601,9 +602,11 @@ export default class Year extends ConfigurationItemBase {
      */
     dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
-            const pf2eAdjust = PF2E.weekdayAdjust();
-            if(pf2eAdjust !== undefined){
-                this.firstWeekday = pf2eAdjust;
+            if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
+                const pf2eAdjust = PF2E.weekdayAdjust();
+                if(pf2eAdjust !== undefined){
+                    this.firstWeekday = pf2eAdjust;
+                }
             }
 
             const month = this.months.find(m => m.numericRepresentation === targetMonth);
@@ -712,7 +715,7 @@ export default class Year extends ConfigurationItemBase {
         const month = this.getMonth();
         if(month){
             const day = month.getDay();
-            totalSeconds = Utilities.ToSeconds(this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true, this);
+            totalSeconds = ToSeconds(SimpleCalendar.instance.activeCalendar, this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true);
         }
         return totalSeconds;
     }
@@ -949,7 +952,7 @@ export default class Year extends ConfigurationItemBase {
             if(this.yearNamingRule === YearNamingRules.Repeat){
                 nameIndex = (((yearToUse - this.yearNamesStart) % this.yearNames.length) + this.yearNames.length) % this.yearNames.length;
             } else if(this.yearNamingRule === YearNamingRules.Random){
-                const yearHash = Utilities.randomHash(`${yearToUse}-AbCxYz`);
+                const yearHash = randomHash(`${yearToUse}-AbCxYz`);
                 nameIndex = (((yearHash - this.yearNamesStart) % this.yearNames.length) + this.yearNames.length) % this.yearNames.length;
             } else {
                 nameIndex = Math.abs(this.yearNamesStart - yearToUse);
@@ -979,8 +982,8 @@ export default class Year extends ConfigurationItemBase {
             this.updateTime(parsedDate);
             // If the current player is the GM then we need to save this new value to the database
             // Since the current date is updated this will trigger an update on all players as well
-            if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
-                GameSettings.SaveCurrentDate(this).catch(Logger.error);
+            if(GameSettings.IsGm() && SimpleCalendar.instance.activeCalendar.primary){
+                SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
             }
         }
     }
@@ -1025,11 +1028,11 @@ export default class Year extends ConfigurationItemBase {
                 }
                 nextSeasonYear = seasonYear + 1
             }
-            const daysBetweenSeasonStartAndDay = Utilities.DaysBetweenDates(
+            const daysBetweenSeasonStartAndDay = DaysBetweenDates(SimpleCalendar.instance.activeCalendar,
                 { year: seasonYear, month: season.startingMonth, day: season.startingDay, hour: 0, minute: 0, seconds: 0 },
                 { year: year, month: this.months[monthIndex].numericRepresentation, day: this.months[monthIndex].days[dayIndex].numericRepresentation, hour: 0, minute: 0, seconds: 0 }
             );
-            const daysBetweenSeasons = Utilities.DaysBetweenDates(
+            const daysBetweenSeasons = DaysBetweenDates(SimpleCalendar.instance.activeCalendar,
                 { year: seasonYear, month: season.startingMonth, day: season.startingDay, hour: 0, minute: 0, seconds: 0 },
                 { year: nextSeasonYear, month: nextSeason.startingMonth, day: nextSeason.startingDay, hour: 0, minute: 0, seconds: 0 }
             );
@@ -1038,7 +1041,7 @@ export default class Year extends ConfigurationItemBase {
             const sunriseChangeForDay = daysBetweenSeasonStartAndDay * averageChangePerDay;
             const finalSunriseTime = Math.round((sunrise? season.sunriseTime : season.sunsetTime) + sunriseChangeForDay);
             if(calculateTimestamp){
-                return API.dateToTimestamp({ year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, second: 0 }) + finalSunriseTime;
+                return DateToTimestamp({ year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, second: 0 }, SimpleCalendar.instance.activeCalendar) + finalSunriseTime;
             } else {
                 return finalSunriseTime;
             }

@@ -10,12 +10,12 @@ import "../../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import UserPermissions from "./user-permissions";
 
 describe('User Permissions Class Tests', () => {
     let up: UserPermissions;
-    SimpleCalendar.instance = new SimpleCalendar();
+    MainApp.instance = new MainApp();
 
     beforeEach(() => {
         up = new UserPermissions();

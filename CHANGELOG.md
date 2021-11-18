@@ -8,6 +8,12 @@ I am very happy to announce the release of version 2 of Simple Calendar! This up
 
 I am happy to say that Simple Calendar has finally had a big visual update. This touches on every aspect of the calendar, configuration and notes.
 
+#### Themes
+
+There are now different themes that can be applied to Simple Calendar to change how it looks! This release includes a Light and Dark theme. Additional themes or system specific themes may be added as time goes on.
+
+I have tried to make sure that the light and dark themes are still easily usable for individuals with color blindness.
+
 #### Main Calendar
 
 This section of the module has been 100% redesigned so that the full version is much more compact and easy to use. It features:
@@ -27,11 +33,6 @@ This section of the module has been 100% redesigned so that the full version is 
 
 #### Notes Dialog
 
-#### Themes
-
-There are now different themes that can be applied to Simple Calendar to change how it looks! This release includes a Light and Dark theme. Additional themes or system specific themes may be added as time goes on.
-
-I have tried to make sure that the light and dark themes are still easily usable for individuals with color blindness.
 
 ### Client Settings
 
@@ -55,6 +56,7 @@ The date/time selector that is used when choosing a date for notes or specifying
 
 The searching for notes has been improved since the initial quick search added. The improvements are:
 
+- Search is part of the main calendar display instead of its own dialog now.
 - Hitting enter on the search text box will now trigger a search.
 - Note author is now also searched against. 
 - Note categories are now also searched against.
@@ -75,18 +77,24 @@ The searching for notes has been improved since the initial quick search added. 
 - Added a new function `SimpleCalendar.api.activateFullCalendarListeners()` ([docs](./docs/API.md#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick)) that is used to activate all the basic interactivity for calendars rendered with the [sc-full-calendar](./docs/API.md#sc-full-calendar) Handlebar helper.
 - Added a new Handlebar helper [sc-date-selector](./docs/API.md#sc-date-selector) that can be used to render the custom date selector interface that Simple Calendar uses for picking the date(s) for notes, seasons starting month and seasons sunrise/sunset times.
 - Added a new section `SimpleCalendar.api.DateSelector` ([docs](./docs/API.md#simplecalendarapidateselector)) that contains functions for creating, removing and enabling interactivity for date selectors.
-
-### Structural Changes for Multi Calendar Support
-
-This change includes a large back end change to how calendars are rendered. All generation of full calendar displays (main application, the date/time selectors and the new Handlebar helper) have been updated to use a brand-new rendering class. This change makes it very easy for Simple Calendar to display 1 or more calendar views at the same time or switch the calendar being shown, which will be very important when multi calendar support is introduced.
-
-Users should not notice any real change to how the different calendars function. Overall the different calendars should feel more consistent with one another for interactivity. 
-
-I have taken a lot of time and care to ensure that no functionality was broken in this update, but as with any big change the introduction of bugs could be possible so please let me know if you find any!
+- With the release of Foundry v9 depreciated properties from the [Date Object](./docs/API.md#date-object) have been removed:
+  - **dayDisplay**: Please use display.day instead.
+  - **monthName**: Please use display.monthName instead.
+  - **yearName**: Please use display.yearName instead.
+  - **yearPrefix**: Please use display.yearPrefix instead.
+  - **yearPostfix**: Please use display.yearPostfix instead.
+- With the release of Foundry v9 depreciated functions from the SimpleCalendar class
+  - `SimpleCalendar.show();`: Please use `SimpleCalendar.api.showCalendar();`
+  - `SimpleCalendar.setDateTime()`: Please use `SimpleCalendar.api.setDate()`
+  - `SimpleCalendar.changeDateTime()`: Please use `SimpleCalendar.api.changeDate()`
 
 ### Translation Updates
 
 - Updates to the German translation thanks to [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird)!
+
+### About Time and Calendar/Weather Importing
+
+I have removed the functionality for importing calendar data from about-time and calendar/weather. About-time has not supported custom calendars for several months now and calendar/weather has been depreciated for weather control.
 
 ## v1.3.75 - Bug Fixes
 
@@ -828,7 +836,7 @@ A function has been added to allow users to make macros that open the calendar.
 This function can be accessed by using a script macro and running this command:
 
 ```javascript
-SimpleCalendar.show();
+MainApp.show();
 ```
 **Important**: If this macro is intended to be useable by players don't forget to configure the Macros permissions for all players. It will need to be set to at least the "Limited", permission level.
 
@@ -844,13 +852,15 @@ Day | number or null | null | The day of the month to select.<br/>The day is exp
 All these examples assume we are using a standard Gregorian calendar.
 
 Open the calendar to August 2003
+
 ```javascript
-SimpleCalendar.show(2003, 7);
+MainApp.show(2003, 7);
 ```
 
 Open the calendar to December 1999 and select the 25th day
+
 ```javascript
-SimpleCalendar.show(1999, 11, 25);
+MainApp.show(1999, 11, 25);
 ```
 
 ## v1.1.0 - Reoccurring Notes, Leap Years, Intercalary Months and Bug Fixes

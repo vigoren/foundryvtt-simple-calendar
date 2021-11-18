@@ -17,6 +17,8 @@ export enum SettingNames {
     RememberPosition = 'remember-position',
     AppPosition = 'app-position',
     CalendarConfigurationMenu= 'calendar-configuration-menu',
+    CalendarConfiguration = 'calendar-configuration',
+
     YearConfiguration = 'year-config',
     WeekdayConfiguration = 'weekday-config',
     MonthConfiguration = 'month-config',
@@ -95,7 +97,7 @@ export enum YearNamingRules{
  */
 export enum SocketTypes {
     primary = 'primary',
-    time = 'time',
+    clock = 'clock',
     checkClockRunning = 'check-clock-running',
     journal = 'journal',
     dateTime = 'date-time',

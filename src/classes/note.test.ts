@@ -8,7 +8,7 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../__mocks__/crypto";
 
-import SimpleCalendar from "./applications/simple-calendar";
+import MainApp from "./applications/main-app";
 import Note from "./note";
 import {NoteConfig} from "../interfaces";
 import {LeapYearRules, NoteRepeat} from "../constants";
@@ -74,8 +74,8 @@ describe('Note Tests', () => {
     });
 
     test('To Template', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.noteCategories.push({name: 'cat', color: '#fff', textColor: '#000'})
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.noteCategories.push({name: 'cat', color: '#fff', textColor: '#000'})
 
         let c = n.toTemplate();
         expect(Object.keys(c).length).toBe(17); //Make sure no new properties have been added
@@ -204,9 +204,9 @@ describe('Note Tests', () => {
     });
 
     test('Is Visible', () => {
-        SimpleCalendar.instance = new SimpleCalendar()
+        MainApp.instance = new MainApp()
         const y = new Year(0);
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance.activeCalendar.year = y;
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));
         y.months.push(new Month('W', 3, 0, 20));
@@ -231,10 +231,10 @@ describe('Note Tests', () => {
         expect(n.isVisible(99,3,10)).toBe(false);
         n.endDate.month = 123;
         expect(n.isVisible(99,3,10)).toBe(false);
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         expect(n.isVisible(99,3,10)).toBe(false);
 
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance.activeCalendar.year = y;
         n.year = 0;
         n.month = 1;
         n.day = 2;
@@ -253,7 +253,7 @@ describe('Note Tests', () => {
         expect(n.isVisible(99,1,1)).toBe(true);
         expect(n.isVisible(99,3,19)).toBe(true);
         expect(n.isVisible(99,3,10)).toBe(false);
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         expect(n.isVisible(99,3,10)).toBe(false);
 
         n.year = 0;
@@ -263,20 +263,20 @@ describe('Note Tests', () => {
         n.endDate.month = 1;
         n.endDate.day = 2;
         n.repeats = NoteRepeat.Weekly;
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         expect(n.isVisible(0,0,0)).toBe(false);
         expect(n.isVisible(0,1,2)).toBe(true);
 
-        SimpleCalendar.instance.activeCalendar.year = new Year(0);
-        SimpleCalendar.instance.activeCalendar.year.months.push(new Month('J', 1, 0, 31));
-        SimpleCalendar.instance.activeCalendar.year.months.push(new Month('F', 2, 0, 28));
-        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(1, 'S'));
-        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(2, 'M'));
-        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(3, 'T'));
-        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(4, 'W'));
-        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(5, 'T'));
-        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(6, 'F'));
-        SimpleCalendar.instance.activeCalendar.year.weekdays.push(new Weekday(7, 'S'));
+        MainApp.instance.activeCalendar.year = new Year(0);
+        MainApp.instance.activeCalendar.year.months.push(new Month('J', 1, 0, 31));
+        MainApp.instance.activeCalendar.year.months.push(new Month('F', 2, 0, 28));
+        MainApp.instance.activeCalendar.year.weekdays.push(new Weekday(1, 'S'));
+        MainApp.instance.activeCalendar.year.weekdays.push(new Weekday(2, 'M'));
+        MainApp.instance.activeCalendar.year.weekdays.push(new Weekday(3, 'T'));
+        MainApp.instance.activeCalendar.year.weekdays.push(new Weekday(4, 'W'));
+        MainApp.instance.activeCalendar.year.weekdays.push(new Weekday(5, 'T'));
+        MainApp.instance.activeCalendar.year.weekdays.push(new Weekday(6, 'F'));
+        MainApp.instance.activeCalendar.year.weekdays.push(new Weekday(7, 'S'));
         expect(n.isVisible(0,0,0)).toBe(false);
         expect(n.isVisible(0,1,1)).toBe(false);
         expect(n.isVisible(0,1,2)).toBe(true);
@@ -346,10 +346,10 @@ describe('Note Tests', () => {
     });
 
     test('Display', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         expect(n.display()).toBe('1 02, 0');
         const y = new Year(0);
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance.activeCalendar.year = y;
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));
         y.months.push(new Month('W', 3, 0, 18));

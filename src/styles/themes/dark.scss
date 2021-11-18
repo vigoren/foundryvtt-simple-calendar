@@ -373,12 +373,60 @@
       }
     }
 
+    //Note Search Styling
     .sc-note-search{
       .search-box{
         .control{
           box-shadow: unset;
           background-color: $gray-700;
           border-color: $gray-500;
+        }
+      }
+    }
+
+    //Configuration Styling
+    .sc-configuration-wrapper{
+      .tabs{
+        .heading{
+          color: $primary-A400;
+          border-color: $primary-A200;
+        }
+        .item{
+          border-color: $gray-700;
+
+          &.active, &:hover{
+            background-color: $secondary;
+            color: $fontColor;
+          }
+        }
+      }
+      .tab-wrapper{
+        h2{
+          border-color: $secondary;
+        }
+        .warning{
+          background-color: $secondary-A500;
+          border-color: $secondary;
+          color: $fontColor;
+        }
+        .section{
+          h3{
+            color: $primary-A200;
+          }
+        }
+        .quick-setup{
+          .predefined-list{
+            .predefined-calendar{
+              color: $tertiary-A100;
+              border-color: $tertiary-400;
+              box-shadow: inset 0 0 5px $tertiary-A100;
+              &.selected, &:hover{
+                border-color: $tertiary-600;
+                background-color: $tertiary-600;
+                color: $white;
+              }
+            }
+          }
         }
       }
     }

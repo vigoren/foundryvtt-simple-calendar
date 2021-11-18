@@ -9,7 +9,7 @@ import "../../__mocks__/event";
 import "../../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import Year from "./year";
 import Month from "./month";
 import {Weekday} from "./weekday";
@@ -18,21 +18,21 @@ import LeapYear from "./leap-year";
 import Season from "./season";
 import Moon from "./moon";
 import Note from "../note";
-import {SimpleCalendarConfiguration} from "../applications/simple-calendar-configuration";
+import {ConfigurationApp} from "../applications/configuration-app";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 
 describe('Year Class Tests', () => {
     let year: Year;
     let year2: Year;
     let month: Month;
-    SimpleCalendar.instance = new SimpleCalendar();
+    MainApp.instance = new MainApp();
 
     beforeEach(() => {
         year = new Year(0);
         month = new Month("Test", 1, 0, 30);
         year2 = new Year(2020);
 
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
     });
 
     test('Properties', () => {
@@ -108,8 +108,8 @@ describe('Year Class Tests', () => {
         t = year.toTemplate();
         expect(t.selectedDayMoons.length).toBe(1);
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = year;
         t = year.toTemplate();
         expect(t.selectedDayNotes.normal).toBe(0);
 
@@ -121,7 +121,7 @@ describe('Year Class Tests', () => {
         n.endDate.month = 1;
         n.endDate.year = 0;
         n.playerVisible = true;
-        SimpleCalendar.instance.activeCalendar.notes.push(n);
+        MainApp.instance.activeCalendar.notes.push(n);
         t = year.toTemplate();
         expect(t.selectedDayNotes.normal).toBe(1);
 
@@ -593,7 +593,7 @@ describe('Year Class Tests', () => {
         year.months[0].startingWeekday = 3;
         expect(year.dayOfTheWeek(year.numericRepresentation, 1, 1)).toBe(2);
 
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AR", worldCreatedOn: 0}};
         expect(year.dayOfTheWeek(year.numericRepresentation, 1, 1)).toBe(2);
@@ -626,7 +626,7 @@ describe('Year Class Tests', () => {
     });
 
     test('To Seconds', () => {
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         expect(year.toSeconds()).toBe(0);
         year.months.push(month);
         year.numericRepresentation = 1;
@@ -634,7 +634,7 @@ describe('Year Class Tests', () => {
         year.months[0].days[0].current = true;
         expect(year.toSeconds()).toBe(2592000);
 
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AA", worldCreatedOn: 0}};
         expect(year.toSeconds()).toBe(2678400);
@@ -653,8 +653,8 @@ describe('Year Class Tests', () => {
         const select = document.createElement('input');
         select.value = 'gregorian';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValueOnce(select);
-        SimpleCalendar.instance.activeCalendar.year = year;
-        const sc = new SimpleCalendarConfiguration(SimpleCalendar.instance.activeCalendar);
+        MainApp.instance.activeCalendar.year = year;
+        const sc = new ConfigurationApp(MainApp.instance.activeCalendar);
         sc.predefinedApplyConfirm();
         year.resetMonths();
         year.months[3].current = true;
@@ -947,7 +947,7 @@ describe('Year Class Tests', () => {
     });
 
     test('Process Own Combat Round Time', () => {
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         PredefinedCalendar.setToPredefined(year, PredefinedCalendars.Gregorian);
         let curTime = year.time.seconds;
         year.processOwnCombatRoundTime(<Combat>{});
@@ -965,7 +965,7 @@ describe('Year Class Tests', () => {
         year.processOwnCombatRoundTime({round: 2, previous: {round: 2}});
         expect(year.time.seconds).toBe(curTime);
 
-        SimpleCalendar.instance.primary = true;
+        MainApp.instance.primary = true;
         curTime = year.time.seconds;
         //@ts-ignore
         year.processOwnCombatRoundTime({round: 2, previous: {round: 1}});
@@ -982,8 +982,8 @@ describe('Year Class Tests', () => {
 
         PredefinedCalendar.setToPredefined(year, PredefinedCalendars.Gregorian);
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = year;
 
         sunrise = year.getSunriseSunsetTime(year.numericRepresentation, year.months[0], year.months[0].days[0], true, false);
         expect(sunrise).toBe(21600);

@@ -219,7 +219,6 @@
   "FSC.Configuration.General.ImportExport.Title": "Import/Export",
   "FSC.Configuration.General.ImportExport.SCConfig": "Import/Export nastavení kalendáře",
   "FSC.Configuration.General.ImportExport.SCConfigHelp": "Pro importování nebo exportování aktuálního nastavení Simple Calendar a jeho sdílení či nahrání do jiného světa.",
-  "FSC.Configuration.General.ThirdPartyModule": "Import/export modulu třetí strany",
   "FSC.Configuration.General.Permissions.Note": "Zde lze upravit oprávnění Simple Calendar pro jednotlivé role Foundry VTT. GM bude mít vždy všechna oprávnění.",
   "FSC.Configuration.General.CalendarPlayerVisible": "Zobrazit kalendář",
   "FSC.Configuration.General.CalendarPlayerVisibleHelp": "Zaškrtnuté role budou moci otevřít Simple Calendar.",
@@ -390,12 +389,6 @@
   "FSC.Error.Calendar.GMCurrent": "Pro změnu aktuálního data musíte být GM.",
   "FSC.Module.Import": "Importovat do Simple Calendar",
   "FSC.Module.NoChanges": "Beze změn",
-  "FSC.Module.CalendarWeather.Title": "Byl zjištěn modul kalendáře/počasí!",
-  "FSC.Module.CalendarWeather.Configuration.Message": "Zjistili jsme, že modul pro kalendář/počasí je v tomto světě aktivován.<br/><br/>Pokud chcete importovat nastavení tohoto modulu do Simple Calendar, zvolte \"Importovat do Simple Calendar\"; ten tak převezme konfiguraci jiného modulu.<br/><br/>Pokud chcete, aby jiný modul převzal nastavení Simple Calendar, zvolte \"Exportovat do kalendáře/počasí\"; externí modul tak převezme nastavení Simple Calendar.<br/>",
-  "FSC.Module.CalendarWeather.Export": "Exportovat do kalendáře/počasí",
-  "FSC.Module.AboutTime.Title": "Detekován modul About-Time",
-  "FSC.Module.AboutTime.Configuration.Message": "Zjistili jsme, že modul about-time je v tomto světě aktivován.<br/><br/>Pokud chcete importovat nastavení tohoto modulu do Simple Calendar, zvolte \"Importovat do Simple Calendar\"; ten tak převezme konfiguraci modulu about-time.<br/><br/>Pokud chcete, aby modul about-time převzal nastavení Simple Calendar, zvolte \"Exportovat do About-Time\"; ten tak převezme nastavení Simple Calendar.<br/>",
-  "FSC.Module.AboutTime.Export": "Exportovat do About-Time",
   "FSC.Importer.NoFile": "Vyberte soubor pro import.",
   "FSC.Importer.InvalidSCConfig": "Nahrán neplatný soubor, nahrajte prosím soubor exportu JSON ze Simple Calendar."
 }

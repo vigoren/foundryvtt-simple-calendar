@@ -1,0 +1,130 @@
+@import "../variables";
+#simple-calendar-configuration-application-form{
+  &.window-app{
+    .window-content{
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+  }
+}
+.simple-calendar{
+  .sc-configuration-wrapper{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    max-height: 100%;
+    .tabs{
+      flex: 0 0 10rem;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      border-right: 1px solid;
+      overflow-y: auto;
+      overflow-x: visible;
+
+      .tab-section{
+        flex: unset;
+        display: flex;
+        flex-direction: column;
+
+        .item{
+          border-bottom: 1px solid;
+          &:last-child{
+            border-bottom: unset;
+          }
+        }
+      }
+      .heading{
+        flex: unset;
+        padding: $spacer-half $spacer-half $spacer-half ($spacer-half*0.5);
+        text-align: left;
+        font-size: 1rem;
+        font-weight: 600;
+        border-bottom: 1px solid;
+      }
+      .item{
+        flex: unset;
+        padding: $spacer-half $spacer-half $spacer-half $spacer;
+        text-align: left;
+        text-decoration: none;
+        font-weight: 600;
+
+        &.active, &:hover{
+          text-shadow: unset;
+        }
+        &.active{
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          justify-content: space-between;
+          align-items: center;
+          &:after{
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            content: '\f061';
+            padding-left: $spacer-half * 0.5;
+          }
+        }
+      }
+    }
+    .tab-wrapper{
+      flex: 1;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: $spacer-half;
+
+      .warning{
+        padding: 16px;
+        text-align: center;
+        border: 1px solid;
+        width: fit-content;
+        margin: 0 auto;
+      }
+
+      .section{
+        margin: $spacer 0;
+        opacity: 0;
+
+        &.open{
+          visibility: visible;
+          opacity: 1;
+        }
+        &.closed{
+          visibility: hidden;
+        }
+      }
+
+      .quick-setup{
+        .section.predefined{
+          opacity: 1;
+        }
+        .predefined-list{
+          display: grid;
+          justify-items: stretch;
+          grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+          grid-gap: $spacer;
+          align-items: center;
+
+          .predefined-calendar{
+            padding: $spacer-half;
+            border: 1px solid;
+            border-radius: 10px;
+            cursor: pointer;
+            &.selected{
+              display: flex;
+              flex-direction: row;
+              flex-wrap: nowrap;
+              justify-content: space-between;
+              align-items: center;
+              &:after{
+                font-family: "Font Awesome 5 Free";
+                font-weight: 900;
+                content: '\f00c';
+                padding-left: $spacer-half * 0.5;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

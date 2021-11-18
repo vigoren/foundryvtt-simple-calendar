@@ -1,9 +1,8 @@
-import DateSelector from "../date-selector";
+import DateSelectorManager from "../date-selector/date-selector-manager";
 import Renderer from "../renderer";
-import SimpleCalendar from "../applications/simple-calendar";
 import {SCDateSelector, SCRenderer} from "../../interfaces";
-import Utilities from "../utilities";
-import {Themes} from "../../constants";
+import {GetIcon} from "../utilities/visual";
+import SimpleCalendar from "../simple-calendar";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -32,6 +31,11 @@ export default class HandlebarsHelpers{
             }
             if(options.hash.hasOwnProperty('allowTimeRangeSelection')){
                 dsOptions.allowTimeRangeSelection = options.hash['allowTimeRangeSelection'];
+            }
+            if(options.hash.hasOwnProperty('calendar')){
+                dsOptions.calendar = options.hash['calendar'];
+            } else {
+                dsOptions.calendar = SimpleCalendar.instance.activeCalendar;
             }
             if(options.hash.hasOwnProperty('onDateSelect')){
                 dsOptions.onDateSelect = options.hash['onDateSelect'];
@@ -62,7 +66,7 @@ export default class HandlebarsHelpers{
                 dsOptions.timeDelimiter = options.hash['timeDelimiter'];
             }
             const id = options.hash['id'];
-            const ds = DateSelector.GetSelector(id, dsOptions);
+            const ds = DateSelectorManager.GetSelector(id, dsOptions);
             return new Handlebars.SafeString(ds.build());
         }
         return '';
@@ -119,6 +123,10 @@ export default class HandlebarsHelpers{
         return new Handlebars.SafeString(Renderer.Clock.Render(SimpleCalendar.instance.activeCalendar, renderOptions));
     }
 
+    /**
+     * Renders one of the icons bundled with Simple Calendar
+     * @param options
+     */
     static Icon(options: any){
         if(options.hash.hasOwnProperty('name') ){
             let stroke = "#000000";
@@ -130,7 +138,7 @@ export default class HandlebarsHelpers{
             if(options.hash.hasOwnProperty('fill')){
                 fill = options.hash['fill'];
             }
-            return new Handlebars.SafeString(Utilities.GetIcon(options.hash['name'], stroke, fill));
+            return new Handlebars.SafeString(GetIcon(options.hash['name'], stroke, fill));
         }
         return '';
     }

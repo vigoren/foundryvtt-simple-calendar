@@ -1,8 +1,11 @@
 import SocketBase from "./socket-base";
 import {SimpleCalendarSocket} from "../../interfaces";
 import {SocketTypes} from "../../constants";
-import SimpleCalendar from "../applications/simple-calendar";
+import SimpleCalendar from "../simple-calendar";
 
+/**
+ * Note Reminder socket type, this is triggered for each client to check if any note reminders need to be triggered
+ */
 export default class NoteRemindersSocket extends SocketBase{
     constructor() {
         super();

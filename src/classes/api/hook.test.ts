@@ -9,7 +9,7 @@ import "../../__mocks__/event";
 import "../../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import Year from "../calendar/year";
 import Month from "../calendar/month";
 import Hook from "./hook";
@@ -22,7 +22,7 @@ describe('Hook Tests', () => {
 
     beforeEach(()=>{
         jest.spyOn(console, 'error').mockImplementation();
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         y = new Year(0);
         y.months.push(new Month('M', 1, 0, 5));
         y.months.push(new Month('T', 2, 0, 15));
@@ -39,15 +39,15 @@ describe('Hook Tests', () => {
 
     test('Emit Date/Time Change', ()=>{
         // @ts-ignore
-        SimpleCalendar.instance = null;
+        MainApp.instance = null;
         Hook.emit(SimpleCalendarHooks.DateTimeChange);
         expect(console.error).toHaveBeenCalledTimes(1);
 
         Hook.emit(SimpleCalendarHooks.ClockStartStop);
         expect(console.error).toHaveBeenCalledTimes(2);
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = y;
         Hook.emit(SimpleCalendarHooks.DateTimeChange);
         expect(console.error).toHaveBeenCalledTimes(2);
         expect(Hooks.callAll).toHaveBeenCalledTimes(1);

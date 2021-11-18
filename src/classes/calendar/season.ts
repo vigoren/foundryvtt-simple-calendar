@@ -1,7 +1,6 @@
-import {SCDateSelector, SeasonConfiguration, SeasonTemplate} from "../../interfaces";
+import {SeasonConfiguration, SeasonTemplate} from "../../interfaces";
 import Year from "./year";
-import DateSelector from "../date-selector";
-import SimpleCalendar from "../applications/simple-calendar";
+import SimpleCalendar from "../simple-calendar";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 
 /**

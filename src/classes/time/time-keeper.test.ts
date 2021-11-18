@@ -11,7 +11,7 @@ import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 
 import TimeKeeper from "./time-keeper";
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import {GameWorldTimeIntegrations, TimeKeeperStatus} from "../../constants";
 import Year from "../calendar/year";
 import Month from "../calendar/month";
@@ -22,7 +22,7 @@ describe('Time Keeper Class Tests', () => {
     beforeEach(() => {
         jest.spyOn(console, 'error').mockImplementation();
         tk = new TimeKeeper(1);
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
     });
 
 
@@ -56,7 +56,7 @@ describe('Time Keeper Class Tests', () => {
 
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.primary = true;
+        MainApp.instance.primary = true;
 
         tk.start();
         //@ts-ignore
@@ -70,8 +70,8 @@ describe('Time Keeper Class Tests', () => {
         //@ts-ignore
         expect(tk.saveIntervalNumber).toBeUndefined();
 
-        SimpleCalendar.instance.activeCalendar.year = new Year(0);
-        SimpleCalendar.instance.activeCalendar.year.time.unifyGameAndClockPause = true;
+        MainApp.instance.activeCalendar.year = new Year(0);
+        MainApp.instance.activeCalendar.year.time.unifyGameAndClockPause = true;
         tk.start();
         //@ts-ignore
         expect(tk.intervalNumber).toBeDefined();
@@ -96,9 +96,9 @@ describe('Time Keeper Class Tests', () => {
     });
 
     test('Set Status', () => {
-        const o = SimpleCalendar.instance.element;
+        const o = MainApp.instance.element;
         //@ts-ignore
-        SimpleCalendar.instance.element = {
+        MainApp.instance.element = {
             find: jest.fn().mockReturnValue({
                 removeClass: jest.fn().mockReturnValue({addClass: jest.fn()})
             })
@@ -111,13 +111,13 @@ describe('Time Keeper Class Tests', () => {
         expect(tk.getStatus()).toBe(TimeKeeperStatus.Started);
 
         //@ts-ignore
-        SimpleCalendar.instance.element = o;
+        MainApp.instance.element = o;
     });
 
     test('Set Clock Time', () => {
-        const o = SimpleCalendar.instance.element;
+        const o = MainApp.instance.element;
         //@ts-ignore
-        SimpleCalendar.instance.element = {
+        MainApp.instance.element = {
             find: jest.fn().mockReturnValue({
                 removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
                 text: jest.fn()
@@ -126,20 +126,20 @@ describe('Time Keeper Class Tests', () => {
 
         tk.setClockTime('');
         //@ts-ignore
-        expect(SimpleCalendar.instance.element.find).toHaveBeenCalled();
-        SimpleCalendar.instance.activeCalendar.year = new Year(0);
+        expect(MainApp.instance.element.find).toHaveBeenCalled();
+        MainApp.instance.activeCalendar.year = new Year(0);
         tk.setClockTime('');
         //@ts-ignore
-        expect(SimpleCalendar.instance.element.find).toHaveBeenCalled();
+        expect(MainApp.instance.element.find).toHaveBeenCalled();
 
         //@ts-ignore
-        SimpleCalendar.instance.element = o;
+        MainApp.instance.element = o;
     });
 
     test('Interval', () => {
-        const o = SimpleCalendar.instance.element;
+        const o = MainApp.instance.element;
         //@ts-ignore
-        SimpleCalendar.instance.element = {
+        MainApp.instance.element = {
             find: jest.fn().mockReturnValue({
                 removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
                 text: jest.fn()
@@ -149,10 +149,10 @@ describe('Time Keeper Class Tests', () => {
         //@ts-ignore
         tk.interval();
 
-        SimpleCalendar.instance.activeCalendar.year = new Year(0);
-        SimpleCalendar.instance.activeCalendar.year.months.push(new Month('M',1,0,10));
-        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
-        SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current = true;
+        MainApp.instance.activeCalendar.year = new Year(0);
+        MainApp.instance.activeCalendar.year.months.push(new Month('M',1,0,10));
+        MainApp.instance.activeCalendar.year.months[0].current = true;
+        MainApp.instance.activeCalendar.year.months[0].days[0].current = true;
         //@ts-ignore
         tk.interval();
 
@@ -162,43 +162,43 @@ describe('Time Keeper Class Tests', () => {
         //@ts-ignore
         tk.interval();
 
-        SimpleCalendar.instance.activeCalendar.year.time.seconds = SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay - 1;
+        MainApp.instance.activeCalendar.year.time.seconds = MainApp.instance.activeCalendar.year.time.secondsPerDay - 1;
         //@ts-ignore
         tk.interval();
 
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.primary = true;
+        MainApp.instance.primary = true;
 
         //@ts-ignore
         tk.interval();
 
-        SimpleCalendar.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
+        MainApp.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
 
         //@ts-ignore
         tk.interval();
 
         tk.stop();
         //@ts-ignore
-        SimpleCalendar.instance.element = o;
+        MainApp.instance.element = o;
     });
 
     test('Save Interval', () => {
         //@ts-ignore
         tk.saveInterval();
 
-        SimpleCalendar.instance.activeCalendar.year = new Year(0);
+        MainApp.instance.activeCalendar.year = new Year(0);
 
         //@ts-ignore
         tk.saveInterval();
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.primary = true;
+        MainApp.instance.primary = true;
 
         //@ts-ignore
         tk.saveInterval();
 
-        SimpleCalendar.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
+        MainApp.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
 
         //@ts-ignore
         tk.interval();

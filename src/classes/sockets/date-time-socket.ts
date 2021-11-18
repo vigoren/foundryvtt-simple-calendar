@@ -3,15 +3,22 @@ import {SimpleCalendarSocket} from "../../interfaces";
 import {SocketTypes} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {Logger} from "../logging";
-import SimpleCalendar from "../applications/simple-calendar";
+import SimpleCalendar from "../simple-calendar";
 
+/**
+ * Date/Time Socket type that is called when a non primary GM user uses the change date/time controls
+ */
 export default class DateTimeSocket extends SocketBase{
     constructor() {
         super();
     }
 
+    /**
+     * If you are the priamry GM then process this request from a user
+     * @param data
+     */
     public async process(data: SimpleCalendarSocket.Data): Promise<boolean> {
-        if(data.type === SocketTypes.dateTime && GameSettings.IsGm() && SimpleCalendar.instance.primary){
+        if(data.type === SocketTypes.dateTime && GameSettings.IsGm() && SimpleCalendar.instance.activeCalendar.primary){
             Logger.debug(`Processing Date/Time Change Request.`);
             if((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).dataType){
                 switch ((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).dataType){
@@ -30,7 +37,7 @@ export default class DateTimeSocket extends SocketBase{
                         SimpleCalendar.instance.activeCalendar.year.changeYear((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).isNext? 1 : -1, false, "current");
                         break;
                 }
-                GameSettings.SaveCurrentDate(SimpleCalendar.instance.activeCalendar.year).catch(Logger.error);
+                SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
                 //Sync the current time on apply, this will propagate to other modules
                 SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
             }

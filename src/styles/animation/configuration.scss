@@ -1,4 +1,17 @@
 @import "../variables";
+.simple-calendar{
+  .sc-configuration-wrapper{
+    .tab-wrapper{
+      .section{
+        &.animate {
+          transition: opacity 500ms;
+        }
+      }
+    }
+  }
+}
+
+
 .simple-calendar-configuration{
   &.window-app{
     .window-content{

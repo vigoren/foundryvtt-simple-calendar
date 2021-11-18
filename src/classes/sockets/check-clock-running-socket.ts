@@ -3,18 +3,30 @@ import {SimpleCalendarSocket} from "../../interfaces";
 import {SocketTypes} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import {Logger} from "../logging";
-import SimpleCalendar from "../applications/simple-calendar";
+import SimpleCalendar from "../simple-calendar";
 
+/**
+ * Socket type used by connecting clients to see if the clock is currently running
+ */
 export default class CheckClockRunningSocket extends SocketBase {
     constructor() {
         super();
     }
 
+    /**
+     * When initializing this socket type, emit asking if the clock is running or not.
+     */
+    public async initialize(): Promise<boolean> {
+        return GameSockets.emit({type: SocketTypes.checkClockRunning, data: {}});
+    }
+
+    /**
+     * If a request is received asking if the clock is running, and you are the GM and the primary GM, emit out the current status of the clock.
+     * @param data
+     */
     public async process(data: SimpleCalendarSocket.Data): Promise<boolean> {
-        if (data.type === SocketTypes.checkClockRunning && GameSettings.IsGm() && SimpleCalendar.instance.primary){
-            GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.time, data: { timeKeeperStatus: SimpleCalendar.instance.activeCalendar.year.time.timeKeeper.getStatus() } }).catch(Logger.error);
-            return true;
+        if (data.type === SocketTypes.checkClockRunning && GameSettings.IsGm() && SimpleCalendar.instance.activeCalendar.primary){
+            return GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: SimpleCalendar.instance.activeCalendar.year.time.timeKeeper.getStatus() } });
         }
         return false;
     }

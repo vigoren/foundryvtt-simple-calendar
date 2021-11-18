@@ -8,7 +8,7 @@ import "../../../__mocks__/crypto";
 import "../../__mocks__/hooks"
 
 import {GameSettings} from "./game-settings";
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import Year from "../calendar/year";
 import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
@@ -90,7 +90,7 @@ describe('Game Settings Class Tests', () => {
     });
 
     test('Register Settings', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         GameSettings.RegisterSettings();
         expect((<Game>game).settings.register).toHaveBeenCalled();
         expect((<Game>game).settings.register).toHaveBeenCalledTimes(13);
@@ -243,7 +243,7 @@ describe('Game Settings Class Tests', () => {
         await expect(GameSettings.SaveCurrentDate(year, false)).resolves.toBe(true);
 
         //@ts-ignore
-        SimpleCalendar.instance = null;
+        MainApp.instance = null;
         await expect(GameSettings.SaveCurrentDate(year)).resolves.toBe(true);
         expect((<Game>game).settings.get).toHaveBeenCalled();
         expect((<Game>game).settings.set).toHaveBeenCalled();

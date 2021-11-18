@@ -10,7 +10,7 @@ import "../../../__mocks__/crypto";
 import "../../../__mocks__/dialog";
 import "../../../__mocks__/hooks";
 import PF2E from "./pf2e";
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import {GameSystems, LeapYearRules} from "../../constants";
 
 describe('Systems/PF2E Class Tests', () => {
@@ -22,7 +22,7 @@ describe('Systems/PF2E Class Tests', () => {
         game.pf2e = {worldClock: {dateTheme: "AD", worldCreatedOn: 1626101710000}};
         expect(PF2E.getWorldCreateSeconds()).toBe(1626101710);
 
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         expect(PF2E.getWorldCreateSeconds()).toBe(1626015310);
 
         //@ts-ignore
@@ -75,31 +75,31 @@ describe('Systems/PF2E Class Tests', () => {
     });
 
     test('Check Leap Year Rules', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.DnD5E;
-        SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule = LeapYearRules.None;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.DnD5E;
+        MainApp.instance.activeCalendar.year.leapYearRule.rule = LeapYearRules.None;
 
-        PF2E.checkLeapYearRules(SimpleCalendar.instance.activeCalendar.year.leapYearRule);
-        expect(SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule).toBe(LeapYearRules.None);
+        PF2E.checkLeapYearRules(MainApp.instance.activeCalendar.year.leapYearRule);
+        expect(MainApp.instance.activeCalendar.year.leapYearRule.rule).toBe(LeapYearRules.None);
 
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AA", worldCreatedOn: 10000}};
-        PF2E.checkLeapYearRules(SimpleCalendar.instance.activeCalendar.year.leapYearRule);
-        expect(SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule).toBe(LeapYearRules.None);
+        PF2E.checkLeapYearRules(MainApp.instance.activeCalendar.year.leapYearRule);
+        expect(MainApp.instance.activeCalendar.year.leapYearRule.rule).toBe(LeapYearRules.None);
 
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AR", worldCreatedOn: 10000}};
-        PF2E.checkLeapYearRules(SimpleCalendar.instance.activeCalendar.year.leapYearRule);
-        expect(SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule).toBe(LeapYearRules.Gregorian);
+        PF2E.checkLeapYearRules(MainApp.instance.activeCalendar.year.leapYearRule);
+        expect(MainApp.instance.activeCalendar.year.leapYearRule.rule).toBe(LeapYearRules.Gregorian);
     });
 
     test('Weekday Adjust', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.DnD5E;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.DnD5E;
         expect(PF2E.weekdayAdjust()).toBeUndefined();
 
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AA", worldCreatedOn: 10000}};
         expect(PF2E.weekdayAdjust()).toBeUndefined();

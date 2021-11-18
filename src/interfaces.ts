@@ -15,7 +15,8 @@ import {
     Icons, Themes
 } from "./constants";
 import Note from "./classes/note";
-import DateSelector from "./classes/date-selector";
+import DateSelector from "./classes/date-selector/date-selector";
+import Calendar from "./classes/calendar";
 
 export interface AppPosition{
     top?: number;
@@ -261,7 +262,7 @@ export interface NoteTemplate extends IConfigurationItemBaseTemplate{
     content: string;
     playerVisible: boolean;
     author: string;
-    authorDisplay: any | null;
+    authorDisplay: UserColorData | null;
     monthDisplay: string;
     displayDate: string;
     allDay: boolean;
@@ -459,6 +460,12 @@ export interface DateTime{
     second?: number;
 }
 
+export interface UserColorData {
+    name: string;
+    color: string;
+    textColor: string;
+}
+
 export namespace SearchOptions{
     export interface Fields {
         date: boolean;
@@ -602,6 +609,7 @@ export namespace SCDateSelector {
     }
 
     export interface Options {
+        calendar?: Calendar;
         onDateSelect?: Function;
         allowDateRangeSelection?: boolean;
         allowTimeRangeSelection?: boolean;

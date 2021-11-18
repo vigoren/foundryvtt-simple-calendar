@@ -335,10 +335,10 @@ describe('Interface Tests', () => {
     describe('Simple Calendar Socket', () => {
 
         test('Data', () => {
-            const d: SimpleCalendarSocket.Data = {data: {}, type: SocketTypes.time};
+            const d: SimpleCalendarSocket.Data = {data: {}, type: SocketTypes.clock};
             expect(Object.keys(d).length).toBe(2); //Make sure no new properties have been added
             expect(d.data).toStrictEqual({});
-            expect(d.type).toBe(SocketTypes.time);
+            expect(d.type).toBe(SocketTypes.clock);
         });
 
         test('Simple Calendar Socket Time', () => {

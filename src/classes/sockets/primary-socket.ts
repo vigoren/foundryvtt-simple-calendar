@@ -5,37 +5,53 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {Logger} from "../logging";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Hook from "../api/hook";
-import SimpleCalendar from "../applications/simple-calendar";
+import SimpleCalendar from "../simple-calendar";
 
+/**
+ * Socket calls used to set who is considered the primary GM
+ */
 export default class PrimarySocket extends SocketBase {
     /**
-     * The primary check timeout number used when checking if this user is the GM
-     * @type{number|undefined}
+     * How long to wait for a response to who is the primary GM before taking over as primary.
+     * @type{number}
      * @private
      */
-    private primaryCheckTimeout: number | undefined;
+    private checkDuration: number = 5000;
+    /**
+     * If another primary GM responded
+     * @private
+     */
+    private otherPrimaryFound: boolean = false;
 
     constructor() {
         super();
     }
 
+    /**
+     * Called when no primary GM was found
+     * Emit a socket saying that we have taken over as primary.
+     * Emit a socket saying that the clock is currently not running. (increase the clock was running and the GM got disconnected)
+     * Emit the hook saying we are the primary GM
+     */
     async primaryCheckTimeoutCall(){
         Logger.debug('No primary GM found, taking over as primary');
-        SimpleCalendar.instance.primary = true;
-        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: SimpleCalendar.instance.primary}};
+        SimpleCalendar.instance.activeCalendar.primary = true;
+        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: SimpleCalendar.instance.activeCalendar.primary}};
         await GameSockets.emit(socketData);
-        const timeKeeperSocketData = <SimpleCalendarSocket.Data>{type: SocketTypes.time, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}};
+        const timeKeeperSocketData = <SimpleCalendarSocket.Data>{type: SocketTypes.clock, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}};
         await GameSockets.emit(timeKeeperSocketData);
         if(SimpleCalendar.instance.activeCalendar.year.time.unifyGameAndClockPause){
             (<Game>game).togglePause(true, true);
         }
-        await SimpleCalendar.instance.timeKeepingCheck();
-        SimpleCalendar.instance.updateApp();
-        Hook.emit(SimpleCalendarHooks.PrimaryGM);
-        Hook.emit(SimpleCalendarHooks.Ready);
+        await SimpleCalendar.instance.mainApp?.timeKeepingCheck();
+        Hook.emit(SimpleCalendarHooks.PrimaryGM, SimpleCalendar.instance.activeCalendar);
     }
 
-    public initialize() {
+    /**
+     * Initializes this socket type by emitting a socket asking if anyone is currently the primary GM
+     * Also starts a timeout, if no one responds in the timeframe we assume we are the primary
+     */
+    public async initialize(): Promise<boolean> {
         if(GameSettings.IsGm()){
             const socket = <SimpleCalendarSocket.Data>{
                 type: SocketTypes.primary,
@@ -43,13 +59,27 @@ export default class PrimarySocket extends SocketBase {
                     primaryCheck: true
                 }
             };
-            this.primaryCheckTimeout = window.setTimeout(this.primaryCheckTimeoutCall.bind(this), 5000);
-            GameSockets.emit(socket).catch(Logger.error);
+            return GameSockets.emit(socket).then(() => {
+                return new Promise<boolean>(resolve => {
+                    //Set a timeout for the check duration
+                    window.setTimeout(((r: Function) => {
+                        //If no other primary GM was found, take over
+                        if(!this.otherPrimaryFound){
+                            this.primaryCheckTimeoutCall();
+                        }
+                        r(true);
+                    }).bind(this, resolve), this.checkDuration);
+                });
+            });
         } else {
-            Hook.emit(SimpleCalendarHooks.Ready);
+            return true;
         }
     }
 
+    /**
+     * Process this socket type
+     * @param data
+     */
     public async process(data: SimpleCalendarSocket.Data): Promise<boolean> {
         if (data.type === SocketTypes.primary){
             if(GameSettings.IsGm()){
@@ -59,18 +89,17 @@ export default class PrimarySocket extends SocketBase {
                     await GameSockets.emit(<SimpleCalendarSocket.Data>{
                         type: SocketTypes.primary,
                         data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
-                            amPrimary: SimpleCalendar.instance.primary
+                            amPrimary: SimpleCalendar.instance.activeCalendar.primary
                         }
                     });
                 }
-                    // Another client has emitted that they are the primary, stop my check and set myself to not being the primary
+                // Another client has emitted that they are the primary, stop my check and set myself to not being the primary
                 // This CAN lead to no primary if 2 GMs finish their primary check at the same time. This is best resolved by 1 gm reloading the page.
                 else if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary !== undefined){
                     if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary){
                         Logger.debug('A primary GM is all ready present.');
-                        window.clearTimeout(this.primaryCheckTimeout);
-                        SimpleCalendar.instance.primary = false;
-                        Hook.emit(SimpleCalendarHooks.Ready);
+                        this.otherPrimaryFound = true;
+                        SimpleCalendar.instance.activeCalendar.primary = false;
                     } else {
                         Logger.debug('We are all ready waiting to take over as primary.');
                     }

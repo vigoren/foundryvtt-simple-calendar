@@ -2,12 +2,33 @@ import Year from "./year";
 import {
     CalendarConfiguration,
     CalendarTemplate,
+    CurrentDateConfig,
+    GeneralSettingsConfig,
+    LeapYearConfig,
+    MonthConfig,
+    MoonConfiguration,
     NoteCategory,
+    NoteConfig,
     NoteTemplate,
     PermissionMatrix,
-    SearchOptions
+    SCDateSelector,
+    SearchOptions,
+    SeasonConfiguration,
+    SimpleCalendarSocket,
+    TimeConfig,
+    WeekdayConfig,
+    YearConfig
 } from "../../interfaces";
-import {GameSystems, GameWorldTimeIntegrations, PredefinedCalendars, TimeKeeperStatus} from "../../constants";
+import {
+    GameSystems,
+    GameWorldTimeIntegrations,
+    NoteRepeat,
+    PredefinedCalendars,
+    SettingNames,
+    SimpleCalendarHooks,
+    SocketTypes,
+    TimeKeeperStatus
+} from "../../constants";
 import Note from "../note";
 import Month from "./month";
 import {Logger} from "../logging";
@@ -15,25 +36,28 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {Weekday} from "./weekday";
 import Season from "./season";
 import Moon from "./moon";
-import SimpleCalendar from "../applications/simple-calendar";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import GeneralSettings from "../configuration/general-settings";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
-import Utilities from "../utilities";
 import PF2E from "../systems/pf2e";
 import Renderer from "../renderer";
+import SimpleCalendar from "../simple-calendar";
+import GameSockets from "../foundry-interfacing/game-sockets";
+import Hook from "../api/hook";
+import {generateUniqueId} from "../utilities/string";
+import {FormatDateTime, ToSeconds, GetDisplayDate} from "../utilities/date-time";
 
 export default class Calendar extends ConfigurationItemBase{
-
     /**
-     * Loads the calendars from the settings
+     * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
+     * @type {boolean}
      */
-    static LoadCalendars(){
-        const cal = new Calendar({id: '', name: 'default'});
-        cal.settingUpdate();
-
-        return [cal];
-    }
+    public primary: boolean = false;
+    /**
+     * If this calendar is around temporarily. This is used when we want to clone a calendar, make changes to the clone without affecting the main calendar.
+     * Primarily used by the configuration dialog
+     */
+    isTemporary: boolean = false;
     /**
      * The currently running game system
      * @type {GameSystems}
@@ -66,7 +90,7 @@ export default class Calendar extends ConfigurationItemBase{
      */
     constructor(configuration: CalendarConfiguration) {
         super(configuration.name);
-        this.id = Utilities.generateUniqueId();
+        this.id = configuration.id || generateUniqueId();
         // Set Calendar Data
         this.gameSystem = GameSystems.Other;
 
@@ -107,7 +131,7 @@ export default class Calendar extends ConfigurationItemBase{
      * Creates a cloned version of the Calendar class
      */
     clone(): Calendar {
-        const c = new Calendar({ id: '', name: this.name });
+        const c = new Calendar({ id: this.id, name: this.name });
         c.id = this.id;
         c.name = this.name;
         c.gameSystem = this.gameSystem;
@@ -167,13 +191,49 @@ export default class Calendar extends ConfigurationItemBase{
             showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             showSetCurrentDate: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && showSetCurrentDate,
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
-            calendarDisplay: Utilities.FormatDateTime({year: this.year.visibleYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear),
-            selectedDisplay: Utilities.FormatDateTime({year: sYear, month: sMonth, day: sDay, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.date),
-            timeDisplay: Utilities.FormatDateTime({year: 0, month: 0, day: 0, ...this.year.time.getCurrentTime()}, this.generalSettings.dateFormat.time),
+            calendarDisplay: FormatDateTime({year: this.year.visibleYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear, this),
+            selectedDisplay: FormatDateTime({year: sYear, month: sMonth, day: sDay, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.date, this),
+            timeDisplay: FormatDateTime({year: 0, month: 0, day: 0, ...this.year.time.getCurrentTime()}, this.generalSettings.dateFormat.time, this),
             visibleDate: {year: vYear, month: vMonthIndex}
         };
     }
 
+    /**
+     * saves the current date and time to the game settings
+     * @param emitHook
+     */
+    public async saveCurrentDate(emitHook: boolean = true){
+        const currentMonth = this.year.getMonth();
+        if(currentMonth){
+            const currentDay = currentMonth.getDay();
+            if(currentDay){
+                const currentDate = <CurrentDateConfig>GameSettings.GetObjectSettings(SettingNames.CurrentDate);
+                const newDate: CurrentDateConfig = {
+                    year: this.year.numericRepresentation,
+                    month: currentMonth.numericRepresentation,
+                    day: currentDay.numericRepresentation,
+                    seconds: this.year.time.seconds
+                };
+                const saved = await GameSettings.SaveObjectSetting(SettingNames.CurrentDate, newDate);
+                if(saved){
+                    if(emitHook){
+                        const diff = this.year.toSeconds() - (ToSeconds(this, currentDate.year, currentDate.month, currentDate.day, false) + currentDate.seconds);
+                        await GameSockets.emit(<SimpleCalendarSocket.Data>{type: SocketTypes.emitHook, data: <SimpleCalendarSocket.SimpleCalendarEmitHook>{hook: SimpleCalendarHooks.DateTimeChange, param: diff}});
+                        Hook.emit(SimpleCalendarHooks.DateTimeChange, this, diff);
+                    }
+                    await GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.noteReminders, data: { justTimeChange: currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day }});
+                    this.checkNoteReminders()
+                    if(SimpleCalendar.instance){
+                        SimpleCalendar.instance.checkNoteReminders(currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day);
+                    }
+                }
+            }
+        }
+    }
+
+    //---------------------------
+    // Note Functionality
+    //---------------------------
     /**
      * Gets all of the notes associated with the selected or current day
      * @private
@@ -219,7 +279,7 @@ export default class Calendar extends ConfigurationItemBase{
         this.notes.forEach((note) => {
             if((GameSettings.IsGm() || (!GameSettings.IsGm() && note.playerVisible))){
                 let match = 0;
-                const noteFormattedDate = Utilities.GetDisplayDate({year: note.year, month: note.month, day: note.day, hour: note.hour, minute: note.minute, allDay: note.allDay}, {...note.endDate, allDay: note.allDay}).toLowerCase();
+                const noteFormattedDate = GetDisplayDate(this,{year: note.year, month: note.month, day: note.day, hour: note.hour, minute: note.minute, allDay: note.allDay}, {...note.endDate, allDay: note.allDay}).toLowerCase();
                 const noteTitle = note.title.toLowerCase();
                 const noteContent = note.content.toLowerCase();
                 const author = GameSettings.GetUser(note.author);
@@ -330,6 +390,96 @@ export default class Calendar extends ConfigurationItemBase{
     }
 
     /**
+     * Takes a list of note IDs and will order the notes on the current day to match the passed in order.
+     * @param newOrderedIds
+     */
+    public reorderNotesOnDay(newOrderedIds: string[]){
+        const dayNotes = this.getNotesForDay();
+        for(let i = 0; i < newOrderedIds.length; i++){
+            const n = dayNotes.find(n => n.id === newOrderedIds[i]);
+            if(n){
+                n.order = i;
+            }
+        }
+        let currentNotes = (<NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
+            const note = new Note();
+            note.loadFromSettings(n);
+            return note;
+        });
+        currentNotes = currentNotes.map(n => {
+            const dayNote = dayNotes.find(dn => dn.id === n.id);
+            return dayNote? dayNote : n;
+        });
+        GameSettings.SaveObjectSetting(SettingNames.Notes, currentNotes.map(n => n.toConfig())).catch(Logger.error);
+    }
+
+    /**
+     * Checks to see if any note reminders needs to be sent to players for the current date.
+     * @param {boolean} [justTimeChange=false] If only the time (hour, minute, second) has changed or not
+     */
+    public checkNoteReminders(justTimeChange: boolean = false){
+        const userID = GameSettings.UserID();
+        const noteRemindersForPlayer = this.notes.filter(n => n.remindUsers.indexOf(userID) > -1);
+        if(noteRemindersForPlayer.length){
+            const currentMonth = this.year.getMonth();
+            const currentDay = currentMonth? currentMonth.getDay() : this.year.months[0].days[0];
+            const time = this.year.time.getCurrentTime();
+            const currentHour = time.hour;
+            const currentMinute = time.minute;
+
+            const currentDate: SCDateSelector.Date = {
+                year: this.year.numericRepresentation,
+                month: currentMonth? currentMonth.numericRepresentation : 1,
+                day: currentDay? currentDay.numericRepresentation : 1,
+                hour: currentHour,
+                minute: currentMinute,
+                allDay: false
+            };
+            const noteRemindersCurrentDay = noteRemindersForPlayer.filter(n => {
+                if(n.repeats !== NoteRepeat.Never && !justTimeChange){
+                    if(n.repeats === NoteRepeat.Yearly){
+                        if(n.year !== currentDate.year){
+                            n.reminderSent = false;
+                        }
+                    } else if(n.repeats === NoteRepeat.Monthly){
+                        if(n.year !== currentDate.year || n.month !== currentDate.month || (n.month === currentDate.month && n.year !== currentDate.year)){
+                            n.reminderSent = false;
+                        }
+                    } else if(n.repeats === NoteRepeat.Weekly){
+                        if(n.year !== currentDate.year || n.month !== currentDate.month || n.day !== currentDate.day || (n.day === currentDate.day && (n.month !== currentDate.month || n.year !== currentDate.year))){
+                            n.reminderSent = false;
+                        }
+                    }
+                }
+                //Check if the reminder has been sent or not and if the new day is between the notes start/end date
+                if(!n.reminderSent && n.isVisible(currentDate.year, currentDate.month, currentDate.day)){
+                    if(n.allDay){
+                        return true;
+                    } else if(currentDate.hour === n.hour){
+                        if(currentDate.minute >= n.minute){
+                            return true;
+                        }
+                    } else if(currentDate.hour > n.hour){
+                        return true;
+                    } else if(currentDate.year > n.year || currentDate.month > n.month || currentDate.day > n.day){
+                        return true;
+                    }
+                }
+                return false;
+            });
+            for(let i = 0; i < noteRemindersCurrentDay.length; i++){
+                const note = noteRemindersCurrentDay[i];
+                ChatMessage.create({
+                    speaker: {alias: "Simple Calendar Reminder"},
+                    whisper: [userID],
+                    content: `<div style="margin-bottom: 0.5rem;font-size:0.75rem">${note.display()}</div><h2>${note.title}</h2>${note.content}`
+                }).catch(Logger.error);
+                note.reminderSent = true;
+            }
+        }
+    }
+
+    /**
      * Sets the current game world time to match what our current time is
      */
     async syncTime(force: boolean = false){
@@ -357,7 +507,7 @@ export default class Calendar extends ConfigurationItemBase{
 
         // If this is a Pathfinder 2E game, add the world creation seconds
         if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
-            newTime += PF2E.getWorldCreateSeconds();
+            newTime += PF2E.getWorldCreateSeconds(this);
         }
         if(changeAmount !== 0){
             // If the tracking rules are for self or mixed and the clock is running then we make the change.
@@ -368,7 +518,7 @@ export default class Calendar extends ConfigurationItemBase{
                 Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.year.time.timeKeeper.getStatus());
                 //Something else has changed the world time and we need to update everything to reflect that.
                 if((this.year.time.updateFrequency * this.year.time.gameTimeRatio) !== changeAmount){
-                    SimpleCalendar.instance.updateApp();
+                    SimpleCalendar.instance.mainApp?.updateApp();
                 }
             }
             // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
@@ -380,8 +530,8 @@ export default class Calendar extends ConfigurationItemBase{
                     this.year.updateTime(parsedDate);
                     // If the current player is the GM then we need to save this new value to the database
                     // Since the current date is updated this will trigger an update on all players as well
-                    if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
-                        GameSettings.SaveCurrentDate(this.year).catch(Logger.error);
+                    if(GameSettings.IsGm() && this.primary){
+                        this.saveCurrentDate().catch(Logger.error);
                     }
                 }
             }
@@ -392,8 +542,8 @@ export default class Calendar extends ConfigurationItemBase{
                 const parsedDate = this.year.secondsToDate(newTime);
                 this.year.updateTime(parsedDate);
                 //We need to save the change so that when the game is reloaded simple calendar will display the correct time
-                if(GameSettings.IsGm() && SimpleCalendar.instance.primary){
-                    GameSettings.SaveCurrentDate(this.year).catch(Logger.error);
+                if(GameSettings.IsGm() && this.primary){
+                    this.saveCurrentDate().catch(Logger.error);
                 }
             } else {
                 Logger.debug(`Not Applying Change!`);
@@ -410,11 +560,11 @@ export default class Calendar extends ConfigurationItemBase{
      */
     public settingUpdate(type: string = 'all'){
         if(type === 'all' || type === 'year'){
-            this.year.loadFromSettings(GameSettings.LoadYearData());
+            this.year.loadFromSettings(<YearConfig>GameSettings.GetObjectSettings(SettingNames.YearConfiguration));
         }
         if(type === 'all' || type === 'month'){
             Logger.debug('Loading month configuration from settings.');
-            const monthData = GameSettings.LoadMonthData();
+            const monthData = <MonthConfig[]>GameSettings.GetObjectSettings(SettingNames.MonthConfiguration);
             if(monthData.length){
                 Logger.debug('Setting the months from data.');
                 this.year.months = [];
@@ -427,7 +577,7 @@ export default class Calendar extends ConfigurationItemBase{
         }
         if(type === 'all' || type === 'weekday'){
             Logger.debug('Loading weekday configuration from settings.');
-            const weekdayData = GameSettings.LoadWeekdayData();
+            const weekdayData = <WeekdayConfig[]>GameSettings.GetObjectSettings(SettingNames.WeekdayConfiguration);
             if(weekdayData.length){
                 Logger.debug('Setting the weekdays from data.');
                 this.year.weekdays = [];
@@ -440,7 +590,7 @@ export default class Calendar extends ConfigurationItemBase{
         }
         if(type === 'all' || type === 'notes'){
             Logger.debug('Loading notes from settings.');
-            const notes = GameSettings.LoadNotes();
+            const notes = <NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes);
             this.notes = notes.map(n => {
                 const note = new Note();
                 note.loadFromSettings(n);
@@ -449,15 +599,15 @@ export default class Calendar extends ConfigurationItemBase{
         }
         if(type === 'all' || type === 'leapyear'){
             Logger.debug('Loading Leap Year Settings');
-            this.year.leapYearRule.loadFromSettings(GameSettings.LoadLeapYearRules());
+            this.year.leapYearRule.loadFromSettings(<LeapYearConfig>GameSettings.GetObjectSettings(SettingNames.LeapYearRule));
         }
         if(type === 'all' || type === 'time'){
             Logger.debug('Loading time configuration from settings.');
-            this.year.time.loadFromSettings(GameSettings.LoadTimeData());
+            this.year.time.loadFromSettings(<TimeConfig>GameSettings.GetObjectSettings(SettingNames.TimeConfiguration));
         }
         if(type === 'all' || type === 'season'){
             Logger.debug('Loading season configuration from settings.');
-            const seasonData = GameSettings.LoadSeasonData();
+            const seasonData = <SeasonConfiguration[]>GameSettings.GetObjectSettings(SettingNames.SeasonConfiguration);
             this.year.seasons = [];
             if(seasonData.length){
                 Logger.debug('Setting the seasons from data.');
@@ -470,7 +620,7 @@ export default class Calendar extends ConfigurationItemBase{
         }
         if(type === 'all' || type === 'moon'){
             Logger.debug('Loading moon configuration from settings.');
-            const moonData = GameSettings.LoadMoonData();
+            const moonData = <MoonConfiguration[]>GameSettings.GetObjectSettings(SettingNames.MoonConfiguration);
             this.year.moons = [];
             if(moonData.length){
                 Logger.debug('Setting the moons from data.');
@@ -483,10 +633,10 @@ export default class Calendar extends ConfigurationItemBase{
         }
         if(type === 'all' || type === 'general'){
             Logger.debug('Loading General Settings');
-            this.generalSettings.loadFromSettings(GameSettings.LoadGeneralSettings());
+            this.generalSettings.loadFromSettings(<GeneralSettingsConfig>GameSettings.GetObjectSettings(SettingNames.GeneralConfiguration));
         }
         if(type === 'all' || type === 'note-categories'){
-            this.noteCategories= GameSettings.LoadNoteCategories();
+            this.noteCategories = <NoteCategory[]>GameSettings.GetObjectSettings(SettingNames.NoteCategories);
         }
         this.loadCurrentDate();
     }
@@ -496,7 +646,7 @@ export default class Calendar extends ConfigurationItemBase{
      */
     public loadCurrentDate(){
         Logger.debug('Loading current date from settings.');
-        const currentDate = GameSettings.LoadCurrentDate();
+        const currentDate = <CurrentDateConfig>GameSettings.GetObjectSettings(SettingNames.CurrentDate);
         if(currentDate && Object.keys(currentDate).length){
             this.year.numericRepresentation = currentDate.year;
             this.year.selectedYear = currentDate.year;

@@ -1,23 +1,23 @@
 /**
  * @jest-environment jsdom
  */
-import "../../__mocks__/game";
-import "../../__mocks__/form-application";
+import "../../../__mocks__/game";
+import "../../../__mocks__/form-application";
 import "../../__mocks__/application";
 import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
-import "../../__mocks__/crypto";
+import "../../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
-import "../../__mocks__/crypto";
+import "../../../__mocks__/crypto";
 
-import Utilities from "./utilities";
-import {DateTimeParts, SCDateSelector} from "../interfaces";
-import {DateRangeMatch, GameSystems, Icons, PredefinedCalendars} from "../constants";
-import SimpleCalendar from "./applications/simple-calendar";
-import Month from "./calendar/month";
-import Year from "./calendar/year";
-import PredefinedCalendar from "./configuration/predefined-calendar";
+import Utilities from "./index";
+import {DateTimeParts, SCDateSelector} from "../../interfaces";
+import {DateRangeMatch, GameSystems, Icons, PredefinedCalendars} from "../../constants";
+import MainApp from "../applications/main-app";
+import Month from "../calendar/month";
+import Year from "../calendar/year";
+import PredefinedCalendar from "../configuration/predefined-calendar";
 
 describe('Utilities Class Tests', () => {
 
@@ -115,10 +115,10 @@ describe('Utilities Class Tests', () => {
     });
 
     test('FormatDateTime', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year.months[11].name = 'December';
-        SimpleCalendar.instance.activeCalendar.year.months[11].abbreviation = 'Dec';
-        SimpleCalendar.instance.activeCalendar.year.weekdays[1].name = 'Monday';
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year.months[11].name = 'December';
+        MainApp.instance.activeCalendar.year.months[11].abbreviation = 'Dec';
+        MainApp.instance.activeCalendar.year.weekdays[1].name = 'Monday';
         //Year
         expect(Utilities.FormatDateTime({year: 2021, month: 12, day: 25, hour: 11, minute: 22, seconds: 33}, "YY YYYY YN YA YZ")).toBe('21 2021   ');
         //Month
@@ -142,11 +142,11 @@ describe('Utilities Class Tests', () => {
     });
 
     test('To Seconds', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.DnD5E;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.DnD5E;
         expect(Utilities.ToSeconds(1970, 1, 1, false)).toBe(0);
 
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AA", worldCreatedOn: 0}};
         expect(Utilities.ToSeconds(1970, 1, 1, false)).toBe(86400);
@@ -196,8 +196,8 @@ describe('Utilities Class Tests', () => {
             minute: 0
         };
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = y;
         expect(Utilities.IsDayBetweenDates(dateToCheck, startDate, endDate)).toBe(DateRangeMatch.None);
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));
@@ -258,8 +258,8 @@ describe('Utilities Class Tests', () => {
             seconds: 0
         };
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = y;
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));
         y.months.push(new Month('W', 3, 0, 20));
@@ -291,8 +291,8 @@ describe('Utilities Class Tests', () => {
             minute: 0
         };
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = y;
         expect(Utilities.GetDisplayDate(startDate, endDate)).toBe(' 10, 1');
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));

@@ -1,5 +1,4 @@
-import SimpleCalendar from "./classes/applications/simple-calendar";
-import Macros from "./classes/macros";
+import SimpleCalendar from "./classes/simple-calendar";
 import API from "./classes/api";
 import {Logger} from "./classes/logging";
 import {SettingNames, SimpleCalendarHooks} from "./constants";
@@ -8,23 +7,19 @@ import {GameSettings} from "./classes/foundry-interfacing/game-settings";
 SimpleCalendar.instance = new SimpleCalendar();
 Hooks.on('init', () => {
     //Initialize the Simple Calendar
-    SimpleCalendar.instance.init();
+    SimpleCalendar.instance.initialize();
     //Expose the api
     (window as any).SimpleCalendar = {
-        show: Macros.show,
-        setDateTime: Macros.setDateTime,
-        changeDateTime: Macros.changeDateTime,
         api: API,
         Hooks: SimpleCalendarHooks
     };
 });
 Hooks.on('ready', () => {
     //Initialize the Simple Calendar Sockets
-    SimpleCalendar.instance.sockets.initializeSockets();
-    //SimpleCalendar.instance.initializeSockets();
+    SimpleCalendar.instance.sockets.initialize();
     SimpleCalendar.instance.checkNoteReminders();
     if(GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad)){
-        SimpleCalendar.instance.showApp();
+        SimpleCalendar.instance.mainApp?.showApp();
     }
 });
 Hooks.on('getSceneControlButtons', SimpleCalendar.instance.getSceneControlButtons.bind(SimpleCalendar.instance));

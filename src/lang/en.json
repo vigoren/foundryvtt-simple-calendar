@@ -1,4 +1,6 @@
 {
+  "FSC.About": "About",
+  "FSC.AdvancedSettings": "Advanced Settings",
   "FSC.Calendars": "Calendars",
   "FSC.Configuration.Client.OpenOnLoad.Title": "Open On Load",
   "FSC.Configuration.Client.OpenOnLoad.Description": "Will open up the Simple Calendar application when foundry is loaded.",
@@ -6,11 +8,20 @@
   "FSC.Configuration.Client.OpenCompact.Description": "When the Simple Calendar application is opened it will open in the compact view by default.",
   "FSC.Configuration.Client.RememberPosition.Title": "Remember Position",
   "FSC.Configuration.Client.RememberPosition.Description": "Simple Calendar will remember where it was last positioned and place itself there.",
+  "FSC.Configuration.QuickSetup.Description": "Follow these directions below to quickly get a calendar set up and running!",
+  "FSC.Configuration.QuickSetup.ChooseCurrentDateTitle": "Choose the Current Date",
+  "FSC.Configuration.QuickSetup.ChooseCurrentDateDescription": "Set the initial Year, Month and Day for your calendar.",
+  "FSC.Configuration.QuickSetup.ChoosePredefinedTitle": "Choose a Predefined Calendar",
+  "FSC.Configuration.QuickSetup.ChoosePredefinedDescription": "Choose one of these predefined calendars to quickly set all other settings to match that calendar.",
+
+  "FSC.Configuration.Title": "Simple Calendar Configuration",
+  "FSC.Documentation": "Documentation",
   "FSC.Search.Options.Title": "Search Options",
   "FSC.Search.Options.Fields.Date": "Date",
   "FSC.Search.Options.Fields.Title": "Title",
   "FSC.Search.Options.Fields.Details": "Details",
   "FSC.Search.Options.Fields.Categories": "Categories",
+  "FSC.Settings": "Settings",
 
 
   "FSC.Title": "Simple Calendar",
@@ -209,7 +220,6 @@
   "FSC.Moon.Phase.WaningGibbous": "Waning Gibbous",
   "FSC.Moon.Phase.LastQuarter": "Last Quarter",
   "FSC.Moon.Phase.WaningCrescent": "Waning Crescent",
-  "FSC.Configuration.Title": "Calendar Configuration",
   "FSC.Configuration.Description": "This form allows you to customize your games calendar by specifying the current year, how many months, the name of each month and how many days each month has.",
   "FSC.Configuration.Help": "For help configuring the calendar be sure to check out the <a href='https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md' target='_blank'>documentation!</a>",
   "FSC.Configuration.Save": "Save Configuration",
@@ -235,7 +245,6 @@
   "FSC.Configuration.General.ImportExport.Title": "Import/Export",
   "FSC.Configuration.General.ImportExport.SCConfig": "Import/Export Calendar Configuration",
   "FSC.Configuration.General.ImportExport.SCConfigHelp": "For importing or exporting Simple Calendars current calendar configuration to share or load replicate in another world.",
-  "FSC.Configuration.General.ThirdPartyModule": "Third Party Module Import/Export",
   "FSC.Configuration.General.Permissions.Note": "Here the permissions for various interactions with Simple Calendar can be adjusted based on Foundry roles. Game masters will always have these permissions.",
   "FSC.Configuration.General.CalendarPlayerVisible": "View Calendar",
   "FSC.Configuration.General.CalendarPlayerVisibleHelp": "The checked roles will be able to open Simple Calendar.",
@@ -406,12 +415,6 @@
   "FSC.Error.Calendar.GMCurrent": "You need to be a GM to change the current date.",
   "FSC.Module.Import": "Import Into Simple Calendar",
   "FSC.Module.NoChanges": "No Changes",
-  "FSC.Module.CalendarWeather.Title": "Calendar/Weather Module Detected!",
-  "FSC.Module.CalendarWeather.Configuration.Message": "We have detected that the Calendar/Weather module is enabled for this world.<br/><br/>If you would like to import the Calendar/Weather calendar settings into Simple Calendar choose \"Import Into Simple Calendar\", this will make the Simple Calendar match the Calendar/Weather settings.<br/><br/>If you would like to make Calendar/Weather match Simple Calendar choose \"Export Into Calendar/Weather\", this will make the Calendar/Weather settings match the Simple Calendars configuration.<br/>",
-  "FSC.Module.CalendarWeather.Export": "Export Into Calendar/Weather",
-  "FSC.Module.AboutTime.Title": "About-Time Module Detected",
-  "FSC.Module.AboutTime.Configuration.Message": "We have detected that the about-time module is/has been enabled for this world.<br/><br/>If you would like to import the about-time calendar settings into Simple Calendar choose \"Import Into Simple Calendar\", this will make the Simple Calendar match the about-time settings.<br/><br/>If you would like to make about-time match Simple Calendar choose \"Export Into About-Time\", this will make the about-time settings match the Simple Calendars configuration.<br/>",
-  "FSC.Module.AboutTime.Export": "Export Into About-Time",
   "FSC.Importer.NoFile": "Please Select a file to import.",
   "FSC.Importer.InvalidSCConfig": "Invalid file uploaded, please upload a Simple Calendar exported JSON file."
 }

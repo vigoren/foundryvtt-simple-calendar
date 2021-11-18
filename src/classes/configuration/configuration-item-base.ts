@@ -1,4 +1,4 @@
-import Utilities from "../utilities";
+import {generateUniqueId} from "../utilities/string";
 import {IConfigurationItemBaseConfig, IConfigurationItemBaseTemplate} from "../../interfaces";
 import Year from "../calendar/year";
 
@@ -21,7 +21,7 @@ export default class ConfigurationItemBase{
     name: string;
 
     constructor(name: string = '', numericRepresentation: number = NaN) {
-        this.id = Utilities.generateUniqueId();
+        this.id = generateUniqueId();
         this.name = name;
         this.numericRepresentation = numericRepresentation;
     }

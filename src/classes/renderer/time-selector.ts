@@ -1,8 +1,9 @@
 import {SCRenderer} from "../../interfaces";
 import Calendar from "../calendar";
-import Utilities from "../utilities";
-import SimpleCalendar from "../applications/simple-calendar";
+import {PadNumber} from "../utilities/string";
+import {deepMerge} from "../utilities/object";
 import {TimeSelectorEvents} from "../../constants";
+import CalendarManager from "../calendar/calendar-manager";
 
 export default class TimeSelector {
 
@@ -14,8 +15,8 @@ export default class TimeSelector {
     };
 
     public static Render(calendar: Calendar, options: SCRenderer.TimeSelectorOptions = {id: ''}): string{
-        options = Utilities.deepMerge({}, this.defaultOptions, options);
-        let html = `<div id="${options.id}" class="time-selector" data-calendar="${SimpleCalendar.instance.calendars.findIndex(c => c.id === calendar.id)}">`;
+        options = deepMerge({}, this.defaultOptions, options);
+        let html = `<div id="${options.id}" class="time-selector" data-calendar="${CalendarManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
         html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/><span class="far fa-clock"></span>`;
 
@@ -35,16 +36,16 @@ export default class TimeSelector {
     private static RenderTimeInputGroup(calendar: Calendar, cssClass: string = '', selectedAmount = {hour: 0, minute: 0}){
         let html = `<div class="sc-ts-inputs ${cssClass}">`;
         //Add Hours
-        html += `<input class="sc-ts-hour" type="number" value="${Utilities.PadNumber(selectedAmount.hour)}" /><ul class="dropdown hide sc-ts-hour-list">`;
+        html += `<input class="sc-ts-hour" type="number" value="${PadNumber(selectedAmount.hour)}" /><ul class="dropdown hide sc-ts-hour-list">`;
         for(let i = 0; i < calendar.year.time.hoursInDay; i++){
-            html += `<li>${Utilities.PadNumber(i)}</li>`;
+            html += `<li>${PadNumber(i)}</li>`;
         }
         html += `</ul>`;
 
         //Ad Minutes
-        html += `<span class="time-spacer">:</span><input class="sc-ts-minute" type="number" value="${Utilities.PadNumber(selectedAmount.minute)}" /><ul class="dropdown hide sc-ts-minute-list">`;
+        html += `<span class="time-spacer">:</span><input class="sc-ts-minute" type="number" value="${PadNumber(selectedAmount.minute)}" /><ul class="dropdown hide sc-ts-minute-list">`;
         for(let i = 0; i < calendar.year.time.minutesInHour; i+=5){
-            html += `<li>${Utilities.PadNumber(i)}</li>`;
+            html += `<li>${PadNumber(i)}</li>`;
         }
         html += `</ul>`;
 
@@ -98,8 +99,9 @@ export default class TimeSelector {
         const timeSelectorElement = document.getElementById(timeSelectorId);
         if(timeSelectorElement){
             const calendarIndex = parseInt(timeSelectorElement.getAttribute('data-calendar') || '');
-            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < SimpleCalendar.instance.calendars.length){
-                const calendar = SimpleCalendar.instance.calendars[calendarIndex];
+            const calendars = CalendarManager.getAllCalendars();
+            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
+                const calendar = calendars[calendarIndex];
                 let options: SCRenderer.TimeSelectorOptions = {id:''};
                 const optionsInput = timeSelectorElement.querySelector('.render-options');
                 if(optionsInput){

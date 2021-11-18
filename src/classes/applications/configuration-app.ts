@@ -1,4 +1,5 @@
 import {Logger} from "../logging";
+import SimpleCalendar from "../simple-calendar";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
@@ -13,24 +14,25 @@ import {
     SettingNames,
     YearNamingRules
 } from "../../constants";
-import Importer from "../importer";
 import Season from "../calendar/season";
 import Moon from "../calendar/moon";
-import SimpleCalendar from "./simple-calendar";
 import {saveAs} from "file-saver";
 import {NoteCategory, SCDateSelector} from "../../interfaces";
-import Utilities from "../utilities";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
-import DateSelector from "../date-selector";
+import DateSelectorManager from "../date-selector/date-selector-manager";
+import {GetContrastColor} from "../utilities/visual";
 
-export class SimpleCalendarConfiguration extends FormApplication {
+export class ConfigurationApp extends FormApplication {
 
     /**
      * Used to store a globally accessible copy of the Simple calendar configuration class for access from event functions.
-     * @type {SimpleCalendarConfiguration}
+     * @type {ConfigurationApp}
      */
-    static instance: SimpleCalendarConfiguration;
+    static instance: ConfigurationApp;
+
+    private static appWindowId: string = 'simple-calendar-configuration-application-form';
+
     /**
      * The year object where the changes are applied and loaded from
      * @type {Calendar}
@@ -52,6 +54,12 @@ export class SimpleCalendarConfiguration extends FormApplication {
 
     private dateFormatTableExpanded: boolean = false;
 
+
+    uiElementStates = {
+        selectedPredefinedCalendar: '',
+        predefinedSectionAnimationActive: false
+    };
+
     /**
      * The Calendar configuration constructor
      * @param {Calendar} data The year data used to populate the configuration dialog
@@ -63,9 +71,9 @@ export class SimpleCalendarConfiguration extends FormApplication {
         } else {
             this.calendar = data;
         }
-        this._tabs[0].active = "generalSettings";
+        this._tabs[0].active = "quickSetup";
 
-        this.generalSettings.defaultPlayerNoteVisibility = GameSettings.GetDefaultNoteVisibility();
+        this.generalSettings.defaultPlayerNoteVisibility = GameSettings.GetBooleanSettings(SettingNames.DefaultNoteVisibility);
 
         this.noteCategories = SimpleCalendar.instance.activeCalendar.noteCategories.map(nc => {
             return {
@@ -83,7 +91,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/calendar-config.html";
         options.title = "FSC.Configuration.Title";
-        options.classes = ["simple-calendar", "simple-calendar-configuration", "dark"];
+        options.id = this.appWindowId;
+        options.classes = ["simple-calendar", "dark"];
         options.resizable = true;
         options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
         options.height = 700;
@@ -111,8 +120,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
      */
     close(options?: FormApplication.CloseOptions): Promise<void> {
         (<Calendar>this.object).year.seasons.forEach(s => {
-            DateSelector.RemoveSelector(`sc_season_start_date_${s.id}`);
-            DateSelector.RemoveSelector(`sc_season_sunrise_time_${s.id}`);
+            DateSelectorManager.RemoveSelector(`sc_season_start_date_${s.id}`);
+            DateSelectorManager.RemoveSelector(`sc_season_sunrise_time_${s.id}`);
         });
         return super.close(options);
     }
@@ -131,6 +140,8 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
         let data = {
             ...super.getData(options),
+            uiElementStates: this.uiElementStates,
+
             showDateFormatTokens: this.dateFormatTableExpanded,
             defaultPlayerNoteVisibility: this.generalSettings.defaultPlayerNoteVisibility,
             gameSystem: (<Calendar>this.object).gameSystem,
@@ -142,29 +153,24 @@ export class SimpleCalendarConfiguration extends FormApplication {
             leapYearRule: (<Calendar>this.object).year.leapYearRule,
             showLeapYearCustomMod: (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom,
             showLeapYearMonths: (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None,
-            predefined: {
-                gregorian: 'FSC.Configuration.LeapYear.Rules.Gregorian',
-                darksun: 'Dark Sun',
-                eberron: 'Eberron',
-                exandrian: 'Exandrian',
-                'forbidden-lands': 'Forbidden Lands',
-                harptos: 'Forgotten Realms: Harptos',
-                golarianpf1e : 'Golarian: Pathfinder 1E',
-                golarianpf2e : 'Golarian: Pathfinder 2E',
-                greyhawk: 'Greyhawk',
-                'traveller-ic': 'Traveller: Imperial Calendar',
-                warhammer: "Warhammer: Imperial Calendar"
-            },
+            predefined: [
+                {key: PredefinedCalendars.Gregorian, label: 'FSC.Configuration.LeapYear.Rules.Gregorian'},
+                {key: PredefinedCalendars.DarkSun, label: 'Dark Sun'},
+                {key: PredefinedCalendars.Eberron, label: 'Eberron'},
+                {key: PredefinedCalendars.Exandrian, label: 'Exandrian'},
+                {key: PredefinedCalendars.ForbiddenLands, label: 'Forbidden Lands'},
+                {key: PredefinedCalendars.Harptos, label: 'Forgotten Realms: Harptos'},
+                {key: PredefinedCalendars.GolarianPF1E, label: 'Golarian: Pathfinder 1E'},
+                {key: PredefinedCalendars.GolarianPF2E, label: 'Golarian: Pathfinder 2E'},
+                {key: PredefinedCalendars.Greyhawk, label: 'Greyhawk'},
+                {key: PredefinedCalendars.TravellerImperialCalendar, label: 'Traveller: Imperial Calendar'},
+                {key: PredefinedCalendars.WarhammerImperialCalendar, label: 'Warhammer: Imperial Calendar'}
+            ],
             timeTrackers: {
                 none: 'FSC.Configuration.General.None',
                 self: 'FSC.Configuration.General.Self',
                 'third-party': 'FSC.Configuration.General.ThirdParty',
                 'mixed': 'FSC.Configuration.General.Mixed'
-            },
-            importing: {
-                showAboutTime: false,
-                aboutTimeV1: Importer.aboutTimeV1(),
-                showCalendarWeather:false
             },
             monthStartingWeekdays: <{[key: string]: string}>{},
             seasons: (<Calendar>this.object).year.seasons.map(s => s.toTemplate((<Calendar>this.object).year)),
@@ -205,13 +211,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
             users: <{[key: string]: string}>{},
             noteCategories: <NoteCategory[]>[]
         };
-
-        const calendarWeather = (<Game>game).modules.get('calendar-weather');
-        const aboutTime = (<Game>game).modules.get('about-time');
-
-        data.importing.showCalendarWeather = calendarWeather !== undefined && calendarWeather.active;
-        data.importing.showAboutTime = aboutTime !== undefined && aboutTime.active;
-
 
         data.moonIcons[Icons.NewMoon] = GameSettings.Localize('FSC.Moon.Phase.New');
         data.moonIcons[Icons.WaxingCrescent] = GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent');
@@ -260,11 +259,23 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public activateListeners(html: JQuery<HTMLElement>) {
         super.activateListeners(html);
         (<Calendar>this.object).year.seasons.forEach(s => {
-            DateSelector.GetSelector(`sc_season_start_date_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonStartingDate)}).activateListeners();
-            DateSelector.GetSelector( `sc_season_sunrise_time_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonSunriseSunsetTime)}).activateListeners();
+            DateSelectorManager.GetSelector(`sc_season_start_date_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonStartingDate)}).activateListeners();
+            DateSelectorManager.GetSelector( `sc_season_sunrise_time_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonSunriseSunsetTime)}).activateListeners();
         });
+
+        const appWindow = document.getElementById(ConfigurationApp.appWindowId);
+        if(appWindow){
+            //---------------------
+            // Quick Setup
+            //---------------------
+            appWindow.querySelectorAll('.quick-setup .predefined-list .predefined-calendar').forEach(e => {
+                e.addEventListener('click', this.predefinedCalendarClick.bind(this));
+            });
+        }
+
+
+
         if(html.hasOwnProperty("length")) {
-            console.log(html);
             (<JQuery>html).parent().addClass('open');
             //Date Format Tokens Show/hide
             (<JQuery>html).find('.date-format-token-show').on('click', this.dateFormatTableClick.bind(this));
@@ -296,12 +307,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".year-name-add").on('click', this.addToTable.bind(this, 'year-name'));
             (<JQuery>html).find(".note-category-add").on('click', this.addToTable.bind(this, 'note-category'));
 
-            //Import Buttons
-            (<JQuery>html).find("#scAboutTimeImport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-import', 'about-time'));
-            (<JQuery>html).find("#scAboutTimeExport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-export','about-time'));
-            (<JQuery>html).find("#scCalendarWeatherImport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-import', 'calendar-weather'));
-            (<JQuery>html).find("#scCalendarWeatherExport").on('click', this.overwriteConfirmationDialog.bind(this, 'tp-export','calendar-weather'));
-
             (<JQuery>html).find("#exportCalendar").on('click', this.exportCalendar.bind(this));
             (<JQuery>html).find("#importCalendar").on('click', this.importCalendar.bind(this));
 
@@ -321,6 +326,30 @@ export class SimpleCalendarConfiguration extends FormApplication {
             (<JQuery>html).find(".moon-settings select").on('change', this.inputChange.bind(this));
         }
     }
+
+    private predefinedCalendarClick(e: Event){
+        const element = <HTMLElement>e.target;
+        if(element){
+            const allReadySelected = element.classList.contains('selected');
+            document.querySelectorAll(`#${ConfigurationApp.appWindowId} .quick-setup .predefined-list .predefined-calendar`).forEach(e => {
+                e.classList.remove('selected');
+            });
+            if(!allReadySelected){
+                element.classList.add('selected');
+                const cal = element.getAttribute('data-calendar');
+                if(cal){
+                    this.uiElementStates.selectedPredefinedCalendar = cal;
+                    PredefinedCalendar.setToPredefined((<Calendar>this.object).year, <PredefinedCalendars>cal);
+                }
+            } else {
+                this.uiElementStates.selectedPredefinedCalendar = '';
+            }
+            this.updateApp();
+        }
+    }
+
+
+
 
     /**
      * When the date format table header is clicked, will expand/collapse the table of information
@@ -815,7 +844,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
                         }
                     } else if(cssClass === 'note-category-color' && this.noteCategories.length > index){
                         this.noteCategories[index].color = value;
-                        this.noteCategories[index].textColor = Utilities.GetContrastColor(value);
+                        this.noteCategories[index].textColor = GetContrastColor(value);
                     }
                 }
             }
@@ -909,20 +938,6 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public async overwriteConfirmationYes(type: string, type2: string){
         if(type === 'predefined'){
             this.predefinedApplyConfirm();
-        } else if(type === 'tp-import'){
-            if(type2 === 'about-time'){
-                await Importer.importAboutTime((<Calendar>this.object).year);
-                this.updateApp();
-            } else if(type2 === 'calendar-weather'){
-                await Importer.importCalendarWeather((<Calendar>this.object).year);
-                this.updateApp();
-            }
-        } else if(type === 'tp-export'){
-            if(type2 === 'about-time'){
-                await Importer.exportToAboutTime((<Calendar>this.object).year);
-            } else if(type2 === 'calendar-weather'){
-                await Importer.exportCalendarWeather((<Calendar>this.object).year);
-            }
         }
     }
 
@@ -941,7 +956,7 @@ export class SimpleCalendarConfiguration extends FormApplication {
             }
             // Update the general Settings
             (<Calendar>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>(<HTMLInputElement>document.getElementById("scGameWorldTime")).value;
-            await GameSettings.SaveGeneralSettings((<Calendar>this.object).generalSettings);
+            await GameSettings.SaveObjectSetting(SettingNames.GeneralConfiguration, (<Calendar>this.object).generalSettings);
 
             // Update the Year Configuration
             const currentYear = parseInt((<HTMLInputElement>document.getElementById("scCurrentYear")).value);
@@ -951,28 +966,28 @@ export class SimpleCalendarConfiguration extends FormApplication {
                 (<Calendar>this.object).year.visibleYear = currentYear;
             }
 
-            await GameSettings.SaveYearConfiguration((<Calendar>this.object).year);
+            await GameSettings.SaveObjectSetting(SettingNames.YearConfiguration, (<Calendar>this.object).year.toConfig());
             // Update the Month Configuration
-            await GameSettings.SaveMonthConfiguration((<Calendar>this.object).year.months);
+            await GameSettings.SaveObjectSetting(SettingNames.MonthConfiguration, (<Calendar>this.object).year.months.map(m => m.toConfig()));
             //Update Weekday Configuration
-            await GameSettings.SaveWeekdayConfiguration((<Calendar>this.object).year.weekdays);
+            await GameSettings.SaveObjectSetting(SettingNames.WeekdayConfiguration, (<Calendar>this.object).year.weekdays.map(w => w.toConfig()));
             //Update Leap Year Configuration
-            await GameSettings.SaveLeapYearRules((<Calendar>this.object).year.leapYearRule);
+            await GameSettings.SaveObjectSetting(SettingNames.LeapYearRule, (<Calendar>this.object).year.leapYearRule.toConfig());
             //Update Time Configuration
-            await GameSettings.SaveTimeConfiguration((<Calendar>this.object).year.time);
+            await GameSettings.SaveObjectSetting(SettingNames.TimeConfiguration, (<Calendar>this.object).year.time.toConfig());
             //Update Season Configuration
-            await GameSettings.SaveSeasonConfiguration((<Calendar>this.object).year.seasons);
+            await GameSettings.SaveObjectSetting(SettingNames.SeasonConfiguration, (<Calendar>this.object).year.seasons.map(s => s.toConfig()));
             //Update Moon Settings
-            await GameSettings.SaveMoonConfiguration((<Calendar>this.object).year.moons);
+            await GameSettings.SaveObjectSetting(SettingNames.MoonConfiguration, (<Calendar>this.object).year.moons.map(m => m.toConfig()));
 
             if(this.yearChanged){
-                await GameSettings.SaveCurrentDate((<Calendar>this.object).year);
+                (<Calendar>this.object).saveCurrentDate().catch(Logger.error);
             }
 
             const noteDefaultPlayerVisibility = (<HTMLInputElement>document.getElementById('scDefaultPlayerVisibility')).checked;
-            await GameSettings.SetDefaultNoteVisibility(noteDefaultPlayerVisibility);
+            await GameSettings.SaveBooleanSetting(SettingNames.DefaultNoteVisibility, noteDefaultPlayerVisibility);
 
-            await GameSettings.SaveNoteCategories(this.noteCategories);
+            await GameSettings.SaveObjectSetting(SettingNames.NoteCategories, this.noteCategories);
 
             await SimpleCalendar.instance.activeCalendar.syncTime(true);
 
@@ -989,16 +1004,16 @@ export class SimpleCalendarConfiguration extends FormApplication {
     public exportCalendar(event: Event){
         event.preventDefault();
         const ex = {
-            currentDate: GameSettings.LoadCurrentDate(),
-            generalSettings: GameSettings.LoadGeneralSettings(),
-            leapYearSettings: GameSettings.LoadLeapYearRules(),
-            monthSettings: GameSettings.LoadMonthData(),
-            moonSettings: GameSettings.LoadMoonData(),
-            noteCategories: GameSettings.LoadNoteCategories(),
-            seasonSettings: GameSettings.LoadSeasonData(),
-            timeSettings: GameSettings.LoadTimeData(),
-            weekdaySettings: GameSettings.LoadWeekdayData(),
-            yearSettings: GameSettings.LoadYearData()
+            currentDate: GameSettings.GetObjectSettings(SettingNames.CurrentDate),
+            generalSettings: GameSettings.GetObjectSettings(SettingNames.GeneralConfiguration),
+            leapYearSettings: GameSettings.GetObjectSettings(SettingNames.LeapYearRule),
+            monthSettings: GameSettings.GetObjectSettings(SettingNames.MonthConfiguration),
+            moonSettings: GameSettings.GetObjectSettings(SettingNames.MoonConfiguration),
+            noteCategories: GameSettings.GetObjectSettings(SettingNames.NoteCategories),
+            seasonSettings: GameSettings.GetObjectSettings(SettingNames.SeasonConfiguration),
+            timeSettings: GameSettings.GetObjectSettings(SettingNames.TimeConfiguration),
+            weekdaySettings: GameSettings.GetObjectSettings(SettingNames.WeekdayConfiguration),
+            yearSettings: GameSettings.GetObjectSettings(SettingNames.YearConfiguration)
         };
         saveAs(new Blob([JSON.stringify(ex)], {type: 'application/json'}), 'simple-calendar-export.json');
     }

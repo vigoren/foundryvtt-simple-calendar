@@ -7,7 +7,7 @@ import "../../__mocks__/application";
 import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../../__mocks__/crypto";
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import Year from "./year";
 import Month from "./month";
 import Moon from "./moon";
@@ -47,7 +47,7 @@ describe('Moon Tests', () => {
         expect(m.cycleDayAdjust).toBe(0);
         expect(c.dayList).toStrictEqual([]);
 
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
 
         c = m.toTemplate(y);
         expect(c.dayList.length).toStrictEqual(0);

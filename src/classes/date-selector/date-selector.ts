@@ -1,54 +1,14 @@
-import {SCDateSelector, SCRenderer} from "../interfaces";
-import SimpleCalendar from "./applications/simple-calendar";
-import {GameSettings} from "./foundry-interfacing/game-settings";
-import Utilities from "./utilities";
-import Renderer from "./renderer";
-import {CalendarClickEvents, DateSelectorPositions} from "../constants";
+import {SCDateSelector, SCRenderer} from "../../interfaces";
+import {GameSettings} from "../foundry-interfacing/game-settings";
+import {GetDisplayDate, DateTheSame} from "../utilities/date-time";
+import Renderer from "../renderer";
+import {CalendarClickEvents, DateSelectorPositions} from "../../constants";
+import Calendar from "../calendar";
+import SimpleCalendar from "../simple-calendar";
 
 export default class DateSelector {
 
-    /**
-     * List of date selector objects that are active on the page.
-     * @type {SCDateSelector.SelectorList}
-     */
-    static Selectors:SCDateSelector.SelectorList = {};
 
-    /**
-     * Creates a new Date Selector or returns an existing Date Selector if it all ready exists in the list.
-     * @param {string} id The unique ID of the selector to add
-     * @param {SCDateSelector.Options} options The options associated with setting up the new Date Selector
-     * @return {DateSelector}
-     */
-    static GetSelector(id: string, options: SCDateSelector.Options){
-        if(DateSelector.Selectors.hasOwnProperty(id)){
-            this.Selectors[id].applyOptions(options);
-            return this.Selectors[id];
-        } else {
-            const ds = new DateSelector(id, options);
-            this.Selectors[id] = ds;
-            return ds;
-        }
-    }
-
-    /**
-     * Removes a Date Selector from the list of selectors
-     * @param {string} id The ID of the selector to remove
-     */
-    static RemoveSelector(id: string){
-        if(DateSelector.Selectors.hasOwnProperty(id)){
-            delete this.Selectors[id];
-        }
-    }
-
-    /**
-     * Activates a selectors listeners
-     * @param {string} id The ID of the selector to activate
-     */
-    static ActivateSelector(id: string){
-        if(DateSelector.Selectors.hasOwnProperty(id)){
-            this.Selectors[id].activateListeners();
-        }
-    }
 
     /**
      * The unique ID of the date selector object
@@ -107,6 +67,8 @@ export default class DateSelector {
 
     position: DateSelectorPositions = DateSelectorPositions.Auto;
 
+
+    calendar: Calendar = SimpleCalendar.instance.activeCalendar;
 
     calendarId: string;
 
@@ -171,6 +133,9 @@ export default class DateSelector {
      * @param options
      */
     applyOptions(options: SCDateSelector.Options){
+        if(options.calendar !== undefined){
+            this.calendar = options.calendar;
+        }
         if(options.showDateSelector !== undefined){
             this.showDateSelector = options.showDateSelector;
         }
@@ -242,7 +207,7 @@ export default class DateSelector {
         let timeSelectors = '';
 
         if(this.showDateSelector){
-            calendar = Renderer.CalendarFull.Render(SimpleCalendar.instance.activeCalendar, {
+            calendar = Renderer.CalendarFull.Render(this.calendar, {
                 id: this.calendarId,
                 allowChangeMonth: true,
                 allowSelectDateRange: this.allowDateRangeSelection,
@@ -254,18 +219,18 @@ export default class DateSelector {
                 showSeasonName: false,
                 showYear: this.showCalendarYear,
                 date: {
-                    month: SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.visibleDate.month),
+                    month: this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.visibleDate.month),
                     year: this.selectedDate.visibleDate.year
                 },
                 selectedDates: {
                     start: {
                         year: this.selectedDate.startDate.year,
-                        month: SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.startDate.month),
+                        month: this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.startDate.month),
                         day: this.selectedDate.startDate.day
                     },
                     end: {
                         year: this.selectedDate.endDate.year,
-                        month: SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.endDate.month),
+                        month: this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.endDate.month),
                         day: this.selectedDate.endDate.day
                     }
                 }
@@ -274,7 +239,7 @@ export default class DateSelector {
         if(this.showTimeSelector){
             timeSelectors = `<div class="sc-date-selector-time-selector-wrapper">`
             if(this.addTime){
-                timeSelectors += Renderer.TimeSelector.Render(SimpleCalendar.instance.activeCalendar, {
+                timeSelectors += Renderer.TimeSelector.Render(this.calendar, {
                     id: this.timeSelectorId,
                     allowTimeRange: this.allowTimeRangeSelection,
                     disableSelfUpdate: true,
@@ -298,7 +263,7 @@ export default class DateSelector {
             }
             timeSelectors += `</div>`;
         }
-        const displayDate = Utilities.GetDisplayDate(this.selectedDate.startDate, this.selectedDate.endDate, (this.showTimeSelector && !this.showDateSelector), this.showCalendarYear, this.timeDelimiter);
+        const displayDate = GetDisplayDate(this.calendar, this.selectedDate.startDate, this.selectedDate.endDate, (this.showTimeSelector && !this.showDateSelector), this.showCalendarYear, this.timeDelimiter);
         returnHtml = `<input class="display-input" value="${displayDate}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar-wrapper${this.showTimeSelector && !this.showDateSelector? ' just-time' : ''}" style="display:${hideCalendar? 'none' : 'block'};">${calendar}${timeSelectors}</div>`;
         if(includeWrapper){
             returnHtml = `${wrapper}${returnHtml}</div>`
@@ -412,15 +377,15 @@ export default class DateSelector {
     callOnDateSelect(){
         if(this.onDateSelect){
 
-            const startMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.startDate.month);
-            const endMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.endDate.month);
+            const startMonthIndex = this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.startDate.month);
+            const endMonthIndex = this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.endDate.month);
             let startDayIndex = 0;
             let endDayIndex = 0;
             if(startMonthIndex > -1){
-                startDayIndex = SimpleCalendar.instance.activeCalendar.year.months[startMonthIndex].days.findIndex(d => d.numericRepresentation === this.selectedDate.startDate.day);
+                startDayIndex = this.calendar.year.months[startMonthIndex].days.findIndex(d => d.numericRepresentation === this.selectedDate.startDate.day);
             }
             if(endMonthIndex > -1){
-                endDayIndex = SimpleCalendar.instance.activeCalendar.year.months[endMonthIndex].days.findIndex(d => d.numericRepresentation === this.selectedDate.endDate.day);
+                endDayIndex = this.calendar.year.months[endMonthIndex].days.findIndex(d => d.numericRepresentation === this.selectedDate.endDate.day);
             }
 
 
@@ -503,20 +468,20 @@ export default class DateSelector {
             let hideCalendar = true;
             if(!this.secondDaySelect){
                 this.selectedDate.startDate.year = options.selectedDates.start.year;
-                this.selectedDate.startDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.start.month].numericRepresentation;
+                this.selectedDate.startDate.month = this.calendar.year.months[options.selectedDates.start.month].numericRepresentation;
                 this.selectedDate.startDate.day = options.selectedDates.start.day || 1;
                 this.selectedDate.endDate.year = options.selectedDates.start.year;
-                this.selectedDate.endDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.start.month].numericRepresentation;
+                this.selectedDate.endDate.month = this.calendar.year.months[options.selectedDates.start.month].numericRepresentation;
                 this.selectedDate.endDate.day = options.selectedDates.start.day || 1;
                 this.secondDaySelect = true;
                 hideCalendar = !this.allowDateRangeSelection;
 
             }else{
                 this.selectedDate.startDate.year = options.selectedDates.start.year;
-                this.selectedDate.startDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.start.month].numericRepresentation;
+                this.selectedDate.startDate.month = this.calendar.year.months[options.selectedDates.start.month].numericRepresentation;
                 this.selectedDate.startDate.day = options.selectedDates.start.day || 1;
                 this.selectedDate.endDate.year = options.selectedDates.end.year;
-                this.selectedDate.endDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.selectedDates.end.month].numericRepresentation;
+                this.selectedDate.endDate.month = this.calendar.year.months[options.selectedDates.end.month].numericRepresentation;
                 this.selectedDate.endDate.day = options.selectedDates.end.day || 1;
             }
 
@@ -538,7 +503,7 @@ export default class DateSelector {
     changeMonthClick(clickType: CalendarClickEvents, options: SCRenderer.CalendarOptions){
         if(options.date){
             this.selectedDate.visibleDate.year = options.date.year;
-            this.selectedDate.visibleDate.month = SimpleCalendar.instance.activeCalendar.year.months[options.date.month].numericRepresentation;
+            this.selectedDate.visibleDate.month = this.calendar.year.months[options.date.month].numericRepresentation;
         }
         this.activateListeners(null, false, false);
         if(this.showTimeSelector){
@@ -585,7 +550,7 @@ export default class DateSelector {
     timeChange(options: SCRenderer.TimeSelectorOptions){
         if(options.selectedTime){
             //If the day is the same, make sure that the end time is not before the start time
-            if(Utilities.DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
+            if(DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
                 if(options.selectedTime.end.hour <= options.selectedTime.start.hour){
                     options.selectedTime.end.hour = options.selectedTime.start.hour;
 

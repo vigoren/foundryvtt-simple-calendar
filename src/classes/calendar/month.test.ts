@@ -11,7 +11,7 @@ import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 import "../../__mocks__/chat-message";
 
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import Month from "./month";
 
 describe('Month Class Tests', () => {
@@ -19,7 +19,7 @@ describe('Month Class Tests', () => {
     let month2: Month;
     let monthLy: Month;
     let monthIc: Month;
-    SimpleCalendar.instance = new SimpleCalendar();
+    MainApp.instance = new MainApp();
 
     beforeEach(() => {
         month = new Month("Test", 0, 0, 0);
@@ -110,7 +110,7 @@ describe('Month Class Tests', () => {
         const t2 = monthIc.toTemplate();
         expect(t2.numericRepresentation).toBe(-1);
 
-        const t3 = SimpleCalendar.instance.activeCalendar.year.months[0].toTemplate(SimpleCalendar.instance.activeCalendar.year);
+        const t3 = MainApp.instance.activeCalendar.year.months[0].toTemplate(MainApp.instance.activeCalendar.year);
         expect(t3.name).toBe('1');
 
     });

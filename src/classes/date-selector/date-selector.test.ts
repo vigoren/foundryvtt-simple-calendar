@@ -1,19 +1,19 @@
 /**
  * @jest-environment jsdom
  */
-import "../../__mocks__/game";
-import "../../__mocks__/form-application";
+import "../../../__mocks__/game";
+import "../../../__mocks__/form-application";
 import "../../__mocks__/application";
 import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
-import "../../__mocks__/crypto";
+import "../../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import DateSelector from "./date-selector";
-import SimpleCalendar from "./applications/simple-calendar";
-import Year from "./calendar/year";
-import {LeapYearRules} from "../constants";
-import Month from "./calendar/month";
-import {Weekday} from "./calendar/weekday";
+import MainApp from "../applications/main-app";
+import Year from "../calendar/year";
+import {LeapYearRules} from "../../constants";
+import Month from "../calendar/month";
+import {Weekday} from "../calendar/weekday";
 
 describe('Date Selector Class Tests', () => {
 
@@ -24,7 +24,7 @@ describe('Date Selector Class Tests', () => {
         ds = DateSelector.GetSelector('test', {showDateSelector: true, showTimeSelector: true});
         y = new Year(1);
         // @ts-ignore
-        SimpleCalendar.instance = undefined;
+        MainApp.instance = undefined;
     });
 
     test('Get Selector', () => {
@@ -67,9 +67,9 @@ describe('Date Selector Class Tests', () => {
     });
 
     test('Build', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         expect(ds.build()).toBeDefined();
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance.activeCalendar.year = y;
         //expect(ds.build().length).toBeGreaterThan(0);
 
         y.showWeekdayHeadings = false;
@@ -139,7 +139,7 @@ describe('Date Selector Class Tests', () => {
 
     test('Update', () => {
         const buildSpy = jest.spyOn(ds, 'build');
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         ds.update();
         expect(buildSpy).toHaveBeenCalledTimes(1);
 
@@ -296,7 +296,7 @@ describe('Date Selector Class Tests', () => {
         ds.dayClick(html ,event);
         expect(htmlQSSpy).toHaveBeenCalledTimes(4);
 
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         currentMonthYear.setAttribute('data-visible','1/1');
         (<HTMLElement>event.target).setAttribute('data-day', '1');
         ds.dayClick(html ,event);
@@ -322,8 +322,8 @@ describe('Date Selector Class Tests', () => {
         expect(ds.selectedDate.endDate.month).toBe(2);
         expect(ds.selectedDate.endDate.day).toBe(3);
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        //SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance = new MainApp();
+        //Main.instance.activeCalendar.year = y;
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));
         y.months.push(new Month('W', 3, 0, 20));
@@ -387,8 +387,8 @@ describe('Date Selector Class Tests', () => {
     test('Change Month', () => {
         const updateSpy = jest.spyOn(ds, "update").mockImplementation();
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = y;
         y.months.push(new Month('M', 1, 0, 20));
         y.months.push(new Month('T', 2, 0, 20));
         y.months.push(new Month('W', 3, 0, 20));
@@ -497,7 +497,7 @@ describe('Date Selector Class Tests', () => {
         const event = new Event('change');
         const updateSpy = jest.spyOn(ds, 'update').mockImplementation();
         (<HTMLInputElement>event.currentTarget).value = '';
-        SimpleCalendar.instance = new SimpleCalendar();
+        MainApp.instance = new MainApp();
         ds.timeUpdate(event);
         expect(updateSpy).toHaveBeenCalled();
 
@@ -509,8 +509,8 @@ describe('Date Selector Class Tests', () => {
         ds.timeUpdate(event);
         expect(updateSpy).toHaveBeenCalled();
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = y;
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = y;
         ds.timeUpdate(event);
         expect(updateSpy).toHaveBeenCalledTimes(4);
 

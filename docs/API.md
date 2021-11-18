@@ -139,7 +139,7 @@ onDayClick|Function or Null|null|Optional function to be called when a day is cl
 ### Examples
 
 ```javascript
-SimpleCalendar.api.activateFullCalendarListeners('example_1');
+MainApp.api.activateFullCalendarListeners('example_1');
 ```
 
 ## `SimpleCalendar.api.advanceTimeToPreset(preset)`
@@ -163,11 +163,11 @@ This function will return true if the date was set successfully, false if it was
 ```javascript
 //Assuming the curent time is 11am, set the time to the next sunset
 //Will result in the date staying the same but the time changing to 6pm
-SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunset);
+MainApp.api.advanceTimeToPreset(MainApp.api.PresetTimeOfDay.Sunset);
 
 //Assuming the current time is 11am, set the time to the next sunrise
 //Will result in the date advancing by 1 day and the time changing to 6am
-SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunrise);
+MainApp.api.advanceTimeToPreset(MainApp.api.PresetTimeOfDay.Sunrise);
 ```
 
 <hr/>
@@ -189,18 +189,19 @@ interval|[Interval Time Object](#interval-time-object)|No Default|The interval o
 This function will return true if the date change was successful and false if it was not.
 
 ### Examples
+
 ```javascript
 //Assuming a date of June 1, 2021 and user has permission to change the date
-SimpleCalendar.api.changeDate({day: 1}); // Will set the new date to June 2, 2021
+MainApp.api.changeDate({day: 1}); // Will set the new date to June 2, 2021
 
 //Assuming a date of June 1, 2021 and user has permission to change the date
-SimpleCalendar.api.changeDate({day: -1}); // Will set the new date to May 31, 2021
+MainApp.api.changeDate({day: -1}); // Will set the new date to May 31, 2021
 
 //Assuming a date of June 1, 2021 10:00:00 and user has permission to change the date
-SimpleCalendar.api.changeDate({year: 1, month: 1, day: 1, hour: 1, minute: 1, second: 1}); // Will set the new date to July 2, 2022 11:01:01
+MainApp.api.changeDate({year: 1, month: 1, day: 1, hour: 1, minute: 1, second: 1}); // Will set the new date to July 2, 2022 11:01:01
 
 //Assuming a date of June 1, 2021 10:00:00 and user has permission to change the date
-SimpleCalendar.api.changeDate({second: 3600}); // Will set the new date to June 1, 2021 11:00:00
+MainApp.api.changeDate({second: 3600}); // Will set the new date to June 1, 2021 11:00:00
 ```
 
 <hr/>
@@ -231,7 +232,7 @@ second|Number|0|The randomly selected second
 ### Examples
 
 ```javascript
-SimpleCalendar.api.chooseRandomDate({year: 2021, month: 3, day: 0},{year: 2021, month: 5, day: 1})
+MainApp.api.chooseRandomDate({year: 2021, month: 3, day: 0}, {year: 2021, month: 5, day: 1})
 /*
 {
     day: 1
@@ -243,7 +244,7 @@ SimpleCalendar.api.chooseRandomDate({year: 2021, month: 3, day: 0},{year: 2021, 
 }
  */
 
-SimpleCalendar.api.chooseRandomDate({year: 1900, month: 3},{year: 2021, month: 5})
+MainApp.api.chooseRandomDate({year: 1900, month: 3}, {year: 2021, month: 5})
 /*
 {
     day: 19
@@ -255,7 +256,7 @@ SimpleCalendar.api.chooseRandomDate({year: 1900, month: 3},{year: 2021, month: 5
 }
 */
 
-SimpleCalendar.api.chooseRandomDate();
+MainApp.api.chooseRandomDate();
 /*
 {
     day: 11
@@ -287,7 +288,7 @@ paused|Boolean|If the clock has paused. The clock will be paused when the game i
 ### Examples
 
 ```javascript
-const status = SimpleCalendar.api.clockStatus();
+const status = MainApp.api.clockStatus();
 console.log(status); // {started: false, stopped: true, paused: false}
 ```
 
@@ -313,12 +314,12 @@ Returns a promise that resolves to a boolean value, true if the change was succe
 ```javascript
 
 //Set the calendar configuration to the Gregorian calendar
-const result = await SimpleCalendar.api.configureCalendar(SimpleCalendar.api.Calendars.Gregorian);
+const result = await MainApp.api.configureCalendar(MainApp.api.Calendars.Gregorian);
 
 //Set the calendar configuration to a custom calendar
 const custom = {};
 
-const result = await SimpleCalendar.api.configureCalendar(custom);
+const result = await MainApp.api.configureCalendar(custom);
 
 ```
 
@@ -342,9 +343,9 @@ Returns the timestamp for that date.
 ### Examples
 
 ```javascript
-SimpleCalendar.api.dateToTimestamp({}); //Returns the timestamp for the current date
+MainApp.api.dateToTimestamp({}); //Returns the timestamp for the current date
 
-SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, second: 0}); //Returns 1609462860
+MainApp.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, second: 0}); //Returns 1609462860
 ```
 
 <hr/>
@@ -368,18 +369,19 @@ date|[Date Time Ojbect](#date-time-object) or null|null|A date object (eg `{year
 Returns an object that contains a formatted date string and a formatted time string.
 
 ### Examples
+
 ```javascript
 // Assuming that the default date and time formats are in place
 // Date: Full Month Name Day, Year
 // Time: 24Hour:Minute:Second
 
-SimpleCalendar.api.formatDate({year: 2021, month: 11, day: 24, hour: 12, minute: 13, second: 14});
+MainApp.api.formatDate({year: 2021, month: 11, day: 24, hour: 12, minute: 13, second: 14});
 // Returns {date: 'December 25, 2021', time: '12:13:14'}
 
-SimpleCalendar.api.formatDate({year: -2021, month: -11, day: 24, hour: 12, minute: 13, second: 14})
+MainApp.api.formatDate({year: -2021, month: -11, day: 24, hour: 12, minute: 13, second: 14})
 // Returns {date: 'January 25, -2021', time: '12:13:14'}
 
-SimpleCalendar.api.formatDate({year: 2021, month: 111, day: 224, hour: 44, minute: 313, second: 314})
+MainApp.api.formatDate({year: 2021, month: 111, day: 224, hour: 44, minute: 313, second: 314})
 // Returns {date: 'December 31, 2021', time: '23:59:59'}
 ```
 
@@ -396,7 +398,7 @@ This function returns an array of [Month Objects](#month-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getAllMonths();
+MainApp.api.getAllMonths();
 /* Returns an array like this, assuming the Gregorian Calendar
 [
     {
@@ -560,7 +562,7 @@ This function returns an array of [Moon Objects](#moon-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getAllMoons();
+MainApp.api.getAllMoons();
 /* Returns an array like this, assuming the Gregorian Calendar
 [
     {
@@ -648,8 +650,9 @@ Gets the details for all the seasons for the calendar.
 This function returns an array of [Season objects](#season-object).
 
 ### Examples
+
 ```javascript
-SimpleCalendar.api.getAllSeasons();
+MainApp.api.getAllSeasons();
 /* Returns an array like this, assuming the Gregorian Calendar
 [
     {
@@ -705,7 +708,7 @@ This function returns an array of [Weekday Object](#weekday-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getAllWeekdays();
+MainApp.api.getAllWeekdays();
 /* Returns an array like this, assuming the Gregorian Calendar
 [
     {
@@ -760,7 +763,7 @@ This function returns a [Day Object](#day-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getCurrentDay();
+MainApp.api.getCurrentDay();
 /* Returns an object like this:
 {
     id: "cbdb31cb",
@@ -783,7 +786,7 @@ This function returns a [Month Object](#month-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getCurrentMonth();
+MainApp.api.getCurrentMonth();
 /* Returns an object like this:
 {
     abbreviation: "Jun",
@@ -813,7 +816,7 @@ This function returns a [Season Object](#season-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getCurrentSeason();
+MainApp.api.getCurrentSeason();
 /* Returns an object like this
 {
     color: "#fffce8",
@@ -840,7 +843,7 @@ This function returns a [Weekday Object](#weekday-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getCurrentWeekday();
+MainApp.api.getCurrentWeekday();
 /* Returns an object like this
 {
     id: "b40f3a20",
@@ -863,7 +866,7 @@ This function returns a [Year Object](#year-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getCurrentYear();
+MainApp.api.getCurrentYear();
 /* Returns an object like this
 {
     firstWeekday: 4,
@@ -893,7 +896,7 @@ This function returns a [Leap Year Object](#leap-year-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getLeapYearConfiguration();
+MainApp.api.getLeapYearConfiguration();
 /* Returns an object like this
 {
     customMod: 0,
@@ -916,7 +919,7 @@ This function returns a [Time Object](#time-object).
 ### Examples
 
 ```javascript
-SimpleCalendar.api.getTimeConfiguration();
+MainApp.api.getTimeConfiguration();
 /* Returns an object like this
 {
     gameTimeRatio: 1,
@@ -941,7 +944,7 @@ Returns if the current user is considered the primary GM or not.
 
 ```javascript
 
-SimpleCalendar.api.isPrimaryGM(); //True or Flase depending on if the current user is primary gm
+MainApp.api.isPrimaryGM(); //True or Flase depending on if the current user is primary gm
 
 ```
 
@@ -965,12 +968,12 @@ Returns an [Interval Time Object](#interval-time-object).
 
 ```javascript
 //Assuming a Gregorian Calendar
-SimpleCalendar.api.secondsToInterval(3600); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 0, second 0}
-SimpleCalendar.api.secondsToInterval(3660); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 1, second: 0}
-SimpleCalendar.api.secondsToInterval(86400); //Returns {year: 0, month: 0, day: 1, hour: 0, minute: 0, second: 0}
-SimpleCalendar.api.secondsToInterval(604800); //Returns {year: 0, month: 0, day: 7, hour: 0, minute: 0, second: 0}
-SimpleCalendar.api.secondsToInterval(2629743); //Returns {year: 0, month: 1, day: 0, hour: 10, minute: 29, second: 3}
-SimpleCalendar.api.secondsToInterval(31556926); //Returns {year: 1, month: 0, day: 0, hour: 5, minute: 48, second: 46}
+MainApp.api.secondsToInterval(3600); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 0, second 0}
+MainApp.api.secondsToInterval(3660); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 1, second: 0}
+MainApp.api.secondsToInterval(86400); //Returns {year: 0, month: 0, day: 1, hour: 0, minute: 0, second: 0}
+MainApp.api.secondsToInterval(604800); //Returns {year: 0, month: 0, day: 7, hour: 0, minute: 0, second: 0}
+MainApp.api.secondsToInterval(2629743); //Returns {year: 0, month: 1, day: 0, hour: 10, minute: 29, second: 3}
+MainApp.api.secondsToInterval(31556926); //Returns {year: 1, month: 0, day: 0, hour: 5, minute: 48, second: 46}
 ```
 
 <hr/>
@@ -995,10 +998,10 @@ This function will return true if the date was set successfully, false if it was
 
 ```javascript
 //To set the date to December 25th 1999 with the time 00:00:00
-SimpleCalendar.setDateTime(1999, 11, 24);
+MainApp.setDateTime(1999, 11, 24);
 
 //To set the date to December 31st 1999 and the time to 11:59:59pm
-SimpleCalendar.setDateTime(1999, 11, 30, 23, 59, 59);
+MainApp.setDateTime(1999, 11, 30, 23, 59, 59);
 ```
 
 <hr/>
@@ -1015,11 +1018,12 @@ date|[Date Time Object](#date-time-object) or null|null|A date object (eg `{year
 compact|boolean|false|If to open the calendar in compact mode or not.
 
 ### Examples
+
 ```javascript
 //Assuming a Gregorian Calendar
-SimpleCalendar.api.showCalendar(); // Will open the calendar to the current date.
-SimpleCalendar.api.showCalendar({year: 1999, month: 11, day: 25}); // Will open the calendar to the date December 25th, 1999
-SimpleCalendar.api.showCalendar(null, true); // Will opent the calendar to the current date in compact mode.
+MainApp.api.showCalendar(); // Will open the calendar to the current date.
+MainApp.api.showCalendar({year: 1999, month: 11, day: 25}); // Will open the calendar to the date December 25th, 1999
+MainApp.api.showCalendar(null, true); // Will opent the calendar to the current date in compact mode.
 ```
 
 <hr/>
@@ -1035,7 +1039,7 @@ Will return true if the clock started, false if it did not.
 ### Examples
 
 ```javascript
-SimpleCalendar.api.startClock();
+MainApp.api.startClock();
 ```
 
 <hr/>
@@ -1051,7 +1055,7 @@ Will return true if the clock stopped, false if it did not.
 ### Examples
 
 ```javascript
-SimpleCalendar.api.stopClock();
+MainApp.api.stopClock();
 ```
 
 <hr/>
@@ -1061,8 +1065,9 @@ SimpleCalendar.api.stopClock();
 Return the timestamp (in seconds) of the calendars currently set date.
 
 ### Examples
+
 ```javascript
-const timestamp = SimpleCalendar.api.timestamp();
+const timestamp = MainApp.api.timestamp();
 console.log(timestamp); // This will be a number representing the current number of seconds passed in the calendar.
 ```
 
@@ -1082,11 +1087,11 @@ interval|[Interval Time Object](#interval-time-object)|No Default|The interval o
 ### Examples
 
 ```javascript
-let newTime = SimpleCalendar.api.timestampPlusInterval(0, {day: 1});
+let newTime = MainApp.api.timestampPlusInterval(0, {day: 1});
 console.log(newTime); // this will be 0 + the number of seconds in 1 day. For most calendars this will be 86400
 
 // Assuming Gregorian Calendar with the current date of June 1, 2021
-newTime = SimpleCalendar.api.timestampPlusInterval(1622505600, {month: 1, day: 1});
+newTime = MainApp.api.timestampPlusInterval(1622505600, {month: 1, day: 1});
 console.log(newTime); // This will be the number of seconds that equal July 2nd 2021
 ```
 
@@ -1112,7 +1117,7 @@ A [Date Object](#date-object) is returned.
 
 ```javascript
 // Assuming Gregorian Calendar with the current date of June 1, 2021
-let scDate = SimpleCalendar.api.timestampToDate(1622505600);
+let scDate = MainApp.api.timestampToDate(1622505600);
 console.log(scDate);
 /* This is what the returned object will look like
 {
@@ -1287,7 +1292,6 @@ Property|Type|Default Value|Description
 ---------|-----|-------------|-----------
 currentSeason|[Season Object](#season-object)|{}|The information for the season of the date, properties include "name" for the seasons name and "color" for the color associated with the season.
 day|Number|0|The index of the day of the month represented in the timestamp.
-dayDisplay|String|""|**Depreciated** Please use display.day instead. This will be removed when Foundry v9 Stable is released.
 dayOfTheWeek|Number|0|The day of the week the day falls on.
 dayOffset|Number|0|The number of days that the months days are offset by.
 display|[Date Display Object](#date-display-object)|{}|All of the strings associated with displaying the date are put here
@@ -1296,16 +1300,12 @@ isLeapYear|Boolean|false|If this date falls on a leap year.
 midday|Number|0|The timestamp of when midday occurs for this date.
 minute|Number|0|The minute represented in the timestamp.
 month|Number|0|The index of the month represented in the timestamp.
-monthName|String|""|**Depreciated** Please use display.monthName instead. This will be removed when Foundry v9 Stable is released.
 second|Number|0|The seconds represented in the timestamp.
 showWeekdayHeadings|Boolean|true|If to show the weekday headings for the month.
 sunrise|Number|0|The timestamp of when the sun rises for this date.
 sunset|Number|0|The timestamp of when the sun sets for this date.
 weekdays|String Array|[]|A list of weekday names.
 year|Number|0|The year represented in the timestamp.
-yearName|String|""|**Depreciated** Please use display.yearName instead. This will be removed when Foundry v9 Stable is released.
-yearPostfix|String|""|**Depreciated** Please use display.yearPostfix instead. This will be removed when Foundry v9 Stable is released.
-yearPrefix|String|""|**Depreciated** Please use display.yearPrefix instead. This will be removed when Foundry v9 Stable is released.
 yearZero|Number|0|What is considered as year zero when doing timestamp calculations.
 
 

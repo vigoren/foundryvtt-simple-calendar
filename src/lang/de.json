@@ -127,7 +127,6 @@
   "FSC.Configuration.General.ImportExport.Title": "Import/Export",
   "FSC.Configuration.General.ImportExport.SCConfig": "Import/Export Kalender Konfiguration",
   "FSC.Configuration.General.ImportExport.SCConfigHelp": "Importieren und Exportieren der Konfiguration von Simple Calendar zum Sichern und Laden in anderen Welten.",
-  "FSC.Configuration.General.ThirdPartyModule": "Drittanbieter-Module Import/Export",
   "FSC.Configuration.General.Permissions.Note": "Hier können Rechte für zahlreiche Interaktionen mit Simple Calender auf der Basis von Foundry-Rollen eingestellt werden. SL haben imemr dieses Recht.",
   "FSC.Configuration.General.CalendarPlayerVisible": "Kalender anzeigen",
   "FSC.Configuration.General.CalendarPlayerVisibleHelp": "Die ausgewählte Rolle kann Simple Calendar öffnen.",
@@ -272,12 +271,6 @@
   "FSC.Error.Calendar.GMCurrent": "Du musst SL sein, um das aktuelle Datum ändern zu können.",
   "FSC.Module.Import": "Import in Simple Calendar",
   "FSC.Module.NoChanges": "Keine Änderungen",
-  "FSC.Module.CalendarWeather.Title": "Calendar/Weather Modul erkannt!",
-  "FSC.Module.CalendarWeather.Configuration.Message": "Wir haben festgestellt, dass das Modul Calendar/Weather für diese Welt aktiviert ist.<br/><br/>Wenn du die Calendar/Weather-Einstellungen in den Simple Calendar importieren möchtest, wähle \"Import in Simple Calendar\", damit der Simple Calendar mit den Calendar/Weather-Einstellungen übereinstimmt.<br/><br/>Wenn du den Calendar/Weather mit dem Simple Calendar überschreiben möchtest, wähle \"Export in Calendar/Weather\", damit die Kalender-/Wetter-Einstellungen mit der Konfiguration des Simple Calendars übereinstimmen.<br/>",
-  "FSC.Module.CalendarWeather.Export": "Export in Calendar/Weather",
-  "FSC.Module.AboutTime.Title": "About-Time Modul erkannt",
-  "FSC.Module.AboutTime.Configuration.Message": "Wir haben festgestellt, dass das Modul \"About-Time\" für diese Welt aktiviert ist/wurde.<br/><br/>Wenn du die Einstellungen des Kalenders \"About-Time\" in Simple Calendar importieren möchtest, wähle \"In Simple Calendar importieren\", damit Simple Calendar mit den Einstellungen von \"About-Time\" übereinstimmt.<br/><br/>Wenn du \"About-Time\" mit Simple Calendar synchronisieren möchtest, wähle \"In About-Time exportieren\", damit die Einstellungen von \"About-Time\" mit der Konfiguration von Simple Calendar übereinstimmen.<br/>",
-  "FSC.Module.AboutTime.Export": "Export in About-Time",
   "FSC.Importer.NoFile": "Bitte wähle eine Datei zum Importieren aus.",
   "FSC.Importer.InvalidSCConfig": "Ungültige Datei. Bitte eine von Simple Calendar exportierte JSON Datei hochladen.",
   "FSC.OrdinalSuffix.st": "er",
@@ -397,5 +390,5 @@
   "FSC.Configuration.Weekday.Abbreviation": "Wochentagsname Abkürzung",
   "FSC.Configuration.Weekday.AbbreviationHelp": "Die abgekürzte Form dieses Tags in der Woche.",
   "FSC.Configuration.Time.SecondsInCombatRound": "Sekunden pro Kampfrunde",
-  "FSC.Configuration.Time.SecondsInCombatRoundHelp": "Die Anzahl an Sekunden in einer Kampfrunde.Dies wird nur angewendet, wenn das System die Kampfrunden nicht erhöht!",
+  "FSC.Configuration.Time.SecondsInCombatRoundHelp": "Die Anzahl an Sekunden in einer Kampfrunde.Dies wird nur angewendet, wenn das System die Kampfrunden nicht erhöht!"
 }

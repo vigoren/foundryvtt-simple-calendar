@@ -10,7 +10,7 @@ import "../../../__mocks__/crypto";
 import "../../__mocks__/dialog";
 import "../../__mocks__/hooks";
 
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import Year from "../calendar/year";
 import API from "./index";
 import Month from "../calendar/month";
@@ -29,8 +29,8 @@ describe('API Class Tests', () => {
     let year: Year;
     let renderSpy: SpyInstance;
     beforeEach(() => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        renderSpy = jest.spyOn(SimpleCalendar.instance, 'render');
+        MainApp.instance = new MainApp();
+        renderSpy = jest.spyOn(MainApp.instance, 'render');
         renderSpy.mockClear();
         year = new Year(1);
         year.months.push(new Month('M1', 1, 0, 30));
@@ -68,13 +68,13 @@ describe('API Class Tests', () => {
     });
 
     test('Timestamp', () => {
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         expect(API.timestamp()).toBe(5184000);
     });
 
     test('Timestamp Plus Interval', () => {
         expect(API.timestampPlusInterval(0, {})).toBe(0);
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         year.yearZero = 0;
         expect(API.timestampPlusInterval(0, {second: 1})).toBe(1);
         expect(API.timestampPlusInterval(0, {minute: 1})).toBe(60);
@@ -99,8 +99,8 @@ describe('API Class Tests', () => {
         expect(API.timestampPlusInterval(0, {second: 7862400})).toBe(7862400);
         expect(API.timestampPlusInterval(86399, {second: 1})).toBe(86400);
 
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
-        SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync = true;
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        MainApp.instance.activeCalendar.generalSettings.pf2eSync = true;
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AR", worldCreatedOn: 0}};
         expect(API.timestampPlusInterval(0, {day: 0})).toBe(0);
@@ -117,7 +117,7 @@ describe('API Class Tests', () => {
         expect(tstd.hour).toBe(1);
         expect(tstd.minute).toBe(0);
         expect(tstd.second).toBe(0);
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         year.weekdays.push(new Weekday(1, 'W1'));
         let season = year.seasons[0].clone();
         season.startingMonth = 0;
@@ -126,8 +126,8 @@ describe('API Class Tests', () => {
         expect(API.timestampToDate(5184000)).toStrictEqual({year: 1, month: 0, day: 0, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, midday: 5227200, sunrise: 5184000, sunset: 5184000, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '1', "display": {"date": "M1 01, 1", "day": "1", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
         expect(API.timestampToDate(5270400)).toStrictEqual({year: 1, month: 0, day: 1, dayOfTheWeek: 0, hour: 0, minute: 0, second: 0, monthName: "M1", yearName: "", yearZero: 0, weekdays: ["W1"], currentSeason: season, midday: 5313600, sunrise: 5270400, sunset: 5270400, isLeapYear: false, showWeekdayHeadings: true, yearPostfix: '', yearPrefix: '', dayOffset: 0, dayDisplay: '2', "display": {"date": "M1 02, 1", "day": "2", "daySuffix": "", "month": "1", "monthName": "M1", "weekday": "W1", "year": "1", "yearName": "", "yearPostfix": "", "yearPrefix": "", time:"00:00:00"}});
 
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
-        SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync = true;
+        MainApp.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        MainApp.instance.activeCalendar.generalSettings.pf2eSync = true;
         (<Game>game).system.data.version = '2.15.0';
         PredefinedCalendar.setToPredefined(year, PredefinedCalendars.GolarianPF2E);
         PF2E.checkLeapYearRules(year.leapYearRule);
@@ -150,7 +150,7 @@ describe('API Class Tests', () => {
     });
 
     test('Date to Timestamp', () => {
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
 
         expect(API.dateToTimestamp({})).toBe(API.timestamp());
         expect(API.dateToTimestamp({year: 2021, month: 5, day: 10, hour: 15, minute: 54, second: 29})).toBe(10480377269);
@@ -188,20 +188,20 @@ describe('API Class Tests', () => {
         API.showCalendar({year: 0, month: 0, day: 1});
         expect(renderSpy).toHaveBeenCalledTimes(5);
 
-        SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule = LeapYearRules.Gregorian
+        MainApp.instance.activeCalendar.year.leapYearRule.rule = LeapYearRules.Gregorian
         API.showCalendar({year: 4, month: -1, day: -1});
         expect(renderSpy).toHaveBeenCalledTimes(6);
 
-        SimpleCalendar.instance.activeCalendar.year.resetMonths();
-        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        MainApp.instance.activeCalendar.year.resetMonths();
+        MainApp.instance.activeCalendar.year.months[0].current = true;
         API.showCalendar({year: 0, month: 0, day: 0});
         expect(renderSpy).toHaveBeenCalledTimes(7);
 
-        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        MainApp.instance.activeCalendar.year.resetMonths();
         API.showCalendar({year: 0, month: 0, day: 0});
         expect(renderSpy).toHaveBeenCalledTimes(8);
 
-        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        MainApp.instance.activeCalendar.year.resetMonths();
         API.showCalendar({year: 0, month: 10, day: 0});
         expect(renderSpy).toHaveBeenCalledTimes(9);
     });
@@ -212,7 +212,7 @@ describe('API Class Tests', () => {
 
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
 
         API.changeDate({});
         expect(renderSpy).toHaveBeenCalledTimes(0);
@@ -248,7 +248,7 @@ describe('API Class Tests', () => {
 
         //@ts-ignore
         game.user.isGM = true;
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         API.setDate({year: 2021});
         expect(year.numericRepresentation).toBe(2021);
 
@@ -268,7 +268,7 @@ describe('API Class Tests', () => {
     });
 
     test('Advance Time to Preset', () => {
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         year.seasons.push(new Season('Spring', 3, 20));
         year.seasons[0].sunriseTime = 21600;
         year.seasons[0].sunsetTime = 64800;
@@ -339,14 +339,14 @@ describe('API Class Tests', () => {
     test('Is Primary GM', () => {
         expect(API.isPrimaryGM()).toBe(false);
         // @ts-ignore
-        SimpleCalendar.instance = null;
+        MainApp.instance = null;
         expect(API.isPrimaryGM()).toBe(false);
     });
 
     test('Start Clock', () => {
         expect(API.startClock()).toBe(false);
-        SimpleCalendar.instance.activeCalendar.year = year;
-        SimpleCalendar.instance.primary = true;
+        MainApp.instance.activeCalendar.year = year;
+        MainApp.instance.primary = true;
         expect(API.startClock()).toBe(true);
     });
 
@@ -361,13 +361,13 @@ describe('API Class Tests', () => {
     });
 
     test('Get Current Day', () => {
-        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        MainApp.instance.activeCalendar.year.resetMonths();
         expect(API.getCurrentDay()).toBeNull();
 
-        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        MainApp.instance.activeCalendar.year.months[0].current = true;
         expect(API.getCurrentDay()).toBeNull();
 
-        SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current = true;
+        MainApp.instance.activeCalendar.year.months[0].days[0].current = true;
         expect(API.getCurrentDay()).not.toBeNull();
     });
 
@@ -376,10 +376,10 @@ describe('API Class Tests', () => {
     });
 
     test('Get Current Month', () => {
-        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        MainApp.instance.activeCalendar.year.resetMonths();
         expect(API.getCurrentMonth()).toBeNull();
 
-        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        MainApp.instance.activeCalendar.year.months[0].current = true;
         expect(API.getCurrentMonth()).not.toBeNull();
     });
 
@@ -392,7 +392,7 @@ describe('API Class Tests', () => {
     });
 
     test('Get Current Season', () => {
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         year.seasons.push(new Season('s1', 1, 1));
         const s = API.getCurrentSeason();
         expect(s.name).toBe(year.seasons[0].name);
@@ -403,7 +403,7 @@ describe('API Class Tests', () => {
     });
 
     test('Get All Seasons', () => {
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         year.seasons.push(new Season('s1', 1, 1));
         year.seasons.push(new Season('s1', 122, 1));
         expect(API.getAllSeasons().length).toBe(2);
@@ -414,13 +414,13 @@ describe('API Class Tests', () => {
     });
 
     test('Get Current Weekday', () => {
-        SimpleCalendar.instance.activeCalendar.year.resetMonths();
+        MainApp.instance.activeCalendar.year.resetMonths();
         expect(API.getCurrentWeekday()).toBeNull();
 
-        SimpleCalendar.instance.activeCalendar.year.months[0].current = true;
+        MainApp.instance.activeCalendar.year.months[0].current = true;
         expect(API.getCurrentWeekday()).toBeNull();
 
-        SimpleCalendar.instance.activeCalendar.year.months[0].days[0].current = true;
+        MainApp.instance.activeCalendar.year.months[0].days[0].current = true;
         expect(API.getCurrentWeekday()).not.toBeNull();
     });
 
@@ -439,7 +439,7 @@ describe('API Class Tests', () => {
         let r = await API.configureCalendar(API.Calendars.Harptos);
         expect(r).toBe(false);
 
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         r = await API.configureCalendar(API.Calendars.Harptos);
         expect(r).toBe(false);
 
@@ -489,7 +489,7 @@ describe('API Class Tests', () => {
             events: [],
             reEvents: []
         });
-        SimpleCalendar.instance.activeCalendar.year = year;
+        MainApp.instance.activeCalendar.year = year;
         const r = await API.calendarWeatherImport();
         expect(r).toBe(true);
     });

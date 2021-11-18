@@ -6,9 +6,10 @@ Here are all the hooks that Simple Calendar emits and when they are emitted.
 
 The global Simple Calendar object comes with a variable called hooks which will list all the available hooks that can be listened for.
 
-Example: 
-```javascript
-SimpleCalendar.Hooks.DateTimeChange
+Example:
+
+  ```javascript
+MainApp.Hooks.DateTimeChange
 ```
 
 The current hooks that are emitted are:
@@ -94,10 +95,10 @@ color|string|The hex color representation of the season.
 
 This is an example of how to listen for the hook:
 
-```javascript
-Hooks.on(SimpleCalendar.Hooks.DateTimeChange, (data) => {
-    console.log(data);
-});
+  ```javascript
+Hooks.on(MainApp.Hooks.DateTimeChange, (data) => {
+     console.log(data);
+ });
 ```
 
 #### Response Data
@@ -221,10 +222,10 @@ paused|boolean|If the clock is paused. The clock is paused when the game is paus
 
 This is an example of how to listen for the hook:
 
-```javascript
-Hooks.on(SimpleCalendar.Hooks.ClockStartStop, (data) => {
-    console.log(data);
-});
+  ```javascript
+Hooks.on(MainApp.Hooks.ClockStartStop, (data) => {
+     console.log(data);
+ });
 ```
 
 #### Response Data
@@ -260,10 +261,10 @@ isPrimaryGM|boolean|If the user is the primary gm (true).
 
 This is an example of how to listen for the hook:
 
-```javascript
-Hooks.on(SimpleCalendar.Hooks.PrimaryGM, (data) => {
-    console.log(data);
-});
+  ```javascript
+Hooks.on(MainApp.Hooks.PrimaryGM, (data) => {
+     console.log(data);
+ });
 ```
 
 #### Response Data
@@ -294,8 +295,8 @@ No data is passed when this hook is fired.
 
 This is an example of how to listen for the hook:
 
-```javascript
-Hooks.on(SimpleCalendar.Hooks.Ready, () => {
-    console.log(`Simple Calendar is ready!`);
-});
+  ```javascript
+Hooks.on(MainApp.Hooks.Ready, () => {
+     console.log(`Simple Calendar is ready!`);
+ });
 ```

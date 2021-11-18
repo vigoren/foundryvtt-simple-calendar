@@ -9,7 +9,7 @@ import "../../__mocks__/event";
 import "../../../__mocks__/crypto";
 
 import Season from "./season";
-import SimpleCalendar from "../applications/simple-calendar";
+import MainApp from "../applications/main-app";
 import Year from "./year";
 
 describe('Season Tests', () => {
@@ -21,7 +21,7 @@ describe('Season Tests', () => {
 
         const s2 = new Season();
         // @ts-ignore
-        SimpleCalendar.instance = undefined;
+        MainApp.instance = undefined;
     });
 
     test('Properties', () => {
@@ -59,8 +59,8 @@ describe('Season Tests', () => {
         expect(c.startDateSelectorId).toBeDefined();
         expect(c.sunriseSelectorId).toBeDefined();
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = new Year(0);
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = new Year(0);
         c = s.toTemplate(y);
 
         s.sunriseTime = 3660;
@@ -105,8 +105,8 @@ describe('Season Tests', () => {
         expect(s.sunriseTime).toBe(0);
         expect(s.sunsetTime).toBe(0);
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.year = new Year(0);
+        MainApp.instance = new MainApp();
+        MainApp.instance.activeCalendar.year = new Year(0);
         s.sunriseSunsetChange({
             startDate: { year: 0, month: 1, day: 1, minute: 30, hour: 2, allDay: false },
             endDate: { year: 0, month: 1, day: 1, minute: 0, hour: 4, allDay: false },

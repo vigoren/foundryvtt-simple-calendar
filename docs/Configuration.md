@@ -278,33 +278,6 @@ Change Date and Time| If users in these roles are able to change the calendars d
 
 **Important**: This import and export is just for the calendar configuration, notes are not exported or imported through this process! Note exporting is planned, just not ready yet.
 
-### Third Party Module Import/Export
-
-If you have certain other modules installed and active in your game, options will appear here to either import their settings into Simple Calendar or to export Simple Calendars settings into that module.
-The current supported modules for importing/exporting settings:
-
-#### about-time
-
-The [about-time](https://foundryvtt.com/packages/about-time) module as of v1.0.0 now depends on Simple Calendar for its calendaring functionality.
-
-For help with updating to this version the settings from about-time can be imported into Simple Calendar.
-
-#### Calendar/Weather
-
-The [Calendar/Weather](https://foundryvtt.com/packages/calendar-weather) module has recently been updated to v4 which renames the module to [Weather Control](https://gitlab.com/jstebenne/foundryvtt-weather-control). The new version pulls data directly from Simple Calendar and no longer requires the import/export functionality. 
-
-If an older version of Calendar/Weather is being used the settings can still be imported/exported.
-
-Most settings can be imported and exported between these two modules with these notable exceptions:
-
-- Calendar/Weather does not seem to support Leap Years at all (see this [line of code](https://github.com/DasSauerkraut/calendar-weather/blob/89b59e047c86c979b246ae385c471f4e824eaaa1/modules/dateTime.mjs#L42)) as a result:
-    - When Importing from Calendar/Weather no leap year rule will be set in Simple Calendar.
-    - When Exporting to Calendar/Weather the date will be off by the number of leap days that have passed so far. Example if there have been 4 leap years with 1 extra day each year the Calendar/Weather's calendar will be ahead by 4 days. This gets very exaggerated when using a Gregorian calendar for today's date as there have been 490 extra leap days for 2021.
-- Calendar/Weather's season colors and Simple Calendar's season colors do not line up so they are not Imported or Exported.
-- Calendar/Weather's season month is not properly stored:
-    - When Importing from Calendar/Weather every season will have its month set to be the first month.
-    - When Exporting to Calendar/Weather every season will have no month set.
-
 ## Note Settings
 
 This tab contains the settings for creating and interacting with notes.
