@@ -1,26 +1,14 @@
 import Sockets from "./sockets";
-import HandlebarsHelpers from "./api/handlebars-helpers";
-import GameSettingsRegistration from "./foundry-interfacing/game-settings-registration";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import MainApp from "./applications/main-app";
 import {NoteRepeat, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import {SCDateSelector} from "../interfaces";
 import Note from "./note";
 import {NotesApp} from "./applications/notes-app";
-import CalendarManager from "./calendar/calendar-manager";
+import {MainApplication, CalManager} from "./index";
 
 export default class SimpleCalendar {
-    /**
-     * Used to store a globally accessible copy of the Simple calendar class for access from event functions.
-     */
-    static instance: SimpleCalendar;
-    /**
-     * The main application instance.
-     * @type {MainApp}
-     */
-    public mainApp: MainApp | null = null;
     /**
      * Keeps track of the new note dialog, we only ever need 1 new note dialog.
      */
@@ -29,7 +17,7 @@ export default class SimpleCalendar {
      * Gets the current active calendar
      */
     public get activeCalendar(){
-        return CalendarManager.getActiveCalendar();
+        return CalManager.getActiveCalendar();
     }
     /**
      * The sockets class for communicating with the connected players over our own socket
@@ -42,16 +30,6 @@ export default class SimpleCalendar {
     }
 
     /**
-     * Initialize Simple Calendar
-     */
-    public initialize(){
-        GameSettingsRegistration.Register();
-        HandlebarsHelpers.Register();
-        CalendarManager.initialize();
-        this.mainApp = new MainApp(this.activeCalendar);
-    }
-
-    /**
      * Called when a setting is updated, refreshes the configurations for all types
      * @param {boolean} [update=false] If to update the display
      * @param {string} [type='all']
@@ -59,7 +37,7 @@ export default class SimpleCalendar {
     public settingUpdate(update: boolean = false, type: string = 'all'){
         this.activeCalendar.settingUpdate(type);
         if(update && this.activeCalendar.year.time.timeKeeper.getStatus() !== TimeKeeperStatus.Started ) {
-            this.mainApp?.updateApp();
+            MainApplication.updateApp();
         }
     }
 
@@ -81,7 +59,7 @@ export default class SimpleCalendar {
                     title: "FSC.ButtonTitle",
                     icon: "fas fa-calendar",
                     button: true,
-                    onClick: this.mainApp?.showApp.bind(this.mainApp)
+                    onClick: MainApplication.showApp.bind(MainApplication)
                 });
             }
         }

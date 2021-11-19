@@ -1,5 +1,4 @@
 import {Logger} from "../logging";
-import SimpleCalendar from "../simple-calendar";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
@@ -21,7 +20,8 @@ import {NoteCategory, SCDateSelector} from "../../interfaces";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {GetContrastColor} from "../utilities/visual";
+import {animateElement, GetContrastColor} from "../utilities/visual";
+import {CalManager} from "../index";
 
 export class ConfigurationApp extends FormApplication {
 
@@ -33,15 +33,10 @@ export class ConfigurationApp extends FormApplication {
 
     private static appWindowId: string = 'simple-calendar-configuration-application-form';
 
-    /**
-     * The year object where the changes are applied and loaded from
-     * @type {Calendar}
-     * @private
-     */
-    private calendar: Calendar;
-
     private noteCategories: NoteCategory[] = [];
 
+
+    private calendars: Calendar[];
     /**
      * If the year has changed
      * @private
@@ -62,20 +57,17 @@ export class ConfigurationApp extends FormApplication {
 
     /**
      * The Calendar configuration constructor
-     * @param {Calendar} data The year data used to populate the configuration dialog
      */
-    constructor(data: Calendar) {
-        super(!data? SimpleCalendar.instance.activeCalendar.clone() : data);
-        if(!data){
-            this.calendar = SimpleCalendar.instance.activeCalendar;
-        } else {
-            this.calendar = data;
-        }
+    constructor() {
+        super({});
+        this.calendars = CalManager.getAllCalendars();
+        this.object = this.calendars[0];//Temp until we get better calendar picking
+
         this._tabs[0].active = "quickSetup";
 
         this.generalSettings.defaultPlayerNoteVisibility = GameSettings.GetBooleanSettings(SettingNames.DefaultNoteVisibility);
 
-        this.noteCategories = SimpleCalendar.instance.activeCalendar.noteCategories.map(nc => {
+        this.noteCategories = CalManager.getActiveCalendar().noteCategories.map(nc => {
             return {
                 name: nc.name,
                 color: nc.color,
@@ -141,6 +133,7 @@ export class ConfigurationApp extends FormApplication {
         let data = {
             ...super.getData(options),
             uiElementStates: this.uiElementStates,
+            calendars: this.calendars,
 
             showDateFormatTokens: this.dateFormatTableExpanded,
             defaultPlayerNoteVisibility: this.generalSettings.defaultPlayerNoteVisibility,
@@ -234,9 +227,7 @@ export class ConfigurationApp extends FormApplication {
             });
         }
 
-        if(SimpleCalendar.instance){
-            data.noteCategories = this.noteCategories;
-        }
+        data.noteCategories = this.noteCategories;
 
         return data;
     }
@@ -265,12 +256,31 @@ export class ConfigurationApp extends FormApplication {
 
         const appWindow = document.getElementById(ConfigurationApp.appWindowId);
         if(appWindow){
+            // Click anywhere in the app
+            appWindow.addEventListener('click', () => {
+                this.toggleCalendarSelector(true);
+            });
+            //---------------------
+            // Calendar Picker / Add new calendar
+            //---------------------
+            appWindow.querySelector('.tabs .calendar-selector .heading')?.addEventListener('click', this.toggleCalendarSelector.bind(this, false));
+            appWindow.querySelectorAll('.tabs .calendar-selector ul li[data-calendar]').forEach(e => {
+                e.addEventListener('click', this.calendarClick.bind(this));
+            });
+            appWindow.querySelector('.tab-wrapper .new-calendar .save')?.addEventListener('click', this.addNewCalendar.bind(this));
             //---------------------
             // Quick Setup
             //---------------------
             appWindow.querySelectorAll('.quick-setup .predefined-list .predefined-calendar').forEach(e => {
                 e.addEventListener('click', this.predefinedCalendarClick.bind(this));
             });
+
+
+            //---------------------
+            // Save Buttons
+            //---------------------
+            appWindow.querySelector("#scSave")?.addEventListener('click', this.saveClick.bind(this, false));
+            appWindow.querySelector("#scSubmit")?.addEventListener('click', this.saveClick.bind(this, true));
         }
 
 
@@ -282,9 +292,6 @@ export class ConfigurationApp extends FormApplication {
 
             //Month advanced click
             (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));
-
-            //Save button clicks
-            (<JQuery>html).find("#scSubmit").on('click', this.saveClick.bind(this));
 
             //Predefined calendar apply
             (<JQuery>html).find("#scApplyPredefined").on('click', this.overwriteConfirmationDialog.bind(this, 'predefined', ''));
@@ -324,6 +331,39 @@ export class ConfigurationApp extends FormApplication {
             (<JQuery>html).find(".time-settings input").on('change', this.inputChange.bind(this));
             (<JQuery>html).find(".moon-settings input").on('change', this.inputChange.bind(this));
             (<JQuery>html).find(".moon-settings select").on('change', this.inputChange.bind(this));
+        }
+    }
+
+    private toggleCalendarSelector(forceHide: boolean = false){
+        const cList = document.querySelector(".tabs .calendar-selector ul");
+        if(cList){
+            animateElement(cList, 500, forceHide);
+        }
+    }
+
+    private calendarClick(e: Event){
+        const target = <HTMLElement>e.target;
+        if(target){
+            const calId = target.getAttribute('data-calendar');
+            if(calId && calId !== (<Calendar>this.object).id){
+                const clickedCal = this.calendars.find(c => c.id === calId);
+                if(clickedCal){
+                    this.object = clickedCal;
+                    this.updateApp();
+                }
+            }
+        }
+    }
+
+    private addNewCalendar(e: Event){
+        e.preventDefault();
+        const calNameElement = <HTMLInputElement>document.getElementById('scCalendarName');
+        if(calNameElement && calNameElement.value){
+            const newCal = new Calendar({id: '', name: calNameElement.value});
+            this.calendars.push(newCal);
+            this.object = newCal;
+            this._tabs[0].active = "quickSetup";
+            this.updateApp();
         }
     }
 
@@ -831,11 +871,12 @@ export class ConfigurationApp extends FormApplication {
                     }
                     // Note Categories
                     else if(cssClass === 'note-category-name' && this.noteCategories.length > index){
+                        const activeCalendar = CalManager.getActiveCalendar();
                         const oldName = this.noteCategories[index].name;
                         this.noteCategories[index].name = value;
-                        if(index < SimpleCalendar.instance.activeCalendar.noteCategories.length){
+                        if(index < activeCalendar.noteCategories.length){
                             //Update all existing notes with the new name;
-                            SimpleCalendar.instance.activeCalendar.notes.forEach(n => {
+                            activeCalendar.notes.forEach(n => {
                                 const nci = n.categories.indexOf(oldName);
                                 if (nci > -1) {
                                     n.categories[nci] = value;
@@ -868,8 +909,9 @@ export class ConfigurationApp extends FormApplication {
                 season.startingMonth = (<Calendar>this.object).year.months[sMonthIndex].numericRepresentation;
                 season.startingDay = (<Calendar>this.object).year.months[sMonthIndex].days[sDayIndex].numericRepresentation;
             } else if(dateSelectorType === ConfigurationDateSelectors.seasonSunriseSunsetTime){
-                season.sunriseTime = ((selectedDate.startDate.hour || 0) * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + ((selectedDate.startDate.minute || 0) * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
-                season.sunsetTime = ((selectedDate.endDate.hour || 0) * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute) + ((selectedDate.endDate.minute || 0) * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
+                const activeCalendar = CalManager.getActiveCalendar();
+                season.sunriseTime = ((selectedDate.startDate.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.startDate.minute || 0) * activeCalendar.year.time.secondsInMinute);
+                season.sunsetTime = ((selectedDate.endDate.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.endDate.minute || 0) * activeCalendar.year.time.secondsInMinute);
             }
         }
     }
@@ -943,11 +985,14 @@ export class ConfigurationApp extends FormApplication {
 
     /**
      * When the save button is clicked, apply those changes to the game settings and re-load the calendars across all players
+     * @param {boolean} close If to close the dialog after save
      * @param {Event} e The click event
      */
-    public async saveClick(e: Event) {
+    public async saveClick(close: boolean, e: Event) {
         e.preventDefault();
         try{
+            CalManager.updateCalendars(this.calendars);
+
             //If there is no leap year rule set ensure months leap year and normal days match
             if((<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None){
                 for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
@@ -989,9 +1034,11 @@ export class ConfigurationApp extends FormApplication {
 
             await GameSettings.SaveObjectSetting(SettingNames.NoteCategories, this.noteCategories);
 
-            await SimpleCalendar.instance.activeCalendar.syncTime(true);
+            await CalManager.getActiveCalendar().syncTime(true);
 
-            this.closeApp();
+            if(close){
+                this.closeApp();
+            }
         } catch (error: any){
             Logger.error(error);
         }

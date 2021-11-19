@@ -1,6 +1,6 @@
 import {ModuleName, SettingNames} from "../../constants";
 import {ConfigurationApp} from "../applications/configuration-app";
-import SimpleCalendar from "../simple-calendar";
+import {SC} from "../index"
 
 export default class GameSettingsRegistration{
     /**
@@ -61,7 +61,7 @@ export default class GameSettingsRegistration{
             scope: "world",
             config: false,
             type: Array,
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'calendar')
+            onChange: SC.settingUpdate.bind(SC, true, 'calendar')
         });
 
 
@@ -71,14 +71,14 @@ export default class GameSettingsRegistration{
             scope: "world",
             config: false,
             type: Object,
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'general')
+            onChange: SC.settingUpdate.bind(SC, true, 'general')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.YearConfiguration, {
             name: "Year Configuration",
             scope: "world",
             config: false,
             type: Object,
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'year')
+            onChange: SC.settingUpdate.bind(SC, true, 'year')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.WeekdayConfiguration, {
             name: "Weekday Configuration",
@@ -86,7 +86,7 @@ export default class GameSettingsRegistration{
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'weekday')
+            onChange: SC.settingUpdate.bind(SC, true, 'weekday')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.MonthConfiguration, {
             name: "Month Configuration",
@@ -94,21 +94,21 @@ export default class GameSettingsRegistration{
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'month')
+            onChange: SC.settingUpdate.bind(SC, true, 'month')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.CurrentDate, {
             name: "Current Date",
             scope: "world",
             config: false,
             type: Object,
-            onChange:  SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'current')
+            onChange:  SC.settingUpdate.bind(SC, true, 'current')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.LeapYearRule, {
             name: "Leap Year Rule",
             scope: "world",
             config: false,
             type: Object,
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'leapyear')
+            onChange: SC.settingUpdate.bind(SC, true, 'leapyear')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.DefaultNoteVisibility, {
             name: "FSC.Configuration.DefaultNoteVisibility",
@@ -123,7 +123,7 @@ export default class GameSettingsRegistration{
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'notes')
+            onChange: SC.settingUpdate.bind(SC, true, 'notes')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.TimeConfiguration, {
             name: "Time",
@@ -131,7 +131,7 @@ export default class GameSettingsRegistration{
             config: false,
             type: Object,
             default: {},
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'time')
+            onChange: SC.settingUpdate.bind(SC, true, 'time')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.SeasonConfiguration, {
             name: "Season Configuration",
@@ -139,7 +139,7 @@ export default class GameSettingsRegistration{
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'season')
+            onChange: SC.settingUpdate.bind(SC, true, 'season')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.MoonConfiguration, {
             name: "Moon Configuration",
@@ -147,7 +147,7 @@ export default class GameSettingsRegistration{
             config: false,
             type: Array,
             default: [],
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'moon')
+            onChange: SC.settingUpdate.bind(SC, true, 'moon')
         });
         (<Game>game).settings.register(ModuleName, SettingNames.NoteCategories, {
             name: "Note Categories",
@@ -155,7 +155,7 @@ export default class GameSettingsRegistration{
             config: false,
             type: Array,
             default: [{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}],
-            onChange: SimpleCalendar.instance.settingUpdate.bind(SimpleCalendar.instance, true, 'note-categories')
+            onChange: SC.settingUpdate.bind(SC, true, 'note-categories')
         });
     }
 }

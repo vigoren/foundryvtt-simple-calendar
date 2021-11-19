@@ -1,4 +1,3 @@
-import SimpleCalendar from "../simple-calendar";
 import Month from "./month";
 import {
     DateTime,
@@ -22,6 +21,7 @@ import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {randomHash} from "../utilities/string";
 import {ToSeconds, DaysBetweenDates, DateToTimestamp} from "../utilities/date-time";
 import {GetIcon} from "../utilities/visual";
+import {CalManager} from "../index";
 
 /**
  * Class for representing a year
@@ -153,6 +153,7 @@ export default class Year extends ConfigurationItemBase {
      * @returns {YearTemplate}
      */
     toTemplate(): YearTemplate{
+        const activeCalendar = CalManager.getActiveCalendar();
         const currentMonth = this.getMonth();
         const selectedMonth = this.getMonth('selected');
         const visibleMonth = this.getMonth('visible');
@@ -172,7 +173,7 @@ export default class Year extends ConfigurationItemBase {
                         });
                     }
                 }
-                const notes = SimpleCalendar.instance.activeCalendar.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
+                const notes = activeCalendar.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
                 const userId = GameSettings.UserID();
                 if(notes.length){
                     sNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
@@ -184,7 +185,7 @@ export default class Year extends ConfigurationItemBase {
         if(selectedMonth){
             const d = selectedMonth.getDay('selected');
             if(d){
-                const notes = SimpleCalendar.instance.activeCalendar.notes.filter(n => n.isVisible(this.selectedYear, selectedMonth.numericRepresentation, d.numericRepresentation));
+                const notes = activeCalendar.notes.filter(n => n.isVisible(this.selectedYear, selectedMonth.numericRepresentation, d.numericRepresentation));
                 const userId = GameSettings.UserID();
                 if(notes.length){
                     sNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
@@ -602,7 +603,8 @@ export default class Year extends ConfigurationItemBase {
      */
     dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
         if(this.weekdays.length){
-            if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
+            const activeCalendar = CalManager.getActiveCalendar();
+            if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync){
                 const pf2eAdjust = PF2E.weekdayAdjust();
                 if(pf2eAdjust !== undefined){
                     this.firstWeekday = pf2eAdjust;
@@ -711,11 +713,12 @@ export default class Year extends ConfigurationItemBase {
      * Converts the years current date into seconds
      */
     toSeconds(){
+        const activeCalendar = CalManager.getActiveCalendar();
         let totalSeconds = 0;
         const month = this.getMonth();
         if(month){
             const day = month.getDay();
-            totalSeconds = ToSeconds(SimpleCalendar.instance.activeCalendar, this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true);
+            totalSeconds = ToSeconds(activeCalendar, this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true);
         }
         return totalSeconds;
     }
@@ -971,6 +974,7 @@ export default class Year extends ConfigurationItemBase {
      * @param {Combat} combat The current active combat
      */
     processOwnCombatRoundTime(combat: Combat){
+        const activeCalendar = CalManager.getActiveCalendar();
         let roundSeconds = this.time.secondsInCombatRound;
         let roundsPassed = 1;
 
@@ -982,8 +986,8 @@ export default class Year extends ConfigurationItemBase {
             this.updateTime(parsedDate);
             // If the current player is the GM then we need to save this new value to the database
             // Since the current date is updated this will trigger an update on all players as well
-            if(GameSettings.IsGm() && SimpleCalendar.instance.activeCalendar.primary){
-                SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
+            if(GameSettings.IsGm() && activeCalendar.primary){
+                activeCalendar.saveCurrentDate().catch(Logger.error);
             }
         }
     }
@@ -997,6 +1001,7 @@ export default class Year extends ConfigurationItemBase {
      * @param {boolean} [calculateTimestamp=true] If to add the date timestamp to the sunrise/sunset time
      */
     getSunriseSunsetTime(year: number, month: Month, day: Day, sunrise: boolean = true, calculateTimestamp: boolean = true){
+        const activeCalendar = CalManager.getActiveCalendar();
         const monthIndex = this.months.findIndex(m => m.numericRepresentation === month.numericRepresentation);
         const dayIndex = month.days.findIndex(d => d.numericRepresentation === day.numericRepresentation);
 
@@ -1028,11 +1033,11 @@ export default class Year extends ConfigurationItemBase {
                 }
                 nextSeasonYear = seasonYear + 1
             }
-            const daysBetweenSeasonStartAndDay = DaysBetweenDates(SimpleCalendar.instance.activeCalendar,
+            const daysBetweenSeasonStartAndDay = DaysBetweenDates(activeCalendar,
                 { year: seasonYear, month: season.startingMonth, day: season.startingDay, hour: 0, minute: 0, seconds: 0 },
                 { year: year, month: this.months[monthIndex].numericRepresentation, day: this.months[monthIndex].days[dayIndex].numericRepresentation, hour: 0, minute: 0, seconds: 0 }
             );
-            const daysBetweenSeasons = DaysBetweenDates(SimpleCalendar.instance.activeCalendar,
+            const daysBetweenSeasons = DaysBetweenDates(activeCalendar,
                 { year: seasonYear, month: season.startingMonth, day: season.startingDay, hour: 0, minute: 0, seconds: 0 },
                 { year: nextSeasonYear, month: nextSeason.startingMonth, day: nextSeason.startingDay, hour: 0, minute: 0, seconds: 0 }
             );
@@ -1041,7 +1046,7 @@ export default class Year extends ConfigurationItemBase {
             const sunriseChangeForDay = daysBetweenSeasonStartAndDay * averageChangePerDay;
             const finalSunriseTime = Math.round((sunrise? season.sunriseTime : season.sunsetTime) + sunriseChangeForDay);
             if(calculateTimestamp){
-                return DateToTimestamp({ year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, second: 0 }, SimpleCalendar.instance.activeCalendar) + finalSunriseTime;
+                return DateToTimestamp({ year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, second: 0 }, activeCalendar) + finalSunriseTime;
             } else {
                 return finalSunriseTime;
             }

@@ -32,7 +32,7 @@ module.exports = {
         new CircularDependencyPlugin({
             exclude: /__mocks__|docs|dist|node_modules|\.test\.ts/,
             include: /src/,
-            failOnError: false,
+            failOnError: true,
         }),
         new CopyPlugin({
             patterns: [

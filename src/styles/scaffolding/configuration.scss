@@ -9,6 +9,7 @@
 }
 .simple-calendar{
   .sc-configuration-wrapper{
+    position: relative;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -17,14 +18,65 @@
       flex: 0 0 10rem;
       flex-direction: column;
       flex-wrap: nowrap;
+      justify-content: flex-start;
       border-right: 1px solid;
       overflow-y: auto;
       overflow-x: visible;
+      margin-bottom: 30px;
 
       .tab-section{
         flex: unset;
         display: flex;
         flex-direction: column;
+
+        &.calendar-selector{
+          position: relative;
+          .heading{
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            &::after{
+              font-family: "Font Awesome 5 Free";
+              content: "\f0d7";
+              -moz-osx-font-smoothing: grayscale;
+              -webkit-font-smoothing: antialiased;
+              font-weight: 900;
+              font-style: normal;
+              font-variant: normal;
+              text-rendering: auto;
+            }
+          }
+          ul{
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            top:100%;
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+
+            &.closed{
+              visibility: hidden;
+            }
+            &.open{
+              visibility: visible;
+              max-height: 300px;
+            }
+
+            li{
+              flex: unset;
+              padding: $spacer-half $spacer-half $spacer-half $spacer;
+              cursor: pointer;
+              border-bottom: 1px solid;
+
+              &.new-calendar{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              }
+            }
+          }
+        }
 
         .item{
           border-bottom: 1px solid;
@@ -34,6 +86,14 @@
         }
       }
       .heading{
+        flex: unset;
+        padding: $spacer-half $spacer-half $spacer-half ($spacer-half*0.5);
+        text-align: left;
+        font-size: 1.125rem;
+        font-weight: 600;
+        border-bottom: 1px solid;
+      }
+      .sub-heading{
         flex: unset;
         padding: $spacer-half $spacer-half $spacer-half ($spacer-half*0.5);
         text-align: left;
@@ -71,6 +131,7 @@
       overflow-x: hidden;
       overflow-y: auto;
       padding: $spacer-half;
+      margin-bottom: 30px;
 
       .warning{
         padding: 16px;
@@ -90,6 +151,13 @@
         }
         &.closed{
           visibility: hidden;
+        }
+      }
+
+      .new-calendar{
+        button{
+          max-width: 200px;
+          margin: 0.5rem auto;
         }
       }
 
@@ -124,6 +192,22 @@
             }
           }
         }
+      }
+    }
+    .config-save{
+      position: absolute;
+      text-align: center;
+      width: 100%;
+      backdrop-filter: blur(2px);
+      left: 0;
+      bottom: 0;
+      height: 30px;
+      border-top: 1px solid #b5b5b5;
+
+      button{
+        width: 30%;
+        margin-left: $spacer;
+        margin-top: $spacer-half * 0.5;
       }
     }
   }

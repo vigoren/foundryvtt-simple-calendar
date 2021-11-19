@@ -4,6 +4,7 @@ import {deepMerge} from "../utilities/object";
 import {GetIcon} from "../utilities/visual";
 import {Icons, TimeKeeperStatus} from "../../constants";
 import CalendarManager from "../calendar/calendar-manager";
+import {CalManager} from "../index";
 
 export default class Clock {
     private static defaultOptions: SCRenderer.ClockOptions = {
@@ -21,7 +22,7 @@ export default class Clock {
         const status = calendar.year.time.timeKeeper.getStatus();
         options.cssClasses += ` ${status}`;
 
-        let html = `<div id="${options.id}" class="sc-clock ${options.cssClasses} ${status === TimeKeeperStatus.Started? 'animate': ''}" data-calendar="${CalendarManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
+        let html = `<div id="${options.id}" class="sc-clock ${options.cssClasses} ${status === TimeKeeperStatus.Started? 'animate': ''}" data-calendar="${CalManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
         html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
         html += `<div class="animated-clock">${GetIcon(Icons.Clock)}</div>`;
@@ -47,7 +48,7 @@ export default class Clock {
         const clockElement = document.getElementById(clockId);
         if(clockElement){
             const calendarIndex = parseInt(clockElement.getAttribute('data-calendar') || '');
-            const calendars = CalendarManager.getAllCalendars();
+            const calendars = CalManager.getAllCalendars();
             if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
                 const calendar = calendars[calendarIndex];
                 calendar.year.time.timeKeeper.registerUpdateListener(clockId, Clock.UpdateListener.bind(Clock, clockId))
@@ -65,7 +66,7 @@ export default class Clock {
         const clockElement = document.getElementById(clockId);
         if(clockElement){
             const calendarIndex = parseInt(clockElement.getAttribute('data-calendar') || '');
-            const calendars = CalendarManager.getAllCalendars();
+            const calendars = CalManager.getAllCalendars();
             if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
                 const calendar = calendars[calendarIndex];
                 let options: SCRenderer.ClockOptions = {id:''};

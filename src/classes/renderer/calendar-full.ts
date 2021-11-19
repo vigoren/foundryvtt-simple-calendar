@@ -7,6 +7,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {CalendarClickEvents, DateRangeMatch} from "../../constants";
 import RendererUtilities from "./utilities";
 import CalendarManager from "../calendar/calendar-manager";
+import {CalManager} from "../index";
 
 export default class CalendarFull{
 
@@ -90,7 +91,7 @@ export default class CalendarFull{
             calendarStyle = `border-color: ${season.color};`;
         }
 
-        let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${CalendarManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
+        let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${CalManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
         html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
         //Put the header together
@@ -217,7 +218,7 @@ export default class CalendarFull{
         const calendarElement = document.getElementById(calendarId);
         if(calendarElement){
             const calendarIndex = parseInt(calendarElement.getAttribute('data-calendar') || '');
-            const calendars = CalendarManager.getAllCalendars();
+            const calendars = CalManager.getAllCalendars();
             if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
                 const calendar = calendars[calendarIndex];
                 let options: SCRenderer.CalendarOptions = {id:''};

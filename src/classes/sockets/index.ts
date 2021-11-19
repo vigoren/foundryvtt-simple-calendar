@@ -13,6 +13,7 @@ import NoteRemindersSocket from "./note-reminders-socket";
 import PrimarySocket from "./primary-socket";
 import SimpleCalendar from "../simple-calendar";
 import Hook from "../api/hook";
+import {CalManager, MainApplication} from "../index";
 
 export default class Sockets {
 
@@ -43,8 +44,8 @@ export default class Sockets {
 
         Promise.all(this.sockets.map(s => s.initialize()))
             .then((results => {
-                SimpleCalendar.instance.mainApp?.updateApp();
-                Hook.emit(SimpleCalendarHooks.Ready, SimpleCalendar.instance.activeCalendar);
+                MainApplication.updateApp();
+                Hook.emit(SimpleCalendarHooks.Ready, CalManager.getActiveCalendar());
             }))
             .catch(Logger.error);
     }
@@ -55,9 +56,10 @@ export default class Sockets {
      */
     async process(data: SimpleCalendarSocket.Data){
         Logger.debug(`Processing ${data.type} socket emit`);
+        const activeCalendar = CalManager.getActiveCalendar();
         for(let i = 0; i < this.sockets.length; i++){
             // If this socket processed the data, then no need to check the other sockets.
-            if(await this.sockets[i].process(data)){
+            if(await this.sockets[i].process(data, activeCalendar)){
                 break;
             }
         }

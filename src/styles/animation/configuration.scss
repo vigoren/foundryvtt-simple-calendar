@@ -1,6 +1,15 @@
 @import "../variables";
 .simple-calendar{
   .sc-configuration-wrapper{
+    .tab-section{
+      &.calendar-selector{
+        ul {
+          &.animate {
+            transition: max-height 500ms;
+          }
+        }
+      }
+    }
     .tab-wrapper{
       .section{
         &.animate {

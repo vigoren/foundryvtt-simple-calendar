@@ -1,5 +1,7 @@
 import {Logger} from "../logging";
-import Month from "../calendar/month";
+import type Month from "../calendar/month";
+import type Day from "../calendar/day";
+import type Calendar from "../calendar";
 import {
     AppPosition,
     NoteTemplate,
@@ -8,7 +10,6 @@ import {
     SimpleCalendarSocket,
     SimpleCalendarTemplate
 } from "../../interfaces";
-import {ConfigurationApp} from "./configuration-app";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {NotesApp} from "./notes-app";
 import {
@@ -19,13 +20,11 @@ import {
     SocketTypes,
     Themes
 } from "../../constants";
-import Day from "../calendar/day";
+import {ConfigurationApp} from "./configuration-app";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import Calendar from "../calendar";
 import Renderer from "../renderer";
-import SimpleCalendar from "../simple-calendar";
 import {animateElement} from "../utilities/visual";
-import CalendarManager from "../calendar/calendar-manager";
+import {CalManager, SC} from "../index";
 
 
 /**
@@ -103,7 +102,7 @@ export default class MainApp extends Application{
     getData(options?: Application.RenderOptions): SimpleCalendarTemplate | Promise<SimpleCalendarTemplate> {
         return {
             calendar: this.activeCalendar.toTemplate(),
-            calendarList: CalendarManager.getAllCalendars().map(c => {return {id: c.id, name: c.name}}),
+            calendarList: CalManager.getAllCalendars().map(c => {return {id: c.id, name: c.name}}),
             clockClass: this.clockClass,
             isPrimary: this.activeCalendar.primary,
             theme: Themes.dark, //TODO: Update this when we have the theme being stored,
@@ -782,7 +781,7 @@ export default class MainApp extends Application{
     public configurationClick(e: Event) {
         if(GameSettings.IsGm()){
             if(!ConfigurationApp.instance || (ConfigurationApp.instance && !ConfigurationApp.instance.rendered)){
-                ConfigurationApp.instance = new ConfigurationApp(this.activeCalendar.clone());
+                ConfigurationApp.instance = new ConfigurationApp();
                 ConfigurationApp.instance.showApp();
             } else {
                 ConfigurationApp.instance.bringToTop();
@@ -801,7 +800,7 @@ export default class MainApp extends Application{
         if(!(<Game>game).users?.find(u => u.isGM && u.active)){
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
         } else {
-            SimpleCalendar.instance.openNewNoteApp();
+            SC.openNewNoteApp();
         }
     }
 

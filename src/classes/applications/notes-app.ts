@@ -1,12 +1,12 @@
 import Note from '../note';
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import SimpleCalendar from "../simple-calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import {NoteRepeats, NoteConfig, SCDateSelector} from "../../interfaces";
 import {SettingNames} from "../../constants";
 import {DaysBetweenDates} from "../utilities/date-time";
 import {GetContrastColor} from "../utilities/visual";
+import {CalManager} from "../index";
 
 export class NotesApp extends FormApplication {
     /**
@@ -79,6 +79,7 @@ export class NotesApp extends FormApplication {
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
     getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
+        const activeCalendar = CalManager.getActiveCalendar();
         let data = {
             ... super.getData(options),
             isGM: GameSettings.IsGm(),
@@ -102,8 +103,8 @@ export class NotesApp extends FormApplication {
                 end: (<Note>this.object).endDate
             },
             dateSelectorClick: this.dateSelectorClick.bind(this),
-            categories: SimpleCalendar.instance.activeCalendar.noteCategories.filter(nc => (<Note>this.object).categories.includes(nc.name)),
-            allCategories: SimpleCalendar.instance.activeCalendar.noteCategories.map(nc => {
+            categories: activeCalendar.noteCategories.filter(nc => (<Note>this.object).categories.includes(nc.name)),
+            allCategories: activeCalendar.noteCategories.map(nc => {
                 return {
                     name: nc.name,
                     color : nc.color,
@@ -114,13 +115,13 @@ export class NotesApp extends FormApplication {
             timeSelected: !(<Note>this.object).allDay
         };
 
-        const daysBetween = DaysBetweenDates(SimpleCalendar.instance.activeCalendar, {year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, seconds: 0},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, seconds: 0});
+        const daysBetween = DaysBetweenDates(activeCalendar, {year: (<Note>this.object).year, month: (<Note>this.object).month, day: (<Note>this.object).day, hour: 0, minute:0, seconds: 0},{year: (<Note>this.object).endDate.year, month: (<Note>this.object).endDate.month, day: (<Note>this.object).endDate.day, hour: 0, minute:0, seconds: 0});
 
-        if(daysBetween >= SimpleCalendar.instance.activeCalendar.year.totalNumberOfDays(false, true)){
+        if(daysBetween >= activeCalendar.year.totalNumberOfDays(false, true)){
             data.repeatOptions = {0: 'FSC.Notes.Repeat.Never'};
-        } else if(daysBetween >= SimpleCalendar.instance.activeCalendar.year.months[0].days.length){
+        } else if(daysBetween >= activeCalendar.year.months[0].days.length){
             data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 3: 'FSC.Notes.Repeat.Yearly'};
-        }else if(daysBetween >= SimpleCalendar.instance.activeCalendar.year.weekdays.length){
+        }else if(daysBetween >= activeCalendar.year.weekdays.length){
             data.repeatOptions = {0: 'FSC.Notes.Repeat.Never', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'};
         }
 
@@ -259,8 +260,9 @@ export class NotesApp extends FormApplication {
             Logger.debug(`Input Name "${name}" change found`);
             if(name === 'scNoteCategories'){
                 if(checked){
-                    const nc = SimpleCalendar.instance.activeCalendar.noteCategories.findIndex(nc => nc.name === value);
-                    (<Note>this.object).categories.push(SimpleCalendar.instance.activeCalendar.noteCategories[nc].name);
+                    const activeCalendar = CalManager.getActiveCalendar();
+                    const nc = activeCalendar.noteCategories.findIndex(nc => nc.name === value);
+                    (<Note>this.object).categories.push(activeCalendar.noteCategories[nc].name);
                 } else {
                     const nci = (<Note>this.object).categories.findIndex(nc => nc === value);
                     (<Note>this.object).categories.splice(nci, 1);
@@ -298,12 +300,13 @@ export class NotesApp extends FormApplication {
      * @param selectedDate
      */
     dateSelectorClick(selectedDate: SCDateSelector.Result){
+        const activeCalendar = CalManager.getActiveCalendar();
         const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
         const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
         const eMonthIndex = !selectedDate.endDate.month || selectedDate.endDate.month < 0? 0 : selectedDate.endDate.month;
         const eDayIndex = !selectedDate.endDate.day || selectedDate.endDate.day < 0? 0 : selectedDate.endDate.day;
-        const startMonthObj = SimpleCalendar.instance.activeCalendar.year.months[sMonthIndex];
-        const endMonthObj = SimpleCalendar.instance.activeCalendar.year.months[eMonthIndex];
+        const startMonthObj = activeCalendar.year.months[sMonthIndex];
+        const endMonthObj = activeCalendar.year.months[eMonthIndex];
         (<Note>this.object).year = selectedDate.startDate.year || 0;
         (<Note>this.object).month = startMonthObj.numericRepresentation;
         (<Note>this.object).day = startMonthObj.days[sDayIndex].numericRepresentation;

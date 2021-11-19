@@ -2,7 +2,7 @@ import DateSelectorManager from "../date-selector/date-selector-manager";
 import Renderer from "../renderer";
 import {SCDateSelector, SCRenderer} from "../../interfaces";
 import {GetIcon} from "../utilities/visual";
-import SimpleCalendar from "../simple-calendar";
+import {CalManager} from "../index";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -35,7 +35,7 @@ export default class HandlebarsHelpers{
             if(options.hash.hasOwnProperty('calendar')){
                 dsOptions.calendar = options.hash['calendar'];
             } else {
-                dsOptions.calendar = SimpleCalendar.instance.activeCalendar;
+                dsOptions.calendar = CalManager.getActiveCalendar();
             }
             if(options.hash.hasOwnProperty('onDateSelect')){
                 dsOptions.onDateSelect = options.hash['onDateSelect'];
@@ -108,7 +108,7 @@ export default class HandlebarsHelpers{
         if(options.hash.hasOwnProperty('showYear')){
             renderOptions.showYear = options.hash['showYear'];
         }
-        return new Handlebars.SafeString(Renderer.CalendarFull.Render(SimpleCalendar.instance.activeCalendar, renderOptions));
+        return new Handlebars.SafeString(Renderer.CalendarFull.Render(CalManager.getActiveCalendar(), renderOptions));
     }
 
     /**
@@ -120,7 +120,7 @@ export default class HandlebarsHelpers{
         if(options.hash.hasOwnProperty('id')){
             renderOptions.id = options.hash['id'];
         }
-        return new Handlebars.SafeString(Renderer.Clock.Render(SimpleCalendar.instance.activeCalendar, renderOptions));
+        return new Handlebars.SafeString(Renderer.Clock.Render(CalManager.getActiveCalendar(), renderOptions));
     }
 
     /**

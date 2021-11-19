@@ -1,14 +1,23 @@
 <form autocomplete="off" class="sc-configuration-wrapper">
     <nav class="sheet-tabs tabs">
+        <div class="tab-section calendar-selector">
+            <div class="heading">{{localize 'FSC.Calendar'}}: {{object.name}}</div>
+            <ul class="closed">
+                {{#each calendars}}
+                <li class="{{#if (eq ../object.id id)}}active{{/if}}" data-calendar="{{id}}">{{name}}</li>
+                {{/each}}
+                <li class="item new-calendar" data-tab="newCalendar">{{localize 'FSC.AddNewCalendar'}}<span class="fa fa-plus-circle"></span></li>
+            </ul>
+        </div>
         <a class="item" data-tab="quickSetup">{{localize 'FSC.Configuration.General.QuickSetup'}}</a>
         <div class="tab-section settings">
-        <div class="heading">{{localize 'FSC.Settings'}}</div>
+        <div class="sub-heading">{{localize 'FSC.Settings'}}</div>
             <a class="item" data-tab="generalSettings">{{localize 'FSC.Configuration.General.Title'}}</a>
             <a class="item" data-tab="displayOptions">{{localize 'FSC.Configuration.General.DisplayOptions'}}</a>
             <a class="item" data-tab="permissions">{{localize 'Permissions'}}</a>
         </div>
         <div class="tab-section advanced-settings">
-            <div class="heading">{{localize 'FSC.AdvancedSettings'}}</div>
+            <div class="sub-heading">{{localize 'FSC.AdvancedSettings'}}</div>
             <a class="item" data-tab="noteSettings">{{localize 'FSC.Configuration.Notes.Title'}}</a>
             <a class="item" data-tab="yearSettings">{{localize 'FSC.Configuration.Year.Title'}}</a>
             <a class="item" data-tab="monthSettings">{{localize 'FSC.Configuration.Month.Title'}}</a>
@@ -17,13 +26,25 @@
             <a class="item" data-tab="timeSettings">{{localize 'FSC.Configuration.Time.Title'}}</a>
             <a class="item" data-tab="moonSettings">{{localize 'FSC.Configuration.Moon.Title'}}</a>
         </div>
-        <div class="tab-section advanced-settings">
+        <div class="tab-section help">
             <div class="heading">{{localize 'FSC.Help'}}</div>
             <a class="item" href="https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md" target="_blank">{{localize 'FSC.Documentation'}}&nbsp;<span class="fa fa-external-link-alt"></span></a>
             <a class="item" data-tab="about">{{localize 'About'}}</a>
         </div>
     </nav>
     <div class="tab-wrapper">
+        <div class="tab new-calendar" data-tab="newCalendar">
+            <h2>{{localize 'FSC.AddNewCalendar'}}</h2>
+            <div class="form-group">
+                <label for="scCalendarName">{{localize 'FSC.Configuration.AddCalendar.CalendarName'}}</label>
+                <div class="form-fields">
+                    <input value="" type="text" id="scCalendarName" />
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.AddCalendar.CalendarNameHelp'}}</p>
+                <button class="control save" id="scAddCalendar">{{localize 'FSC.Configuration.AddCalendar.Button'}}</button>
+            </div>
+        </div>
+
         <div class="tab quick-setup" data-tab="quickSetup">
             <h2>{{localize 'FSC.Configuration.General.QuickSetup'}}</h2>
             <p>{{localize 'FSC.Configuration.QuickSetup.Description'}}</p>
@@ -935,6 +956,14 @@
         </div>
 
         <div class="tab quick-setup" data-tab="about"></div>
+    </div>
+    <div class="config-save">
+        <button class="control save" id="scSave" type="button" title="{{localize 'FSC.Configuration.Save'}}">
+            <i class="far fa-save"></i> {{localize 'FSC.Configuration.Save'}}
+        </button>
+        <button class="control save" id="scSubmit" type="submit" title="{{localize 'FSC.SaveClose'}}">
+            <i class="fas fa-save"></i> {{localize 'FSC.SaveClose'}}
+        </button>
     </div>
 </form>
 

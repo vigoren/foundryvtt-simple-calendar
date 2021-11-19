@@ -1,6 +1,8 @@
 {
   "FSC.About": "About",
+  "FSC.AddNewCalendar": "Add New Calendar",
   "FSC.AdvancedSettings": "Advanced Settings",
+  "FSC.Calendar": "Calendar",
   "FSC.Calendars": "Calendars",
   "FSC.Configuration.Client.OpenOnLoad.Title": "Open On Load",
   "FSC.Configuration.Client.OpenOnLoad.Description": "Will open up the Simple Calendar application when foundry is loaded.",
@@ -13,9 +15,12 @@
   "FSC.Configuration.QuickSetup.ChooseCurrentDateDescription": "Set the initial Year, Month and Day for your calendar.",
   "FSC.Configuration.QuickSetup.ChoosePredefinedTitle": "Choose a Predefined Calendar",
   "FSC.Configuration.QuickSetup.ChoosePredefinedDescription": "Choose one of these predefined calendars to quickly set all other settings to match that calendar.",
-
+  "FSC.Configuration.AddCalendar.Button": "Add Calendar",
+  "FSC.Configuration.AddCalendar.CalendarName": "Calendar Name",
+  "FSC.Configuration.AddCalendar.CalendarNameHelp": "A name for your new calendar to help distinguish it from the other calendars.",
   "FSC.Configuration.Title": "Simple Calendar Configuration",
   "FSC.Documentation": "Documentation",
+  "FSC.SaveClose": "Save and Close",
   "FSC.Search.Options.Title": "Search Options",
   "FSC.Search.Options.Fields.Date": "Date",
   "FSC.Search.Options.Fields.Title": "Title",

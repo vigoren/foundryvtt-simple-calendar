@@ -1,6 +1,6 @@
 import {SimpleCalendarHooks, TimeKeeperStatus} from "../../constants";
 import {TimestampToDate} from "../utilities/date-time";
-import Calendar from "../calendar";
+import type Calendar from "../calendar";
 
 
 export default class Hook{

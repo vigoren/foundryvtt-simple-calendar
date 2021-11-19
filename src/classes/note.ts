@@ -1,10 +1,10 @@
 import {DateTimeParts, DayTemplate, NoteConfig, NoteTemplate, UserColorData} from "../interfaces";
 import {GameSettings} from "./foundry-interfacing/game-settings"
 import {DateRangeMatch, NoteRepeat, SettingNames} from "../constants";
-import SimpleCalendar from "./simple-calendar"
 import ConfigurationItemBase from "./configuration/configuration-item-base";
 import {GetContrastColor} from "./utilities/visual";
 import {GetDisplayDate, IsDayBetweenDates} from "./utilities/date-time";
+import {CalManager} from "./index";
 
 /**
  * All content around a calendar note
@@ -130,6 +130,7 @@ export default class Note extends ConfigurationItemBase{
      * @return {NoteTemplate}
      */
     toTemplate(): NoteTemplate {
+        const activeCalendar = CalManager.getActiveCalendar();
         const author = GameSettings.GetUser(this.author);
         let authDisplay: UserColorData | null;
         if(author){
@@ -156,12 +157,12 @@ export default class Note extends ConfigurationItemBase{
             authorDisplay: authDisplay,
             monthDisplay: this.monthDisplay,
             allDay: this.allDay,
-            displayDate: GetDisplayDate(SimpleCalendar.instance.activeCalendar,{year: this.year, month: this.month, day: this.day, hour: this.hour, minute: this.minute, allDay: this.allDay}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, hour: this.endDate.hour? this.endDate.hour : 0, minute: this.endDate.minute? this.endDate.minute : 0, allDay: this.allDay}, true),
+            displayDate: GetDisplayDate(activeCalendar,{year: this.year, month: this.month, day: this.day, hour: this.hour, minute: this.minute, allDay: this.allDay}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, hour: this.endDate.hour? this.endDate.hour : 0, minute: this.endDate.minute? this.endDate.minute : 0, allDay: this.allDay}, true),
             hour: this.hour,
             minute: this.minute,
             endDate: this.endDate,
             order: this.order,
-            categories: SimpleCalendar.instance.activeCalendar.noteCategories.filter(nc => this.categories.includes(nc.name)),
+            categories: activeCalendar.noteCategories.filter(nc => this.categories.includes(nc.name)),
             reminder: reminder
         };
     }
@@ -262,15 +263,16 @@ export default class Note extends ConfigurationItemBase{
      * @param {number} day The day we are checking
      */
     isVisible(year: number, month: number ,day: number){
+        const activeCalendar = CalManager.getActiveCalendar();
         const userVisible = (GameSettings.IsGm() || (!GameSettings.IsGm() && this.playerVisible));
         let dayVisible = false;
         if(userVisible){
             let inBetween = DateRangeMatch.None;
             if(this.repeats === NoteRepeat.Weekly){
                 let noteStartDayOfWeek = 0, noteEndDayOfWeek = 0, targetDayOfWeek = 1;
-                noteStartDayOfWeek = SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(this.year, this.month, this.day);
-                targetDayOfWeek = SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(year, month, day);
-                noteEndDayOfWeek = SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(this.endDate.year, this.endDate.month, this.endDate.day);
+                noteStartDayOfWeek = activeCalendar.year.dayOfTheWeek(this.year, this.month, this.day);
+                targetDayOfWeek = activeCalendar.year.dayOfTheWeek(year, month, day);
+                noteEndDayOfWeek = activeCalendar.year.dayOfTheWeek(this.endDate.year, this.endDate.month, this.endDate.day);
                 if(noteStartDayOfWeek === targetDayOfWeek){
                     inBetween = DateRangeMatch.Start;
                 } else if(noteEndDayOfWeek === targetDayOfWeek){
@@ -291,33 +293,33 @@ export default class Note extends ConfigurationItemBase{
                 let sYear = year;
                 let eYear = year;
                 if (this.month !== this.endDate.month) {
-                    let sMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.month);
-                    let eMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.endDate.month);
-                    let cMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === month);
+                    let sMonthIndex = activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.month);
+                    let eMonthIndex = activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.endDate.month);
+                    let cMonthIndex = activeCalendar.year.months.findIndex(m => m.numericRepresentation === month);
                     let mDiff = eMonthIndex - sMonthIndex;
                     sMonthIndex = cMonthIndex - mDiff;
                     if(sMonthIndex < 0){
-                        sMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.length - 1;
+                        sMonthIndex = activeCalendar.year.months.length - 1;
                         sYear--;
                     }
                     eMonthIndex = cMonthIndex + mDiff;
-                    if(eMonthIndex >= SimpleCalendar.instance.activeCalendar.year.months.length){
+                    if(eMonthIndex >= activeCalendar.year.months.length){
                         eMonthIndex = 0;
                         eYear++;
                     }
-                    if(sMonthIndex > -1 && sMonthIndex < SimpleCalendar.instance.activeCalendar.year.months.length && eMonthIndex > -1 && eMonthIndex < SimpleCalendar.instance.activeCalendar.year.months.length){
-                        sMonth = SimpleCalendar.instance.activeCalendar.year.months[sMonthIndex].numericRepresentation;
-                        eMonth = SimpleCalendar.instance.activeCalendar.year.months[eMonthIndex].numericRepresentation;
+                    if(sMonthIndex > -1 && sMonthIndex < activeCalendar.year.months.length && eMonthIndex > -1 && eMonthIndex < activeCalendar.year.months.length){
+                        sMonth = activeCalendar.year.months[sMonthIndex].numericRepresentation;
+                        eMonth = activeCalendar.year.months[eMonthIndex].numericRepresentation;
 
-                        const sInBetween = IsDayBetweenDates(SimpleCalendar.instance.activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
-                        const eInBetween = IsDayBetweenDates(SimpleCalendar.instance.activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                        const sInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                        const eInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
                         if(sInBetween !== DateRangeMatch.None || eInBetween !== DateRangeMatch.None){
                             inBetween = DateRangeMatch.Middle;
                         }
                     }
                 }
                 else {
-                    inBetween = IsDayBetweenDates(SimpleCalendar.instance.activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
                 }
             } else if(this.repeats === NoteRepeat.Yearly){
                 let sYear = year;
@@ -326,17 +328,17 @@ export default class Note extends ConfigurationItemBase{
                     const yDiff = this.endDate.year - this.year;
                     sYear = year - yDiff;
                     eYear = year + yDiff;
-                    const sInBetween = IsDayBetweenDates(SimpleCalendar.instance.activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
-                    const eInBetween = IsDayBetweenDates(SimpleCalendar.instance.activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    const sInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    const eInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
                     if(sInBetween !== DateRangeMatch.None || eInBetween !== DateRangeMatch.None){
                         inBetween = DateRangeMatch.Middle;
                     }
                 }
                 else{
-                    inBetween = IsDayBetweenDates(SimpleCalendar.instance.activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
                 }
             } else {
-                inBetween = IsDayBetweenDates(SimpleCalendar.instance.activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: this.year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: this.year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
             }
             dayVisible = inBetween !== DateRangeMatch.None;
         }
@@ -348,27 +350,28 @@ export default class Note extends ConfigurationItemBase{
      * Takes into account if the note repeats.
      */
     display(){
+        const activeCalendar = CalManager.getActiveCalendar();
         let display: string = '';
 
-        let currentVisibleYear = SimpleCalendar.instance.activeCalendar.year.visibleYear;
-        let currentVisibleMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.selected);
+        let currentVisibleYear = activeCalendar.year.visibleYear;
+        let currentVisibleMonthIndex = activeCalendar.year.months.findIndex(m => m.selected);
         if(currentVisibleMonthIndex === -1){
-            currentVisibleMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.current);
+            currentVisibleMonthIndex = activeCalendar.year.months.findIndex(m => m.current);
         }
-        let currentVisibleDayIndex = SimpleCalendar.instance.activeCalendar.year.months[currentVisibleMonthIndex].days.findIndex(d => d.selected);
+        let currentVisibleDayIndex = activeCalendar.year.months[currentVisibleMonthIndex].days.findIndex(d => d.selected);
         if(currentVisibleDayIndex === -1){
-            currentVisibleDayIndex = SimpleCalendar.instance.activeCalendar.year.months[currentVisibleMonthIndex].days.findIndex(d => d.current);
+            currentVisibleDayIndex = activeCalendar.year.months[currentVisibleMonthIndex].days.findIndex(d => d.current);
         }
-        let noteStartMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.month);
-        let noteEndMonthIndex = SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.endDate.month);
+        let noteStartMonthIndex = activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.month);
+        let noteEndMonthIndex = activeCalendar.year.months.findIndex(m => m.numericRepresentation === this.endDate.month);
         if(noteStartMonthIndex === -1){
             noteStartMonthIndex = 0;
         }
         if(noteEndMonthIndex === -1){
             noteEndMonthIndex = 0;
         }
-        let noteStartDayIndex = SimpleCalendar.instance.activeCalendar.year.months[noteStartMonthIndex].days.findIndex(d => d.numericRepresentation === this.day);
-        let noteEndDayIndex = SimpleCalendar.instance.activeCalendar.year.months[noteEndMonthIndex].days.findIndex(d => d.numericRepresentation === this.endDate.day);
+        let noteStartDayIndex = activeCalendar.year.months[noteStartMonthIndex].days.findIndex(d => d.numericRepresentation === this.day);
+        let noteEndDayIndex = activeCalendar.year.months[noteEndMonthIndex].days.findIndex(d => d.numericRepresentation === this.endDate.day);
 
 
         let startYear = this.year;
@@ -385,11 +388,11 @@ export default class Note extends ConfigurationItemBase{
             let eMonth = currentVisibleMonthIndex;
             let sDay: number | undefined = this.day;
             let eDay: number | undefined = this.endDate.day;
-            const currentVisibleDayNumericRepresentation = SimpleCalendar.instance.activeCalendar.year.months[currentVisibleMonthIndex].days[currentVisibleDayIndex].numericRepresentation;
-            let noteStartDayOfWeek = SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(this.year, this.month, startDay);
-            let noteEndDayOfWeek = SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(this.endDate.year, this.endDate.month, endDay);
-            let currentDayOfWeek = SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(SimpleCalendar.instance.activeCalendar.year.visibleYear, SimpleCalendar.instance.activeCalendar.year.months[currentVisibleMonthIndex].numericRepresentation, currentVisibleDayNumericRepresentation);
-            let weeks = SimpleCalendar.instance.activeCalendar.year.daysIntoWeeks(SimpleCalendar.instance.activeCalendar.year.months[currentVisibleMonthIndex], currentVisibleYear, SimpleCalendar.instance.activeCalendar.year.weekdays.length);
+            const currentVisibleDayNumericRepresentation = activeCalendar.year.months[currentVisibleMonthIndex].days[currentVisibleDayIndex].numericRepresentation;
+            let noteStartDayOfWeek = activeCalendar.year.dayOfTheWeek(this.year, this.month, startDay);
+            let noteEndDayOfWeek = activeCalendar.year.dayOfTheWeek(this.endDate.year, this.endDate.month, endDay);
+            let currentDayOfWeek = activeCalendar.year.dayOfTheWeek(activeCalendar.year.visibleYear, activeCalendar.year.months[currentVisibleMonthIndex].numericRepresentation, currentVisibleDayNumericRepresentation);
+            let weeks = activeCalendar.year.daysIntoWeeks(activeCalendar.year.months[currentVisibleMonthIndex], currentVisibleYear, activeCalendar.year.weekdays.length);
 
             for(let i = 0; i < weeks.length; i++){
                 const res = weeks[i].find(wd => wd !== false && wd !== true && wd.numericRepresentation === currentVisibleDayNumericRepresentation);
@@ -424,9 +427,9 @@ export default class Note extends ConfigurationItemBase{
                     sMonth--;
                 } else {
                     startYear--;
-                    sMonth = SimpleCalendar.instance.activeCalendar.year.months.length - 1;
+                    sMonth = activeCalendar.year.months.length - 1;
                 }
-                weeks = SimpleCalendar.instance.activeCalendar.year.daysIntoWeeks(SimpleCalendar.instance.activeCalendar.year.months[sMonth], startYear, SimpleCalendar.instance.activeCalendar.year.weekdays.length);
+                weeks = activeCalendar.year.daysIntoWeeks(activeCalendar.year.months[sMonth], startYear, activeCalendar.year.weekdays.length);
                 let wi = weeks.length - 1;
                 while(wi >= 0){
                     if(weeks[wi][noteStartDayOfWeek] !== false){
@@ -439,13 +442,13 @@ export default class Note extends ConfigurationItemBase{
                 }
             }
             if(eDay === undefined){
-                if(eMonth < SimpleCalendar.instance.activeCalendar.year.months.length - 1){
+                if(eMonth < activeCalendar.year.months.length - 1){
                     eMonth++;
                 } else {
                     endYear++;
                     eMonth = 0;
                 }
-                weeks = SimpleCalendar.instance.activeCalendar.year.daysIntoWeeks(SimpleCalendar.instance.activeCalendar.year.months[eMonth], endYear, SimpleCalendar.instance.activeCalendar.year.weekdays.length);
+                weeks = activeCalendar.year.daysIntoWeeks(activeCalendar.year.months[eMonth], endYear, activeCalendar.year.weekdays.length);
                 let wi = 0;
                 while(wi < weeks.length){
                     if(weeks[wi][noteEndDayOfWeek] !== false){
@@ -457,8 +460,8 @@ export default class Note extends ConfigurationItemBase{
                     }
                 }
             }
-            startMonth = SimpleCalendar.instance.activeCalendar.year.months[sMonth].numericRepresentation;
-            endMonth = SimpleCalendar.instance.activeCalendar.year.months[eMonth].numericRepresentation;
+            startMonth = activeCalendar.year.months[sMonth].numericRepresentation;
+            endMonth = activeCalendar.year.months[eMonth].numericRepresentation;
             startDay = sDay? sDay : 1;
             endDay = eDay? eDay : 1;
 
@@ -471,33 +474,33 @@ export default class Note extends ConfigurationItemBase{
                 const mDiff = noteEndMonthIndex - noteStartMonthIndex;
                 if(noteStartDayIndex <= currentVisibleDayIndex){
                     eMonth = currentVisibleMonthIndex + mDiff;
-                    if(eMonth >= SimpleCalendar.instance.activeCalendar.year.months.length){
+                    if(eMonth >= activeCalendar.year.months.length){
                         eMonth = 0;
                         endYear = currentVisibleYear + 1;
                     }
                 } else if(noteEndDayIndex >= currentVisibleDayIndex){
                     sMonth = currentVisibleMonthIndex - mDiff;
                     if(sMonth < 0){
-                        sMonth = SimpleCalendar.instance.activeCalendar.year.months.length - 1;
+                        sMonth = activeCalendar.year.months.length - 1;
                         startYear = currentVisibleYear - 1;
                     }
                 }
-                startMonth = SimpleCalendar.instance.activeCalendar.year.months[sMonth].numericRepresentation;
-                endMonth = SimpleCalendar.instance.activeCalendar.year.months[eMonth].numericRepresentation;
+                startMonth = activeCalendar.year.months[sMonth].numericRepresentation;
+                endMonth = activeCalendar.year.months[eMonth].numericRepresentation;
             } else {
-                startMonth = SimpleCalendar.instance.activeCalendar.year.months[currentVisibleMonthIndex].numericRepresentation;
-                endMonth = SimpleCalendar.instance.activeCalendar.year.months[currentVisibleMonthIndex].numericRepresentation;
+                startMonth = activeCalendar.year.months[currentVisibleMonthIndex].numericRepresentation;
+                endMonth = activeCalendar.year.months[currentVisibleMonthIndex].numericRepresentation;
             }
             // Check if the selected start day is more days than the current month has, if so adjust the end day to the max number of day.
-            if(noteStartDayIndex >= SimpleCalendar.instance.activeCalendar.year.months[sMonth].days.length){
-                const isLeapYear = SimpleCalendar.instance.activeCalendar.year.leapYearRule.isLeapYear(startYear);
-                startDay = isLeapYear? SimpleCalendar.instance.activeCalendar.year.months[sMonth].numberOfLeapYearDays : SimpleCalendar.instance.activeCalendar.year.months[sMonth].numberOfDays;
+            if(noteStartDayIndex >= activeCalendar.year.months[sMonth].days.length){
+                const isLeapYear = activeCalendar.year.leapYearRule.isLeapYear(startYear);
+                startDay = isLeapYear? activeCalendar.year.months[sMonth].numberOfLeapYearDays : activeCalendar.year.months[sMonth].numberOfDays;
             }
 
             // Check if the selected end day is more days than the current month has, if so adjust the end day to the max number of day.
-            if(noteEndDayIndex >= SimpleCalendar.instance.activeCalendar.year.months[eMonth].days.length){
-                const isLeapYear = SimpleCalendar.instance.activeCalendar.year.leapYearRule.isLeapYear(endYear);
-                endDay = isLeapYear? SimpleCalendar.instance.activeCalendar.year.months[eMonth].numberOfLeapYearDays : SimpleCalendar.instance.activeCalendar.year.months[eMonth].numberOfDays;
+            if(noteEndDayIndex >= activeCalendar.year.months[eMonth].days.length){
+                const isLeapYear = activeCalendar.year.leapYearRule.isLeapYear(endYear);
+                endDay = isLeapYear? activeCalendar.year.months[eMonth].numberOfLeapYearDays : activeCalendar.year.months[eMonth].numberOfDays;
             }
         } else if(this.repeats === NoteRepeat.Yearly){
             if(this.year !== this.endDate.year){
@@ -516,7 +519,7 @@ export default class Note extends ConfigurationItemBase{
                 endYear = currentVisibleYear;
             }
         }
-        display = GetDisplayDate(SimpleCalendar.instance.activeCalendar,{year: startYear, month: startMonth, day: startDay, hour: this.hour, minute: this.minute, allDay: this.allDay},{year: endYear, month: endMonth, day: endDay, hour: this.endDate.hour, minute: this.endDate.minute, allDay: this.allDay} );
+        display = GetDisplayDate(activeCalendar,{year: startYear, month: startMonth, day: startDay, hour: this.hour, minute: this.minute, allDay: this.allDay},{year: endYear, month: endMonth, day: endDay, hour: this.endDate.hour, minute: this.endDate.minute, allDay: this.allDay} );
         return display;
     }
 }

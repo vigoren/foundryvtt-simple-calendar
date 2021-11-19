@@ -2,7 +2,7 @@ import {GameSystems, LeapYearRules} from "../../constants";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {LeapYearConfig, LeapYearTemplate} from "../../interfaces";
 import PF2E from "../systems/pf2e";
-import SimpleCalendar from "../simple-calendar";
+import {CalManager} from "../index";
 
 export default class LeapYear extends ConfigurationItemBase{
     /**
@@ -78,7 +78,8 @@ export default class LeapYear extends ConfigurationItemBase{
      * @param {number} year The year number to check
      */
     isLeapYear(year: number): boolean {
-        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync) {
+        const activeCalendar = CalManager.getActiveCalendar();
+        if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync) {
             PF2E.checkLeapYearRules(this);
         }
         if(this.rule === LeapYearRules.Gregorian){

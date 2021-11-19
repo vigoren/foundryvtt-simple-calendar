@@ -1,7 +1,7 @@
 import {SeasonConfiguration, SeasonTemplate} from "../../interfaces";
 import Year from "./year";
-import SimpleCalendar from "../simple-calendar";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
+import {CalManager} from "../index";
 
 /**
  * All content around a season
@@ -83,17 +83,16 @@ export default class Season extends ConfigurationItemBase{
         const sunriseSelectorId = `sc_season_sunrise_time_${this.id}`;
 
         let sunriseHour = 0, sunriseMinute = 0, sunsetHour = 0, sunsetMinute = 0;
-        if(SimpleCalendar.instance){
-            sunriseMinute = Math.floor(this.sunriseTime / SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
-            sunsetMinute = Math.floor(this.sunsetTime / SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
-            if(sunriseMinute >= SimpleCalendar.instance.activeCalendar.year.time.minutesInHour){
-                sunriseHour = Math.floor(sunriseMinute / SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
-                sunriseMinute = sunriseMinute - (sunriseHour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
-            }
-            if(sunsetMinute >= SimpleCalendar.instance.activeCalendar.year.time.minutesInHour){
-                sunsetHour = Math.floor(sunsetMinute / SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
-                sunsetMinute = sunsetMinute - (sunsetHour * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
-            }
+        const activeCalendar = CalManager.getActiveCalendar();
+        sunriseMinute = Math.floor(this.sunriseTime / activeCalendar.year.time.secondsInMinute);
+        sunsetMinute = Math.floor(this.sunsetTime / activeCalendar.year.time.secondsInMinute);
+        if(sunriseMinute >= activeCalendar.year.time.minutesInHour){
+            sunriseHour = Math.floor(sunriseMinute / activeCalendar.year.time.minutesInHour);
+            sunriseMinute = sunriseMinute - (sunriseHour * activeCalendar.year.time.minutesInHour);
+        }
+        if(sunsetMinute >= activeCalendar.year.time.minutesInHour){
+            sunsetHour = Math.floor(sunsetMinute / activeCalendar.year.time.minutesInHour);
+            sunsetMinute = sunsetMinute - (sunsetHour * activeCalendar.year.time.minutesInHour);
         }
 
         const data: SeasonTemplate =  {

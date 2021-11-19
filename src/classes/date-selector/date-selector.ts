@@ -4,7 +4,7 @@ import {GetDisplayDate, DateTheSame} from "../utilities/date-time";
 import Renderer from "../renderer";
 import {CalendarClickEvents, DateSelectorPositions} from "../../constants";
 import Calendar from "../calendar";
-import SimpleCalendar from "../simple-calendar";
+import {CalManager} from "../index";
 
 export default class DateSelector {
 
@@ -67,8 +67,7 @@ export default class DateSelector {
 
     position: DateSelectorPositions = DateSelectorPositions.Auto;
 
-
-    calendar: Calendar = SimpleCalendar.instance.activeCalendar;
+    calendar: Calendar = CalManager.getActiveCalendar();
 
     calendarId: string;
 

@@ -3,11 +3,22 @@ import API from "./classes/api";
 import {Logger} from "./classes/logging";
 import {SettingNames, SimpleCalendarHooks} from "./constants";
 import {GameSettings} from "./classes/foundry-interfacing/game-settings";
+import {updateCalManager, updateMainApplication, updateSC, CalManager, MainApplication, SC} from "./classes";
+import HandlebarsHelpers from "./classes/api/handlebars-helpers";
+import GameSettingsRegistration from "./classes/foundry-interfacing/game-settings-registration";
+import CalendarManager from "./classes/calendar/calendar-manager";
+import MainApp from "./classes/applications/main-app";
 
-SimpleCalendar.instance = new SimpleCalendar();
+updateCalManager(new CalendarManager());
+updateMainApplication(new MainApp(CalManager.getDefaultCalendar()));
+updateSC(new SimpleCalendar());
+
 Hooks.on('init', () => {
-    //Initialize the Simple Calendar
-    SimpleCalendar.instance.initialize();
+    //Register everything
+    HandlebarsHelpers.Register();
+    GameSettingsRegistration.Register();
+    CalManager.register();
+
     //Expose the api
     (window as any).SimpleCalendar = {
         api: API,
@@ -16,18 +27,18 @@ Hooks.on('init', () => {
 });
 Hooks.on('ready', () => {
     //Initialize the Simple Calendar Sockets
-    SimpleCalendar.instance.sockets.initialize();
-    SimpleCalendar.instance.checkNoteReminders();
+    SC.sockets.initialize();
+    SC.checkNoteReminders();
     if(GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad)){
-        SimpleCalendar.instance.mainApp?.showApp();
+        MainApplication.showApp();
     }
 });
-Hooks.on('getSceneControlButtons', SimpleCalendar.instance.getSceneControlButtons.bind(SimpleCalendar.instance));
-Hooks.on("updateWorldTime", SimpleCalendar.instance.worldTimeUpdate.bind(SimpleCalendar.instance));
-Hooks.on('createCombatant', SimpleCalendar.instance.createCombatant.bind(SimpleCalendar.instance));
-Hooks.on("updateCombat", SimpleCalendar.instance.combatUpdate.bind(SimpleCalendar.instance));
-Hooks.on("deleteCombat", SimpleCalendar.instance.combatDelete.bind(SimpleCalendar.instance));
-Hooks.on("pauseGame", SimpleCalendar.instance.gamePaused.bind(SimpleCalendar.instance));
+Hooks.on('getSceneControlButtons', SC.getSceneControlButtons.bind(SC));
+Hooks.on("updateWorldTime", SC.worldTimeUpdate.bind(SC));
+Hooks.on('createCombatant', SC.createCombatant.bind(SC));
+Hooks.on("updateCombat", SC.combatUpdate.bind(SC));
+Hooks.on("deleteCombat", SC.combatDelete.bind(SC));
+Hooks.on("pauseGame", SC.gamePaused.bind(SC));
 
 Logger.debugMode = false;
 

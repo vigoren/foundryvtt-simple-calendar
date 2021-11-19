@@ -4,6 +4,7 @@ import {PadNumber} from "../utilities/string";
 import {deepMerge} from "../utilities/object";
 import {TimeSelectorEvents} from "../../constants";
 import CalendarManager from "../calendar/calendar-manager";
+import {CalManager} from "../index";
 
 export default class TimeSelector {
 
@@ -16,7 +17,7 @@ export default class TimeSelector {
 
     public static Render(calendar: Calendar, options: SCRenderer.TimeSelectorOptions = {id: ''}): string{
         options = deepMerge({}, this.defaultOptions, options);
-        let html = `<div id="${options.id}" class="time-selector" data-calendar="${CalendarManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
+        let html = `<div id="${options.id}" class="time-selector" data-calendar="${CalManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
         html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/><span class="far fa-clock"></span>`;
 
@@ -99,7 +100,7 @@ export default class TimeSelector {
         const timeSelectorElement = document.getElementById(timeSelectorId);
         if(timeSelectorElement){
             const calendarIndex = parseInt(timeSelectorElement.getAttribute('data-calendar') || '');
-            const calendars = CalendarManager.getAllCalendars();
+            const calendars = CalManager.getAllCalendars();
             if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
                 const calendar = calendars[calendarIndex];
                 let options: SCRenderer.TimeSelectorOptions = {id:''};

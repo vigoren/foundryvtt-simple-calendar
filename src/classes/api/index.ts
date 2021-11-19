@@ -1,4 +1,3 @@
-import SimpleCalendar from "../simple-calendar";
 import {
     DateTime,
     LeapYearConfig,
@@ -28,6 +27,7 @@ import {DateToTimestamp, FormatDateTime, TimestampToDate} from "../utilities/dat
 import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Renderer from "../renderer";
+import {MainApplication, CalManager} from "../index";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
@@ -86,7 +86,7 @@ export default class API{
      * Get the timestamp for the current year
      */
     public static timestamp(): number{
-        return SimpleCalendar.instance.activeCalendar.year.toSeconds();
+        return CalManager.getActiveCalendar().year.toSeconds();
     }
 
     /**
@@ -95,10 +95,11 @@ export default class API{
      * @param interval
      */
     public static timestampPlusInterval(currentSeconds: number, interval: DateTime): number{
-        const clone = SimpleCalendar.instance.activeCalendar.year.clone();
+        const activeCalendar = CalManager.getActiveCalendar();
+        const clone = activeCalendar.year.clone();
         // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
-        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
-            currentSeconds += PF2E.getWorldCreateSeconds(SimpleCalendar.instance.activeCalendar);
+        if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync){
+            currentSeconds += PF2E.getWorldCreateSeconds(activeCalendar);
         }
 
         const dateTime = clone.secondsToDate(currentSeconds);
@@ -145,7 +146,7 @@ export default class API{
      * @param seconds
      */
     public static timestampToDate(seconds: number){
-        return TimestampToDate(seconds, SimpleCalendar.instance.activeCalendar);
+        return TimestampToDate(seconds, CalManager.getActiveCalendar());
     }
 
     /**
@@ -153,7 +154,7 @@ export default class API{
      * @param {DateTime} date
      */
     public static dateToTimestamp(date: DateTime): number{
-        return DateToTimestamp(date, SimpleCalendar.instance.activeCalendar);
+        return DateToTimestamp(date, CalManager.getActiveCalendar());
     }
 
     /**
@@ -161,14 +162,14 @@ export default class API{
      * @param seconds
      */
     public static secondsToInterval(seconds: number): DateTime{
-        return SimpleCalendar.instance.activeCalendar.year.secondsToInterval(seconds);
+        return CalManager.getActiveCalendar().year.secondsToInterval(seconds);
     }
 
     /**
      * Returns the current status of the clock
      */
     public static clockStatus(){
-        const status = SimpleCalendar.instance.activeCalendar.year.time.timeKeeper.getStatus();
+        const status = CalManager.getActiveCalendar().year.time.timeKeeper.getStatus();
         return {
             started: status === TimeKeeperStatus.Started,
             stopped: status === TimeKeeperStatus.Stopped,
@@ -182,15 +183,16 @@ export default class API{
      * @param {boolean} [compact=false] If the calendar should open in compact mode or not
      */
     public static showCalendar(date: DateTime | null = null, compact: boolean = false){
+        const activeCalendar = CalManager.getActiveCalendar();
         if(date !== null){
             if(!date.year){
-                date.year = SimpleCalendar.instance.activeCalendar.year.numericRepresentation;
+                date.year = activeCalendar.year.numericRepresentation;
             }
 
             if(!date.month || !date.day){
-                const curMonth = SimpleCalendar.instance.activeCalendar.year.getMonth();
+                const curMonth = activeCalendar.year.getMonth();
                 if(!date.month){
-                    date.month = curMonth? SimpleCalendar.instance.activeCalendar.year.months.findIndex(m => m.numericRepresentation === curMonth.numericRepresentation) : 0;
+                    date.month = curMonth? activeCalendar.year.months.findIndex(m => m.numericRepresentation === curMonth.numericRepresentation) : 0;
                 }
 
                 if(!date.day){
@@ -204,33 +206,31 @@ export default class API{
             }
 
             if(Number.isInteger(date.year) && Number.isInteger(date.month) && Number.isInteger(date.day)){
-                const isLeapYear = SimpleCalendar.instance.activeCalendar.year.leapYearRule.isLeapYear(date.year);
-                SimpleCalendar.instance.activeCalendar.year.visibleYear = date.year;
-                if(date.month === -1 || date.month > SimpleCalendar.instance.activeCalendar.year.months.length){
-                    date.month = SimpleCalendar.instance.activeCalendar.year.months.length - 1;
+                const isLeapYear = activeCalendar.year.leapYearRule.isLeapYear(date.year);
+                activeCalendar.year.visibleYear = date.year;
+                if(date.month === -1 || date.month > activeCalendar.year.months.length){
+                    date.month = activeCalendar.year.months.length - 1;
                 }
-                SimpleCalendar.instance.activeCalendar.year.resetMonths('visible');
-                SimpleCalendar.instance.activeCalendar.year.months[date.month].visible = true;
+                activeCalendar.year.resetMonths('visible');
+                activeCalendar.year.months[date.month].visible = true;
 
-                const numberOfDays = isLeapYear? SimpleCalendar.instance.activeCalendar.year.months[date.month].numberOfLeapYearDays : SimpleCalendar.instance.activeCalendar.year.months[date.month].numberOfDays;
+                const numberOfDays = isLeapYear? activeCalendar.year.months[date.month].numberOfLeapYearDays : activeCalendar.year.months[date.month].numberOfDays;
                 if(date.day > 0){
                     date.day = date.day - 1;
                 }
                 if(date.day == -1 || date.day > numberOfDays){
                     date.day = numberOfDays - 1;
                 }
-                SimpleCalendar.instance.activeCalendar.year.resetMonths('selected');
-                SimpleCalendar.instance.activeCalendar.year.months[date.month].days[date.day].selected = true;
-                SimpleCalendar.instance.activeCalendar.year.months[date.month].selected = true;
-                SimpleCalendar.instance.activeCalendar.year.selectedYear = SimpleCalendar.instance.activeCalendar.year.visibleYear;
+                activeCalendar.year.resetMonths('selected');
+                activeCalendar.year.months[date.month].days[date.day].selected = true;
+                activeCalendar.year.months[date.month].selected = true;
+                activeCalendar.year.selectedYear = activeCalendar.year.visibleYear;
             } else {
                 Logger.error('Main.api.showCalendar: Invalid date passed in.');
             }
         }
-        if(SimpleCalendar.instance.mainApp){
-            SimpleCalendar.instance.mainApp.uiElementStates.compactView = compact;
-            SimpleCalendar.instance.mainApp.showApp();
-        }
+        MainApplication.uiElementStates.compactView = compact;
+        MainApplication.showApp();
     }
 
     /**
@@ -238,32 +238,33 @@ export default class API{
      * @param interval
      */
     public static changeDate(interval: DateTime): boolean{
-        if(SimpleCalendar.instance.activeCalendar.canUser((<Game>game).user, SimpleCalendar.instance.activeCalendar.generalSettings.permissions.changeDateTime)){
+        const activeCalendar = CalManager.getActiveCalendar();
+        if(activeCalendar.canUser((<Game>game).user, activeCalendar.generalSettings.permissions.changeDateTime)){
             let change = false;
             if(interval.year){
-                SimpleCalendar.instance.activeCalendar.year.changeYear(interval.year, true, 'current');
+                activeCalendar.year.changeYear(interval.year, true, 'current');
                 change = true;
             }
             if(interval.month){
-                SimpleCalendar.instance.activeCalendar.year.changeMonth(interval.month, 'current');
+                activeCalendar.year.changeMonth(interval.month, 'current');
                 change = true;
             }
             if(interval.day){
-                SimpleCalendar.instance.activeCalendar.year.changeDay(interval.day);
+                activeCalendar.year.changeDay(interval.day);
                 change = true;
             }
             if(interval.hour || interval.minute || interval.second){
-                const dayChange = SimpleCalendar.instance.activeCalendar.year.time.changeTime(interval.hour, interval.minute, interval.second);
+                const dayChange = activeCalendar.year.time.changeTime(interval.hour, interval.minute, interval.second);
                 if(dayChange !== 0){
-                    SimpleCalendar.instance.activeCalendar.year.changeDay(dayChange);
+                    activeCalendar.year.changeDay(dayChange);
                 }
                 change = true;
             }
 
             if(change){
-                SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
-                SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
-                SimpleCalendar.instance.mainApp?.updateApp();
+                activeCalendar.saveCurrentDate().catch(Logger.error);
+                activeCalendar.syncTime().catch(Logger.error);
+                MainApplication.updateApp();
             }
             return true;
         } else {
@@ -277,12 +278,13 @@ export default class API{
      * @param date
      */
     public static setDate(date: DateTime): boolean{
-        if(SimpleCalendar.instance.activeCalendar.canUser((<Game>game).user, SimpleCalendar.instance.activeCalendar.generalSettings.permissions.changeDateTime)){
+        const activeCalendar = CalManager.getActiveCalendar();
+        if(activeCalendar.canUser((<Game>game).user, activeCalendar.generalSettings.permissions.changeDateTime)){
             const seconds = this.dateToTimestamp(date);
-            SimpleCalendar.instance.activeCalendar.year.updateTime(SimpleCalendar.instance.activeCalendar.year.secondsToDate(seconds));
-            SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
-            SimpleCalendar.instance.activeCalendar.syncTime().catch(Logger.error);
-            SimpleCalendar.instance.mainApp?.updateApp();
+            activeCalendar.year.updateTime(activeCalendar.year.secondsToDate(seconds));
+            activeCalendar.saveCurrentDate().catch(Logger.error);
+            activeCalendar.syncTime().catch(Logger.error);
+            MainApplication.updateApp();
             return true;
         } else {
             GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
@@ -295,38 +297,39 @@ export default class API{
      * @param preset
      */
     public static advanceTimeToPreset(preset: PresetTimeOfDay){
-        if(SimpleCalendar.instance.activeCalendar.canUser((<Game>game).user, SimpleCalendar.instance.activeCalendar.generalSettings.permissions.changeDateTime)) {
+        const activeCalendar = CalManager.getActiveCalendar();
+        if(activeCalendar.canUser((<Game>game).user, activeCalendar.generalSettings.permissions.changeDateTime)) {
             let timeOfDay = 0;
 
             if (preset === PresetTimeOfDay.Sunrise || preset === PresetTimeOfDay.Sunset) {
-                let month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+                let month = activeCalendar.year.getMonth();
                 if (month) {
                     let day = month.getDay();
                     if (day) {
-                        timeOfDay = SimpleCalendar.instance.activeCalendar.year.getSunriseSunsetTime(SimpleCalendar.instance.activeCalendar.year.numericRepresentation, month, day, preset === PresetTimeOfDay.Sunrise, false);
-                        if (SimpleCalendar.instance.activeCalendar.year.time.seconds >= timeOfDay) {
-                            SimpleCalendar.instance.activeCalendar.year.changeDay(1, 'current');
-                            month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+                        timeOfDay = activeCalendar.year.getSunriseSunsetTime(activeCalendar.year.numericRepresentation, month, day, preset === PresetTimeOfDay.Sunrise, false);
+                        if (activeCalendar.year.time.seconds >= timeOfDay) {
+                            activeCalendar.year.changeDay(1, 'current');
+                            month = activeCalendar.year.getMonth();
                             if (month) {
                                 day = month.getDay();
                                 if (day) {
-                                    timeOfDay = SimpleCalendar.instance.activeCalendar.year.getSunriseSunsetTime(SimpleCalendar.instance.activeCalendar.year.numericRepresentation, month, day, preset === PresetTimeOfDay.Sunrise, false);
+                                    timeOfDay = activeCalendar.year.getSunriseSunsetTime(activeCalendar.year.numericRepresentation, month, day, preset === PresetTimeOfDay.Sunrise, false);
                                 }
                             }
                         }
                     }
                 }
             } else if (preset === PresetTimeOfDay.Midday) {
-                timeOfDay = Math.floor(SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay / 2);
-                if (SimpleCalendar.instance.activeCalendar.year.time.seconds >= timeOfDay) {
-                    SimpleCalendar.instance.activeCalendar.year.changeDay(1, 'current');
+                timeOfDay = Math.floor(activeCalendar.year.time.secondsPerDay / 2);
+                if (activeCalendar.year.time.seconds >= timeOfDay) {
+                    activeCalendar.year.changeDay(1, 'current');
                 }
             } else if (preset === PresetTimeOfDay.Midnight) {
-                SimpleCalendar.instance.activeCalendar.year.changeDay(1, 'current');
+                activeCalendar.year.changeDay(1, 'current');
             }
-            SimpleCalendar.instance.activeCalendar.year.time.seconds = timeOfDay;
-            SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
-            SimpleCalendar.instance.activeCalendar.syncTime(true).catch(Logger.error);
+            activeCalendar.year.time.seconds = timeOfDay;
+            activeCalendar.saveCurrentDate().catch(Logger.error);
+            activeCalendar.syncTime(true).catch(Logger.error);
             return true;
         } else {
             return false;
@@ -339,6 +342,7 @@ export default class API{
      * @param endingDate
      */
     public static chooseRandomDate(startingDate: DateTime = {}, endingDate: DateTime = {}): DateTime {
+        const activeCalendar = CalManager.getActiveCalendar();
         let year = 0, month = 0, day = 0, hour = 0, minute = 0, second = 0;
 
         /**
@@ -370,14 +374,14 @@ export default class API{
                 month = Math.floor(Math.random() * (endingDate.month - startingDate.month + 1)) + startingDate.month;
             }
         } else {
-            month = Math.floor(Math.random() * SimpleCalendar.instance.activeCalendar.year.months.length);
+            month = Math.floor(Math.random() * activeCalendar.year.months.length);
         }
 
-        if(month < 0 || month >= SimpleCalendar.instance.activeCalendar.year.months.length){
-            month = SimpleCalendar.instance.activeCalendar.year.months.length - 1;
+        if(month < 0 || month >= activeCalendar.year.months.length){
+            month = activeCalendar.year.months.length - 1;
         }
 
-        let monthObject = SimpleCalendar.instance.activeCalendar.year.months[month];
+        let monthObject = activeCalendar.year.months[month];
         /**
          * Chose a random day
          *      If the starting and ending day are the same use that day
@@ -405,7 +409,7 @@ export default class API{
                 hour = Math.floor(Math.random() * (endingDate.hour - startingDate.hour + 1)) + startingDate.hour;
             }
         } else {
-            hour = Math.floor(Math.random() * SimpleCalendar.instance.activeCalendar.year.time.hoursInDay);
+            hour = Math.floor(Math.random() * activeCalendar.year.time.hoursInDay);
         }
 
         if(startingDate.minute !== undefined && endingDate.minute !== undefined){
@@ -415,7 +419,7 @@ export default class API{
                 minute = Math.floor(Math.random() * (endingDate.minute - startingDate.minute + 1)) + startingDate.minute;
             }
         } else {
-            minute = Math.floor(Math.random() * SimpleCalendar.instance.activeCalendar.year.time.minutesInHour);
+            minute = Math.floor(Math.random() * activeCalendar.year.time.minutesInHour);
         }
 
         if(startingDate.second !== undefined && endingDate.second !== undefined){
@@ -425,7 +429,7 @@ export default class API{
                 second = Math.floor(Math.random() * (endingDate.second - startingDate.second + 1)) + startingDate.second;
             }
         } else {
-            second = Math.floor(Math.random() * SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute);
+            second = Math.floor(Math.random() * activeCalendar.year.time.secondsInMinute);
         }
         return {
             year: year,
@@ -441,15 +445,15 @@ export default class API{
      * Returns if the current user is the primary GM
      */
     public static isPrimaryGM(){
-        return SimpleCalendar.instance.activeCalendar.primary;
+        return CalManager.getActiveCalendar().primary;
     }
 
     /**
      * Starts the built in clock - if the user is the primary gm
      */
     public static startClock(){
-        if(SimpleCalendar.instance.activeCalendar.primary){
-            SimpleCalendar.instance.activeCalendar.year.time.timeKeeper.start();
+        if(CalManager.getActiveCalendar().primary){
+            CalManager.getActiveCalendar().year.time.timeKeeper.start();
             return true;
         }
         return false;
@@ -459,7 +463,7 @@ export default class API{
      * Stops the build in clock
      */
     public static stopClock(){
-        SimpleCalendar.instance.activeCalendar.year.time.timeKeeper.stop();
+        CalManager.getActiveCalendar().year.time.timeKeeper.stop();
         return true;
     }
 
@@ -468,32 +472,33 @@ export default class API{
      * @param {DateTime} date The date and time to format
      */
     public static formatDateTime(date: DateTime){
+        const activeCalendar = CalManager.getActiveCalendar();
         const year = date.year? date.year : 0;
         let monthIndex = date.month && date.month >= 0? date.month : 0;
-        if(monthIndex >= SimpleCalendar.instance.activeCalendar.year.months.length){
-            monthIndex = SimpleCalendar.instance.activeCalendar.year.months.length - 1;
+        if(monthIndex >= activeCalendar.year.months.length){
+            monthIndex = activeCalendar.year.months.length - 1;
         }
-        const month = SimpleCalendar.instance.activeCalendar.year.months[monthIndex];
+        const month = activeCalendar.year.months[monthIndex];
         let dayIndex = date.day && date.day >= 0? date.day : 0;
         if(dayIndex >= month.days.length){
             dayIndex = month.days.length - 1;
         }
         const day = month.days[dayIndex];
         let hour = date.hour && date.hour >= 0? date.hour : 0;
-        if(hour >= SimpleCalendar.instance.activeCalendar.year.time.hoursInDay){
-            hour = SimpleCalendar.instance.activeCalendar.year.time.hoursInDay - 1;
+        if(hour >= activeCalendar.year.time.hoursInDay){
+            hour = activeCalendar.year.time.hoursInDay - 1;
         }
         let minute = date.minute && date.minute >= 0? date.minute : 0;
-        if(minute >= SimpleCalendar.instance.activeCalendar.year.time.minutesInHour){
-            minute = SimpleCalendar.instance.activeCalendar.year.time.minutesInHour - 1;
+        if(minute >= activeCalendar.year.time.minutesInHour){
+            minute = activeCalendar.year.time.minutesInHour - 1;
         }
         let second = date.second && date.second >= 0? date.second : 0;
-        if(second >= SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute){
-            second = SimpleCalendar.instance.activeCalendar.year.time.secondsInMinute - 1;
+        if(second >= activeCalendar.year.time.secondsInMinute){
+            second = activeCalendar.year.time.secondsInMinute - 1;
         }
         return {
-            date: FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds:0}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.date, SimpleCalendar.instance.activeCalendar),
-            time: FormatDateTime({year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds:second}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time, SimpleCalendar.instance.activeCalendar)
+            date: FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds:0}, activeCalendar.generalSettings.dateFormat.date, activeCalendar),
+            time: FormatDateTime({year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds:second}, activeCalendar.generalSettings.dateFormat.time, activeCalendar)
         };
     }
 
@@ -501,7 +506,7 @@ export default class API{
      * Returns configuration details about the curent day, or null if the current day con't be found
      */
     public static getCurrentDay(){
-        const month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+        const month = CalManager.getActiveCalendar().year.getMonth();
         if(month){
             const day = month.getDay();
             if(day){
@@ -515,7 +520,7 @@ export default class API{
      * Returns the configuration details about leap years
      */
     public static getLeapYearConfiguration(): LeapYearConfig{
-        return SimpleCalendar.instance.activeCalendar.year.leapYearRule.toConfig();
+        return CalManager.getActiveCalendar().year.leapYearRule.toConfig();
     }
 
     /**
@@ -523,7 +528,7 @@ export default class API{
      * @returns {MonthConfig| null}
      */
     public static getCurrentMonth(): MonthConfig | null{
-        const month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+        const month = CalManager.getActiveCalendar().year.getMonth();
         if(month){
             return month.toConfig();
         }
@@ -535,16 +540,17 @@ export default class API{
      * @returns {Array<MonthConfig>}
      */
     public static getAllMonths(): MonthConfig[]{
-        return SimpleCalendar.instance.activeCalendar.year.months.map(m => m.toConfig());
+        return CalManager.getActiveCalendar().year.months.map(m => m.toConfig());
     }
 
     /**
      * Returns configuration details for all moons
      */
     public static getAllMoons(): MoonConfiguration[] {
-        return SimpleCalendar.instance.activeCalendar.year.moons.map(m => {
+        const activeCalendar = CalManager.getActiveCalendar();
+        return activeCalendar.year.moons.map(m => {
             const c = m.toConfig();
-            c.currentPhase = m.getMoonPhase(SimpleCalendar.instance.activeCalendar.year);
+            c.currentPhase = m.getMoonPhase(activeCalendar.year);
             return c;
         });
     }
@@ -553,7 +559,7 @@ export default class API{
      * Returns the season for the current date
      */
     public static getCurrentSeason(){
-        const clone = SimpleCalendar.instance.activeCalendar.year.clone();
+        const clone = CalManager.getActiveCalendar().year.clone();
         const mon = clone.getMonth('current');
         if(mon){
             const mIndex = clone.months.findIndex(m => m.numericRepresentation == mon.numericRepresentation);
@@ -569,14 +575,14 @@ export default class API{
      * Returns details for all seasons set up in the calendar
      */
     public static getAllSeasons(){
-        return SimpleCalendar.instance.activeCalendar.year.seasons.map(s => s.toConfig());
+        return CalManager.getActiveCalendar().year.seasons.map(s => s.toConfig());
     }
 
     /**
      * Returns details for how time is configured in the calendar
      */
     public static getTimeConfiguration(): TimeConfig{
-        return SimpleCalendar.instance.activeCalendar.year.time.toConfig();
+        return CalManager.getActiveCalendar().year.time.toConfig();
     }
 
     /**
@@ -584,12 +590,13 @@ export default class API{
      * @returns {WeekdayConfig | null}
      */
     public static getCurrentWeekday(): WeekdayConfig | null{
-        const month = SimpleCalendar.instance.activeCalendar.year.getMonth();
+        const activeCalendar = CalManager.getActiveCalendar();
+        const month = activeCalendar.year.getMonth();
         if(month){
             const day = month.getDay();
             if(day){
-                const weekdayIndex = SimpleCalendar.instance.activeCalendar.year.dayOfTheWeek(SimpleCalendar.instance.activeCalendar.year.numericRepresentation, month.numericRepresentation, day.numericRepresentation);
-                return SimpleCalendar.instance.activeCalendar.year.weekdays[weekdayIndex].toConfig();
+                const weekdayIndex = activeCalendar.year.dayOfTheWeek(activeCalendar.year.numericRepresentation, month.numericRepresentation, day.numericRepresentation);
+                return activeCalendar.year.weekdays[weekdayIndex].toConfig();
             }
         }
         return null;
@@ -600,14 +607,14 @@ export default class API{
      * @returns {WeekdayConfig[]}
      */
     public static getAllWeekdays(): WeekdayConfig[]{
-        return SimpleCalendar.instance.activeCalendar.year.weekdays.map(w => w.toConfig());
+        return CalManager.getActiveCalendar().year.weekdays.map(w => w.toConfig());
     }
 
     /**
      * Returns details for the current year
      */
     public static getCurrentYear(): YearConfig {
-        return SimpleCalendar.instance.activeCalendar.year.toConfig();
+        return CalManager.getActiveCalendar().year.toConfig();
     }
 
     /**
@@ -616,8 +623,9 @@ export default class API{
      */
     public static async configureCalendar(o: PredefinedCalendars | any){
         if(GameSettings.IsGm()){
+            const activeCalendar = CalManager.getActiveCalendar();
             if(typeof o === "string"){
-                const clone = SimpleCalendar.instance.activeCalendar.year.clone();
+                const clone = activeCalendar.year.clone();
                 const res = PredefinedCalendar.setToPredefined(clone, <PredefinedCalendars>o);
                 await GameSettings.SaveObjectSetting(SettingNames.YearConfiguration, clone.toConfig());
                 await GameSettings.SaveObjectSetting(SettingNames.MonthConfiguration, clone.months.map(m => m.toConfig()));
@@ -627,7 +635,7 @@ export default class API{
                 await GameSettings.SaveObjectSetting(SettingNames.SeasonConfiguration, clone.seasons.map(s => s.toConfig()));
                 await GameSettings.SaveObjectSetting(SettingNames.MoonConfiguration, clone.moons.map(m => m.toConfig()));
 
-                SimpleCalendar.instance.activeCalendar.saveCurrentDate().catch(Logger.error);
+                activeCalendar.saveCurrentDate().catch(Logger.error);
                 return res;
             } else if(Object.keys(o).length) {
                 if(o.hasOwnProperty('yearSettings')){

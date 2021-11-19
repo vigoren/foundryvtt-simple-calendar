@@ -8,11 +8,11 @@ export default class CalendarManager {
      * A list of all calendars
      * @type {Calendar[]}
      */
-    private static calendars: Record<string, Calendar>= {};
+    private calendars: Record<string, Calendar>= {};
 
-    private static activeId: string = '';
+    private activeId: string = '';
 
-    public static initialize(){
+    public register(){
         //TODO: Replace with loading from the game settings
         const calendars = <CalendarConfiguration[]>GameSettings.GetObjectSettings(SettingNames.CalendarConfiguration);
         if(calendars.length === 1 && !calendars[0]){
@@ -21,19 +21,33 @@ export default class CalendarManager {
         if(calendars.length){
 
         } else {
-            const cal = this.addCalendar({id: '', name: 'default'});
+            const cal = this.getDefaultCalendar();
             cal.settingUpdate();
             this.activeId = cal.id;
         }
     }
 
-    public static addCalendar(configuration: CalendarConfiguration): Calendar{
+    public getDefaultCalendar(){
+        let dCal = this.getCalendar('default');
+        if(!dCal){
+            dCal = this.addCalendar({id: 'default', name: 'Default'});
+        }
+        return dCal;
+    }
+
+    public addCalendar(configuration: CalendarConfiguration): Calendar{
         const cal = new Calendar(configuration);
         this.calendars[cal.id] = cal;
         return this.calendars[cal.id];
     }
 
-    public static getCalendar(id: string): Calendar | null {
+    public updateCalendars(calendars: Calendar[]){
+        for(let i = 0; i < calendars.length; i++){
+            this.calendars[calendars[i].id] = calendars[i];
+        }
+    }
+
+    public getCalendar(id: string): Calendar | null {
         if(this.calendars.hasOwnProperty(id)){
             return this.calendars[id];
         } else {
@@ -41,7 +55,7 @@ export default class CalendarManager {
         }
     }
 
-    public static getAllCalendars(): Calendar[] {
+    public getAllCalendars(): Calendar[] {
         const cals: Calendar[] = [];
         for(const [key, value] of Object.entries(this.calendars)){
             cals.push(value);
@@ -49,7 +63,7 @@ export default class CalendarManager {
         return cals;
     }
 
-    public static getActiveCalendar(){
+    public getActiveCalendar(){
         return this.calendars[this.activeId];
     }
 }

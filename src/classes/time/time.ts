@@ -2,8 +2,8 @@ import {Logger} from "../logging";
 import {TimeConfig, TimeTemplate} from "../../interfaces";
 import TimeKeeper from "./time-keeper";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
-import SimpleCalendar from "../simple-calendar";
 import {FormatDateTime} from "../utilities/date-time";
+import {CalManager} from "../index";
 
 /**
  * Class representing the time of day
@@ -168,7 +168,8 @@ export default class Time extends ConfigurationItemBase{
      */
     toString(): string{
         const t = this.getCurrentTime();
-        return FormatDateTime({year: 0, month: 1, day: 1, ...t}, SimpleCalendar.instance.activeCalendar.generalSettings.dateFormat.time, SimpleCalendar.instance.activeCalendar);
+        const activeCalendar = CalManager.getActiveCalendar();
+        return FormatDateTime({year: 0, month: 1, day: 1, ...t}, activeCalendar.generalSettings.dateFormat.time, activeCalendar);
     }
 
     /**

@@ -1,4 +1,3 @@
-import Year from "./year";
 import {
     CalendarConfiguration,
     CalendarTemplate,
@@ -29,6 +28,7 @@ import {
     SocketTypes,
     TimeKeeperStatus
 } from "../../constants";
+import Year from "./year";
 import Note from "../note";
 import Month from "./month";
 import {Logger} from "../logging";
@@ -41,11 +41,11 @@ import GeneralSettings from "../configuration/general-settings";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import PF2E from "../systems/pf2e";
 import Renderer from "../renderer";
-import SimpleCalendar from "../simple-calendar";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Hook from "../api/hook";
 import {generateUniqueId} from "../utilities/string";
 import {FormatDateTime, ToSeconds, GetDisplayDate} from "../utilities/date-time";
+import {MainApplication, SC} from "../index";
 
 export default class Calendar extends ConfigurationItemBase{
     /**
@@ -223,9 +223,7 @@ export default class Calendar extends ConfigurationItemBase{
                     }
                     await GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.noteReminders, data: { justTimeChange: currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day }});
                     this.checkNoteReminders()
-                    if(SimpleCalendar.instance){
-                        SimpleCalendar.instance.checkNoteReminders(currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day);
-                    }
+                    SC.checkNoteReminders(currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day);
                 }
             }
         }
@@ -518,7 +516,7 @@ export default class Calendar extends ConfigurationItemBase{
                 Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.year.time.timeKeeper.getStatus());
                 //Something else has changed the world time and we need to update everything to reflect that.
                 if((this.year.time.updateFrequency * this.year.time.gameTimeRatio) !== changeAmount){
-                    SimpleCalendar.instance.mainApp?.updateApp();
+                    MainApplication.updateApp();
                 }
             }
             // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
