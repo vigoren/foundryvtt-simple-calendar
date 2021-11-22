@@ -33,10 +33,13 @@ This section of the module has been 100% redesigned so that the full version is 
 
 #### Notes Dialog
 
+### Multiple Calendar Support
+
+### Note Improvements
 
 ### Client Settings
 
-Three new settings have been added to the Module Settings dialog of Foundry. These settings are [client settings](https://foundryvtt.com/article/settings/), which are saved in the browser and are applied on a per-browser basis.
+Three new settings have been added to the Module Settings dialog of Foundry. These settings are [client settings](https://foundryvtt.com/article/settings/), which are saved in the browser and are applied on a per-browser basis. So everyone can customize these to their liking!
 
 - **Open On Load**: This setting will open Simple Calendar's main interface when loading foundry. If the GM has disabled viewing the calendar for players, Simple Calendar will not show regardless of this setting. By default, this is set to true.
 - **Open In Compact View**: If checked anytime Simple Calendar is opened (On Load, Clicking the button or through a macro) it will be opened in the compact view. By default, this is set to false.
