@@ -5,9 +5,9 @@ import {Weekday} from "../calendar/weekday";
 import {
     ConfigurationDateSelectors,
     GameWorldTimeIntegrations,
+    Icons,
     LeapYearRules,
     ModuleName,
-    Icons,
     MoonYearResetOptions,
     PredefinedCalendars,
     SettingNames,
@@ -60,7 +60,7 @@ export class ConfigurationApp extends FormApplication {
      */
     constructor() {
         super({});
-        this.calendars = CalManager.getAllCalendars();
+        this.calendars = CalManager.cloneCalendars();
         this.object = this.calendars[0];//Temp until we get better calendar picking
 
         this._tabs[0].active = "quickSetup";
@@ -132,6 +132,7 @@ export class ConfigurationApp extends FormApplication {
     public getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
         let data = {
             ...super.getData(options),
+            qsCalDate: {year: 1, month: 0, day: 0, hour: 0, minute: 0, allDay: true},
             uiElementStates: this.uiElementStates,
             calendars: this.calendars,
 
@@ -227,8 +228,12 @@ export class ConfigurationApp extends FormApplication {
             });
         }
 
-        data.noteCategories = this.noteCategories;
+        const currDate = (<Calendar>this.object).getCurrentDate();
+        data.qsCalDate.year = currDate.year;
+        data.qsCalDate.month = currDate.month;
+        data.qsCalDate.day = currDate.day;
 
+        data.noteCategories = this.noteCategories;
         return data;
     }
 
@@ -256,6 +261,9 @@ export class ConfigurationApp extends FormApplication {
 
         const appWindow = document.getElementById(ConfigurationApp.appWindowId);
         if(appWindow){
+
+            DateSelectorManager.ActivateSelector('quick-setup-predefined-calendar');
+
             // Click anywhere in the app
             appWindow.addEventListener('click', () => {
                 this.toggleCalendarSelector(true);
@@ -266,6 +274,9 @@ export class ConfigurationApp extends FormApplication {
             appWindow.querySelector('.tabs .calendar-selector .heading')?.addEventListener('click', this.toggleCalendarSelector.bind(this, false));
             appWindow.querySelectorAll('.tabs .calendar-selector ul li[data-calendar]').forEach(e => {
                 e.addEventListener('click', this.calendarClick.bind(this));
+            });
+            appWindow.querySelectorAll('.tabs .calendar-selector ul li[data-calendar] .control').forEach(e => {
+                e.addEventListener('click', this.removeCalendarClick.bind(this));
             });
             appWindow.querySelector('.tab-wrapper .new-calendar .save')?.addEventListener('click', this.addNewCalendar.bind(this));
             //---------------------
@@ -292,9 +303,6 @@ export class ConfigurationApp extends FormApplication {
 
             //Month advanced click
             (<JQuery>html).find(".month-show-advanced").on('click', this.inputChange.bind(this));
-
-            //Predefined calendar apply
-            (<JQuery>html).find("#scApplyPredefined").on('click', this.overwriteConfirmationDialog.bind(this, 'predefined', ''));
 
             //Table Removes
             (<JQuery>html).find(".remove-month").on('click', this.removeFromTable.bind(this, 'month'));
@@ -342,7 +350,7 @@ export class ConfigurationApp extends FormApplication {
     }
 
     private calendarClick(e: Event){
-        const target = <HTMLElement>e.target;
+        const target = <HTMLElement>e.currentTarget;
         if(target){
             const calId = target.getAttribute('data-calendar');
             if(calId && calId !== (<Calendar>this.object).id){
@@ -355,11 +363,35 @@ export class ConfigurationApp extends FormApplication {
         }
     }
 
+    private removeCalendarClick(e: Event){
+        e.preventDefault();
+        e.stopPropagation();
+        const target = <HTMLElement>e.currentTarget;
+        if(target){
+            const calId = target.getAttribute('data-calendar');
+            if(calId){
+                const clickedCal = this.calendars.find(c => c.id === calId);
+                if(clickedCal){
+                    this.confirmationDialog('remove-calendar', 'remove-calendar', {id: clickedCal.id, name: clickedCal.name});
+                }
+            }
+        }
+    }
+
+    private removeCalendarConfirm(args: any){
+        if(args['id']){
+            CalManager.removeCalendar(args['id']);
+            this.calendars = CalManager.getAllCalendars(true);
+            this.updateApp();
+        }
+    }
+
     private addNewCalendar(e: Event){
         e.preventDefault();
         const calNameElement = <HTMLInputElement>document.getElementById('scCalendarName');
         if(calNameElement && calNameElement.value){
-            const newCal = new Calendar({id: '', name: calNameElement.value});
+            const newCal = CalManager.addTempCalendar(calNameElement.value);
+            PredefinedCalendar.setToPredefined(newCal.year, PredefinedCalendars.Gregorian);
             this.calendars.push(newCal);
             this.object = newCal;
             this._tabs[0].active = "quickSetup";
@@ -947,20 +979,27 @@ export class ConfigurationApp extends FormApplication {
 
     /**
      * Shows a confirmation dialog to the user to confirm that they want to do the action they chose
-     * @param {string} type They type of action the user is attempting to preform - Used to call the correct functions
-     * @param {string} type2 The sub type of the above type the user is attempting to preform
-     * @param {Event} e The click event
+     * @param {string} dialogType
+     * @param {string} contentType
+     * @param {*} args
      */
-    public overwriteConfirmationDialog(type: string, type2: string, e: Event){
-        e.preventDefault();
+    public confirmationDialog(dialogType: string, contentType: string, args: any){
+        let title = '', content = '';
+        if(dialogType === 'overwrite'){
+            title = GameSettings.Localize('FSC.OverwriteConfirm');
+            content = GameSettings.Localize("FSC.OverwriteConfirmText");
+        } else if(dialogType === 'remove-calendar'){
+            title = GameSettings.Localize('FSC.RemoveCalendar');
+            content = GameSettings.Localize("FSC.RemoveCalendarConfirmText").replace('${CAL_NAME}', args['name']);
+        }
         const dialog = new Dialog({
-            title: GameSettings.Localize('FSC.OverwriteConfirm'),
-            content: GameSettings.Localize("FSC.OverwriteConfirmText"),
+            title: title,
+            content: content,
             buttons:{
                 yes: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: GameSettings.Localize('FSC.Apply'),
-                    callback: this.overwriteConfirmationYes.bind(this, type, type2)
+                    label: GameSettings.Localize('FSC.Confirm'),
+                    callback: this.confirmationDialogYes.bind(this, contentType, args)
                 },
                 no: {
                     icon: '<i class="fas fa-times"></i>',
@@ -974,12 +1013,14 @@ export class ConfigurationApp extends FormApplication {
 
     /**
      * Based on the passed in types calls the correct functionality
-     * @param {string} type The type of action being preformed
-     * @param {string} type2 The sub type of the above type
+     * @param {string} contentType The type of action being preformed
+     * @param {*} args The sub type of the above type
      */
-    public async overwriteConfirmationYes(type: string, type2: string){
-        if(type === 'predefined'){
+    public async confirmationDialogYes(contentType: string, args: any){
+        if(contentType === 'predefined'){
             this.predefinedApplyConfirm();
+        } else if(contentType === 'remove-calendar'){
+            this.removeCalendarConfirm(args);
         }
     }
 
@@ -991,51 +1032,9 @@ export class ConfigurationApp extends FormApplication {
     public async saveClick(close: boolean, e: Event) {
         e.preventDefault();
         try{
-            CalManager.updateCalendars(this.calendars);
-
-            //If there is no leap year rule set ensure months leap year and normal days match
-            if((<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None){
-                for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
-                    (<Calendar>this.object).year.months[i].numberOfLeapYearDays = (<Calendar>this.object).year.months[i].numberOfDays;
-                }
-            }
-            // Update the general Settings
-            (<Calendar>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>(<HTMLInputElement>document.getElementById("scGameWorldTime")).value;
-            await GameSettings.SaveObjectSetting(SettingNames.GeneralConfiguration, (<Calendar>this.object).generalSettings);
-
-            // Update the Year Configuration
-            const currentYear = parseInt((<HTMLInputElement>document.getElementById("scCurrentYear")).value);
-            if(!isNaN(currentYear)){
-                (<Calendar>this.object).year.numericRepresentation = currentYear;
-                (<Calendar>this.object).year.selectedYear = currentYear;
-                (<Calendar>this.object).year.visibleYear = currentYear;
-            }
-
-            await GameSettings.SaveObjectSetting(SettingNames.YearConfiguration, (<Calendar>this.object).year.toConfig());
-            // Update the Month Configuration
-            await GameSettings.SaveObjectSetting(SettingNames.MonthConfiguration, (<Calendar>this.object).year.months.map(m => m.toConfig()));
-            //Update Weekday Configuration
-            await GameSettings.SaveObjectSetting(SettingNames.WeekdayConfiguration, (<Calendar>this.object).year.weekdays.map(w => w.toConfig()));
-            //Update Leap Year Configuration
-            await GameSettings.SaveObjectSetting(SettingNames.LeapYearRule, (<Calendar>this.object).year.leapYearRule.toConfig());
-            //Update Time Configuration
-            await GameSettings.SaveObjectSetting(SettingNames.TimeConfiguration, (<Calendar>this.object).year.time.toConfig());
-            //Update Season Configuration
-            await GameSettings.SaveObjectSetting(SettingNames.SeasonConfiguration, (<Calendar>this.object).year.seasons.map(s => s.toConfig()));
-            //Update Moon Settings
-            await GameSettings.SaveObjectSetting(SettingNames.MoonConfiguration, (<Calendar>this.object).year.moons.map(m => m.toConfig()));
-
-            if(this.yearChanged){
-                (<Calendar>this.object).saveCurrentDate().catch(Logger.error);
-            }
-
-            const noteDefaultPlayerVisibility = (<HTMLInputElement>document.getElementById('scDefaultPlayerVisibility')).checked;
-            await GameSettings.SaveBooleanSetting(SettingNames.DefaultNoteVisibility, noteDefaultPlayerVisibility);
-
-            await GameSettings.SaveObjectSetting(SettingNames.NoteCategories, this.noteCategories);
-
+            CalManager.mergeClonedCalendars();
+            CalManager.saveCalendars();
             await CalManager.getActiveCalendar().syncTime(true);
-
             if(close){
                 this.closeApp();
             }

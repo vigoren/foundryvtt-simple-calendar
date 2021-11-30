@@ -33,6 +33,22 @@
           transition: left 500ms;
         }
       }
+      .sc-calendar-list{
+        .animated-clock{
+          &.animate{
+            svg{
+              #c_arm_s{
+                transform-origin: center;
+                animation: 2s linear infinite sc-clock-spin;
+              }
+              #c_arm_m{
+                transform-origin: center;
+                animation: 6s linear infinite sc-clock-spin;
+              }
+            }
+          }
+        }
+      }
       .sc-note-search{
         .search-options{
           &.animate{

@@ -69,6 +69,19 @@ export default class UserPermissions extends ConfigurationItemBase{
     }
 
     /**
+     * Creates the configuration object for these permissions
+     */
+    toConfig(): UserPermissionsConfig {
+        return {
+            id: this.id,
+            addNotes: this.addNotes,
+            changeDateTime: this.changeDateTime,
+            reorderNotes: this.reorderNotes,
+            viewCalendar: this.viewCalendar
+        };
+    }
+
+    /**
      * Sets the properties for this class to options set in the passed in configuration object
      * @param {UserPermissionsConfig} config The configuration object for this class
      */

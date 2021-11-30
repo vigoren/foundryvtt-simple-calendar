@@ -68,6 +68,20 @@ export default class GeneralSettings extends ConfigurationItemBase{
     }
 
     /**
+     * Creates the configuration object for the general settings
+     */
+    toConfig(): GeneralSettingsConfig {
+        return {
+            id: this.id,
+            gameWorldTimeIntegration: this.gameWorldTimeIntegration,
+            showClock: this.showClock,
+            pf2eSync: this.pf2eSync,
+            dateFormat: this.dateFormat,
+            permissions: this.permissions.toConfig()
+        };
+    }
+
+    /**
      * Sets the properties for this class to options set in the passed in configuration object
      * @param {GeneralSettingsConfig} config The configuration object for this class
      */

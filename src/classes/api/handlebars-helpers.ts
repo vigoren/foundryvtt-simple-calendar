@@ -37,6 +37,9 @@ export default class HandlebarsHelpers{
             } else {
                 dsOptions.calendar = CalManager.getActiveCalendar();
             }
+            if(options.hash.hasOwnProperty('editYear')){
+                dsOptions.editYear = options.hash['editYear'];
+            }
             if(options.hash.hasOwnProperty('onDateSelect')){
                 dsOptions.onDateSelect = options.hash['onDateSelect'];
             }
@@ -78,6 +81,7 @@ export default class HandlebarsHelpers{
      */
     static FullCalendar(options: any){
         const renderOptions: SCRenderer.CalendarOptions = {id:''};
+        let calendarId = '';
         if(options.hash.hasOwnProperty('allowChangeMonth')){
             renderOptions.allowChangeMonth = options.hash['allowChangeMonth'];
         }
@@ -90,8 +94,14 @@ export default class HandlebarsHelpers{
         if(options.hash.hasOwnProperty('date')){
             renderOptions.date = Object.assign({}, options.hash['date']);
         }
+        if(options.hash.hasOwnProperty('editYear')){
+            renderOptions.editYear = options.hash['editYear'];
+        }
         if(options.hash.hasOwnProperty('id')){
             renderOptions.id = options.hash['id'];
+        }
+        if(options.hash.hasOwnProperty('calendarId')){
+            calendarId = options.hash['calendarId'];
         }
         if(options.hash.hasOwnProperty('showCurrentDate')){
             renderOptions.showCurrentDate = options.hash['showCurrentDate'];
@@ -108,7 +118,11 @@ export default class HandlebarsHelpers{
         if(options.hash.hasOwnProperty('showYear')){
             renderOptions.showYear = options.hash['showYear'];
         }
-        return new Handlebars.SafeString(Renderer.CalendarFull.Render(CalManager.getActiveCalendar(), renderOptions));
+        let cal = CalManager.getCalendar(calendarId);
+        if(!cal){
+            cal = CalManager.getActiveCalendar();
+        }
+        return new Handlebars.SafeString(Renderer.CalendarFull.Render(cal, renderOptions));
     }
 
     /**
@@ -117,10 +131,18 @@ export default class HandlebarsHelpers{
      */
     static Clock(options: any){
         const renderOptions: SCRenderer.ClockOptions = {id:''};
+        let calendarId = '';
         if(options.hash.hasOwnProperty('id')){
             renderOptions.id = options.hash['id'];
         }
-        return new Handlebars.SafeString(Renderer.Clock.Render(CalManager.getActiveCalendar(), renderOptions));
+        if(options.hash.hasOwnProperty('calendarId')){
+            calendarId = options.hash['calendarId'];
+        }
+        let cal = CalManager.getCalendar(calendarId);
+        if(!cal){
+            cal = CalManager.getActiveCalendar();
+        }
+        return new Handlebars.SafeString(Renderer.Clock.Render(cal, renderOptions));
     }
 
     /**

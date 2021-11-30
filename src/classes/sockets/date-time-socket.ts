@@ -4,6 +4,7 @@ import {SocketTypes} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {Logger} from "../logging";
 import type Calendar from "../calendar";
+import {CalManager, SC} from "../index";
 
 /**
  * Date/Time Socket type that is called when a non primary GM user uses the change date/time controls
@@ -19,7 +20,7 @@ export default class DateTimeSocket extends SocketBase{
      * @param {Calendar} calendar
      */
     public async process(data: SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
-        if(data.type === SocketTypes.dateTime && GameSettings.IsGm() && calendar.primary){
+        if(data.type === SocketTypes.dateTime && GameSettings.IsGm() && SC.primary){
             Logger.debug(`Processing Date/Time Change Request.`);
             if((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).dataType){
                 switch ((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).dataType){
@@ -38,7 +39,7 @@ export default class DateTimeSocket extends SocketBase{
                         calendar.year.changeYear((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).isNext? 1 : -1, false, "current");
                         break;
                 }
-                calendar.saveCurrentDate().catch(Logger.error);
+                CalManager.saveCalendars();
                 //Sync the current time on apply, this will propagate to other modules
                 calendar.syncTime().catch(Logger.error);
             }

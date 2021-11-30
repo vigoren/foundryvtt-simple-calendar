@@ -3,14 +3,17 @@ import Calendar from "../calendar";
 import {DateRangeMatch, GameSystems} from "../../constants";
 import PF2E from "../systems/pf2e";
 import {PadNumber, ordinalSuffix} from "./string";
+import {deepMerge} from "./object";
 
 /**
  * Formats the passed in date/time to match the passed in mask
  * @param {DateTimeParts} date The date/time to change into a formatted string
  * @param {string} mask The mask that is used to change the date/time to match the mask
  * @param {Calendar} calendar The calendar to use to format the date string
+ * @param {*} inputs
  */
-export function FormatDateTime(date: DateTimeParts, mask: string, calendar: Calendar){
+export function FormatDateTime(date: DateTimeParts, mask: string, calendar: Calendar, inputs: {year?: boolean, month?: boolean} = {}){
+    inputs = deepMerge({year: false, month: false}, inputs);
     const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|ZZ|Z|([HhMmsD])\1?|[aA]/g;
     const literal = /\[([^]*?)\]/gm;
     const formatFlags: Record<string, (dateObj: DateTimeParts) => string> = {
@@ -34,8 +37,8 @@ export function FormatDateTime(date: DateTimeParts, mask: string, calendar: Cale
         "YN": (dateObj: DateTimeParts) => calendar.year.getYearName(dateObj.year),
         "YA": (dateObj: DateTimeParts) => calendar.year.prefix,
         "YZ": (dateObj: DateTimeParts) => calendar.year.postfix,
-        "YY": (dateObj: DateTimeParts) => PadNumber(dateObj.year, 2).substring(2),
-        "YYYY": (dateObj: DateTimeParts) => String(dateObj.year),
+        "YY": (dateObj: DateTimeParts) => inputs.year? `<input type="number" style="width:4ch;" value="${PadNumber(dateObj.year, 2).substring(2)}" />` : PadNumber(dateObj.year, 2).substring(2),
+        "YYYY": (dateObj: DateTimeParts) => inputs.year? `<input type="number" style="width:${String(dateObj.year).length + 2}ch;" value="${dateObj.year}" />` : String(dateObj.year),
         "H": (dateObj: DateTimeParts) => String(dateObj.hour),
         "HH": (dateObj: DateTimeParts) => PadNumber(dateObj.hour),
         "h": (dateObj: DateTimeParts) => {

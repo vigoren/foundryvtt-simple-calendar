@@ -7,9 +7,6 @@ import Calendar from "../calendar";
 import {CalManager} from "../index";
 
 export default class DateSelector {
-
-
-
     /**
      * The unique ID of the date selector object
      * @type {string}
@@ -72,6 +69,8 @@ export default class DateSelector {
     calendarId: string;
 
     timeSelectorId: string;
+
+    editYear: boolean = false;
 
 
     /**
@@ -157,6 +156,9 @@ export default class DateSelector {
         if(options.allowTimeRangeSelection !== undefined){
             this.allowTimeRangeSelection = options.allowTimeRangeSelection;
         }
+        if(options.editYear !== undefined){
+            this.editYear = options.editYear;
+        }
         if(options.timeDelimiter !== undefined){
             this.timeDelimiter = options.timeDelimiter;
         }
@@ -212,6 +214,7 @@ export default class DateSelector {
                 allowSelectDateRange: this.allowDateRangeSelection,
                 cssClasses: `sc-date-selector-calendar`,
                 colorToMatchSeason: false,
+                editYear: this.editYear,
                 showCurrentDate: false,
                 showMoonPhases: false,
                 showNoteCount: false,
@@ -344,7 +347,7 @@ export default class DateSelector {
             }
 
             if(activateCalendarListeners && this.showDateSelector){
-                Renderer.CalendarFull.ActivateListeners(this.calendarId, this.changeMonthClick.bind(this), this.dayClick.bind(this));
+                Renderer.CalendarFull.ActivateListeners(this.calendarId, this.changeMonthClick.bind(this), this.dayClick.bind(this), this.changeYear.bind(this));
             }
             if(this.showDateSelector){
                 const cal = <HTMLElement>html.querySelector('.sc-date-selector-calendar');
@@ -503,6 +506,20 @@ export default class DateSelector {
         if(options.date){
             this.selectedDate.visibleDate.year = options.date.year;
             this.selectedDate.visibleDate.month = this.calendar.year.months[options.date.month].numericRepresentation;
+        }
+        this.activateListeners(null, false, false);
+        if(this.showTimeSelector){
+            Renderer.TimeSelector.HideTimeDropdown(this.timeSelectorId);
+        }
+    }
+
+    /**
+     * Processes the callback from the Calendar Renderer's year change event
+     * @param options
+     */
+    changeYear(options: SCRenderer.CalendarOptions){
+        if(options.date){
+            this.selectedDate.visibleDate.year = options.date.year;
         }
         this.activateListeners(null, false, false);
         if(this.showTimeSelector){

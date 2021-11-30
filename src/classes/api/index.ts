@@ -27,7 +27,7 @@ import {DateToTimestamp, FormatDateTime, TimestampToDate} from "../utilities/dat
 import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Renderer from "../renderer";
-import {MainApplication, CalManager} from "../index";
+import {MainApplication, CalManager, SC} from "../index";
 
 /**
  * All external facing functions for other systems, modules or macros to consume
@@ -262,7 +262,7 @@ export default class API{
             }
 
             if(change){
-                activeCalendar.saveCurrentDate().catch(Logger.error);
+                CalManager.saveCalendars();
                 activeCalendar.syncTime().catch(Logger.error);
                 MainApplication.updateApp();
             }
@@ -282,7 +282,7 @@ export default class API{
         if(activeCalendar.canUser((<Game>game).user, activeCalendar.generalSettings.permissions.changeDateTime)){
             const seconds = this.dateToTimestamp(date);
             activeCalendar.year.updateTime(activeCalendar.year.secondsToDate(seconds));
-            activeCalendar.saveCurrentDate().catch(Logger.error);
+            CalManager.saveCalendars();
             activeCalendar.syncTime().catch(Logger.error);
             MainApplication.updateApp();
             return true;
@@ -328,7 +328,7 @@ export default class API{
                 activeCalendar.year.changeDay(1, 'current');
             }
             activeCalendar.year.time.seconds = timeOfDay;
-            activeCalendar.saveCurrentDate().catch(Logger.error);
+            CalManager.saveCalendars();
             activeCalendar.syncTime(true).catch(Logger.error);
             return true;
         } else {
@@ -445,14 +445,14 @@ export default class API{
      * Returns if the current user is the primary GM
      */
     public static isPrimaryGM(){
-        return CalManager.getActiveCalendar().primary;
+        return SC.primary;
     }
 
     /**
      * Starts the built in clock - if the user is the primary gm
      */
     public static startClock(){
-        if(CalManager.getActiveCalendar().primary){
+        if(SC.primary){
             CalManager.getActiveCalendar().year.time.timeKeeper.start();
             return true;
         }
@@ -635,7 +635,7 @@ export default class API{
                 await GameSettings.SaveObjectSetting(SettingNames.SeasonConfiguration, clone.seasons.map(s => s.toConfig()));
                 await GameSettings.SaveObjectSetting(SettingNames.MoonConfiguration, clone.moons.map(m => m.toConfig()));
 
-                activeCalendar.saveCurrentDate().catch(Logger.error);
+                CalManager.saveCalendars();
                 return res;
             } else if(Object.keys(o).length) {
                 if(o.hasOwnProperty('yearSettings')){

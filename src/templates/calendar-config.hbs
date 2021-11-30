@@ -4,7 +4,9 @@
             <div class="heading">{{localize 'FSC.Calendar'}}: {{object.name}}</div>
             <ul class="closed">
                 {{#each calendars}}
-                <li class="{{#if (eq ../object.id id)}}active{{/if}}" data-calendar="{{id}}">{{name}}</li>
+                <li class="{{#if (eq ../object.id id)}}active{{/if}}" data-calendar="{{id}}">
+                    {{name}} {{#unless (eq id 'default_temp')}}<button class="control delete fa fa-trash" title="{{localize 'FSC.RemoveCalendar'}}" data-calendar="{{id}}"></button>{{/unless}}
+                </li>
                 {{/each}}
                 <li class="item new-calendar" data-tab="newCalendar">{{localize 'FSC.AddNewCalendar'}}<span class="fa fa-plus-circle"></span></li>
             </ul>
@@ -49,27 +51,23 @@
             <h2>{{localize 'FSC.Configuration.General.QuickSetup'}}</h2>
             <p>{{localize 'FSC.Configuration.QuickSetup.Description'}}</p>
             <div class="section predefined">
-                <h3>{{localize 'FSC.Configuration.QuickSetup.ChoosePredefinedTitle'}}</h3>
-                <p>{{localize 'FSC.Configuration.QuickSetup.ChoosePredefinedDescription'}}</p>
-                <div class="predefined-list">
-                    {{#each predefined}}
-                    <div class="predefined-calendar {{#if (eq ../uiElementStates.selectedPredefinedCalendar key)}}selected{{/if}}" data-calendar="{{key}}">{{localize label}}</div>
-                    {{/each}}
+                <div class="form-group">
+                    <label>{{localize 'FSC.Configuration.QuickSetup.ChoosePredefinedTitle'}}</label>
+                    <p class="notes">{{localize 'FSC.Configuration.QuickSetup.ChoosePredefinedDescription'}}</p>
+                    <div class="predefined-list">
+                        {{#each predefined}}
+                            <div class="predefined-calendar {{#if (eq ../uiElementStates.selectedPredefinedCalendar key)}}selected{{/if}}" data-calendar="{{key}}">{{localize label}}</div>
+                        {{/each}}
+                    </div>
                 </div>
             </div>
             <div class="section {{#if uiElementStates.selectedPredefinedCalendar}}open{{else}}closed{{/if}}">
-                <h3>{{localize 'FSC.Configuration.QuickSetup.ChooseCurrentDateTitle'}}</h3>
-                <p>{{localize 'FSC.Configuration.QuickSetup.ChooseCurrentDateDescription'}}</p>
-                <div>
-                    <label>Year <input type="number" id="quickSetup_year" value="{{currentYear.numericRepresentation}}" /></label>
-                    <label>Month
-                        <select id="quickSetup_month">
-                            {{#each months}}
-                            <option value="{{numericRepresentation}}">{{name}}</option>
-                            {{/each}}
-                        </select>
-                    </label>
-                    <label>Day <input type="number" id="quickSetup_day" value="{{currentYear.numericRepresentation}}" /></label>
+                <div class="form-group">
+                    <label>{{localize 'FSC.Configuration.QuickSetup.ChooseCurrentDateTitle'}}</label>
+                    <div class="form-fields">
+                        {{sc-date-selector id='quick-setup-predefined-calendar' calendar=object selectedStartDate=qsCalDate selectedEndDate=qsCalDate position='left-down' allowDateRangeSelection=false showTimeSelector=false editYear=true }}
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.QuickSetup.ChooseCurrentDateDescription'}}</p>
                 </div>
             </div>
         </div>

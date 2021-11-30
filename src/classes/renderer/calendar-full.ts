@@ -6,7 +6,6 @@ import {GetIcon} from "../utilities/visual";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {CalendarClickEvents, DateRangeMatch} from "../../constants";
 import RendererUtilities from "./utilities";
-import CalendarManager from "../calendar/calendar-manager";
 import {CalManager} from "../index";
 
 export default class CalendarFull{
@@ -21,6 +20,7 @@ export default class CalendarFull{
         allowSelectDateRange: false,
         colorToMatchSeason: true,
         cssClasses: '',
+        editYear: false,
         showCurrentDate: true,
         showSeasonName: true,
         showNoteCount: true,
@@ -43,7 +43,7 @@ export default class CalendarFull{
 
         let vYear, vMonth = 1, vMonthIndex, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | DayTemplate)[][] = [], calendarStyle = '', seasonName = '';
         if(options.date){
-            if(options.date.month > 0 && options.date.month < calendar.year.months.length){
+            if(options.date.month >= 0 && options.date.month < calendar.year.months.length){
                 vMonth = calendar.year.months[options.date.month].numericRepresentation;
                 vMonthIndex = options.date.month;
             } else {
@@ -51,7 +51,7 @@ export default class CalendarFull{
                 vMonthIndex = 0;
             }
             vYear = options.date.year;
-            const visibleMonth = calendar.year.months[options.date.month]
+            const visibleMonth = calendar.year.months[vMonthIndex]
             if(visibleMonth){
                 weeks = calendar.year.daysIntoWeeks(visibleMonth, vYear, calendar.year.weekdays.length);
             }
@@ -91,7 +91,7 @@ export default class CalendarFull{
             calendarStyle = `border-color: ${season.color};`;
         }
 
-        let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${CalManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
+        let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${calendar.id}">`;
         //Hidden Options
         html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
         //Put the header together
@@ -101,7 +101,7 @@ export default class CalendarFull{
         if(options.allowChangeMonth){
             html += `<a class="fa fa-chevron-left" title="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
         }
-        html += `<span class="month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar)}</span>`;
+        html += `<span class="month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar, {year: options.editYear})}</span>`;
         if(options.allowChangeMonth){
             html += `<a class="fa fa-chevron-right" title="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
         }
@@ -187,20 +187,26 @@ export default class CalendarFull{
      * @param {string} calendarId The ID of the HTML element representing the calendar to activate listeners for
      * @param {Function|null} onMonthChange Function to call when the month is changed
      * @param {Function|null} onDayClick Function to call when a day is clicked
+     * @param {Function|null} onYearChange Function to call when the year is an input and it changes
      */
-    public static ActivateListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null){
+    public static ActivateListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null, onYearChange: Function | null = null){
         const calendarElement = document.getElementById(calendarId);
         if(calendarElement){
             const prev = <HTMLElement>calendarElement.querySelector('.calendar-header .current-date .fa-chevron-left');
             if(prev){
-                prev.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.previous, onMonthChange, onDayClick));
+                prev.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.previous, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             }
             const next = <HTMLElement>calendarElement.querySelector('.calendar-header .current-date .fa-chevron-right');
             if(next){
-                next.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.next, onMonthChange, onDayClick));
+                next.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.next, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
+            }
+            const yearInput = <HTMLElement>calendarElement.querySelector('.calendar-header .current-date .month-year input[type=number]');
+            if(yearInput){
+                yearInput.addEventListener('click', (e)=> e.preventDefault());
+                yearInput.addEventListener('change', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.year, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             }
             calendarElement.querySelectorAll('.days .day').forEach(el => {
-                el.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.day, onMonthChange, onDayClick));
+                el.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.day, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             });
         }
     }
@@ -209,18 +215,19 @@ export default class CalendarFull{
      * Updates the rendered calendars view to change to the next or previous month
      * @param {string} calendarId The ID of the HTML element making up the calendar
      * @param {CalendarClickEvents} clickType If true the previous button was clicked, otherwise next was clicked
-     * @param {Function|null} onMonthChange The custom function to call when the month is changed.
-     * @param {Function|null} onDayClick The custom function to call when a day is clicked.
+     * @param {{}} funcs The functions that can be called
+     * @param {Function|null} funcs.onMonthChange The custom function to call when the month is changed.
+     * @param {Function|null} funcs.onDayClick The custom function to call when a day is clicked.
+     * @param {Function|null} funcs.onYearChange Function to call when the year is an input and it changes
      * @param {Event} event The click event
      */
-    public static EventListener(calendarId: string, clickType: CalendarClickEvents, onMonthChange: Function | null, onDayClick: Function | null, event: Event){
+    public static EventListener(calendarId: string, clickType: CalendarClickEvents, funcs:{onMonthChange: Function | null, onDayClick: Function | null, onYearChange: Function | null } = {onMonthChange: null, onDayClick: null, onYearChange: null}, event: Event){
         event.stopPropagation();
         const calendarElement = document.getElementById(calendarId);
         if(calendarElement){
-            const calendarIndex = parseInt(calendarElement.getAttribute('data-calendar') || '');
-            const calendars = CalManager.getAllCalendars();
-            if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
-                const calendar = calendars[calendarIndex];
+            const calendarIndex = calendarElement.getAttribute('data-calendar') || '';
+            const calendar = CalManager.getCalendar(calendarIndex);
+            if(calendar){
                 let options: SCRenderer.CalendarOptions = {id:''};
                 const optionsInput = calendarElement.querySelector('.render-options');
                 if(optionsInput){
@@ -317,6 +324,14 @@ export default class CalendarFull{
                                             };
                                         }
                                     }
+                                } else if(clickType === CalendarClickEvents.year){
+                                    const yearInput = <HTMLInputElement>currentMonthYear.querySelector('input[type=number]');
+                                    if(yearInput){
+                                        const newYear = parseInt(yearInput.value);
+                                        if(!isNaN(newYear)){
+                                            yearNumber = newYear;
+                                        }
+                                    }
                                 }
                                 options.date = {
                                     year: yearNumber,
@@ -331,12 +346,14 @@ export default class CalendarFull{
                 temp.innerHTML = newHTML;
                 if(temp.firstChild) {
                     calendarElement.replaceWith(temp.firstChild);
-                    CalendarFull.ActivateListeners(options.id, onMonthChange, onDayClick);
+                    CalendarFull.ActivateListeners(options.id, funcs.onMonthChange, funcs.onDayClick);
                 }
-                if(onMonthChange !== null && (clickType === CalendarClickEvents.previous || clickType === CalendarClickEvents.next)){
-                    onMonthChange(clickType, options);
-                } else if(onDayClick !== null && clickType === CalendarClickEvents.day){
-                    onDayClick(options);
+                if(funcs.onMonthChange !== null && (clickType === CalendarClickEvents.previous || clickType === CalendarClickEvents.next)){
+                    funcs.onMonthChange(clickType, options);
+                } else if(funcs.onDayClick !== null && clickType === CalendarClickEvents.day){
+                    funcs.onDayClick(options);
+                } else if(funcs.onYearChange !== null && clickType === CalendarClickEvents.year){
+                    funcs.onYearChange(options);
                 }
             }
         }

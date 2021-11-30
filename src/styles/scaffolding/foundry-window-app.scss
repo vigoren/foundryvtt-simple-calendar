@@ -191,6 +191,42 @@
       }
     }
 
+    .sc-calendar-list{
+      overflow-y: auto;
+
+      .calendar-display{
+        border: 1px solid;
+        border-radius: 5px;
+        margin: 0.5rem;
+        padding: 0.5rem;
+        cursor: pointer;
+
+        .calendar-name{
+          font-size: 1.125rem;
+          font-weight: 600;
+          margin-bottom: $spacer-half * 0.5;
+        }
+        .calendar-date{
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          align-items: center;
+          font-size: 0.75rem;
+          margin-left: $spacer-half;
+          *{
+            margin-right: $spacer-half * 0.5;
+          }
+
+          .animated-clock{
+            svg{
+              width: 14px;
+              height: 14px;
+            }
+          }
+        }
+      }
+    }
+
     .sc-note-list{
       display: flex;
       flex-direction: column;

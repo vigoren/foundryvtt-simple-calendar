@@ -2,30 +2,18 @@ import {
     CalendarConfiguration,
     CalendarTemplate,
     CurrentDateConfig,
-    GeneralSettingsConfig,
-    LeapYearConfig,
-    MonthConfig,
-    MoonConfiguration,
     NoteCategory,
     NoteConfig,
     NoteTemplate,
     PermissionMatrix,
     SCDateSelector,
-    SearchOptions,
-    SeasonConfiguration,
-    SimpleCalendarSocket,
-    TimeConfig,
-    WeekdayConfig,
-    YearConfig
+    SearchOptions
 } from "../../interfaces";
 import {
     GameSystems,
     GameWorldTimeIntegrations,
     NoteRepeat,
-    PredefinedCalendars,
     SettingNames,
-    SimpleCalendarHooks,
-    SocketTypes,
     TimeKeeperStatus
 } from "../../constants";
 import Year from "./year";
@@ -36,28 +24,15 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {Weekday} from "./weekday";
 import Season from "./season";
 import Moon from "./moon";
-import PredefinedCalendar from "../configuration/predefined-calendar";
 import GeneralSettings from "../configuration/general-settings";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import PF2E from "../systems/pf2e";
 import Renderer from "../renderer";
-import GameSockets from "../foundry-interfacing/game-sockets";
-import Hook from "../api/hook";
 import {generateUniqueId} from "../utilities/string";
-import {FormatDateTime, ToSeconds, GetDisplayDate} from "../utilities/date-time";
-import {MainApplication, SC} from "../index";
+import {FormatDateTime, GetDisplayDate} from "../utilities/date-time";
+import {CalManager, MainApplication, SC} from "../index";
 
 export default class Calendar extends ConfigurationItemBase{
-    /**
-     * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
-     * @type {boolean}
-     */
-    public primary: boolean = false;
-    /**
-     * If this calendar is around temporarily. This is used when we want to clone a calendar, make changes to the clone without affecting the main calendar.
-     * Primarily used by the configuration dialog
-     */
-    isTemporary: boolean = false;
     /**
      * The currently running game system
      * @type {GameSystems}
@@ -86,11 +61,18 @@ export default class Calendar extends ConfigurationItemBase{
 
     /**
      * Construct a new Calendar class
+     * @param {string} id
+     * @param {string} name
      * @param {CalendarConfiguration} configuration The configuration object for the calendar
      */
-    constructor(configuration: CalendarConfiguration) {
-        super(configuration.name);
-        this.id = configuration.id || generateUniqueId();
+    constructor(id: string, name: string, configuration: CalendarConfiguration = {id: ''}) {
+        super(name);
+        this.id = id || generateUniqueId();
+        this.year = new Year(0);
+        if(Object.keys(configuration).length > 1){
+            this.loadFromSettings(configuration);
+        }
+
         // Set Calendar Data
         this.gameSystem = GameSystems.Other;
 
@@ -110,9 +92,6 @@ export default class Calendar extends ConfigurationItemBase{
                     break;
             }
         }
-
-        this.year = new Year(0);
-        PredefinedCalendar.setToPredefined(this.year, PredefinedCalendars.Gregorian);
     }
 
     /**
@@ -131,7 +110,7 @@ export default class Calendar extends ConfigurationItemBase{
      * Creates a cloned version of the Calendar class
      */
     clone(): Calendar {
-        const c = new Calendar({ id: this.id, name: this.name });
+        const c = new Calendar(this.id, this.name);
         c.id = this.id;
         c.name = this.name;
         c.gameSystem = this.gameSystem;
@@ -198,35 +177,143 @@ export default class Calendar extends ConfigurationItemBase{
         };
     }
 
-    /**
-     * saves the current date and time to the game settings
-     * @param emitHook
-     */
-    public async saveCurrentDate(emitHook: boolean = true){
-        const currentMonth = this.year.getMonth();
-        if(currentMonth){
-            const currentDay = currentMonth.getDay();
-            if(currentDay){
-                const currentDate = <CurrentDateConfig>GameSettings.GetObjectSettings(SettingNames.CurrentDate);
-                const newDate: CurrentDateConfig = {
-                    year: this.year.numericRepresentation,
-                    month: currentMonth.numericRepresentation,
-                    day: currentDay.numericRepresentation,
-                    seconds: this.year.time.seconds
-                };
-                const saved = await GameSettings.SaveObjectSetting(SettingNames.CurrentDate, newDate);
-                if(saved){
-                    if(emitHook){
-                        const diff = this.year.toSeconds() - (ToSeconds(this, currentDate.year, currentDate.month, currentDate.day, false) + currentDate.seconds);
-                        await GameSockets.emit(<SimpleCalendarSocket.Data>{type: SocketTypes.emitHook, data: <SimpleCalendarSocket.SimpleCalendarEmitHook>{hook: SimpleCalendarHooks.DateTimeChange, param: diff}});
-                        Hook.emit(SimpleCalendarHooks.DateTimeChange, this, diff);
-                    }
-                    await GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.noteReminders, data: { justTimeChange: currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day }});
-                    this.checkNoteReminders()
-                    SC.checkNoteReminders(currentDate.seconds !== newDate.seconds && currentDate.day === newDate.day);
-                }
+    toConfig(): CalendarConfiguration {
+        return <CalendarConfiguration>{
+            id: this.id,
+            name: this.name,
+            currentDate: this.getCurrentDate(),
+            general: this.generalSettings.toConfig(),
+            leapYear: this.year.leapYearRule.toConfig(),
+            months: this.year.months.map(m => m.toConfig()),
+            moons: this.year.moons.map(m => m.toConfig()),
+            noteCategories: this.noteCategories,
+            seasons: this.year.seasons.map(s => s.toConfig()),
+            time: this.year.time.toConfig(),
+            weekdays: this.year.weekdays.map(w => w.toConfig()),
+            year: this.year.toConfig()
+        };
+    }
+
+    loadFromSettings(config: CalendarConfiguration) {
+        if(config.year){
+            this.year.loadFromSettings(config.year);
+        } else {
+            Logger.warn(`Invalid year configuration found when loading calendar "${this.name}", setting year to default configuration`);
+            this.year = new Year(0);
+        }
+
+        if(config.months){
+            this.year.months = [];
+            for(let i = 0; i < config.months.length; i++){
+                const newMonth = new Month();
+                newMonth.loadFromSettings(config.months[i]);
+                this.year.months.push(newMonth);
             }
         }
+
+        if(config.weekdays){
+            this.year.weekdays = [];
+            for(let i = 0; i < config.weekdays.length; i++){
+                const newW = new Weekday();
+                newW.loadFromSettings(config.weekdays[i]);
+                this.year.weekdays.push(newW);
+            }
+        }
+
+        if(config.leapYear){
+            this.year.leapYearRule.loadFromSettings(config.leapYear);
+        }
+
+        if(config.time){
+            this.year.time.loadFromSettings(config.time);
+        }
+
+        if(config.seasons){
+            this.year.seasons = [];
+            for(let i = 0; i < config.seasons.length; i++){
+                const newW = new Season();
+                newW.loadFromSettings(config.seasons[i]);
+                this.year.seasons.push(newW);
+            }
+        }
+
+        if(config.moons){
+            this.year.moons = [];
+            for(let i = 0; i < config.moons.length; i++){
+                const newW = new Moon();
+                newW.loadFromSettings(config.moons[i]);
+                this.year.moons.push(newW);
+            }
+        }
+
+        if(config.general){
+            this.generalSettings.loadFromSettings(config.general);
+        }
+
+        if(config.noteCategories){
+            this.noteCategories = config.noteCategories;
+        }
+
+        if(config.currentDate){
+            this.year.numericRepresentation = config.currentDate.year;
+            this.year.selectedYear = config.currentDate.year;
+            this.year.visibleYear = config.currentDate.year;
+
+            this.year.resetMonths('current');
+            this.year.resetMonths('visible');
+            const currentMonth = config.currentDate.month;
+            const currentDay = config.currentDate.day;
+            const month = this.year.months.find(m => m.numericRepresentation === currentMonth);
+            if(month){
+                month.current = true;
+                month.visible = true;
+                const day = month.days.find(d => d.numericRepresentation === currentDay);
+                if(day){
+                    day.current = true;
+                } else {
+                    Logger.warn('Saved current day could not be found in this month, perhaps number of days has changed. Setting current day to first day of month');
+                    month.days[0].current = true;
+                }
+            } else {
+                Logger.warn('Saved current month could not be found, perhaps months have changed. Setting current month to the first month');
+                this.year.months[0].current = true;
+                this.year.months[0].visible = true;
+                this.year.months[0].days[0].current = true;
+            }
+            this.year.time.seconds = config.currentDate.seconds;
+            if(this.year.time.seconds === undefined){
+                this.year.time.seconds = 0;
+            }
+        } else if(this.year.months.length) {
+            Logger.warn('No current date setting found, setting default current date.');
+            this.year.months[0].current = true;
+            this.year.months[0].visible = true;
+            this.year.months[0].days[0].current = true;
+        } else {
+            Logger.error('Error setting the current date.');
+        }
+    }
+
+    /**
+     * Gets the current date configuration object
+     * @private
+     */
+    getCurrentDate(){
+        const newDate: CurrentDateConfig = {
+            year: this.year.numericRepresentation,
+            month: 1,
+            day: 1,
+            seconds: this.year.time.seconds
+        };
+        const currentMonth = this.year.getMonth();
+        if(currentMonth){
+            newDate.month = currentMonth.numericRepresentation;
+            const currentDay = currentMonth.getDay();
+            if(currentDay){
+                newDate.day = currentDay.numericRepresentation;
+            }
+        }
+        return newDate;
     }
 
     //---------------------------
@@ -528,8 +615,8 @@ export default class Calendar extends ConfigurationItemBase{
                     this.year.updateTime(parsedDate);
                     // If the current player is the GM then we need to save this new value to the database
                     // Since the current date is updated this will trigger an update on all players as well
-                    if(GameSettings.IsGm() && this.primary){
-                        this.saveCurrentDate().catch(Logger.error);
+                    if(GameSettings.IsGm() && SC.primary){
+                        CalManager.saveCalendars();
                     }
                 }
             }
@@ -540,8 +627,8 @@ export default class Calendar extends ConfigurationItemBase{
                 const parsedDate = this.year.secondsToDate(newTime);
                 this.year.updateTime(parsedDate);
                 //We need to save the change so that when the game is reloaded simple calendar will display the correct time
-                if(GameSettings.IsGm() && this.primary){
-                    this.saveCurrentDate().catch(Logger.error);
+                if(GameSettings.IsGm() && SC.primary){
+                    CalManager.saveCalendars();
                 }
             } else {
                 Logger.debug(`Not Applying Change!`);
@@ -550,137 +637,5 @@ export default class Calendar extends ConfigurationItemBase{
         Logger.debug('Resetting time change triggers.');
         this.year.timeChangeTriggered = false;
         this.year.combatChangeTriggered = false;
-    }
-
-    /**
-     * Called when a setting is updated, refreshes the configurations for all types
-     * @param {string} [type='all']
-     */
-    public settingUpdate(type: string = 'all'){
-        if(type === 'all' || type === 'year'){
-            this.year.loadFromSettings(<YearConfig>GameSettings.GetObjectSettings(SettingNames.YearConfiguration));
-        }
-        if(type === 'all' || type === 'month'){
-            Logger.debug('Loading month configuration from settings.');
-            const monthData = <MonthConfig[]>GameSettings.GetObjectSettings(SettingNames.MonthConfiguration);
-            if(monthData.length){
-                Logger.debug('Setting the months from data.');
-                this.year.months = [];
-                for(let i = 0; i < monthData.length; i++){
-                    const newMonth = new Month();
-                    newMonth.loadFromSettings(monthData[i]);
-                    this.year.months.push(newMonth);
-                }
-            }
-        }
-        if(type === 'all' || type === 'weekday'){
-            Logger.debug('Loading weekday configuration from settings.');
-            const weekdayData = <WeekdayConfig[]>GameSettings.GetObjectSettings(SettingNames.WeekdayConfiguration);
-            if(weekdayData.length){
-                Logger.debug('Setting the weekdays from data.');
-                this.year.weekdays = [];
-                for(let i = 0; i < weekdayData.length; i++){
-                    const weekday = new Weekday();
-                    weekday.loadFromSettings(weekdayData[i]);
-                    this.year.weekdays.push(weekday);
-                }
-            }
-        }
-        if(type === 'all' || type === 'notes'){
-            Logger.debug('Loading notes from settings.');
-            const notes = <NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes);
-            this.notes = notes.map(n => {
-                const note = new Note();
-                note.loadFromSettings(n);
-                return note;
-            });
-        }
-        if(type === 'all' || type === 'leapyear'){
-            Logger.debug('Loading Leap Year Settings');
-            this.year.leapYearRule.loadFromSettings(<LeapYearConfig>GameSettings.GetObjectSettings(SettingNames.LeapYearRule));
-        }
-        if(type === 'all' || type === 'time'){
-            Logger.debug('Loading time configuration from settings.');
-            this.year.time.loadFromSettings(<TimeConfig>GameSettings.GetObjectSettings(SettingNames.TimeConfiguration));
-        }
-        if(type === 'all' || type === 'season'){
-            Logger.debug('Loading season configuration from settings.');
-            const seasonData = <SeasonConfiguration[]>GameSettings.GetObjectSettings(SettingNames.SeasonConfiguration);
-            this.year.seasons = [];
-            if(seasonData.length){
-                Logger.debug('Setting the seasons from data.');
-                for(let i = 0; i < seasonData.length; i++){
-                    const newSeason = new Season();
-                    newSeason.loadFromSettings(seasonData[i]);
-                    this.year.seasons.push(newSeason);
-                }
-            }
-        }
-        if(type === 'all' || type === 'moon'){
-            Logger.debug('Loading moon configuration from settings.');
-            const moonData = <MoonConfiguration[]>GameSettings.GetObjectSettings(SettingNames.MoonConfiguration);
-            this.year.moons = [];
-            if(moonData.length){
-                Logger.debug('Setting the moons from data.');
-                for(let i = 0; i < moonData.length; i++){
-                    const newMoon = new Moon();
-                    newMoon.loadFromSettings(moonData[i]);
-                    this.year.moons.push(newMoon);
-                }
-            }
-        }
-        if(type === 'all' || type === 'general'){
-            Logger.debug('Loading General Settings');
-            this.generalSettings.loadFromSettings(<GeneralSettingsConfig>GameSettings.GetObjectSettings(SettingNames.GeneralConfiguration));
-        }
-        if(type === 'all' || type === 'note-categories'){
-            this.noteCategories = <NoteCategory[]>GameSettings.GetObjectSettings(SettingNames.NoteCategories);
-        }
-        this.loadCurrentDate();
-    }
-
-    /**
-     * Loads the current date data from the settings and applies them to the current year
-     */
-    public loadCurrentDate(){
-        Logger.debug('Loading current date from settings.');
-        const currentDate = <CurrentDateConfig>GameSettings.GetObjectSettings(SettingNames.CurrentDate);
-        if(currentDate && Object.keys(currentDate).length){
-            this.year.numericRepresentation = currentDate.year;
-            this.year.selectedYear = currentDate.year;
-            this.year.visibleYear = currentDate.year;
-
-            this.year.resetMonths('current');
-            this.year.resetMonths('visible');
-
-            const month = this.year.months.find(m => m.numericRepresentation === currentDate.month);
-            if(month){
-                month.current = true;
-                month.visible = true;
-                const day = month.days.find(d => d.numericRepresentation === currentDate.day);
-                if(day){
-                    day.current = true;
-                } else {
-                    Logger.error('Save day could not be found in this month, perhaps number of days has changed. Setting current day to first day of month');
-                    month.days[0].current = true;
-                }
-            } else {
-                Logger.error('Saved month could not be found, perhaps months have changed. Setting current month to the first month');
-                this.year.months[0].current = true;
-                this.year.months[0].visible = true;
-                this.year.months[0].days[0].current = true;
-            }
-            this.year.time.seconds = currentDate.seconds;
-            if(this.year.time.seconds === undefined){
-                this.year.time.seconds = 0;
-            }
-        } else if(this.year.months.length) {
-            Logger.debug('No current date setting found, setting default current date.');
-            this.year.months[0].current = true;
-            this.year.months[0].visible = true;
-            this.year.months[0].days[0].current = true;
-        } else {
-            Logger.error('Error setting the current date.');
-        }
     }
 }

@@ -10,15 +10,14 @@ import CalendarManager from "./classes/calendar/calendar-manager";
 import MainApp from "./classes/applications/main-app";
 
 updateCalManager(new CalendarManager());
-updateMainApplication(new MainApp(CalManager.getDefaultCalendar()));
+updateMainApplication(new MainApp());
 updateSC(new SimpleCalendar());
 
 Hooks.on('init', () => {
     //Register everything
     HandlebarsHelpers.Register();
     GameSettingsRegistration.Register();
-    CalManager.register();
-
+    CalManager.initialize();
     //Expose the api
     (window as any).SimpleCalendar = {
         api: API,
@@ -26,9 +25,8 @@ Hooks.on('init', () => {
     };
 });
 Hooks.on('ready', () => {
-    //Initialize the Simple Calendar Sockets
-    SC.sockets.initialize();
-    SC.checkNoteReminders();
+    //Initialize the Simple Calendar Class
+    SC.initialize();
     if(GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad)){
         MainApplication.showApp();
     }

@@ -21,7 +21,7 @@ import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {randomHash} from "../utilities/string";
 import {ToSeconds, DaysBetweenDates, DateToTimestamp} from "../utilities/date-time";
 import {GetIcon} from "../utilities/visual";
-import {CalManager} from "../index";
+import {CalManager, SC} from "../index";
 
 /**
  * Class for representing a year
@@ -986,8 +986,8 @@ export default class Year extends ConfigurationItemBase {
             this.updateTime(parsedDate);
             // If the current player is the GM then we need to save this new value to the database
             // Since the current date is updated this will trigger an update on all players as well
-            if(GameSettings.IsGm() && activeCalendar.primary){
-                activeCalendar.saveCurrentDate().catch(Logger.error);
+            if(GameSettings.IsGm() && SC.primary){
+                CalManager.saveCalendars();
             }
         }
     }

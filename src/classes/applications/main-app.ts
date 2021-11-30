@@ -1,7 +1,6 @@
 import {Logger} from "../logging";
 import type Month from "../calendar/month";
 import type Day from "../calendar/day";
-import type Calendar from "../calendar";
 import {
     AppPosition,
     NoteTemplate,
@@ -18,21 +17,27 @@ import {
     GameWorldTimeIntegrations,
     SettingNames,
     SocketTypes,
-    Themes
+    Themes,
+    TimeKeeperStatus
 } from "../../constants";
 import {ConfigurationApp} from "./configuration-app";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
 import {animateElement} from "../utilities/visual";
 import {CalManager, SC} from "../index";
+import {FormatDateTime} from "../utilities/date-time";
 
 
 /**
  * Contains all functionality for displaying/updating the simple calendar
  */
 export default class MainApp extends Application{
-    
-    private activeCalendar: Calendar;
+    /**
+     * Gets the current active calendar
+     */
+    private get activeCalendar(){
+        return CalManager.getActiveCalendar();
+    }
     /**
      * The CSS class associated with the animated clock
      */
@@ -73,13 +78,8 @@ export default class MainApp extends Application{
     /**
      * Simple Calendar constructor
      */
-    constructor(calendar: Calendar) {
+    constructor() {
         super();
-        this.activeCalendar = calendar;
-    }
-
-    public updateActiveCalendar(calendar: Calendar){
-        this.activeCalendar = calendar;
     }
 
     /**
@@ -102,9 +102,19 @@ export default class MainApp extends Application{
     getData(options?: Application.RenderOptions): SimpleCalendarTemplate | Promise<SimpleCalendarTemplate> {
         return {
             calendar: this.activeCalendar.toTemplate(),
-            calendarList: CalManager.getAllCalendars().map(c => {return {id: c.id, name: c.name}}),
+            calendarList: CalManager.getAllCalendars().map(c => {
+                const cd = c.getCurrentDate();
+                const ct = c.year.time.getCurrentTime();
+                return {
+                    id: c.id,
+                    name: c.name,
+                    date: FormatDateTime({year: cd.year, month: cd.month, day: cd.day, hour: 0, minute: 0, seconds: 0}, c.generalSettings.dateFormat.date, c),
+                    time: c.generalSettings.showClock? FormatDateTime({year: 0, month: 1, day: 1, hour: ct.hour, minute: ct.minute, seconds: ct.seconds}, c.generalSettings.dateFormat.time, c) : '',
+                    clockRunning: c.year.time.timeKeeper.getStatus() === TimeKeeperStatus.Started
+                };
+            }),
             clockClass: this.clockClass,
-            isPrimary: this.activeCalendar.primary,
+            isPrimary: SC.primary,
             theme: Themes.dark, //TODO: Update this when we have the theme being stored,
             uiElementStates: this.uiElementStates,
             search: this.search
@@ -147,6 +157,9 @@ export default class MainApp extends Application{
     async minimize(){
         this.uiElementStates.compactView = !this.uiElementStates.compactView;
         this.activeCalendar.year.resetMonths('selected');
+        this.toggleCalendarDrawer(true);
+        this.toggleNoteDrawer(true);
+        this.toggleSearchDrawer(true);
         this.setWidthHeight();
         this.render(true);
     }
@@ -156,6 +169,9 @@ export default class MainApp extends Application{
      */
     async maximize(){
         this.uiElementStates.compactView = false;
+        this.toggleCalendarDrawer(true);
+        this.toggleNoteDrawer(true);
+        this.toggleSearchDrawer(true);
         this.setWidthHeight();
         this.render(true);
     }
@@ -315,7 +331,13 @@ export default class MainApp extends Application{
                 appWindow.querySelector(".time-start")?.addEventListener('click', this.startTime.bind(this));
                 appWindow.querySelector(".time-stop")?.addEventListener('click', this.stopTime.bind(this));
 
-
+                //-----------------------
+                // Calendar Drawer
+                //-----------------------
+                //Calendar Click
+                appWindow.querySelectorAll('.sc-calendar-list .calendar-display').forEach(e => {
+                    e.addEventListener('click', this.changeCalendar.bind(this));
+                });
                 //-----------------------
                 // Note/Search Drawer
                 //-----------------------
@@ -454,6 +476,17 @@ export default class MainApp extends Application{
         }
     }
 
+    public changeCalendar(e: Event){
+        const target = <HTMLElement>e.currentTarget;
+        if(target){
+            const calendarId = target.getAttribute('data-calid');
+            if(calendarId && this.activeCalendar.id !== calendarId){
+                CalManager.setActiveCalendar(calendarId);
+                this.render(true);
+            }
+        }
+    }
+
     /**
      * Processes the callback from the Calendar Renderer's month change click
      * @param {CalendarClickEvents} clickType What was clicked, previous or next
@@ -536,7 +569,7 @@ export default class MainApp extends Application{
         const dataAmount = target.getAttribute('data-amount');
         if(dataType && dataAmount){
             const amount = parseInt(dataAmount);
-            if(!GameSettings.IsGm() || !this.activeCalendar.primary){
+            if(!GameSettings.IsGm() || !SC.primary){
                 if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                     GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
                 } else {
@@ -562,14 +595,14 @@ export default class MainApp extends Application{
                 }
 
                 if(change){
-                    this.activeCalendar.saveCurrentDate().catch(Logger.error);
+                    CalManager.saveCalendars();
                     //Sync the current time on apply, this will propagate to other modules
                     this.activeCalendar.syncTime(true).catch(Logger.error);
                 }
             }
         } else if(dataType && (dataType === 'dawn' || dataType === 'midday' || dataType === 'dusk' || dataType === 'midnight')){
             this.timeOfDayControlClick(dataType);
-            this.activeCalendar.saveCurrentDate().catch(Logger.error);
+            CalManager.saveCalendars();
             //Sync the current time on apply, this will propagate to other modules
             this.activeCalendar.syncTime(true).catch(Logger.error);
         }
@@ -675,7 +708,7 @@ export default class MainApp extends Application{
                 }
             }
             if(!validSelection){
-                this.activeCalendar.saveCurrentDate().catch(Logger.error);
+                CalManager.saveCalendars();
                 //Sync the current time on apply, this will propagate to other modules
                 this.activeCalendar.syncTime().catch(Logger.error);
             }
@@ -691,7 +724,7 @@ export default class MainApp extends Application{
      * @param {Day} day They day object to set as current
      */
     public setCurrentDate(year: number, month: Month, day: Day){
-        if(!GameSettings.IsGm() || !this.activeCalendar.primary){
+        if(!GameSettings.IsGm() || !SC.primary){
             if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                 GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
             } else {
@@ -706,7 +739,7 @@ export default class MainApp extends Application{
             month.selected = false;
             day.current = true;
             day.selected = false;
-            this.activeCalendar.saveCurrentDate().catch(Logger.error);
+            CalManager.saveCalendars();
             //Sync the current time on apply, this will propagate to other modules
             this.activeCalendar.syncTime().catch(Logger.error);
         }

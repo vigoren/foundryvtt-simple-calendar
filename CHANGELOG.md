@@ -1,6 +1,6 @@
 # Change Log
 
-## v2.0.0 - Changes, Changes Everywhere
+## v2.0.0 - Visual Redesign / Themes, Multiple Calendar Support, Note Improvements and more!
 
 I am very happy to announce the release of version 2 of Simple Calendar! This update is big and covers many improvements and changes. Be sure to check out the full notes for all the details.
 
@@ -33,10 +33,6 @@ This section of the module has been 100% redesigned so that the full version is 
 
 #### Notes Dialog
 
-### Multiple Calendar Support
-
-### Note Improvements
-
 ### Client Settings
 
 Three new settings have been added to the Module Settings dialog of Foundry. These settings are [client settings](https://foundryvtt.com/article/settings/), which are saved in the browser and are applied on a per-browser basis. So everyone can customize these to their liking!
@@ -44,6 +40,22 @@ Three new settings have been added to the Module Settings dialog of Foundry. The
 - **Open On Load**: This setting will open Simple Calendar's main interface when loading foundry. If the GM has disabled viewing the calendar for players, Simple Calendar will not show regardless of this setting. By default, this is set to true.
 - **Open In Compact View**: If checked anytime Simple Calendar is opened (On Load, Clicking the button or through a macro) it will be opened in the compact view. By default, this is set to false.
 - **Remember Position**: If checked Simple Calendar will remember where it was placed on the screen and position itself there everytime it is opened. By default, this is set to true.
+
+
+### Multiple Calendar Support
+
+### Note Improvements
+
+### Note Search Updates
+
+The searching for notes has been improved since the initial quick search added. The improvements are:
+
+- Search is part of the main calendar display instead of its own dialog now.
+- Hitting enter on the search text box will now trigger a search.
+- Note author is now also searched against.
+- Note categories are now also searched against.
+- Added options to choose which fields on a note to search.
+
 
 ### Improved Date/Time Selector
 
@@ -54,16 +66,6 @@ The date/time selector that is used when choosing a date for notes or specifying
   - The design of the interface has been improved with better looking and easier to interact with text boxes and dropdowns for the text boxes.
   - Added the ability to use the scroll wheel to change the number up or down in any of the text boxes.
   - Validation and changes are more consistent, they worked fine before but just feel better now.
-
-### Note Search Updates
-
-The searching for notes has been improved since the initial quick search added. The improvements are:
-
-- Search is part of the main calendar display instead of its own dialog now.
-- Hitting enter on the search text box will now trigger a search.
-- Note author is now also searched against. 
-- Note categories are now also searched against.
-- Added options to choose which fields on a note to search.
 
 ### Bug Fixes
 

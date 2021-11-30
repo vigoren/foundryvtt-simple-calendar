@@ -1,6 +1,6 @@
 import {ModuleName, SettingNames} from "../../constants";
 import {ConfigurationApp} from "../applications/configuration-app";
-import {SC} from "../index"
+import {CalManager} from "../index"
 
 export default class GameSettingsRegistration{
     /**
@@ -61,54 +61,51 @@ export default class GameSettingsRegistration{
             scope: "world",
             config: false,
             type: Array,
-            onChange: SC.settingUpdate.bind(SC, true, 'calendar')
+            default: [],
+            onChange: CalManager.loadCalendars.bind(CalManager)
         });
 
 
-
+        // -------------------
+        // Legacy Settings
+        // -------------------
         (<Game>game).settings.register(ModuleName, SettingNames.GeneralConfiguration, {
             name: "General Configuration",
             scope: "world",
             config: false,
-            type: Object,
-            onChange: SC.settingUpdate.bind(SC, true, 'general')
+            type: Object
         });
         (<Game>game).settings.register(ModuleName, SettingNames.YearConfiguration, {
             name: "Year Configuration",
             scope: "world",
             config: false,
-            type: Object,
-            onChange: SC.settingUpdate.bind(SC, true, 'year')
+            type: Object
         });
         (<Game>game).settings.register(ModuleName, SettingNames.WeekdayConfiguration, {
             name: "Weekday Configuration",
             scope: "world",
             config: false,
             type: Array,
-            default: [],
-            onChange: SC.settingUpdate.bind(SC, true, 'weekday')
+            default: []
         });
         (<Game>game).settings.register(ModuleName, SettingNames.MonthConfiguration, {
             name: "Month Configuration",
             scope: "world",
             config: false,
             type: Array,
-            default: [],
-            onChange: SC.settingUpdate.bind(SC, true, 'month')
+            default: []
         });
         (<Game>game).settings.register(ModuleName, SettingNames.CurrentDate, {
             name: "Current Date",
             scope: "world",
             config: false,
-            type: Object,
-            onChange:  SC.settingUpdate.bind(SC, true, 'current')
+            type: Object
         });
         (<Game>game).settings.register(ModuleName, SettingNames.LeapYearRule, {
             name: "Leap Year Rule",
             scope: "world",
             config: false,
-            type: Object,
-            onChange: SC.settingUpdate.bind(SC, true, 'leapyear')
+            type: Object
         });
         (<Game>game).settings.register(ModuleName, SettingNames.DefaultNoteVisibility, {
             name: "FSC.Configuration.DefaultNoteVisibility",
@@ -122,40 +119,35 @@ export default class GameSettingsRegistration{
             scope: "world",
             config: false,
             type: Array,
-            default: [],
-            onChange: SC.settingUpdate.bind(SC, true, 'notes')
+            default: []
         });
         (<Game>game).settings.register(ModuleName, SettingNames.TimeConfiguration, {
             name: "Time",
             scope: "world",
             config: false,
             type: Object,
-            default: {},
-            onChange: SC.settingUpdate.bind(SC, true, 'time')
+            default: {}
         });
         (<Game>game).settings.register(ModuleName, SettingNames.SeasonConfiguration, {
             name: "Season Configuration",
             scope: "world",
             config: false,
             type: Array,
-            default: [],
-            onChange: SC.settingUpdate.bind(SC, true, 'season')
+            default: []
         });
         (<Game>game).settings.register(ModuleName, SettingNames.MoonConfiguration, {
             name: "Moon Configuration",
             scope: "world",
             config: false,
             type: Array,
-            default: [],
-            onChange: SC.settingUpdate.bind(SC, true, 'moon')
+            default: []
         });
         (<Game>game).settings.register(ModuleName, SettingNames.NoteCategories, {
             name: "Note Categories",
             scope: "world",
             config: false,
             type: Array,
-            default: [{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}],
-            onChange: SC.settingUpdate.bind(SC, true, 'note-categories')
+            default: [{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]
         });
     }
 }

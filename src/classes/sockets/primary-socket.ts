@@ -5,7 +5,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {Logger} from "../logging";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Hook from "../api/hook";
-import {CalManager, MainApplication} from "../index";
+import {CalManager, MainApplication, SC} from "../index";
 import type Calendar from "../calendar";
 
 /**
@@ -37,8 +37,8 @@ export default class PrimarySocket extends SocketBase {
     async primaryCheckTimeoutCall(){
         Logger.debug('No primary GM found, taking over as primary');
         const activeCalendar = CalManager.getActiveCalendar();
-        activeCalendar.primary = true;
-        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: activeCalendar.primary}};
+        SC.primary = true;
+        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: SC.primary}};
         await GameSockets.emit(socketData);
         const timeKeeperSocketData = <SimpleCalendarSocket.Data>{type: SocketTypes.clock, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}};
         await GameSockets.emit(timeKeeperSocketData);
@@ -92,7 +92,7 @@ export default class PrimarySocket extends SocketBase {
                     await GameSockets.emit(<SimpleCalendarSocket.Data>{
                         type: SocketTypes.primary,
                         data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
-                            amPrimary: calendar.primary
+                            amPrimary: SC.primary
                         }
                     });
                 }
@@ -102,7 +102,7 @@ export default class PrimarySocket extends SocketBase {
                     if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary){
                         Logger.debug('A primary GM is all ready present.');
                         this.otherPrimaryFound = true;
-                        calendar.primary = false;
+                        SC.primary = false;
                     } else {
                         Logger.debug('We are all ready waiting to take over as primary.');
                     }

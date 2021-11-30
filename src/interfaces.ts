@@ -58,10 +58,16 @@ export interface SimpleCalendarTemplate{
 }
 
 export interface CalendarConfiguration extends IConfigurationItemBaseConfig {
-    name: string;
-    generalSettings?: GeneralSettingsConfig;
-    year?: YearConfig;
+    currentDate?: CurrentDateConfig;
+    general?: GeneralSettingsConfig;
+    leapYear?: LeapYearConfig;
     months?: MonthConfig[];
+    moons?: MoonConfiguration[];
+    noteCategories?: NoteCategory[];
+    seasons?: SeasonConfiguration[];
+    time?: TimeConfig;
+    weekdays?: WeekdayConfig[];
+    year?: YearConfig;
 }
 
 export interface CalendarTemplate extends IConfigurationItemBaseTemplate {
@@ -554,6 +560,8 @@ export namespace SCRenderer {
         cssClasses?: string;
         //The currently visible date
         date?: Date;
+        //If the year is a number input that can be changed
+        editYear?: boolean;
         //The ID of the HTML element being added
         id: string;
         //The dates that are currently selected, if just single date mode use start
@@ -613,6 +621,8 @@ export namespace SCDateSelector {
         onDateSelect?: Function;
         allowDateRangeSelection?: boolean;
         allowTimeRangeSelection?: boolean;
+        //If the year is a number input that can be changed
+        editYear?: boolean;
         position?: DateSelectorPositions;
         showCalendarYear?: boolean;
         showDateSelector?: boolean;

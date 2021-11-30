@@ -50,7 +50,17 @@
         <div class="sc-calendar-list sc-side-drawer {{#if uiElementStates.calendarDrawerOpen}}open{{else}}closed{{/if}}">
             <h2>{{localize 'FSC.Calendars'}}</h2>
             {{#each calendarList}}
-            <button class="calendar-button control {{#if (eq id ../calendar.id)}}secondary{{/if}}" data-calid="{{id}}" title="{{name}}"><span>{{name}}</span></button>
+                <div class="calendar-display {{#if (eq id ../calendar.id)}}active{{/if}}" data-calid="{{id}}" title="{{name}}">
+                    <div class="calendar-name">{{name}}</div>
+                    <div class="calendar-date">
+                        <div class="fa fa-calendar-day"></div>
+                        <div>{{date}}</div>
+                        <div>{{time}}</div>
+                        {{#if clockRunning}}
+                            <div class="animated-clock animate">{{sc-icon name='clock'}}</div>
+                        {{/if}}
+                    </div>
+                </div>
             {{/each}}
         </div>
         {{/if}}

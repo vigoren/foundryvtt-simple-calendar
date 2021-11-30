@@ -4,7 +4,7 @@ import Hook from "../api/hook";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {SimpleCalendarSocket} from "../../interfaces";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import {MainApplication, CalManager} from "../index";
+import {MainApplication, CalManager, SC} from "../index";
 
 /**
  * The Time Keeper class used by the built in Simple Calendar Clock to keep real time
@@ -63,7 +63,7 @@ export default class TimeKeeper{
                 Logger.debug(`TimeKeeper Starting`);
                 this.intervalNumber = window.setInterval(this.interval.bind(this), 1000 * this.updateFrequency);
                 this.updateStatus();
-                if (GameSettings.IsGm() && activeCalendar.primary) {
+                if (GameSettings.IsGm() && SC.primary) {
                     this.saveInterval();
                     this.saveIntervalNumber = window.setInterval(this.saveInterval.bind(this), 10000);
                 }
@@ -94,7 +94,7 @@ export default class TimeKeeper{
             this.intervalNumber = undefined;
             this.saveIntervalNumber = undefined;
             this.updateStatus();
-            if(GameSettings.IsGm() && activeCalendar.primary){
+            if(GameSettings.IsGm() && SC.primary){
                 this.saveInterval(true);
             }
         }
@@ -129,7 +129,7 @@ export default class TimeKeeper{
                 activeCalendar.year.changeDay(dayChange);
                 MainApplication.updateApp();
             }
-            if (GameSettings.IsGm() && activeCalendar.primary) {
+            if (GameSettings.IsGm() && SC.primary) {
                 if(activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
                     //Main.instance.updateApp();
                     GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
@@ -149,13 +149,13 @@ export default class TimeKeeper{
      */
     private saveInterval(emitHook: boolean = false){
         const activeCalendar = CalManager.getActiveCalendar();
-        if (GameSettings.IsGm() && activeCalendar.primary) {
+        if (GameSettings.IsGm() && SC.primary) {
             if(activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
                 GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
             } else {
                 activeCalendar.syncTime().catch(Logger.error);
             }
-           activeCalendar.saveCurrentDate(emitHook).catch(Logger.error);
+            CalManager.saveCalendars();
         }
     }
 
@@ -193,7 +193,7 @@ export default class TimeKeeper{
      */
     private emitSocket(){
         const activeCalendar = CalManager.getActiveCalendar();
-        if(GameSettings.IsGm() && activeCalendar.primary){
+        if(GameSettings.IsGm() && SC.primary){
             const socketData = <SimpleCalendarSocket.Data>{
                 type: SocketTypes.clock,
                 data: {

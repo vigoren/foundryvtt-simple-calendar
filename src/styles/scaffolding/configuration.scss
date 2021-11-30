@@ -54,6 +54,7 @@
             width: 100%;
             max-height: 0;
             overflow: hidden;
+            list-style: none;
 
             &.closed{
               visibility: hidden;
@@ -68,11 +69,14 @@
               padding: $spacer-half $spacer-half $spacer-half $spacer;
               cursor: pointer;
               border-bottom: 1px solid;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
 
-              &.new-calendar{
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
+              .control{
+                width: unset;
+                font-size: 0.75rem;
+                line-height: 0.875rem;
               }
             }
           }
@@ -132,6 +136,12 @@
       overflow-y: auto;
       padding: $spacer-half;
       margin-bottom: 30px;
+
+      .form-group{
+        label{
+          font-size: 1rem;
+        }
+      }
 
       .warning{
         padding: 16px;

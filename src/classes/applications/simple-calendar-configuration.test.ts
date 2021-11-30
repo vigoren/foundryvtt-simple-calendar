@@ -1355,33 +1355,33 @@ describe('Simple Calendar Configuration Tests', () => {
     test('Overwrite Confirmation Yes', async () => {
         //@ts-ignore
         game.user.isGM = true;
-        await ConfigurationApp.instance.overwriteConfirmationYes('a', 'b');
+        await ConfigurationApp.instance.confirmationDialogYes('a', 'b');
         expect(renderSpy).not.toHaveBeenCalled();
         expect((<Game>game).settings.set).not.toHaveBeenCalled();
 
         const select = document.createElement('input');
         select.value = 'gregorian';
         jest.spyOn(document, 'getElementById').mockImplementation().mockReturnValue(select);
-        await ConfigurationApp.instance.overwriteConfirmationYes('predefined', 'b');
+        await ConfigurationApp.instance.confirmationDialogYes('predefined', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(1);
         expect((<Game>game).settings.set).not.toHaveBeenCalled();
 
-        await ConfigurationApp.instance.overwriteConfirmationYes('tp-import', 'b');
+        await ConfigurationApp.instance.confirmationDialogYes('tp-import', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(1);
 
-        await ConfigurationApp.instance.overwriteConfirmationYes('tp-import', 'about-time');
+        await ConfigurationApp.instance.confirmationDialogYes('tp-import', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(2);
 
-        await ConfigurationApp.instance.overwriteConfirmationYes('tp-import', 'calendar-weather');
+        await ConfigurationApp.instance.confirmationDialogYes('tp-import', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
 
-        await ConfigurationApp.instance.overwriteConfirmationYes('tp-export', 'b');
+        await ConfigurationApp.instance.confirmationDialogYes('tp-export', 'b');
         expect(renderSpy).toHaveBeenCalledTimes(3);
 
-        await ConfigurationApp.instance.overwriteConfirmationYes('tp-export', 'about-time');
+        await ConfigurationApp.instance.confirmationDialogYes('tp-export', 'about-time');
         expect(renderSpy).toHaveBeenCalledTimes(3);
 
-        await ConfigurationApp.instance.overwriteConfirmationYes('tp-export', 'calendar-weather');
+        await ConfigurationApp.instance.confirmationDialogYes('tp-export', 'calendar-weather');
         expect(renderSpy).toHaveBeenCalledTimes(3);
 
         (<Mock>(<Game>game).settings.set).mockClear();

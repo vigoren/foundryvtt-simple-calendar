@@ -1,6 +1,7 @@
 import {SimpleCalendarHooks, TimeKeeperStatus} from "../../constants";
 import {TimestampToDate} from "../utilities/date-time";
 import type Calendar from "../calendar";
+import {SC} from "../index";
 
 
 export default class Hook{
@@ -66,7 +67,7 @@ export default class Hook{
                 paused: status === TimeKeeperStatus.Paused
             };
         } else if(hook === SimpleCalendarHooks.PrimaryGM){
-            data['isPrimaryGM'] = calendar.primary;
+            data['isPrimaryGM'] = SC.primary;
         }
         Hooks.callAll(hook, data);
     }

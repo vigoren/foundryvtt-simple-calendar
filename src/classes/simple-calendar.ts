@@ -10,6 +10,11 @@ import {MainApplication, CalManager} from "./index";
 
 export default class SimpleCalendar {
     /**
+     * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
+     * @type {boolean}
+     */
+    public primary: boolean = false;
+    /**
      * Keeps track of the new note dialog, we only ever need 1 new note dialog.
      */
     public newNoteApp: NotesApp | undefined;
@@ -29,19 +34,10 @@ export default class SimpleCalendar {
         this.sockets = new Sockets();
     }
 
-    /**
-     * Called when a setting is updated, refreshes the configurations for all types
-     * @param {boolean} [update=false] If to update the display
-     * @param {string} [type='all']
-     */
-    public settingUpdate(update: boolean = false, type: string = 'all'){
-        this.activeCalendar.settingUpdate(type);
-        if(update && this.activeCalendar.year.time.timeKeeper.getStatus() !== TimeKeeperStatus.Started ) {
-            MainApplication.updateApp();
-        }
+    public initialize(){
+        this.sockets.initialize();
+        this.checkNoteReminders();
     }
-
-
 
     //---------------------------
     // Foundry Hooks

@@ -37,7 +37,7 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { context: './src/', from : '**/*.json', to : './' },
-                { context: './src/', from : '**/*.html', to : './' },
+                { context: './src/', from : '**/*.(hbs|html)', to : '[path][name].html' },
                 { context: './', from : 'README.md', to : './' },
                 { context: './', from : 'LICENSE', to : './' },
                 { context: './docs', from : 'Configuration.md', to : './docs' },

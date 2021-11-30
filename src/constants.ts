@@ -197,7 +197,8 @@ export enum TimeKeeperStatus {
 export enum CalendarClickEvents{
     previous = 'previous',
     next = 'next',
-    day = 'day'
+    day = 'day',
+    year = 'year'
 }
 
 export enum TimeSelectorEvents{
