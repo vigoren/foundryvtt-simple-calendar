@@ -30,7 +30,6 @@ export default class CalendarManager {
         if(!processed){
             const cal = this.getDefaultCalendar();
             this.activeId = cal.id;
-            console.log(cal.year.months[0].name);
         }
     }
 
@@ -231,7 +230,6 @@ export default class CalendarManager {
                 cloneIds.push({key: key.replace('_temp', ''), value: value});
             }
         }
-        console.log(cloneIds);
         for(let i = 0; i < cloneIds.length; i++){
             const exCal = this.getCalendar(cloneIds[i].key);
             //Update existing calendars with the new details
@@ -254,6 +252,16 @@ export default class CalendarManager {
         if(!this.getActiveCalendar()){
             this.setActiveCalendar(cloneIds[0].key);
         }
-        console.log(this.calendars, this.activeId);
+    }
+
+    /**
+     * Removes all clone instances from the list of calendars
+     */
+    public clearClones(){
+        for(const [key, value] of Object.entries(this.calendars)){
+            if(value.id.endsWith('_temp')){
+                delete this.calendars[key];
+            }
+        }
     }
 }

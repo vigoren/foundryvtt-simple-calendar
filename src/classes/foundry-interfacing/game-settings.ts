@@ -67,6 +67,14 @@ export class GameSettings {
         return <object>(<Game>game).settings.get(ModuleName, setting);
     }
 
+    /**
+     * Will return the value for the passed in string setting
+     * @param {SettingNames} setting The name of the setting to get
+     */
+    static GetStringSettings(setting: SettingNames): string{
+        return <string>(<Game>game).settings.get(ModuleName, setting);
+    }
+
     static async SaveBooleanSetting(setting: SettingNames, data: boolean, checkIfGM: boolean = true): Promise<boolean> {
         let save = false;
         if(checkIfGM){

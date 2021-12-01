@@ -58,7 +58,7 @@ export class NotesApp extends FormApplication {
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/calendar-notes.html";
         options.title = "FSC.Notes.DialogTitle";
-        options.classes = ["form","simple-calendar simple-calendar-note", "dark"];
+        options.classes = ["form","simple-calendar simple-calendar-note", GameSettings.GetStringSettings(SettingNames.Theme)];
         options.resizable = true;
         options.closeOnSubmit = false;
         options.width = 500;

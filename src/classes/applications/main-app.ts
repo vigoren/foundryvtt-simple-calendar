@@ -20,11 +20,10 @@ import {
     Themes,
     TimeKeeperStatus
 } from "../../constants";
-import {ConfigurationApp} from "./configuration-app";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
 import {animateElement} from "../utilities/visual";
-import {CalManager, SC} from "../index";
+import {CalManager, ConfigurationApplication, SC} from "../index";
 import {FormatDateTime} from "../utilities/date-time";
 
 
@@ -32,6 +31,11 @@ import {FormatDateTime} from "../utilities/date-time";
  * Contains all functionality for displaying/updating the simple calendar
  */
 export default class MainApp extends Application{
+    /**
+     * The ID used for the application window within foundry
+     * @type {string}
+     */
+    public static appWindowId: string = 'simple-calendar-application';
     /**
      * Gets the current active calendar
      */
@@ -89,8 +93,8 @@ export default class MainApp extends Application{
         const options = super.defaultOptions;
         options.template = "modules/foundryvtt-simple-calendar/templates/main.html";
         options.title = "FSC.Title";
-        options.classes = ["simple-calendar", "dark"];
-        options.id = "simple-calendar-application"
+        options.classes = ["simple-calendar"];
+        options.id = this.appWindowId;
         options.resizable = false;
         return options;
     }
@@ -139,6 +143,7 @@ export default class MainApp extends Application{
                     options.left = pos.left;
                 }
             }
+            options.classes = ["simple-calendar", GameSettings.GetStringSettings(SettingNames.Theme)];
             this.render(true, options);
         }
     }
@@ -812,16 +817,7 @@ export default class MainApp extends Application{
      * @param {Event} e The click event
      */
     public configurationClick(e: Event) {
-        if(GameSettings.IsGm()){
-            if(!ConfigurationApp.instance || (ConfigurationApp.instance && !ConfigurationApp.instance.rendered)){
-                ConfigurationApp.instance = new ConfigurationApp();
-                ConfigurationApp.instance.showApp();
-            } else {
-                ConfigurationApp.instance.bringToTop();
-            }
-        } else {
-            GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Calendar.GMConfigure"), 'warn');
-        }
+        ConfigurationApplication.initializeAndShowDialog();
     }
 
     /**

@@ -23,20 +23,14 @@ import DateSelectorManager from "../date-selector/date-selector-manager";
 import {animateElement, GetContrastColor} from "../utilities/visual";
 import {CalManager} from "../index";
 
-export class ConfigurationApp extends FormApplication {
+export default class ConfigurationApp extends FormApplication {
 
-    /**
-     * Used to store a globally accessible copy of the Simple calendar configuration class for access from event functions.
-     * @type {ConfigurationApp}
-     */
-    static instance: ConfigurationApp;
-
-    private static appWindowId: string = 'simple-calendar-configuration-application-form';
+    public static appWindowId: string = 'simple-calendar-configuration-application-form';
 
     private noteCategories: NoteCategory[] = [];
 
 
-    private calendars: Calendar[];
+    private calendars: Calendar[] = [];
     /**
      * If the year has changed
      * @private
@@ -52,7 +46,7 @@ export class ConfigurationApp extends FormApplication {
 
     uiElementStates = {
         selectedPredefinedCalendar: '',
-        predefinedSectionAnimationActive: false
+        qsNextClicked: false
     };
 
     /**
@@ -60,12 +54,15 @@ export class ConfigurationApp extends FormApplication {
      */
     constructor() {
         super({});
+    }
+
+    /**
+     * Sets up the data for the dialog and shows it
+     */
+    initializeAndShowDialog(){
         this.calendars = CalManager.cloneCalendars();
         this.object = this.calendars[0];//Temp until we get better calendar picking
-
-        this._tabs[0].active = "quickSetup";
-
-        this.generalSettings.defaultPlayerNoteVisibility = GameSettings.GetBooleanSettings(SettingNames.DefaultNoteVisibility);
+        this._tabs[0].active = "globalSettings";
 
         this.noteCategories = CalManager.getActiveCalendar().noteCategories.map(nc => {
             return {
@@ -74,6 +71,12 @@ export class ConfigurationApp extends FormApplication {
                 textColor: nc.textColor
             }
         });
+
+        if(!this.rendered){
+            this.showApp();
+        } else {
+            this.bringToTop();
+        }
     }
 
     /**
@@ -84,7 +87,7 @@ export class ConfigurationApp extends FormApplication {
         options.template = "modules/foundryvtt-simple-calendar/templates/calendar-config.html";
         options.title = "FSC.Configuration.Title";
         options.id = this.appWindowId;
-        options.classes = ["simple-calendar", "dark"];
+        options.classes = ["simple-calendar"];
         options.resizable = true;
         options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
         options.height = 700;
@@ -96,7 +99,7 @@ export class ConfigurationApp extends FormApplication {
      * Shows the application window
      */
     public showApp(){
-        this.render(true);
+        this.render(true, {classes: ["simple-calendar", GameSettings.GetStringSettings(SettingNames.Theme)]});
     }
 
     /**
@@ -111,6 +114,7 @@ export class ConfigurationApp extends FormApplication {
      * @param options
      */
     close(options?: FormApplication.CloseOptions): Promise<void> {
+        CalManager.clearClones();
         (<Calendar>this.object).year.seasons.forEach(s => {
             DateSelectorManager.RemoveSelector(`sc_season_start_date_${s.id}`);
             DateSelectorManager.RemoveSelector(`sc_season_sunrise_time_${s.id}`);
@@ -132,9 +136,20 @@ export class ConfigurationApp extends FormApplication {
     public getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
         let data = {
             ...super.getData(options),
+            isGM: GameSettings.IsGm(),
             qsCalDate: {year: 1, month: 0, day: 0, hour: 0, minute: 0, allDay: true},
             uiElementStates: this.uiElementStates,
             calendars: this.calendars,
+            clientSettings: {
+                openOnLoad: GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad),
+                openInCompact: GameSettings.GetBooleanSettings(SettingNames.OpenCompact),
+                rememberPos: GameSettings.GetBooleanSettings(SettingNames.RememberPosition),
+                theme: GameSettings.GetStringSettings(SettingNames.Theme),
+                themes: {
+                    'dark': 'FSC.Configuration.Theme.Dark',
+                    'light': 'FSC.Configuration.Theme.Light'
+                }
+            },
 
             showDateFormatTokens: this.dateFormatTableExpanded,
             defaultPlayerNoteVisibility: this.generalSettings.defaultPlayerNoteVisibility,
@@ -282,16 +297,21 @@ export class ConfigurationApp extends FormApplication {
             //---------------------
             // Quick Setup
             //---------------------
+            //Predefined Calendar clicked
             appWindow.querySelectorAll('.quick-setup .predefined-list .predefined-calendar').forEach(e => {
                 e.addEventListener('click', this.predefinedCalendarClick.bind(this));
             });
-
+            //Next button clicked
+            appWindow.querySelector('.quick-setup .control-section .qs-next')?.addEventListener('click', this.quickSetupNextClick.bind(this));
+            //Back button clicked
+            appWindow.querySelector('.quick-setup .control-section .qs-back')?.addEventListener('click', this.quickSetupBackClick.bind(this));
+            //Save button clicked
+            appWindow.querySelector('.quick-setup .control-section .qs-save')?.addEventListener('click', this.quickSetupSaveClick.bind(this));
 
             //---------------------
             // Save Buttons
             //---------------------
-            appWindow.querySelector("#scSave")?.addEventListener('click', this.saveClick.bind(this, false));
-            appWindow.querySelector("#scSubmit")?.addEventListener('click', this.saveClick.bind(this, true));
+            appWindow.querySelector("#scSave")?.addEventListener('click', this.saveClick.bind(this, true));
         }
 
 
@@ -388,7 +408,7 @@ export class ConfigurationApp extends FormApplication {
 
     private addNewCalendar(e: Event){
         e.preventDefault();
-        const calNameElement = <HTMLInputElement>document.getElementById('scCalendarName');
+        const calNameElement = <HTMLInputElement>document.getElementById('scAddCalendarName');
         if(calNameElement && calNameElement.value){
             const newCal = CalManager.addTempCalendar(calNameElement.value);
             PredefinedCalendar.setToPredefined(newCal.year, PredefinedCalendars.Gregorian);
@@ -411,7 +431,7 @@ export class ConfigurationApp extends FormApplication {
                 const cal = element.getAttribute('data-calendar');
                 if(cal){
                     this.uiElementStates.selectedPredefinedCalendar = cal;
-                    PredefinedCalendar.setToPredefined((<Calendar>this.object).year, <PredefinedCalendars>cal);
+                    //PredefinedCalendar.setToPredefined((<Calendar>this.object).year, <PredefinedCalendars>cal);
                 }
             } else {
                 this.uiElementStates.selectedPredefinedCalendar = '';
@@ -420,8 +440,42 @@ export class ConfigurationApp extends FormApplication {
         }
     }
 
+    private quickSetupNextClick(e: Event){
+        e.preventDefault();
+        this.confirmationDialog('overwrite', 'predefined', {name: (<Calendar>this.object).name});
+    }
 
+    private quickSetupNextConfirm(){
+        PredefinedCalendar.setToPredefined((<Calendar>this.object).year, <PredefinedCalendars>this.uiElementStates.selectedPredefinedCalendar);
+        this.uiElementStates.qsNextClicked = !this.uiElementStates.qsNextClicked;
+        this.updateApp();
+    }
 
+    private quickSetupBackClick(e: Event){
+        e.preventDefault();
+        this.uiElementStates.qsNextClicked = !this.uiElementStates.qsNextClicked;
+        this.updateApp();
+    }
+
+    private quickSetupSaveClick(e: Event){
+        e.preventDefault();
+        this.uiElementStates.selectedPredefinedCalendar = ''
+        this.uiElementStates.qsNextClicked = false;
+        const ds = DateSelectorManager.GetSelector('quick-setup-predefined-calendar', {});
+        let monthIndex, dayIndex = 0;
+        monthIndex = (<Calendar>this.object).year.months.findIndex(m => m.numericRepresentation === ds.selectedDate.startDate.month);
+        if(monthIndex > -1) {
+            dayIndex = (<Calendar>this.object).year.months[monthIndex].days.findIndex(d => d.numericRepresentation === ds.selectedDate.startDate.day);
+        }
+        if(monthIndex > -1 && dayIndex > -1){
+            (<Calendar>this.object).year.numericRepresentation = ds.selectedDate.startDate.year;
+            (<Calendar>this.object).year.visibleYear = ds.selectedDate.startDate.year;
+            (<Calendar>this.object).year.selectedYear = ds.selectedDate.startDate.year;
+            (<Calendar>this.object).year.updateMonth(monthIndex, 'current', true, dayIndex);
+        }
+        this._tabs[0].active = "generalSettings";
+        this.saveClick(false, e).catch(Logger.error);
+    }
 
     /**
      * When the date format table header is clicked, will expand/collapse the table of information
@@ -986,8 +1040,8 @@ export class ConfigurationApp extends FormApplication {
     public confirmationDialog(dialogType: string, contentType: string, args: any){
         let title = '', content = '';
         if(dialogType === 'overwrite'){
-            title = GameSettings.Localize('FSC.OverwriteConfirm');
-            content = GameSettings.Localize("FSC.OverwriteConfirmText");
+            title = GameSettings.Localize('FSC.ApplyPredefined');
+            content = GameSettings.Localize("FSC.ApplyPredefinedText").replace('${CAL_NAME}', args['name']);
         } else if(dialogType === 'remove-calendar'){
             title = GameSettings.Localize('FSC.RemoveCalendar');
             content = GameSettings.Localize("FSC.RemoveCalendarConfirmText").replace('${CAL_NAME}', args['name']);
@@ -1018,7 +1072,7 @@ export class ConfigurationApp extends FormApplication {
      */
     public async confirmationDialogYes(contentType: string, args: any){
         if(contentType === 'predefined'){
-            this.predefinedApplyConfirm();
+            this.quickSetupNextConfirm();
         } else if(contentType === 'remove-calendar'){
             this.removeCalendarConfirm(args);
         }
@@ -1037,6 +1091,10 @@ export class ConfigurationApp extends FormApplication {
             await CalManager.getActiveCalendar().syncTime(true);
             if(close){
                 this.closeApp();
+            } else {
+                this.calendars = CalManager.cloneCalendars();
+                this.object = this.calendars[0];
+                this.updateApp();
             }
         } catch (error: any){
             Logger.error(error);

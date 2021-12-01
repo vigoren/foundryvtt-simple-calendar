@@ -31,6 +31,13 @@ This section of the module has been 100% redesigned so that the full version is 
 
 #### Configuration Dialog
 
+The configuration dialog has also been completely redesigned to support multiple calendars and hopefully reduce some confusion around configuring a calendar. It features:
+
+- A Refreshed display with sections.
+  - **Global Configuration Settings**: These affect Simple Calendar overall and are not specific to any one calendar.
+  - **Calendar Settings**: This section features a calendar selector, the ability to add or remove calendars and all the settings that affect the currently selected calendar.
+  - **Help**: This section provides a link to the documentation and an about section with more details about the module.
+
 #### Notes Dialog
 
 ### Client Settings

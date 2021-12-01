@@ -1,6 +1,8 @@
 import {ModuleName, SettingNames} from "../../constants";
-import {ConfigurationApp} from "../applications/configuration-app";
+import ConfigurationApp from "../applications/configuration-app";
 import {CalManager} from "../index"
+import {GameSettings} from "./game-settings";
+import SimpleCalendar from "../simple-calendar";
 
 export default class GameSettingsRegistration{
     /**
@@ -10,6 +12,19 @@ export default class GameSettingsRegistration{
         // -------------------
         // Client Settings
         // -------------------
+        (<Game>game).settings.register(ModuleName, SettingNames.Theme, {
+            name: "FSC.Configuration.Theme.Title",
+            hint: "FSC.Configuration.Theme.Description",
+            scope: "client",
+            config: true,
+            type: String,
+            choices: {
+                'dark': GameSettings.Localize("FSC.Configuration.Theme.Dark"),
+                'light': GameSettings.Localize("FSC.Configuration.Theme.Light")
+            },
+            default: 'dark',
+            onChange: SimpleCalendar.ThemeChange.bind(SimpleCalendar)
+        });
         (<Game>game).settings.register(ModuleName, SettingNames.OpenOnLoad, {
             name: "FSC.Configuration.Client.OpenOnLoad.Title",
             hint: "FSC.Configuration.Client.OpenOnLoad.Description",

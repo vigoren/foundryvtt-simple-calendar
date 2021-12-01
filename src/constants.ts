@@ -12,6 +12,7 @@ export const ModuleSocketName = `module.${ModuleName}`;
  * The name of the settings that are saved in the world settings database
  */
 export enum SettingNames {
+    Theme = 'theme',
     OpenOnLoad = 'open-on-load',
     OpenCompact = 'open-compact',
     RememberPosition = 'remember-position',

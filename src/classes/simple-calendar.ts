@@ -1,12 +1,14 @@
 import Sockets from "./sockets";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {NoteRepeat, TimeKeeperStatus} from "../constants";
+import {NoteRepeat, SettingNames, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import {SCDateSelector} from "../interfaces";
 import Note from "./note";
 import {NotesApp} from "./applications/notes-app";
-import {MainApplication, CalManager} from "./index";
+import {CalManager, MainApplication} from "./index";
+import ConfigurationApp from "./applications/configuration-app";
+import MainApp from "./applications/main-app";
 
 export default class SimpleCalendar {
     /**
@@ -32,6 +34,23 @@ export default class SimpleCalendar {
 
     constructor() {
         this.sockets = new Sockets();
+    }
+
+    public static ThemeChange(){
+        const newTheme = GameSettings.GetStringSettings(SettingNames.Theme);
+        const themes = [Themes.light, Themes.dark]
+        //Update the main app
+        const mainApp = document.getElementById(MainApp.appWindowId);
+        if(mainApp){
+            mainApp.classList.remove(...themes);
+            mainApp.classList.add(newTheme);
+        }
+        //Update the configuration (if open)
+        const configApp = document.getElementById(ConfigurationApp.appWindowId);
+        if(configApp){
+            configApp.classList.remove(...themes);
+            configApp.classList.add(newTheme);
+        }
     }
 
     public initialize(){

@@ -230,7 +230,7 @@
     }
 
     //Inputs
-    input{
+    input, select{
       background-color: $gray-700;
       border-color: $gray-500;
       color: $white;
@@ -426,15 +426,19 @@
         }
         .heading{
           color: $primary-A400;
-          border-color: $primary-A200;
+          border-top-color: $primary-A200;
+          border-bottom-color: $gray-700;
         }
         .tab-section{
-          &.calendar-selector{
+          &.stripe{
+            background-color: $primary-1000;
+          }
+          .calendar-selector{
             ul{
               box-shadow: 1px 1px 5px #000000;
               li{
-                background-color: $primary-1000;
-                border-color: $primary-900;
+                background-color: $primary-900;
+                border-color: $primary-400;
 
                 &.active,&:hover{
                   background-color: $primary-A400;
@@ -469,6 +473,8 @@
           border-color: $secondary;
         }
         .form-group{
+          border-color:$gray-600;
+          background-color: $primary-1000;
           label{
             color: $primary-A200;
           }
@@ -486,6 +492,23 @@
             color: $primary-A200;
           }
         }
+        .f-table{
+          background-color: $primary-1000;
+          border-color: $gray-600;
+          .row{
+            &.head{
+              border-color: $gray-600;
+            }
+            &:nth-child(even) {
+              background-color: rgba($primary-200,0.1);
+            }
+            .options{
+              h3{
+                border-color: $secondary;
+              }
+            }
+          }
+        }
         .quick-setup{
           .predefined-list{
             .predefined-calendar{
@@ -498,6 +521,11 @@
                 color: $white;
               }
             }
+          }
+        }
+        .permissions{
+          .table-header{
+            border-color: $gray-600;
           }
         }
       }

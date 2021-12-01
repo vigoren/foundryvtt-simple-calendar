@@ -3,15 +3,25 @@ import API from "./classes/api";
 import {Logger} from "./classes/logging";
 import {SettingNames, SimpleCalendarHooks} from "./constants";
 import {GameSettings} from "./classes/foundry-interfacing/game-settings";
-import {updateCalManager, updateMainApplication, updateSC, CalManager, MainApplication, SC} from "./classes";
+import {
+    updateCalManager,
+    updateMainApplication,
+    updateSC,
+    CalManager,
+    MainApplication,
+    SC,
+    updateConfigurationApplication
+} from "./classes";
 import HandlebarsHelpers from "./classes/api/handlebars-helpers";
 import GameSettingsRegistration from "./classes/foundry-interfacing/game-settings-registration";
 import CalendarManager from "./classes/calendar/calendar-manager";
 import MainApp from "./classes/applications/main-app";
+import ConfigurationApp from "./classes/applications/configuration-app";
 
 updateCalManager(new CalendarManager());
-updateMainApplication(new MainApp());
 updateSC(new SimpleCalendar());
+updateMainApplication(new MainApp());
+updateConfigurationApplication(new ConfigurationApp());
 
 Hooks.on('init', () => {
     //Register everything
