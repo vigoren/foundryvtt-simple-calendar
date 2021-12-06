@@ -97,6 +97,7 @@ Korean (ko)|[drdwing](https://github.com/drdwing)
 Portuguese Brasil (pt-BR)|[castanhocorreia](https://github.com/castanhocorreia)
 Czech (cs)|[robertjunek](https://github.com/robertjunek)
 French (fr)|[JDR Ninja](https://github.com/JDR-Ninja) <br/> [TheBird956](https://github.com/TheBird956)
+Italian (it)|[Haloghen](https://github.com/Haloghen)
 
 If your language is missing from the list, and you would like to help translate Simple Calendar please follow these steps:
 
