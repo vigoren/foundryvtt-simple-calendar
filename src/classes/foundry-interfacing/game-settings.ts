@@ -90,6 +90,21 @@ export class GameSettings {
         return false;
     }
 
+    static async SaveStringSetting(setting: SettingNames, data: string, checkIfGM: boolean = true): Promise<boolean> {
+        let save = false;
+        if(checkIfGM){
+            if(this.IsGm()){
+                save = true;
+            }
+        } else {
+            save = true;
+        }
+        if(save){
+            return await (<Game>game).settings.set(ModuleName, setting, data).then(() => {return true;});
+        }
+        return false;
+    }
+
     /**
      * Save the passed in object to the passed in setting
      * @param setting

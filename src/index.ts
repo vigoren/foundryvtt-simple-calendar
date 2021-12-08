@@ -1,8 +1,7 @@
 import SimpleCalendar from "./classes/simple-calendar";
 import API from "./classes/api";
 import {Logger} from "./classes/logging";
-import {SettingNames, SimpleCalendarHooks} from "./constants";
-import {GameSettings} from "./classes/foundry-interfacing/game-settings";
+import {SimpleCalendarHooks} from "./constants";
 import {
     updateCalManager,
     updateMainApplication,
@@ -23,21 +22,26 @@ updateSC(new SimpleCalendar());
 updateMainApplication(new MainApp());
 updateConfigurationApplication(new ConfigurationApp());
 
+//Expose the api
+(window as any).SimpleCalendar = {
+    api: API,
+    Hooks: SimpleCalendarHooks
+};
+
 Hooks.on('init', () => {
-    //Register everything
+    //Register Handlebar Helpers and our game settings
     HandlebarsHelpers.Register();
     GameSettingsRegistration.Register();
+    //Initialize the calendar manager (loads the calendars and their settings)
     CalManager.initialize();
-    //Expose the api
-    (window as any).SimpleCalendar = {
-        api: API,
-        Hooks: SimpleCalendarHooks
-    };
+    //Load the global configuration settings
+    SC.load();
 });
 Hooks.on('ready', () => {
     //Initialize the Simple Calendar Class
     SC.initialize();
-    if(GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad)){
+    //If we are to open the main app on foundry load, open it
+    if(SC.clientSettings.openOnLoad){
         MainApplication.showApp();
     }
 });

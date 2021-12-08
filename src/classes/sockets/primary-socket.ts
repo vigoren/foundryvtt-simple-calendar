@@ -55,24 +55,32 @@ export default class PrimarySocket extends SocketBase {
      */
     public async initialize(): Promise<boolean> {
         if(GameSettings.IsGm()){
-            const socket = <SimpleCalendarSocket.Data>{
-                type: SocketTypes.primary,
-                data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
-                    primaryCheck: true
-                }
-            };
-            return GameSockets.emit(socket).then(() => {
-                return new Promise<boolean>(resolve => {
-                    //Set a timeout for the check duration
-                    window.setTimeout(((r: Function) => {
-                        //If no other primary GM was found, take over
-                        if(!this.otherPrimaryFound){
-                            this.primaryCheckTimeoutCall();
-                        }
-                        r(true);
-                    }).bind(this, resolve), this.checkDuration);
+            const users = (<Game>game).users;
+            const numberOfGMs = users? users.filter(u => u.isGM).length : 0;
+            //If more than 1 GM in the world, check to see who is the primary GM. Otherwise take over as primary GM
+            if(numberOfGMs > 1){
+                const socket = <SimpleCalendarSocket.Data>{
+                    type: SocketTypes.primary,
+                    data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
+                        primaryCheck: true
+                    }
+                };
+                return GameSockets.emit(socket).then(() => {
+                    return new Promise<boolean>(resolve => {
+                        //Set a timeout for the check duration
+                        window.setTimeout(((r: Function) => {
+                            //If no other primary GM was found, take over
+                            if(!this.otherPrimaryFound){
+                                this.primaryCheckTimeoutCall();
+                            }
+                            r(true);
+                        }).bind(this, resolve), this.checkDuration);
+                    });
                 });
-            });
+            } else {
+                await this.primaryCheckTimeoutCall();
+                return true;
+            }
         } else {
             return true;
         }

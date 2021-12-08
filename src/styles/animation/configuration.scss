@@ -11,6 +11,21 @@
       }
     }
     .tab-wrapper{
+      .settings-group{
+        &.animate {
+          transition: opacity 400ms;
+        }
+      }
+      .form-group{
+        &.animate {
+          transition: max-height 200ms;
+        }
+      }
+      .options{
+        &.animate {
+          transition: max-height 400ms;
+        }
+      }
       .section{
         &.animate {
           transition: opacity 500ms;

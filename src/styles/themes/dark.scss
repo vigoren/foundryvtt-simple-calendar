@@ -475,6 +475,9 @@
         .form-group{
           border-color:$gray-600;
           background-color: $primary-1000;
+          &:hover{
+            background-color: $primary-950;
+          }
           label{
             color: $primary-A200;
           }

@@ -57,6 +57,19 @@ export interface SimpleCalendarTemplate{
     search: any;
 }
 
+export interface GlobalConfiguration extends IConfigurationItemBaseConfig {
+    permissions: UserPermissionsConfig;
+    clientSettings: ClientSettings;
+}
+
+export interface ClientSettings extends IConfigurationItemBaseConfig {
+    theme: Themes;
+    openOnLoad: boolean;
+    openCompact: boolean;
+    rememberPosition: boolean;
+    appPosition: AppPosition;
+}
+
 export interface CalendarConfiguration extends IConfigurationItemBaseConfig {
     currentDate?: CurrentDateConfig;
     general?: GeneralSettingsConfig;
@@ -97,6 +110,7 @@ export interface GeneralSettingsConfig extends IConfigurationItemBaseConfig{
     gameWorldTimeIntegration: GameWorldTimeIntegrations;
     /** If to show the clock below the calendar */
     showClock: boolean;
+    noteDefaultVisibility: boolean;
     /** If the Pathfinder 2e world clock sync is turned on */
     pf2eSync: boolean;
     /** Formats used for display date and time information */
@@ -105,8 +119,6 @@ export interface GeneralSettingsConfig extends IConfigurationItemBaseConfig{
         time: string;
         monthYear: string;
     };
-    /** The user permissions for the calendar */
-    permissions: UserPermissionsConfig;
     /** @deprecated Old Players can add notes permission, only used for very old setting files */
     playersAddNotes?: boolean;
 }
@@ -116,6 +128,7 @@ export interface GeneralSettingsTemplate extends IConfigurationItemBaseTemplate{
     gameWorldTimeIntegration: GameWorldTimeIntegrations;
     /** If to show the clock below the calendar */
     showClock: boolean;
+    noteDefaultVisibility: boolean;
     /** If the Pathfinder 2e world clock sync is turned on */
     pf2eSync: boolean;
     /** Formats used for display date and time information */
@@ -124,8 +137,6 @@ export interface GeneralSettingsTemplate extends IConfigurationItemBaseTemplate{
         time: string;
         monthYear: string;
     };
-    /** The user permissions for the calendar */
-    permissions: UserPermissionsConfig;
 }
 
 export interface UserPermissionsConfig extends IConfigurationItemBaseConfig {
@@ -481,7 +492,6 @@ export namespace SearchOptions{
         categories: boolean;
     }
 }
-
 
 /**
  * Namespace for our own socket information

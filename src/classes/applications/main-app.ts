@@ -129,7 +129,7 @@ export default class MainApp extends Application{
      * Shows the application window
      */
     public showApp(){
-        if(this.activeCalendar.canUser((<Game>game).user, this.activeCalendar.generalSettings.permissions.viewCalendar)){
+        if(this.activeCalendar.canUser((<Game>game).user, SC.permissions.viewCalendar)){
             this.activeCalendar.year.setCurrentToVisible();
             this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
 
@@ -682,7 +682,7 @@ export default class MainApp extends Application{
      * @param {Event} e The click event
      */
     public dateControlApply(e: Event){
-        if(this.activeCalendar.canUser((<Game>game).user, this.activeCalendar.generalSettings.permissions.changeDateTime)){
+        if(this.activeCalendar.canUser((<Game>game).user, SC.permissions.changeDateTime)){
             let validSelection = false;
             const selectedYear = this.activeCalendar.year.selectedYear;
             const selectedMonth = this.activeCalendar.year.getMonth('selected');

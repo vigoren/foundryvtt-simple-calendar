@@ -153,13 +153,37 @@
         }
       }
 
+      .settings-group{
+        opacity: 0;
+        &.open{
+          visibility: visible;
+          opacity: 1;
+        }
+        &.closed{
+          visibility: hidden;
+          height: 0;
+          overflow: hidden;
+        }
+      }
+
       .form-group{
         margin: $spacer-half 0;
         padding: $spacer-half;
         border: 1px solid;
+        max-height: 0;
+        overflow: hidden;
 
         &.border-none{
           border-width: 0;
+        }
+        &.open{
+          visibility: visible;
+          max-height: 150px;
+        }
+        &.closed{
+          visibility: hidden;
+          margin: 0;
+          padding: 0;
         }
         label{
           font-size: 1rem;
@@ -172,6 +196,10 @@
         border: 1px solid;
         width: fit-content;
         margin: 0 auto;
+      }
+
+      .section-wrapper{
+        position: relative;
       }
 
       .section{
@@ -189,6 +217,7 @@
         &.closed{
           visibility: hidden;
           height: 0;
+          overflow: hidden;
         }
       }
 
@@ -227,13 +256,27 @@
             input{
               text-align: left;
             }
-          }
-          .hidden{
-            display: none;
+            .month-show-advanced{
+              span{
+                font-weight: normal;
+                margin-left: ($spacer-half * 0.5);
+              }
+            }
           }
           .options{
             flex: 0 0 100%;
             padding: .25rem 2rem;
+            max-height: 0;
+            overflow: hidden;
+
+            &.open{
+              visibility: visible;
+              max-height: 500px;
+            }
+            &.closed{
+              visibility: hidden;
+            }
+
             .form-fields{
               flex: 1;
             }
@@ -242,6 +285,16 @@
               margin-top: 0.5rem;
               border-bottom: 1px solid;
               font-weight: 600;
+            }
+          }
+        }
+
+        &.moons{
+          .row{
+            .options{
+              &.open{
+                max-height: fit-content;
+              }
             }
           }
         }
@@ -270,8 +323,15 @@
         }
       }
       .quick-setup{
-        .section.predefined{
-          opacity: 1;
+        .section{
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          .form-group{
+            max-height: fit-content;
+            overflow: visible;
+          }
         }
         .predefined-list{
           display: grid;

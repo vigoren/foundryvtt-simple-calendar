@@ -3,12 +3,13 @@ import {GameSettings} from "./foundry-interfacing/game-settings";
 import {NoteRepeat, SettingNames, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
-import {SCDateSelector} from "../interfaces";
+import {AppPosition, ClientSettings, GlobalConfiguration, SCDateSelector} from "../interfaces";
 import Note from "./note";
 import {NotesApp} from "./applications/notes-app";
 import {CalManager, MainApplication} from "./index";
 import ConfigurationApp from "./applications/configuration-app";
 import MainApp from "./applications/main-app";
+import UserPermissions from "./configuration/user-permissions";
 
 export default class SimpleCalendar {
     /**
@@ -31,9 +32,17 @@ export default class SimpleCalendar {
      * @type {Sockets}
      */
     sockets: Sockets;
+    /**
+     * User permissions for different actions in simple calendar
+     */
+    public permissions: UserPermissions;
+
+    public clientSettings: ClientSettings;
 
     constructor() {
         this.sockets = new Sockets();
+        this.permissions = new UserPermissions();
+        this.clientSettings = {id: '', theme: Themes.dark, openOnLoad: true, openCompact: false, rememberPosition: true, appPosition: {}};
     }
 
     public static ThemeChange(){
@@ -58,6 +67,39 @@ export default class SimpleCalendar {
         this.checkNoteReminders();
     }
 
+    /**
+     * Load the global configuration and apply it
+     */
+    public load(){
+        const globalConfiguration = <GlobalConfiguration>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
+        this.permissions.loadFromSettings(globalConfiguration.permissions);
+        this.clientSettings.theme = <Themes>GameSettings.GetStringSettings(SettingNames.Theme);
+        this.clientSettings.openOnLoad = GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad);
+        this.clientSettings.openCompact = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
+        this.clientSettings.rememberPosition = GameSettings.GetBooleanSettings(SettingNames.RememberPosition);
+        this.clientSettings.appPosition = <AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
+    }
+
+    /**
+     * Save the global configuration and the calendar configuration
+     */
+    public save(config: GlobalConfiguration | null = null){
+        CalManager.saveCalendars();
+        if(config){
+            const globalConfiguration = {
+                permissions: config.permissions,
+            };
+            //Save the client settings
+            GameSettings.SaveStringSetting(SettingNames.Theme, config.clientSettings.theme).catch(Logger.error);
+            GameSettings.SaveBooleanSetting(SettingNames.OpenOnLoad, config.clientSettings.openOnLoad).catch(Logger.error);
+            GameSettings.SaveBooleanSetting(SettingNames.OpenCompact, config.clientSettings.openCompact).catch(Logger.error);
+            GameSettings.SaveBooleanSetting(SettingNames.RememberPosition, config.clientSettings.rememberPosition).catch(Logger.error);
+            GameSettings.SaveObjectSetting(SettingNames.AppPosition, config.clientSettings.appPosition).catch(Logger.error);
+            //Save the global configuration (triggers the load function)
+            GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, globalConfiguration).catch(Logger.error);
+        }
+    }
+
     //---------------------------
     // Foundry Hooks
     //---------------------------
@@ -66,7 +108,7 @@ export default class SimpleCalendar {
      * @param controls
      */
     public getSceneControlButtons(controls: any[]){
-        if(this.activeCalendar.canUser((<Game>game).user, this.activeCalendar.generalSettings.permissions.viewCalendar)){
+        if(this.activeCalendar.canUser((<Game>game).user, this.permissions.viewCalendar)){
             let tokenControls = controls.find(c => c.name === "token" );
             if(tokenControls && tokenControls.hasOwnProperty('tools')){
                 tokenControls.tools.push({

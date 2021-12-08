@@ -1,7 +1,6 @@
 import {GameWorldTimeIntegrations} from "../../constants";
 import ConfigurationItemBase from "./configuration-item-base";
 import {GeneralSettingsConfig, GeneralSettingsTemplate} from "../../interfaces";
-import UserPermissions from "./user-permissions";
 
 export default class GeneralSettings extends ConfigurationItemBase{
     /**
@@ -12,6 +11,10 @@ export default class GeneralSettings extends ConfigurationItemBase{
      * If to show the clock
      */
     showClock: boolean = true;
+    /**
+     * For new notes, if by default the player visibility option is checked or not
+     */
+    noteDefaultVisibility: boolean = true;
     /**
      * If to enable the PF2E World Clock Sync
      */
@@ -27,14 +30,9 @@ export default class GeneralSettings extends ConfigurationItemBase{
         /** Format for displaying just the month and year. Used at the top of any calendar month display */
         monthYear: 'MMMM YAYYYYYZ'
     };
-    /**
-     * User permissions for different actions in the calendar
-     */
-    permissions: UserPermissions;
 
     constructor() {
         super();
-        this.permissions = new UserPermissions();
     }
 
     /**
@@ -45,11 +43,11 @@ export default class GeneralSettings extends ConfigurationItemBase{
         gs.id = this.id;
         gs.gameWorldTimeIntegration = this.gameWorldTimeIntegration;
         gs.showClock = this.showClock;
+        gs.noteDefaultVisibility = this.noteDefaultVisibility;
         gs.pf2eSync = this.pf2eSync;
         gs.dateFormat.date = this.dateFormat.date;
         gs.dateFormat.time = this.dateFormat.time;
         gs.dateFormat.monthYear = this.dateFormat.monthYear;
-        gs.permissions = this.permissions.clone();
         return gs;
     }
 
@@ -61,9 +59,9 @@ export default class GeneralSettings extends ConfigurationItemBase{
             ...super.toTemplate(),
             gameWorldTimeIntegration: this.gameWorldTimeIntegration,
             showClock: this.showClock,
+            noteDefaultVisibility: this.noteDefaultVisibility,
             pf2eSync: this.pf2eSync,
-            dateFormat: this.dateFormat,
-            permissions: this.permissions.toTemplate()
+            dateFormat: this.dateFormat
         }
     }
 
@@ -75,9 +73,9 @@ export default class GeneralSettings extends ConfigurationItemBase{
             id: this.id,
             gameWorldTimeIntegration: this.gameWorldTimeIntegration,
             showClock: this.showClock,
+            noteDefaultVisibility: this.noteDefaultVisibility,
             pf2eSync: this.pf2eSync,
-            dateFormat: this.dateFormat,
-            permissions: this.permissions.toConfig()
+            dateFormat: this.dateFormat
         };
     }
 
@@ -90,17 +88,10 @@ export default class GeneralSettings extends ConfigurationItemBase{
             this.id = config.id;
             this.gameWorldTimeIntegration = config.gameWorldTimeIntegration;
             this.showClock = config.showClock;
+            this.noteDefaultVisibility = config.noteDefaultVisibility;
 
             if(config.hasOwnProperty('pf2eSync')){
                 this.pf2eSync = config.pf2eSync;
-            }
-
-            if(config.hasOwnProperty('permissions')){
-                this.permissions.loadFromSettings(config.permissions)
-            } else if(config.hasOwnProperty('playersAddNotes')){
-                this.permissions.addNotes.player = <boolean>config['playersAddNotes'];
-                this.permissions.addNotes.trustedPlayer = <boolean>config['playersAddNotes'];
-                this.permissions.addNotes.assistantGameMaster = <boolean>config['playersAddNotes'];
             }
 
             if(config.hasOwnProperty('dateFormat')){

@@ -155,20 +155,20 @@ export default class Calendar extends ConfigurationItemBase{
 
         return {
             ...super.toTemplate(),
-            addNotes: this.canUser((<Game>game).user, this.generalSettings.permissions.addNotes),
+            addNotes: this.canUser((<Game>game).user, SC.permissions.addNotes),
             calendarId: `sc_${this.id}_calendar`,
             clockId: `sc_${this.id}_clock`,
-            changeDateTime: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime),
+            changeDateTime: this.canUser((<Game>game).user, SC.permissions.changeDateTime),
             currentYear: this.year.toTemplate(),
             gameSystem: this.gameSystem,
             isGM: GameSettings.IsGm(),
             id: this.id,
             name: this.name,
             notes: this.getNotesForDay().map(n => n.toTemplate()),
-            reorderNotes: this.canUser((<Game>game).user, this.generalSettings.permissions.reorderNotes),
+            reorderNotes: this.canUser((<Game>game).user, SC.permissions.reorderNotes),
             showClock: this.generalSettings.showClock,
             showDateControls: this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
-            showSetCurrentDate: this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && showSetCurrentDate,
+            showSetCurrentDate: this.canUser((<Game>game).user, SC.permissions.changeDateTime) && showSetCurrentDate,
             showTimeControls: this.generalSettings.showClock && this.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
             calendarDisplay: FormatDateTime({year: this.year.visibleYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear, this),
             selectedDisplay: FormatDateTime({year: sYear, month: sMonth, day: sDay, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.date, this),
@@ -195,6 +195,13 @@ export default class Calendar extends ConfigurationItemBase{
     }
 
     loadFromSettings(config: CalendarConfiguration) {
+        if(config.id){
+            this.id = config.id;
+        }
+        if(config.name){
+            this.name = config.name;
+        }
+
         if(config.year){
             this.year.loadFromSettings(config.year);
         } else {
@@ -569,7 +576,7 @@ export default class Calendar extends ConfigurationItemBase{
      */
     async syncTime(force: boolean = false){
         // Only if the time tracking rules are set to self or mixed
-        if(this.canUser((<Game>game).user, this.generalSettings.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
+        if(this.canUser((<Game>game).user, SC.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
             Logger.debug(`Year.syncTime()`);
             const totalSeconds = this.year.toSeconds();
             // If the calculated seconds are different from what is set in the game world time, update the game world time to match sc's time

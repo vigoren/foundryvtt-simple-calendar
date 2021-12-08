@@ -14,7 +14,7 @@ import {deepMerge} from "./object";
  */
 export function FormatDateTime(date: DateTimeParts, mask: string, calendar: Calendar, inputs: {year?: boolean, month?: boolean} = {}){
     inputs = deepMerge({year: false, month: false}, inputs);
-    const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|ZZ|Z|([HhMmsD])\1?|[aA]/g;
+    const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|([HhMmsD])\1?|[aA]/g;
     const literal = /\[([^]*?)\]/gm;
     const formatFlags: Record<string, (dateObj: DateTimeParts) => string> = {
         "D": (dateObj: DateTimeParts) => String(dateObj.day),

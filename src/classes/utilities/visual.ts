@@ -1,4 +1,4 @@
-import {Icons} from "../../constants";
+import {Icons, MoonYearResetOptions} from "../../constants";
 import SCIcon from "../../icons/logo.svg";
 import Clock from "../../icons/clock.svg";
 import MiddayIcon from "../../icons/midday.svg";
@@ -13,6 +13,7 @@ import WaningCrescentIcon from "../../icons/moon-waning-crescent.svg";
 import WaningGibbousIcon from "../../icons/moon-waning-gibbous.svg";
 import WaxingCrescentIcon from "../../icons/moon-waxing-crescent.svg";
 import WaxingGibbousIcon from "../../icons/moon-waxing-gibbous.svg";
+import Calendar from "../calendar";
 
 /**
  * Finds the "best" contrast color for the passed in color
@@ -127,4 +128,19 @@ export function animateElement(element: Element, duration: number, forceHide: bo
         setTimeout(((nl: Element) => { nl.classList.remove('animate'); }).bind(null, element), duration);
     }
     return openState;
+}
+
+export function animateFormGroup(selector: string, check: boolean, element: Document | Element = document){
+    const fg = element.querySelector(selector)?.closest('.form-group');
+    if(fg){
+        if((fg.classList.contains('closed') && check) || fg.classList.contains('open') && !check){
+            animateElement(fg, 200);
+        } else if(check){
+            fg.classList.remove('closed');
+            fg.classList.add('open');
+        } else {
+            fg.classList.add('closed');
+            fg.classList.remove('open');
+        }
+    }
 }

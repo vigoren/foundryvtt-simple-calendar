@@ -1,6 +1,6 @@
 import {ModuleName, SettingNames} from "../../constants";
 import ConfigurationApp from "../applications/configuration-app";
-import {CalManager} from "../index"
+import {CalManager, SC} from "../index"
 import {GameSettings} from "./game-settings";
 import SimpleCalendar from "../simple-calendar";
 
@@ -78,6 +78,14 @@ export default class GameSettingsRegistration{
             type: Array,
             default: [],
             onChange: CalManager.loadCalendars.bind(CalManager)
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.GlobalConfiguration, {
+            name: "Global Configuration",
+            scope: "world",
+            config: false,
+            type: Object,
+            default: {},
+            onChange: SC.load.bind(SC)
         });
 
 

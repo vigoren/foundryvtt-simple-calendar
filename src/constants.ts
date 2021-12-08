@@ -19,6 +19,7 @@ export enum SettingNames {
     AppPosition = 'app-position',
     CalendarConfigurationMenu= 'calendar-configuration-menu',
     CalendarConfiguration = 'calendar-configuration',
+    GlobalConfiguration = 'global-configuration',
 
     YearConfiguration = 'year-config',
     WeekdayConfiguration = 'weekday-config',
