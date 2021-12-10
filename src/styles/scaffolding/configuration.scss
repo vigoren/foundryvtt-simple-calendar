@@ -392,6 +392,23 @@
           }
         }
       }
+
+      .about{
+        .logo{
+          width: 200px;
+          margin: 0 auto;
+        }
+        h1{
+          text-align: center;
+        }
+
+        .translations{
+          table{
+            border: 1px solid;
+            width: 400px;
+          }
+        }
+      }
     }
     .config-save{
       position: absolute;

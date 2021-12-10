@@ -26,6 +26,7 @@ import {CalManager, SC} from "../index";
 import UserPermissions from "../configuration/user-permissions";
 import {deepMerge} from "../utilities/object";
 import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
+import {FormatDateTime} from "../utilities/date-time";
 
 export default class ConfigurationApp extends FormApplication {
 
@@ -35,11 +36,6 @@ export default class ConfigurationApp extends FormApplication {
 
 
     private calendars: Calendar[] = [];
-    /**
-     * If the year has changed
-     * @private
-     */
-    private yearChanged: boolean = false;
 
     private dateFormatTableExpanded: boolean = false;
 
@@ -49,7 +45,10 @@ export default class ConfigurationApp extends FormApplication {
 
     uiElementStates = {
         selectedPredefinedCalendar: '',
-        qsNextClicked: false
+        qsNextClicked: false,
+        dateFormatExample: '',
+        timeFormatExample: '',
+        monthYearFormatExample: ''
     };
 
     /**
@@ -132,6 +131,11 @@ export default class ConfigurationApp extends FormApplication {
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
     public getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
+        const currDate = (<Calendar>this.object).getCurrentDate();
+        this.uiElementStates.dateFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.date, <Calendar>this.object);
+        this.uiElementStates.timeFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.time, <Calendar>this.object);
+        this.uiElementStates.monthYearFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.monthYear, <Calendar>this.object);
+
         let data = {
             ...super.getData(options),
             isGM: GameSettings.IsGm(),
@@ -151,6 +155,7 @@ export default class ConfigurationApp extends FormApplication {
             globalConfiguration:{
                 permissions: this.permissions
             },
+
 
             showDateFormatTokens: this.dateFormatTableExpanded,
             gameSystem: (<Calendar>this.object).gameSystem,
@@ -243,7 +248,7 @@ export default class ConfigurationApp extends FormApplication {
             });
         }
 
-        const currDate = (<Calendar>this.object).getCurrentDate();
+
         data.qsCalDate.year = currDate.year;
         data.qsCalDate.month = currDate.month;
         data.qsCalDate.day = currDate.day;
@@ -323,6 +328,19 @@ export default class ConfigurationApp extends FormApplication {
                     this.updateUIFromObject();
                 });
             });
+            //---------------------
+            // Date Format Table open/close
+            //---------------------
+            appWindow.querySelector('.date-format-token-show')?.addEventListener('click', this.dateFormatTableClick.bind(this));
+            //---------------------
+            // Add To/Remove From Table
+            //---------------------
+            document.querySelectorAll(`#${ConfigurationApp.appWindowId} .table-actions .save`).forEach(e => {
+                e.addEventListener('click', this.addToTable.bind(this));
+            });
+            document.querySelectorAll(`#${ConfigurationApp.appWindowId} .control.delete`).forEach(e => {
+                e.addEventListener('click', this.removeFromTable.bind(this));
+            });
 
             //---------------------
             // Save Button
@@ -333,27 +351,6 @@ export default class ConfigurationApp extends FormApplication {
 
 
         if(html.hasOwnProperty("length")) {
-            //Date Format Tokens Show/hide
-            (<JQuery>html).find('.date-format-token-show').on('click', this.dateFormatTableClick.bind(this));
-
-            //Table Removes
-            (<JQuery>html).find(".remove-month").on('click', this.removeFromTable.bind(this, 'month'));
-            (<JQuery>html).find(".remove-weekday").on('click', this.removeFromTable.bind(this, 'weekday'));
-            (<JQuery>html).find(".remove-season").on('click', this.removeFromTable.bind(this, 'season'));
-            (<JQuery>html).find(".remove-moon").on('click', this.removeFromTable.bind(this, 'moon'));
-            (<JQuery>html).find(".remove-moon-phase").on('click', this.removeFromTable.bind(this, 'moon-phase'));
-            (<JQuery>html).find(".remove-year-name").on('click', this.removeFromTable.bind(this, 'year-name'));
-            (<JQuery>html).find(".remove-note-category").on('click', this.removeFromTable.bind(this, 'note-category'));
-
-            //Table Adds
-            (<JQuery>html).find(".month-add").on('click', this.addToTable.bind(this, 'month'));
-            (<JQuery>html).find(".weekday-add").on('click', this.addToTable.bind(this, 'weekday'));
-            (<JQuery>html).find(".season-add").on('click', this.addToTable.bind(this, 'season'));
-            (<JQuery>html).find(".moon-add").on('click', this.addToTable.bind(this, 'moon'));
-            (<JQuery>html).find(".moon-phase-add").on('click', this.addToTable.bind(this, 'moon-phase'));
-            (<JQuery>html).find(".year-name-add").on('click', this.addToTable.bind(this, 'year-name'));
-            (<JQuery>html).find(".note-category-add").on('click', this.addToTable.bind(this, 'note-category'));
-
             (<JQuery>html).find("#exportCalendar").on('click', this.exportCalendar.bind(this));
             (<JQuery>html).find("#importCalendar").on('click', this.importCalendar.bind(this));
         }
@@ -710,6 +707,26 @@ export default class ConfigurationApp extends FormApplication {
 
     private updateUIFromObject(){
         //----------------------------------
+        // Calendar Config: Display Options
+        //----------------------------------
+        const currDate = (<Calendar>this.object).getCurrentDate();
+        this.uiElementStates.dateFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.date, <Calendar>this.object);
+        this.uiElementStates.timeFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.time, <Calendar>this.object);
+        this.uiElementStates.monthYearFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.monthYear, <Calendar>this.object);
+
+        let df = document.querySelector(`#${ConfigurationApp.appWindowId} #scDateFormatsDate`)?.closest('.form-group')?.querySelector('.example');
+        if(df){
+            (<HTMLElement>df).textContent = this.uiElementStates.dateFormatExample;
+        }
+        df = document.querySelector(`#${ConfigurationApp.appWindowId} #scDateFormatsTime`)?.closest('.form-group')?.querySelector('.example');
+        if(df){
+            (<HTMLElement>df).textContent = this.uiElementStates.timeFormatExample;
+        }
+        df = document.querySelector(`#${ConfigurationApp.appWindowId} #scDateFormatsMonthYear`)?.closest('.form-group')?.querySelector('.example');
+        if(df){
+            (<HTMLElement>df).textContent = this.uiElementStates.monthYearFormatExample;
+        }
+        //----------------------------------
         // Calendar Config: Year
         //----------------------------------
         animateFormGroup('#scYearNamesStart', (<Calendar>this.object).year.yearNamingRule !== YearNamingRules.Random);
@@ -788,7 +805,14 @@ export default class ConfigurationApp extends FormApplication {
      */
     private dateFormatTableClick(){
         this.dateFormatTableExpanded = !this.dateFormatTableExpanded;
-        this.updateApp();
+        const collapseArea = document.querySelector(`#${ConfigurationApp.appWindowId} .display-options .tokens .collapse-data`);
+        if(collapseArea){
+            (<HTMLElement>collapseArea).style.display = this.dateFormatTableExpanded? 'block' : 'none';
+        }
+        const a = document.querySelector(`#${ConfigurationApp.appWindowId} .display-options .tokens .date-format-token-show .fa`);
+        if(a){
+            (<HTMLElement>a).className = `fa ${this.dateFormatTableExpanded? 'fa-chevron-up' : 'fa-chevron-down'}`
+        }
     }
 
     /**
@@ -811,181 +835,181 @@ export default class ConfigurationApp extends FormApplication {
 
     /**
      * Adds to the specified table.
-     * @param {string} setting The settings table we are adding to. only accepts month, weekday, season, moon, moon-phase
      * @param {Event} e The click event
      */
-    public addToTable(setting: string, e: Event){
+    public addToTable(e: Event){
         e.preventDefault();
-        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name' | 'note-category';
-        switch (filteredSetting){
-            case "month":
-                const newMonthNumber = (<Calendar>this.object).year.months.length + 1;
-                (<Calendar>this.object).year.months.push(new Month('New Month', newMonthNumber, 0, 30));
-                this.rebaseMonthNumbers();
-                break;
-            case "weekday":
-                const newWeekdayNumber = (<Calendar>this.object).year.weekdays.length + 1;
-                (<Calendar>this.object).year.weekdays.push(new Weekday(newWeekdayNumber, 'New Weekday'));
-                break;
-            case "season":
-                (<Calendar>this.object).year.seasons.push(new Season('New Season', 1, 1));
-                break;
-            case "moon":
-                const newMoon = new Moon('Moon', 29.53059);
-                newMoon.firstNewMoon = {
-                    yearReset: MoonYearResetOptions.None,
-                    yearX: 0,
-                    year: 0,
-                    month: 1,
-                    day: 1
-                };
-                const phaseLength = Number(((newMoon.cycleLength - 4) / 4).toPrecision(5));
-                newMoon.phases = [
-                    {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: Icons.NewMoon, singleDay: true},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: Icons.FirstQuarter, singleDay: true},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: Icons.WaxingGibbous, singleDay: false},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: Icons.Full, singleDay: true},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: Icons.WaningGibbous, singleDay: false},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: Icons.LastQuarter, singleDay: true},
-                    {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
-                ];
-                (<Calendar>this.object).year.moons.push(newMoon);
-                break;
-            case "moon-phase":
-                const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
-                if(dataMoonIndex){
-                    const moonIndex = parseInt(dataMoonIndex);
-                    if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length){
-                        (<Calendar>this.object).year.moons[moonIndex].phases.push({
-                            name: "Phase",
-                            length: 1,
-                            icon: Icons.NewMoon,
-                            singleDay: false
-                        });
-                        (<Calendar>this.object).year.moons[moonIndex].updatePhaseLength();
-                    }
-                }
-                break;
-            case "year-name":
-                (<Calendar>this.object).year.yearNames.push('New Named Year');
-                break;
-            case 'note-category':
-                (<Calendar>this.object).noteCategories.push({name: "New Category", color:"#b13737 ", textColor:"#ffffff"});
-                break;
-        }
-        this.updateApp();
-    }
-
-    /**
-     * Removes one or more row from the specified table.
-     * @param {string} setting The settings table we are removing from. only accepts month, weekday, season, moon, moon-phase
-     * @param {Event} e The click event
-     */
-    public removeFromTable(setting: string, e: Event){
-        e.preventDefault();
-        const filteredSetting = setting.toLowerCase() as 'month' | 'weekday' | 'season' | 'moon' | 'moon-phase' | 'year-name' | 'note-category';
-        const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
-        if(dataIndex && dataIndex !== 'all'){
-            const index = parseInt(dataIndex);
-            if(!isNaN(index)){
-                switch (filteredSetting){
-                    case "month":
-                        if(index < (<Calendar>this.object).year.months.length){
-                            (<Calendar>this.object).year.months.splice(index, 1);
-                            //Reindex the remaining months
-                            for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
-                                (<Calendar>this.object).year.months[i].numericRepresentation = i + 1;
-                            }
-                            this.rebaseMonthNumbers();
-                        }
-                        break;
-                    case "weekday":
-                        if(index < (<Calendar>this.object).year.weekdays.length){
-                            (<Calendar>this.object).year.weekdays.splice(index, 1);
-                            //Reindex the remaining months
-                            for(let i = 0; i < (<Calendar>this.object).year.weekdays.length; i++){
-                                (<Calendar>this.object).year.weekdays[i].numericRepresentation = i + 1;
-                            }
-                        }
-                        break;
-                    case "season":
-                        if(index < (<Calendar>this.object).year.seasons.length){
-                            (<Calendar>this.object).year.seasons.splice(index, 1);
-                        }
-                        break;
-                    case "moon":
-                        if(index < (<Calendar>this.object).year.moons.length){
-                            (<Calendar>this.object).year.moons.splice(index, 1);
-                        }
-                        break;
-                    case "moon-phase":
-                        const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
-                        if(dataMoonIndex){
-                            const moonIndex = parseInt(dataMoonIndex);
-                            if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length && index < (<Calendar>this.object).year.moons[moonIndex].phases.length){
-                                (<Calendar>this.object).year.moons[moonIndex].phases.splice(index, 1);
-                                (<Calendar>this.object).year.moons[moonIndex].updatePhaseLength();
-                            }
-                        }
-                        break;
-                    case "year-name":
-                        if(index < (<Calendar>this.object).year.yearNames.length){
-                            (<Calendar>this.object).year.yearNames.splice(index, 1);
-                        }
-                        break;
-                    case 'note-category':
-                        if(index < (<Calendar>this.object).noteCategories.length){{
-                            (<Calendar>this.object).noteCategories.splice(index, 1);
-                        }}
-                        break;
-                }
-                this.updateApp();
-            }
-        } else if(dataIndex && dataIndex === 'all'){
+        const target = <HTMLElement>e.currentTarget;
+        if(target){
+            const filteredSetting = target.getAttribute('data-type');
             switch (filteredSetting){
                 case "month":
-                    (<Calendar>this.object).year.months = [];
+                    const newMonthNumber = (<Calendar>this.object).year.months.length + 1;
+                    (<Calendar>this.object).year.months.push(new Month('New Month', newMonthNumber, 0, 30));
+                    this.rebaseMonthNumbers();
                     break;
                 case "weekday":
-                    (<Calendar>this.object).year.weekdays = [];
+                    const newWeekdayNumber = (<Calendar>this.object).year.weekdays.length + 1;
+                    (<Calendar>this.object).year.weekdays.push(new Weekday(newWeekdayNumber, 'New Weekday'));
                     break;
                 case "season":
-                    (<Calendar>this.object).year.seasons = [];
+                    (<Calendar>this.object).year.seasons.push(new Season('New Season', 1, 1));
                     break;
                 case "moon":
-                    (<Calendar>this.object).year.moons = [];
+                    const newMoon = new Moon('Moon', 29.53059);
+                    newMoon.firstNewMoon = {
+                        yearReset: MoonYearResetOptions.None,
+                        yearX: 0,
+                        year: 0,
+                        month: 1,
+                        day: 1
+                    };
+                    const phaseLength = Number(((newMoon.cycleLength - 4) / 4).toPrecision(5));
+                    newMoon.phases = [
+                        {name: GameSettings.Localize('FSC.Moon.Phase.New'), length: 1, icon: Icons.NewMoon, singleDay: true},
+                        {name: GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent'), length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
+                        {name: GameSettings.Localize('FSC.Moon.Phase.FirstQuarter'), length: 1, icon: Icons.FirstQuarter, singleDay: true},
+                        {name: GameSettings.Localize('FSC.Moon.Phase.WaxingGibbous'), length: phaseLength, icon: Icons.WaxingGibbous, singleDay: false},
+                        {name: GameSettings.Localize('FSC.Moon.Phase.Full'), length: 1, icon: Icons.Full, singleDay: true},
+                        {name: GameSettings.Localize('FSC.Moon.Phase.WaningGibbous'), length: phaseLength, icon: Icons.WaningGibbous, singleDay: false},
+                        {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: Icons.LastQuarter, singleDay: true},
+                        {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
+                    ];
+                    (<Calendar>this.object).year.moons.push(newMoon);
                     break;
                 case "moon-phase":
                     const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
                     if(dataMoonIndex){
                         const moonIndex = parseInt(dataMoonIndex);
                         if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length){
-                            (<Calendar>this.object).year.moons[moonIndex].phases = [];
+                            (<Calendar>this.object).year.moons[moonIndex].phases.push({
+                                name: "Phase",
+                                length: 1,
+                                icon: Icons.NewMoon,
+                                singleDay: false
+                            });
+                            (<Calendar>this.object).year.moons[moonIndex].updatePhaseLength();
                         }
                     }
                     break;
                 case "year-name":
-                    (<Calendar>this.object).year.yearNames = [];
+                    (<Calendar>this.object).year.yearNames.push('New Named Year');
                     break;
                 case 'note-category':
-                    (<Calendar>this.object).noteCategories = [];
+                    (<Calendar>this.object).noteCategories.push({name: "New Category", color:"#b13737 ", textColor:"#ffffff"});
                     break;
             }
             this.updateApp();
         }
-
     }
 
     /**
-     * When the GM confirms using a predefined calendar
+     * Removes one or more row from the specified table.
+     * @param {Event} e The click event
      */
-    public predefinedApplyConfirm() {
-        const selectedPredefined = <PredefinedCalendars>(<HTMLInputElement>document.getElementById("scPreDefined")).value;
-        Logger.debug(`Overwriting the existing calendar configuration with the "${selectedPredefined}" configuration`);
-        PredefinedCalendar.setToPredefined((<Calendar>this.object).year, selectedPredefined);
-        this.yearChanged = true;
-        this.updateApp();
+    public removeFromTable(e: Event){
+        e.preventDefault();
+        const target = <HTMLElement>e.currentTarget;
+        if(target){
+            const filteredSetting = target.getAttribute('data-type');
+            const row = target.closest('.row');
+            const dataIndex = target.getAttribute('data-index');
+            if(row && !dataIndex){
+                const rowDataIndex = (<HTMLElement>row).getAttribute('data-index');
+                if(rowDataIndex){
+                    const index = parseInt(rowDataIndex);
+                    if(!isNaN(index)){
+                        switch (filteredSetting){
+                            case "month":
+                                if(index < (<Calendar>this.object).year.months.length){
+                                    (<Calendar>this.object).year.months.splice(index, 1);
+                                    if((<Calendar>this.object).year.months.length === 0){
+                                        (<Calendar>this.object).year.months.push(new Month('New Month', 1, 0, 30));
+                                    }
+                                    //Reindex the remaining months
+                                    for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
+                                        (<Calendar>this.object).year.months[i].numericRepresentation = i + 1;
+                                    }
+                                    this.rebaseMonthNumbers();
+                                }
+                                break;
+                            case "weekday":
+                                if(index < (<Calendar>this.object).year.weekdays.length){
+                                    (<Calendar>this.object).year.weekdays.splice(index, 1);
+                                    //Reindex the remaining months
+                                    for(let i = 0; i < (<Calendar>this.object).year.weekdays.length; i++){
+                                        (<Calendar>this.object).year.weekdays[i].numericRepresentation = i + 1;
+                                    }
+                                }
+                                break;
+                            case "season":
+                                if(index < (<Calendar>this.object).year.seasons.length){
+                                    (<Calendar>this.object).year.seasons.splice(index, 1);
+                                }
+                                break;
+                            case "moon":
+                                if(index < (<Calendar>this.object).year.moons.length){
+                                    (<Calendar>this.object).year.moons.splice(index, 1);
+                                }
+                                break;
+                            case "moon-phase":
+                                const dataMoonIndex = target.getAttribute('data-moon-index');
+                                if(dataMoonIndex){
+                                    const moonIndex = parseInt(dataMoonIndex);
+                                    if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length && index < (<Calendar>this.object).year.moons[moonIndex].phases.length){
+                                        (<Calendar>this.object).year.moons[moonIndex].phases.splice(index, 1);
+                                        (<Calendar>this.object).year.moons[moonIndex].updatePhaseLength();
+                                    }
+                                }
+                                break;
+                            case "year-name":
+                                if(index < (<Calendar>this.object).year.yearNames.length){
+                                    (<Calendar>this.object).year.yearNames.splice(index, 1);
+                                }
+                                break;
+                            case 'note-category':
+                                if(index < (<Calendar>this.object).noteCategories.length){{
+                                    (<Calendar>this.object).noteCategories.splice(index, 1);
+                                }}
+                                break;
+                        }
+                        this.updateApp();
+                    }
+                }
+            }
+            else if(dataIndex && dataIndex === 'all'){
+                switch (filteredSetting){
+                    case "month":
+                        (<Calendar>this.object).year.months = [new Month('New Month', 1, 0, 30)];
+                        break;
+                    case "weekday":
+                        (<Calendar>this.object).year.weekdays = [];
+                        break;
+                    case "season":
+                        (<Calendar>this.object).year.seasons = [];
+                        break;
+                    case "moon":
+                        (<Calendar>this.object).year.moons = [];
+                        break;
+                    case "moon-phase":
+                        const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
+                        if(dataMoonIndex){
+                            const moonIndex = parseInt(dataMoonIndex);
+                            if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length){
+                                (<Calendar>this.object).year.moons[moonIndex].phases = [];
+                            }
+                        }
+                        break;
+                    case "year-name":
+                        (<Calendar>this.object).year.yearNames = [];
+                        break;
+                    case 'note-category':
+                        (<Calendar>this.object).noteCategories = [];
+                        break;
+                }
+                this.updateApp();
+            }
+        }
     }
 
     /**

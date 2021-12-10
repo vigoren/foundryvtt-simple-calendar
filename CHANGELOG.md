@@ -29,6 +29,10 @@ This section of the module has been 100% redesigned so that the full version is 
 - The notes list will now slide out to the right of the window when the notes button is clicked. This makes viewing notes easier and less intrusive to the calendar view.
 - Search has been changed so that it also slides out to the right of the window (rather than its own window) where a search can be preformed.
 
+#### Compact View
+
+The compact view has also been completely redesigned to be more compact while still showing the same amount of information and functionality as before. It is now just slightly larger than the old calendar/weather widget.
+
 #### Configuration Dialog
 
 The configuration dialog has also been completely redesigned to support multiple calendars and hopefully reduce some confusion around configuring a calendar. It features:
@@ -40,16 +44,43 @@ The configuration dialog has also been completely redesigned to support multiple
 
 #### Notes Dialog
 
-### Client Settings
+### Multiple Calendar Support
 
-Three new settings have been added to the Module Settings dialog of Foundry. These settings are [client settings](https://foundryvtt.com/article/settings/), which are saved in the browser and are applied on a per-browser basis. So everyone can customize these to their liking!
+Simple Calendar now support having multiple calendars within the module!
 
+In the configuration GMs can now add new and remove existing calendars, switch between calendars and customize each calendar individually. Each calendar can also be given a name to help distinguish it from the other calendars.
+
+The main Calendar interface also has a new button (that shows when more than 1 calendar has been added) that allows you to switch between which calendar you are currently viewing as well as which calendar is currently active. The listing of calendars will also show you the current date and time for each calendar.
+
+### Configuration Changes
+
+The configuration dialog can now be opened by GMs and players. GM only options are hidden for players, but any player specific options will be shown to the players.
+
+The configuration dialog should be a little easier to understand and hopefully more intuitive to use.
+
+#### Client Settings
+
+Four new settings have been added to the Module Settings dialog of Foundry. These settings are [client settings](https://foundryvtt.com/article/settings/), which are saved in the browser and are applied on a per-browser basis. So everyone can customize these to their liking!
+
+- **Theme**: Each player can choose what visual theme to use for Simple Calendar!
 - **Open On Load**: This setting will open Simple Calendar's main interface when loading foundry. If the GM has disabled viewing the calendar for players, Simple Calendar will not show regardless of this setting. By default, this is set to true.
 - **Open In Compact View**: If checked anytime Simple Calendar is opened (On Load, Clicking the button or through a macro) it will be opened in the compact view. By default, this is set to false.
 - **Remember Position**: If checked Simple Calendar will remember where it was placed on the screen and position itself there everytime it is opened. By default, this is set to true.
 
+#### Quick Setup
 
-### Multiple Calendar Support
+For new and existing calendars a GM can run through the Quick Setup tab to configure a calendar in 5 easy clicks. This tab will prompt you to:
+
+- Choose a starting predefined calendar to base your calendar on.
+- Choose the current date for your calendar.
+- Choose if to show the clock for your calendar or not.
+
+Then save to apply your changes!
+
+#### Display Options
+
+A display options tab has been added where the options for specifying your date and time formats live. The inputs for these formats have been improved for an easier time creating the formats as well as a real time preview of how it will look for the selected calendar.
+
 
 ### Note Improvements
 
@@ -564,11 +595,11 @@ Check out the new [API documentation](./docs/API.md) for all the additions and c
 
 You can now have named years in Simple Calendar! This update adds several options for adding and configuring how named years work.
 
-Setting|Description
--------|-----------
-Year Names | This is a list of different names that can be used for the years.
-Year Name Behaviour|This drop down is used to determine how the year names are applied to years. The options are:<br/><strong>Default:</strong> The year list starts at the specified starting year and goes down the list for each subsequent year. If the year is past the number of names in the list it will continue to use the last name from the list.<br/><br/><strong>Repeat</strong>: The year list starts at the specified starting year and goes down the list for each subsequent year. When the current year is past the name list length it will start again at the top of the list and repeat it forever.<br/><br/><strong>Random</strong>: For every year a random name from the list will be chosen. The calendar will do its best to keep the same name for a year.
-Starting Year For Names | This is the year that the first name in the list of Year Names is associated with.<br/>This option only appears if the Year Name Behaviour setting is set to None or Repeat.
+| Setting                 | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Year Names              | This is a list of different names that can be used for the years.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Year Name Behaviour     | This drop down is used to determine how the year names are applied to years. The options are:<br/><strong>Default:</strong> The year list starts at the specified starting year and goes down the list for each subsequent year. If the year is past the number of names in the list it will continue to use the last name from the list.<br/><br/><strong>Repeat</strong>: The year list starts at the specified starting year and goes down the list for each subsequent year. When the current year is past the name list length it will start again at the top of the list and repeat it forever.<br/><br/><strong>Random</strong>: For every year a random name from the list will be chosen. The calendar will do its best to keep the same name for a year. |
+| Starting Year For Names | This is the year that the first name in the list of Year Names is associated with.<br/>This option only appears if the Year Name Behaviour setting is set to None or Repeat.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 The Dark Sun predefined calendar has been updated to include named years that match the Merchant Calendar for that game system.
 
@@ -604,11 +635,11 @@ This update changes how permissions work within Simple Calendar. There is now a 
 
 These are the current available permissions:
 
-Permission|Description
-----------|------------
-View Calendar | If users in this role can view the calendar interface or not.
-Add Notes | If users in these roles are able to add notes to the calendar.
-Change Date and Time| If users in these roles are able to change the calendars date and time.
+| Permission           | Description                                                             |
+|----------------------|-------------------------------------------------------------------------|
+| View Calendar        | If users in this role can view the calendar interface or not.           |
+| Add Notes            | If users in these roles are able to add notes to the calendar.          |
+| Change Date and Time | If users in these roles are able to change the calendars date and time. |
 
 ### Quality of Life Improvements
 
@@ -757,12 +788,12 @@ Simple Calendar now supports time of day! What this means is that Simple Calenda
 
 There are 4 different options on how to tie into the game world time to achieve the exact level of interaction you want for your world. They are:
 
-Option|Description|Update Game World Time|When Game World Time is Updated
---------|--------------------|-------------------------------------------------|----------------------------------------------------------
-None (default)|Simple Calendar does not interact with the game world time at all. This setting is ideal if you want to keep Simple Calendar isolated from other modules.|Does not update the game world time|Simple Calendar is not updated when the game world time is updated by something else.
-Self|Treats Simple Calendar as the authority source for the game world time. This setting is ideal when you want Simple Calendar to be in control of the games time and don't want other modules updating Simple Calendar|Updates the game world time to match what is in Simple Calendar.|Combat round changes will update Simple Calendars time. Simple Calendar will ignore updates from all others modules.
-Third Party Module|This will instruct Simple Calendar to just display the Time in the game world time. All date changing controls are disabled and the changing of time relies 100% on another module. This setting is ideal if you are just want to use Simple Calenar to display the date in calendar form and/or take advantage of the notes.|Does not update the game world time.|Updates it's display everytime the game world time is changed, following what the other modules say the time is.
-Mixed|This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.|Will update the game world time|Will update it's own time based on changes to the game world time, following what other modules say the time is.
+| Option             | Description                                                                                                                                                                                                                                                                                                                   | Update Game World Time                                           | When Game World Time is Updated                                                                                      |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| None (default)     | Simple Calendar does not interact with the game world time at all. This setting is ideal if you want to keep Simple Calendar isolated from other modules.                                                                                                                                                                     | Does not update the game world time                              | Simple Calendar is not updated when the game world time is updated by something else.                                |
+| Self               | Treats Simple Calendar as the authority source for the game world time. This setting is ideal when you want Simple Calendar to be in control of the games time and don't want other modules updating Simple Calendar                                                                                                          | Updates the game world time to match what is in Simple Calendar. | Combat round changes will update Simple Calendars time. Simple Calendar will ignore updates from all others modules. |
+| Third Party Module | This will instruct Simple Calendar to just display the Time in the game world time. All date changing controls are disabled and the changing of time relies 100% on another module. This setting is ideal if you are just want to use Simple Calenar to display the date in calendar form and/or take advantage of the notes. | Does not update the game world time.                             | Updates it's display everytime the game world time is changed, following what the other modules say the time is.     |
+| Mixed              | This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.                                       | Will update the game world time                                  | Will update it's own time based on changes to the game world time, following what other modules say the time is.     |
 
 You can check out the [configuration](./docs/Configuration.md#game-world-time-integration) section for more details.
 
@@ -790,13 +821,13 @@ For two of the more common modules Simple Calendar can also import their setting
 
 Simple Calendar now supports seasons. Any number of seasons can be added to a calendar, and you are able to specify the following options for each season:
 
-Setting | Description
---------|------------
-Season Name | Specify a custom name of the season.
-Starting Month | From a drop down choose which month this season starts in. This drop down is populated based on the custom months that have been set up.
-Starting Day | From a drop down choose which day of the the starting month this season begins on. This drop down is populated with a list of days based on the staring month selected.
-Color | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color.
-Custom Color | If the color option is set to Custom Color an option will appear where you can enter a custom Hex representation of a color to use for the seasons color.
+| Setting        | Description                                                                                                                                                                                                                                         |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Season Name    | Specify a custom name of the season.                                                                                                                                                                                                                |
+| Starting Month | From a drop down choose which month this season starts in. This drop down is populated based on the custom months that have been set up.                                                                                                            |
+| Starting Day   | From a drop down choose which day of the the starting month this season begins on. This drop down is populated with a list of days based on the staring month selected.                                                                             |
+| Color          | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color. |
+| Custom Color   | If the color option is set to Custom Color an option will appear where you can enter a custom Hex representation of a color to use for the seasons color.                                                                                           |
 
 The calendar display has also been updated so that right below the month and year the name of the current season will be displayed.
 
@@ -854,11 +885,11 @@ MainApp.show();
 
 The show function can take 3 parameters to set the year, month and day that the calendar opens up to.
 
-Parameter|Type|Default|Details
----------|----|-------|-------
-Year | number or null | null | The year to open the calendar too. If null is passed in it will open the calendar to the year the user last viewed
-Month | number or null | null | The month to open the calendar too.<br/>This month is expected to start at 0, or be the index of the month to show. This way intercalary months can be easily chosen by using their index as they don't have a month number.<br/>-1 can be passed in to view the last month of the year.<br/>If null is passed in the calendar will open to the month the user last viewed.
-Day | number or null | null | The day of the month to select.<br/>The day is expected to start at 1.<br/>-1 can be passed in to select the last day of the month.<br/>If null is passed in the selected day will be the last day the user selected, if any.
+| Parameter | Type           | Default | Details                                                                                                                                                                                                                                                                                                                                                                     |
+|-----------|----------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Year      | number or null | null    | The year to open the calendar too. If null is passed in it will open the calendar to the year the user last viewed                                                                                                                                                                                                                                                          |
+| Month     | number or null | null    | The month to open the calendar too.<br/>This month is expected to start at 0, or be the index of the month to show. This way intercalary months can be easily chosen by using their index as they don't have a month number.<br/>-1 can be passed in to view the last month of the year.<br/>If null is passed in the calendar will open to the month the user last viewed. |
+| Day       | number or null | null    | The day of the month to select.<br/>The day is expected to start at 1.<br/>-1 can be passed in to select the last day of the month.<br/>If null is passed in the selected day will be the last day the user selected, if any.                                                                                                                                               |
 
 ##### Examples
 All these examples assume we are using a standard Gregorian calendar.

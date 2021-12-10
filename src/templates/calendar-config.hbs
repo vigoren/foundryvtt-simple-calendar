@@ -210,6 +210,7 @@
 
         <div class="tab general-settings" data-tab="generalSettings">
             <h2>{{localize 'FSC.Configuration.General.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#general-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+            <p>{{localize 'FSC.Configuration.General.Description'}}</p>
             <div class="settings-group open">
                 <div class="form-group open">
                     <label for="scCalendarName">{{localize 'FSC.Configuration.AddCalendar.CalendarName'}}</label>
@@ -240,13 +241,16 @@
         </div>
         <div class="tab display-options" data-tab="displayOptions">
             <h2>{{localize 'FSC.Configuration.General.DisplayOptions'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#display-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
-            <div class="f-table" style="border-top: 1px solid #7a7971;">
-                <div class="row head date-format-token-show">
-                    <div class="col">{{localize 'FSC.DateFormat.Title'}}</div>
-                    <div class="col">{{localize 'FSC.DateFormat.Description'}}</div>
-                    <div class="col fa {{#if showDateFormatTokens}}fa-chevron-up{{else}}fa-chevron-down{{/if}}"></div>
+            <p>{{{localize 'FSC.Configuration.Display.Description'}}}</p>
+            <div class="f-table tokens" style="border-top: 1px solid #7a7971;">
+                <div class="row head date-format-token-show" style="cursor: pointer;">
+                    <div class="col">
+                        <div>{{localize 'FSC.DateFormat.Title'}}</div>
+                        <div style="flex: 1 1 100%;font-weight: normal;font-size: 0.75rem; margin-top: 0.5rem;">{{localize 'FSC.DateFormat.Description'}}</div>
+                    </div>
+                    <div class="fa {{#if showDateFormatTokens}}fa-chevron-up{{else}}fa-chevron-down{{/if}}" style="flex: 0 1 50px;"></div>
                 </div>
-                <div style="{{#unless showDateFormatTokens}}display: none;{{/unless}}">
+                <div class="collapse-data" style="{{#unless showDateFormatTokens}}display: none;{{/unless}}">
                     <div class="row">
                         <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.YearOptions'}}</strong></div>
                         <div style="flex: 1 1 75%;">
@@ -481,7 +485,6 @@
                     </div>
                 </div>
             </div>
-            <p>{{{localize 'FSC.DateFormat.Documentation'}}}</p>
 
             <div class="form-group open">
                 <label for="scDateFormatsDate">{{localize 'FSC.Configuration.General.Display.DateFormat.Date'}}</label>
@@ -489,6 +492,7 @@
                     <input value="{{generalSettings.dateFormat.date}}" id="scDateFormatsDate" type="text" />
                 </div>
                 <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.DateHelp'}}</p>
+                <div class="example">{{uiElementStates.dateFormatExample}}</div>
             </div>
             <div class="form-group open">
                 <label for="scDateFormatsTime">{{localize 'FSC.Configuration.General.Display.DateFormat.Time'}}</label>
@@ -496,6 +500,7 @@
                     <input value="{{generalSettings.dateFormat.time}}" id="scDateFormatsTime" type="text" />
                 </div>
                 <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.TimeHelp'}}</p>
+                <div class="example">{{uiElementStates.timeFormatExample}}</div>
             </div>
             <div class="form-group open">
                 <label for="scDateFormatsMonthYear">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYear'}}</label>
@@ -503,11 +508,13 @@
                     <input value="{{generalSettings.dateFormat.monthYear}}" id="scDateFormatsMonthYear" type="text" />
                 </div>
                 <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYearHelp'}}</p>
+                <div class="example">{{uiElementStates.monthYearFormatExample}}</div>
             </div>
         </div>
         <div class="tab year-settings" data-tab="yearSettings">
             <div class="settings-group open">
                 <h2>{{localize 'FSC.Configuration.Year.Current'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <p></p>
                 <div class="form-group open">
                     <label for="scCurrentYear">{{localize 'FSC.Configuration.Year.Current'}}</label>
                     <div class="form-fields">
@@ -566,21 +573,22 @@
                             <input class="year-name" value="{{this}}" type="text" title="{{localize 'FSC.Configuration.Year.YearNameHelp'}}" />
                         </div>
                         <div class="col">
-                            <button class="remove-year-name control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                            <button class="control delete" data-type="year-name"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                         </div>
                     </div>
                     {{/each}}
                 </div>
                 <div class="table-actions">
-                    <button class="year-name-add control save"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Year.YearNameAdd'}}</button>
+                    <button class="control save" data-type="year-name"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Year.YearNameAdd'}}</button>
                     <span class="spacer"></span>
-                    <button class="remove-year-name control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Year.YearNameRemove'}}</button>
+                    <button class="control delete" data-type="year-name" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Year.YearNameRemove'}}</button>
                 </div>
             </div>
         </div>
         <div class="tab month-settings" data-tab="monthSettings"  >
             <div class="settings-group open">
                 <h2>{{localize 'FSC.Configuration.Months'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#month-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <p>{{localize 'FSC.Configuration.Month.Description'}}</p>
                 <div class="f-table months">
                     <div class="row head">
                         <div class="col" title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</div>
@@ -610,7 +618,7 @@
                             {{/if}}
                         </div>
                         <div class="col">
-                            <button class="remove-month control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                            <button class="control delete" data-type="month"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                         </div>
                         <div class="options {{#unless showAdvanced }}closed{{/unless}}">
                             <div class="form-group open">
@@ -648,9 +656,9 @@
                     {{/each}}
                 </div>
                 <div class="table-actions">
-                    <button class="month-add control save"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Month.Add'}}</button>
+                    <button class="control save" data-type="month"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Month.Add'}}</button>
                     <span class="spacer"></span>
-                    <button class="remove-month control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.RemoveAll'}}</button>
+                    <button class="control delete" data-type="month" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.RemoveAll'}}</button>
                 </div>
             </div>
         </div>
@@ -693,15 +701,15 @@
                             <input class="weekday-abbreviation" value="{{abbreviation}}" type="text" title="{{localize 'FSC.Configuration.Weekday.AbbreviationHelp'}}" />
                         </div>
                         <div class="col">
-                            <button class="remove-weekday control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                            <button class="control delete" data-type="weekday"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                         </div>
                     </div>
                     {{/each}}
                 </div>
                 <div class="table-actions">
-                    <button class="weekday-add control save"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Weekday.Add'}}</button>
+                    <button class="control save" data-type="weekday"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Weekday.Add'}}</button>
                     <span class="spacer"></span>
-                    <button class="remove-weekday control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Weekday.RemoveAll'}}</button>
+                    <button class="control delete" data-type="weekday" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Weekday.RemoveAll'}}</button>
                 </div>
             </div>
         </div>
@@ -776,15 +784,15 @@
                                 <input type="color" value="{{color}}" class="season-color" title="{{localize 'FSC.Configuration.Season.Color'}}" list="scSeasonColors" />
                             </div>
                             <div class="col">
-                                <button class="remove-season control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                                <button class="control delete" data-type="season"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                             </div>
                         </div>
                     {{/each}}
                 </div>
                 <div class="table-actions">
-                    <button class="season-add control save"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Season.Add'}}</button>
+                    <button class="control save" data-type="season"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Season.Add'}}</button>
                     <span class="spacer"></span>
-                    <button class="remove-season control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Season.RemoveAll'}}</button>
+                    <button class="control delete" data-type="season" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Season.RemoveAll'}}</button>
                 </div>
             </div>
         </div>
@@ -814,7 +822,7 @@
                             <input class="moon-color" value="{{color}}" type="color" title="{{localize 'FSC.Configuration.Moon.ColorHelp'}}" />
                         </div>
                         <div class="col">
-                            <button class="remove-moon control delete"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                            <button class="control delete" data-type="moon"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                         </div>
                         <div class="options open">
                             <h3>{{localize 'FSC.Configuration.Moon.FirstNewMoon'}}</h3>
@@ -875,36 +883,36 @@
                                 {{#each phases}}
                                 <div class="row" data-index="{{@index}}">
                                     <div class="col">
-                                        <input class="moon-phase-name" value="{{name}}" type="text" data-moon-index="{{@../index}}" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.PhaseNameHelp'}}" />
+                                        <input class="moon-phase-name" value="{{name}}" type="text" data-moon-index="{{@../index}}" title="{{localize 'FSC.Configuration.Moon.PhaseNameHelp'}}" />
                                     </div>
                                     <div class="col moon-phase-length">{{length}} {{localize 'FSC.Days'}}</div>
                                     <div class="col">
-                                        <input class="moon-phase-single-day" value="{{singleDay}}" type="checkbox" data-moon-index="{{@../index}}" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.PhaseSingleDayHelp'}}" {{checked singleDay}} />
+                                        <input class="moon-phase-single-day" value="{{singleDay}}" type="checkbox" data-moon-index="{{@../index}}" title="{{localize 'FSC.Configuration.Moon.PhaseSingleDayHelp'}}" {{checked singleDay}} />
                                     </div>
                                     <div class="col">
-                                        <select class="moon-phase-icon" data-moon-index="{{@../index}}" data-index="{{@index}}" title="{{localize 'FSC.Configuration.Moon.PhaseIcon'}}">
+                                        <select class="moon-phase-icon" data-moon-index="{{@../index}}" title="{{localize 'FSC.Configuration.Moon.PhaseIcon'}}">
                                             {{selectOptions ../../moonIcons selected=icon localize=true}}
                                         </select>
                                     </div>
                                     <div class="col">
-                                        <button class="remove-moon-phase control delete" data-moon-index="{{@../index}}" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                                        <button class="control delete" data-type="moon-phase" data-moon-index="{{@../index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                                     </div>
                                 </div>
                                 {{/each}}
                             </div>
                             <div class="table-actions">
-                                <button class="moon-phase-add control save" data-moon-index="{{@index}}"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Moon.PhaseAdd'}}</button>
+                                <button class="control save" data-type="moon-phase" data-moon-index="{{@index}}"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Moon.PhaseAdd'}}</button>
                                 <span class="spacer"></span>
-                                <button class="remove-moon-phase control delete" data-moon-index="{{@index}}" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Moon.PhaseRemoveAll'}}</button>
+                                <button class="control delete" data-type="moon-phase" data-moon-index="{{@index}}" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Moon.PhaseRemoveAll'}}</button>
                             </div>
                         </div>
                     </div>
                     {{/each}}
                 </div>
                 <div class="table-actions">
-                    <button class="moon-add control save"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Moon.Add'}}</button>
+                    <button class="control save" data-type="moon"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.Moon.Add'}}</button>
                     <span class="spacer"></span>
-                    <button class="remove-moon control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Moon.RemoveAll'}}</button>
+                    <button class="control delete" data-type="moon" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Moon.RemoveAll'}}</button>
                 </div>
             </div>
         </div>
@@ -1000,20 +1008,95 @@
                                 <input type="color" value="{{color}}" class="note-category-color" title="{{localize 'FSC.Configuration.NoteCategories.Color'}}" />
                             </div>
                             <div class="col">
-                                <button class="remove-note-category control delete" data-index="{{@index}}"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                                <button class="control delete" data-type="note-category"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                             </div>
                         </div>
                     {{/each}}
                 </div>
                 <div class="table-actions">
-                    <button class="note-category-add control save"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.NoteCategories.Add'}}</button>
+                    <button class="control save" data-type="note-category"><span class="fa fa-plus"></span> {{localize 'FSC.Configuration.NoteCategories.Add'}}</button>
                     <span class="spacer"></span>
-                    <button class="remove-note-category control delete" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.NoteCategories.RemoveAll'}}</button>
+                    <button class="control delete" data-type="note-category" data-index="all"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.NoteCategories.RemoveAll'}}</button>
                 </div>
             </div>
         </div>
         {{/if}}
-        <div class="tab about" data-tab="about"></div>
+        <div class="tab about" data-tab="about">
+            <div class="logo">
+                {{sc-icon name='logo'}}
+            </div>
+            <h1>{{localize 'FSC.Title'}}</h1>
+            <p>This module allows you to create a completely customizable calendar that ties in with the Game Masters world exactly how they want it to. Notes and events can be added to the calendar to help keep track of what and when things are happening in your world.</p>
+            <div class="row">
+                <div class="authors">
+                    <h2>Author</h2>
+                    <p>Simple Calendar is a hobby project built and maintained by Dean Vigoren (Vigorator) and released for everyone to use and enjoy!</p>
+                </div>
+                <div class="translations">
+                    <h2>Translations</h2>
+                    <p>Simple Calendar is available in languages other than English thanks to these wonderful individuals:</p>
+                    <table>
+                        <tr>
+                            <th>Language</th>
+                            <th>Translator(s)</th>
+                        </tr>
+                        <tr>
+                            <td>Czech (cs)</td>
+                            <td>
+                                <a href="https://github.com/robertjunek" target="_blank">robertjunek</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>French (fr)</td>
+                            <td>
+                                <a href="https://github.com/JDR-Ninja" target="_blank">JDR Ninja</a><br/>
+                                <a href="https://github.com/TheBird956" target="_blank">TheBird956</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>German (de)</td>
+                            <td>
+                                <a href="https://github.com/MasterZelgadis" target="_blank">MasterZelgadis</a><br/>
+                                <a href="https://github.com/BlueSkyBlackBird" target="_blank">BlueSkyBlackBird</a><br/>
+                                <a href="https://github.com/Fallayn" target="_blank">Fallayn</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Italian (it)</td>
+                            <td>
+                                <a href="https://github.com/Haloghen" target="_blank">Haloghen</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Korean (ko)</td>
+                            <td>
+                                <a href="https://github.com/drdwing" target="_blank">drdwing</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Portuguese Brasil (pt-BR)</td>
+                            <td>
+                                <a href="https://github.com/castanhocorreia" target="_blank">castanhocorreia</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Spanish (es)</td>
+                            <td>
+                                <a href="https://github.com/areymoreno" target="_blank">areymoreno</a><br/>
+                                <a href="https://github.com/lozalojo" target="_blank">lozalojo</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Traditional Chinese (zh)</td>
+                            <td>
+                                <a href="https://github.com/benwater12" target="_blank">benwater12</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
     </div>
     <div class="config-save">
         <button class="control save" id="scSave" type="button" title="{{localize 'FSC.Configuration.Save'}}">
