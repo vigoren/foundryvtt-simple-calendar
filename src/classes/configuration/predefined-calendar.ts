@@ -56,10 +56,10 @@ export default class PredefinedCalendar{
                 year.leapYearRule.customMod = 0;
                 year.months[currentDate.getMonth()].current = true;
                 year.months[currentDate.getMonth()].days[currentDate.getDate()-1].current = true;
-                year.seasons[0].color = "#fffce8";
-                year.seasons[1].color = "#f3fff3";
-                year.seasons[2].color = "#fff7f2";
-                year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].color = "#E0C40B";
+                year.seasons[1].color = "#46B946";
+                year.seasons[2].color = "#FF8E47";
+                year.seasons[3].color = "#479DFF";
                 year.seasons[0].sunriseTime = 21600;
                 year.seasons[1].sunriseTime = 21600;
                 year.seasons[2].sunriseTime = 21600;
@@ -132,9 +132,9 @@ export default class PredefinedCalendar{
                     new Season("Sun Ascending", 7, 1),
                     new Season("High Sun", 9, 1)
                 ];
-                year.seasons[2].color = '#fff2da';
-                year.seasons[0].color = '#dececc';
-                year.seasons[1].color = '#fff1e7';
+                year.seasons[2].color = '#ffa500';
+                year.seasons[0].color = '#cd4a39';
+                year.seasons[1].color = '#ff6a00';
                 year.seasons[0].sunriseTime = 21600;
                 year.seasons[1].sunriseTime = 21600;
                 year.seasons[2].sunriseTime = 21600;
@@ -356,10 +356,10 @@ export default class PredefinedCalendar{
                 year.leapYearRule.customMod = 0;
                 year.months[0].current = true;
                 year.months[0].days[0].current = true;
-                year.seasons[0].color = "#fffce8";
-                year.seasons[1].color = "#f3fff3";
-                year.seasons[2].color = "#fff7f2";
-                year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].color = "#E0C40B";
+                year.seasons[1].color = "#46B946";
+                year.seasons[2].color = "#FF8E47";
+                year.seasons[3].color = "#479DFF";
                 year.seasons[0].sunriseTime = 27000;
                 year.seasons[1].sunriseTime = 21600;
                 year.seasons[2].sunriseTime = 27000;
@@ -535,10 +535,10 @@ export default class PredefinedCalendar{
                 year.leapYearRule.customMod = 8;
                 year.months[0].current = true;
                 year.months[0].days[0].current = true;
-                year.seasons[0].color = "#fffce8";
-                year.seasons[1].color = "#f3fff3";
-                year.seasons[2].color = "#fff7f2";
-                year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].color = "#E0C40B";
+                year.seasons[1].color = "#46B946";
+                year.seasons[2].color = "#FF8E47";
+                year.seasons[3].color = "#479DFF";
                 year.seasons[0].sunriseTime = 21600;
                 year.seasons[1].sunriseTime = 21600;
                 year.seasons[2].sunriseTime = 21600;
@@ -615,10 +615,10 @@ export default class PredefinedCalendar{
                 year.leapYearRule.customMod = 4;
                 year.months[0].current = true;
                 year.months[0].days[0].current = true;
-                year.seasons[0].color = "#fffce8";
-                year.seasons[1].color = "#f3fff3";
-                year.seasons[2].color = "#fff7f2";
-                year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].color = "#E0C40B";
+                year.seasons[1].color = "#46B946";
+                year.seasons[2].color = "#FF8E47";
+                year.seasons[3].color = "#479DFF";
                 year.seasons[0].sunriseTime = 21600;
                 year.seasons[1].sunriseTime = 21600;
                 year.seasons[2].sunriseTime = 21600;
@@ -696,11 +696,11 @@ export default class PredefinedCalendar{
                     new Season('Fall', 10, 1),
                     new Season('Winter', 12, 1)
                 ];
-                year.seasons[0].color = "#fffce8";
-                year.seasons[1].color = "#f3fff3";
-                year.seasons[2].color = "#f3fff3";
-                year.seasons[3].color = "#fff7f2";
-                year.seasons[4].color = "#f2f8ff";
+                year.seasons[0].color = "#E0C40B";
+                year.seasons[1].color = "#46B946";
+                year.seasons[2].color = "#46B946";
+                year.seasons[3].color = "#FF8E47";
+                year.seasons[4].color = "#479DFF";
                 year.seasons[0].sunriseTime = 24300;
                 year.seasons[1].sunriseTime = 18840;
                 year.seasons[2].sunriseTime = 16500;
@@ -810,10 +810,10 @@ export default class PredefinedCalendar{
                     new Season('Fall', 9, 21),
                     new Season('Winter', 12, 20)
                 ];
-                year.seasons[0].color = "#fffce8";
-                year.seasons[1].color = "#f3fff3";
-                year.seasons[2].color = "#fff7f2";
-                year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].color = "#E0C40B";
+                year.seasons[1].color = "#46B946";
+                year.seasons[2].color = "#FF8E47";
+                year.seasons[3].color = "#479DFF";
                 year.seasons[0].sunriseTime = 21600;
                 year.seasons[1].sunriseTime = 21600;
                 year.seasons[2].sunriseTime = 21600;
@@ -939,10 +939,10 @@ export default class PredefinedCalendar{
                     new Season('Fall', 7, 17),
                     new Season('Winter', 10, 18)
                 ];
-                year.seasons[0].color = "#fffce8";
-                year.seasons[1].color = "#f3fff3";
-                year.seasons[2].color = "#fff7f2";
-                year.seasons[3].color = "#f2f8ff";
+                year.seasons[0].color = "#E0C40B";
+                year.seasons[1].color = "#46B946";
+                year.seasons[2].color = "#FF8E47";
+                year.seasons[3].color = "#479DFF";
                 year.seasons[0].sunriseTime = 21600;
                 year.seasons[1].sunriseTime = 21600;
                 year.seasons[2].sunriseTime = 21600;

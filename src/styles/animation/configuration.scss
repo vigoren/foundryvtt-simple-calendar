@@ -1,6 +1,11 @@
 @import "../variables";
 .simple-calendar{
   .sc-configuration-wrapper{
+    .progress{
+      .progress-bar{
+        transition: width 100ms;
+      }
+    }
     .tab-section{
       &.calendar-selector{
         ul {

@@ -46,21 +46,21 @@
             {{localize 'FSC.Notes.NewFor'}} {{object.monthDisplay}} {{object.day}}, {{object.year}}
             <span class="reminder note-category {{#if reminder}}selected{{/if}}"><label><input type="checkbox" /><span class="fa fa-bell"></span>{{localize 'FSC.Notes.Reminder'}}</label></span>
         </h1>
-        <div class="form-group">
+        <div class="form-group open">
             <label for="scNoteTitle">{{localize 'FSC.Notes.Title'}}</label>
             <div class="form-fields">
                 <input value="{{object.title}}" placeholder="{{localize 'FSC.Notes.New'}}" type="text" id="scNoteTitle" />
             </div>
             <p class="notes">{{localize 'FSC.Notes.TitleHelp'}}</p>
         </div>
-        <div class="form-group">
+        <div class="form-group  open">
             <label for="{{dateSelectorId}}">{{localize 'FSC.Notes.DateTime.Title'}}</label>
             <div class="form-fields">
                 {{sc-date-selector id=dateSelectorId showDateSelector=true showTimeSelector=true placeholderText='' allowDateRangeSelection=true timeSelected=timeSelected selectedStartDate=dateSelectorSelectedDate.start selectedEndDate=dateSelectorSelectedDate.end onDateSelect=dateSelectorClick }}
             </div>
             <p class="notes">{{localize 'FSC.Notes.DateTime.Help'}}</p>
         </div>
-        <div class="form-group">
+        <div class="form-group  open">
             <label for="scNoteRepeats">{{localize 'FSC.Notes.Repeating'}}</label>
             <div class="form-fields">
                 <select id="scNoteRepeats">
@@ -69,14 +69,14 @@
             </div>
             <p class="notes">{{localize 'FSC.Notes.RepeatingHelp'}}</p>
         </div>
-        <div class="form-group">
+        <div class="form-group  open">
             <label for="scNoteVisibility">{{localize 'FSC.Notes.PlayerVisible'}}</label>
             <div class="form-fields">
                 <input value="{{object.playerVisible}}" type="checkbox" id="scNoteVisibility" {{checked object.playerVisible}} {{#unless isGM}}disabled="disabled"{{/unless}} />
             </div>
             <p class="notes">{{localize 'FSC.Notes.PlayerVisibleHelp'}}</p>
         </div>
-        <div class="form-group">
+        <div class="form-group  open">
             <label>{{localize 'FSC.Configuration.Notes.NoteCategories'}}</label>
             <div class="form-fields category-list">
                 {{#each allCategories}}

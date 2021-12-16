@@ -239,7 +239,7 @@ export default class API{
      */
     public static changeDate(interval: DateTime): boolean{
         const activeCalendar = CalManager.getActiveCalendar();
-        if(activeCalendar.canUser((<Game>game).user, SC.permissions.changeDateTime)){
+        if(activeCalendar.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
             let change = false;
             if(interval.year){
                 activeCalendar.year.changeYear(interval.year, true, 'current');
@@ -279,7 +279,7 @@ export default class API{
      */
     public static setDate(date: DateTime): boolean{
         const activeCalendar = CalManager.getActiveCalendar();
-        if(activeCalendar.canUser((<Game>game).user, SC.permissions.changeDateTime)){
+        if(activeCalendar.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
             const seconds = this.dateToTimestamp(date);
             activeCalendar.year.updateTime(activeCalendar.year.secondsToDate(seconds));
             CalManager.saveCalendars();
@@ -298,7 +298,7 @@ export default class API{
      */
     public static advanceTimeToPreset(preset: PresetTimeOfDay){
         const activeCalendar = CalManager.getActiveCalendar();
-        if(activeCalendar.canUser((<Game>game).user, SC.permissions.changeDateTime)) {
+        if(activeCalendar.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)) {
             let timeOfDay = 0;
 
             if (preset === PresetTimeOfDay.Sunrise || preset === PresetTimeOfDay.Sunset) {

@@ -193,6 +193,15 @@
             border-right-color: $secondary;
           }
         }
+        &.tertiary{
+          border-right-color: $tertiary;
+          &:first-child{
+            border-left-color: $tertiary-300;
+          }
+          &:last-child{
+            border-right-color: $tertiary-300;
+          }
+        }
         &.delete{
           border-right-color: $danger;
           &:first-child{
@@ -472,19 +481,7 @@
         h2{
           border-color: $secondary;
         }
-        .form-group{
-          border-color:$gray-600;
-          background-color: $primary-1000;
-          &:hover{
-            background-color: $primary-950;
-          }
-          label{
-            color: $primary-A200;
-          }
-          .notes{
-            color: $primary-50;
-          }
-        }
+
         .warning{
           background-color: $secondary-A500;
           border-color: $secondary;
@@ -512,6 +509,17 @@
             }
           }
         }
+        .import-export{
+          .importing{
+            .progress{
+              background-color: $gray-700;
+              border-color: $gray-500;
+              .progress-bar{
+                background-color: $tertiary-300;
+              }
+            }
+          }
+        }
         .quick-setup{
           .predefined-list{
             .predefined-calendar{
@@ -531,6 +539,32 @@
             border-color: $gray-600;
           }
         }
+        .about{
+          h1{
+            border-color: $primary;
+          }
+          .row{
+            .card{
+              border-color: $primary-400;
+              background-color: $primary-1000;
+            }
+          }
+        }
+      }
+    }
+
+    //Form Groups
+    .form-group{
+      border-color:$gray-600;
+      background-color: $primary-1000;
+      &:hover{
+        background-color: $primary-950;
+      }
+      label{
+        color: $primary-A200;
+      }
+      .notes{
+        color: $primary-50;
       }
     }
   }

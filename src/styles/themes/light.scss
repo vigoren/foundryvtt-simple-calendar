@@ -1,10 +1,31 @@
 @import "../variables";
 .simple-calendar{
   &.light{
+
+    &.compact-view{
+      .sc-clock{
+        background-color: $primary-100;
+      }
+      .time-keeper-buttons{
+        .save{
+          color: $success-900;
+        }
+        .secondary{
+          color: $secondary;
+          &:hover{
+            color: $secondary;
+          }
+        }
+        .delete{
+          color: $danger-900;
+        }
+      }
+    }
+
     a{
-      color: $secondary;
+      color: $tertiary;
       &:hover, &:active, &:focus{
-        color: $secondary-800;
+        color: $tertiary-400;
         text-shadow: unset;
       }
     }
@@ -38,6 +59,11 @@
       background-color: $primary-100;
       border-color: $primary-950;
       color: $fontColor;
+      scrollbar-color: $primary $primary-600;
+      &::-webkit-scrollbar-thumb{
+        background: $primary;
+        border-color:$primary-600;
+      }
 
       .calendar-header{
         background-color: $primary-100;
@@ -95,12 +121,12 @@
         border-color: $gray-400;
       }
       &.primary {
-        background-color: $primary-300;
-        border-color: $primary-300;
+        background-color: $primary-A200;
+        border-color: $primary-A200;
 
         &:hover {
-          background-color: $primary-200;
-          border-color: $primary-200;
+          background-color: $primary-A100;
+          border-color: $primary-A100;
         }
       }
       &.secondary {
@@ -113,21 +139,21 @@
         }
       }
       &.tertiary{
-        background-color: $tertiary-200;
-        border-color: $tertiary-200;
+        background-color: $tertiary-A100;
+        border-color: $tertiary-A100;
 
         &:hover {
-          background-color: $tertiary-100;
-          border-color: $tertiary-100;
+          background-color: $tertiary-A200;
+          border-color: $tertiary-A200;
         }
       }
       &.delete {
-        background-color: $danger-400;
-        border-color: $danger-400;
+        background-color: $danger-A500;
+        border-color: $danger-A500;
 
         &:hover {
-          background-color: $danger-300;
-          border-color: $danger-300;
+          background-color: $danger-A400;
+          border-color: $danger-A400;
         }
       }
       &.save {
@@ -151,12 +177,12 @@
         }
 
         &.primary{
-          border-right-color: $primary-600;
+          border-right-color: $primary-400;
           &:first-child{
-            border-left-color: $primary-300;
+            border-left-color: $primary-A200;
           }
           &:last-child{
-            border-right-color: $primary-300;
+            border-right-color: $primary-A200;
           }
         }
         &.secondary{
@@ -168,13 +194,22 @@
             border-right-color: $secondary-300;
           }
         }
+        &.tertiary{
+          border-right-color: $tertiary-400;
+          &:first-child{
+            border-left-color: $tertiary-A200;
+          }
+          &:last-child{
+            border-right-color: $tertiary-A200;
+          }
+        }
         &.delete{
           border-right-color: $danger-800;
           &:first-child{
-            border-left-color: $danger-400;
+            border-left-color: $danger-A500;
           }
           &:last-child{
-            border-right-color: $danger-400;
+            border-right-color: $danger-A500;
           }
         }
         &.save{
@@ -191,17 +226,26 @@
     .controls.unit-controls{
       .control-group{
         .unit-list{
-          background-color: $primary-200;
-          border-color: $primary;
+          background-color: $primary-A200;
+          border-color: $primary-A400;
           color: $fontColor;
 
           li{
-            border-color: $primary;
+            border-color: $primary-A400;
             &.selected, &:hover{
-              background-color: $primary-400;
+              background-color: $primary-A100;
             }
           }
         }
+      }
+    }
+
+    //Inputs
+    input, select{
+      background-color: $gray-400;
+      color: $fontColor;
+      &:focus{
+        box-shadow: unset;
       }
     }
 
@@ -213,8 +257,8 @@
         svg{
           filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
           path{
-            fill: $danger-800;
-            stroke: $danger-800;
+            fill: $danger-600;
+            stroke: $danger-600;
           }
         }
       }
@@ -222,8 +266,8 @@
         .animated-clock{
           svg{
             path{
-              fill: $success-800;
-              stroke: $success-800;
+              fill: $success-600;
+              stroke: $success-600;
             }
           }
         }
@@ -274,7 +318,41 @@
               background-color: $gray-400;
             }
             &:hover{
-              background-color: $gray-300;
+              background-color: $primary-300;
+            }
+          }
+        }
+      }
+    }
+
+    //Calendar List Styling
+    .sc-calendar-list{
+      scrollbar-color: $primary $primary-600;
+      &::-webkit-scrollbar-thumb{
+        background: $primary;
+        border-color:$primary-600;
+      }
+
+      .calendar-display{
+        color: $fontColor;
+        border-color: $primary-800;
+        box-shadow: inset 0 0 5px $primary-200;
+        &.selected, &:hover{
+          border-color: $success-800;
+          background-color: $success-800;
+          box-shadow: inset 0 0 5px $success-200;
+          color: $white;
+        }
+        &.active{
+          border-color: $primary;
+          background-color: $primary;
+          color: $white;
+        }
+        .animated-clock{
+          svg{
+            path{
+              fill: $success-400;
+              stroke: $success-400;
             }
           }
         }
@@ -282,10 +360,13 @@
     }
 
     //Note List Styling
-    .sc-note-list{
+    .sc-side-drawer{
       background-color: $primary-100;
       border-color: $primary-900;
 
+      h2{
+        border-bottom-color: $secondary;
+      }
       .note-list{
         scrollbar-color: $primary $primary-600;
         &::-webkit-scrollbar-thumb{
@@ -335,18 +416,158 @@
       }
     }
 
-    .sc-header-bar{
-      border-color: $gray-700;
-      background-color: $gray-800;
+    //Note Search Styling
+    .sc-note-search{
+      .search-box{
+        .control{
+          box-shadow: unset;
+          background-color: $gray-400;
+          border-color: #7a7971;
+        }
+      }
+    }
 
-      .sc-calendar-list{
-        background-color: $primary-800;
-        border-color: $primary-800;
+    //Configuration Styling
+    .sc-configuration-wrapper{
+      .tabs{
         scrollbar-color: $primary $primary-600;
         &::-webkit-scrollbar-thumb{
           background: $primary;
           border-color:$primary-600;
         }
+        .heading{
+          color: $primary-600;
+          border-top-color: $primary-200;
+          border-bottom-color: $gray-500;
+        }
+        .tab-section{
+          &.stripe{
+            background-color: $primary-100;
+          }
+          .calendar-selector{
+            ul{
+              box-shadow: 1px 1px 5px #000000;
+              li{
+                background-color: $primary-200;
+                border-color: $primary-400;
+
+                &.active,&:hover{
+                  background-color: $primary-A400;
+                  color: $fontColor;
+                }
+                &.new-calendar{
+                  color: $success-900;
+                  &.active,&:hover{
+                    color: $fontColor;
+                  }
+                }
+              }
+            }
+          }
+        }
+        .item{
+          border-color: $gray-500;
+
+          &.active, &:hover{
+            background-color: $tertiary;
+            color: $white;
+          }
+        }
+      }
+      .tab-wrapper{
+        scrollbar-color: $primary $primary-600;
+        &::-webkit-scrollbar-thumb{
+          background: $primary;
+          border-color:$primary-600;
+        }
+        h2{
+          border-color: $tertiary;
+        }
+
+        .warning{
+          background-color: $secondary-A500;
+          border-color: $secondary;
+          color: $fontColor;
+        }
+        .section{
+          h3{
+            color: $primary-A200;
+          }
+        }
+        .f-table{
+          background-color: $primary-100;
+          border-color: $gray-500;
+          .row{
+            &.head{
+              border-color: $gray-500;
+            }
+            &:nth-child(even) {
+              background-color: rgba($primary-1000,0.1);
+            }
+            .options{
+              h3{
+                border-color: $tertiary;
+              }
+            }
+          }
+        }
+        .import-export{
+          .importing{
+            .progress{
+              background-color: $gray-300;
+              border-color: $gray-500;
+              .progress-bar{
+                background-color: $tertiary-300;
+              }
+            }
+          }
+        }
+        .quick-setup{
+          .predefined-list{
+            .predefined-calendar{
+              color: $primary-1000;
+              border-color: $primary-950;
+              box-shadow: inset 0 0 5px $primary-400;
+              &.selected, &:hover{
+                border-color: $primary-400;
+                background-color: $primary-950;
+                color: $white;
+                box-shadow: inset 0 0 5px $primary-400;
+              }
+            }
+          }
+        }
+        .permissions{
+          .table-header{
+            border-color: $gray-600;
+          }
+        }
+        .about{
+          h1{
+            border-color: $primary;
+          }
+          .row{
+            .card{
+              border-color: $primary-400;
+              background-color: $primary-100;
+            }
+          }
+        }
+      }
+    }
+
+    //Form Groups
+    .form-group{
+      border-color:$gray-600;
+      background-color: $primary-100;
+      &:hover{
+        background-color: $primary-150;
+      }
+      label{
+        color: $tertiary-A500;
+      }
+      .notes{
+        color: $primary-1100;
       }
     }
   }

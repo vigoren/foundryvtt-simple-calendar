@@ -17,6 +17,7 @@ import {
 import Note from "./classes/note";
 import DateSelector from "./classes/date-selector/date-selector";
 import Calendar from "./classes/calendar";
+import UserPermissions from "./classes/configuration/user-permissions";
 
 export interface AppPosition{
     top?: number;
@@ -58,8 +59,8 @@ export interface SimpleCalendarTemplate{
 }
 
 export interface GlobalConfiguration extends IConfigurationItemBaseConfig {
-    permissions: UserPermissionsConfig;
-    clientSettings: ClientSettings;
+    permissions: UserPermissions;
+    secondsInCombatRound: number;
 }
 
 export interface ClientSettings extends IConfigurationItemBaseConfig {
@@ -360,7 +361,6 @@ export interface TimeConfig extends IConfigurationItemBaseConfig{
     hoursInDay: number;
     minutesInHour: number;
     secondsInMinute: number;
-    secondsInCombatRound: number;
     gameTimeRatio: number;
     unifyGameAndClockPause: boolean;
     updateFrequency: number;

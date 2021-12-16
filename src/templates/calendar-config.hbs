@@ -46,7 +46,14 @@
             {{#if isGM}}
             <div class="section open">
                 <h2>{{localize 'FSC.Configuration.Global.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#global-configuration" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
-
+                <p>{{localize 'FSC.Configuration.Global.Description'}}</p>
+                <div class="form-group open">
+                    <label for="scSecondsInCombatRound">{{localize 'FSC.Configuration.Time.SecondsInCombatRound'}}</label>
+                    <div class="form-fields">
+                        <input value="{{globalConfiguration.secondsInCombatRound}}" type="number" id="scSecondsInCombatRound" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInCombatRoundHelp'}}</p>
+                </div>
             </div>
             {{/if}}
             <div class="section open">
@@ -143,15 +150,29 @@
             <h2>{{localize 'FSC.Configuration.General.ImportExport.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#importexport" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
             <div class="section open">
                 <div class="form-group open">
-                    <label>{{localize 'FSC.Configuration.General.ImportExport.SCConfig'}}</label>
-                    <div class="form-btn-group">
-                        <div class="file-import-group">
-                            <input type="file" id="-scImportCalendarPicker" />
-                            <button class="control save" id="importCalendar"><i class="fa fa-file-import"></i> {{localize 'FSC.Import'}}</button>
+                    <label>{{localize 'FSC.Import'}}</label>
+                    <div class="form-fields importing">
+                        <input type="file" id="scImportCalendarPicker" accept="application/json, .json" />
+                        <div class="progress hide">
+                            <div class="progress-bar"></div>
                         </div>
-                        <button class="control" id="exportCalendar"><i class="fa fa-file-export"></i> {{localize 'FSC.Export'}}</button>
+                        <div class="file-details"></div>
                     </div>
-                    <p class="notes">{{localize 'FSC.Configuration.General.ImportExport.SCConfigHelp'}}</p>
+                    <p class="notes">{{localize 'FSC.Configuration.ImportExport.ImportDescription'}}</p>
+                </div>
+                <div class="form-group open">
+                    <label>{{localize 'FSC.Export'}}</label>
+                    <div class="form-fields">
+                        <ul class="calendar-list">
+                            <li><label><input type="checkbox" data-id="global" checked /> {{localize 'FSC.Configuration.Global.Title'}}</label></li>
+                            <li><label><input type="checkbox" data-id="permissions" checked /> {{localize 'Permissions'}}</label></li>
+                            {{#each calendars}}
+                                <li><label><input type="checkbox" data-id="{{id}}" checked /> {{localize 'FSC.Calendar'}}: {{name}}</label></li>
+                            {{/each}}
+                        </ul>
+                        <button class="control secondary" id="exportCalendar"><i class="fa fa-file-export"></i> {{localize 'FSC.Export'}}</button>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.ImportExport.ExportDescription'}}</p>
                 </div>
             </div>
         </div>
@@ -491,24 +512,24 @@
                 <div class="form-fields">
                     <input value="{{generalSettings.dateFormat.date}}" id="scDateFormatsDate" type="text" />
                 </div>
+                <div class="example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.dateFormatExample}}</div>
                 <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.DateHelp'}}</p>
-                <div class="example">{{uiElementStates.dateFormatExample}}</div>
             </div>
             <div class="form-group open">
                 <label for="scDateFormatsTime">{{localize 'FSC.Configuration.General.Display.DateFormat.Time'}}</label>
                 <div class="form-fields">
                     <input value="{{generalSettings.dateFormat.time}}" id="scDateFormatsTime" type="text" />
                 </div>
+                <div class="example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.timeFormatExample}}</div>
                 <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.TimeHelp'}}</p>
-                <div class="example">{{uiElementStates.timeFormatExample}}</div>
             </div>
             <div class="form-group open">
                 <label for="scDateFormatsMonthYear">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYear'}}</label>
                 <div class="form-fields">
                     <input value="{{generalSettings.dateFormat.monthYear}}" id="scDateFormatsMonthYear" type="text" />
                 </div>
+                <div class="example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.monthYearFormatExample}}</div>
                 <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYearHelp'}}</p>
-                <div class="example">{{uiElementStates.monthYearFormatExample}}</div>
             </div>
         </div>
         <div class="tab year-settings" data-tab="yearSettings">
@@ -940,13 +961,6 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInMinuteHelp'}}</p>
                 </div>
-                <div class="form-group open">
-                    <label for="scSecondsInCombatRound">{{localize 'FSC.Configuration.Time.SecondsInCombatRound'}}</label>
-                    <div class="form-fields">
-                        <input value="{{currentYear.time.secondsInCombatRound}}" type="number" id="scSecondsInCombatRound" />
-                    </div>
-                    <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInCombatRoundHelp'}}</p>
-                </div>
             </div>
             <div class="section open">
                 <h2>{{localize 'FSC.Configuration.Time.ClockSettings'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#clock-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
@@ -1026,13 +1040,31 @@
                 {{sc-icon name='logo'}}
             </div>
             <h1>{{localize 'FSC.Title'}}</h1>
-            <p>This module allows you to create a completely customizable calendar that ties in with the Game Masters world exactly how they want it to. Notes and events can be added to the calendar to help keep track of what and when things are happening in your world.</p>
+            <p class="description">This module allows you to create a completely customizable calendar that ties in with the Game Masters world exactly how they want it to. Notes and events can be added to the calendar to help keep track of what and when things are happening in your world.</p>
             <div class="row">
-                <div class="authors">
+                <div class="card authors">
                     <h2>Author</h2>
-                    <p>Simple Calendar is a hobby project built and maintained by Dean Vigoren (Vigorator) and released for everyone to use and enjoy!</p>
+                    <p>Simple Calendar is a hobby project built and maintained by <a href="https://github.com/vigoren">Dean Vigoren (Vigorator)</a>!</p>
+                    <p>If you wish to support the development of Simple Calendar there are a few ways you can help:</p>
+                    <ul>
+                        <li>Share your good experiences with the module with others!</li>
+                        <li>Leave an endorsement or comment on <a href="https://www.foundryvtt-hub.com/package/foundryvtt-simple-calendar/">Foundry Hub</a>.</li>
+                        <li>If you wish and are able to you can support the developer monetarily by becoming a <a href="https://www.patreon.com/vigorator">Patron</a> or donating on <a href="https://ko-fi.com/vigorator">Ko-fi</a>. Simple Calendar will always be free to use by anyone, these are just options for those who want to donate to the development.</li>
+                    </ul>
                 </div>
-                <div class="translations">
+                <div class="card support">
+                    <h2>Support</h2>
+                    <p>If you run into issue with Simple Calendar there are several ways to get assistance:</p>
+                    <ul>
+                        <li>Check out Simple Calendars <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs">documentation</a>!</li>
+                        <li>Ask on the <a href="https://discord.gg/foundryvtt">FoundryVTT Discord server</a>, lots of very knowledgeable individuals who can help out there.</li>
+                        <li>Check the projects GitHub <a href="https://github.com/vigoren/foundryvtt-simple-calendar/issues">issues</a> or <a href="https://github.com/vigoren/foundryvtt-simple-calendar/discussions">discussions</a> to see if anyone else has had this issue before</li>
+                        <li>If none of the above work then please create a new <a href="https://github.com/vigoren/foundryvtt-simple-calendar/issues">issue</a> or <a href="https://github.com/vigoren/foundryvtt-simple-calendar/discussions">discussion</a> and I will hapily look into it!</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card translations">
                     <h2>Translations</h2>
                     <p>Simple Calendar is available in languages other than English thanks to these wonderful individuals:</p>
                     <table>
@@ -1095,7 +1127,6 @@
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
     <div class="config-save">

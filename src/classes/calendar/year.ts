@@ -974,8 +974,7 @@ export default class Year extends ConfigurationItemBase {
      * @param {Combat} combat The current active combat
      */
     processOwnCombatRoundTime(combat: Combat){
-        const activeCalendar = CalManager.getActiveCalendar();
-        let roundSeconds = this.time.secondsInCombatRound;
+        let roundSeconds = SC.globalConfiguration.secondsInCombatRound;
         let roundsPassed = 1;
 
         if(combat.hasOwnProperty('previous') && combat['previous'].round){

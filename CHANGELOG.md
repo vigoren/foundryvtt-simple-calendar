@@ -67,6 +67,14 @@ Four new settings have been added to the Module Settings dialog of Foundry. Thes
 - **Open In Compact View**: If checked anytime Simple Calendar is opened (On Load, Clicking the button or through a macro) it will be opened in the compact view. By default, this is set to false.
 - **Remember Position**: If checked Simple Calendar will remember where it was placed on the screen and position itself there everytime it is opened. By default, this is set to true.
 
+#### Import/Export
+
+The importing and exporting of calendar settings has been improved.
+- **Exporting**: You can now choose what to export, specific calendars, permissions or the global configuration settings.
+- **Importing**: When importing the file will be parsed and show what was found inside and allow you to choose if to import it or not. For calendar configurations you can also choose which calendar to import those settings into or to import them into a new calendar.
+
+You will be able to import configurations from version 1.x of Simple Calendar so any saved configurations will not be lost!
+
 #### Quick Setup
 
 For new and existing calendars a GM can run through the Quick Setup tab to configure a calendar in 5 easy clicks. This tab will prompt you to:
@@ -84,7 +92,7 @@ A display options tab has been added where the options for specifying your date 
 
 ### Note Improvements
 
-### Note Search Updates
+#### Note Search Updates
 
 The searching for notes has been improved since the initial quick search added. The improvements are:
 
@@ -110,6 +118,7 @@ The date/time selector that is used when choosing a date for notes or specifying
 - Fixed a bug where the display year in the calendar header would not update properly if the year being viewed was different from the current year.
 - Fixed a bug where clicking on a moon icon or note indicator would not select the day properly.
 - Fixed a bug with the Warhammer predefined calendar where the season starts were set to the wrong dates.
+- Fixed a bug where using Z or ZZ in the date/time formats would break the calendars configuration.
 
 ### API Changes
 
@@ -134,6 +143,7 @@ The date/time selector that is used when choosing a date for notes or specifying
 ### Translation Updates
 
 - Updates to the German translation thanks to [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird)!
+- Simple Calendar is now available in Italian thanks to [Haloghen](https://github.com/Haloghen)!
 
 ### About Time and Calendar/Weather Importing
 

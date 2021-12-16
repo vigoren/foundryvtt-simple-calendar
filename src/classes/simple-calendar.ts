@@ -3,7 +3,7 @@ import {GameSettings} from "./foundry-interfacing/game-settings";
 import {NoteRepeat, SettingNames, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
-import {AppPosition, ClientSettings, GlobalConfiguration, SCDateSelector} from "../interfaces";
+import {AppPosition, ClientSettings, GlobalConfiguration, SCDateSelector, UserPermissionsConfig} from "../interfaces";
 import Note from "./note";
 import {NotesApp} from "./applications/notes-app";
 import {CalManager, MainApplication} from "./index";
@@ -32,17 +32,20 @@ export default class SimpleCalendar {
      * @type {Sockets}
      */
     sockets: Sockets;
-    /**
-     * User permissions for different actions in simple calendar
-     */
-    public permissions: UserPermissions;
 
     public clientSettings: ClientSettings;
 
+    public globalConfiguration: GlobalConfiguration;
+
     constructor() {
         this.sockets = new Sockets();
-        this.permissions = new UserPermissions();
         this.clientSettings = {id: '', theme: Themes.dark, openOnLoad: true, openCompact: false, rememberPosition: true, appPosition: {}};
+        this.globalConfiguration = {
+            id: '',
+            permissions: new UserPermissions(),
+            secondsInCombatRound: 6,
+
+        };
     }
 
     public static ThemeChange(){
@@ -72,7 +75,8 @@ export default class SimpleCalendar {
      */
     public load(){
         const globalConfiguration = <GlobalConfiguration>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
-        this.permissions.loadFromSettings(globalConfiguration.permissions);
+        this.globalConfiguration.permissions.loadFromSettings(globalConfiguration.permissions);
+        this.globalConfiguration.secondsInCombatRound = globalConfiguration.secondsInCombatRound;
         this.clientSettings.theme = <Themes>GameSettings.GetStringSettings(SettingNames.Theme);
         this.clientSettings.openOnLoad = GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad);
         this.clientSettings.openCompact = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
@@ -83,20 +87,21 @@ export default class SimpleCalendar {
     /**
      * Save the global configuration and the calendar configuration
      */
-    public save(config: GlobalConfiguration | null = null){
+    public save(globalConfig: GlobalConfiguration | null = null, clientConfig: ClientSettings | null = null){
         CalManager.saveCalendars();
-        if(config){
-            const globalConfiguration = {
-                permissions: config.permissions,
+        if(globalConfig && clientConfig){
+            const gc = {
+                permissions: globalConfig.permissions.toConfig(),
+                secondsInCombatRound: globalConfig.secondsInCombatRound
             };
             //Save the client settings
-            GameSettings.SaveStringSetting(SettingNames.Theme, config.clientSettings.theme).catch(Logger.error);
-            GameSettings.SaveBooleanSetting(SettingNames.OpenOnLoad, config.clientSettings.openOnLoad).catch(Logger.error);
-            GameSettings.SaveBooleanSetting(SettingNames.OpenCompact, config.clientSettings.openCompact).catch(Logger.error);
-            GameSettings.SaveBooleanSetting(SettingNames.RememberPosition, config.clientSettings.rememberPosition).catch(Logger.error);
-            GameSettings.SaveObjectSetting(SettingNames.AppPosition, config.clientSettings.appPosition).catch(Logger.error);
+            GameSettings.SaveStringSetting(SettingNames.Theme, clientConfig.theme, false).catch(Logger.error);
+            GameSettings.SaveBooleanSetting(SettingNames.OpenOnLoad, clientConfig.openOnLoad, false).catch(Logger.error);
+            GameSettings.SaveBooleanSetting(SettingNames.OpenCompact, clientConfig.openCompact, false).catch(Logger.error);
+            GameSettings.SaveBooleanSetting(SettingNames.RememberPosition, clientConfig.rememberPosition, false).catch(Logger.error);
+            GameSettings.SaveObjectSetting(SettingNames.AppPosition, clientConfig.appPosition, false).catch(Logger.error);
             //Save the global configuration (triggers the load function)
-            GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, globalConfiguration).catch(Logger.error);
+            GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc).catch(Logger.error);
         }
     }
 
@@ -108,7 +113,7 @@ export default class SimpleCalendar {
      * @param controls
      */
     public getSceneControlButtons(controls: any[]){
-        if(this.activeCalendar.canUser((<Game>game).user, this.permissions.viewCalendar)){
+        if(this.activeCalendar.canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)){
             let tokenControls = controls.find(c => c.name === "token" );
             if(tokenControls && tokenControls.hasOwnProperty('tools')){
                 tokenControls.tools.push({

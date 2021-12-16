@@ -7,7 +7,6 @@ import {
     GameWorldTimeIntegrations,
     Icons,
     LeapYearRules,
-    ModuleName,
     MoonYearResetOptions,
     PredefinedCalendars,
     SettingNames,
@@ -17,7 +16,13 @@ import {
 import Season from "../calendar/season";
 import Moon from "../calendar/moon";
 import {saveAs} from "file-saver";
-import {ClientSettings, NoteCategory, SCDateSelector} from "../../interfaces";
+import {
+    CalendarConfiguration,
+    ClientSettings,
+    GlobalConfiguration,
+    NoteCategory,
+    SCDateSelector
+} from "../../interfaces";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
@@ -29,17 +34,27 @@ import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "..
 import {FormatDateTime} from "../utilities/date-time";
 
 export default class ConfigurationApp extends FormApplication {
-
+    /**
+     * ID used for the application window when rendered on the page
+     * @type{string}
+     */
     public static appWindowId: string = 'simple-calendar-configuration-application-form';
-
-    private noteCategories: NoteCategory[] = [];
-
+    /**
+     * The HTML element representing the application window
+     * @type {HTMLElement | null}
+     * @private
+     */
+    private appWindow: HTMLElement | null = null;
 
     private calendars: Calendar[] = [];
 
     private dateFormatTableExpanded: boolean = false;
 
-    permissions: UserPermissions = new UserPermissions();
+    globalConfiguration: GlobalConfiguration = {
+        id: '',
+        permissions: new UserPermissions(),
+        secondsInCombatRound: 6
+    };
 
     clientSettings: ClientSettings = {id: '', theme: Themes.dark, openOnLoad: true, openCompact: false, rememberPosition: true, appPosition: {}};
 
@@ -65,7 +80,8 @@ export default class ConfigurationApp extends FormApplication {
         this.calendars = CalManager.cloneCalendars();
         this.object = this.calendars[0];//Temp until we get better calendar picking
         SC.load();
-        this.permissions = SC.permissions.clone();
+        this.globalConfiguration.permissions = SC.globalConfiguration.permissions.clone();
+        this.globalConfiguration.secondsInCombatRound = SC.globalConfiguration.secondsInCombatRound;
         this.clientSettings = deepMerge({}, SC.clientSettings);
         this._tabs[0].active = "globalSettings";
 
@@ -116,6 +132,7 @@ export default class ConfigurationApp extends FormApplication {
             DateSelectorManager.RemoveSelector(`sc_season_start_date_${s.id}`);
             DateSelectorManager.RemoveSelector(`sc_season_sunrise_time_${s.id}`);
         });
+        this.appWindow = null;
         return super.close(options);
     }
 
@@ -152,9 +169,7 @@ export default class ConfigurationApp extends FormApplication {
                     'light': 'FSC.Configuration.Theme.Light'
                 }
             },
-            globalConfiguration:{
-                permissions: this.permissions
-            },
+            globalConfiguration: this.globalConfiguration,
 
 
             showDateFormatTokens: this.dateFormatTableExpanded,
@@ -194,19 +209,19 @@ export default class ConfigurationApp extends FormApplication {
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorWhite")
                 },
                 {
-                    value: '#fffce8',
+                    value: '#E0C40B',
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorSpring")
                 },
                 {
-                    value: '#f3fff3',
+                    value: '#46B946',
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorSummer")
                 },
                 {
-                    value: '#fff7f2',
+                    value: '#FF8E47',
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorFall")
                 },
                 {
-                    value: '#f2f8ff',
+                    value: '#479DFF',
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorWinter")
                 }
             ],
@@ -278,51 +293,50 @@ export default class ConfigurationApp extends FormApplication {
             DateSelectorManager.GetSelector(`sc_season_start_date_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonStartingDate)}).activateListeners();
             DateSelectorManager.GetSelector( `sc_season_sunrise_time_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonSunriseSunsetTime)}).activateListeners();
         });
-
-        const appWindow = document.getElementById(ConfigurationApp.appWindowId);
-        if(appWindow){
+        this.appWindow = document.getElementById(ConfigurationApp.appWindowId);
+        if(this.appWindow){
 
             DateSelectorManager.ActivateSelector('quick-setup-predefined-calendar');
 
             // Click anywhere in the app
-            appWindow.addEventListener('click', () => {
+            this.appWindow.addEventListener('click', () => {
                 this.toggleCalendarSelector(true);
             });
             //---------------------
             // Calendar Picker / Add new calendar
             //---------------------
-            appWindow.querySelector('.tabs .calendar-selector .heading')?.addEventListener('click', this.toggleCalendarSelector.bind(this, false));
-            appWindow.querySelectorAll('.tabs .calendar-selector ul li[data-calendar]').forEach(e => {
+            this.appWindow.querySelector('.tabs .calendar-selector .heading')?.addEventListener('click', this.toggleCalendarSelector.bind(this, false));
+            this.appWindow.querySelectorAll('.tabs .calendar-selector ul li[data-calendar]').forEach(e => {
                 e.addEventListener('click', this.calendarClick.bind(this));
             });
-            appWindow.querySelectorAll('.tabs .calendar-selector ul li[data-calendar] .control').forEach(e => {
+            this.appWindow.querySelectorAll('.tabs .calendar-selector ul li[data-calendar] .control').forEach(e => {
                 e.addEventListener('click', this.removeCalendarClick.bind(this));
             });
-            appWindow.querySelector('.tab-wrapper .new-calendar .save')?.addEventListener('click', this.addNewCalendar.bind(this));
+            this.appWindow.querySelector('.tab-wrapper .new-calendar .save')?.addEventListener('click', this.addNewCalendar.bind(this));
             //---------------------
             // Quick Setup
             //---------------------
             //Predefined Calendar clicked
-            appWindow.querySelectorAll('.quick-setup .predefined-list .predefined-calendar').forEach(e => {
+            this.appWindow.querySelectorAll('.quick-setup .predefined-list .predefined-calendar').forEach(e => {
                 e.addEventListener('click', this.predefinedCalendarClick.bind(this));
             });
             //Next button clicked
-            appWindow.querySelector('.quick-setup .control-section .qs-next')?.addEventListener('click', this.quickSetupNextClick.bind(this));
+            this.appWindow.querySelector('.quick-setup .control-section .qs-next')?.addEventListener('click', this.quickSetupNextClick.bind(this));
             //Back button clicked
-            appWindow.querySelector('.quick-setup .control-section .qs-back')?.addEventListener('click', this.quickSetupBackClick.bind(this));
+            this.appWindow.querySelector('.quick-setup .control-section .qs-back')?.addEventListener('click', this.quickSetupBackClick.bind(this));
             //Save button clicked
-            appWindow.querySelector('.quick-setup .control-section .qs-save')?.addEventListener('click', this.quickSetupSaveClick.bind(this));
+            this.appWindow.querySelector('.quick-setup .control-section .qs-save')?.addEventListener('click', this.quickSetupSaveClick.bind(this));
 
             //---------------------
             // Month Show/Hide Advanced
             //---------------------
-            appWindow.querySelectorAll(".month-show-advanced").forEach(e => {
+            this.appWindow.querySelectorAll(".month-show-advanced").forEach(e => {
                 e.addEventListener('click', this.toggleMonthShowAdvanced.bind(this));
             });
             //---------------------
             // Input Changes
             //---------------------
-            appWindow.querySelectorAll("input, select").forEach(e => {
+            this.appWindow.querySelectorAll("input, select").forEach(e => {
                 e.addEventListener('change', () => {
                     this.writeInputValuesToObjects();
                     this.updateUIFromObject();
@@ -331,35 +345,34 @@ export default class ConfigurationApp extends FormApplication {
             //---------------------
             // Date Format Table open/close
             //---------------------
-            appWindow.querySelector('.date-format-token-show')?.addEventListener('click', this.dateFormatTableClick.bind(this));
+            this.appWindow.querySelector('.date-format-token-show')?.addEventListener('click', this.dateFormatTableClick.bind(this));
             //---------------------
             // Add To/Remove From Table
             //---------------------
-            document.querySelectorAll(`#${ConfigurationApp.appWindowId} .table-actions .save`).forEach(e => {
+            this.appWindow.querySelectorAll(`.table-actions .save`).forEach(e => {
                 e.addEventListener('click', this.addToTable.bind(this));
             });
-            document.querySelectorAll(`#${ConfigurationApp.appWindowId} .control.delete`).forEach(e => {
+            this.appWindow.querySelectorAll(`.control.delete`).forEach(e => {
                 e.addEventListener('click', this.removeFromTable.bind(this));
             });
-
+            //---------------------
+            // Import/Export buttons
+            //---------------------
+            this.appWindow.querySelector("#exportCalendar")?.addEventListener('click', this.exportCalendar.bind(this));
+            this.appWindow.querySelector("#scImportCalendarPicker")?.addEventListener('change', this.importCalendarFileChange.bind(this));
             //---------------------
             // Save Button
             //---------------------
-            appWindow.querySelector("#scSave")?.addEventListener('click', this.saveClick.bind(this, true));
-        }
-
-
-
-        if(html.hasOwnProperty("length")) {
-            (<JQuery>html).find("#exportCalendar").on('click', this.exportCalendar.bind(this));
-            (<JQuery>html).find("#importCalendar").on('click', this.importCalendar.bind(this));
+            this.appWindow.querySelector("#scSave")?.addEventListener('click', this.saveClick.bind(this, true));
         }
     }
 
     private toggleCalendarSelector(forceHide: boolean = false){
-        const cList = document.querySelector(".tabs .calendar-selector ul");
-        if(cList){
-            animateElement(cList, 500, forceHide);
+        if(this.appWindow){
+            const cList = this.appWindow.querySelector(".tabs .calendar-selector ul");
+            if(cList){
+                animateElement(cList, 500, forceHide);
+            }
         }
     }
 
@@ -415,12 +428,12 @@ export default class ConfigurationApp extends FormApplication {
 
     private predefinedCalendarClick(e: Event){
         const element = <HTMLElement>e.target;
-        if(element){
+        if(element && this.appWindow){
             const allReadySelected = element.classList.contains('selected');
-            document.querySelectorAll(`#${ConfigurationApp.appWindowId} .quick-setup .predefined-list .predefined-calendar`).forEach(e => {
+            this.appWindow.querySelectorAll(`.quick-setup .predefined-list .predefined-calendar`).forEach(e => {
                 e.classList.remove('selected');
             });
-            const nextBttn = document.querySelector('#simple-calendar-configuration-application-form .quick-setup .control-section .qs-next');
+            const nextBttn = this.appWindow.querySelector('.quick-setup .control-section .qs-next');
             if(!allReadySelected){
                 element.classList.add('selected');
                 const cal = element.getAttribute('data-calendar');
@@ -447,31 +460,21 @@ export default class ConfigurationApp extends FormApplication {
     }
 
     private quickSetupNextConfirm(){
-        PredefinedCalendar.setToPredefined((<Calendar>this.object).year, <PredefinedCalendars>this.uiElementStates.selectedPredefinedCalendar);
         this.uiElementStates.qsNextClicked = !this.uiElementStates.qsNextClicked;
-        const step1 = document.querySelector('#simple-calendar-configuration-application-form .quick-setup .predefined');
-        const step2 = document.querySelector('#simple-calendar-configuration-application-form .quick-setup .settings');
-        if(step1 && step2){
-            animateElement(step1, 500);
-            animateElement(step2, 500);
-        }
-        const currDate = (<Calendar>this.object).getCurrentDate();
-        const ds = DateSelectorManager.GetSelector('quick-setup-predefined-calendar', {
-            calendar: (<Calendar>this.object),
-            selectedStartDate: {year: currDate.year, month: currDate.month, day: currDate.day, hour: 0, minute: 0, seconds: 0},
-            selectedEndDate: {year: currDate.year, month: currDate.month, day: currDate.day, hour: 0, minute: 0, seconds: 0}
-        });
-        ds.update(false);
+        PredefinedCalendar.setToPredefined((<Calendar>this.object).year, <PredefinedCalendars>this.uiElementStates.selectedPredefinedCalendar);
+        this.updateApp();
     }
 
     private quickSetupBackClick(e: Event){
         e.preventDefault();
         this.uiElementStates.qsNextClicked = !this.uiElementStates.qsNextClicked;
-        const step1 = document.querySelector('#simple-calendar-configuration-application-form .quick-setup .predefined');
-        const step2 = document.querySelector('#simple-calendar-configuration-application-form .quick-setup .settings');
-        if(step1 && step2){
-            animateElement(step1, 500);
-            animateElement(step2, 500);
+        if(this.appWindow){
+            const step1 = this.appWindow.querySelector('.quick-setup .predefined');
+            const step2 = this.appWindow.querySelector('.quick-setup .settings');
+            if(step1 && step2){
+                animateElement(step1, 500);
+                animateElement(step2, 500);
+            }
         }
     }
 
@@ -492,11 +495,7 @@ export default class ConfigurationApp extends FormApplication {
             (<Calendar>this.object).year.updateMonth(monthIndex, 'current', true, dayIndex);
         }
         this._tabs[0].active = "generalSettings";
-        const curYear = document.getElementById('scCurrentYear');
-        if(curYear){
-            (<HTMLInputElement>curYear).value = (<Calendar>this.object).year.numericRepresentation.toString();
-        }
-        this.saveClick(false, e).catch(Logger.error);
+        this.save(false, false).catch(Logger.error);
     }
 
     private toggleMonthShowAdvanced(e: Event){
@@ -515,285 +514,293 @@ export default class ConfigurationApp extends FormApplication {
     }
 
     private writeInputValuesToObjects(){
-        //----------------------------------
-        // Global Config: Settings
-        //----------------------------------
-        this.clientSettings.theme = <Themes>getTextInputValue('#scTheme', <string>Themes.dark);
-        this.clientSettings.openOnLoad = getCheckBoxInputValue('#scOpenOnLoad', true);
-        this.clientSettings.openCompact = getCheckBoxInputValue('#scOpenInCompact', false);
-        this.clientSettings.rememberPosition = getCheckBoxInputValue('#scRememberPos', true);
+        if(this.appWindow){
+            //----------------------------------
+            // Global Config: Settings
+            //----------------------------------
+            this.globalConfiguration.secondsInCombatRound = <number>getNumericInputValue('#scSecondsInCombatRound', 6, false, this.appWindow);
 
-        //----------------------------------
-        // Global Config: Permissions
-        //----------------------------------
-        this.permissions.viewCalendar.player = getCheckBoxInputValue('#scCalendarVisibleP', true);
-        this.permissions.viewCalendar.trustedPlayer = getCheckBoxInputValue('#scCalendarVisibleTP', true);
-        this.permissions.viewCalendar.assistantGameMaster = getCheckBoxInputValue('#scCalendarVisibleAGM', true);
-        this.permissions.addNotes.player = getCheckBoxInputValue('#scAddNotesP', false);
-        this.permissions.addNotes.trustedPlayer = getCheckBoxInputValue('#scAddNotesTP', false);
-        this.permissions.addNotes.assistantGameMaster = getCheckBoxInputValue('#scAddNotesAGM', false);
-        this.permissions.changeDateTime.player = getCheckBoxInputValue('#scChangeDateTimeP', false);
-        this.permissions.changeDateTime.trustedPlayer = getCheckBoxInputValue('#scChangeDateTimeTP', false);
-        this.permissions.changeDateTime.assistantGameMaster = getCheckBoxInputValue('#scChangeDateTimeAGM', false);
-        this.permissions.reorderNotes.player = getCheckBoxInputValue('#scReorderNotesP', false);
-        this.permissions.reorderNotes.trustedPlayer = getCheckBoxInputValue('#scReorderNotesTP', false);
-        this.permissions.reorderNotes.assistantGameMaster = getCheckBoxInputValue('#scReorderNotesAGM', false);
+            //----------------------------------
+            // Global Config: Client Settings
+            //----------------------------------
+            this.clientSettings.theme = <Themes>getTextInputValue('#scTheme', <string>Themes.dark, this.appWindow);
+            this.clientSettings.openOnLoad = getCheckBoxInputValue('#scOpenOnLoad', true, this.appWindow);
+            this.clientSettings.openCompact = getCheckBoxInputValue('#scOpenInCompact', false, this.appWindow);
+            this.clientSettings.rememberPosition = getCheckBoxInputValue('#scRememberPos', true, this.appWindow);
 
-        //----------------------------------
-        // Calendar: General Settings
-        //----------------------------------
-        (<Calendar>this.object).name = getTextInputValue('#scCalendarName', 'New Calendar');
-        (<Calendar>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>getTextInputValue('#scGameWorldTime', <string>GameWorldTimeIntegrations.Mixed);
-        (<Calendar>this.object).generalSettings.pf2eSync = getCheckBoxInputValue('#scPF2ESync', true);
+            //----------------------------------
+            // Global Config: Permissions
+            //----------------------------------
+            this.globalConfiguration.permissions.viewCalendar.player = getCheckBoxInputValue('#scCalendarVisibleP', true, this.appWindow);
+            this.globalConfiguration.permissions.viewCalendar.trustedPlayer = getCheckBoxInputValue('#scCalendarVisibleTP', true, this.appWindow);
+            this.globalConfiguration.permissions.viewCalendar.assistantGameMaster = getCheckBoxInputValue('#scCalendarVisibleAGM', true, this.appWindow);
+            this.globalConfiguration.permissions.addNotes.player = getCheckBoxInputValue('#scAddNotesP', false, this.appWindow);
+            this.globalConfiguration.permissions.addNotes.trustedPlayer = getCheckBoxInputValue('#scAddNotesTP', false, this.appWindow);
+            this.globalConfiguration.permissions.addNotes.assistantGameMaster = getCheckBoxInputValue('#scAddNotesAGM', false, this.appWindow);
+            this.globalConfiguration.permissions.changeDateTime.player = getCheckBoxInputValue('#scChangeDateTimeP', false, this.appWindow);
+            this.globalConfiguration.permissions.changeDateTime.trustedPlayer = getCheckBoxInputValue('#scChangeDateTimeTP', false, this.appWindow);
+            this.globalConfiguration.permissions.changeDateTime.assistantGameMaster = getCheckBoxInputValue('#scChangeDateTimeAGM', false, this.appWindow);
+            this.globalConfiguration.permissions.reorderNotes.player = getCheckBoxInputValue('#scReorderNotesP', false, this.appWindow);
+            this.globalConfiguration.permissions.reorderNotes.trustedPlayer = getCheckBoxInputValue('#scReorderNotesTP', false, this.appWindow);
+            this.globalConfiguration.permissions.reorderNotes.assistantGameMaster = getCheckBoxInputValue('#scReorderNotesAGM', false, this.appWindow);
 
-        //----------------------------------
-        // Calendar: Display Options
-        //----------------------------------
-        (<Calendar>this.object).generalSettings.dateFormat.date = getTextInputValue('#scDateFormatsDate', 'MMMM DD, YYYY');
-        (<Calendar>this.object).generalSettings.dateFormat.time = getTextInputValue('#scDateFormatsTime', 'HH:mm:ss');
-        (<Calendar>this.object).generalSettings.dateFormat.monthYear = getTextInputValue('#scDateFormatsMonthYear', 'MMMM YAYYYYYZ');
+            //----------------------------------
+            // Calendar: General Settings
+            //----------------------------------
+            (<Calendar>this.object).name = getTextInputValue('#scCalendarName', 'New Calendar', this.appWindow);
+            (<Calendar>this.object).generalSettings.gameWorldTimeIntegration = <GameWorldTimeIntegrations>getTextInputValue('#scGameWorldTime', <string>GameWorldTimeIntegrations.Mixed, this.appWindow);
+            (<Calendar>this.object).generalSettings.pf2eSync = getCheckBoxInputValue('#scPF2ESync', true, this.appWindow);
 
-        //----------------------------------
-        // Calendar: Year Settings
-        //----------------------------------
-        (<Calendar>this.object).year.numericRepresentation = <number>getNumericInputValue('#scCurrentYear', 0);
-        (<Calendar>this.object).year.prefix = getTextInputValue("#scYearPreFix", "");
-        (<Calendar>this.object).year.postfix = getTextInputValue("#scYearPostFix", "");
-        (<Calendar>this.object).year.yearZero = <number>getNumericInputValue('#scYearZero', 0);
+            //----------------------------------
+            // Calendar: Display Options
+            //----------------------------------
+            (<Calendar>this.object).generalSettings.dateFormat.date = getTextInputValue('#scDateFormatsDate', 'MMMM DD, YYYY', this.appWindow);
+            (<Calendar>this.object).generalSettings.dateFormat.time = getTextInputValue('#scDateFormatsTime', 'HH:mm:ss', this.appWindow);
+            (<Calendar>this.object).generalSettings.dateFormat.monthYear = getTextInputValue('#scDateFormatsMonthYear', 'MMMM YAYYYYYZ', this.appWindow);
 
-        (<Calendar>this.object).year.yearNamingRule = <YearNamingRules>getTextInputValue("#scYearNameBehaviour", <string>YearNamingRules.Default);
-        (<Calendar>this.object).year.yearNamesStart = <number>getNumericInputValue('#scYearNamesStart', 0);
-        document.querySelectorAll('#simple-calendar-configuration-application-form .year-settings .year-names>.row:not(.head)').forEach(e => {
-            const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-            if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.yearNames.length){
-                (<Calendar>this.object).year.yearNames[index] = getTextInputValue(".year-name", "New Named Year", e);
-            }
-        });
+            //----------------------------------
+            // Calendar: Year Settings
+            //----------------------------------
+            (<Calendar>this.object).year.numericRepresentation = <number>getNumericInputValue('#scCurrentYear', 0, false, this.appWindow);
+            (<Calendar>this.object).year.prefix = getTextInputValue("#scYearPreFix", "", this.appWindow);
+            (<Calendar>this.object).year.postfix = getTextInputValue("#scYearPostFix", "", this.appWindow);
+            (<Calendar>this.object).year.yearZero = <number>getNumericInputValue('#scYearZero', 0, false, this.appWindow);
 
-        //----------------------------------
-        // Calendar: Month Settings
-        //----------------------------------
-        document.querySelectorAll('#simple-calendar-configuration-application-form .month-settings .months>.row:not(.head)').forEach(e => {
-            const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-            if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.months.length){
-                const name = getTextInputValue(".month-name", "New Month", e);
-                if(name !== (<Calendar>this.object).year.months[index].name ){
-                    (<Calendar>this.object).year.months[index].abbreviation = name.substring(0, 3);
-                } else {
-                    (<Calendar>this.object).year.months[index].abbreviation = getTextInputValue(".month-abbreviation", "New Month", e);
+            (<Calendar>this.object).year.yearNamingRule = <YearNamingRules>getTextInputValue("#scYearNameBehaviour", <string>YearNamingRules.Default, this.appWindow);
+            (<Calendar>this.object).year.yearNamesStart = <number>getNumericInputValue('#scYearNamesStart', 0, false, this.appWindow);
+            this.appWindow.querySelectorAll('.year-settings .year-names>.row:not(.head)').forEach(e => {
+                const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.yearNames.length){
+                    (<Calendar>this.object).year.yearNames[index] = getTextInputValue(".year-name", "New Named Year", e);
                 }
-                (<Calendar>this.object).year.months[index].name = name;
-                const days = <number>getNumericInputValue('.month-days', 1, false, e);
-                if(days !== (<Calendar>this.object).year.months[index].numberOfDays){
-                    (<Calendar>this.object).year.months[index].numberOfDays = days;
-                    if((<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None){
+            });
+
+            //----------------------------------
+            // Calendar: Month Settings
+            //----------------------------------
+            this.appWindow.querySelectorAll('.month-settings .months>.row:not(.head)').forEach(e => {
+                const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.months.length){
+                    const name = getTextInputValue(".month-name", "New Month", e);
+                    if(name !== (<Calendar>this.object).year.months[index].name ){
+                        (<Calendar>this.object).year.months[index].abbreviation = name.substring(0, 3);
+                    } else {
+                        (<Calendar>this.object).year.months[index].abbreviation = getTextInputValue(".month-abbreviation", "New Month", e);
+                    }
+                    (<Calendar>this.object).year.months[index].name = name;
+                    const days = <number>getNumericInputValue('.month-days', 1, false, e);
+                    if(days !== (<Calendar>this.object).year.months[index].numberOfDays){
+                        (<Calendar>this.object).year.months[index].numberOfDays = days;
+                        if((<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None){
+                            (<Calendar>this.object).year.months[index].numberOfLeapYearDays = days;
+                        }
+                        this.updateMonthDays((<Calendar>this.object).year.months[index]);
+                    }
+                    const intercalary = getCheckBoxInputValue(".month-intercalary", false, e);
+                    if(intercalary !== (<Calendar>this.object).year.months[index].intercalary){
+                        (<Calendar>this.object).year.months[index].intercalary = intercalary;
+                        this.rebaseMonthNumbers();
+                    }
+                    const intercalaryInclude = getCheckBoxInputValue(".month-intercalary-include", false, e);
+                    if(intercalaryInclude !== (<Calendar>this.object).year.months[index].intercalaryInclude){
+                        (<Calendar>this.object).year.months[index].intercalaryInclude = intercalaryInclude;
+                        this.rebaseMonthNumbers();
+                    }
+                    (<Calendar>this.object).year.months[index].numericRepresentationOffset = <number>getNumericInputValue(".month-numeric-representation-offset", 0, false, e);
+                    (<Calendar>this.object).year.months[index].startingWeekday = getNumericInputValue(".month-starting-weekday", null, false, e);
+                }
+            });
+            //----------------------------------
+            // Calendar: Weekday Settings
+            //----------------------------------
+            (<Calendar>this.object).year.showWeekdayHeadings = getCheckBoxInputValue('#scShowWeekdayHeaders', true, this.appWindow);
+            (<Calendar>this.object).year.firstWeekday = <number>getNumericInputValue('#scWeekdayFirstDay', 0, false, this.appWindow);
+            this.appWindow.querySelectorAll('.weekday-settings .weekdays>.row:not(.head)').forEach(e => {
+                const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.weekdays.length){
+                    const name = getTextInputValue('.weekday-name', 'New Weekday', e);
+                    if(name !== (<Calendar>this.object).year.weekdays[index].name){
+                        (<Calendar>this.object).year.weekdays[index].name = name;
+                        (<Calendar>this.object).year.weekdays[index].abbreviation = name.substring(0, 2);
+                    } else {
+                        (<Calendar>this.object).year.weekdays[index].abbreviation = getTextInputValue('.weekday-abbreviation', 'New', e);
+                    }
+                }
+            });
+
+            //----------------------------------
+            // Calendar: Leap Year Settings
+            //----------------------------------
+            (<Calendar>this.object).year.leapYearRule.rule = <LeapYearRules>getTextInputValue('#scLeapYearRule', 'none', this.appWindow);
+            (<Calendar>this.object).year.leapYearRule.customMod = <number>getNumericInputValue('#scLeapYearCustomMod', 0, false, this.appWindow);
+            this.appWindow.querySelectorAll('.leapyear-settings .months>.row:not(.head)').forEach(e => {
+                const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.months.length){
+                    const days = <number>getNumericInputValue('.month-leap-days', 0, false, e);
+                    if(days !== (<Calendar>this.object).year.months[index].numberOfLeapYearDays){
                         (<Calendar>this.object).year.months[index].numberOfLeapYearDays = days;
+                        this.updateMonthDays((<Calendar>this.object).year.months[index]);
                     }
-                    this.updateMonthDays((<Calendar>this.object).year.months[index]);
                 }
-                const intercalary = getCheckBoxInputValue(".month-intercalary", false, e);
-                if(intercalary !== (<Calendar>this.object).year.months[index].intercalary){
-                    (<Calendar>this.object).year.months[index].intercalary = intercalary;
-                    this.rebaseMonthNumbers();
+            });
+
+            //----------------------------------
+            // Calendar: Season Settings
+            //----------------------------------
+            this.appWindow.querySelectorAll('.season-settings .seasons>.row:not(.head)').forEach(e => {
+                const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.seasons.length){
+                    (<Calendar>this.object).year.seasons[index].name = getTextInputValue(".season-name", "New Season", e);
+                    (<Calendar>this.object).year.seasons[index].color = getTextInputValue(".season-color", "#FFFFFF", e);
                 }
-                const intercalaryInclude = getCheckBoxInputValue(".month-intercalary-include", false, e);
-                if(intercalaryInclude !== (<Calendar>this.object).year.months[index].intercalaryInclude){
-                    (<Calendar>this.object).year.months[index].intercalaryInclude = intercalaryInclude;
-                    this.rebaseMonthNumbers();
+            });
+
+            //----------------------------------
+            // Calendar: Moon Settings
+            //----------------------------------
+            this.appWindow.querySelectorAll('.moon-settings .moons>.row:not(.head)').forEach(e => {
+                const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.moons.length){
+                    (<Calendar>this.object).year.moons[index].name = getTextInputValue('.moon-name', 'New Moon', e);
+                    (<Calendar>this.object).year.moons[index].cycleLength = <number>getNumericInputValue('.moon-cycle-length', 29.53059, true, e);
+                    (<Calendar>this.object).year.moons[index].cycleDayAdjust = <number>getNumericInputValue('.moon-cycle-adjustment', 0, true, e);
+                    (<Calendar>this.object).year.moons[index].color = getTextInputValue('.moon-color', '#FFFFFF', e);
+                    (<Calendar>this.object).year.moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>getTextInputValue('.moon-year-reset', 'none', e);
+                    (<Calendar>this.object).year.moons[index].firstNewMoon.year = <number>getNumericInputValue('.moon-year', 0, false, e);
+                    (<Calendar>this.object).year.moons[index].firstNewMoon.yearX = <number>getNumericInputValue('.moon-year-x', 0, false, e);
+                    (<Calendar>this.object).year.moons[index].firstNewMoon.month = <number>getNumericInputValue('.moon-month', 1, false, e);
+                    (<Calendar>this.object).year.moons[index].firstNewMoon.day = <number>getNumericInputValue('.moon-day', 1, false, e);
+
+                    e.querySelectorAll('.phases>.row:not(.head)').forEach(p => {
+                        const phaseIndex = parseInt((<HTMLElement>p).getAttribute('data-index') || '');
+                        if(!isNaN(phaseIndex) && phaseIndex >= 0 && phaseIndex < (<Calendar>this.object).year.moons[index].phases.length){
+                            (<Calendar>this.object).year.moons[index].phases[phaseIndex].name = getTextInputValue('.moon-phase-name', 'New Phase', p);
+                            (<Calendar>this.object).year.moons[index].phases[phaseIndex].singleDay = getCheckBoxInputValue('.moon-phase-single-day', false, p);
+                            (<Calendar>this.object).year.moons[index].phases[phaseIndex].icon = <Icons>getTextInputValue('.moon-phase-icon', 'new', p);
+                        }
+                    });
+
+                    (<Calendar>this.object).year.moons[index].updatePhaseLength();
                 }
-                (<Calendar>this.object).year.months[index].numericRepresentationOffset = <number>getNumericInputValue(".month-numeric-representation-offset", 0, false, e);
-                (<Calendar>this.object).year.months[index].startingWeekday = getNumericInputValue(".month-starting-weekday", null, false, e);
-            }
-        });
-        //----------------------------------
-        // Calendar: Weekday Settings
-        //----------------------------------
-        (<Calendar>this.object).year.showWeekdayHeadings = getCheckBoxInputValue('#scShowWeekdayHeaders', true);
-        (<Calendar>this.object).year.firstWeekday = <number>getNumericInputValue('#scWeekdayFirstDay', 0, false);
-        document.querySelectorAll('#simple-calendar-configuration-application-form .weekday-settings .weekdays>.row:not(.head)').forEach(e => {
-            const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-            if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.weekdays.length){
-                const name = getTextInputValue('.weekday-name', 'New Weekday', e);
-                if(name !== (<Calendar>this.object).year.weekdays[index].name){
-                    (<Calendar>this.object).year.weekdays[index].name = name;
-                    (<Calendar>this.object).year.weekdays[index].abbreviation = name.substring(0, 2);
-                } else {
-                    (<Calendar>this.object).year.weekdays[index].abbreviation = getTextInputValue('.weekday-abbreviation', 'New', e);
+            });
+
+            //----------------------------------
+            // Calendar: Time Settings
+            //----------------------------------
+            (<Calendar>this.object).year.time.hoursInDay = <number>getNumericInputValue('#scHoursInDay', 24, false, this.appWindow);
+            (<Calendar>this.object).year.time.minutesInHour = <number>getNumericInputValue('#scMinutesInHour', 60, false, this.appWindow);
+            (<Calendar>this.object).year.time.secondsInMinute = <number>getNumericInputValue('#scSecondsInMinute', 60, false, this.appWindow);
+            (<Calendar>this.object).generalSettings.showClock = getCheckBoxInputValue('#scShowClock', true, this.appWindow);
+            (<Calendar>this.object).year.time.gameTimeRatio = <number>getNumericInputValue('#scGameTimeRatio', 1, false, this.appWindow);
+            (<Calendar>this.object).year.time.updateFrequency = <number>getNumericInputValue('#scTimeUpdateFrequency', 1, false, this.appWindow);
+            (<Calendar>this.object).year.time.unifyGameAndClockPause = getCheckBoxInputValue('#scUnifyClockWithFoundryPause', false, this.appWindow);
+
+            //----------------------------------
+            // Calendar: Note Settings
+            //----------------------------------
+            (<Calendar>this.object).generalSettings.noteDefaultVisibility = getCheckBoxInputValue('#scDefaultPlayerVisibility', true, this.appWindow);
+            this.appWindow.querySelectorAll('.note-settings .note-categories .row:not(.head)').forEach(e => {
+                const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).noteCategories.length){
+                    (<Calendar>this.object).noteCategories[index].name = getTextInputValue(".note-category-name", "New Category", e);
+                    (<Calendar>this.object).noteCategories[index].color = getTextInputValue(".note-category-color", "New Category", e);
+                    (<Calendar>this.object).noteCategories[index].textColor = GetContrastColor((<Calendar>this.object).noteCategories[index].color);
                 }
-            }
-        });
-
-        //----------------------------------
-        // Calendar: Leap Year Settings
-        //----------------------------------
-        (<Calendar>this.object).year.leapYearRule.rule = <LeapYearRules>getTextInputValue('#scLeapYearRule', 'none');
-        (<Calendar>this.object).year.leapYearRule.customMod = <number>getNumericInputValue('#scLeapYearCustomMod', 0, false);
-        document.querySelectorAll('#simple-calendar-configuration-application-form .leapyear-settings .months>.row:not(.head)').forEach(e => {
-            const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-            if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.months.length){
-                const days = <number>getNumericInputValue('.month-leap-days', 0, false, e);
-                if(days !== (<Calendar>this.object).year.months[index].numberOfLeapYearDays){
-                    (<Calendar>this.object).year.months[index].numberOfLeapYearDays = days;
-                    this.updateMonthDays((<Calendar>this.object).year.months[index]);
-                }
-            }
-        });
-
-        //----------------------------------
-        // Calendar: Season Settings
-        //----------------------------------
-        document.querySelectorAll('#simple-calendar-configuration-application-form .season-settings .seasons>.row:not(.head)').forEach(e => {
-            const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-            if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.seasons.length){
-                (<Calendar>this.object).year.seasons[index].name = getTextInputValue(".season-name", "New Season", e);
-                (<Calendar>this.object).year.seasons[index].color = getTextInputValue(".season-color", "#FFFFFF", e);
-            }
-        });
-
-        //----------------------------------
-        // Calendar: Moon Settings
-        //----------------------------------
-        document.querySelectorAll('#simple-calendar-configuration-application-form .moon-settings .moons>.row:not(.head)').forEach(e => {
-            const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-            if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.moons.length){
-                (<Calendar>this.object).year.moons[index].name = getTextInputValue('.moon-name', 'New Moon', e);
-                (<Calendar>this.object).year.moons[index].cycleLength = <number>getNumericInputValue('.moon-cycle-length', 29.53059, true, e);
-                (<Calendar>this.object).year.moons[index].cycleDayAdjust = <number>getNumericInputValue('.moon-cycle-adjustment', 0, true, e);
-                (<Calendar>this.object).year.moons[index].color = getTextInputValue('.moon-color', '#FFFFFF', e);
-                (<Calendar>this.object).year.moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>getTextInputValue('.moon-year-reset', 'none', e);
-                (<Calendar>this.object).year.moons[index].firstNewMoon.year = <number>getNumericInputValue('.moon-year', 0, false, e);
-                (<Calendar>this.object).year.moons[index].firstNewMoon.yearX = <number>getNumericInputValue('.moon-year-x', 0, false, e);
-                (<Calendar>this.object).year.moons[index].firstNewMoon.month = <number>getNumericInputValue('.moon-month', 1, false, e);
-                (<Calendar>this.object).year.moons[index].firstNewMoon.day = <number>getNumericInputValue('.moon-day', 1, false, e);
-
-                e.querySelectorAll('.phases>.row:not(.head)').forEach(p => {
-                    const phaseIndex = parseInt((<HTMLElement>p).getAttribute('data-index') || '');
-                    if(!isNaN(phaseIndex) && phaseIndex >= 0 && phaseIndex < (<Calendar>this.object).year.moons[index].phases.length){
-                        (<Calendar>this.object).year.moons[index].phases[phaseIndex].name = getTextInputValue('.moon-phase-name', 'New Phase', p);
-                        (<Calendar>this.object).year.moons[index].phases[phaseIndex].singleDay = getCheckBoxInputValue('.moon-phase-single-day', false, p);
-                        (<Calendar>this.object).year.moons[index].phases[phaseIndex].icon = <Icons>getTextInputValue('.moon-phase-icon', 'new', p);
-                    }
-                });
-
-                (<Calendar>this.object).year.moons[index].updatePhaseLength();
-            }
-        });
-
-        //----------------------------------
-        // Calendar: Time Settings
-        //----------------------------------
-        (<Calendar>this.object).year.time.hoursInDay = <number>getNumericInputValue('#scHoursInDay', 24);
-        (<Calendar>this.object).year.time.minutesInHour = <number>getNumericInputValue('#scMinutesInHour', 60);
-        (<Calendar>this.object).year.time.secondsInMinute = <number>getNumericInputValue('#scSecondsInMinute', 60);
-        (<Calendar>this.object).year.time.secondsInCombatRound = <number>getNumericInputValue('#scSecondsInCombatRound', 6);
-        (<Calendar>this.object).generalSettings.showClock = getCheckBoxInputValue('#scShowClock', true);
-        (<Calendar>this.object).year.time.gameTimeRatio = <number>getNumericInputValue('#scGameTimeRatio', 1);
-        (<Calendar>this.object).year.time.updateFrequency = <number>getNumericInputValue('#scTimeUpdateFrequency', 1);
-        (<Calendar>this.object).year.time.unifyGameAndClockPause = getCheckBoxInputValue('#scUnifyClockWithFoundryPause', false);
-
-        //----------------------------------
-        // Calendar: Note Settings
-        //----------------------------------
-        (<Calendar>this.object).generalSettings.noteDefaultVisibility = getCheckBoxInputValue('#scDefaultPlayerVisibility', true);
-        document.querySelectorAll('#simple-calendar-configuration-application-form .note-settings .note-categories .row:not(.head)').forEach(e => {
-            const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-            if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).noteCategories.length){
-                (<Calendar>this.object).noteCategories[index].name = getTextInputValue(".note-category-name", "New Category", e);
-                (<Calendar>this.object).noteCategories[index].color = getTextInputValue(".note-category-color", "New Category", e);
-                (<Calendar>this.object).noteCategories[index].textColor = GetContrastColor((<Calendar>this.object).noteCategories[index].color);
-            }
-        });
+            });
+        }
     }
 
     private updateUIFromObject(){
-        //----------------------------------
-        // Calendar Config: Display Options
-        //----------------------------------
-        const currDate = (<Calendar>this.object).getCurrentDate();
-        this.uiElementStates.dateFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.date, <Calendar>this.object);
-        this.uiElementStates.timeFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.time, <Calendar>this.object);
-        this.uiElementStates.monthYearFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.monthYear, <Calendar>this.object);
+        if(this.appWindow){
+            //----------------------------------
+            // Calendar Config: Display Options
+            //----------------------------------
+            const currDate = (<Calendar>this.object).getCurrentDate();
+            this.uiElementStates.dateFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.date, <Calendar>this.object);
+            this.uiElementStates.timeFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.time, <Calendar>this.object);
+            this.uiElementStates.monthYearFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.monthYear, <Calendar>this.object);
 
-        let df = document.querySelector(`#${ConfigurationApp.appWindowId} #scDateFormatsDate`)?.closest('.form-group')?.querySelector('.example');
-        if(df){
-            (<HTMLElement>df).textContent = this.uiElementStates.dateFormatExample;
-        }
-        df = document.querySelector(`#${ConfigurationApp.appWindowId} #scDateFormatsTime`)?.closest('.form-group')?.querySelector('.example');
-        if(df){
-            (<HTMLElement>df).textContent = this.uiElementStates.timeFormatExample;
-        }
-        df = document.querySelector(`#${ConfigurationApp.appWindowId} #scDateFormatsMonthYear`)?.closest('.form-group')?.querySelector('.example');
-        if(df){
-            (<HTMLElement>df).textContent = this.uiElementStates.monthYearFormatExample;
-        }
-        //----------------------------------
-        // Calendar Config: Year
-        //----------------------------------
-        animateFormGroup('#scYearNamesStart', (<Calendar>this.object).year.yearNamingRule !== YearNamingRules.Random);
+            let df = this.appWindow.querySelector(`#scDateFormatsDate`)?.closest('.form-group')?.querySelector('.example');
+            if(df){
+                (<HTMLElement>df).innerHTML = `<strong>${GameSettings.Localize('FSC.Example')}</strong>: ${this.uiElementStates.dateFormatExample}`;
+            }
+            df = this.appWindow.querySelector(`#scDateFormatsTime`)?.closest('.form-group')?.querySelector('.example');
+            if(df){
+                (<HTMLElement>df).innerHTML = `<strong>${GameSettings.Localize('FSC.Example')}</strong>: ${this.uiElementStates.timeFormatExample}`;
+            }
+            df = this.appWindow.querySelector(`#scDateFormatsMonthYear`)?.closest('.form-group')?.querySelector('.example');
+            if(df){
+                (<HTMLElement>df).innerHTML = `<strong>${GameSettings.Localize('FSC.Example')}</strong>: ${this.uiElementStates.monthYearFormatExample}`;
+            }
+            //----------------------------------
+            // Calendar Config: Year
+            //----------------------------------
+            animateFormGroup('#scYearNamesStart', (<Calendar>this.object).year.yearNamingRule !== YearNamingRules.Random);
 
-        //----------------------------------
-        // Calendar Config: Month
-        //----------------------------------
-        for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
-            const row = document.querySelector(`#simple-calendar-configuration-application-form .month-settings .months>.row[data-index="${i}"]`);
-            if(row){
-                //Show Advanced Stuff
-                const button = row.querySelector('.month-show-advanced');
-                const options = row.querySelector('.options');
-                if(button && options){
-                    if((options.classList.contains('closed') && (<Calendar>this.object).year.months[i].showAdvanced) || (options.classList.contains('open') && !(<Calendar>this.object).year.months[i].showAdvanced)){
-                        animateElement(options, 400);
+            //----------------------------------
+            // Calendar Config: Month
+            //----------------------------------
+            for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
+                const row = this.appWindow.querySelector(`.month-settings .months>.row[data-index="${i}"]`);
+                if(row){
+                    //Show Advanced Stuff
+                    const button = row.querySelector('.month-show-advanced');
+                    const options = row.querySelector('.options');
+                    if(button && options){
+                        if((options.classList.contains('closed') && (<Calendar>this.object).year.months[i].showAdvanced) || (options.classList.contains('open') && !(<Calendar>this.object).year.months[i].showAdvanced)){
+                            animateElement(options, 400);
+                        }
+                        if((<Calendar>this.object).year.months[i].showAdvanced){
+                            button.classList.remove('fa-chevron-down');
+                            button.classList.add('fa-chevron-up');
+                            (<HTMLElement>button).innerHTML = `<span>${GameSettings.Localize('FSC.HideAdvanced')}</span>`;
+                        } else {
+                            button.classList.add('fa-chevron-down');
+                            button.classList.remove('fa-chevron-up');
+                            (<HTMLElement>button).innerHTML = `<span>${GameSettings.Localize('FSC.ShowAdvanced')}</span>`;
+                        }
                     }
-                    if((<Calendar>this.object).year.months[i].showAdvanced){
-                        button.classList.remove('fa-chevron-down');
-                        button.classList.add('fa-chevron-up');
-                        (<HTMLElement>button).innerHTML = `<span>${GameSettings.Localize('FSC.HideAdvanced')}</span>`;
-                    } else {
-                        button.classList.add('fa-chevron-down');
-                        button.classList.remove('fa-chevron-up');
-                        (<HTMLElement>button).innerHTML = `<span>${GameSettings.Localize('FSC.ShowAdvanced')}</span>`;
+                    //Intercalary Stuff
+                    animateFormGroup('.month-intercalary-include', (<Calendar>this.object).year.months[i].intercalary, row);
+
+                    //Month Number
+                    const mn = row.querySelector('.month-number');
+                    if(mn){
+                        (<HTMLElement>mn).innerText = (<Calendar>this.object).year.months[i].numericRepresentation < 0 ? 'IC' : (<Calendar>this.object).year.months[i].numericRepresentation.toString();
                     }
                 }
-                //Intercalary Stuff
-                animateFormGroup('.month-intercalary-include', (<Calendar>this.object).year.months[i].intercalary, row);
+            }
 
-                //Month Number
-                const mn = row.querySelector('.month-number');
-                if(mn){
-                    (<HTMLElement>mn).innerText = (<Calendar>this.object).year.months[i].numericRepresentation < 0 ? 'IC' : (<Calendar>this.object).year.months[i].numericRepresentation.toString();
+            //----------------------------------
+            // Calendar Config: Leap Year
+            //----------------------------------
+            animateFormGroup('#scLeapYearCustomMod', (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom);
+            let fg = this.appWindow.querySelector('#scLeapYearMonthList');
+            if(fg){
+                if((fg.classList.contains('closed') && (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None) || (fg.classList.contains('open') && (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None)){
+                    animateElement(fg, 400);
+                } else if((<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None){
+                    fg.classList.remove('closed');
+                    fg.classList.add('open');
+                } else {
+                    fg.classList.add('closed');
+                    fg.classList.remove('open');
                 }
             }
-        }
 
-        //----------------------------------
-        // Calendar Config: Leap Year
-        //----------------------------------
-        animateFormGroup('#scLeapYearCustomMod', (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom);
-        let fg = document.querySelector('#scLeapYearMonthList');
-        if(fg){
-            if((fg.classList.contains('closed') && (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None) || (fg.classList.contains('open') && (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None)){
-                animateElement(fg, 400);
-            } else if((<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None){
-                fg.classList.remove('closed');
-                fg.classList.add('open');
-            } else {
-                fg.classList.add('closed');
-                fg.classList.remove('open');
-            }
-        }
-
-        //----------------------------------
-        // Calendar Config: Moons
-        //----------------------------------
-        for(let i = 0; i < (<Calendar>this.object).year.moons.length; i++){
-            const row = document.querySelector(`#simple-calendar-configuration-application-form .moon-settings .moons>.row[data-index="${i}"]`);
-            if(row){
-                animateFormGroup('.moon-year', (<Calendar>this.object).year.moons[i].firstNewMoon.yearReset === MoonYearResetOptions.None, row);
-                animateFormGroup('.moon-year-x', (<Calendar>this.object).year.moons[i].firstNewMoon.yearReset === MoonYearResetOptions.XYears, row);
-                for(let p = 0; p < (<Calendar>this.object).year.moons[i].phases.length; p++){
-                    const pl = row.querySelector(`.phases>.row[data-index="${p}"] .moon-phase-length`);
-                    if(pl){
-                        (<HTMLElement>pl).innerText = `${(<Calendar>this.object).year.moons[i].phases[p].length} ${GameSettings.Localize('FSC.Days')}`;
+            //----------------------------------
+            // Calendar Config: Moons
+            //----------------------------------
+            for(let i = 0; i < (<Calendar>this.object).year.moons.length; i++){
+                const row = this.appWindow.querySelector(`.moon-settings .moons>.row[data-index="${i}"]`);
+                if(row){
+                    animateFormGroup('.moon-year', (<Calendar>this.object).year.moons[i].firstNewMoon.yearReset === MoonYearResetOptions.None, row);
+                    animateFormGroup('.moon-year-x', (<Calendar>this.object).year.moons[i].firstNewMoon.yearReset === MoonYearResetOptions.XYears, row);
+                    for(let p = 0; p < (<Calendar>this.object).year.moons[i].phases.length; p++){
+                        const pl = row.querySelector(`.phases>.row[data-index="${p}"] .moon-phase-length`);
+                        if(pl){
+                            (<HTMLElement>pl).innerText = `${(<Calendar>this.object).year.moons[i].phases[p].length} ${GameSettings.Localize('FSC.Days')}`;
+                        }
                     }
                 }
             }
@@ -805,13 +812,15 @@ export default class ConfigurationApp extends FormApplication {
      */
     private dateFormatTableClick(){
         this.dateFormatTableExpanded = !this.dateFormatTableExpanded;
-        const collapseArea = document.querySelector(`#${ConfigurationApp.appWindowId} .display-options .tokens .collapse-data`);
-        if(collapseArea){
-            (<HTMLElement>collapseArea).style.display = this.dateFormatTableExpanded? 'block' : 'none';
-        }
-        const a = document.querySelector(`#${ConfigurationApp.appWindowId} .display-options .tokens .date-format-token-show .fa`);
-        if(a){
-            (<HTMLElement>a).className = `fa ${this.dateFormatTableExpanded? 'fa-chevron-up' : 'fa-chevron-down'}`
+        if(this.appWindow){
+            const collapseArea = this.appWindow.querySelector(`.display-options .tokens .collapse-data`);
+            if(collapseArea){
+                (<HTMLElement>collapseArea).style.display = this.dateFormatTableExpanded? 'block' : 'none';
+            }
+            const a = this.appWindow.querySelector(`.display-options .tokens .date-format-token-show .fa`);
+            if(a){
+                (<HTMLElement>a).className = `fa ${this.dateFormatTableExpanded? 'fa-chevron-up' : 'fa-chevron-down'}`
+            }
         }
     }
 
@@ -1118,24 +1127,27 @@ export default class ConfigurationApp extends FormApplication {
      */
     public async saveClick(close: boolean, e: Event) {
         e.preventDefault();
-        try{
+        await this.save(close);
+    }
+
+    /**
+     * Saves the current settings
+     * @param {boolean} close If to close the application window after saving
+     * @param {boolean} updateFromForm If to update the data model from the form content
+     */
+    public async save(close: boolean, updateFromForm: boolean = true){
+        if(updateFromForm){
             this.writeInputValuesToObjects();
-            CalManager.mergeClonedCalendars();
-            SC.save({
-                id: '',
-                permissions: this.permissions.toConfig(),
-                clientSettings: this.clientSettings
-            });
-            await CalManager.getActiveCalendar().syncTime(true);
-            if(close){
-                this.closeApp();
-            } else {
-                this.calendars = CalManager.cloneCalendars();
-                this.object = this.calendars[0];
-                this.updateApp();
-            }
-        } catch (error: any){
-            Logger.error(error);
+        }
+        CalManager.mergeClonedCalendars();
+        SC.save(this.globalConfiguration, this.clientSettings);
+        await CalManager.getActiveCalendar().syncTime(true);
+        if(close){
+            this.closeApp();
+        } else {
+            this.calendars = CalManager.cloneCalendars();
+            this.object = this.calendars[0];
+            this.updateApp();
         }
     }
 
@@ -1145,81 +1157,179 @@ export default class ConfigurationApp extends FormApplication {
      */
     public exportCalendar(event: Event){
         event.preventDefault();
-        const ex = {
-            currentDate: GameSettings.GetObjectSettings(SettingNames.CurrentDate),
-            generalSettings: GameSettings.GetObjectSettings(SettingNames.GeneralConfiguration),
-            leapYearSettings: GameSettings.GetObjectSettings(SettingNames.LeapYearRule),
-            monthSettings: GameSettings.GetObjectSettings(SettingNames.MonthConfiguration),
-            moonSettings: GameSettings.GetObjectSettings(SettingNames.MoonConfiguration),
-            noteCategories: GameSettings.GetObjectSettings(SettingNames.NoteCategories),
-            seasonSettings: GameSettings.GetObjectSettings(SettingNames.SeasonConfiguration),
-            timeSettings: GameSettings.GetObjectSettings(SettingNames.TimeConfiguration),
-            weekdaySettings: GameSettings.GetObjectSettings(SettingNames.WeekdayConfiguration),
-            yearSettings: GameSettings.GetObjectSettings(SettingNames.YearConfiguration)
+
+        const options:Record<string, boolean> = {};
+        this.appWindow?.querySelectorAll(`.import-export .calendar-list input`).forEach(e => {
+            const id = e.getAttribute('data-id');
+            if(id){
+                options[id] = (<HTMLInputElement>e).checked;
+            }
+        });
+
+        const data = {
+            exportVersion: 2,
+            globalConfig: options['global']? {
+                secondsInCombatRound: SC.globalConfiguration.secondsInCombatRound
+            } : {},
+            permissions: options['permissions']? SC.globalConfiguration.permissions.toConfig() : {},
+            calendars: <CalendarConfiguration[]>[]
         };
-        saveAs(new Blob([JSON.stringify(ex)], {type: 'application/json'}), 'simple-calendar-export.json');
+
+        for(let i = 0; i < this.calendars.length; i++){
+            const config = this.calendars[i].toConfig()
+            if(options[config.id]){
+                config.id = config.id.replace('_temp', '');
+                data.calendars.push(config);
+            }
+        }
+        saveAs(new Blob([JSON.stringify(data)], {type: 'application/json'}), 'simple-calendar-export.json');
     }
 
     /**
-     * Imports a Simple Calendar configuration JSON file into the current calendar. Does its best to detect incorrect file format.
+     * Called when a file is selected in the input file picker
      * @param event
      */
-    public importCalendar(event: Event){
-        event.preventDefault();
-        const fileInput = <HTMLInputElement>document.getElementById('-scImportCalendarPicker');
-        if(fileInput && fileInput.files && fileInput.files.length){
-            const reader = new FileReader();
-            reader.onload = this.importOnLoad.bind(this, reader);
-            reader.readAsText(fileInput.files[0]);
-        } else {
-            GameSettings.UiNotification(GameSettings.Localize('FSC.Importer.NoFile'), 'warn');
+    public importCalendarFileChange(event: Event){
+        const target = <HTMLInputElement>event.target;
+        if(target && target.files && target.files.length){
+            if(target.files[0].type === 'application/json'){
+                this.appWindow?.querySelector(`.import-export .progress`)?.classList.remove('hide');
+                const reader = new FileReader();
+                reader.onprogress = this.importCalendarProgress.bind(this);
+                reader.onload = this.importCalendarRead.bind(this);
+                reader.readAsText(target.files[0]);
+            }
         }
     }
 
     /**
-     * Processes the response once the file has been loaded.
-     * @param reader
+     * Resize the progress bar to show how much of the file has been loaded in. 99% of cases this will never actually show lol
      * @param e
-     * @private
      */
-    private async importOnLoad(reader: FileReader, e: Event){
-        try{
-            if(reader.result){
+    public importCalendarProgress(e: Event){
+        const bar = this.appWindow?.querySelector(`.import-export .progress .progress-bar`);
+        if(bar){
+            (<HTMLElement>bar).style.width = `${((<ProgressEvent>e).loaded / (<ProgressEvent>e).total) * 100}%`;
+        }
+    }
+
+    /**
+     * Called when a file has finished being read.
+     * @param e
+     */
+    public importCalendarRead(e: Event){
+        this.importCalendarProgress(e);
+        this.appWindow?.querySelector(`.import-export .progress`)?.classList.add('hide');
+        const reader = <FileReader>e.target;
+        if(reader && reader.result && this.appWindow){
+            const fDetail = this.appWindow.querySelector('.import-export .importing .file-details');
+            if(fDetail){
+                let html = `<p>${GameSettings.Localize('FSC.Configuration.ImportExport.ImportDetailsText')}</p><ul class="calendar-list">`;
                 const res = JSON.parse(reader.result.toString());
-                if(res.hasOwnProperty('yearSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.YearConfiguration, res.yearSettings);
+                if(!res.hasOwnProperty('exportVersion')){
+                    //v1 support - Convert v1 format into v2 format
+                    res.calendars = [{id: 'default', name: 'Default'}];
+                    res.globalConfig = {};
+                    if(res.hasOwnProperty('generalSettings')){
+                        res.permissions = res.generalSettings.permissions;
+                        delete res.generalSettings.permissions;
+                        res.calendars[0].general = res.generalSettings;
+                        delete res.generalSettings;
+                    }
+                    if(res.hasOwnProperty('currentDate')){
+                        res.calendars[0].currentDate = res.currentDate;
+                        delete res.currentDate;
+                    }
+                    if(res.hasOwnProperty('leapYearSettings')){
+                        res.calendars[0].leapYear = res.leapYearSettings;
+                        delete res.leapYearSettings;
+                    }
+                    if(res.hasOwnProperty('monthSettings')){
+                        res.calendars[0].months = res.monthSettings;
+                        delete res.monthSettings;
+                    }
+                    if(res.hasOwnProperty('moonSettings')){
+                        res.calendars[0].moons = res.moonSettings;
+                        delete res.moonSettings;
+                    }
+                    if(res.hasOwnProperty('noteCategories')){
+                        res.calendars[0].noteCategories = res.noteCategories;
+                        delete res.noteCategories;
+                    }
+                    if(res.hasOwnProperty('seasonSettings')){
+                        res.calendars[0].seasons = res.seasonSettings;
+                        delete res.seasonSettings;
+                    }
+                    if(res.hasOwnProperty('timeSettings')){
+                        res.globalConfig.secondsInCombatRound = res.timeSettings.secondsInCombatRound;
+                        delete res.timeSettings.secondsInCombatRound;
+                        res.calendars[0].time = res.timeSettings;
+                        delete res.timeSettings;
+                    }
+                    if(res.hasOwnProperty('weekdaySettings')){
+                        res.calendars[0].weekdays = res.weekdaySettings;
+                        delete res.weekdaySettings;
+                    }
+                    if(res.hasOwnProperty('yearSettings')){
+                        res.calendars[0].year = res.yearSettings;
+                        delete res.yearSettings;
+                    }
                 }
-                if(res.hasOwnProperty('monthSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.MonthConfiguration, res.monthSettings);
+                if(res.hasOwnProperty('globalConfig') && !isObjectEmpty(res.globalConfig)){
+                    html += `<li><label><input type="checkbox" data-id="global" checked /> ${GameSettings.Localize('FSC.Configuration.Global.Title')}</label></li>`;
                 }
-                if(res.hasOwnProperty('weekdaySettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.WeekdayConfiguration, res.weekdaySettings);
+                if(res.hasOwnProperty('permissions') && !isObjectEmpty(res.permissions)){
+                    html += `<li><label><input type="checkbox" data-id="permissions" checked /> ${GameSettings.Localize('Permissions')}</label></li>`;
                 }
-                if(res.hasOwnProperty('leapYearSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.LeapYearRule, res.leapYearSettings);
+                if(res.hasOwnProperty('calendars') && res.calendars.length){
+                    for(let i = 0; i < res.calendars.length; i++){
+                        html += `<li><label><input type="checkbox" data-id="${res.calendars[i].id}" checked /> ${GameSettings.Localize('FSC.Calendar')}: ${res.calendars[i].name}</label><label>${GameSettings.Localize('FSC.ImportInto')}:&nbsp;<select data-for-cal="${res.calendars[i].id}">`;
+                        const selectedIndex = this.calendars.findIndex(c => c.id.indexOf(res.calendars[i].id) === 0);
+                        html += `<option value="new" ${selectedIndex === -1? 'selected' : ''}>${GameSettings.Localize('FSC.NewCalendar')}</option>`;
+                        for(let i = 0; i < this.calendars.length; i++){
+                            html += `<option value="${this.calendars[i].id}" ${selectedIndex === i? 'selected' : ''}>${this.calendars[i].name}</option>`;
+                        }
+                        html += `</select></label></li>`;
+                    }
                 }
-                if(res.hasOwnProperty('timeSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.TimeConfiguration, res.timeSettings);
-                }
-                if(res.hasOwnProperty('seasonSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.SeasonConfiguration, res.seasonSettings);
-                }
-                if(res.hasOwnProperty('moonSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.MoonConfiguration, res.moonSettings);
-                }
-                if(res.hasOwnProperty('generalSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.GeneralConfiguration, res.generalSettings);
-                }
-                if(res.hasOwnProperty('noteCategories')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.NoteCategories, res.noteCategories);
-                }
-                if(res.hasOwnProperty('currentDate')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.CurrentDate, res.currentDate);
-                }
-                this.closeApp();
+                html += `</ul><button class="control save" id="importCalendar"><i class="fa fa-file-import"></i> ${GameSettings.Localize('FSC.Import')}</button>`;
+                fDetail.innerHTML = html;
+                fDetail.querySelector('#importCalendar')?.addEventListener('click', this.importCalendarSave.bind(this, res));
             }
-        } catch (ex){
-            GameSettings.UiNotification(GameSettings.Localize('FSC.Importer.InvalidSCConfig'), 'error');
+        }
+    }
+
+    /**
+     * Saves the data from the file into the selected calendars
+     * @param data
+     * @param event
+     */
+    public importCalendarSave(data:any, event: Event){
+        event.preventDefault();
+        if(this.appWindow){
+            if(data.hasOwnProperty('globalConfig') && !isObjectEmpty(data.globalConfig) && getCheckBoxInputValue('.import-export .importing .file-details input[data-id="global"]', true, this.appWindow)){
+                this.globalConfiguration.secondsInCombatRound = data.globalConfig.secondsInCombatRound;
+            }
+            if(data.hasOwnProperty('permissions') && !isObjectEmpty(data.permissions) && getCheckBoxInputValue('.import-export .importing .file-details input[data-id="permissions"]', true, this.appWindow)){
+                this.globalConfiguration.permissions.loadFromSettings(data.permissions);
+            }
+            if(data.hasOwnProperty('calendars') && data.calendars.length){
+                for(let i = 0; i < data.calendars.length; i++){
+                    if(getCheckBoxInputValue(`.import-export .importing .file-details input[data-id="${data.calendars[i].id}"]`, true, this.appWindow)){
+                        const importInto = getTextInputValue(`.import-export .importing .file-details select[data-for-cal="${data.calendars[i].id}"]`, 'new', this.appWindow);
+                        const importCalendar = this.calendars.find(c => c.id === importInto);
+                        delete data.calendars[i].id;
+                        if(importCalendar){
+                            importCalendar.loadFromSettings(data.calendars[i]);
+                        } else {
+                            const newCalendar = CalManager.addTempCalendar(data.calendars[i].name);
+                            newCalendar.loadFromSettings(data.calendars[i]);
+                        }
+                    }
+                }
+            }
+            this._tabs[0].active = "generalSettings";
+            this.save(false, false).catch(Logger.error);
         }
     }
 }

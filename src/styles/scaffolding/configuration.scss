@@ -108,7 +108,7 @@
       }
       .sub-heading{
         flex: unset;
-        padding: $spacer-half $spacer-half $spacer-half ($spacer-half*0.5);
+        padding: $spacer-half;
         text-align: left;
         font-size: 1rem;
         font-weight: 600;
@@ -166,29 +166,7 @@
         }
       }
 
-      .form-group{
-        margin: $spacer-half 0;
-        padding: $spacer-half;
-        border: 1px solid;
-        max-height: 0;
-        overflow: hidden;
 
-        &.border-none{
-          border-width: 0;
-        }
-        &.open{
-          visibility: visible;
-          max-height: 150px;
-        }
-        &.closed{
-          visibility: hidden;
-          margin: 0;
-          padding: 0;
-        }
-        label{
-          font-size: 1rem;
-        }
-      }
 
       .warning{
         padding: 16px;
@@ -316,6 +294,64 @@
       //----------------
       // Config Tabs
       //----------------
+      .import-export{
+        .importing{
+          flex-direction: column;
+          .progress{
+            margin-top: $spacer-half;
+            border: 1px solid;
+            width: 100%;
+            &.hide{
+              display: none;
+            }
+            .progress-bar{
+              height: 1rem;
+              width: 0;
+            }
+          }
+          .file-details{
+            .calendar-list{
+              li{
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: space-between;
+                margin: $spacer-half 0;
+              }
+            }
+            .save{
+              width: 200px;
+              margin: 0 auto;
+            }
+          }
+        }
+        .form-group{
+          &.open{
+            max-height: fit-content;
+            align-items: flex-start;
+          }
+          .calendar-list{
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex: 1 1 70%;
+            label{
+              display: flex;
+              align-items: center;
+              justify-content: flex-start;
+              align-content: center;
+              flex-wrap: nowrap;
+              flex-direction: row;
+              font-size: 0.875rem;
+              font-weight: normal;
+            }
+          }
+          #exportCalendar{
+            flex: 1 1 30%;
+          }
+        }
+      }
       .new-calendar{
         button{
           max-width: 200px;
@@ -395,11 +431,37 @@
 
       .about{
         .logo{
-          width: 200px;
+          width: 100px;
           margin: 0 auto;
         }
         h1{
           text-align: center;
+        }
+        .description{
+          margin-bottom: $spacer;
+        }
+
+        .row{
+          display: flex;
+          flex-direction: row;
+          margin-bottom: $spacer-half;
+
+          .card{
+            flex: 1;
+            border: 1px solid;
+            border-radius: 5px;
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+            &:last-child{
+              margin-right: 0;
+            }
+          }
+
+          ul{
+            li{
+              margin: ($spacer-half * 0.5) 0;
+            }
+          }
         }
 
         .translations{

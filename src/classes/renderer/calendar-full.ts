@@ -100,10 +100,14 @@ export default class CalendarFull{
         html += `<div class="current-date">`;
         if(options.allowChangeMonth){
             html += `<a class="fa fa-chevron-left" title="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
+        } else {
+            html += `<span></span>`;
         }
         html += `<span class="month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar, {year: options.editYear})}</span>`;
         if(options.allowChangeMonth){
             html += `<a class="fa fa-chevron-right" title="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
+        } else {
+            html += `<span></span>`;
         }
         html += '</div>';
         //Season Name
