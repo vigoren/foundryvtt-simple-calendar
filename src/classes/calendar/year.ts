@@ -366,13 +366,11 @@ export default class Year extends ConfigurationItemBase {
     }
 
     setCurrentToVisible(){
-        if(this.time.timeKeeper.getStatus() !== TimeKeeperStatus.Started){
-            this.visibleYear = this.numericRepresentation;
-            this.resetMonths('visible');
-            const curMonth = this.getMonth();
-            if(curMonth){
-                curMonth.visible = true;
-            }
+        this.visibleYear = this.numericRepresentation;
+        this.resetMonths('visible');
+        const curMonth = this.getMonth();
+        if(curMonth){
+            curMonth.visible = true;
         }
     }
 

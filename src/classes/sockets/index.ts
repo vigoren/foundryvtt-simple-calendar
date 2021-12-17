@@ -11,7 +11,6 @@ import EmitHookSocket from "./emit-hook-socket";
 import JournalSocket from "./journal-socket";
 import NoteRemindersSocket from "./note-reminders-socket";
 import PrimarySocket from "./primary-socket";
-import SimpleCalendar from "../simple-calendar";
 import Hook from "../api/hook";
 import {CalManager, MainApplication} from "../index";
 

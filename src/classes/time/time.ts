@@ -1,6 +1,5 @@
 import {Logger} from "../logging";
 import {TimeConfig, TimeTemplate} from "../../interfaces";
-import TimeKeeper from "./time-keeper";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {FormatDateTime} from "../utilities/date-time";
 import {CalManager} from "../index";
@@ -40,10 +39,6 @@ export default class Time extends ConfigurationItemBase{
      */
     secondsPerDay: number;
     /**
-     * The Time Keeper class used for the in game clock
-     */
-    timeKeeper: TimeKeeper;
-    /**
      * If a combat is currently running or not
      */
     combatRunning: boolean = false;
@@ -70,8 +65,6 @@ export default class Time extends ConfigurationItemBase{
         this.gameTimeRatio = 1;
 
         this.secondsPerDay = this.hoursInDay * this.minutesInHour * this.secondsInMinute;
-
-        this.timeKeeper = new TimeKeeper(this.updateFrequency);
     }
 
     /**
@@ -124,7 +117,6 @@ export default class Time extends ConfigurationItemBase{
 
             if(config.hasOwnProperty('updateFrequency')){
                 this.updateFrequency = config.updateFrequency;
-                this.timeKeeper.updateFrequency = config.updateFrequency;
             }
         }
     }

@@ -17,7 +17,6 @@ import {
     GameWorldTimeIntegrations,
     SettingNames,
     SocketTypes,
-    Themes,
     TimeKeeperStatus
 } from "../../constants";
 import GameSockets from "../foundry-interfacing/game-sockets";
@@ -114,12 +113,11 @@ export default class MainApp extends Application{
                     name: c.name,
                     date: FormatDateTime({year: cd.year, month: cd.month, day: cd.day, hour: 0, minute: 0, seconds: 0}, c.generalSettings.dateFormat.date, c),
                     time: c.generalSettings.showClock? FormatDateTime({year: 0, month: 1, day: 1, hour: ct.hour, minute: ct.minute, seconds: ct.seconds}, c.generalSettings.dateFormat.time, c) : '',
-                    clockRunning: c.year.time.timeKeeper.getStatus() === TimeKeeperStatus.Started
+                    clockRunning: c.timeKeeper.getStatus() === TimeKeeperStatus.Started
                 };
             }),
             clockClass: this.clockClass,
             isPrimary: SC.primary,
-            theme: Themes.dark, //TODO: Update this when we have the theme being stored,
             uiElementStates: this.uiElementStates,
             search: this.search
         };
@@ -130,7 +128,9 @@ export default class MainApp extends Application{
      */
     public showApp(){
         if(this.activeCalendar.canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)){
-            this.activeCalendar.year.setCurrentToVisible();
+            if(this.activeCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
+                this.activeCalendar.year.setCurrentToVisible();
+            }
             this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
 
             const options:  Application.RenderOptions<Application.Options> = {}
@@ -470,6 +470,10 @@ export default class MainApp extends Application{
                 this.uiElementStates.dateTimeUnit = DateTimeUnits.Minute;
                 this.uiElementStates.dateTimeUnitText = "FSC.Minute";
                 change = true;
+            } else if(dataUnit === 'round'){
+                this.uiElementStates.dateTimeUnit = DateTimeUnits.Round;
+                this.uiElementStates.dateTimeUnitText = "FSC.Round";
+                change = true;
             } else if(dataUnit === 'second'){
                 this.uiElementStates.dateTimeUnit = DateTimeUnits.Second;
                 this.uiElementStates.dateTimeUnitText = "FSC.Second";
@@ -587,6 +591,10 @@ export default class MainApp extends Application{
                 let change = false;
                 if(dataType === 'second' || dataType === 'minute' || dataType === 'hour'){
                     this.activeCalendar.year.changeTime(true, dataType, amount);
+                    change = true;
+                } else if(dataType === 'round'){
+                    const adjustedAmount = amount * SC.globalConfiguration.secondsInCombatRound;
+                    this.activeCalendar.year.changeTime(true, 'second', adjustedAmount);
                     change = true;
                 } else if(dataType === 'year'){
                     this.activeCalendar.year.changeYear(amount, false, "current");
@@ -875,8 +883,8 @@ export default class MainApp extends Application{
         if(combats && combats.size > 0 && combats.find(g => g.started && ((activeScene !== null && g.scene && g.scene.id === activeScene) || activeScene === null))){
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
         } else if(this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
-            this.activeCalendar.year.time.timeKeeper.start();
-            this.clockClass = this.activeCalendar.year.time.timeKeeper.getStatus();
+            this.activeCalendar.timeKeeper.start();
+            this.clockClass = this.activeCalendar.timeKeeper.getStatus();
             this.updateApp();
         }
     }
@@ -885,8 +893,8 @@ export default class MainApp extends Application{
      * Stops the built in time keeper
      */
     stopTime(){
-        this.activeCalendar.year.time.timeKeeper.stop();
-        this.clockClass = this.activeCalendar.year.time.timeKeeper.getStatus();
+        this.activeCalendar.timeKeeper.stop();
+        this.clockClass = this.activeCalendar.timeKeeper.getStatus();
         this.updateApp();
     }
 

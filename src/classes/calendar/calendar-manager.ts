@@ -1,7 +1,7 @@
 import Calendar from "./index";
 import {CalendarConfiguration} from "../../interfaces";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {PredefinedCalendars, SettingNames, SimpleCalendarHooks} from "../../constants";
+import {PredefinedCalendars, SettingNames, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../../constants";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import {Logger} from "../logging";
 import {MainApplication} from "../index";
@@ -181,7 +181,17 @@ export default class CalendarManager {
     public setActiveCalendar(id: string){
         const newActive = this.getCalendar(id);
         if(newActive){
+            for(const [key, value] of Object.entries(this.calendars)){
+                value.timeKeeper.pause();
+            }
             this.activeId = newActive.id;
+            if(newActive.timeKeeper.getStatus() === TimeKeeperStatus.Paused){
+                newActive.timeKeeper.start(true);
+            }
+            (<Game>game).socket?.emit(SocketTypes.clock);
+            MainApplication.clockClass = newActive.timeKeeper.getStatus();
+            MainApplication.updateApp();
+
             //TODO: Add check if we want to force the timestamps to change with the changing of the calendar
             //Simple Time: Updates on the world time changing
             //Weather Control: Updates on the date time change hook
@@ -196,6 +206,7 @@ export default class CalendarManager {
      */
     public removeCalendar(id: string){
         if(this.calendars.hasOwnProperty(id)){
+            this.calendars[id].timeKeeper.stop();
             delete this.calendars[id];
         }
     }

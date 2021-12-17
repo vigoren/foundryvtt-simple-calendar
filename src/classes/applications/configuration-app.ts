@@ -45,25 +45,46 @@ export default class ConfigurationApp extends FormApplication {
      * @private
      */
     private appWindow: HTMLElement | null = null;
-
+    /**
+     * A list of temporary calendars to be edited in the configuration dialog.
+     * @type {Calendar[]}
+     * @private
+     */
     private calendars: Calendar[] = [];
-
-    private dateFormatTableExpanded: boolean = false;
-
-    globalConfiguration: GlobalConfiguration = {
+    /**
+     * A copy of the global configuration options to be edited in the configuration dialog.
+     * @type {GlobalConfiguration}
+     * @private
+     */
+    private globalConfiguration: GlobalConfiguration = {
         id: '',
         permissions: new UserPermissions(),
         secondsInCombatRound: 6
     };
-
-    clientSettings: ClientSettings = {id: '', theme: Themes.dark, openOnLoad: true, openCompact: false, rememberPosition: true, appPosition: {}};
-
-    uiElementStates = {
-        selectedPredefinedCalendar: '',
-        qsNextClicked: false,
+    /**
+     * A copy of the client settings to be edited in the configuration dialog.
+     * @type {ClientSettings}
+     * @private
+     */
+    private clientSettings: ClientSettings = {
+        id: '',
+        theme: Themes.dark,
+        openOnLoad: true,
+        openCompact: false,
+        rememberPosition: true,
+        appPosition: {}
+    };
+    /**
+     * A list of different states for the UI
+     * @private
+     */
+    private uiElementStates = {
         dateFormatExample: '',
-        timeFormatExample: '',
-        monthYearFormatExample: ''
+        dateFormatTableExpanded: false,
+        monthYearFormatExample: '',
+        qsNextClicked: false,
+        selectedPredefinedCalendar: '',
+        timeFormatExample: ''
     };
 
     /**
@@ -97,7 +118,7 @@ export default class ConfigurationApp extends FormApplication {
      */
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.template = "modules/foundryvtt-simple-calendar/templates/calendar-config.html";
+        options.template = "modules/foundryvtt-simple-calendar/templates/configuration.html";
         options.title = "FSC.Configuration.Title";
         options.id = this.appWindowId;
         options.classes = ["simple-calendar"];
@@ -155,9 +176,6 @@ export default class ConfigurationApp extends FormApplication {
 
         let data = {
             ...super.getData(options),
-            isGM: GameSettings.IsGm(),
-            qsCalDate: {year: 1, month: 0, day: 0, hour: 0, minute: 0, allDay: true},
-            uiElementStates: this.uiElementStates,
             calendars: this.calendars,
             clientSettings: {
                 openOnLoad: this.clientSettings.openOnLoad,
@@ -169,19 +187,23 @@ export default class ConfigurationApp extends FormApplication {
                     'light': 'FSC.Configuration.Theme.Light'
                 }
             },
-            globalConfiguration: this.globalConfiguration,
-
-
-            showDateFormatTokens: this.dateFormatTableExpanded,
-            gameSystem: (<Calendar>this.object).gameSystem,
             currentYear: (<Calendar>this.object).year,
+            gameSystem: (<Calendar>this.object).gameSystem,
             generalSettings: (<Calendar>this.object).generalSettings,
-            months: (<Calendar>this.object).year.months.map(m => m.toTemplate()),
-            weekdays: (<Calendar>this.object).year.weekdays.map(w => w.toTemplate()),
-            leapYearRules: {none: 'FSC.Configuration.LeapYear.Rules.None', gregorian: 'FSC.Configuration.LeapYear.Rules.Gregorian', custom: 'FSC.Configuration.LeapYear.Rules.Custom'},
+            globalConfiguration: this.globalConfiguration,
+            isGM: GameSettings.IsGm(),
             leapYearRule: (<Calendar>this.object).year.leapYearRule,
-            showLeapYearCustomMod: (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom,
-            showLeapYearMonths: (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None,
+            leapYearRules: {none: 'FSC.Configuration.LeapYear.Rules.None', gregorian: 'FSC.Configuration.LeapYear.Rules.Gregorian', custom: 'FSC.Configuration.LeapYear.Rules.Custom'},
+            months: (<Calendar>this.object).year.months.map(m => m.toTemplate()),
+            monthStartingWeekdays: <{[key: string]: string}>{},
+            moons: (<Calendar>this.object).year.moons.map(m => m.toTemplate((<Calendar>this.object).year)),
+            moonIcons: <{[key: string]: string}>{},
+            moonYearReset: {
+                none: 'FSC.Configuration.Moon.YearResetNo',
+                'leap-year': 'FSC.Configuration.Moon.YearResetLeap',
+                'x-years': 'FSC.Configuration.Moon.YearResetX'
+            },
+            noteCategories: <NoteCategory[]>[],
             predefined: [
                 {key: PredefinedCalendars.Gregorian, label: 'FSC.Configuration.LeapYear.Rules.Gregorian'},
                 {key: PredefinedCalendars.DarkSun, label: 'Dark Sun'},
@@ -195,14 +217,7 @@ export default class ConfigurationApp extends FormApplication {
                 {key: PredefinedCalendars.TravellerImperialCalendar, label: 'Traveller: Imperial Calendar'},
                 {key: PredefinedCalendars.WarhammerImperialCalendar, label: 'Warhammer: Imperial Calendar'}
             ],
-            timeTrackers: {
-                none: 'FSC.Configuration.General.None',
-                self: 'FSC.Configuration.General.Self',
-                'third-party': 'FSC.Configuration.General.ThirdParty',
-                'mixed': 'FSC.Configuration.General.Mixed'
-            },
-            monthStartingWeekdays: <{[key: string]: string}>{},
-            seasons: (<Calendar>this.object).year.seasons.map(s => s.toTemplate((<Calendar>this.object).year)),
+            qsCalDate: {year: 1, month: 0, day: 0, hour: 0, minute: 0, allDay: true},
             seasonColors: [
                 {
                     value: '#ffffff',
@@ -225,20 +240,22 @@ export default class ConfigurationApp extends FormApplication {
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorWinter")
                 }
             ],
-            moons: (<Calendar>this.object).year.moons.map(m => m.toTemplate((<Calendar>this.object).year)),
-            moonIcons: <{[key: string]: string}>{},
-            moonYearReset: {
-                none: 'FSC.Configuration.Moon.YearResetNo',
-                'leap-year': 'FSC.Configuration.Moon.YearResetLeap',
-                'x-years': 'FSC.Configuration.Moon.YearResetX'
+            seasons: (<Calendar>this.object).year.seasons.map(s => s.toTemplate((<Calendar>this.object).year)),
+            showLeapYearCustomMod: (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom,
+            showLeapYearMonths: (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None,
+            timeTrackers: {
+                none: 'FSC.Configuration.General.None',
+                self: 'FSC.Configuration.General.Self',
+                'third-party': 'FSC.Configuration.General.ThirdParty',
+                'mixed': 'FSC.Configuration.General.Mixed'
             },
+            uiElementStates: this.uiElementStates,
+            weekdays: (<Calendar>this.object).year.weekdays.map(w => w.toTemplate()),
             yearNameBehaviourOptions: {
                 'default': 'Default',
                 'repeat': 'PLAYLIST.SoundRepeat',
                 'random': 'FSC.Random'
-            },
-            users: <{[key: string]: string}>{},
-            noteCategories: <NoteCategory[]>[]
+            }
         };
 
         data.moonIcons[Icons.NewMoon] = GameSettings.Localize('FSC.Moon.Phase.New');
@@ -254,15 +271,6 @@ export default class ConfigurationApp extends FormApplication {
         for(let i = 0; i < (<Calendar>this.object).year.weekdays.length; i++){
             data.monthStartingWeekdays[(<Calendar>this.object).year.weekdays[i].numericRepresentation.toString()] = (<Calendar>this.object).year.weekdays[i].name;
         }
-        const users = (<Game>game).users;
-        if(users){
-            users.forEach(u => {
-                if(!u.isGM && u.id !== null){
-                    data.users[u.id] = u.name? u.name : '';
-                }
-            });
-        }
-
 
         data.qsCalDate.year = currDate.year;
         data.qsCalDate.month = currDate.month;
@@ -811,15 +819,15 @@ export default class ConfigurationApp extends FormApplication {
      * When the date format table header is clicked, will expand/collapse the table of information
      */
     private dateFormatTableClick(){
-        this.dateFormatTableExpanded = !this.dateFormatTableExpanded;
+        this.uiElementStates.dateFormatTableExpanded = !this.uiElementStates.dateFormatTableExpanded;
         if(this.appWindow){
             const collapseArea = this.appWindow.querySelector(`.display-options .tokens .collapse-data`);
             if(collapseArea){
-                (<HTMLElement>collapseArea).style.display = this.dateFormatTableExpanded? 'block' : 'none';
+                (<HTMLElement>collapseArea).style.display = this.uiElementStates.dateFormatTableExpanded? 'block' : 'none';
             }
             const a = this.appWindow.querySelector(`.display-options .tokens .date-format-token-show .fa`);
             if(a){
-                (<HTMLElement>a).className = `fa ${this.dateFormatTableExpanded? 'fa-chevron-up' : 'fa-chevron-down'}`
+                (<HTMLElement>a).className = `fa ${this.uiElementStates.dateFormatTableExpanded? 'fa-chevron-up' : 'fa-chevron-down'}`;
             }
         }
     }

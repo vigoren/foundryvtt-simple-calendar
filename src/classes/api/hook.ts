@@ -60,7 +60,7 @@ export default class Hook{
                 });
             }
         } else if(hook === SimpleCalendarHooks.ClockStartStop){
-            const status = calendar.year.time.timeKeeper.getStatus();
+            const status = calendar.timeKeeper.getStatus();
             data = {
                 started: status === TimeKeeperStatus.Started,
                 stopped: status === TimeKeeperStatus.Stopped,

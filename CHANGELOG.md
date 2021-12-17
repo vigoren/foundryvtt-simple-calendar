@@ -113,6 +113,12 @@ The date/time selector that is used when choosing a date for notes or specifying
   - Added the ability to use the scroll wheel to change the number up or down in any of the text boxes.
   - Validation and changes are more consistent, they worked fine before but just feel better now.
 
+### Quality of Life Changes
+
+- Added a new way to change time, you can now manually change the time by Rounds. 
+  - This option has been added to the unit type selector. 
+  - The number of seconds this changes the time by is based on "Seconds per Combat Round" setting.
+
 ### Bug Fixes
 
 - Fixed a bug where the display year in the calendar header would not update properly if the year being viewed was different from the current year.

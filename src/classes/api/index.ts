@@ -169,7 +169,7 @@ export default class API{
      * Returns the current status of the clock
      */
     public static clockStatus(){
-        const status = CalManager.getActiveCalendar().year.time.timeKeeper.getStatus();
+        const status = CalManager.getActiveCalendar().timeKeeper.getStatus();
         return {
             started: status === TimeKeeperStatus.Started,
             stopped: status === TimeKeeperStatus.Stopped,
@@ -453,7 +453,7 @@ export default class API{
      */
     public static startClock(){
         if(SC.primary){
-            CalManager.getActiveCalendar().year.time.timeKeeper.start();
+            CalManager.getActiveCalendar().timeKeeper.start();
             return true;
         }
         return false;
@@ -463,7 +463,7 @@ export default class API{
      * Stops the build in clock
      */
     public static stopClock(){
-        CalManager.getActiveCalendar().year.time.timeKeeper.stop();
+        CalManager.getActiveCalendar().timeKeeper.stop();
         return true;
     }
 

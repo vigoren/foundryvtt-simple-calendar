@@ -54,7 +54,6 @@ export interface SimpleCalendarTemplate{
     clockClass: string;
     uiElementStates: any;
     isPrimary: boolean;
-    theme: Themes;
     search: any;
 }
 

@@ -228,5 +228,6 @@ export enum DateTimeUnits{
     Year = "year",
     Hour = "hour",
     Minute = "minute",
+    Round = "round",
     Second = "second"
 }

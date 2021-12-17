@@ -48,15 +48,17 @@
         <div class="sc-calendar-list sc-side-drawer {{#if uiElementStates.calendarDrawerOpen}}open{{else}}closed{{/if}}">
             <h2>{{localize 'FSC.Calendars'}}</h2>
             {{#each calendarList}}
-                <div class="calendar-display {{#if (eq id ../calendar.id)}}active{{/if}}" data-calid="{{id}}" title="{{name}}">
-                    <div class="calendar-name">{{name}}</div>
-                    <div class="calendar-date">
-                        <div class="fa fa-calendar-day"></div>
-                        <div>{{date}}</div>
-                        <div>{{time}}</div>
-                        {{#if clockRunning}}
-                            <div class="animated-clock animate">{{sc-icon name='clock'}}</div>
-                        {{/if}}
+                <div class="calendar-display {{#if (eq id ../calendar.id)}}active{{/if}}" data-calid="{{id}}" title="{{#if ../calendar.changeDateTime}}{{localize 'FSC.MakeActiveCalendar'}}{{else}}{{name}}{{/if}}">
+                    <div class="details">
+                        <div class="calendar-name">{{name}}</div>
+                        <div class="calendar-date">
+                            <div class="fa fa-calendar-day"></div>
+                            <div>{{date}}</div>
+                            <div>{{time}}</div>
+                            {{#if clockRunning}}
+                                <div class="animated-clock animate">{{sc-icon name='clock'}}</div>
+                            {{/if}}
+                        </div>
                     </div>
                 </div>
             {{/each}}
@@ -213,6 +215,7 @@
                 <ul class="unit-list time-units {{#if uiElementStates.dateTimeUnitOpen}}open{{else}}closed{{/if}}">
                     {{#if calendar.showTimeControls}}
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'second')}}selected{{/if}}" data-unit="second">{{localize 'FSC.Second'}}</li>
+                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'round')}}selected{{/if}}" data-unit="round">{{localize 'FSC.Round'}}</li>
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'minute')}}selected{{/if}}" data-unit="minute">{{localize 'FSC.Minute'}}</li>
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'hour')}}selected{{/if}}" data-unit="hour">{{localize 'FSC.Hour'}}</li>
                     {{/if}}

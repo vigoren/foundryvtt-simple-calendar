@@ -31,6 +31,7 @@ import Renderer from "../renderer";
 import {generateUniqueId} from "../utilities/string";
 import {FormatDateTime, GetDisplayDate} from "../utilities/date-time";
 import {CalManager, MainApplication, SC} from "../index";
+import TimeKeeper from "../time/time-keeper";
 
 export default class Calendar extends ConfigurationItemBase{
     /**
@@ -58,6 +59,10 @@ export default class Calendar extends ConfigurationItemBase{
      * @type{Array.<NoteCategory>}
      */
     public noteCategories: NoteCategory[] = [];
+    /**
+     * The Time Keeper class used for the in game clock
+     */
+    timeKeeper: TimeKeeper;
 
     /**
      * Construct a new Calendar class
@@ -69,6 +74,7 @@ export default class Calendar extends ConfigurationItemBase{
         super(name);
         this.id = id || generateUniqueId();
         this.year = new Year(0);
+        this.timeKeeper = new TimeKeeper(this.id, this.year.time.updateFrequency);
         if(Object.keys(configuration).length > 1){
             this.loadFromSettings(configuration);
         }
@@ -197,6 +203,7 @@ export default class Calendar extends ConfigurationItemBase{
     loadFromSettings(config: CalendarConfiguration) {
         if(config.id){
             this.id = config.id;
+            this.timeKeeper.calendarId = this.id;
         }
         if(config.name){
             this.name = config.name;
@@ -233,6 +240,7 @@ export default class Calendar extends ConfigurationItemBase{
 
         if(config.time){
             this.year.time.loadFromSettings(config.time);
+            this.timeKeeper.updateFrequency = this.year.time.updateFrequency;
         }
 
         if(config.seasons){
@@ -603,11 +611,11 @@ export default class Calendar extends ConfigurationItemBase{
         }
         if(changeAmount !== 0){
             // If the tracking rules are for self or mixed and the clock is running then we make the change.
-            if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.year.time.timeKeeper.getStatus() === TimeKeeperStatus.Started){
+            if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.timeKeeper.getStatus() === TimeKeeperStatus.Started){
                 Logger.debug(`Tracking Rule: Self/Mixed\nClock Is Running, no need to update the date.`)
                 const parsedDate = this.year.secondsToDate(newTime);
                 this.year.updateTime(parsedDate);
-                Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.year.time.timeKeeper.getStatus());
+                Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.timeKeeper.getStatus());
                 //Something else has changed the world time and we need to update everything to reflect that.
                 if((this.year.time.updateFrequency * this.year.time.gameTimeRatio) !== changeAmount){
                     MainApplication.updateApp();

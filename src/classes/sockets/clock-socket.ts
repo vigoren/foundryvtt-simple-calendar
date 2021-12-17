@@ -16,7 +16,7 @@ export default class ClockSocket extends SocketBase{
     public async process(data: SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
         if(data.type === SocketTypes.clock) {
             // This is processed by all players to update the animated clock
-            calendar.year.time.timeKeeper.setStatus((<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);
+            calendar.timeKeeper.setStatus((<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);
             MainApplication.clockClass = (<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus;
             if (calendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None) {
                 Renderer.Clock.UpdateListener(`sc_${calendar.id}_clock`, (<SimpleCalendarSocket.SimpleCalendarSocketTime>data.data).timeKeeperStatus);

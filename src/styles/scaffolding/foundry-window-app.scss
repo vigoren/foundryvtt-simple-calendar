@@ -116,7 +116,11 @@
 
       .control-group{
         justify-content: center;
-        margin-bottom: $spacer-half*0.5;
+        margin-bottom: $spacer-half;
+
+        &:last-child{
+          margin-bottom: 0;
+        }
       }
 
       button{
@@ -195,12 +199,36 @@
       overflow-y: auto;
 
       .calendar-display{
+        display: flex;
+        flex-direction: row;
         border: 1px solid;
         border-radius: 5px;
-        margin: 0.5rem;
-        padding: 0.5rem;
+        margin: $spacer-half;
+        padding: $spacer-half;
         cursor: pointer;
 
+        .details{
+          flex: 1;
+        }
+        .make-active{
+          flex: 0;
+          align-self: center;
+          padding: $spacer-half;
+        }
+        .actions{
+          display: flex;
+          flex-direction: row;
+          flex: 0;
+          margin: calc(-#{$spacer-half} - 1px) calc(-#{$spacer-half} - 1px) calc(-#{$spacer-half} - 1px) 0;
+
+          .control{
+            height: 100%;
+            margin: 0;
+            &.preview{
+              border-radius: 0 5px 5px 0;
+            }
+          }
+        }
         .calendar-name{
           font-size: 1.125rem;
           font-weight: 600;

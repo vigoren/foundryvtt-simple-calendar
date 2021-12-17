@@ -28,7 +28,7 @@ export default class CheckClockRunningSocket extends SocketBase {
      */
     public async process(data: SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
         if (data.type === SocketTypes.checkClockRunning && GameSettings.IsGm() && SC.primary){
-            return GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: calendar.year.time.timeKeeper.getStatus() } });
+            return GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: calendar.timeKeeper.getStatus() } });
         }
         return false;
     }

@@ -134,9 +134,9 @@ export default class SimpleCalendar {
     public gamePaused(paused: boolean){
         if(this.activeCalendar.year.time.unifyGameAndClockPause){
             if(!(<Game>game).paused){
-                this.activeCalendar.year.time.timeKeeper.start(true);
+                this.activeCalendar.timeKeeper.start(true);
             } else {
-                this.activeCalendar.year.time.timeKeeper.setStatus(TimeKeeperStatus.Paused);
+                this.activeCalendar.timeKeeper.setStatus(TimeKeeperStatus.Paused);
             }
         }
     }

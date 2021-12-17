@@ -18,7 +18,7 @@ export default class Clock {
      */
     public static Render(calendar: Calendar, options: SCRenderer.ClockOptions = {id: ''}): string {
         options = deepMerge({}, this.defaultOptions, options);
-        const status = calendar.year.time.timeKeeper.getStatus();
+        const status = calendar.timeKeeper.getStatus();
         options.cssClasses += ` ${status}`;
 
         let html = `<div id="${options.id}" class="sc-clock ${options.cssClasses} ${status === TimeKeeperStatus.Started? 'animate': ''}" data-calendar="${calendar.id}">`;
@@ -49,7 +49,7 @@ export default class Clock {
             const calendarIndex = clockElement.getAttribute('data-calendar') || '';
             const calendar = CalManager.getCalendar(calendarIndex);
             if(calendar){
-                calendar.year.time.timeKeeper.registerUpdateListener(clockId, Clock.UpdateListener.bind(Clock, clockId))
+                calendar.timeKeeper.registerUpdateListener(clockId, Clock.UpdateListener.bind(Clock, clockId))
             }
         }
     }
