@@ -128,6 +128,7 @@ The date/time selector that is used when choosing a date for notes or specifying
 
 ### API Changes
 
+- Fixed a bug with `SimpleCalendar.api.changeDate` where if just a year was passed in the month would update to the first month of the year.
 - Removed 2 Handlebar helpers, day-has-note and day-moon-phase. These were used internally and are no longer required.
 - Added a new Handlebar helper [sc-full-calendar](./docs/API.md#sc-full-calendar) that can be used to render a full calendar view of the current date or passed in date.
   - These calendars support basic interactivity, change which month is being viewed and selecting a day when it is clicked, with the option to pass in your own function to extend this functionality.

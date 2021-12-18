@@ -48,6 +48,20 @@
                 <h2>{{localize 'FSC.Configuration.Global.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#global-configuration" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <p>{{localize 'FSC.Configuration.Global.Description'}}</p>
                 <div class="form-group open">
+                    <label for="scSyncCalendars">{{localize 'FSC.Configuration.Global.SyncCalendars.Title'}}</label>
+                    <div class="form-fields">
+                        <input value="{{globalConfiguration.syncCalendars}}" type="checkbox" id="scSyncCalendars" {{checked globalConfiguration.syncCalendars}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Global.SyncCalendars.Description'}}</p>
+                </div>
+                <div class="form-group open">
+                    <label for="scCalendarsSameTimestamp">{{localize 'FSC.Configuration.Global.SameTimestamp.Title'}}</label>
+                    <div class="form-fields">
+                        <input value="{{globalConfiguration.calendarsSameTimestamp}}" type="checkbox" id="scCalendarsSameTimestamp" {{checked globalConfiguration.calendarsSameTimestamp}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Global.SameTimestamp.Description'}}</p>
+                </div>
+                <div class="form-group open">
                     <label for="scSecondsInCombatRound">{{localize 'FSC.Configuration.Time.SecondsInCombatRound'}}</label>
                     <div class="form-fields">
                         <input value="{{globalConfiguration.secondsInCombatRound}}" type="number" id="scSecondsInCombatRound" />

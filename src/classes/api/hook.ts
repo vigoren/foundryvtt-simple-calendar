@@ -16,7 +16,7 @@ export default class Hook{
         let data: any = {};
 
         if(hook === SimpleCalendarHooks.DateTimeChange){
-            data['date'] = TimestampToDate(calendar.year.toSeconds(), calendar);
+            data['date'] = TimestampToDate(calendar.toSeconds(), calendar);
             data['diff'] = param;
             data['moons'] = [];
 

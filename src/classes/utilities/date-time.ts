@@ -283,9 +283,9 @@ export function TimestampToDate(seconds: number, calendar: Calendar){
 
 export function DateToTimestamp(date: DateTime , calendar: Calendar): number {
     let ts = 0;
-    const clone = calendar.year.clone();
-    const currentMonth = clone.getMonth();
-    const currentTime = clone.time.getCurrentTime();
+    const clone = calendar.clone(false);
+    const currentMonth = clone.year.getMonth();
+    const currentTime = clone.year.time.getCurrentTime();
     if (date.second === undefined) {
         date.second = currentTime.seconds;
     }
@@ -304,7 +304,7 @@ export function DateToTimestamp(date: DateTime , calendar: Calendar): number {
     }
     if (date.month === undefined) {
         if (currentMonth) {
-            date.month = clone.months.findIndex(m => m.numericRepresentation === currentMonth.numericRepresentation);
+            date.month = clone.year.months.findIndex(m => m.numericRepresentation === currentMonth.numericRepresentation);
         } else {
             date.month = 0;
         }
@@ -318,9 +318,9 @@ export function DateToTimestamp(date: DateTime , calendar: Calendar): number {
             }
         }
     }
-    clone.updateMonth(date.month, 'current', true, date.day);
+    clone.year.updateMonth(date.month, 'current', true, date.day);
     clone.numericRepresentation = date.year;
-    clone.time.setTime(date.hour, date.minute, date.second);
+    clone.year.time.setTime(date.hour, date.minute, date.second);
     ts = clone.toSeconds();
     return ts;
 }

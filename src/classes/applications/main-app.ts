@@ -2,7 +2,7 @@ import {Logger} from "../logging";
 import type Month from "../calendar/month";
 import type Day from "../calendar/day";
 import {
-    AppPosition,
+    AppPosition, DateTime,
     NoteTemplate,
     SCRenderer,
     SearchOptions,
@@ -578,39 +578,24 @@ export default class MainApp extends Application{
         const dataAmount = target.getAttribute('data-amount');
         if(dataType && dataAmount){
             const amount = parseInt(dataAmount);
-            if(!GameSettings.IsGm() || !SC.primary){
-                if(!(<Game>game).users?.find(u => u.isGM && u.active)){
-                    GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
+            if(!isNaN(amount)){
+                const interval: DateTime = {};
+                if(dataType === 'round'){
+                    interval.second = amount * SC.globalConfiguration.secondsInCombatRound;
+                } else if(dataType === 'second' || dataType === 'minute' || dataType === 'hour' || dataType === 'day' || dataType === 'month' || dataType === 'year'){
+                    interval[dataType] = amount;
+                }
+                //If user is not the GM nor the primary GM, send over the socket
+                if(!GameSettings.IsGm() || !SC.primary){
+                    if(!(<Game>game).users?.find(u => u.isGM && u.active)){
+                        GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
+                    } else {
+                        const socketData = <SimpleCalendarSocket.SimpleCalendarSocketDateTime>{interval: interval};
+                        Logger.debug(`Sending Date/Time Change to Primary GM`);
+                        GameSockets.emit({type: SocketTypes.dateTime, data: socketData}).catch(Logger.error);
+                    }
                 } else {
-                    const socketData = <SimpleCalendarSocket.SimpleCalendarSocketDateTime>{dataType: 'time', isNext: true, amount: amount, unit: dataType};
-                    Logger.debug(`Sending Date/Time Change to Primary GM`);
-                    GameSockets.emit({type: SocketTypes.dateTime, data: socketData}).catch(Logger.error);
-                }
-
-            } else if(!isNaN(amount)){
-                let change = false;
-                if(dataType === 'second' || dataType === 'minute' || dataType === 'hour'){
-                    this.activeCalendar.year.changeTime(true, dataType, amount);
-                    change = true;
-                } else if(dataType === 'round'){
-                    const adjustedAmount = amount * SC.globalConfiguration.secondsInCombatRound;
-                    this.activeCalendar.year.changeTime(true, 'second', adjustedAmount);
-                    change = true;
-                } else if(dataType === 'year'){
-                    this.activeCalendar.year.changeYear(amount, false, "current");
-                    change = true;
-                } else if(dataType === 'month'){
-                    this.activeCalendar.year.changeMonth(amount, 'current');
-                    change = true;
-                } else if(dataType === 'day'){
-                    this.activeCalendar.year.changeDay(amount, 'current');
-                    change = true;
-                }
-
-                if(change){
-                    CalManager.saveCalendars();
-                    //Sync the current time on apply, this will propagate to other modules
-                    this.activeCalendar.syncTime(true).catch(Logger.error);
+                    this.activeCalendar.changeDateTime(interval, false);
                 }
             }
         } else if(dataType && (dataType === 'dawn' || dataType === 'midday' || dataType === 'dusk' || dataType === 'midnight')){
@@ -679,7 +664,7 @@ export default class MainApp extends Application{
                 }
                 break;
             case 'midnight':
-                this.activeCalendar.year.changeTime(true, 'second', this.activeCalendar.year.time.secondsPerDay - this.activeCalendar.year.time.seconds);
+                this.activeCalendar.changeDateTime({second: this.activeCalendar.year.time.secondsPerDay - this.activeCalendar.year.time.seconds});
                 break;
         }
     }

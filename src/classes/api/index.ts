@@ -86,7 +86,7 @@ export default class API{
      * Get the timestamp for the current year
      */
     public static timestamp(): number{
-        return CalManager.getActiveCalendar().year.toSeconds();
+        return CalManager.getActiveCalendar().toSeconds();
     }
 
     /**
@@ -96,47 +96,47 @@ export default class API{
      */
     public static timestampPlusInterval(currentSeconds: number, interval: DateTime): number{
         const activeCalendar = CalManager.getActiveCalendar();
-        const clone = activeCalendar.year.clone();
+        const clone = activeCalendar.clone(false);
         // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
         if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync){
             currentSeconds += PF2E.getWorldCreateSeconds(activeCalendar);
         }
 
-        const dateTime = clone.secondsToDate(currentSeconds);
-        clone.updateTime(dateTime);
+        const dateTime = clone.year.secondsToDate(currentSeconds);
+        clone.year.updateTime(dateTime);
         if(interval.year){
-            clone.changeYear(interval.year, false, 'current');
+            clone.year.changeYear(interval.year, false, 'current');
         }
         if(interval.month){
             //If a large number of months are passed in then
-            if(interval.month > clone.months.length){
-                let years = Math.floor(interval.month/clone.months.length);
-                interval.month = interval.month - (years * clone.months.length);
-                clone.changeYear(years, false, 'current');
+            if(interval.month > clone.year.months.length){
+                let years = Math.floor(interval.month/clone.year.months.length);
+                interval.month = interval.month - (years * clone.year.months.length);
+                clone.year.changeYear(years, false, 'current');
             }
-            clone.changeMonth(interval.month, 'current');
+            clone.year.changeMonth(interval.month, 'current');
         }
         if(interval.day){
-            clone.changeDayBulk(interval.day);
+            clone.year.changeDayBulk(interval.day);
         }
-        if(interval.hour && interval.hour > clone.time.hoursInDay){
-            const days = Math.floor(interval.hour / clone.time.hoursInDay);
-            interval.hour = interval.hour - (days * clone.time.hoursInDay);
-            clone.changeDayBulk(days);
+        if(interval.hour && interval.hour > clone.year.time.hoursInDay){
+            const days = Math.floor(interval.hour / clone.year.time.hoursInDay);
+            interval.hour = interval.hour - (days * clone.year.time.hoursInDay);
+            clone.year.changeDayBulk(days);
         }
-        if(interval.minute && interval.minute > (clone.time.hoursInDay * clone.time.minutesInHour)){
-            const days = Math.floor(interval.minute / (clone.time.hoursInDay * clone.time.minutesInHour));
-            interval.minute = interval.minute - (days * (clone.time.hoursInDay * clone.time.minutesInHour));
-            clone.changeDayBulk(days);
+        if(interval.minute && interval.minute > (clone.year.time.hoursInDay * clone.year.time.minutesInHour)){
+            const days = Math.floor(interval.minute / (clone.year.time.hoursInDay * clone.year.time.minutesInHour));
+            interval.minute = interval.minute - (days * (clone.year.time.hoursInDay * clone.year.time.minutesInHour));
+            clone.year.changeDayBulk(days);
         }
-        if(interval.second && interval.second > clone.time.secondsPerDay){
-            const days = Math.floor(interval.second / clone.time.secondsPerDay);
-            interval.second = interval.second - (days * clone.time.secondsPerDay);
-            clone.changeDayBulk(days);
+        if(interval.second && interval.second > clone.year.time.secondsPerDay){
+            const days = Math.floor(interval.second / clone.year.time.secondsPerDay);
+            interval.second = interval.second - (days * clone.year.time.secondsPerDay);
+            clone.year.changeDayBulk(days);
         }
-        const dayChange = clone.time.changeTime(interval.hour, interval.minute, interval.second);
+        const dayChange = clone.year.time.changeTime(interval.hour, interval.minute, interval.second);
         if(dayChange !== 0){
-            clone.changeDay(dayChange);
+            clone.year.changeDay(dayChange);
         }
         return clone.toSeconds();
     }
@@ -238,39 +238,7 @@ export default class API{
      * @param interval
      */
     public static changeDate(interval: DateTime): boolean{
-        const activeCalendar = CalManager.getActiveCalendar();
-        if(activeCalendar.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
-            let change = false;
-            if(interval.year){
-                activeCalendar.year.changeYear(interval.year, true, 'current');
-                change = true;
-            }
-            if(interval.month){
-                activeCalendar.year.changeMonth(interval.month, 'current');
-                change = true;
-            }
-            if(interval.day){
-                activeCalendar.year.changeDay(interval.day);
-                change = true;
-            }
-            if(interval.hour || interval.minute || interval.second){
-                const dayChange = activeCalendar.year.time.changeTime(interval.hour, interval.minute, interval.second);
-                if(dayChange !== 0){
-                    activeCalendar.year.changeDay(dayChange);
-                }
-                change = true;
-            }
-
-            if(change){
-                CalManager.saveCalendars();
-                activeCalendar.syncTime().catch(Logger.error);
-                MainApplication.updateApp();
-            }
-            return true;
-        } else {
-            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
-        }
-        return false;
+        return CalManager.getActiveCalendar().changeDateTime(interval, false);
     }
 
     /**

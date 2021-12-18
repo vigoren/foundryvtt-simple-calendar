@@ -58,8 +58,10 @@ export interface SimpleCalendarTemplate{
 }
 
 export interface GlobalConfiguration extends IConfigurationItemBaseConfig {
+    calendarsSameTimestamp: boolean;
     permissions: UserPermissions;
     secondsInCombatRound: number;
+    syncCalendars: boolean;
 }
 
 export interface ClientSettings extends IConfigurationItemBaseConfig {
@@ -506,10 +508,7 @@ export namespace SimpleCalendarSocket{
     }
 
     export interface SimpleCalendarSocketDateTime{
-        dataType: String;
-        isNext: boolean;
-        amount: number;
-        unit: string;
+        interval: DateTime;
     }
 
     export interface SimpleCalendarSocketDate{

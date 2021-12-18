@@ -58,8 +58,10 @@ export default class ConfigurationApp extends FormApplication {
      */
     private globalConfiguration: GlobalConfiguration = {
         id: '',
+        calendarsSameTimestamp: false,
         permissions: new UserPermissions(),
-        secondsInCombatRound: 6
+        secondsInCombatRound: 6,
+        syncCalendars: false
     };
     /**
      * A copy of the client settings to be edited in the configuration dialog.
@@ -103,6 +105,8 @@ export default class ConfigurationApp extends FormApplication {
         SC.load();
         this.globalConfiguration.permissions = SC.globalConfiguration.permissions.clone();
         this.globalConfiguration.secondsInCombatRound = SC.globalConfiguration.secondsInCombatRound;
+        this.globalConfiguration.calendarsSameTimestamp = SC.globalConfiguration.calendarsSameTimestamp;
+        this.globalConfiguration.syncCalendars = SC.globalConfiguration.syncCalendars;
         this.clientSettings = deepMerge({}, SC.clientSettings);
         this._tabs[0].active = "globalSettings";
 
@@ -392,6 +396,7 @@ export default class ConfigurationApp extends FormApplication {
                 const clickedCal = this.calendars.find(c => c.id === calId);
                 if(clickedCal){
                     this.object = clickedCal;
+                    this._tabs[0].active = "generalSettings";
                     this.updateApp();
                 }
             }
@@ -527,6 +532,8 @@ export default class ConfigurationApp extends FormApplication {
             // Global Config: Settings
             //----------------------------------
             this.globalConfiguration.secondsInCombatRound = <number>getNumericInputValue('#scSecondsInCombatRound', 6, false, this.appWindow);
+            this.globalConfiguration.calendarsSameTimestamp = getCheckBoxInputValue('#scCalendarsSameTimestamp', false, this.appWindow);
+            this.globalConfiguration.syncCalendars = getCheckBoxInputValue('#scSyncCalendars', false, this.appWindow);
 
             //----------------------------------
             // Global Config: Client Settings
@@ -1177,9 +1184,11 @@ export default class ConfigurationApp extends FormApplication {
         const data = {
             exportVersion: 2,
             globalConfig: options['global']? {
-                secondsInCombatRound: SC.globalConfiguration.secondsInCombatRound
+                secondsInCombatRound: this.globalConfiguration.secondsInCombatRound,
+                calendarsSameTimestamp: this.globalConfiguration.calendarsSameTimestamp,
+                syncCalendars: this.globalConfiguration.syncCalendars
             } : {},
-            permissions: options['permissions']? SC.globalConfiguration.permissions.toConfig() : {},
+            permissions: options['permissions']? this.globalConfiguration.permissions.toConfig() : {},
             calendars: <CalendarConfiguration[]>[]
         };
 
@@ -1317,6 +1326,8 @@ export default class ConfigurationApp extends FormApplication {
         if(this.appWindow){
             if(data.hasOwnProperty('globalConfig') && !isObjectEmpty(data.globalConfig) && getCheckBoxInputValue('.import-export .importing .file-details input[data-id="global"]', true, this.appWindow)){
                 this.globalConfiguration.secondsInCombatRound = data.globalConfig.secondsInCombatRound;
+                this.globalConfiguration.calendarsSameTimestamp = data.globalConfig.calendarsSameTimestamp;
+                this.globalConfiguration.syncCalendars = data.globalConfig.syncCalendars;
             }
             if(data.hasOwnProperty('permissions') && !isObjectEmpty(data.permissions) && getCheckBoxInputValue('.import-export .importing .file-details input[data-id="permissions"]', true, this.appWindow)){
                 this.globalConfiguration.permissions.loadFromSettings(data.permissions);

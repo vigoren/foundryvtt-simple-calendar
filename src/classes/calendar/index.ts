@@ -1,7 +1,7 @@
 import {
     CalendarConfiguration,
     CalendarTemplate,
-    CurrentDateConfig,
+    CurrentDateConfig, DateTime,
     NoteCategory,
     NoteConfig,
     NoteTemplate,
@@ -29,7 +29,7 @@ import ConfigurationItemBase from "../configuration/configuration-item-base";
 import PF2E from "../systems/pf2e";
 import Renderer from "../renderer";
 import {generateUniqueId} from "../utilities/string";
-import {FormatDateTime, GetDisplayDate} from "../utilities/date-time";
+import {FormatDateTime, GetDisplayDate, ToSeconds} from "../utilities/date-time";
 import {CalManager, MainApplication, SC} from "../index";
 import TimeKeeper from "../time/time-keeper";
 
@@ -115,15 +115,17 @@ export default class Calendar extends ConfigurationItemBase{
     /**
      * Creates a cloned version of the Calendar class
      */
-    clone(): Calendar {
+    clone(includeNotes: boolean = true): Calendar {
         const c = new Calendar(this.id, this.name);
         c.id = this.id;
         c.name = this.name;
         c.gameSystem = this.gameSystem;
         c.generalSettings = this.generalSettings.clone();
         c.year = this.year.clone();
-        c.notes = this.notes.map(n => n.clone());
-        c.noteCategories = this.noteCategories.map(nc => {return {name: nc.name, textColor: nc.textColor, color: nc.color}});
+        if(includeNotes){
+            c.notes = this.notes.map(n => n.clone());
+            c.noteCategories = this.noteCategories.map(nc => {return {name: nc.name, textColor: nc.textColor, color: nc.color}});
+        }
         return c;
     }
 
@@ -579,6 +581,59 @@ export default class Calendar extends ConfigurationItemBase{
         }
     }
 
+    //-------------------------------
+    // Date/Time Management
+    //-------------------------------
+
+    /**
+     * Converts current date into seconds
+     */
+    toSeconds(){
+        //TODO: FIX - This should reference the current calendar NOT the active one as they will be different
+        let totalSeconds = 0;
+        const month = this.year.getMonth();
+        if(month){
+            const day = month.getDay();
+            totalSeconds = ToSeconds(this, this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true);
+        }
+        return totalSeconds;
+    }
+
+    public changeDateTime(interval: DateTime, yearChangeUpdateMonth: boolean = true){
+        if(this.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
+            let change = false;
+            if(interval.year){
+                this.year.changeYear(interval.year, yearChangeUpdateMonth, 'current');
+                change = true;
+            }
+            if(interval.month){
+                this.year.changeMonth(interval.month, 'current');
+                change = true;
+            }
+            if(interval.day){
+                this.year.changeDay(interval.day);
+                change = true;
+            }
+            if(interval.hour || interval.minute || interval.second){
+                const dayChange = this.year.time.changeTime(interval.hour, interval.minute, interval.second);
+                if(dayChange !== 0){
+                    this.year.changeDay(dayChange);
+                }
+                change = true;
+            }
+
+            if(change){
+                CalManager.saveCalendars();
+                this.syncTime().catch(Logger.error);
+                MainApplication.updateApp();
+            }
+            return true;
+        } else {
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
+        }
+        return false;
+    }
+
     /**
      * Sets the current game world time to match what our current time is
      */
@@ -586,7 +641,7 @@ export default class Calendar extends ConfigurationItemBase{
         // Only if the time tracking rules are set to self or mixed
         if(this.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
             Logger.debug(`Year.syncTime()`);
-            const totalSeconds = this.year.toSeconds();
+            const totalSeconds = this.toSeconds();
             // If the calculated seconds are different from what is set in the game world time, update the game world time to match sc's time
             if(totalSeconds !== (<Game>game).time.worldTime || force){
                 //Let the local functions know that we all ready updated this time
@@ -652,5 +707,27 @@ export default class Calendar extends ConfigurationItemBase{
         Logger.debug('Resetting time change triggers.');
         this.year.timeChangeTriggered = false;
         this.year.combatChangeTriggered = false;
+    }
+
+    /**
+     * If we have determined that the system does not change the world time when a combat round is changed we run this function to update the time by the set amount.
+     * @param {Combat} combat The current active combat
+     */
+    processOwnCombatRoundTime(combat: Combat){
+        let roundSeconds = SC.globalConfiguration.secondsInCombatRound;
+        let roundsPassed = 1;
+
+        if(combat.hasOwnProperty('previous') && combat['previous'].round){
+            roundsPassed = combat.round - combat['previous'].round;
+        }
+        if(roundSeconds !== 0 && roundsPassed !== 0){
+            const parsedDate = this.year.secondsToDate(this.toSeconds() + (roundSeconds * roundsPassed));
+            this.year.updateTime(parsedDate);
+            // If the current player is the GM then we need to save this new value to the database
+            // Since the current date is updated this will trigger an update on all players as well
+            if(GameSettings.IsGm() && SC.primary){
+                CalManager.saveCalendars();
+            }
+        }
     }
 }

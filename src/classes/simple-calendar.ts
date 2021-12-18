@@ -42,9 +42,10 @@ export default class SimpleCalendar {
         this.clientSettings = {id: '', theme: Themes.dark, openOnLoad: true, openCompact: false, rememberPosition: true, appPosition: {}};
         this.globalConfiguration = {
             id: '',
+            calendarsSameTimestamp: false,
             permissions: new UserPermissions(),
             secondsInCombatRound: 6,
-
+            syncCalendars: false
         };
     }
 
@@ -77,6 +78,8 @@ export default class SimpleCalendar {
         const globalConfiguration = <GlobalConfiguration>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
         this.globalConfiguration.permissions.loadFromSettings(globalConfiguration.permissions);
         this.globalConfiguration.secondsInCombatRound = globalConfiguration.secondsInCombatRound;
+        this.globalConfiguration.calendarsSameTimestamp = globalConfiguration.calendarsSameTimestamp;
+        this.globalConfiguration.syncCalendars = globalConfiguration.syncCalendars;
         this.clientSettings.theme = <Themes>GameSettings.GetStringSettings(SettingNames.Theme);
         this.clientSettings.openOnLoad = GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad);
         this.clientSettings.openCompact = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
@@ -92,7 +95,9 @@ export default class SimpleCalendar {
         if(globalConfig && clientConfig){
             const gc = {
                 permissions: globalConfig.permissions.toConfig(),
-                secondsInCombatRound: globalConfig.secondsInCombatRound
+                secondsInCombatRound: globalConfig.secondsInCombatRound,
+                calendarsSameTimestamp: globalConfig.calendarsSameTimestamp,
+                syncCalendars: globalConfig.syncCalendars
             };
             //Save the client settings
             GameSettings.SaveStringSetting(SettingNames.Theme, clientConfig.theme, false).catch(Logger.error);
@@ -191,7 +196,7 @@ export default class SimpleCalendar {
                     this.activeCalendar.year.combatChangeTriggered = true;
                 } else {
                     // System does not advance time when combat rounds change, check our own settings
-                    this.activeCalendar.year.processOwnCombatRoundTime(combat);
+                    this.activeCalendar.processOwnCombatRoundTime(combat);
                 }
             }
         }

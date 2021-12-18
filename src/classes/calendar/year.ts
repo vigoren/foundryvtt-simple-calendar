@@ -10,7 +10,7 @@ import {Logger} from "../logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
 import Time from "../time/time";
-import {GameSystems, LeapYearRules, TimeKeeperStatus, YearNamingRules} from "../../constants";
+import {GameSystems, LeapYearRules, YearNamingRules} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import Season from "./season";
 import Moon from "./moon";
@@ -535,30 +535,6 @@ export default class Year extends ConfigurationItemBase {
     }
 
     /**
-     * Changes the passed in time type by the passed in amount
-     * @param {boolean} next If we are going forward or backwards
-     * @param {string} type The time type we are adjusting, can be hour, minute or second
-     * @param {number} [clickedAmount=1] The amount to change by
-     */
-    changeTime(next: boolean, type: string, clickedAmount: number = 1){
-        type = type.toLowerCase();
-        const amount = next? clickedAmount : clickedAmount * -1;
-        let dayChange = 0;
-        this.timeChangeTriggered = true;
-        if(type === 'hour'){
-            dayChange = this.time.changeTime(amount);
-        } else if(type === 'minute'){
-            dayChange = this.time.changeTime(0, amount);
-        } else if(type === 'second'){
-            dayChange = this.time.changeTime(0, 0, amount);
-        }
-
-        if(dayChange !== 0){
-            this.changeDay(dayChange);
-        }
-    }
-
-    /**
      * Generates the total number of days in a year
      * @param {boolean} [leapYear=false] If to count the total number of days in a leap year
      * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
@@ -705,20 +681,6 @@ export default class Year extends ConfigurationItemBase {
             daysSoFar += leapYearDayDifference;
         }
         return beforeYearZero? daysSoFar * -1 : daysSoFar;
-    }
-
-    /**
-     * Converts the years current date into seconds
-     */
-    toSeconds(){
-        const activeCalendar = CalManager.getActiveCalendar();
-        let totalSeconds = 0;
-        const month = this.getMonth();
-        if(month){
-            const day = month.getDay();
-            totalSeconds = ToSeconds(activeCalendar, this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true);
-        }
-        return totalSeconds;
     }
 
     /**
@@ -965,28 +927,6 @@ export default class Year extends ConfigurationItemBase {
         }
 
         return name;
-    }
-
-    /**
-     * If we have determined that the system does not change the world time when a combat round is changed we run this function to update the time by the set amount.
-     * @param {Combat} combat The current active combat
-     */
-    processOwnCombatRoundTime(combat: Combat){
-        let roundSeconds = SC.globalConfiguration.secondsInCombatRound;
-        let roundsPassed = 1;
-
-        if(combat.hasOwnProperty('previous') && combat['previous'].round){
-            roundsPassed = combat.round - combat['previous'].round;
-        }
-        if(roundSeconds !== 0 && roundsPassed !== 0){
-            const parsedDate = this.secondsToDate(this.toSeconds() + (roundSeconds * roundsPassed));
-            this.updateTime(parsedDate);
-            // If the current player is the GM then we need to save this new value to the database
-            // Since the current date is updated this will trigger an update on all players as well
-            if(GameSettings.IsGm() && SC.primary){
-                CalManager.saveCalendars();
-            }
-        }
     }
 
     /**
