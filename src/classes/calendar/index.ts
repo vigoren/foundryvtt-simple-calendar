@@ -588,18 +588,17 @@ export default class Calendar extends ConfigurationItemBase{
     /**
      * Converts current date into seconds
      */
-    toSeconds(){
-        //TODO: FIX - This should reference the current calendar NOT the active one as they will be different
+    public toSeconds(){
         let totalSeconds = 0;
         const month = this.year.getMonth();
         if(month){
             const day = month.getDay();
-            totalSeconds = ToSeconds(this, this.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true);
+            totalSeconds = ToSeconds(this, this.year.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true);
         }
         return totalSeconds;
     }
 
-    public changeDateTime(interval: DateTime, yearChangeUpdateMonth: boolean = true){
+    public changeDateTime(interval: DateTime, yearChangeUpdateMonth: boolean = true, syncChange: boolean = false){
         if(this.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
             let change = false;
             if(interval.year){
@@ -622,7 +621,15 @@ export default class Calendar extends ConfigurationItemBase{
                 change = true;
             }
 
-            if(change){
+            if(change && !syncChange){
+                if(SC.globalConfiguration.syncCalendars){
+                    const calendars = CalManager.getAllCalendars();
+                    for(let i = 0; i < calendars.length; i++){
+                        if(calendars[i].id !== this.id){
+                            calendars[i].changeDateTime(interval, yearChangeUpdateMonth, true);
+                        }
+                    }
+                }
                 CalManager.saveCalendars();
                 this.syncTime().catch(Logger.error);
                 MainApplication.updateApp();
