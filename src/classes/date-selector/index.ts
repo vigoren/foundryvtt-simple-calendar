@@ -1,4 +1,3 @@
-import {SCDateSelector, SCRenderer} from "../../interfaces";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {GetDisplayDate, DateTheSame} from "../utilities/date-time";
 import Renderer from "../renderer";
@@ -6,7 +5,7 @@ import {CalendarClickEvents, DateSelectorPositions} from "../../constants";
 import Calendar from "../calendar";
 import {CalManager} from "../index";
 
-export default class DateSelector {
+export class DateSelector {
     /**
      * The unique ID of the date selector object
      * @type {string}
@@ -55,7 +54,7 @@ export default class DateSelector {
      * The currently selected date
      * @type {SCDateSelector.SelectedDate}
      */
-    selectedDate: SCDateSelector.SelectedDate;
+    selectedDate: SimpleCalendar.SCDateSelector.SelectedDate;
     /**
      * A function to call when a date is selected
      * @type{Function | null}
@@ -78,7 +77,7 @@ export default class DateSelector {
      * @param {string} id The unique ID of the selector to add
      * @param {SCDateSelector.Options} options The options associated with setting up the new Date Selector
      */
-    constructor(id: string, options: SCDateSelector.Options) {
+    constructor(id: string, options: SimpleCalendar.SCDateSelector.Options) {
         this.id = id;
         this.calendarId = `${this.id}_calendar`;
         this.timeSelectorId = `${this.id}_time_selector`;
@@ -130,7 +129,7 @@ export default class DateSelector {
      * Applies the passed in options object to the date selector
      * @param options
      */
-    applyOptions(options: SCDateSelector.Options){
+    applyOptions(options: SimpleCalendar.SCDateSelector.Options){
         if(options.calendar !== undefined){
             this.calendar = options.calendar;
         }
@@ -465,7 +464,7 @@ export default class DateSelector {
      * Processes the selecting of a day on the calendar
      * @param {SCRenderer.CalendarOptions} options The renderer options returned from the click event
      */
-    dayClick(options: SCRenderer.CalendarOptions){
+    dayClick(options: SimpleCalendar.SCRenderer.CalendarOptions){
         if(options.selectedDates){
             let hideCalendar = true;
             if(!this.secondDaySelect){
@@ -502,7 +501,7 @@ export default class DateSelector {
      * @param clickType
      * @param options
      */
-    changeMonthClick(clickType: CalendarClickEvents, options: SCRenderer.CalendarOptions){
+    changeMonthClick(clickType: CalendarClickEvents, options: SimpleCalendar.SCRenderer.CalendarOptions){
         if(options.date){
             this.selectedDate.visibleDate.year = options.date.year;
             this.selectedDate.visibleDate.month = this.calendar.year.months[options.date.month].numericRepresentation;
@@ -517,7 +516,7 @@ export default class DateSelector {
      * Processes the callback from the Calendar Renderer's year change event
      * @param options
      */
-    changeYear(options: SCRenderer.CalendarOptions){
+    changeYear(options: SimpleCalendar.SCRenderer.CalendarOptions){
         if(options.date){
             this.selectedDate.visibleDate.year = options.date.year;
         }
@@ -563,7 +562,7 @@ export default class DateSelector {
      * Called when the time selector has benn changed
      * @param options
      */
-    timeChange(options: SCRenderer.TimeSelectorOptions){
+    timeChange(options: SimpleCalendar.SCRenderer.TimeSelectorOptions){
         if(options.selectedTime){
             //If the day is the same, make sure that the end time is not before the start time
             if(DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){

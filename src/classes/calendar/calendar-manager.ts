@@ -1,11 +1,10 @@
 import Calendar from "./index";
-import {CalendarConfiguration} from "../../interfaces";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {PredefinedCalendars, SettingNames, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../../constants";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import {Logger} from "../logging";
 import {MainApplication} from "../index";
-import Hook from "../api/hook";
+import {Hook} from "../api/hook";
 
 /**
  * Class for managing multiple calendars
@@ -37,11 +36,11 @@ export default class CalendarManager {
      * Will save all calendars to Foundry's settings DB
      */
     public saveCalendars(){
-        const calendarConfigurations: CalendarConfiguration[] = [];
+        const calendarConfigurations: SimpleCalendar.CalendarData[] = [];
         for(const [key, value] of Object.entries(this.calendars)){
             calendarConfigurations.push(value.toConfig());
         }
-        GameSettings.SaveObjectSetting(SettingNames.CalendarConfiguration, calendarConfigurations).catch(Logger.error);
+        return GameSettings.SaveObjectSetting(SettingNames.CalendarConfiguration, calendarConfigurations);
     }
 
     /**
@@ -49,7 +48,7 @@ export default class CalendarManager {
      * @returns {number} The number of calendars loaded
      */
     public loadCalendars(): number {
-        const calendars = <CalendarConfiguration[]>GameSettings.GetObjectSettings(SettingNames.CalendarConfiguration);
+        const calendars = <SimpleCalendar.CalendarData[]>GameSettings.GetObjectSettings(SettingNames.CalendarConfiguration);
         //Default array is being returned with an empty string, if this is the case we need to return that empty string to get an empty array
         if(calendars.length === 1 && !calendars[0]){
             calendars.shift();
@@ -77,10 +76,10 @@ export default class CalendarManager {
      * Adds a new calendar
      * @param {string} id The ID to assign to this calendar, if an empty string is passed in an ID will be generated
      * @param {string} name The name of this calendar
-     * @param {CalendarConfiguration} configuration The configuration object for the new calendar
+     * @param {CalendarData} configuration The configuration object for the new calendar
      * @returns {Calendar} The newly create Calendar object
      */
-    public addCalendar(id: string, name: string, configuration: CalendarConfiguration): Calendar{
+    public addCalendar(id: string, name: string, configuration: SimpleCalendar.CalendarData): Calendar{
         const cal = new Calendar(id, name, configuration);
         this.calendars[cal.id] = cal;
         return this.calendars[cal.id];

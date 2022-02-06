@@ -12,7 +12,7 @@ import "../../__mocks__/hooks";
 import MainApp from "../applications/main-app";
 import Year from "../calendar/year";
 import Month from "../calendar/month";
-import Hook from "./hook";
+import {Hook} from "./hook";
 import {SimpleCalendarHooks} from "../../constants";
 import Mock = jest.Mock;
 import Moon from "../calendar/moon";

@@ -1,4 +1,4 @@
-import {Icons, MoonYearResetOptions} from "../../constants";
+import {Icons} from "../../constants";
 import SCIcon from "../../icons/logo.svg";
 import Clock from "../../icons/clock.svg";
 import MiddayIcon from "../../icons/midday.svg";
@@ -13,7 +13,6 @@ import WaningCrescentIcon from "../../icons/moon-waning-crescent.svg";
 import WaningGibbousIcon from "../../icons/moon-waning-gibbous.svg";
 import WaxingCrescentIcon from "../../icons/moon-waxing-crescent.svg";
 import WaxingGibbousIcon from "../../icons/moon-waxing-gibbous.svg";
-import Calendar from "../calendar";
 
 /**
  * Finds the "best" contrast color for the passed in color

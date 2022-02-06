@@ -1,4 +1,3 @@
-import {WeekdayConfig, WeekdayTemplate} from "../../interfaces";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 
 /**
@@ -22,7 +21,7 @@ export class Weekday extends ConfigurationItemBase{
     /**
      * Returns the configuration data for the Weekday
      */
-    toConfig(): WeekdayConfig {
+    toConfig(): SimpleCalendar.WeekdayData {
         return {
             abbreviation: this.abbreviation,
             id: this.id,
@@ -35,7 +34,7 @@ export class Weekday extends ConfigurationItemBase{
      * Returns an object that is used to display the weekday in the HTML template
      * @return {WeekdayTemplate}
      */
-    toTemplate(): WeekdayTemplate{
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.Weekday{
         return {
             ...super.toTemplate(),
             abbreviation: this.abbreviation,
@@ -57,9 +56,9 @@ export class Weekday extends ConfigurationItemBase{
 
     /**
      * Loads the weekday data from the config object.
-     * @param {WeekdayConfig} config The configuration object for this class
+     * @param {WeekdayData} config The configuration object for this class
      */
-    loadFromSettings(config: WeekdayConfig) {
+    loadFromSettings(config: SimpleCalendar.WeekdayData) {
         if(config && Object.keys(config).length){
             if(config.hasOwnProperty('id')){
                 this.id = config.id;

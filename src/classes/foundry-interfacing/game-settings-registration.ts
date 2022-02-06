@@ -2,7 +2,7 @@ import {ModuleName, SettingNames} from "../../constants";
 import ConfigurationApp from "../applications/configuration-app";
 import {CalManager, SC} from "../index"
 import {GameSettings} from "./game-settings";
-import SimpleCalendar from "../simple-calendar";
+import SCController from "../s-c-controller";
 
 export default class GameSettingsRegistration{
     /**
@@ -23,7 +23,7 @@ export default class GameSettingsRegistration{
                 'light': GameSettings.Localize("FSC.Configuration.Theme.Light")
             },
             default: 'dark',
-            onChange: SimpleCalendar.ThemeChange.bind(SimpleCalendar)
+            onChange: SCController.ThemeChange.bind(SCController)
         });
         (<Game>game).settings.register(ModuleName, SettingNames.OpenOnLoad, {
             name: "FSC.Configuration.Client.OpenOnLoad.Title",

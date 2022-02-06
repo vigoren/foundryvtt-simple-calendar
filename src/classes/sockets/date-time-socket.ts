@@ -1,5 +1,4 @@
 import SocketBase from "./socket-base";
-import {SimpleCalendarSocket} from "../../interfaces";
 import {SocketTypes} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {Logger} from "../logging";
@@ -19,11 +18,11 @@ export default class DateTimeSocket extends SocketBase{
      * @param data
      * @param {Calendar} calendar
      */
-    public async process(data: SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
+    public async process(data: SimpleCalendar.SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
         if(data.type === SocketTypes.dateTime && GameSettings.IsGm() && SC.primary){
             Logger.debug(`Processing Date/Time Change Request.`);
-            if((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).interval){
-                calendar.changeDateTime((<SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).interval, false);
+            if((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).interval){
+                calendar.changeDateTime((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDateTime>data.data).interval, false);
             }
             return true;
         }

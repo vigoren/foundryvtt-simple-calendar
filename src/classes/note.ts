@@ -1,4 +1,3 @@
-import {DateTimeParts, DayTemplate, NoteConfig, NoteTemplate, UserColorData} from "../interfaces";
 import {GameSettings} from "./foundry-interfacing/game-settings"
 import {DateRangeMatch, NoteRepeat, SettingNames} from "../constants";
 import ConfigurationItemBase from "./configuration/configuration-item-base";
@@ -49,7 +48,7 @@ export default class Note extends ConfigurationItemBase{
      * The end date and time for a note
      * @type {DateTimeParts}
      */
-    endDate: DateTimeParts = {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0};
+    endDate: SimpleCalendar.DateTime = {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0};
     /**
      * The title of the note
      * @type {string}
@@ -129,12 +128,12 @@ export default class Note extends ConfigurationItemBase{
      * Converts the note class to a template to be used when rendering the note in HTML
      * @return {NoteTemplate}
      */
-    toTemplate(): NoteTemplate {
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.NoteTemplate {
         const activeCalendar = CalManager.getActiveCalendar();
         const author = GameSettings.GetUser(this.author);
-        let authDisplay: UserColorData | null;
+        let authDisplay: SimpleCalendar.UserColorData | null;
         if(author){
-            authDisplay = <UserColorData> {
+            authDisplay = <SimpleCalendar.UserColorData> {
                 name: author.name,
                 color: author.data.color? author.data.color : '',
                 textColor: GetContrastColor(author.data.color? author.data.color : '')
@@ -171,7 +170,7 @@ export default class Note extends ConfigurationItemBase{
      * Sets the properties for this class to options set in the passed in configuration object
      * @param {NoteConfig} config The configuration object for this class
      */
-    loadFromSettings(config: NoteConfig) {
+    loadFromSettings(config: SimpleCalendar.NoteConfig) {
         if(config && Object.keys(config).length){
             this.id = config.id;
             this.year = config.year;
@@ -400,25 +399,25 @@ export default class Note extends ConfigurationItemBase{
                     // Note spans weeks
                     if (noteEndDayOfWeek < noteStartDayOfWeek) {
                         if (currentDayOfWeek <= noteEndDayOfWeek) {
-                            eDay = (<DayTemplate>weeks[i][noteEndDayOfWeek]).numericRepresentation;
+                            eDay = (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][noteEndDayOfWeek]).numericRepresentation;
                             //Choose the previous week
                             if (i > 0) {
-                                sDay = (<DayTemplate>weeks[i - 1][noteStartDayOfWeek]).numericRepresentation;
+                                sDay = (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i - 1][noteStartDayOfWeek]).numericRepresentation;
                             } else {
                                 sDay = undefined;
                             }
                         } else {
-                            sDay = (<DayTemplate>weeks[i][noteStartDayOfWeek]).numericRepresentation;
+                            sDay = (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][noteStartDayOfWeek]).numericRepresentation;
                             //Choose the next week
                             if (i < weeks.length - 1) {
-                                eDay = (<DayTemplate>weeks[i + 1][noteEndDayOfWeek]).numericRepresentation;
+                                eDay = (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i + 1][noteEndDayOfWeek]).numericRepresentation;
                             } else {
                                 eDay = undefined;
                             }
                         }
                     } else {
-                        sDay = (<DayTemplate>weeks[i][noteStartDayOfWeek]).numericRepresentation;
-                        eDay = (<DayTemplate>weeks[i][noteEndDayOfWeek]).numericRepresentation;
+                        sDay = (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][noteStartDayOfWeek]).numericRepresentation;
+                        eDay = (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][noteEndDayOfWeek]).numericRepresentation;
                     }
                 }
             }
@@ -433,7 +432,7 @@ export default class Note extends ConfigurationItemBase{
                 let wi = weeks.length - 1;
                 while(wi >= 0){
                     if(weeks[wi][noteStartDayOfWeek] !== false){
-                        sDay = (<DayTemplate>weeks[wi][noteStartDayOfWeek]).numericRepresentation;
+                        sDay = (<SimpleCalendar.HandlebarTemplateData.Day>weeks[wi][noteStartDayOfWeek]).numericRepresentation;
                     }
                     wi--;
                     if(sDay !== undefined){
@@ -452,7 +451,7 @@ export default class Note extends ConfigurationItemBase{
                 let wi = 0;
                 while(wi < weeks.length){
                     if(weeks[wi][noteEndDayOfWeek] !== false){
-                        eDay = (<DayTemplate>weeks[wi][noteEndDayOfWeek]).numericRepresentation;
+                        eDay = (<SimpleCalendar.HandlebarTemplateData.Day>weeks[wi][noteEndDayOfWeek]).numericRepresentation;
                     }
                     wi++;
                     if(eDay !== undefined){

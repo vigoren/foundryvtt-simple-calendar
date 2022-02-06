@@ -115,54 +115,78 @@
       border-color: $gray-500;
       background-color: $gray-500;
       color: $fontColor;
-      &:hover {
+      &:hover, &.active {
         text-shadow: unset;
         background-color: $gray-400;
-        border-color: $gray-400;
+        border-color: $gray-700;
+      }
+      &:disabled{
+        color: $gray-700;
+        cursor: pointer;
       }
       &.primary {
         background-color: $primary-A200;
         border-color: $primary-A200;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $primary-A100;
           border-color: $primary-A100;
+        }
+        &:disabled{
+          background-color: $primary-T200;
+          border-color: $primary-T200;
         }
       }
       &.secondary {
         background-color: $secondary-400;
         border-color: $secondary-400;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $secondary-300;
           border-color: $secondary-300;
+        }
+        &:disabled{
+          background-color: $secondary-T400;
+          border-color: $secondary-T400;
         }
       }
       &.tertiary{
         background-color: $tertiary-A100;
         border-color: $tertiary-A100;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $tertiary-A200;
           border-color: $tertiary-A200;
+        }
+        &:disabled{
+          background-color: $tertiary-T100;
+          border-color: $tertiary-T100;
         }
       }
       &.delete {
         background-color: $danger-A500;
         border-color: $danger-A500;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $danger-A400;
           border-color: $danger-A400;
+        }
+        &:disabled{
+          background-color: $danger-T400;
+          border-color: $danger-T400;
         }
       }
       &.save {
         background-color: $success-400;
         border-color: $success-400;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $success-300;
           border-color: $success-300;
+        }
+        &:disabled{
+          background-color: $success-T400;
+          border-color: $success-T400;
         }
       }
     }
@@ -336,17 +360,17 @@
       .calendar-display{
         color: $fontColor;
         border-color: $primary-800;
-        box-shadow: inset 0 0 5px $primary-200;
-        &.selected, &:hover{
-          border-color: $success-800;
-          background-color: $success-800;
-          box-shadow: inset 0 0 5px $success-200;
-          color: $white;
-        }
         &.active{
-          border-color: $primary;
           background-color: $primary;
           color: $white;
+        }
+        &.clickable{
+          &:hover{
+            background-color: $primary-300;
+          }
+        }
+        .calendar-actions{
+          border-color: $primary-800;
         }
         .animated-clock{
           svg{

@@ -21,6 +21,8 @@
   "FSC.Configuration.Display.Description": "These settings allow you to change how the date and time are displayed for the selected calendar. For more details about configuring date formats please check out the <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">documentation</a> or expand the table below.",
   "FSC.Configuration.General.CalendarNameHelp": "The name of the calendar to help distinguish it from other calendars.",
   "FSC.Configuration.General.Description": "These settings allow you to configure more general options for the selected calendar.",
+  "FSC.Configuration.General.PlayersChangeActiveCalendar": "Change Active Calendar",
+  "FSC.Configuration.General.PlayersChangeActiveCalendarHelp": "The checked roles will be able to change which calendar is currently active.",
   "FSC.Configuration.Global.Title": "Global Configuration",
   "FSC.Configuration.Global.Description": "These settings will affect how Simple Calendar works for every calendar as opposed to how a specific calendar will work.",
   "FSC.Configuration.Global.SameTimestamp.Title": "Calendars Use Same Timestamp",
@@ -45,7 +47,7 @@
   "FSC.Documentation": "Documentation",
   "FSC.Example": "Example",
   "FSC.ImportInto": "Import Into",
-  "FSC.MakeActiveCalendar": "Make this the active calendar.",
+  "FSC.MakeActive": "Make Active",
   "FSC.Next": "Next",
   "FSC.NewCalendar": "New Calendar",
   "FSC.PreviewCalendar": "Preview this calendar with out making it the active calendar.",
@@ -59,6 +61,7 @@
   "FSC.Search.Options.Fields.Details": "Details",
   "FSC.Search.Options.Fields.Categories": "Categories",
   "FSC.Settings": "Settings",
+  "FSC.View": "View",
 
 
   "FSC.Title": "Simple Calendar",

@@ -1,5 +1,4 @@
 import {generateUniqueId} from "../utilities/string";
-import {IConfigurationItemBaseConfig, IConfigurationItemBaseTemplate} from "../../interfaces";
 import Year from "../calendar/year";
 
 export default class ConfigurationItemBase{
@@ -39,7 +38,7 @@ export default class ConfigurationItemBase{
     /**
      * Creates a configuration object for the item base
      */
-    toConfig(): IConfigurationItemBaseConfig{
+    toConfig(): SimpleCalendar.IDataItemBase{
         return {
             id: this.id,
             name: this.name,
@@ -51,7 +50,7 @@ export default class ConfigurationItemBase{
      * Creates a template for the configuration item base
      * @param {Year|null} [year=null] The year object to use when generating the template
      */
-    toTemplate(year: Year | null = null): IConfigurationItemBaseTemplate {
+    toTemplate(year: Year | null = null): SimpleCalendar.IDataItemBase {
         return {
             id: this.id,
             name: this.name,
@@ -61,9 +60,9 @@ export default class ConfigurationItemBase{
 
     /**
      * Sets the properties for this class to options set in the passed in configuration object
-     * @param {IConfigurationItemBaseConfig} config The configuration object for this class
+     * @param {IDataItemBase} config The configuration object for this class
      */
-    loadFromSettings(config: IConfigurationItemBaseConfig): void{
+    loadFromSettings(config: SimpleCalendar.IDataItemBase): void{
         this.id = config.id;
         if(config.hasOwnProperty('name') && config.name){
             this.name = config.name;

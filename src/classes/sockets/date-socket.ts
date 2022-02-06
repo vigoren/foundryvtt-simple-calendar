@@ -1,5 +1,4 @@
 import SocketBase from "./socket-base";
-import {SimpleCalendarSocket} from "../../interfaces";
 import {SocketTypes} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {MainApplication, SC} from "../index";
@@ -19,13 +18,13 @@ export default class DateSocket extends SocketBase{
      * @param data
      * @param {Calendar} calendar
      */
-    public async process(data: SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
+    public async process(data: SimpleCalendar.SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
         if(data.type === SocketTypes.date && GameSettings.IsGm() && SC.primary){
-            const month = calendar.year.months.find(m => m.numericRepresentation === (<SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).month);
+            const month = calendar.year.months.find(m => m.numericRepresentation === (<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).month);
             if(month){
-                const day = month.days.find(d => d.numericRepresentation === (<SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).day);
+                const day = month.days.find(d => d.numericRepresentation === (<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).day);
                 if(day){
-                    MainApplication.setCurrentDate((<SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).year, month, day);
+                    MainApplication.setCurrentDate((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).year, month, day);
                 }
             }
             return true;

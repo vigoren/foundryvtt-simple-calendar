@@ -1,6 +1,5 @@
 import {GameSystems, LeapYearRules} from "../../constants";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
-import {LeapYearConfig, LeapYearTemplate} from "../../interfaces";
 import PF2E from "../systems/pf2e";
 import {CalManager} from "../index";
 
@@ -35,7 +34,7 @@ export default class LeapYear extends ConfigurationItemBase{
     /**
      * Returns the configuration for leap years
      */
-    toConfig(): LeapYearConfig {
+    toConfig(): SimpleCalendar.LeapYearData {
         return {
             id: this.id,
             rule: this.rule,
@@ -47,7 +46,7 @@ export default class LeapYear extends ConfigurationItemBase{
      * Converts this leap year to a leap year template used to render the leap year data
      * @type {LeapYearTemplate}
      */
-    toTemplate(): LeapYearTemplate {
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.LeapYearTemplate {
         return {
             ...super.toTemplate(),
             rule: this.rule,
@@ -57,9 +56,9 @@ export default class LeapYear extends ConfigurationItemBase{
 
     /**
      * Sets the properties for this class to options set in the passed in configuration object
-     * @param {LeapYearConfig} config The configuration object for this class
+     * @param {LeapYearData} config The configuration object for this class
      */
-    loadFromSettings(config: LeapYearConfig): void {
+    loadFromSettings(config: SimpleCalendar.LeapYearData): void {
         if(config && Object.keys(config).length){
             if(config.hasOwnProperty('id')){
                 this.id = config.id;

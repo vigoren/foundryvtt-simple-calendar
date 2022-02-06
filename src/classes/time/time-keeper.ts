@@ -1,8 +1,7 @@
 import {Logger} from "../logging";
 import {GameWorldTimeIntegrations, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../../constants";
-import Hook from "../api/hook";
+import {Hook} from "../api/hook";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {SimpleCalendarSocket} from "../../interfaces";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import {CalManager, MainApplication, SC} from "../index";
 
@@ -151,7 +150,7 @@ export default class TimeKeeper{
                 if (GameSettings.IsGm() && SC.primary) {
                     if(activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
                         //Main.instance.updateApp();
-                        GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
+                        GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
                     } else {
                         activeCalendar.syncTime().catch(Logger.error);
                     }
@@ -172,11 +171,11 @@ export default class TimeKeeper{
             const activeCalendar = CalManager.getCalendar(this.calendarId);
             if (activeCalendar && GameSettings.IsGm() && SC.primary) {
                 if(activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
-                    GameSockets.emit(<SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
+                    GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
                 } else {
                     activeCalendar.syncTime().catch(Logger.error);
                 }
-                CalManager.saveCalendars();
+                CalManager.saveCalendars().catch(Logger.error);
             }
         }
     }
@@ -217,7 +216,7 @@ export default class TimeKeeper{
      */
     private emitSocket(){
         if(GameSettings.IsGm() && SC.primary){
-            const socketData = <SimpleCalendarSocket.Data>{
+            const socketData = <SimpleCalendar.SimpleCalendarSocket.Data>{
                 type: SocketTypes.clock,
                 data: {
                     timeKeeperStatus: this.status

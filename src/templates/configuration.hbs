@@ -54,6 +54,7 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Global.SyncCalendars.Description'}}</p>
                 </div>
+                <!--
                 <div class="form-group open">
                     <label for="scCalendarsSameTimestamp">{{localize 'FSC.Configuration.Global.SameTimestamp.Title'}}</label>
                     <div class="form-fields">
@@ -61,6 +62,7 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Global.SameTimestamp.Description'}}</p>
                 </div>
+                -->
                 <div class="form-group open">
                     <label for="scSecondsInCombatRound">{{localize 'FSC.Configuration.Time.SecondsInCombatRound'}}</label>
                     <div class="form-fields">
@@ -157,6 +159,16 @@
                         <input type="checkbox" name="AddNotes.GM" checked disabled />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.PlayersChangeDateTimeHelp'}}</p>
+                </li>
+                <li class="permission form-group open">
+                    <label class="index">{{localize 'FSC.Configuration.General.PlayersChangeActiveCalendar'}}</label>
+                    <div class="form-fields">
+                        <input type="checkbox" name="AddNotes.P" id="scChangeActiveCalP" {{checked globalConfiguration.permissions.changeActiveCalendar.player}} />
+                        <input type="checkbox" name="AddNotes.TP" id="scChangeActiveCalTP" {{checked globalConfiguration.permissions.changeActiveCalendar.trustedPlayer}} />
+                        <input type="checkbox" name="AddNotes.AGM" id="scChangeActiveCalAGM" {{checked globalConfiguration.permissions.changeActiveCalendar.assistantGameMaster}} />
+                        <input type="checkbox" name="AddNotes.GM" checked disabled />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.PlayersChangeActiveCalendarHelp'}}</p>
                 </li>
             </ul>
         </div>

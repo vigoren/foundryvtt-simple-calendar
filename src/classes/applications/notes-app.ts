@@ -2,7 +2,6 @@ import Note from '../note';
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {NoteRepeats, NoteConfig, SCDateSelector} from "../../interfaces";
 import {SettingNames} from "../../constants";
 import {DaysBetweenDates} from "../utilities/date-time";
 import {GetContrastColor} from "../utilities/visual";
@@ -88,7 +87,7 @@ export class NotesApp extends FormApplication {
             enableRichTextEditButton: this.checkForThirdPartyMarkdownEditors(),
             enrichedContent: TextEditor.enrichHTML((<Note>this.object).content),
             displayDate: '',
-            repeatOptions: <NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
+            repeatOptions: <SimpleCalendar.NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             repeats: (<Note>this.object).repeats,
             repeatsText: '',
             reminder: (<Note>this.object).remindUsers.indexOf(GameSettings.UserID()) > -1,
@@ -285,7 +284,7 @@ export class NotesApp extends FormApplication {
             (<Note>this.object).remindUsers.splice(userIndex, 1);
         }
         if(this.viewMode){
-            let currentNotes = (<NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
+            let currentNotes = (<SimpleCalendar.NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
                 const note = new Note();
                 note.loadFromSettings(n);
                 return note;
@@ -299,7 +298,7 @@ export class NotesApp extends FormApplication {
      * Called when the date selector date has been selected
      * @param selectedDate
      */
-    dateSelectorClick(selectedDate: SCDateSelector.Result){
+    dateSelectorClick(selectedDate: SimpleCalendar.SCDateSelector.Result){
         const activeCalendar = CalManager.getActiveCalendar();
         const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
         const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
@@ -412,7 +411,7 @@ export class NotesApp extends FormApplication {
      * Called when the user confirms the deletion of a note.
      */
     public async deleteConfirm(){
-        const currentNotes = (<NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
+        const currentNotes = (<SimpleCalendar.NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
             const note = new Note();
             note.loadFromSettings(n);
             return note;
@@ -439,7 +438,7 @@ export class NotesApp extends FormApplication {
             }
         }
         if((<Note>this.object).title){
-            let currentNotes = (<NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
+            let currentNotes = (<SimpleCalendar.NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
                 const note = new Note();
                 note.loadFromSettings(n);
                 return note;

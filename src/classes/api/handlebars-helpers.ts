@@ -1,13 +1,12 @@
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import Renderer from "../renderer";
-import {SCDateSelector, SCRenderer} from "../../interfaces";
 import {GetIcon} from "../utilities/visual";
 import {CalManager} from "../index";
 
 /**
  * Class that contains all of the Handlebars helper functions
  */
-export default class HandlebarsHelpers{
+export class HandlebarsHelpers{
 
     /**
      * Registers the helper functions with Handlebars
@@ -25,7 +24,7 @@ export default class HandlebarsHelpers{
      */
     static DateSelector(options: any){
         if(options.hash.hasOwnProperty('id') ){
-            const dsOptions: SCDateSelector.Options = {};
+            const dsOptions: SimpleCalendar.SCDateSelector.Options = {};
             if(options.hash.hasOwnProperty('allowDateRangeSelection')){
                 dsOptions.allowDateRangeSelection = options.hash['allowDateRangeSelection'];
             }
@@ -80,7 +79,7 @@ export default class HandlebarsHelpers{
      * @param options
      */
     static FullCalendar(options: any){
-        const renderOptions: SCRenderer.CalendarOptions = {id:''};
+        const renderOptions: SimpleCalendar.SCRenderer.CalendarOptions = {id:''};
         let calendarId = '';
         if(options.hash.hasOwnProperty('allowChangeMonth')){
             renderOptions.allowChangeMonth = options.hash['allowChangeMonth'];
@@ -130,7 +129,7 @@ export default class HandlebarsHelpers{
      * @param options
      */
     static Clock(options: any){
-        const renderOptions: SCRenderer.ClockOptions = {id:''};
+        const renderOptions: SimpleCalendar.SCRenderer.ClockOptions = {id:''};
         let calendarId = '';
         if(options.hash.hasOwnProperty('id')){
             renderOptions.id = options.hash['id'];

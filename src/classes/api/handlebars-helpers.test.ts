@@ -8,7 +8,7 @@ import "../../__mocks__/application";
 import "../../__mocks__/event";
 import "../../../__mocks__/crypto";
 
-import HandlebarsHelpers from "./handlebars-helpers";
+import {HandlebarsHelpers} from "./handlebars-helpers";
 import MainApp from "../applications/main-app";
 import Note from "../note";
 

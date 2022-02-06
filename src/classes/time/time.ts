@@ -1,5 +1,4 @@
 import {Logger} from "../logging";
-import {TimeConfig, TimeTemplate} from "../../interfaces";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {FormatDateTime} from "../utilities/date-time";
 import {CalManager} from "../index";
@@ -70,7 +69,7 @@ export default class Time extends ConfigurationItemBase{
     /**
      * Returns the configuration for time in the calendar
      */
-    toConfig(): TimeConfig {
+    toConfig(): SimpleCalendar.TimeData {
         return {
             id: this.id,
             hoursInDay: this.hoursInDay,
@@ -98,9 +97,9 @@ export default class Time extends ConfigurationItemBase{
 
     /**
      * Sets the properties for this class to options set in the passed in configuration object
-     * @param {TimeConfig} config The configuration object for this class
+     * @param {TimeData} config The configuration object for this class
      */
-    loadFromSettings(config: TimeConfig) {
+    loadFromSettings(config: SimpleCalendar.TimeData) {
         if(config && Object.keys(config).length){
             if(config.hasOwnProperty('id')){
                 this.id = config.id;
@@ -125,7 +124,7 @@ export default class Time extends ConfigurationItemBase{
      * Returns the current time as string parts
      * @return {TimeTemplate}
      */
-    getCurrentTime(): TimeTemplate{
+    getCurrentTime(): SimpleCalendar.TimeTemplate{
         let s = this.seconds, m = 0, h = 0;
         if(s >= this.secondsInMinute){
             m = Math.floor(s / this.secondsInMinute);

@@ -1,12 +1,11 @@
-import {SCDateSelector} from "../../interfaces";
-import DateSelector from "./date-selector";
+import {DateSelector} from "./index";
 
 export default class DateSelectorManager{
     /**
      * List of date selector objects that are active on the page.
      * @type {SCDateSelector.SelectorList}
      */
-    static Selectors:SCDateSelector.SelectorList = {};
+    static Selectors: SimpleCalendar.SCDateSelector.SelectorList = {};
 
     /**
      * Creates a new Date Selector or returns an existing Date Selector if it all ready exists in the list.
@@ -14,7 +13,7 @@ export default class DateSelectorManager{
      * @param {SCDateSelector.Options} options The options associated with setting up the new Date Selector
      * @return {DateSelector}
      */
-    static GetSelector(id: string, options: SCDateSelector.Options){
+    static GetSelector(id: string, options: SimpleCalendar.SCDateSelector.Options){
         if(this.Selectors.hasOwnProperty(id)){
             this.Selectors[id].applyOptions(options);
             return this.Selectors[id];

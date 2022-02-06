@@ -1,12 +1,12 @@
 import type CalendarManager from "./calendar/calendar-manager";
 import type MainApp from "./applications/main-app";
-import type SimpleCalendar from "./simple-calendar";
+import type SCController from "./s-c-controller";
 import ConfigurationApp from "./applications/configuration-app";
 
 export let CalManager: CalendarManager;
 export let MainApplication: MainApp;
 export let ConfigurationApplication: ConfigurationApp;
-export let SC: SimpleCalendar;
+export let SC: SCController;
 
 /**
  * Updates the global calendar manager to the passed in value, should only be called once
@@ -34,8 +34,8 @@ export function updateConfigurationApplication(app: ConfigurationApp){
 
 /**
  * Updates the global simple calendar to the passed in value, should only be called once
- * @param {SimpleCalendar} sc
+ * @param {SCController} sc
  */
-export function updateSC(sc: SimpleCalendar){
+export function updateSC(sc: SCController){
     SC = sc;
 }

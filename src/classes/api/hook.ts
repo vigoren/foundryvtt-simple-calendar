@@ -4,7 +4,7 @@ import type Calendar from "../calendar";
 import {SC} from "../index";
 
 
-export default class Hook{
+export class Hook{
 
     /**
      * Emit a specific hook for other things to listen too. Data is put together within this function.

@@ -1,14 +1,6 @@
 import {Logger} from "../logging";
 import type Month from "../calendar/month";
 import type Day from "../calendar/day";
-import {
-    AppPosition, DateTime,
-    NoteTemplate,
-    SCRenderer,
-    SearchOptions,
-    SimpleCalendarSocket,
-    SimpleCalendarTemplate
-} from "../../interfaces";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {NotesApp} from "./notes-app";
 import {
@@ -24,6 +16,7 @@ import Renderer from "../renderer";
 import {animateElement} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, SC} from "../index";
 import {FormatDateTime} from "../utilities/date-time";
+import{canUser} from "../utilities/permissions";
 
 
 /**
@@ -67,9 +60,9 @@ export default class MainApp extends Application{
 
     search = {
         term: '',
-        results: <NoteTemplate[]>[],
+        results: <SimpleCalendar.HandlebarTemplateData.NoteTemplate[]>[],
         options: {
-            fields: <SearchOptions.Fields>{
+            fields: <SimpleCalendar.SearchOptions.Fields>{
                 date: true,
                 title: true,
                 details: true,
@@ -102,8 +95,17 @@ export default class MainApp extends Application{
      * Gets the data object to be used by Handlebars when rending the HTML template
      * @param {Application.RenderOptions | undefined} options The data options
      */
-    getData(options?: Application.RenderOptions): SimpleCalendarTemplate | Promise<SimpleCalendarTemplate> {
+    getData(options?: Application.RenderOptions): SimpleCalendar.HandlebarTemplateData.MainAppData | Promise<SimpleCalendar.HandlebarTemplateData.MainAppData> {
+        let showSetCurrentDate = false;
+        const selectedMonth = this.activeCalendar.year.getMonth('selected');
+        if(selectedMonth){
+            const selectedDay = selectedMonth.getDay('selected');
+            if(selectedDay && !selectedDay.current){
+                showSetCurrentDate = true;
+            }
+        }
         return {
+            addNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes),
             calendar: this.activeCalendar.toTemplate(),
             calendarList: CalManager.getAllCalendars().map(c => {
                 const cd = c.getCurrentDate();
@@ -116,10 +118,18 @@ export default class MainApp extends Application{
                     clockRunning: c.timeKeeper.getStatus() === TimeKeeperStatus.Started
                 };
             }),
+            changeDateTime: canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime),
             clockClass: this.clockClass,
+            isGM: GameSettings.IsGm(),
             isPrimary: SC.primary,
             uiElementStates: this.uiElementStates,
-            search: this.search
+            reorderNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.reorderNotes),
+            search: this.search,
+            showClock: this.activeCalendar.generalSettings.showClock,
+            showDateControls: this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
+            showSetCurrentDate: canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime) && showSetCurrentDate,
+            showTimeControls: this.activeCalendar.generalSettings.showClock && this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
+            showChangeCalendarControls: canUser((<Game>game).user, SC.globalConfiguration.permissions.changeActiveCalendar)
         };
     }
 
@@ -127,15 +137,15 @@ export default class MainApp extends Application{
      * Shows the application window
      */
     public showApp(){
-        if(this.activeCalendar.canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)){
+        if(canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)){
             if(this.activeCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
                 this.activeCalendar.year.setCurrentToVisible();
             }
             this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
 
-            const options:  Application.RenderOptions<Application.Options> = {}
+            const options:  Application.RenderOptions = {}
             if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
-                const pos = <AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
+                const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
                 if(pos.top){
                     options.top = pos.top;
                 }
@@ -271,7 +281,7 @@ export default class MainApp extends Application{
         this._onDragMouseUp(e);
         const app = document.getElementById('simple-calendar-application');
         if(app){
-            const appPos: AppPosition = {};
+            const appPos: SimpleCalendar.AppPosition = {};
             appPos.top = parseFloat(app.style.top);
             appPos.left = parseFloat(app.style.left);
             GameSettings.SaveObjectSetting(SettingNames.AppPosition, appPos, false).catch(Logger.error);
@@ -339,10 +349,25 @@ export default class MainApp extends Application{
                 //-----------------------
                 // Calendar Drawer
                 //-----------------------
-                //Calendar Click
-                appWindow.querySelectorAll('.sc-calendar-list .calendar-display').forEach(e => {
-                    e.addEventListener('click', this.changeCalendar.bind(this));
-                });
+                //Calendar Active Click
+                const calendarActivate =  appWindow.querySelectorAll('.sc-calendar-list .calendar-display .calendar-actions .save');
+
+                if(calendarActivate.length){
+                    calendarActivate.forEach(e => {
+                        e.addEventListener('click', this.changeCalendar.bind(this));
+                    });
+
+                    //Calendar View Click
+                    appWindow.querySelectorAll('.sc-calendar-list .calendar-display .calendar-actions .tertiary').forEach(e => {
+                        //e.addEventListener('click', this.changeCalendar.bind(this));
+                    });
+                } else {
+                    //Calendar View Click
+                    appWindow.querySelectorAll('.sc-calendar-list .calendar-display').forEach(e => {
+                        //e.addEventListener('click', this.changeCalendar.bind(this));
+                    });
+                }
+
                 //-----------------------
                 // Note/Search Drawer
                 //-----------------------
@@ -474,7 +499,7 @@ export default class MainApp extends Application{
                 this.uiElementStates.dateTimeUnit = DateTimeUnits.Round;
                 this.uiElementStates.dateTimeUnitText = "FSC.Round";
                 change = true;
-            } else if(dataUnit === 'second'){
+            } else if(dataUnit === 'seconds'){
                 this.uiElementStates.dateTimeUnit = DateTimeUnits.Second;
                 this.uiElementStates.dateTimeUnitText = "FSC.Second";
                 change = true;
@@ -488,10 +513,13 @@ export default class MainApp extends Application{
     public changeCalendar(e: Event){
         const target = <HTMLElement>e.currentTarget;
         if(target){
-            const calendarId = target.getAttribute('data-calid');
-            if(calendarId && this.activeCalendar.id !== calendarId){
-                CalManager.setActiveCalendar(calendarId);
-                this.render(true);
+            const wrapper = target.closest('.calendar-display');
+            if(wrapper){
+                const calendarId = wrapper.getAttribute('data-calid');
+                if(calendarId && this.activeCalendar.id !== calendarId){
+                    CalManager.setActiveCalendar(calendarId);
+                    this.render(true);
+                }
             }
         }
     }
@@ -501,7 +529,7 @@ export default class MainApp extends Application{
      * @param {CalendarClickEvents} clickType What was clicked, previous or next
      * @param {SCRenderer.CalendarOptions} options The renderer's options associated with the calendar
      */
-    public changeMonth(clickType: CalendarClickEvents, options: SCRenderer.CalendarOptions){
+    public changeMonth(clickType: CalendarClickEvents, options: SimpleCalendar.SCRenderer.CalendarOptions){
         this.toggleUnitSelector(true);
         this.activeCalendar.year.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
         this.setWidthHeight();
@@ -511,7 +539,7 @@ export default class MainApp extends Application{
      * Click event when a users clicks on a day
      * @param {SCRenderer.CalendarOptions} options The renderer options for the calendar who's day was clicked
      */
-    public dayClick(options: SCRenderer.CalendarOptions){
+    public dayClick(options: SimpleCalendar.SCRenderer.CalendarOptions){
         this.toggleUnitSelector(true);
         if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.activeCalendar.year.months.length){
             const selectedDay = options.selectedDates.start.day;
@@ -579,10 +607,10 @@ export default class MainApp extends Application{
         if(dataType && dataAmount){
             const amount = parseInt(dataAmount);
             if(!isNaN(amount)){
-                const interval: DateTime = {};
+                const interval: SimpleCalendar.DateTimeParts = {};
                 if(dataType === 'round'){
-                    interval.second = amount * SC.globalConfiguration.secondsInCombatRound;
-                } else if(dataType === 'second' || dataType === 'minute' || dataType === 'hour' || dataType === 'day' || dataType === 'month' || dataType === 'year'){
+                    interval.seconds = amount * SC.globalConfiguration.secondsInCombatRound;
+                } else if(dataType === 'seconds' || dataType === 'minute' || dataType === 'hour' || dataType === 'day' || dataType === 'month' || dataType === 'year'){
                     interval[dataType] = amount;
                 }
                 //If user is not the GM nor the primary GM, send over the socket
@@ -590,7 +618,7 @@ export default class MainApp extends Application{
                     if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                         GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
                     } else {
-                        const socketData = <SimpleCalendarSocket.SimpleCalendarSocketDateTime>{interval: interval};
+                        const socketData = <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDateTime>{interval: interval};
                         Logger.debug(`Sending Date/Time Change to Primary GM`);
                         GameSockets.emit({type: SocketTypes.dateTime, data: socketData}).catch(Logger.error);
                     }
@@ -600,7 +628,7 @@ export default class MainApp extends Application{
             }
         } else if(dataType && (dataType === 'dawn' || dataType === 'midday' || dataType === 'dusk' || dataType === 'midnight')){
             this.timeOfDayControlClick(dataType);
-            CalManager.saveCalendars();
+            CalManager.saveCalendars().catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
             this.activeCalendar.syncTime(true).catch(Logger.error);
         }
@@ -664,7 +692,7 @@ export default class MainApp extends Application{
                 }
                 break;
             case 'midnight':
-                this.activeCalendar.changeDateTime({second: this.activeCalendar.year.time.secondsPerDay - this.activeCalendar.year.time.seconds});
+                this.activeCalendar.changeDateTime({seconds: this.activeCalendar.year.time.secondsPerDay - this.activeCalendar.year.time.seconds});
                 break;
         }
     }
@@ -675,7 +703,7 @@ export default class MainApp extends Application{
      * @param {Event} e The click event
      */
     public dateControlApply(e: Event){
-        if(this.activeCalendar.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
+        if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
             let validSelection = false;
             const selectedYear = this.activeCalendar.year.selectedYear;
             const selectedMonth = this.activeCalendar.year.getMonth('selected');
@@ -706,7 +734,7 @@ export default class MainApp extends Application{
                 }
             }
             if(!validSelection){
-                CalManager.saveCalendars();
+                CalManager.saveCalendars().catch(Logger.error);
                 //Sync the current time on apply, this will propagate to other modules
                 this.activeCalendar.syncTime().catch(Logger.error);
             }
@@ -726,7 +754,7 @@ export default class MainApp extends Application{
             if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                 GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
             } else {
-                const socketData = <SimpleCalendarSocket.SimpleCalendarSocketDate>{year: year, month: month.numericRepresentation, day: day.numericRepresentation};
+                const socketData = <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>{year: year, month: month.numericRepresentation, day: day.numericRepresentation};
                 Logger.debug(`Sending Date Change to Primary GM: ${socketData.year}, ${socketData.month}, ${socketData.day}`);
                 GameSockets.emit({type: SocketTypes.date, data: socketData}).catch(Logger.error);
             }
@@ -737,7 +765,7 @@ export default class MainApp extends Application{
             month.selected = false;
             day.current = true;
             day.selected = false;
-            CalManager.saveCalendars();
+            CalManager.saveCalendars().catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
             this.activeCalendar.syncTime().catch(Logger.error);
         }
@@ -800,7 +828,7 @@ export default class MainApp extends Application{
         if(element){
             const field = element.getAttribute('data-field');
             if(field && this.search.options.fields.hasOwnProperty(field)){
-                this.search.options.fields[field as keyof SearchOptions.Fields] = element.checked;
+                this.search.options.fields[field as keyof SimpleCalendar.SearchOptions.Fields] = element.checked;
             }
         }
     }

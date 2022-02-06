@@ -1,6 +1,5 @@
 import {GameWorldTimeIntegrations} from "../../constants";
 import ConfigurationItemBase from "./configuration-item-base";
-import {GeneralSettingsConfig, GeneralSettingsTemplate} from "../../interfaces";
 
 export default class GeneralSettings extends ConfigurationItemBase{
     /**
@@ -54,7 +53,7 @@ export default class GeneralSettings extends ConfigurationItemBase{
     /**
      * Creates a template for the general settings
      */
-    toTemplate(): GeneralSettingsTemplate {
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.GeneralSettings {
         return {
             ...super.toTemplate(),
             gameWorldTimeIntegration: this.gameWorldTimeIntegration,
@@ -68,7 +67,7 @@ export default class GeneralSettings extends ConfigurationItemBase{
     /**
      * Creates the configuration object for the general settings
      */
-    toConfig(): GeneralSettingsConfig {
+    toConfig(): SimpleCalendar.GeneralSettingsData {
         return {
             id: this.id,
             gameWorldTimeIntegration: this.gameWorldTimeIntegration,
@@ -81,9 +80,9 @@ export default class GeneralSettings extends ConfigurationItemBase{
 
     /**
      * Sets the properties for this class to options set in the passed in configuration object
-     * @param {GeneralSettingsConfig} config The configuration object for this class
+     * @param {GeneralSettingsData} config The configuration object for this class
      */
-    loadFromSettings(config: GeneralSettingsConfig) {
+    loadFromSettings(config: SimpleCalendar.GeneralSettingsData) {
         if(config && Object.keys(config).length){
             this.id = config.id;
             this.gameWorldTimeIntegration = config.gameWorldTimeIntegration;

@@ -29,14 +29,14 @@
             {{#if (gt calendar.currentYear.selectedDayNotes.reminders 0)}}
             <button class="control tertiary reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.currentYear.selectedDayNotes.reminders}}</button>
             {{/if}}
-            {{#if calendar.addNotes}}
+            {{#if addNotes}}
             <button class="fa control save add-note" title="{{localize 'FSC.Notes.AddNew'}}"><span class="fa-sticky-note"></span>&nbsp;<span class="fa-plus"></span></button>
             {{/if}}
             {{#unless uiElementStates.compactView}}
             <button class="fa fa-search control search" title="{{localize 'FSC.Search.Title'}}"></button>
             <span class="spacer"></span>
-            {{#if calendar.changeDateTime}}
-            {{#if calendar.showSetCurrentDate}}
+            {{#if changeDateTime}}
+            {{#if showSetCurrentDate}}
             <button class="control save btn-apply fa fa-calendar-check" title="{{localize 'FSC.SetCurrentDate'}}"></button>
             {{/if}}
             {{/if}}
@@ -48,7 +48,7 @@
         <div class="sc-calendar-list sc-side-drawer {{#if uiElementStates.calendarDrawerOpen}}open{{else}}closed{{/if}}">
             <h2>{{localize 'FSC.Calendars'}}</h2>
             {{#each calendarList}}
-                <div class="calendar-display {{#if (eq id ../calendar.id)}}active{{/if}}" data-calid="{{id}}" title="{{#if ../calendar.changeDateTime}}{{localize 'FSC.MakeActiveCalendar'}}{{else}}{{name}}{{/if}}">
+                <div class="calendar-display {{#if (eq id ../calendar.id)}}active{{/if}} {{#unless ../showChangeCalendarControls}}clickable{{/unless}}" data-calid="{{id}}">
                     <div class="details">
                         <div class="calendar-name">{{name}}</div>
                         <div class="calendar-date">
@@ -59,6 +59,12 @@
                                 <div class="animated-clock animate">{{sc-icon name='clock'}}</div>
                             {{/if}}
                         </div>
+                        {{#if ../showChangeCalendarControls}}
+                        <div class="calendar-actions">
+                            <button class="control save" {{#if (eq id ../calendar.id)}}disabled{{/if}}><span class="fa fa-check"></span> {{localize 'FSC.MakeActive'}}</button>
+                            <button class="control tertiary"><span class="fa fa-eye"></span> {{localize 'FSC.View'}}</button>
+                        </div>
+                        {{/if}}
                     </div>
                 </div>
             {{/each}}
@@ -69,11 +75,11 @@
             {{#if calendar.notes.length}}
             <div class="note-list">
                 {{#each calendar.notes}}
-                <div class="note" data-index="{{id}}" draggable="{{#if ../calendar.reorderNotes}}true{{else}}false{{/if}}">
+                <div class="note" data-index="{{id}}" draggable="{{#if ../reorderNotes}}true{{else}}false{{/if}}">
                     <div class="note-details-wrapper">
                         <h3 class="note-title">{{title}}</h3>
                         <div class="note-details">
-                            {{#if ../calendar.isGM}}
+                            {{#if ../isGM}}
                             {{#if playerVisible}}
                             <div class="note-category note-icon player-visible" title="{{localize 'FSC.Notes.PlayerVisible'}}">
                                 <span class="fa fa-eye"></span>
@@ -104,7 +110,7 @@
                             {{/each}}
                         </div>
                     </div>
-                    {{#if ../calendar.reorderNotes}}
+                    {{#if ../reorderNotes}}
                     <div class="sorting-dragger"><span class="fa fa-arrows-alt-v"></span></div>
                     {{/if}}
                 </div>
@@ -141,7 +147,7 @@
                     <div class="note-details-wrapper">
                         <h3 class="note-title">{{title}}</h3>
                         <div class="note-details">
-                            {{#if ../calendar.isGM}}
+                            {{#if ../isGM}}
                             {{#if playerVisible}}
                             <div class="note-category note-icon player-visible" title="{{localize 'FSC.Notes.PlayerVisible'}}">
                                 <span class="fa fa-eye"></span>
@@ -180,14 +186,14 @@
             </div>
         </div>
     </div>
-    {{#if calendar.showClock}}
+    {{#if showClock}}
     <div class="section">
         <div class="clock-display">
             {{sc-clock id=calendar.clockId}}
         </div>
         <div class="sc-actions-list">
-            {{#if calendar.changeDateTime}}
-            {{#if calendar.showTimeControls}}
+            {{#if changeDateTime}}
+            {{#if showTimeControls}}
             {{#if isPrimary}}
             <div class="time-keeper-buttons">
                 <button class="control time-start fa {{#if (eq clockClass 'started')}}secondary fa-pause{{else}}save fa-play{{/if}}" title="{{localize 'FSC.Time.Start'}}"></button>
@@ -202,10 +208,10 @@
         </div>
     </div>
     {{/if}}
-    {{#if calendar.changeDateTime}}
+    {{#if changeDateTime}}
     <div class="section">
         <div class="controls unit-controls">
-            {{#if calendar.showDateControls}}
+            {{#if showDateControls}}
             <div class="control-group">
                 <button class="control primary fa fa-angle-double-left" title="{{localize 'FSC.MoveDayBack'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-5"></button>
                 <button class="control primary fa fa-angle-left" title="{{localize 'FSC.MoveDayBack'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-1"></button>
@@ -213,13 +219,13 @@
                 <button class="control primary fa fa-angle-right" title="{{localize 'FSC.MoveDayForward'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="1"></button>
                 <button class="control primary fa fa-angle-double-right" title="{{localize 'FSC.MoveDayForward'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="5"></button>
                 <ul class="unit-list time-units {{#if uiElementStates.dateTimeUnitOpen}}open{{else}}closed{{/if}}">
-                    {{#if calendar.showTimeControls}}
-                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'second')}}selected{{/if}}" data-unit="second">{{localize 'FSC.Second'}}</li>
+                    {{#if showTimeControls}}
+                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'seconds')}}selected{{/if}}" data-unit="seconds">{{localize 'FSC.Second'}}</li>
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'round')}}selected{{/if}}" data-unit="round">{{localize 'FSC.Round'}}</li>
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'minute')}}selected{{/if}}" data-unit="minute">{{localize 'FSC.Minute'}}</li>
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'hour')}}selected{{/if}}" data-unit="hour">{{localize 'FSC.Hour'}}</li>
                     {{/if}}
-                    {{#if calendar.showDateControls}}
+                    {{#if showDateControls}}
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'day')}}selected{{/if}}" data-unit="day">{{localize 'FSC.Day'}}</li>
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'month')}}selected{{/if}}" data-unit="month">{{localize 'FSC.Month'}}</li>
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'year')}}selected{{/if}}" data-unit="year">{{localize 'FSC.Year'}}</li>
@@ -227,7 +233,7 @@
                 </ul>
             </div>
             {{/if}}
-            {{#if calendar.showTimeControls}}
+            {{#if showTimeControls}}
             <div class="control-group">
                 <button class="control secondary" data-type="dawn" title="{{localize 'FSC.Dawn'}}">{{sc-icon name='sunrise'}}</button>
                 <button class="control secondary" data-type="midday" title="{{localize 'FSC.Midday'}}">{{sc-icon name='midday'}}</button>

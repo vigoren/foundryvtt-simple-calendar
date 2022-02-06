@@ -1,24 +1,20 @@
-import {
-    DateTime,
-    LeapYearConfig,
-    MonthConfig,
-    MoonConfiguration,
-    TimeConfig,
-    WeekdayConfig,
-    YearConfig
-} from "../../interfaces";
+/**
+ * There are the functions that other modules, systems and macros can access and what they can do. Most of these are for advanced interfacing with Simple Calendar and not something everyone needs to worry about.
+ *
+ * @remarks
+ * Simple Calendar exposes a variable called `SimpleCalendar`, all of these API functions exist the property api on that variable `SimpleCalendar.api`
+ * @module API
+ */
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
     DateSelectorPositions,
     GameSystems,
     LeapYearRules,
-    ModuleName,
     Icons,
     MoonYearResetOptions,
     PredefinedCalendars,
     PresetTimeOfDay,
-    SettingNames,
     TimeKeeperStatus,
     YearNamingRules
 } from "../../constants";
@@ -28,245 +24,87 @@ import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Renderer from "../renderer";
 import {MainApplication, CalManager, SC} from "../index";
+import {canUser} from "../utilities/permissions";
 
 /**
- * All external facing functions for other systems, modules or macros to consume
+ * The Date selector class used to create date selector inputs based on the calendar
  */
-export default class API{
-    /**
-     * The Date selector class used to create date selector inputs based on the calendar
-     */
-    public static DateSelector = {
-        Activate: DateSelectorManager.ActivateSelector.bind(DateSelectorManager),
-        Get: DateSelectorManager.GetSelector.bind(DateSelectorManager),
-        Remove: DateSelectorManager.RemoveSelector.bind(DateSelectorManager)
-    };
+export const DateSelector = {
+    Activate: DateSelectorManager.ActivateSelector.bind(DateSelectorManager),
+    Get: DateSelectorManager.GetSelector.bind(DateSelectorManager),
+    Remove: DateSelectorManager.RemoveSelector.bind(DateSelectorManager)
+};
+/**
+ * The different date selector positions available
+ */
+export {DateSelectorPositions};
+/**
+ * The predefined calendars packaged with the calendar
+ */
+export {PredefinedCalendars as Calendars};
+/**
+ * The leap year rules
+ */
+export {LeapYearRules};
+/**
+ * The Moon Icons
+ */
+export {Icons as MoonIcons};
+export {Icons};
+/**
+ * The moon year reset options
+ */
+export {MoonYearResetOptions};
+/**
+ * The year naming rules
+ */
+export {YearNamingRules};
+/**
+ * The sun positions
+ */
+export {PresetTimeOfDay};
 
-    /**
-     * The different date selector positions available
-     */
-    public static DateSelectorPositions = DateSelectorPositions;
-    /**
-     * The predefined calendars packaged with the calendar
-     */
-    public static Calendars = PredefinedCalendars;
-    /**
-     * The leap year rules
-     */
-    public static LeapYearRules = LeapYearRules;
-    /**
-     * The Moon Icons
-     */
-    public static MoonIcons = Icons;
-    /**
-     * The moon year reset options
-     */
-    public static MoonYearResetOptions = MoonYearResetOptions;
-    /**
-     * The year naming rules
-     */
-    public static YearNamingRules = YearNamingRules;
-    /**
-     * The sun positions
-     */
-    public static PresetTimeOfDay = PresetTimeOfDay;
+/**
+ * This function is used to activate event listeners for calendars displayed with the [sc-full-calendar](#sc-full-calendar) Handlebar helper.
+ *
+ * If being used in a FoundryVTT application or FormApplication it is best called in the activateListeners function.
+ * @param calendarId The ID of the HTML element of the calendar to activate listeners for. This is the same ID used in the [sc-full-calendar](#sc-full-calendar) Handlebar helper.
+ * @param onMonthChange Optional function to be called when the month being viewed has changed. Returned parameters to the function are:<br/> - The direction moved, previous or next.<br/> - The options used to render the calendar, which includes the date being shown.
+ * @param onDayClick Optional function to be called when a day is clicked. Returned parameters to the function are:<br/>- The options used to render the calendar, which includes the selected date.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.activateFullCalendarListeners('example_1');
+ * ```
+ */
+export function activateFullCalendarListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null): void{
+    Renderer.CalendarFull.ActivateListeners(calendarId, onMonthChange, onDayClick);
+}
 
-
-    /**
-     * Activates listeners for month change and day clicks on the specified rendered calendar
-     * @param {string} calendarId The ID of the HTML element representing the calendar to activate listeners for
-     * @param {Function|null} onMonthChange Function to call when the month is changed
-     * @param {Function|null} onDayClick Function to call when a day is clicked
-     */
-    public static activateFullCalendarListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null){
-        Renderer.CalendarFull.ActivateListeners(calendarId, onMonthChange, onDayClick);
-    }
-
-    /**
-     * Get the timestamp for the current year
-     */
-    public static timestamp(): number{
-        return CalManager.getActiveCalendar().toSeconds();
-    }
-
-    /**
-     * Takes in a current time stamp and adds the passed in interval to it and returns the new time stamp
-     * @param currentSeconds
-     * @param interval
-     */
-    public static timestampPlusInterval(currentSeconds: number, interval: DateTime): number{
-        const activeCalendar = CalManager.getActiveCalendar();
-        const clone = activeCalendar.clone(false);
-        // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
-        if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync){
-            currentSeconds += PF2E.getWorldCreateSeconds(activeCalendar);
-        }
-
-        const dateTime = clone.year.secondsToDate(currentSeconds);
-        clone.year.updateTime(dateTime);
-        if(interval.year){
-            clone.year.changeYear(interval.year, false, 'current');
-        }
-        if(interval.month){
-            //If a large number of months are passed in then
-            if(interval.month > clone.year.months.length){
-                let years = Math.floor(interval.month/clone.year.months.length);
-                interval.month = interval.month - (years * clone.year.months.length);
-                clone.year.changeYear(years, false, 'current');
-            }
-            clone.year.changeMonth(interval.month, 'current');
-        }
-        if(interval.day){
-            clone.year.changeDayBulk(interval.day);
-        }
-        if(interval.hour && interval.hour > clone.year.time.hoursInDay){
-            const days = Math.floor(interval.hour / clone.year.time.hoursInDay);
-            interval.hour = interval.hour - (days * clone.year.time.hoursInDay);
-            clone.year.changeDayBulk(days);
-        }
-        if(interval.minute && interval.minute > (clone.year.time.hoursInDay * clone.year.time.minutesInHour)){
-            const days = Math.floor(interval.minute / (clone.year.time.hoursInDay * clone.year.time.minutesInHour));
-            interval.minute = interval.minute - (days * (clone.year.time.hoursInDay * clone.year.time.minutesInHour));
-            clone.year.changeDayBulk(days);
-        }
-        if(interval.second && interval.second > clone.year.time.secondsPerDay){
-            const days = Math.floor(interval.second / clone.year.time.secondsPerDay);
-            interval.second = interval.second - (days * clone.year.time.secondsPerDay);
-            clone.year.changeDayBulk(days);
-        }
-        const dayChange = clone.year.time.changeTime(interval.hour, interval.minute, interval.second);
-        if(dayChange !== 0){
-            clone.year.changeDay(dayChange);
-        }
-        return clone.toSeconds();
-    }
-
-    /**
-     * Takes in a timestamp in seconds and converts it to a date object.
-     * @param seconds
-     */
-    public static timestampToDate(seconds: number){
-        return TimestampToDate(seconds, CalManager.getActiveCalendar());
-    }
-
-    /**
-     * Converts the passed in date to a timestamp. If date members are missing the current date members are used.
-     * @param {DateTime} date
-     */
-    public static dateToTimestamp(date: DateTime): number{
-        return DateToTimestamp(date, CalManager.getActiveCalendar());
-    }
-
-    /**
-     * Attempts to convert the passed in seconds to an interval (day, month, year, hour, minute, second etc)
-     * @param seconds
-     */
-    public static secondsToInterval(seconds: number): DateTime{
-        return CalManager.getActiveCalendar().year.secondsToInterval(seconds);
-    }
-
-    /**
-     * Returns the current status of the clock
-     */
-    public static clockStatus(){
-        const status = CalManager.getActiveCalendar().timeKeeper.getStatus();
-        return {
-            started: status === TimeKeeperStatus.Started,
-            stopped: status === TimeKeeperStatus.Stopped,
-            paused: status === TimeKeeperStatus.Paused
-        };
-    }
-
-    /**
-     * Shows the calendar. If a date is passed in, the calendar will open so that date is visible and selected
-     * @param {DateTime | null} [date=null] The date to set as visible, it not passed in what ever the users current date will be used
-     * @param {boolean} [compact=false] If the calendar should open in compact mode or not
-     */
-    public static showCalendar(date: DateTime | null = null, compact: boolean = false){
-        const activeCalendar = CalManager.getActiveCalendar();
-        if(date !== null){
-            if(!date.year){
-                date.year = activeCalendar.year.numericRepresentation;
-            }
-
-            if(!date.month || !date.day){
-                const curMonth = activeCalendar.year.getMonth();
-                if(!date.month){
-                    date.month = curMonth? activeCalendar.year.months.findIndex(m => m.numericRepresentation === curMonth.numericRepresentation) : 0;
-                }
-
-                if(!date.day){
-                    if(curMonth){
-                        const curDay = curMonth.getDay();
-                        date.day = curDay? curMonth.days.findIndex(d => d.numericRepresentation === curDay.numericRepresentation) : 0;
-                    } else {
-                        date.day = 0;
-                    }
-                }
-            }
-
-            if(Number.isInteger(date.year) && Number.isInteger(date.month) && Number.isInteger(date.day)){
-                const isLeapYear = activeCalendar.year.leapYearRule.isLeapYear(date.year);
-                activeCalendar.year.visibleYear = date.year;
-                if(date.month === -1 || date.month > activeCalendar.year.months.length){
-                    date.month = activeCalendar.year.months.length - 1;
-                }
-                activeCalendar.year.resetMonths('visible');
-                activeCalendar.year.months[date.month].visible = true;
-
-                const numberOfDays = isLeapYear? activeCalendar.year.months[date.month].numberOfLeapYearDays : activeCalendar.year.months[date.month].numberOfDays;
-                if(date.day > 0){
-                    date.day = date.day - 1;
-                }
-                if(date.day == -1 || date.day > numberOfDays){
-                    date.day = numberOfDays - 1;
-                }
-                activeCalendar.year.resetMonths('selected');
-                activeCalendar.year.months[date.month].days[date.day].selected = true;
-                activeCalendar.year.months[date.month].selected = true;
-                activeCalendar.year.selectedYear = activeCalendar.year.visibleYear;
-            } else {
-                Logger.error('Main.api.showCalendar: Invalid date passed in.');
-            }
-        }
-        MainApplication.uiElementStates.compactView = compact;
-        MainApplication.showApp();
-    }
-
-    /**
-     * Changes the date of the calendar by the passed in interval. Checks to make sure only users who have permission can change the date.
-     * @param interval
-     */
-    public static changeDate(interval: DateTime): boolean{
-        return CalManager.getActiveCalendar().changeDateTime(interval, false);
-    }
-
-    /**
-     * Sets the current date to the passed in date object
-     * @param date
-     */
-    public static setDate(date: DateTime): boolean{
-        const activeCalendar = CalManager.getActiveCalendar();
-        if(activeCalendar.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
-            const seconds = this.dateToTimestamp(date);
-            activeCalendar.year.updateTime(activeCalendar.year.secondsToDate(seconds));
-            CalManager.saveCalendars();
-            activeCalendar.syncTime().catch(Logger.error);
-            MainApplication.updateApp();
-            return true;
-        } else {
-            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
-        }
-        return false;
-    }
-
-    /**
-     * Advances to the next time that matches the preset time of day (same day or next)
-     * @param preset
-     */
-    public static advanceTimeToPreset(preset: PresetTimeOfDay){
-        const activeCalendar = CalManager.getActiveCalendar();
-        if(activeCalendar.canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)) {
+/**
+ * Advance the date and time to match the next preset time.
+ *
+ * **Important**: This function can only be run by users who have permission to change the date in Simple Calendar.
+ * @param preset The preset time that is used to set the time of day.
+ * @param calendarId Optional parameter to specify the ID of the calendar to advance the time and date for. If not provided the current active calendar will be used.
+ *
+ * @returns True if the date was set successfully, false if it was not.
+ *
+ * @example
+ * ```javascript
+ * //Assuming the current time is 11am, set the time to the next sunset
+ * //Will result in the date staying the same but the time changing to 6pm
+ * SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunset);
+ *
+ * //Assuming the current time is 11am, set the time to the next sunrise
+ * //Will result in the date advancing by 1 day and the time changing to 6am
+ * SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunrise);
+ * ```
+ */
+export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string = 'active'): boolean{
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(activeCalendar){
+        if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)) {
             let timeOfDay = 0;
 
             if (preset === PresetTimeOfDay.Sunrise || preset === PresetTimeOfDay.Sunset) {
@@ -296,23 +134,101 @@ export default class API{
                 activeCalendar.year.changeDay(1, 'current');
             }
             activeCalendar.year.time.seconds = timeOfDay;
-            CalManager.saveCalendars();
+            CalManager.saveCalendars().catch(Logger.error);
             activeCalendar.syncTime(true).catch(Logger.error);
             return true;
-        } else {
-            return false;
         }
     }
+    else {
+        Logger.error(`SimpleCalendar.api.advanceTimeToPreset - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+    return false;
+}
 
-    /**
-     * Randomly chooses a date between the two passed in dates, or if no dates passed in chooses a random date.
-     * @param startingDate
-     * @param endingDate
-     */
-    public static chooseRandomDate(startingDate: DateTime = {}, endingDate: DateTime = {}): DateTime {
-        const activeCalendar = CalManager.getActiveCalendar();
-        let year = 0, month = 0, day = 0, hour = 0, minute = 0, second = 0;
+/**
+ * Changes the current date of Simple Calendar.
+ * **Important**: This function can only be run by users who have permission to change the date in Simple Calendar.
+ * @param interval The interval objects properties are all optional so only those that are needed have to be set.<br/>Where each property is how many of that interval to change the current date by.
+ * @param calendarId Optional parameter to specify the ID of the calendar to change the date on. If not provided the current active calendar will be used.
+ *
+ * @returns True if the date change was successful and false if it was not.
+ *
+ * @example
+ * ```javascript
+ * //Assuming a date of June 1, 2021 and user has permission to change the date
+ * SimpleCalendar.api.changeDate({day: 1}); // Will set the new date to June 2, 2021
+ *
+ * //Assuming a date of June 1, 2021 and user has permission to change the date
+ * SimpleCalendar.api.changeDate({day: -1}); // Will set the new date to May 31, 2021
+ *
+ * //Assuming a date of June 1, 2021 10:00:00 and user has permission to change the date
+ * SimpleCalendar.api.changeDate({year: 1, month: 1, day: 1, hour: 1, minute: 1, second: 1}); // Will set the new date to July 2, 2022 11:01:01
+ *
+ * //Assuming a date of June 1, 2021 10:00:00 and user has permission to change the date
+ * SimpleCalendar.api.changeDate({second: 3600}); // Will set the new date to June 1, 2021 11:00:00
+ * ```
+ */
+export function changeDate(interval: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean{
+    if(calendarId === 'active'){
+        return CalManager.getActiveCalendar().changeDateTime(interval, false);
+    } else {
+        const cal = CalManager.getCalendar(calendarId);
+        if(cal){
+            return cal.changeDateTime(interval, false);
+        } else {
+            Logger.error(`SimpleCalendar.api.changeDate - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        }
+        return false;
+    }
+}
 
+/**
+ * Will choose a random date between the 2 passed in dates, or if no dates are passed in will choose a random date.
+ * @param startingDate The start date objects properties are all optional so only those needed have to be set.<br/>Where each property is the earliest date to be chosen when randomly selecting a date.<br/>The month and day properties are both index's so January would be 0 and the first day of the month is also 0.
+ * @param endingDate The end date objects properties are all optional so only those needed have to be set.<br/>Where each property is the latest date to be chosen when randomly selecting a date.<br/>The month and day properties are both index's so January would be 0 and the first day of the month is also 0.
+ * @param calendarId Optional parameter to specify the ID of the calendar to choose the random date from. If not provided the current active calendar will be used.
+ *
+ * @returns A full date and time, where all properties will be randomly set. The month and day properties will be the index of the month/day chosen.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.chooseRandomDate({year: 2021, month: 3, day: 0}, {year: 2021, month: 5, day: 1})
+ *
+ * // {
+ * //     day: 1
+ * //     hour: 12
+ * //     minute: 5
+ * //     month: 4
+ * //     second: 41
+ * //     year: 2021
+ * // }
+ *
+ SimpleCalendar.api.chooseRandomDate({year: 1900, month: 3}, {year: 2021, month: 5})
+ * // {
+ * //     day: 19
+ * //     hour: 8
+ * //     minute: 16
+ * //     month: 3
+ * //     second: 25
+ * //     year: 1982
+ * // }
+ *
+ * SimpleCalendar.api.chooseRandomDate();
+ * // {
+ * //     day: 11
+ * //     hour: 0
+ * //     minute: 49
+ * //     month: 8
+ * //     second: 37
+ * //     year: 3276
+ * // }
+ * ```
+ */
+export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}, endingDate: SimpleCalendar.DateTimeParts = {}, calendarId: string = 'active'): SimpleCalendar.DateTime {
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    let year = 0, month = 0, day = 0, hour = 0, minute = 0, second = 0;
+
+    if(activeCalendar){
         /**
          * Choose a random year
          *      If the starting and ending year are the same, use that year
@@ -390,57 +306,158 @@ export default class API{
             minute = Math.floor(Math.random() * activeCalendar.year.time.minutesInHour);
         }
 
-        if(startingDate.second !== undefined && endingDate.second !== undefined){
-            if(startingDate.second === endingDate.second){
-                second = startingDate.second;
+        if(startingDate.seconds !== undefined && endingDate.seconds !== undefined){
+            if(startingDate.seconds === endingDate.seconds){
+                second = startingDate.seconds;
             } else {
-                second = Math.floor(Math.random() * (endingDate.second - startingDate.second + 1)) + startingDate.second;
+                second = Math.floor(Math.random() * (endingDate.seconds - startingDate.seconds + 1)) + startingDate.seconds;
             }
         } else {
             second = Math.floor(Math.random() * activeCalendar.year.time.secondsInMinute);
         }
+    } else {
+        Logger.error(`SimpleCalendar.api.chooseRandomDate - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+
+    return {
+        year: year,
+        month: month,
+        day: day,
+        hour: hour,
+        minute: minute,
+        seconds: second
+    };
+}
+
+/**
+ * Get the current status of the built-in clock for the specified calendar in Simple Calendar
+ * @param calendarId Optional parameter to specify the ID of the calendar to check its clock status. If not provided the current active calendar will be used.
+ *
+ * @returns The clock status for the specified calendar.
+ *
+ * @example
+ * ```javascript
+ * const status = SimpleCalendar.api.clockStatus();
+ * console.log(status); // {started: false, stopped: true, paused: false}
+ * ```
+ */
+export function clockStatus(calendarId: string = 'active'): SimpleCalendar.ClockStatus{
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        const status = cal.timeKeeper.getStatus();
         return {
-            year: year,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second
+            started: status === TimeKeeperStatus.Started,
+            stopped: status === TimeKeeperStatus.Stopped,
+            paused: status === TimeKeeperStatus.Paused
+        };
+    } else {
+        Logger.error(`SimpleCalendar.api.clockStatus - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return {
+            started: false,
+            stopped: false,
+            paused: false
         };
     }
 
-    /**
-     * Returns if the current user is the primary GM
-     */
-    public static isPrimaryGM(){
-        return SC.primary;
-    }
+}
 
-    /**
-     * Starts the built in clock - if the user is the primary gm
-     */
-    public static startClock(){
-        if(SC.primary){
-            CalManager.getActiveCalendar().timeKeeper.start();
-            return true;
+/**
+ * Sets up the current calendar to match the passed in configuration. This function can only be run by GMs.
+ * @param calendarData The configuration to set the calendar to. It can be one of the predefined calendars or a {@link SimpleCalendar.CalendarData} object representing a custom calendar.
+ * @param calendarId Optional parameter to specify the ID of the calendar to configure. If not provided the current active calendar will be used.
+ *
+ * @returns A promise that resolves to a boolean value, true if the change was successful and false if it was not.
+ *
+ * @example
+ * ```javascript
+ *
+ * //Set the calendar configuration to the Gregorian calendar
+ * const result = await SimpleCalendar.api.configureCalendar(SimpleCalendar.api.Calendars.Gregorian);
+ *
+ * //Set the calendar configuration to a custom calendar
+ * const custom = {};
+ *
+ * const result = await SimpleCalendar.api.configureCalendar(custom);
+ * ```
+ */
+export async function configureCalendar(calendarData: PredefinedCalendars | SimpleCalendar.CalendarData, calendarId: string = 'active'): Promise<boolean> {
+    let res = false;
+    if(GameSettings.IsGm()){
+        const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+        if(activeCalendar){
+            if(typeof calendarData === "string"){
+                res = PredefinedCalendar.setToPredefined(activeCalendar.year, <PredefinedCalendars>calendarData);
+            } else if(Object.keys(calendarData).length) {
+                activeCalendar.loadFromSettings(calendarData);
+                res = true;
+            }
+            CalManager.saveCalendars().catch(Logger.error);
+        } else {
+            Logger.error(`SimpleCalendar.api.configureCalendar - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         }
-        return false;
     }
+    return res;
+}
 
-    /**
-     * Stops the build in clock
-     */
-    public static stopClock(){
-        CalManager.getActiveCalendar().timeKeeper.stop();
-        return true;
+/**
+ * Converts the passed in date to a timestamp.
+ * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, second: 0}`) with the parameters set to the date that should be converted to a timestamp. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+ * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a timestamp. If not provided the current active calendar will be used.
+ *
+ * @returns The timestamp for that date.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.dateToTimestamp({}); //Returns the timestamp for the current date
+ *
+ * SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, second: 0}); //Returns 1609462860
+ * ```
+ */
+export function dateToTimestamp(date: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): number{
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return DateToTimestamp(date, cal);
+    } else {
+        Logger.error(`SimpleCalendar.api.dateToTimestamp - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return 0;
     }
+}
 
-    /**
-     * Returns the formatted date and time strings for the passed in date time object
-     * @param {DateTime} date The date and time to format
-     */
-    public static formatDateTime(date: DateTime){
-        const activeCalendar = CalManager.getActiveCalendar();
+/**
+ * Converts the passed in date/time into formatted date and time strings that match the configured date and time formats or the passed in format string.
+ *
+ * - Any missing date/time parameters will default to a value of 0.
+ * - If the date/time parameters are negative, their value will be set to 0. The exception to this is the year parameter, it can be negative.
+ * - If the date/time parameters are set to a value greater than possible (eg. the 20th month in a calendar that only has 12 months, or the 34th hour when a day can only have 24 hours) the max value will be used.
+ *
+ * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, second: 0}`) with the parameters set to the date and time that should be formatted.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+ * @param format Optional format string to return custom formats for the passed in date and time.
+ * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a formatted string. If not provided the current active calendar will be used.
+ *
+ * @returns If no format string is provided an object with the date and time formatted strings, as set in the configuration, will be returned. If a format is provided then a formatted string will be returned.
+ *
+ * @examples
+ * ```javascript
+ * // Assuming that the default date and time formats are in place
+ * // Date: Full Month Name Day, Year
+ * // Time: 24Hour:Minute:Second
+ *
+ * SimpleCalendar.api.formatDateTime({year: 2021, month: 11, day: 24, hour: 12, minute: 13, second: 14});
+ * // Returns {date: 'December 25, 2021', time: '12:13:14'}
+ *
+ * SimpleCalendar.api.formatDateTime({year: -2021, month: -11, day: 24, hour: 12, minute: 13, second: 14})
+ * // Returns {date: 'January 25, -2021', time: '12:13:14'}
+ *
+ * SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, minute: 313, second: 314})
+ * // Returns {date: 'December 31, 2021', time: '23:59:59'}
+ *
+ * SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, minute: 313, second: 314},"DD/MM/YYYY HH:mm:ss A")
+ * // Returns ""
+ * ```
+ */
+export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: string = '', calendarId: string = 'active'): string | {date: string, time: string} {
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(activeCalendar){
         const year = date.year? date.year : 0;
         let monthIndex = date.month && date.month >= 0? date.month : 0;
         if(monthIndex >= activeCalendar.year.months.length){
@@ -460,105 +477,566 @@ export default class API{
         if(minute >= activeCalendar.year.time.minutesInHour){
             minute = activeCalendar.year.time.minutesInHour - 1;
         }
-        let second = date.second && date.second >= 0? date.second : 0;
+        let second = date.seconds && date.seconds >= 0? date.seconds : 0;
         if(second >= activeCalendar.year.time.secondsInMinute){
             second = activeCalendar.year.time.secondsInMinute - 1;
         }
-        return {
-            date: FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds:0}, activeCalendar.generalSettings.dateFormat.date, activeCalendar),
-            time: FormatDateTime({year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds:second}, activeCalendar.generalSettings.dateFormat.time, activeCalendar)
-        };
+        if(format){
+            return FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: hour, minute: minute, seconds: second}, format, activeCalendar);
+        } else {
+            return {
+                date: FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds:0}, activeCalendar.generalSettings.dateFormat.date, activeCalendar),
+                time: FormatDateTime({year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds:second}, activeCalendar.generalSettings.dateFormat.time, activeCalendar)
+            };
+        }
+    } else {
+        Logger.error(`SimpleCalendar.api.formatDateTime - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return '';
+    }
+}
+
+/**
+ * Gets the details of all calendars that have been configured in Simple Calendar
+ *
+ * @returns Array of all calendars and their data.
+ *
+ * @example
+ * ```javascript
+ * const c = SimpleCalendar.api.getAllCalendars();
+ * console.log(c); // Will contain a list of all calendars and their data
+ * ```
+ */
+export function getAllCalendars(): SimpleCalendar.CalendarData[] {
+    const calendars = CalManager.getAllCalendars();
+    const data: SimpleCalendar.CalendarData[] = [];
+    for(let i = 0; i < calendars.length; i++){
+        data.push(calendars[i].toConfig());
+    }
+    return data;
+}
+
+/**
+ * Gets the details for all the months of the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the list of months from. If not provided the current active calendar will be used.
+ *
+ * @returns Array of all months in the calendar.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getAllMonths();
+ * // Returns an array like this, assuming the Gregorian Calendar
+ * // [
+ * //     {
+ * //         "id": "13390ed",
+ * //         "name": "January",
+ * //         "abbreviation": "Jan",
+ * //         "numericRepresentation": 1,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 31,
+ * //         "numberOfLeapYearDays": 31,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "effafeee",
+ * //         "name": "February",
+ * //         "abbreviation": "Feb",
+ * //         "numericRepresentation": 2,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 28,
+ * //         "numberOfLeapYearDays": 29,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "25b48251",
+ * //         "name": "March",
+ * //         "abbreviation": "Mar",
+ * //         "numericRepresentation": 3,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 31,
+ * //         "numberOfLeapYearDays": 31,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "e5e9782f",
+ * //         "name": "April",
+ * //         "abbreviation": "Apr",
+ * //         "numericRepresentation": 4,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 30,
+ * //         "numberOfLeapYearDays": 30,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "93f626f6",
+ * //         "name": "May",
+ * //         "abbreviation": "May",
+ * //         "numericRepresentation": 5,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 31,
+ * //         "numberOfLeapYearDays": 31,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "22b4b204",
+ * //         "name": "June",
+ * //         "abbreviation": "Jun",
+ * //         "numericRepresentation": 6,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 30,
+ * //         "numberOfLeapYearDays": 30,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "adc0a7ca",
+ * //         "name": "July",
+ * //         "abbreviation": "Jul",
+ * //         "numericRepresentation": 7,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 31,
+ * //         "numberOfLeapYearDays": 31,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "58197d71",
+ * //         "name": "August",
+ * //         "abbreviation": "Aug",
+ * //         "numericRepresentation": 8,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 31,
+ * //         "numberOfLeapYearDays": 31,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "eca76bbd",
+ * //         "name": "September",
+ * //         "abbreviation": "Sep",
+ * //         "numericRepresentation": 9,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 30,
+ * //         "numberOfLeapYearDays": 30,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "6b0da33e",
+ * //         "name": "October",
+ * //         "abbreviation": "Oct",
+ * //         "numericRepresentation": 10,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 31,
+ * //         "numberOfLeapYearDays": 31,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "150f5519",
+ * //         "name": "November",
+ * //         "abbreviation": "Nov",
+ * //         "numericRepresentation": 11,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 30,
+ * //         "numberOfLeapYearDays": 30,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     },
+ * //     {
+ * //         "id": "b67bc3ee",
+ * //         "name": "December",
+ * //         "abbreviation": "Dec",
+ * //         "numericRepresentation": 12,
+ * //         "numericRepresentationOffset": 0,
+ * //         "numberOfDays": 31,
+ * //         "numberOfLeapYearDays": 31,
+ * //         "intercalary": false,
+ * //         "intercalaryInclude": false,
+ * //         "startingWeekday": null
+ * //     }
+ * // ]
+ * ```
+ */
+export function getAllMonths(calendarId: string = 'active'): SimpleCalendar.MonthData[] {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return cal.year.months.map(m => m.toConfig());
+    } else {
+        Logger.error(`SimpleCalendar.api.getAllMonths - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return [];
+    }
+}
+
+/**
+ * Gets the details for all the moons of the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the list of moons from. If not provided the current active calendar will be used.
+ *
+ * @returns Array of all moons in the calendar.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getAllMoons();
+ * // Returns an array like this, assuming the Gregorian Calendar
+ * // [
+ * //     {
+ * //         "id": "2c26abfa",
+ * //         "name": "Moon",
+ * //         "color": "#ffffff",
+ * //         "cycleLength": 29.53059,
+ * //         "cycleDayAdjust": 0.5,
+ * //         "firstNewMoon": {
+ * //             "year": 2000,
+ * //             "month": 1,
+ * //             "day": 6,
+ * //             "yearX": 0,
+ * //             "yearReset": "none"
+ * //         },
+ * //         "phases": [
+ * //             {
+ * //                 "name": "New Moon",
+ * //                 "length": 1,
+ * //                 "icon": "new",
+ * //                 "singleDay": true
+ * //             },
+ * //             {
+ * //                 "name": "Waxing Crescent",
+ * //                 "length": 6.3826,
+ * //                 "icon": "waxing-crescent",
+ * //                 "singleDay": false
+ * //             },
+ * //             {
+ * //                 "name": "First Quarter",
+ * //                 "length": 1,
+ * //                 "icon": "first-quarter",
+ * //                 "singleDay": true
+ * //             },
+ * //             {
+ * //                 "name": "Waxing Gibbous",
+ * //                 "length": 6.3826,
+ * //                 "icon": "waxing-gibbous",
+ * //                 "singleDay": false
+ * //             },
+ * //             {
+ * //                 "name": "Full Moon",
+ * //                 "length": 1,
+ * //                 "icon": "full",
+ * //                 "singleDay": true
+ * //             },
+ * //             {
+ * //                 "name": "Waning Gibbous",
+ * //                 "length": 6.3826,
+ * //                 "icon": "waning-gibbous",
+ * //                 "singleDay": false
+ * //             },
+ * //             {
+ * //                 "name": "Last Quarter",
+ * //                 "length": 1,
+ * //                 "icon": "last-quarter",
+ * //                 "singleDay": true
+ * //             },
+ * //             {
+ * //                 "name": "Waning Crescent",
+ * //                 "length": 6.3826,
+ * //                 "icon": "waning-crescent",
+ * //                 "singleDay": false
+ * //             }
+ * //         ],
+ * //         "currentPhase": {
+ * //             "name": "Waning Crescent",
+ * //             "length": 6.3826,
+ * //             "icon": "waning-crescent",
+ * //             "singleDay": false
+ * //         }
+ * //     }
+ * // ]
+ * ```
+ */
+export function getAllMoons(calendarId: string = 'active'): SimpleCalendar.MoonData[] {
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(activeCalendar){
+        return activeCalendar.year.moons.map(m => {
+            const c = m.toConfig();
+            c.currentPhase = m.getMoonPhase(activeCalendar.year);
+            return c;
+        });
+    } else {
+        Logger.error(`SimpleCalendar.api.getAllMoons - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return [];
     }
 
-    /**
-     * Returns configuration details about the curent day, or null if the current day con't be found
-     */
-    public static getCurrentDay(){
-        const month = CalManager.getActiveCalendar().year.getMonth();
+}
+
+/**
+ * Gets the details for all the seasons for the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the list of seasons from. If not provided the current active calendar will be used.
+ *
+ * @returns Array of all seasons in the calendar.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getAllSeasons();
+ * // Returns an array like this, assuming the Gregorian Calendar
+ * // [
+ * //     {
+ * //         color: "#fffce8",
+ * //         id: "4916a231",
+ * //         name: "Spring",
+ * //         startingDay: 20,
+ * //         startingMonth: 3,
+ * //         sunriseTime: 21600,
+ * //         sunsetTime: 64800
+ * //     },
+ * //     {
+ * //         color: "#f3fff3",
+ * //         id: "e596489",
+ * //         name: "Summer",
+ * //         startingDay: 20,
+ * //         startingMonth: 6,
+ * //         sunriseTime: 21600,
+ * //         sunsetTime: 64800
+ * //     },
+ * //     {
+ * //         color: "#fff7f2",
+ * //         id: "3f137ee5",
+ * //         name: "Fall",
+ * //         startingDay: 22,
+ * //         startingMonth: 9,
+ * //         sunriseTime: 21600,
+ * //         sunsetTime: 64800
+ * //     },
+ * //     {
+ * //         color: "#f2f8ff",
+ * //         id: "92f919a2",
+ * //         name: "Winter",
+ * //         startingDay: 21,
+ * //         startingMonth: 12,
+ * //         sunriseTime: 21600,
+ * //         sunsetTime: 64800
+ * //     }
+ * // ]
+ * ```
+ */
+export function getAllSeasons(calendarId: string = 'active'): SimpleCalendar.SeasonData[] {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return cal.year.seasons.map(s => s.toConfig());
+    } else {
+        Logger.error(`SimpleCalendar.api.getAllSeasons - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return [];
+    }
+}
+
+/**
+ * Gets the details about all the weekdays for the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the list of weekdays from. If not provided the current active calendar will be used.
+ *
+ * @returns Array of all weekdays in the calendar.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getAllWeekdays();
+ * // Returns an array like this, assuming the Gregorian Calendar
+ * // [
+ * //     {
+ * //         id: "dafbfd4",
+ * //         name: "Sunday",
+ * //         numericRepresentation: 1
+ * //     },
+ * //     {
+ * //         id: "8648c7e9",
+ * //         name: "Monday",
+ * //         numericRepresentation: 2
+ * //     }
+ * //     {
+ * //         id: "b40f3a20",
+ * //         name: "Tuesday",
+ * //         numericRepresentation: 3
+ * //     },
+ * //     {
+ * //         id: "6c20a99e",
+ * //         name: "Wednesday",
+ * //         numericRepresentation: 4
+ * //     },
+ * //     {
+ * //         id: "56c14ec7",
+ * //         name: "Thursday",
+ * //         numericRepresentation: 5
+ * //     },
+ * //     {
+ * //         id: "2c732d04",
+ * //         name: "Friday",
+ * //         numericRepresentation: 6
+ * //     },
+ * //     {
+ * //         id: "c8f72e3d",
+ * //         name: "Saturday",
+ * //         numericRepresentation: 7
+ * //     }
+ * // ]
+ * ```
+ */
+export function getAllWeekdays(calendarId: string = 'active'): SimpleCalendar.WeekdayData[] {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return cal.year.weekdays.map(w => w.toConfig());
+    } else {
+        Logger.error(`SimpleCalendar.api.getAllWeekdays - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return [];
+    }
+}
+
+/**
+ * Gets the details about the current day for the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used.
+ *
+ * @returns The current day data or null if no current day can be found.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getCurrentDay();
+ * // Returns an object like this:
+ * // {
+ * //     id: "cbdb31cb",
+ * //     name: "8",
+ * //     numericRepresentation: 8
+ * // }
+ * ```
+ */
+export function getCurrentDay(calendarId: string = 'active'): SimpleCalendar.DayData | null {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        const month = cal.year.getMonth();
         if(month){
             const day = month.getDay();
             if(day){
                 return day.toConfig();
             }
         }
-        return null;
+    } else {
+        Logger.error(`SimpleCalendar.api.getCurrentDay - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
+    return null;
+}
 
-    /**
-     * Returns the configuration details about leap years
-     */
-    public static getLeapYearConfiguration(): LeapYearConfig{
-        return CalManager.getActiveCalendar().year.leapYearRule.toConfig();
-    }
-
-    /**
-     * Returns configuration details about the current month, or null if the current month can't be found.
-     * @returns {MonthConfig| null}
-     */
-    public static getCurrentMonth(): MonthConfig | null{
-        const month = CalManager.getActiveCalendar().year.getMonth();
+/**
+ * Gets the details about the current month for the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the current month from. If not provided the current active calendar will be used.
+ *
+ * @returns The current month data or null if no current month can be found.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getCurrentMonth();
+ * // Returns an object like this:
+ * // {
+ * //     abbreviation: "Jun",
+ * //     id: "22b4b204",
+ * //     intercalary: false,
+ * //     intercalaryInclude: false,
+ * //     name: "June",
+ * //     numberOfDays: 30,
+ * //     numberOfLeapYearDays: 30,
+ * //     numericRepresentation: 6,
+ * //     numericRepresentationOffset: 0,
+ * //     startingWeekday: null
+ * // }
+ * ```
+ */
+export function getCurrentMonth(calendarId: string = 'active'): SimpleCalendar.MonthData | null{
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        const month = cal.year.getMonth();
         if(month){
             return month.toConfig();
         }
-        return null;
+    } else {
+        Logger.error(`SimpleCalendar.api.getCurrentMonth - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
+    return null;
+}
 
-    /**
-     * Returns configuration details for all months
-     * @returns {Array<MonthConfig>}
-     */
-    public static getAllMonths(): MonthConfig[]{
-        return CalManager.getActiveCalendar().year.months.map(m => m.toConfig());
-    }
-
-    /**
-     * Returns configuration details for all moons
-     */
-    public static getAllMoons(): MoonConfiguration[] {
-        const activeCalendar = CalManager.getActiveCalendar();
-        return activeCalendar.year.moons.map(m => {
-            const c = m.toConfig();
-            c.currentPhase = m.getMoonPhase(activeCalendar.year);
-            return c;
-        });
-    }
-
-    /**
-     * Returns the season for the current date
-     */
-    public static getCurrentSeason(){
-        const clone = CalManager.getActiveCalendar().year.clone();
-        const mon = clone.getMonth('current');
-        if(mon){
-            const mIndex = clone.months.findIndex(m => m.numericRepresentation == mon.numericRepresentation);
-            const day = mon.getDay();
+/**
+ * Gets the details about the season for the current date of the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the current season from. If not provided the current active calendar will be used.
+ *
+ * @returns The current seasons data or an empty season data object if no current season can be found.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getCurrentSeason();
+ * // Returns an object like this
+ * // {
+ * //     color: "#fffce8",
+ * //     id: "4916a231",
+ * //     name: "Spring",
+ * //     startingDay: 19,
+ * //     startingMonth: 2,
+ * //     sunriseTime: 21600,
+ * //     sunsetTime: 64800
+ * // }
+ * ```
+ */
+export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.SeasonData{
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        const month = cal.year.getMonth();
+        if(month){
+            const mIndex = cal.year.months.findIndex(m => m.numericRepresentation == month.numericRepresentation);
+            const day = month.getDay();
             if(day){
-                return clone.getSeason(mIndex, day.numericRepresentation).toConfig();
+                return cal.year.getSeason(mIndex, day.numericRepresentation).toConfig();
             }
         }
-        return {name: '', color: ''};
+    } else {
+        Logger.error(`SimpleCalendar.api.getCurrentSeason - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
+    return {id:'', name: '', color: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0};
+}
 
-    /**
-     * Returns details for all seasons set up in the calendar
-     */
-    public static getAllSeasons(){
-        return CalManager.getActiveCalendar().year.seasons.map(s => s.toConfig());
-    }
-
-    /**
-     * Returns details for how time is configured in the calendar
-     */
-    public static getTimeConfiguration(): TimeConfig{
-        return CalManager.getActiveCalendar().year.time.toConfig();
-    }
-
-    /**
-     * Returns details for the weekday whe current date falls on.
-     * @returns {WeekdayConfig | null}
-     */
-    public static getCurrentWeekday(): WeekdayConfig | null{
-        const activeCalendar = CalManager.getActiveCalendar();
+/**
+ * Gets the details about the current weekday.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the current weekday from. If not provided the current active calendar will be used.
+ *
+ * @returns The current weekday data or null if no current weekday can be found.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getCurrentWeekday();
+ * // Returns an object like this
+ * // {
+ * //     id: "b40f3a20",
+ * //     name: "Tuesday",
+ * //     numericRepresentation: 3
+ * // }
+ * ```
+ */
+export function getCurrentWeekday(calendarId: string = 'active'): SimpleCalendar.WeekdayData | null{
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(activeCalendar){
         const month = activeCalendar.year.getMonth();
         if(month){
             const day = month.getDay();
@@ -567,78 +1045,462 @@ export default class API{
                 return activeCalendar.year.weekdays[weekdayIndex].toConfig();
             }
         }
+    } else {
+        Logger.error(`SimpleCalendar.api.getCurrentWeekday - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+
+    return null;
+}
+
+/**
+ * Gets the details about the current year for the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the current year from. If not provided the current active calendar will be used.
+ *
+ * @returns The current year data or null if no current year can be found.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getCurrentYear();
+ * // Returns an object like this
+ * // {
+ * //     firstWeekday: 4,
+ * //     id: "bbe5385c",
+ * //     numericRepresentation: 2021,
+ * //     postfix: "",
+ * //     prefix: "",
+ * //     showWeekdayHeadings: true,
+ * //     yearNames: [],
+ * //     yearNamesStart: 0,
+ * //     yearNamingRule: "default",
+ * //     yearZero: 1970
+ * // }
+ * ```
+ */
+export function getCurrentYear(calendarId: string = 'active'): SimpleCalendar.YearData | null{
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return cal.year.toConfig();
+    } else {
+        Logger.error(`SimpleCalendar.api.getCurrentYear - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+    return null;
+}
+
+/**
+ * Gets the details about how leap years are configured for the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the leap year configuration from. If not provided the current active calendar will be used.
+ *
+ * @returns The leap year configuration.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getLeapYearConfiguration();
+ * // Returns an object like this
+ * // {
+ * //     customMod: 0,
+ * //     id: "1468d034",
+ * //     rule: "gregorian"
+ * }
+ * ```
+ */
+export function getLeapYearConfiguration(calendarId: string = 'active'): SimpleCalendar.LeapYearData | null {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return cal.year.leapYearRule.toConfig();
+    } else {
+        Logger.error(`SimpleCalendar.api.getLeapYearConfiguration - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+    return null;
+}
+
+/**
+ * Get the details about how time is configured for the specified calendar.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the time configuration from. If not provided the current active calendar will be used.
+ *
+ * @returns The time configuration.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getTimeConfiguration();
+ * // Returns an object like this
+ * // {
+ * //     gameTimeRatio: 1,
+ * //     hoursInDay: 24,
+ * //     id: "d4791796",
+ * //     minutesInHour: 60,
+ * //     secondsInCombatRound: 6,
+ * //     secondsInMinute: 60,
+ * //     unifyGameAndClockPause: true,
+ * //     updateFrequency: 1
+ * // }
+ * ```
+ */
+export function getTimeConfiguration(calendarId: string = 'active'): SimpleCalendar.TimeData | null {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return cal.year.time.toConfig();
+    } else {
+        Logger.error(`SimpleCalendar.api.getTimeConfiguration - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+    return null;
+}
+
+/**
+ * Get if the current user is considered the primary GM or not.
+ *
+ * @returns If the current user is the primary GM.
+ *
+ * @example
+ * ```javascript
+ *
+ * SimpleCalendar.api.isPrimaryGM(); //True or Flase depending on if the current user is primary gm
+ *
+ * ```
+ */
+export function isPrimaryGM(): boolean {
+    return SC.primary;
+}
+
+/**
+ * Will attempt to parse the passed in seconds into larger time intervals.
+ *
+ * @param seconds The number of seconds to convert to different intervals.
+ * @param calendarId Optional parameter to specify the ID of the calendar to use when calculating the intervals. If not provided the current active calendar will be used.
+ *
+ * @returns An object containing the larger time intervals that make up the number of seconds passed in.
+ *
+ * @example
+ * ```javascript
+ * //Assuming a Gregorian Calendar
+ * SimpleCalendar.api.secondsToInterval(3600); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 0, second 0}
+ * SimpleCalendar.api.secondsToInterval(3660); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 1, second: 0}
+ * SimpleCalendar.api.secondsToInterval(86400); //Returns {year: 0, month: 0, day: 1, hour: 0, minute: 0, second: 0}
+ * SimpleCalendar.api.secondsToInterval(604800); //Returns {year: 0, month: 0, day: 7, hour: 0, minute: 0, second: 0}
+ * SimpleCalendar.api.secondsToInterval(2629743); //Returns {year: 0, month: 1, day: 0, hour: 10, minute: 29, second: 3}
+ * SimpleCalendar.api.secondsToInterval(31556926); //Returns {year: 1, month: 0, day: 0, hour: 5, minute: 48, second: 46}
+ * ```
+ */
+export function secondsToInterval(seconds: number, calendarId: string = 'active'): SimpleCalendar.DateTimeParts{
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return cal.year.secondsToInterval(seconds);
+    } else {
+        Logger.error(`SimpleCalendar.api.secondsToInterval - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+    return {};
+}
+
+/**
+ * Will set the current date of the specified calendar to match the passed in date.
+ * **Important**: This function can only be run by users who have permission to change the date in Simple Calendar.
+ *
+ * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, second: 0}`) with the parameters set to the date that the calendar should be set to. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+ * @param calendarId Optional parameter to specify the ID of the calendar to set the date of. If not provided the current active calendar will be used.
+ *
+ * @returns True if the date was set successfully, false otherwise.
+ *
+ * @example
+ * ```javascript
+ * //To set the date to December 25th 1999 with the time 00:00:00
+ * SimpleCalendar.setDate({year: 1999, month: 11, day: 24, hour: 0, minute: 0, second: 0});
+ *
+ * //To set the date to December 31st 1999 and the time to 11:59:59pm
+ * SimpleCalendar.setDate({year: 1999, month: 11, day: 30, hour: 23, minute: 59, second: 59});
+ * ```
+ */
+export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean{
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(activeCalendar){
+        if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
+            const seconds = dateToTimestamp(date);
+            activeCalendar.year.updateTime(activeCalendar.year.secondsToDate(seconds));
+            CalManager.saveCalendars().catch(Logger.error);
+            activeCalendar.syncTime().catch(Logger.error);
+            MainApplication.updateApp();
+            return true;
+        } else {
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
+        }
+    } else {
+        Logger.error(`SimpleCalendar.api.setDate - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+
+    return false;
+}
+
+/**
+ * Will open up Simple Calendar to the current date, or the passed in date.
+ *
+ * @param date A date object (eg `{year:2021, month: 4, day: 12}`) with the year, month and day set to the date to be visible when the calendar is opened.<br>**Important**: The month is index based so January would be 0.
+ * @param compact If to open the calendar in compact mode or not.
+ * @param calendarId Optional parameter to specify the ID of the calendar to focus when the calendar view is opened. If not provided the current active calendar will be used.
+ *
+ * @example
+ * ```javascript
+ * //Assuming a Gregorian Calendar
+ * SimpleCalendar.api.showCalendar(); // Will open the calendar to the current date.
+ * SimpleCalendar.api.showCalendar({year: 1999, month: 11, day: 25}); // Will open the calendar to the date December 25th, 1999
+ * SimpleCalendar.api.showCalendar(null, true); // Will open the calendar to the current date in compact mode.
+ * ```
+ */
+export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, compact: boolean = false, calendarId: string = 'active'): void {
+    //TODO: Set the visible calendar to the passed in calendar ID
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+
+    if(activeCalendar){
+        if(date !== null){
+            if(!date.year){
+                date.year = activeCalendar.year.numericRepresentation;
+            }
+
+            if(!date.month || !date.day){
+                const curMonth = activeCalendar.year.getMonth();
+                if(!date.month){
+                    date.month = curMonth? activeCalendar.year.months.findIndex(m => m.numericRepresentation === curMonth.numericRepresentation) : 0;
+                }
+
+                if(!date.day){
+                    if(curMonth){
+                        const curDay = curMonth.getDay();
+                        date.day = curDay? curMonth.days.findIndex(d => d.numericRepresentation === curDay.numericRepresentation) : 0;
+                    } else {
+                        date.day = 0;
+                    }
+                }
+            }
+
+            if(Number.isInteger(date.year) && Number.isInteger(date.month) && Number.isInteger(date.day)){
+                const isLeapYear = activeCalendar.year.leapYearRule.isLeapYear(date.year);
+                activeCalendar.year.visibleYear = date.year;
+                if(date.month === -1 || date.month > activeCalendar.year.months.length){
+                    date.month = activeCalendar.year.months.length - 1;
+                }
+                activeCalendar.year.resetMonths('visible');
+                activeCalendar.year.months[date.month].visible = true;
+
+                const numberOfDays = isLeapYear? activeCalendar.year.months[date.month].numberOfLeapYearDays : activeCalendar.year.months[date.month].numberOfDays;
+                if(date.day > 0){
+                    date.day = date.day - 1;
+                }
+                if(date.day == -1 || date.day > numberOfDays){
+                    date.day = numberOfDays - 1;
+                }
+                activeCalendar.year.resetMonths('selected');
+                activeCalendar.year.months[date.month].days[date.day].selected = true;
+                activeCalendar.year.months[date.month].selected = true;
+                activeCalendar.year.selectedYear = activeCalendar.year.visibleYear;
+            } else {
+                Logger.error('Main.api.showCalendar: Invalid date passed in.');
+            }
+        }
+    } else {
+        Logger.error(`SimpleCalendar.api.showCalendar - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+
+    MainApplication.uiElementStates.compactView = compact;
+    MainApplication.showApp();
+}
+
+/**
+ * Starts the real time clock for the specified calendar. Only the primary GM can start a clock.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to start the real time clock for. If not provided the current active calendar will be used.
+ *
+ * @returns True if the clock was started, false otherwise
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.startClock();
+ * ```
+ */
+export function startClock(calendarId: string = 'active'): boolean {
+    if(SC.primary){
+        const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+        if(cal){
+            cal.timeKeeper.start();
+            return true;
+        } else {
+            Logger.error(`SimpleCalendar.api.startClock - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        }
+    }
+    return false;
+}
+
+/**
+ * Stops the real time clock for the specified calendar. Only the primary GM can stop a clock.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to stop the real time clock for. If not provided the current active calendar will be used.
+ *
+ * @returns True if the clock was stopped, false otherwise
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.stopClock();
+ * ```
+ */
+export function stopClock(calendarId: string = 'active'): boolean {
+    if(SC.primary){
+        const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+        if(cal){
+            cal.timeKeeper.stop();
+            return true;
+        } else {
+            Logger.error(`SimpleCalendar.api.stopClock - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        }
+    }
+    return false;
+}
+
+/**
+ * Get the timestamp (in seconds) of the specified calendars currently set date.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the timestamp for. If not provided the current active calendar will be used.
+ *
+ * @returns The time stamp of the calendar in seconds
+ *
+ * @example
+ * ```javascript
+ * const timestamp = SimpleCalendar.api.timestamp();
+ * console.log(timestamp); // This will be a number representing the current number of seconds passed in the calendar.
+ * ```
+ */
+export function timestamp(calendarId: string = 'active'): number {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return cal.toSeconds();
+    } else {
+        Logger.error(`SimpleCalendar.api.timestamp - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+    return NaN;
+}
+
+/**
+ * Calculates a new timestamp from the passed in timestamp plus the passed in interval amount.
+ * @param currentSeconds The timestamp (in seconds) to have the interval added too.
+ * @param interval The interval objects properties are all optional so only those needed have to be set.<br/>Where each property is how many of that interval to increase the passed in timestamp by.
+ * @param calendarId Optional parameter to specify the ID of the calendar to use to calculate the new timestamp. If not provided the current active calendar will be used.
+ *
+ * @returns The timestamp plus the passed in interval amount
+ *
+ * @example
+ * ```javascript
+ * let newTime = SimpleCalendar.api.timestampPlusInterval(0, {day: 1});
+ * console.log(newTime); // this will be 0 + the number of seconds in 1 day. For most calendars this will be 86400
+ *
+ * // Assuming Gregorian Calendar with the current date of June 1, 2021
+ * newTime = SimpleCalendar.api.timestampPlusInterval(1622505600, {month: 1, day: 1});
+ * console.log(newTime); // This will be the number of seconds that equal July 2nd 2021
+ * ```
+ */
+export function timestampPlusInterval(currentSeconds: number, interval: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): number{
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(activeCalendar){
+        const clone = activeCalendar.clone(false);
+        // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
+        if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync){
+            currentSeconds += PF2E.getWorldCreateSeconds(activeCalendar);
+        }
+
+        const dateTime = clone.year.secondsToDate(currentSeconds);
+        clone.year.updateTime(dateTime);
+        if(interval.year){
+            clone.year.changeYear(interval.year, false, 'current');
+        }
+        if(interval.month){
+            //If a large number of months are passed in then
+            if(interval.month > clone.year.months.length){
+                let years = Math.floor(interval.month/clone.year.months.length);
+                interval.month = interval.month - (years * clone.year.months.length);
+                clone.year.changeYear(years, false, 'current');
+            }
+            clone.year.changeMonth(interval.month, 'current');
+        }
+        if(interval.day){
+            clone.year.changeDayBulk(interval.day);
+        }
+        if(interval.hour && interval.hour > clone.year.time.hoursInDay){
+            const days = Math.floor(interval.hour / clone.year.time.hoursInDay);
+            interval.hour = interval.hour - (days * clone.year.time.hoursInDay);
+            clone.year.changeDayBulk(days);
+        }
+        if(interval.minute && interval.minute > (clone.year.time.hoursInDay * clone.year.time.minutesInHour)){
+            const days = Math.floor(interval.minute / (clone.year.time.hoursInDay * clone.year.time.minutesInHour));
+            interval.minute = interval.minute - (days * (clone.year.time.hoursInDay * clone.year.time.minutesInHour));
+            clone.year.changeDayBulk(days);
+        }
+        if(interval.seconds && interval.seconds > clone.year.time.secondsPerDay){
+            const days = Math.floor(interval.seconds / clone.year.time.secondsPerDay);
+            interval.seconds = interval.seconds - (days * clone.year.time.secondsPerDay);
+            clone.year.changeDayBulk(days);
+        }
+        const dayChange = clone.year.time.changeTime(interval.hour, interval.minute, interval.seconds);
+        if(dayChange !== 0){
+            clone.year.changeDay(dayChange);
+        }
+        return clone.toSeconds();
+    } else {
+        Logger.error(`SimpleCalendar.api.timestampPlusInterval - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return NaN;
+    }
+}
+
+/**
+ * Converts a timestamp (in seconds) into a {@link SimpleCalendar.DateData} objet from the specified calendar
+ * @param seconds The timestamp (in seconds) to convert into a date object.
+ * @param calendarId Optional parameter to specify the ID of the calendar to use to calculate the {@link SimpleCalendar.DateData} objet. If not provided the current active calendar will be used.
+ *
+ * @returns A date object with information about the date the timestamp represents or null if the specified calendar can not be found
+ *
+ * @example
+ * ```javascript
+ * // Assuming Gregorian Calendar with the current date of June 1, 2021
+ * let scDate = SimpleCalendar.api.timestampToDate(1622505600);
+ * console.log(scDate);
+ * // This is what the returned object will look like
+ * // {
+ * //     currentSeason: {color: "#fffce8", startingMonth: 3, startingDay: 20, name: "Spring"},
+ * //     day: 0,
+ * //     dayDisplay: "1",
+ * //     dayOfTheWeek: 2,
+ * //     dayOffset: 0,
+ * //     display: {
+ * //         date: "June 01, 2021",
+ * //         day: "1",
+ * //         daySuffix: "st",
+ * //         month: "6",
+ * //         monthName: "June",
+ * //         time: "00:00:00",
+ * //         weekday: "Tuesday",
+ * //         year: "2021",
+ * //         yearName: "",
+ * //         yearPostfix: "",
+ * //         yearPrefix: "",
+ * //     },
+ * //     hour: 0,
+ * //     minute: 0,
+ * //     month: 5,
+ * //     monthName: "June",
+ * //     second: 0,
+ * //     showWeekdayHeadings: true,
+ * //     weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+ * //     year: 2021,
+ * //     yearName: "",
+ * //     yearPostfix: "",
+ * //     yearPrefix: "",
+ * //     yearZero: 1970
+ * // }
+ * ```
+ */
+export function timestampToDate(seconds: number, calendarId: string = 'active'): SimpleCalendar.DateData | null{
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        return TimestampToDate(seconds, cal);
+    } else {
+        Logger.error(`SimpleCalendar.api.stopClock - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return null;
     }
 
-    /**
-     * Returns details for all weekdays
-     * @returns {WeekdayConfig[]}
-     */
-    public static getAllWeekdays(): WeekdayConfig[]{
-        return CalManager.getActiveCalendar().year.weekdays.map(w => w.toConfig());
-    }
-
-    /**
-     * Returns details for the current year
-     */
-    public static getCurrentYear(): YearConfig {
-        return CalManager.getActiveCalendar().year.toConfig();
-    }
-
-    /**
-     * Sets the current year to the passed in predefined calendar or the custom calendar object
-     * @param o
-     */
-    public static async configureCalendar(o: PredefinedCalendars | any){
-        if(GameSettings.IsGm()){
-            const activeCalendar = CalManager.getActiveCalendar();
-            if(typeof o === "string"){
-                const clone = activeCalendar.year.clone();
-                const res = PredefinedCalendar.setToPredefined(clone, <PredefinedCalendars>o);
-                await GameSettings.SaveObjectSetting(SettingNames.YearConfiguration, clone.toConfig());
-                await GameSettings.SaveObjectSetting(SettingNames.MonthConfiguration, clone.months.map(m => m.toConfig()));
-                await GameSettings.SaveObjectSetting(SettingNames.WeekdayConfiguration, clone.weekdays.map(w => w.toConfig()));
-                await GameSettings.SaveObjectSetting(SettingNames.LeapYearRule, clone.leapYearRule.toConfig());
-                await GameSettings.SaveObjectSetting(SettingNames.TimeConfiguration, clone.time.toConfig());
-                await GameSettings.SaveObjectSetting(SettingNames.SeasonConfiguration, clone.seasons.map(s => s.toConfig()));
-                await GameSettings.SaveObjectSetting(SettingNames.MoonConfiguration, clone.moons.map(m => m.toConfig()));
-
-                CalManager.saveCalendars();
-                return res;
-            } else if(Object.keys(o).length) {
-                if(o.hasOwnProperty('yearSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.YearConfiguration, o.yearSettings);
-                }
-                if(o.hasOwnProperty('monthSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.MonthConfiguration, o.monthSettings);
-                }
-                if(o.hasOwnProperty('weekdaySettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.WeekdayConfiguration, o.weekdaySettings);
-                }
-                if(o.hasOwnProperty('leapYearSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.LeapYearRule, o.leapYearSettings);
-                }
-                if(o.hasOwnProperty('timeSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.TimeConfiguration, o.timeSettings);
-                }
-                if(o.hasOwnProperty('seasonSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.SeasonConfiguration, o.seasonSettings);
-                }
-                if(o.hasOwnProperty('moonSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.MoonConfiguration, o.moonSettings);
-                }
-                if(o.hasOwnProperty('generalSettings')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.GeneralConfiguration, o.generalSettings);
-                }
-                if(o.hasOwnProperty('noteCategories')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.NoteCategories, o.noteCategories);
-                }
-                if(o.hasOwnProperty('currentDate')){
-                    await (<Game>game).settings.set(ModuleName, SettingNames.CurrentDate, o.currentDate);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
 }

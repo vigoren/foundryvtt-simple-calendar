@@ -115,16 +115,20 @@
       border-color: $gray-600;
       background-color: $gray-600;
       color: $white;
-      &:hover {
+      &:hover, &.active {
         text-shadow: unset;
         color: $white;
         background-color: $gray-500;
+      }
+      &:disabled{
+        color: $gray-300;
+        cursor: pointer;
       }
       &.primary {
         background-color: $primary-800;
         border-color: $primary-800;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $primary;
         }
       }
@@ -133,7 +137,7 @@
         border-color: $secondary;
         color: $fontColor;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $secondary-300;
           color: $fontColor;
         }
@@ -143,7 +147,7 @@
         border-color: $tertiary-300;
         color: $fontColor;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $tertiary-200;
           color: $fontColor;
         }
@@ -152,7 +156,7 @@
         background-color: $danger-900;
         border-color: $danger-900;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $danger;
         }
       }
@@ -160,8 +164,12 @@
         background-color: $success-900;
         border-color: $success-900;
 
-        &:hover {
+        &:hover, &.active {
           background-color: $success;
+        }
+        &:disabled{
+          background-color: $success-T900;
+          border-color: $success-T900;
         }
       }
     }
@@ -335,15 +343,16 @@
       .calendar-display{
         color: $white;
         border-color: $primary-A400;
-        box-shadow: inset 0 0 5px $primary-200;
-        &.selected, &:hover{
-          border-color: $success-800;
-          background-color: $success-800;
-          box-shadow: inset 0 0 5px $success-200;
-        }
         &.active{
-          border-color: $primary-800;
           background-color: $primary-800;
+        }
+        &.clickable{
+          &:hover{
+            background-color: $primary-600;
+          }
+        }
+        .calendar-actions{
+          border-color: $primary-A400;
         }
         .animated-clock{
           svg{

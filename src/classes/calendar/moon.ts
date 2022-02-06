@@ -1,4 +1,3 @@
-import {DayTemplate, FirstNewMoonDate, MoonConfiguration, MoonPhase, MoonTemplate} from "../../interfaces";
 import Year from "./year";
 import {Icons, MoonYearResetOptions} from "../../constants";
 import {Logger} from "../logging";
@@ -18,11 +17,11 @@ export default class Moon extends ConfigurationItemBase{
      * The different phases of the moon
      * @type {Array<MoonPhase>}
      */
-    phases: MoonPhase[] = [];
+    phases: SimpleCalendar.MoonPhase[] = [];
     /**
      * When the first new moon took place. Used as a reference for calculating the position of the current cycle
      */
-    firstNewMoon: FirstNewMoonDate = {
+    firstNewMoon: SimpleCalendar.FirstNewMoonDate = {
         /**
          * The year reset options for the first new moon
          * @type {number}
@@ -97,7 +96,7 @@ export default class Moon extends ConfigurationItemBase{
     /**
      * Returns the configuration for the moon
      */
-    toConfig(): MoonConfiguration {
+    toConfig(): SimpleCalendar.MoonData {
         return {
             id: this.id,
             name: this.name,
@@ -113,8 +112,8 @@ export default class Moon extends ConfigurationItemBase{
      * Converts this moon into a template used for displaying the moon in HTML
      * @param {Year} year The year to use for getting the days and months
      */
-    toTemplate(year: Year): MoonTemplate {
-        const data: MoonTemplate = {
+    toTemplate(year: Year): SimpleCalendar.HandlebarTemplateData.Moon {
+        const data: SimpleCalendar.HandlebarTemplateData.Moon = {
             ...super.toTemplate(),
             name: this.name,
             cycleLength: this.cycleLength,
@@ -136,9 +135,9 @@ export default class Moon extends ConfigurationItemBase{
 
     /**
      * Loads the moon data from the config object.
-     * @param {MoonConfiguration} config The configuration object for this class
+     * @param {MoonData} config The configuration object for this class
      */
-    loadFromSettings(config: MoonConfiguration) {
+    loadFromSettings(config: SimpleCalendar.MoonData) {
         if(config && Object.keys(config).length){
             if(config.hasOwnProperty('id')){
                 this.id = config.id;
@@ -189,7 +188,7 @@ export default class Moon extends ConfigurationItemBase{
      * @param {number} monthNum The month to use
      * @param {number} dayNum The day to use
      */
-    getDateMoonPhase(year: Year, yearNum: number, monthNum: number, dayNum: number): MoonPhase{
+    getDateMoonPhase(year: Year, yearNum: number, monthNum: number, dayNum: number): SimpleCalendar.MoonPhase{
         let firstNewMoonDays = year.dateToDays(this.firstNewMoon.year, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
         let resetYearAdjustment = 0;
         if(this.firstNewMoon.yearReset === MoonYearResetOptions.LeapYear){
@@ -216,7 +215,7 @@ export default class Moon extends ConfigurationItemBase{
         let daysIntoCycle = ((moonCycles - Math.floor(moonCycles)) * this.cycleLength) + this.cycleDayAdjust;
 
         let phaseDays = 0;
-        let phase: MoonPhase | null = null;
+        let phase: SimpleCalendar.MoonPhase | null = null;
         for(let i = 0; i < this.phases.length; i++){
             const newPhaseDays = phaseDays + this.phases[i].length;
             if(daysIntoCycle >= phaseDays && daysIntoCycle < newPhaseDays){
@@ -238,7 +237,7 @@ export default class Moon extends ConfigurationItemBase{
      * @param {string} property Which property to use when getting the year, month and day. Can be current, selected or visible
      * @param {DayTemplate|null} [dayToUse=null] The day to use instead of the day associated with the property
      */
-    getMoonPhase(year: Year, property = 'current', dayToUse: DayTemplate | null = null): MoonPhase{
+    getMoonPhase(year: Year, property = 'current', dayToUse: SimpleCalendar.HandlebarTemplateData.Day | null = null): SimpleCalendar.MoonPhase{
         property = property.toLowerCase() as 'current' | 'selected' | 'visible';
         let yearNum = property === 'current'? year.numericRepresentation : property === 'selected'? year.selectedYear : year.visibleYear;
         const month = year.getMonth(property);

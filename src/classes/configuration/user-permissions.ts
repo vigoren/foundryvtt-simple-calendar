@@ -1,23 +1,26 @@
 import ConfigurationItemBase from "./configuration-item-base";
-import {PermissionMatrix, UserPermissionsConfig, UserPermissionsTemplate} from "../../interfaces";
 
 export default class UserPermissions extends ConfigurationItemBase{
     /**
      * Which users can view the calendar
      */
-    viewCalendar: PermissionMatrix;
+    viewCalendar: SimpleCalendar.PermissionMatrix;
     /**
      * Which users can add notes to the calendar
      */
-    addNotes: PermissionMatrix;
+    addNotes: SimpleCalendar.PermissionMatrix;
     /**
      * Which users can reorder notes on calendar days
      */
-    reorderNotes: PermissionMatrix;
+    reorderNotes: SimpleCalendar.PermissionMatrix;
     /**
      * Which users can change the date/time of the calendar
      */
-    changeDateTime: PermissionMatrix;
+    changeDateTime: SimpleCalendar.PermissionMatrix;
+    /**
+     * Which users can change the active calendar
+     */
+    changeActiveCalendar: SimpleCalendar.PermissionMatrix;
 
     constructor() {
         super();
@@ -26,6 +29,7 @@ export default class UserPermissions extends ConfigurationItemBase{
         this.addNotes = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
         this.reorderNotes = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
         this.changeDateTime = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
+        this.changeActiveCalendar = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
     }
 
     /**
@@ -33,7 +37,7 @@ export default class UserPermissions extends ConfigurationItemBase{
      * @param {PermissionMatrix} p The permission matrix to copy
      * @private
      */
-    private static clonePermissions(p: PermissionMatrix): PermissionMatrix{
+    private static clonePermissions(p: SimpleCalendar.PermissionMatrix): SimpleCalendar.PermissionMatrix{
         return {
             player: p.player,
             trustedPlayer: p.trustedPlayer,
@@ -52,45 +56,49 @@ export default class UserPermissions extends ConfigurationItemBase{
         up.addNotes = UserPermissions.clonePermissions(this.addNotes);
         up.reorderNotes = UserPermissions.clonePermissions(this.reorderNotes);
         up.changeDateTime = UserPermissions.clonePermissions(this.changeDateTime);
+        up.changeActiveCalendar = UserPermissions.clonePermissions(this.changeActiveCalendar);
         return up;
     }
 
     /**
      * Creates a template for the user permissions
      */
-    toTemplate(): UserPermissionsTemplate {
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.UserPermissions {
         return {
             ...super.toTemplate(),
             viewCalendar: this.viewCalendar,
             addNotes: this.addNotes,
             reorderNotes: this.reorderNotes,
-            changeDateTime: this.changeDateTime
+            changeDateTime: this.changeDateTime,
+            changeActiveCalendar: this.changeActiveCalendar
         };
     }
 
     /**
      * Creates the configuration object for these permissions
      */
-    toConfig(): UserPermissionsConfig {
+    toConfig(): SimpleCalendar.UserPermissionsData {
         return {
             id: this.id,
             addNotes: this.addNotes,
             changeDateTime: this.changeDateTime,
             reorderNotes: this.reorderNotes,
-            viewCalendar: this.viewCalendar
+            viewCalendar: this.viewCalendar,
+            changeActiveCalendar: this.changeActiveCalendar
         };
     }
 
     /**
      * Sets the properties for this class to options set in the passed in configuration object
-     * @param {UserPermissionsConfig} config The configuration object for this class
+     * @param {UserPermissionsData} config The configuration object for this class
      */
-    loadFromSettings(config: UserPermissionsConfig) {
+    loadFromSettings(config: SimpleCalendar.UserPermissionsData) {
         if(config && Object.keys(config).length){
             this.viewCalendar = config.viewCalendar;
             this.addNotes = config.addNotes;
             this.changeDateTime = config.changeDateTime;
             this.reorderNotes = config.reorderNotes;
+            this.changeActiveCalendar = config.changeActiveCalendar
         }
     }
 }

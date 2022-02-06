@@ -41,8 +41,6 @@ module.exports = {
                 { context: './', from : 'README.md', to : './' },
                 { context: './', from : 'LICENSE', to : './' },
                 { context: './docs', from : 'Configuration.md', to : './docs' },
-                { context: './docs', from : 'API.md', to : './docs' },
-                { context: './docs', from : 'Hooks.md', to : './docs' },
                 { context: './docs', from : 'Notes.md', to : './docs' },
                 { context: './docs', from : 'UpdatingDateTime.md', to : './docs' },
             ]

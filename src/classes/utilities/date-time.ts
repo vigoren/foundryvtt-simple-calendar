@@ -1,4 +1,3 @@
-import {DateTime, DateTimeParts, SCDateSelector} from "../../interfaces";
 import Calendar from "../calendar";
 import {DateRangeMatch, GameSystems} from "../../constants";
 import PF2E from "../systems/pf2e";
@@ -12,54 +11,54 @@ import {deepMerge} from "./object";
  * @param {Calendar} calendar The calendar to use to format the date string
  * @param {*} inputs
  */
-export function FormatDateTime(date: DateTimeParts, mask: string, calendar: Calendar, inputs: {year?: boolean, month?: boolean} = {}){
+export function FormatDateTime(date: SimpleCalendar.DateTime, mask: string, calendar: Calendar, inputs: {year?: boolean, month?: boolean} = {}){
     inputs = deepMerge({year: false, month: false}, inputs);
     const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|([HhMmsD])\1?|[aA]/g;
     const literal = /\[([^]*?)\]/gm;
-    const formatFlags: Record<string, (dateObj: DateTimeParts) => string> = {
-        "D": (dateObj: DateTimeParts) => String(dateObj.day),
-        "DD": (dateObj: DateTimeParts) => PadNumber(dateObj.day),
-        "DO": (dateObj: DateTimeParts) => `${dateObj.day}${ordinalSuffix(dateObj.day)}`,
-        "d": (dateObj: DateTimeParts) => String(calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
-        "dd": (dateObj: DateTimeParts) => PadNumber(calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
-        "ddd": (dateObj: DateTimeParts) => `${calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name.substring(0, 3)}`,
-        "dddd": (dateObj: DateTimeParts) => `${calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name}`,
-        "M": (dateObj: DateTimeParts) => String(dateObj.month),
-        "MM": (dateObj: DateTimeParts) => PadNumber(dateObj.month),
-        "MMM": (dateObj: DateTimeParts) => {
+    const formatFlags: Record<string, (dateObj: SimpleCalendar.DateTime) => string> = {
+        "D": (dateObj: SimpleCalendar.DateTime) => String(dateObj.day),
+        "DD": (dateObj: SimpleCalendar.DateTime) => PadNumber(dateObj.day),
+        "DO": (dateObj: SimpleCalendar.DateTime) => `${dateObj.day}${ordinalSuffix(dateObj.day)}`,
+        "d": (dateObj: SimpleCalendar.DateTime) => String(calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
+        "dd": (dateObj: SimpleCalendar.DateTime) => PadNumber(calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
+        "ddd": (dateObj: SimpleCalendar.DateTime) => `${calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name.substring(0, 3)}`,
+        "dddd": (dateObj: SimpleCalendar.DateTime) => `${calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name}`,
+        "M": (dateObj: SimpleCalendar.DateTime) => String(dateObj.month),
+        "MM": (dateObj: SimpleCalendar.DateTime) => PadNumber(dateObj.month),
+        "MMM": (dateObj: SimpleCalendar.DateTime) => {
             const month = calendar.year.months.find(m => m.numericRepresentation === dateObj.month);
             return month? month.abbreviation : '';
         },
-        "MMMM": (dateObj: DateTimeParts) => {
+        "MMMM": (dateObj: SimpleCalendar.DateTime) => {
             const month = calendar.year.months.find(m => m.numericRepresentation === dateObj.month);
             return month? month.name : '';
         },
-        "YN": (dateObj: DateTimeParts) => calendar.year.getYearName(dateObj.year),
-        "YA": (dateObj: DateTimeParts) => calendar.year.prefix,
-        "YZ": (dateObj: DateTimeParts) => calendar.year.postfix,
-        "YY": (dateObj: DateTimeParts) => inputs.year? `<input type="number" style="width:4ch;" value="${PadNumber(dateObj.year, 2).substring(2)}" />` : PadNumber(dateObj.year, 2).substring(2),
-        "YYYY": (dateObj: DateTimeParts) => inputs.year? `<input type="number" style="width:${String(dateObj.year).length + 2}ch;" value="${dateObj.year}" />` : String(dateObj.year),
-        "H": (dateObj: DateTimeParts) => String(dateObj.hour),
-        "HH": (dateObj: DateTimeParts) => PadNumber(dateObj.hour),
-        "h": (dateObj: DateTimeParts) => {
+        "YN": (dateObj: SimpleCalendar.DateTime) => calendar.year.getYearName(dateObj.year),
+        "YA": (dateObj: SimpleCalendar.DateTime) => calendar.year.prefix,
+        "YZ": (dateObj: SimpleCalendar.DateTime) => calendar.year.postfix,
+        "YY": (dateObj: SimpleCalendar.DateTime) => inputs.year? `<input type="number" style="width:4ch;" value="${PadNumber(dateObj.year, 2).substring(2)}" />` : PadNumber(dateObj.year, 2).substring(2),
+        "YYYY": (dateObj: SimpleCalendar.DateTime) => inputs.year? `<input type="number" style="width:${String(dateObj.year).length + 2}ch;" value="${dateObj.year}" />` : String(dateObj.year),
+        "H": (dateObj: SimpleCalendar.DateTime) => String(dateObj.hour),
+        "HH": (dateObj: SimpleCalendar.DateTime) => PadNumber(dateObj.hour),
+        "h": (dateObj: SimpleCalendar.DateTime) => {
             const halfDay = Math.floor(calendar.year.time.hoursInDay / 2);
             const hour = dateObj.hour % halfDay || halfDay;
             return String(hour);
         },
-        "hh": (dateObj: DateTimeParts) => {
+        "hh": (dateObj: SimpleCalendar.DateTime) => {
             const halfDay = Math.floor(calendar.year.time.hoursInDay / 2);
             const hour = dateObj.hour % halfDay || halfDay;
             return PadNumber(hour);
         },
-        "m": (dateObj: DateTimeParts) => String(dateObj.minute),
-        "mm": (dateObj: DateTimeParts) => PadNumber(dateObj.minute),
-        "s": (dateObj: DateTimeParts) => String(dateObj.seconds),
-        "ss": (dateObj: DateTimeParts) => PadNumber(dateObj.seconds),
-        "A": (dateObj: DateTimeParts) => {
+        "m": (dateObj: SimpleCalendar.DateTime) => String(dateObj.minute),
+        "mm": (dateObj: SimpleCalendar.DateTime) => PadNumber(dateObj.minute),
+        "s": (dateObj: SimpleCalendar.DateTime) => String(dateObj.seconds),
+        "ss": (dateObj: SimpleCalendar.DateTime) => PadNumber(dateObj.seconds),
+        "A": (dateObj: SimpleCalendar.DateTime) => {
             const halfDay = Math.floor(calendar.year.time.hoursInDay / 2);
             return dateObj.hour >= halfDay? "PM" : "AM";
         },
-        "a": (dateObj: DateTimeParts) => {
+        "a": (dateObj: SimpleCalendar.DateTime) => {
             const halfDay = Math.floor(calendar.year.time.hoursInDay / 2);
             return dateObj.hour >= halfDay? "pm" : "am";
         }
@@ -110,7 +109,7 @@ export function ToSeconds(calendar: Calendar, year: number, month: number, day: 
  * @param {boolean} [showYear=true] If to include the year in the display string
  * @param {string} [delimiter='-'] The delimiter to use between the 2 dates
  */
-export function GetDisplayDate(calendar: Calendar, startDate: SCDateSelector.Date, endDate: SCDateSelector.Date, dontIncludeSameDate: boolean = false, showYear: boolean = true, delimiter: string = '-'){
+export function GetDisplayDate(calendar: Calendar, startDate: SimpleCalendar.SCDateSelector.Date, endDate: SimpleCalendar.SCDateSelector.Date, dontIncludeSameDate: boolean = false, showYear: boolean = true, delimiter: string = '-'){
     const timeMask = calendar.generalSettings.dateFormat.time.replace(/:?[s]/g, '');
     let dateMask = calendar.generalSettings.dateFormat.date;
     if(!showYear){
@@ -145,7 +144,7 @@ export function GetDisplayDate(calendar: Calendar, startDate: SCDateSelector.Dat
  * @param {SCDateSelector.Date} startDate
  * @param {SCDateSelector.Date} endDate
  */
-export function DateTheSame(startDate: DateTimeParts | SCDateSelector.Date, endDate: DateTimeParts | SCDateSelector.Date){
+export function DateTheSame(startDate: SimpleCalendar.DateTime | SimpleCalendar.SCDateSelector.Date, endDate: SimpleCalendar.DateTime | SimpleCalendar.SCDateSelector.Date){
     return startDate.year === endDate.year && startDate.month == endDate.month && startDate.day === endDate.day;
 }
 
@@ -155,7 +154,7 @@ export function DateTheSame(startDate: DateTimeParts | SCDateSelector.Date, endD
  * @param {DateTimeParts} startDate The starting date
  * @param {DateTimeParts} endDate The ending date
  */
-export function DaysBetweenDates(calendar: Calendar, startDate: DateTimeParts, endDate: DateTimeParts){
+export function DaysBetweenDates(calendar: Calendar, startDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime){
     const sDays = calendar.year.dateToDays(startDate.year, startDate.month, startDate.day);
     const eDays = calendar.year.dateToDays(endDate.year, endDate.month, endDate.day);
     return eDays - sDays;
@@ -169,7 +168,7 @@ export function DaysBetweenDates(calendar: Calendar, startDate: DateTimeParts, e
  * @param {SCDateSelector.Date} endDate The ending date to use
  * @constructor
  */
-export function IsDayBetweenDates(calendar: Calendar, checkDate: SCDateSelector.Date, startDate: SCDateSelector.Date, endDate: SCDateSelector.Date){
+export function IsDayBetweenDates(calendar: Calendar, checkDate: SimpleCalendar.SCDateSelector.Date, startDate: SimpleCalendar.SCDateSelector.Date, endDate: SimpleCalendar.SCDateSelector.Date){
     let between = DateRangeMatch.None;
     let checkSeconds = 0;
     let startSeconds = 0;
@@ -206,8 +205,8 @@ export function IsDayBetweenDates(calendar: Calendar, checkDate: SCDateSelector.
     return between;
 }
 
-export function TimestampToDate(seconds: number, calendar: Calendar){
-    const result = {
+export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCalendar.DateData{
+    const result: SimpleCalendar.DateData = {
         year: 0,
         month: 0,
         dayOffset: 0,
@@ -222,7 +221,15 @@ export function TimestampToDate(seconds: number, calendar: Calendar){
         midday: 0,
         weekdays: <string[]>[],
         showWeekdayHeadings: true,
-        currentSeason: {},
+        currentSeason: {
+            id: '',
+            name: '',
+            color: '',
+            sunsetTime: 0,
+            sunriseTime: 0,
+            startingDay: 0,
+            startingMonth: 0
+        },
         isLeapYear: false,
         display: {
             date: '',
@@ -262,7 +269,7 @@ export function TimestampToDate(seconds: number, calendar: Calendar){
     result.isLeapYear = calendar.year.leapYearRule.isLeapYear(result.year);
     result.sunrise = calendar.year.getSunriseSunsetTime(result.year, month, day, true);
     result.sunset = calendar.year.getSunriseSunsetTime(result.year, month, day, false);
-    result.midday = DateToTimestamp({ year: result.year, month: result.month, day: result.day, hour: 0, minute: 0, second: 0 }, calendar) + Math.floor(calendar.year.time.secondsPerDay / 2);
+    result.midday = DateToTimestamp({ year: result.year, month: result.month, day: result.day, hour: 0, minute: 0, seconds: 0 }, calendar) + Math.floor(calendar.year.time.secondsPerDay / 2);
 
     // Display Stuff
     result.display.year = dateTime.year.toString();
@@ -281,13 +288,13 @@ export function TimestampToDate(seconds: number, calendar: Calendar){
     return result;
 }
 
-export function DateToTimestamp(date: DateTime , calendar: Calendar): number {
+export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: Calendar): number {
     let ts = 0;
     const clone = calendar.clone(false);
     const currentMonth = clone.year.getMonth();
     const currentTime = clone.year.time.getCurrentTime();
-    if (date.second === undefined) {
-        date.second = currentTime.seconds;
+    if (date.seconds === undefined) {
+        date.seconds = currentTime.seconds;
     }
 
     if (date.minute === undefined) {
@@ -320,7 +327,7 @@ export function DateToTimestamp(date: DateTime , calendar: Calendar): number {
     }
     clone.year.updateMonth(date.month, 'current', true, date.day);
     clone.numericRepresentation = date.year;
-    clone.year.time.setTime(date.hour, date.minute, date.second);
+    clone.year.time.setTime(date.hour, date.minute, date.seconds);
     ts = clone.toSeconds();
     return ts;
 }

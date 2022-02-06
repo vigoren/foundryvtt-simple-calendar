@@ -1,5 +1,4 @@
 import GameSockets from "../foundry-interfacing/game-sockets";
-import {SimpleCalendarSocket} from "../../interfaces";
 import {SimpleCalendarHooks} from "../../constants";
 import {Logger} from "../logging";
 import ClockSocket from "./clock-socket";
@@ -11,7 +10,7 @@ import EmitHookSocket from "./emit-hook-socket";
 import JournalSocket from "./journal-socket";
 import NoteRemindersSocket from "./note-reminders-socket";
 import PrimarySocket from "./primary-socket";
-import Hook from "../api/hook";
+import {Hook} from "../api/hook";
 import {CalManager, MainApplication} from "../index";
 
 export default class Sockets {
@@ -53,7 +52,7 @@ export default class Sockets {
      * Process any data received over our socket
      * @param {SimpleCalendarSocket.Data} data The data received
      */
-    async process(data: SimpleCalendarSocket.Data){
+    async process(data: SimpleCalendar.SimpleCalendarSocket.Data){
         Logger.debug(`Processing ${data.type} socket emit`);
         const activeCalendar = CalManager.getActiveCalendar();
         for(let i = 0; i < this.sockets.length; i++){

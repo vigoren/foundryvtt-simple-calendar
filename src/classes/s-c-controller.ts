@@ -3,15 +3,15 @@ import {GameSettings} from "./foundry-interfacing/game-settings";
 import {NoteRepeat, SettingNames, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
-import {AppPosition, ClientSettings, GlobalConfiguration, SCDateSelector, UserPermissionsConfig} from "../interfaces";
 import Note from "./note";
 import {NotesApp} from "./applications/notes-app";
 import {CalManager, MainApplication} from "./index";
 import ConfigurationApp from "./applications/configuration-app";
 import MainApp from "./applications/main-app";
 import UserPermissions from "./configuration/user-permissions";
+import {canUser} from "./utilities/permissions";
 
-export default class SimpleCalendar {
+export default class SCController {
     /**
      * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
      * @type {boolean}
@@ -33,9 +33,9 @@ export default class SimpleCalendar {
      */
     sockets: Sockets;
 
-    public clientSettings: ClientSettings;
+    public clientSettings: SimpleCalendar.ClientSettingsData;
 
-    public globalConfiguration: GlobalConfiguration;
+    public globalConfiguration: SimpleCalendar.GlobalConfigurationData;
 
     constructor() {
         this.sockets = new Sockets();
@@ -75,7 +75,7 @@ export default class SimpleCalendar {
      * Load the global configuration and apply it
      */
     public load(){
-        const globalConfiguration = <GlobalConfiguration>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
+        const globalConfiguration = <SimpleCalendar.GlobalConfigurationData>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
         this.globalConfiguration.permissions.loadFromSettings(globalConfiguration.permissions);
         this.globalConfiguration.secondsInCombatRound = globalConfiguration.secondsInCombatRound;
         this.globalConfiguration.calendarsSameTimestamp = globalConfiguration.calendarsSameTimestamp;
@@ -84,14 +84,14 @@ export default class SimpleCalendar {
         this.clientSettings.openOnLoad = GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad);
         this.clientSettings.openCompact = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
         this.clientSettings.rememberPosition = GameSettings.GetBooleanSettings(SettingNames.RememberPosition);
-        this.clientSettings.appPosition = <AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
+        this.clientSettings.appPosition = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
     }
 
     /**
      * Save the global configuration and the calendar configuration
      */
-    public save(globalConfig: GlobalConfiguration | null = null, clientConfig: ClientSettings | null = null){
-        CalManager.saveCalendars();
+    public save(globalConfig: SimpleCalendar.GlobalConfigurationData | null = null, clientConfig: SimpleCalendar.ClientSettingsData | null = null){
+        CalManager.saveCalendars().catch(Logger.error);
         if(globalConfig && clientConfig){
             const gc = {
                 permissions: globalConfig.permissions.toConfig(),
@@ -118,7 +118,7 @@ export default class SimpleCalendar {
      * @param controls
      */
     public getSceneControlButtons(controls: any[]){
-        if(this.activeCalendar.canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)){
+        if(canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)){
             let tokenControls = controls.find(c => c.name === "token" );
             if(tokenControls && tokenControls.hasOwnProperty('tools')){
                 tokenControls.tools.push({
@@ -261,7 +261,7 @@ export default class SimpleCalendar {
             const currentHour = time.hour;
             const currentMinute = time.minute;
 
-            const currentDate: SCDateSelector.Date = {
+            const currentDate: SimpleCalendar.SCDateSelector.Date = {
                 year: this.activeCalendar.year.numericRepresentation,
                 month: currentMonth? currentMonth.numericRepresentation : 1,
                 day: currentDay? currentDay.numericRepresentation : 1,

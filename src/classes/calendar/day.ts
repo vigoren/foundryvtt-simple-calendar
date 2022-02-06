@@ -1,4 +1,3 @@
-import {DayTemplate} from "../../interfaces";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 
 /**
@@ -27,10 +26,21 @@ export default class Day extends ConfigurationItemBase {
     }
 
     /**
+     * Returns the configuration data for the day
+     */
+    toConfig(): SimpleCalendar.DayData {
+        return {
+            ... super.toTemplate(),
+            name: this.numericRepresentation.toString(),
+            numericRepresentation: this.numericRepresentation
+        }
+    }
+
+    /**
      * Creates a day template to be used when rendering the day in HTML
      * @return {DayTemplate}
      */
-    toTemplate() : DayTemplate{
+    toTemplate() : SimpleCalendar.HandlebarTemplateData.Day{
         return {
             ...super.toTemplate(),
             name: this.name,

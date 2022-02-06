@@ -1,21 +1,19 @@
-import {SCRenderer} from "../../interfaces";
 import Calendar from "../calendar";
 import {PadNumber} from "../utilities/string";
 import {deepMerge} from "../utilities/object";
 import {TimeSelectorEvents} from "../../constants";
-import CalendarManager from "../calendar/calendar-manager";
 import {CalManager} from "../index";
 
 export default class TimeSelector {
 
-    private static defaultOptions :SCRenderer.TimeSelectorOptions = {
+    private static defaultOptions: SimpleCalendar.SCRenderer.TimeSelectorOptions = {
         id: '',
         allowTimeRange: true,
         disableSelfUpdate: false,
         timeDelimiter: '-'
     };
 
-    public static Render(calendar: Calendar, options: SCRenderer.TimeSelectorOptions = {id: ''}): string{
+    public static Render(calendar: Calendar, options: SimpleCalendar.SCRenderer.TimeSelectorOptions = {id: ''}): string{
         options = deepMerge({}, this.defaultOptions, options);
         let html = `<div id="${options.id}" class="time-selector" data-calendar="${CalManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
@@ -103,7 +101,7 @@ export default class TimeSelector {
             const calendars = CalManager.getAllCalendars();
             if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
                 const calendar = calendars[calendarIndex];
-                let options: SCRenderer.TimeSelectorOptions = {id:''};
+                let options: SimpleCalendar.SCRenderer.TimeSelectorOptions = {id:''};
                 const optionsInput = timeSelectorElement.querySelector('.render-options');
                 if(optionsInput){
                     options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));

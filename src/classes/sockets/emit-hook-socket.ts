@@ -1,6 +1,5 @@
 import SocketBase from "./socket-base";
-import {SimpleCalendarSocket} from "../../interfaces";
-import Hook from "../api/hook";
+import {Hook} from "../api/hook";
 import {SocketTypes} from "../../constants";
 import type Calendar from "../calendar";
 
@@ -17,11 +16,11 @@ export default class EmitHookSocket extends SocketBase {
      * @param data
      * @param {Calendar} calendar
      */
-    public async process(data: SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
+    public async process(data: SimpleCalendar.SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
         if(data.type === SocketTypes.emitHook){
-            const hook = (<SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).hook
+            const hook = (<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).hook
             if(hook){
-                Hook.emit(hook, calendar, (<SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).param);
+                Hook.emit(hook, calendar, (<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarEmitHook>data.data).param);
             }
             return true;
         }

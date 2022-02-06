@@ -1,4 +1,3 @@
-import {SimpleCalendarSocket} from "../../interfaces";
 import type Calendar from "../calendar";
 
 /**
@@ -17,5 +16,5 @@ export default class SocketBase{
      * @param data
      * @param {Calendar} calendar
      */
-    public async process(data: SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean>{return false;}
+    public async process(data: SimpleCalendar.SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean>{return false;}
 }

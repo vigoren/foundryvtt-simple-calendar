@@ -19,7 +19,7 @@ import Mock = jest.Mock;
 import Time from "../time/time";
 import Season from "../calendar/season";
 import Moon from "../calendar/moon";
-import {GeneralSettingsConfig, UserPermissionsConfig} from "../../interfaces";
+import {GeneralSettingsData, UserPermissionsData} from "../../interfaces";
 
 describe('Game Settings Class Tests', () => {
 
@@ -193,8 +193,8 @@ describe('Game Settings Class Tests', () => {
     test('Save General Settings', async () => {
         // @ts-ignore
         game.user.isGM = false;
-        let up: UserPermissionsConfig = {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false}};
-        let gs: GeneralSettingsConfig = {id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, dateFormat: {date: 'MMMM DD, YYYY', time: 'HH:mm:ss', monthYear: 'MMMM YAYYYYYZ'}, permissions: up};
+        let up: UserPermissionsData = {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false}};
+        let gs: GeneralSettingsData = {id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, dateFormat: {date: 'MMMM DD, YYYY', time: 'HH:mm:ss', monthYear: 'MMMM YAYYYYYZ'}, permissions: up};
         await expect(GameSettings.SaveGeneralSettings(gs)).resolves.toBe(false);
         // @ts-ignore
         game.user.isGM = true;

@@ -8,7 +8,7 @@ import "../../__mocks__/handlebars";
 import "../../__mocks__/event";
 import "../../../__mocks__/crypto";
 import "../../__mocks__/dialog";
-import DateSelector from "./date-selector";
+import DateSelector from "./index";
 import MainApp from "../applications/main-app";
 import Year from "../calendar/year";
 import {LeapYearRules} from "../../constants";

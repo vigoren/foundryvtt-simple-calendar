@@ -1,11 +1,4 @@
 import Month from "./month";
-import {
-    DateTime,
-    DateTimeParts,
-    DayTemplate,
-    YearConfig,
-    YearTemplate
-} from "../../interfaces";
 import {Logger} from "../logging";
 import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
@@ -19,7 +12,7 @@ import PF2E from "../systems/pf2e";
 import Day from "./day";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {randomHash} from "../utilities/string";
-import {ToSeconds, DaysBetweenDates, DateToTimestamp} from "../utilities/date-time";
+import {DaysBetweenDates, DateToTimestamp} from "../utilities/date-time";
 import {GetIcon} from "../utilities/visual";
 import {CalManager, SC} from "../index";
 
@@ -133,7 +126,7 @@ export default class Year extends ConfigurationItemBase {
     /**
      * Returns the configuration object for the year
      */
-    toConfig(): YearConfig {
+    toConfig(): SimpleCalendar.YearData {
         return {
           id: this.id,
           numericRepresentation: this.numericRepresentation,
@@ -152,7 +145,7 @@ export default class Year extends ConfigurationItemBase {
      * Returns an object that is used to display the year in the HTML template
      * @returns {YearTemplate}
      */
-    toTemplate(): YearTemplate{
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.Year{
         const activeCalendar = CalManager.getActiveCalendar();
         const currentMonth = this.getMonth();
         const selectedMonth = this.getMonth('selected');
@@ -196,7 +189,7 @@ export default class Year extends ConfigurationItemBase {
 
         const currentSeason = this.getCurrentSeason();
 
-        let weeks: (boolean | DayTemplate)[][] = [];
+        let weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [];
         if(visibleMonth){
             weeks = this.daysIntoWeeks(visibleMonth, this.visibleYear, this.weekdays.length);
         }
@@ -224,9 +217,9 @@ export default class Year extends ConfigurationItemBase {
 
     /**
      * Loads the year data from the config object.
-     * @param {YearConfig} config The configuration object for this class
+     * @param {YearData} config The configuration object for this class
      */
-    loadFromSettings(config: YearConfig) {
+    loadFromSettings(config: SimpleCalendar.YearData) {
         if(config && Object.keys(config).length){
             Logger.debug('Setting the year from data.');
             if(config.hasOwnProperty('id')){
@@ -265,7 +258,7 @@ export default class Year extends ConfigurationItemBase {
      * @param {number} year The year the month is in (for leap year calculation)
      * @param {number} weekLength How many days there are in a week
      */
-    daysIntoWeeks(month: Month, year: number, weekLength: number): (boolean | DayTemplate)[][]{
+    daysIntoWeeks(month: Month, year: number, weekLength: number): (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][]{
         const weeks = [];
         const dayOfWeekOffset = this.monthStartingDayOfWeek(month, year);
         const isLeapYear = this.leapYearRule.isLeapYear(year);
@@ -687,7 +680,7 @@ export default class Year extends ConfigurationItemBase {
      * Convert a number of seconds to year, month, day, hour, minute, seconds
      * @param {number} seconds The seconds to convert
      */
-    secondsToDate(seconds: number): DateTimeParts{
+    secondsToDate(seconds: number): SimpleCalendar.DateTime{
         const beforeYearZero = seconds < 0;
         seconds = Math.abs(seconds);
         let sec, min, hour, day = 0, dayCount, month = 0, year = 0;
@@ -695,25 +688,14 @@ export default class Year extends ConfigurationItemBase {
         dayCount = Math.floor(seconds / this.time.secondsPerDay);
         seconds -= dayCount * this.time.secondsPerDay;
 
-        hour = Math.floor(seconds / (this.time.secondsInMinute * this.time.minutesInHour) ) % this.time.hoursInDay;
-        seconds -= hour * (this.time.secondsInMinute * this.time.minutesInHour);
-
-        min = Math.floor(seconds / this.time.secondsInMinute) % this.time.secondsInMinute;
-        seconds -= min * this.time.secondsInMinute;
-
-        sec = seconds % 60
+        let timeOfDaySeconds = beforeYearZero? this.time.secondsPerDay - seconds : seconds;
+        hour = Math.floor(timeOfDaySeconds / (this.time.secondsInMinute * this.time.minutesInHour) ) % this.time.hoursInDay;
+        timeOfDaySeconds -= hour * (this.time.secondsInMinute * this.time.minutesInHour);
+        min = Math.floor(timeOfDaySeconds / this.time.secondsInMinute) % this.time.secondsInMinute;
+        timeOfDaySeconds -= min * this.time.secondsInMinute;
+        sec = timeOfDaySeconds % 60;
 
         if(beforeYearZero){
-            if(hour > 0){
-                hour = this.time.hoursInDay - hour - (sec > 0 || min > 0? 1 : 0);
-            }
-            if(min > 0){
-                min = this.time.minutesInHour - min - (sec > 0? 1 : 0);
-            }
-            if(sec > 0){
-                sec = this.time.secondsInMinute - sec;
-            }
-
             year = this.yearZero - 1;
             let isLeapYear = this.leapYearRule.isLeapYear(year);
             month = this.months.length - 1;
@@ -793,7 +775,7 @@ export default class Year extends ConfigurationItemBase {
      * Convert the passed in seconds into an interval of larger time
      * @param seconds
      */
-    secondsToInterval(seconds: number): DateTime {
+    secondsToInterval(seconds: number): SimpleCalendar.DateTimeParts {
         let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
         if(sec >= this.time.secondsInMinute){
             min = Math.floor(sec / this.time.secondsInMinute);
@@ -819,7 +801,7 @@ export default class Year extends ConfigurationItemBase {
         month = month - Math.round(year * this.months.length);
 
         return {
-            second: sec,
+            seconds: sec,
             minute: min,
             hour: hour,
             day: day,
@@ -832,7 +814,7 @@ export default class Year extends ConfigurationItemBase {
      * Updates the year's data with passed in date information
      * @param {DateTimeParts} parsedDate Interface that contains all of the individual parts of a date and time
      */
-    updateTime(parsedDate: DateTimeParts){
+    updateTime(parsedDate: SimpleCalendar.DateTime){
         let isLeapYear = this.leapYearRule.isLeapYear(parsedDate.year);
         this.numericRepresentation = parsedDate.year;
         this.updateMonth(parsedDate.month, 'current', true);
@@ -983,7 +965,7 @@ export default class Year extends ConfigurationItemBase {
             const sunriseChangeForDay = daysBetweenSeasonStartAndDay * averageChangePerDay;
             const finalSunriseTime = Math.round((sunrise? season.sunriseTime : season.sunsetTime) + sunriseChangeForDay);
             if(calculateTimestamp){
-                return DateToTimestamp({ year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, second: 0 }, activeCalendar) + finalSunriseTime;
+                return DateToTimestamp({ year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, seconds: 0 }, activeCalendar) + finalSunriseTime;
             } else {
                 return finalSunriseTime;
             }

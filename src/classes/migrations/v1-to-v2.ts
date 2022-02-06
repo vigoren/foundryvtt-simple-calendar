@@ -1,31 +1,24 @@
-import {
-    CalendarConfiguration, CurrentDateConfig, GeneralSettingsConfig,
-    LeapYearConfig,
-    MonthConfig, MoonConfiguration, NoteCategory, SeasonConfiguration,
-    TimeConfig,
-    WeekdayConfig,
-    YearConfig
-} from "../../interfaces";
 import {SettingNames} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import Calendar from "../calendar";
 
+
 export default class V1ToV2{
     public static runCalendarMigration() : Calendar | null {
         //Create a calendar configuration with the legacy settings
-        const legacySettings: CalendarConfiguration = {
+        const legacySettings: SimpleCalendar.CalendarData = {
             id: 'default',
             name: 'Default',
-            currentDate: <CurrentDateConfig>GameSettings.GetObjectSettings(SettingNames.CurrentDate),
-            general: <GeneralSettingsConfig>GameSettings.GetObjectSettings(SettingNames.GeneralConfiguration),
-            leapYear: <LeapYearConfig>GameSettings.GetObjectSettings(SettingNames.LeapYearRule),
-            months: <MonthConfig[]>GameSettings.GetObjectSettings(SettingNames.MonthConfiguration),
-            moons: <MoonConfiguration[]>GameSettings.GetObjectSettings(SettingNames.MoonConfiguration),
-            noteCategories: <NoteCategory[]>GameSettings.GetObjectSettings(SettingNames.NoteCategories),
-            seasons: <SeasonConfiguration[]>GameSettings.GetObjectSettings(SettingNames.SeasonConfiguration),
-            time: <TimeConfig>GameSettings.GetObjectSettings(SettingNames.TimeConfiguration),
-            weekdays: <WeekdayConfig[]>GameSettings.GetObjectSettings(SettingNames.WeekdayConfiguration),
-            year: <YearConfig>GameSettings.GetObjectSettings(SettingNames.YearConfiguration)
+            currentDate: <SimpleCalendar.CurrentDateData>GameSettings.GetObjectSettings(SettingNames.CurrentDate),
+            general: <SimpleCalendar.GeneralSettingsData>GameSettings.GetObjectSettings(SettingNames.GeneralConfiguration),
+            leapYear: <SimpleCalendar.LeapYearData>GameSettings.GetObjectSettings(SettingNames.LeapYearRule),
+            months: <SimpleCalendar.MonthData[]>GameSettings.GetObjectSettings(SettingNames.MonthConfiguration),
+            moons: <SimpleCalendar.MoonData[]>GameSettings.GetObjectSettings(SettingNames.MoonConfiguration),
+            noteCategories: <SimpleCalendar.NoteCategory[]>GameSettings.GetObjectSettings(SettingNames.NoteCategories),
+            seasons: <SimpleCalendar.SeasonData[]>GameSettings.GetObjectSettings(SettingNames.SeasonConfiguration),
+            time: <SimpleCalendar.TimeData>GameSettings.GetObjectSettings(SettingNames.TimeConfiguration),
+            weekdays: <SimpleCalendar.WeekdayData[]>GameSettings.GetObjectSettings(SettingNames.WeekdayConfiguration),
+            year: <SimpleCalendar.YearData>GameSettings.GetObjectSettings(SettingNames.YearConfiguration)
         };
         //Create a new calendar loading the legacy settings
         const newCalendar = new Calendar('default', 'Default', legacySettings);

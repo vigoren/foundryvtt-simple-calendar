@@ -1,10 +1,9 @@
 import SocketBase from "./socket-base";
-import {SimpleCalendarSocket} from "../../interfaces";
 import {SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {Logger} from "../logging";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import Hook from "../api/hook";
+import {Hook} from "../api/hook";
 import {CalManager, MainApplication, SC} from "../index";
 import type Calendar from "../calendar";
 
@@ -38,9 +37,9 @@ export default class PrimarySocket extends SocketBase {
         Logger.debug('No primary GM found, taking over as primary');
         const activeCalendar = CalManager.getActiveCalendar();
         SC.primary = true;
-        const socketData = <SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: SC.primary}};
+        const socketData = <SimpleCalendar.SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: SC.primary}};
         await GameSockets.emit(socketData);
-        const timeKeeperSocketData = <SimpleCalendarSocket.Data>{type: SocketTypes.clock, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}};
+        const timeKeeperSocketData = <SimpleCalendar.SimpleCalendarSocket.Data>{type: SocketTypes.clock, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}};
         await GameSockets.emit(timeKeeperSocketData);
         if(activeCalendar.year.time.unifyGameAndClockPause){
             (<Game>game).togglePause(true, true);
@@ -59,9 +58,9 @@ export default class PrimarySocket extends SocketBase {
             const numberOfGMs = users? users.filter(u => u.isGM).length : 0;
             //If more than 1 GM in the world, check to see who is the primary GM. Otherwise take over as primary GM
             if(numberOfGMs > 1){
-                const socket = <SimpleCalendarSocket.Data>{
+                const socket = <SimpleCalendar.SimpleCalendarSocket.Data>{
                     type: SocketTypes.primary,
-                    data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
+                    data: <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary> {
                         primaryCheck: true
                     }
                 };
@@ -91,23 +90,23 @@ export default class PrimarySocket extends SocketBase {
      * @param data
      * @param {Calendar} calendar
      */
-    public async process(data: SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
+    public async process(data: SimpleCalendar.SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
         if (data.type === SocketTypes.primary){
             if(GameSettings.IsGm()){
                 // Another client is asking if anyone is the primary GM, respond accordingly
-                if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).primaryCheck){
+                if((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary>data.data).primaryCheck){
                     Logger.debug(`Checking if I am the primary`);
-                    await GameSockets.emit(<SimpleCalendarSocket.Data>{
+                    await GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{
                         type: SocketTypes.primary,
-                        data: <SimpleCalendarSocket.SimpleCalendarPrimary> {
+                        data: <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary> {
                             amPrimary: SC.primary
                         }
                     });
                 }
                 // Another client has emitted that they are the primary, stop my check and set myself to not being the primary
                 // This CAN lead to no primary if 2 GMs finish their primary check at the same time. This is best resolved by 1 gm reloading the page.
-                else if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary !== undefined){
-                    if((<SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary){
+                else if((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary !== undefined){
+                    if((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary){
                         Logger.debug('A primary GM is all ready present.');
                         this.otherPrimaryFound = true;
                         SC.primary = false;

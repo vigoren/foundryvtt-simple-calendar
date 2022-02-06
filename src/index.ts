@@ -1,5 +1,5 @@
-import SimpleCalendar from "./classes/simple-calendar";
-import API from "./classes/api";
+import SCController from "./classes/s-c-controller";
+import * as API from "./classes/api";
 import {Logger} from "./classes/logging";
 import {SimpleCalendarHooks} from "./constants";
 import {
@@ -11,14 +11,14 @@ import {
     SC,
     updateConfigurationApplication
 } from "./classes";
-import HandlebarsHelpers from "./classes/api/handlebars-helpers";
+import {HandlebarsHelpers} from "./classes/api/handlebars-helpers";
 import GameSettingsRegistration from "./classes/foundry-interfacing/game-settings-registration";
 import CalendarManager from "./classes/calendar/calendar-manager";
 import MainApp from "./classes/applications/main-app";
 import ConfigurationApp from "./classes/applications/configuration-app";
 
 updateCalManager(new CalendarManager());
-updateSC(new SimpleCalendar());
+updateSC(new SCController());
 updateMainApplication(new MainApp());
 updateConfigurationApplication(new ConfigurationApp());
 

@@ -1,5 +1,4 @@
 import SocketBase from "./socket-base";
-import {SimpleCalendarSocket} from "../../interfaces";
 import {SocketTypes} from "../../constants";
 import type Calendar from "../calendar";
 import {SC} from "../index"
@@ -12,9 +11,9 @@ export default class NoteRemindersSocket extends SocketBase{
         super();
     }
 
-    public async process(data: SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
+    public async process(data: SimpleCalendar.SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
         if(data.type === SocketTypes.noteReminders){
-            SC.checkNoteReminders((<SimpleCalendarSocket.SimpleCalendarNoteReminder>data.data).justTimeChange);
+            SC.checkNoteReminders((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarNoteReminder>data.data).justTimeChange);
             return true;
         }
         return false;

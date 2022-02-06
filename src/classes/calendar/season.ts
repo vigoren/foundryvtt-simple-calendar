@@ -1,4 +1,3 @@
-import {SeasonConfiguration, SeasonTemplate} from "../../interfaces";
 import Year from "./year";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {CalManager} from "../index";
@@ -62,7 +61,7 @@ export default class Season extends ConfigurationItemBase{
     /**
      * The configuration details for the season
      */
-    toConfig(): SeasonConfiguration {
+    toConfig(): SimpleCalendar.SeasonData {
         return {
             id: this.id,
             name: this.name,
@@ -78,7 +77,7 @@ export default class Season extends ConfigurationItemBase{
      * Creates a template of the season used to render its information
      * @param {Year} year The year to look in for the months and days list
      */
-    toTemplate(year: Year): SeasonTemplate{
+    toTemplate(year: Year): SimpleCalendar.HandlebarTemplateData.Season{
         const startDateSelectorId = `sc_season_start_date_${this.id}`;
         const sunriseSelectorId = `sc_season_sunrise_time_${this.id}`;
 
@@ -95,7 +94,7 @@ export default class Season extends ConfigurationItemBase{
             sunsetMinute = sunsetMinute - (sunsetHour * activeCalendar.year.time.minutesInHour);
         }
 
-        const data: SeasonTemplate =  {
+        const data: SimpleCalendar.HandlebarTemplateData.Season =  {
             ...super.toTemplate(),
             name: this.name,
             startingMonth: this.startingMonth,
@@ -114,9 +113,9 @@ export default class Season extends ConfigurationItemBase{
 
     /**
      * Loads the season data from the config object.
-     * @param {SeasonConfiguration} config The configuration object for this class
+     * @param {SeasonData} config The configuration object for this class
      */
-    loadFromSettings(config: SeasonConfiguration) {
+    loadFromSettings(config: SimpleCalendar.SeasonData) {
         if(config && Object.keys(config).length){
             if(config.hasOwnProperty('id')){
                 this.id = config.id;

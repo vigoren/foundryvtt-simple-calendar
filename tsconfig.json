@@ -46,7 +46,7 @@
     // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
     // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
-    // "typeRoots": [],                       /* List of folders to include type definitions from. */
+    "typeRoots": ["node_modules/@types","./types"],                       /* List of folders to include type definitions from. */
     "types": ["@league-of-foundry-developers/foundry-vtt-types", "node", "jest"],   /* Type declaration files to be included in compilation. */
     // "allowSyntheticDefaultImports": true,  /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
     "esModuleInterop": true,                  /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
@@ -65,12 +65,40 @@
 
     /* Advanced Options */
     "skipLibCheck": true,                     /* Skip type checking of declaration files. */
-    "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
+    "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
+
+    "jsx": "react",
+    "jsxFactory": "JSX.createElement",
+    "jsxFragmentFactory": "JSX.Fragment"
   },
   "exclude": [
     "__mocks__",
     "node_modules",
     "**/*.test.ts",
     "jest.config.ts"
-  ]
+  ],
+  "typedocOptions": {
+    "entryPoints": [
+      "./types"
+    ],
+    "media": "./docs/images",
+    "includes": "./docs",
+    "exclude": "**/*.test.ts",
+    "out": "site/api",
+    "name": "Simple Calendar API",
+    "customTitle": "FoundryVTT Simple Calendar",
+    "readme": "none",
+    "plugin": [
+      "./typedoc-theme/index.js",
+      "typedoc-plugin-extras",
+      "typedoc-plugin-merge-modules"
+    ],
+    "theme": "logging",
+    "categorizeByGroup": false,
+    "disableSources": true,
+    "hideGenerator": true,
+    "excludeInternal": true,
+    "entryPointStrategy": "expand",
+    "mergeModulesMergeMode": "project"
+  }
 }

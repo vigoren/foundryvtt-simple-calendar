@@ -205,30 +205,15 @@
         border-radius: 5px;
         margin: $spacer-half;
         padding: $spacer-half;
-        cursor: pointer;
+
+        &.clickable{
+          cursor: pointer;
+        }
 
         .details{
           flex: 1;
         }
-        .make-active{
-          flex: 0;
-          align-self: center;
-          padding: $spacer-half;
-        }
-        .actions{
-          display: flex;
-          flex-direction: row;
-          flex: 0;
-          margin: calc(-#{$spacer-half} - 1px) calc(-#{$spacer-half} - 1px) calc(-#{$spacer-half} - 1px) 0;
 
-          .control{
-            height: 100%;
-            margin: 0;
-            &.preview{
-              border-radius: 0 5px 5px 0;
-            }
-          }
-        }
         .calendar-name{
           font-size: 1.125rem;
           font-weight: 600;
@@ -249,6 +234,25 @@
             svg{
               width: 14px;
               height: 14px;
+            }
+          }
+        }
+        .calendar-actions{
+          display: flex;
+          flex-direction: row;
+          margin: $spacer-half (-$spacer-half) (-$spacer-half) ;
+          border-top: 1px solid;
+
+          button{
+            flex: 1;
+            border-radius: 0;
+            box-shadow: unset;
+            margin: 0;
+            &:first-child{
+              border-bottom-left-radius: 3px;
+            }
+            &:last-child{
+              border-bottom-right-radius: 3px;
             }
           }
         }

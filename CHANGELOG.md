@@ -125,10 +125,32 @@ The date/time selector that is used when choosing a date for notes or specifying
 - Fixed a bug where clicking on a moon icon or note indicator would not select the day properly.
 - Fixed a bug with the Warhammer predefined calendar where the season starts were set to the wrong dates.
 - Fixed a bug where using Z or ZZ in the date/time formats would break the calendars configuration.
+- Fixed a bug when using dates before the year zero year (negative timestamps) the real time clock would skip times near the end of an hour.
 
 ### API Changes
 
+To go along with the large changelist to the Simple Calendar module the API has also undergone some large changes. 
+
+None of these changes should be breaking to existing implementations using the API but please read over all the changes to make sure your Systems/Modules/Macros are not impacted.
+
+#### General Changes
+
+- Added a new property `SimpleCalendar.api.Icons` that contains a list of all available icons within Simple Calendar.
+- **Important**: Depreciating the property `SimpleCalendar.api.MoonIcons`. This has been replaced with the Icons property and will be removed when FoundryVTT v10 Stable has been released.
+
+#### Bug Fixes
+
 - Fixed a bug with `SimpleCalendar.api.changeDate` where if just a year was passed in the month would update to the first month of the year.
+
+#### Multi Calendar Support
+
+- Added a new function `SimpleCalendar.api.getAllCalendars()` that returns a list of all calendars set up in Simple Calendar. (This does not include any predefined calendars)
+- Updated the API functions so that they can now take an additional optional parameter `calendarId` (where it made sense).
+  - This parameter can be used to target a specific calendar for the API function to update/get data from. If the parameter is not specified then the current active calendar will be used.
+  - This means that current systems/modules/macros that use the API will not need to update their function calls unless they want to add the ability to target calendars that are not the one currently being used.
+
+#### Handlebar Helpers
+
 - Removed 2 Handlebar helpers, day-has-note and day-moon-phase. These were used internally and are no longer required.
 - Added a new Handlebar helper [sc-full-calendar](./docs/API.md#sc-full-calendar) that can be used to render a full calendar view of the current date or passed in date.
   - These calendars support basic interactivity, change which month is being viewed and selecting a day when it is clicked, with the option to pass in your own function to extend this functionality.
@@ -136,16 +158,19 @@ The date/time selector that is used when choosing a date for notes or specifying
 - Added a new function `SimpleCalendar.api.activateFullCalendarListeners()` ([docs](./docs/API.md#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick)) that is used to activate all the basic interactivity for calendars rendered with the [sc-full-calendar](./docs/API.md#sc-full-calendar) Handlebar helper.
 - Added a new Handlebar helper [sc-date-selector](./docs/API.md#sc-date-selector) that can be used to render the custom date selector interface that Simple Calendar uses for picking the date(s) for notes, seasons starting month and seasons sunrise/sunset times.
 - Added a new section `SimpleCalendar.api.DateSelector` ([docs](./docs/API.md#simplecalendarapidateselector)) that contains functions for creating, removing and enabling interactivity for date selectors.
-- With the release of Foundry v9 depreciated properties from the [Date Object](./docs/API.md#date-object) have been removed:
-  - **dayDisplay**: Please use display.day instead.
-  - **monthName**: Please use display.monthName instead.
-  - **yearName**: Please use display.yearName instead.
-  - **yearPrefix**: Please use display.yearPrefix instead.
-  - **yearPostfix**: Please use display.yearPostfix instead.
-- With the release of Foundry v9 depreciated functions from the SimpleCalendar class
-  - `SimpleCalendar.show();`: Please use `SimpleCalendar.api.showCalendar();`
-  - `SimpleCalendar.setDateTime()`: Please use `SimpleCalendar.api.setDate()`
-  - `SimpleCalendar.changeDateTime()`: Please use `SimpleCalendar.api.changeDate()`
+
+#### Removal of Depreciated Items
+
+- With the release of Foundry v9 depreciated properties from the [Date Object](https://simplecalendar.info/interfaces/SimpleCalendarInterfaces.DateData.html) have been removed:
+  - _**dayDisplay**_: Please use display.day instead.
+  - _**monthName**_: Please use display.monthName instead.
+  - **_yearName_**: Please use display.yearName instead.
+  - **_yearPrefix_**: Please use display.yearPrefix instead.
+  - **_yearPostfix_**: Please use display.yearPostfix instead.
+- With the release of Foundry v9 depreciated functions from the SimpleCalendar class have been removed:
+    - `SimpleCalendar.show();`: Please use `SimpleCalendar.api.showCalendar();`
+    - `SimpleCalendar.setDateTime()`: Please use `SimpleCalendar.api.setDate()`
+    - `SimpleCalendar.changeDateTime()`: Please use `SimpleCalendar.api.changeDate()`
 
 ### Translation Updates
 

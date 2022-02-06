@@ -1,5 +1,4 @@
 import Day from "./day";
-import {DayTemplate, MonthConfig, MonthTemplate} from "../../interfaces";
 import {Logger} from "../logging";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import Year from "./year";
@@ -115,7 +114,7 @@ export default class Month extends ConfigurationItemBase {
     /**
      * Returns the configuration data for the month
      */
-    toConfig(): MonthConfig{
+    toConfig(): SimpleCalendar.MonthData{
         return {
             id: this.id,
             name: this.name,
@@ -135,7 +134,7 @@ export default class Month extends ConfigurationItemBase {
      * @param {Year} [year=null] The year object
      * @return {MonthTemplate}
      */
-    toTemplate(year: Year | null = null): MonthTemplate {
+    toTemplate(year: Year | null = null): SimpleCalendar.HandlebarTemplateData.Month {
         let isLeapYear = false;
         if(year){
             isLeapYear = year.leapYearRule.isLeapYear(year.visibleYear);
@@ -184,9 +183,9 @@ export default class Month extends ConfigurationItemBase {
 
     /**
      * Loads the month data from the config object.
-     * @param {MonthConfig} config The configuration object for this class
+     * @param {MonthData} config The configuration object for this class
      */
-    loadFromSettings(config: MonthConfig) {
+    loadFromSettings(config: SimpleCalendar.MonthData) {
         if(config && Object.keys(config).length){
             if(config.hasOwnProperty('id')){
                 this.id = config.id;
@@ -233,7 +232,7 @@ export default class Month extends ConfigurationItemBase {
      * Gets a list of all days template objects
      * @param {boolean} [isLeapYear=false] If the year is a leap year
      */
-    getDaysForTemplate(isLeapYear: boolean = false): DayTemplate[] {
+    getDaysForTemplate(isLeapYear: boolean = false): SimpleCalendar.HandlebarTemplateData.Day[] {
         let dt = this.days.map(d => d.toTemplate());
         Logger.debug(`Getting Day Templates for ${this.name}, there are a max of ${dt.length} days`);
         if(this.numberOfDays !== this.numberOfLeapYearDays){

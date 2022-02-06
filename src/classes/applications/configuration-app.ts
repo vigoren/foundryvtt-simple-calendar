@@ -16,13 +16,6 @@ import {
 import Season from "../calendar/season";
 import Moon from "../calendar/moon";
 import {saveAs} from "file-saver";
-import {
-    CalendarConfiguration,
-    ClientSettings,
-    GlobalConfiguration,
-    NoteCategory,
-    SCDateSelector
-} from "../../interfaces";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
@@ -32,6 +25,7 @@ import UserPermissions from "../configuration/user-permissions";
 import {deepMerge} from "../utilities/object";
 import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import {FormatDateTime} from "../utilities/date-time";
+import {generateUniqueId} from "../utilities/string";
 
 export default class ConfigurationApp extends FormApplication {
     /**
@@ -53,10 +47,10 @@ export default class ConfigurationApp extends FormApplication {
     private calendars: Calendar[] = [];
     /**
      * A copy of the global configuration options to be edited in the configuration dialog.
-     * @type {GlobalConfiguration}
+     * @type {GlobalConfigurationData}
      * @private
      */
-    private globalConfiguration: GlobalConfiguration = {
+    private globalConfiguration: SimpleCalendar.GlobalConfigurationData = {
         id: '',
         calendarsSameTimestamp: false,
         permissions: new UserPermissions(),
@@ -68,7 +62,7 @@ export default class ConfigurationApp extends FormApplication {
      * @type {ClientSettings}
      * @private
      */
-    private clientSettings: ClientSettings = {
+    private clientSettings: SimpleCalendar.ClientSettingsData = {
         id: '',
         theme: Themes.dark,
         openOnLoad: true,
@@ -207,7 +201,7 @@ export default class ConfigurationApp extends FormApplication {
                 'leap-year': 'FSC.Configuration.Moon.YearResetLeap',
                 'x-years': 'FSC.Configuration.Moon.YearResetX'
             },
-            noteCategories: <NoteCategory[]>[],
+            noteCategories: <SimpleCalendar.NoteCategory[]>[],
             predefined: [
                 {key: PredefinedCalendars.Gregorian, label: 'FSC.Configuration.LeapYear.Rules.Gregorian'},
                 {key: PredefinedCalendars.DarkSun, label: 'Dark Sun'},
@@ -558,6 +552,9 @@ export default class ConfigurationApp extends FormApplication {
             this.globalConfiguration.permissions.reorderNotes.player = getCheckBoxInputValue('#scReorderNotesP', false, this.appWindow);
             this.globalConfiguration.permissions.reorderNotes.trustedPlayer = getCheckBoxInputValue('#scReorderNotesTP', false, this.appWindow);
             this.globalConfiguration.permissions.reorderNotes.assistantGameMaster = getCheckBoxInputValue('#scReorderNotesAGM', false, this.appWindow);
+            this.globalConfiguration.permissions.changeActiveCalendar.player = getCheckBoxInputValue('#scChangeActiveCalP', false, this.appWindow);
+            this.globalConfiguration.permissions.changeActiveCalendar.trustedPlayer = getCheckBoxInputValue('#scChangeActiveCalTP', false, this.appWindow);
+            this.globalConfiguration.permissions.changeActiveCalendar.assistantGameMaster = getCheckBoxInputValue('#scChangeActiveCalAGM', false, this.appWindow);
 
             //----------------------------------
             // Calendar: General Settings
@@ -920,7 +917,7 @@ export default class ConfigurationApp extends FormApplication {
                     (<Calendar>this.object).year.yearNames.push('New Named Year');
                     break;
                 case 'note-category':
-                    (<Calendar>this.object).noteCategories.push({name: "New Category", color:"#b13737 ", textColor:"#ffffff"});
+                    (<Calendar>this.object).noteCategories.push({id:generateUniqueId(), name: "New Category", color:"#b13737 ", textColor:"#ffffff"});
                     break;
             }
             this.updateApp();
@@ -1042,7 +1039,7 @@ export default class ConfigurationApp extends FormApplication {
      * @param {ConfigurationDateSelectors} dateSelectorType The type of date selector that was changed
      * @param {SCDateSelector.SelectedDate} selectedDate The returned data from the date selector
      */
-    public dateSelectorChange(seasonId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SCDateSelector.Result){
+    public dateSelectorChange(seasonId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SimpleCalendar.SCDateSelector.Result){
         //Season Changes
         const season = (<Calendar>this.object).year.seasons.find(s => s.id === seasonId);
         if(season){
@@ -1189,7 +1186,7 @@ export default class ConfigurationApp extends FormApplication {
                 syncCalendars: this.globalConfiguration.syncCalendars
             } : {},
             permissions: options['permissions']? this.globalConfiguration.permissions.toConfig() : {},
-            calendars: <CalendarConfiguration[]>[]
+            calendars: <SimpleCalendar.CalendarData[]>[]
         };
 
         for(let i = 0; i < this.calendars.length; i++){

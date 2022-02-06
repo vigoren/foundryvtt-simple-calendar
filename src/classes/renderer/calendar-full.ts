@@ -1,5 +1,4 @@
 import Calendar from "../calendar";
-import {DayTemplate, SCRenderer} from "../../interfaces";
 import {deepMerge} from "../utilities/object";
 import {FormatDateTime, IsDayBetweenDates} from "../utilities/date-time";
 import {GetIcon} from "../utilities/visual";
@@ -14,7 +13,7 @@ export default class CalendarFull{
      * The default options used when creating a full view calendar
      * @private
      */
-    private static defaultOptions: SCRenderer.CalendarOptions = {
+    private static defaultOptions: SimpleCalendar.SCRenderer.CalendarOptions = {
         id: '',
         allowChangeMonth: true,
         allowSelectDateRange: false,
@@ -33,7 +32,7 @@ export default class CalendarFull{
      * @param calendar
      * @param options
      */
-    public static Render(calendar: Calendar, options: SCRenderer.CalendarOptions = {id: ''}): string {
+    public static Render(calendar: Calendar, options: SimpleCalendar.SCRenderer.CalendarOptions = {id: ''}): string {
         options = deepMerge({}, this.defaultOptions, options);
 
         let monthYearFormat = calendar.generalSettings.dateFormat.monthYear;
@@ -41,7 +40,7 @@ export default class CalendarFull{
             monthYearFormat = monthYearFormat.replace(/YN|YA|YZ|YY(?:YY)?/g, '');
         }
 
-        let vYear, vMonth = 1, vMonthIndex, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | DayTemplate)[][] = [], calendarStyle = '', seasonName = '';
+        let vYear, vMonth = 1, vMonthIndex, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [], calendarStyle = '', seasonName = '';
         if(options.date){
             if(options.date.month >= 0 && options.date.month < calendar.year.months.length){
                 vMonth = calendar.year.months[options.date.month].numericRepresentation;
@@ -135,7 +134,7 @@ export default class CalendarFull{
                             const checkDate = {
                                 year: options.showYear? vYear: 0,
                                 month: vMonth,
-                                day: (<DayTemplate>weeks[i][x]).numericRepresentation,
+                                day: (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation,
                                 allDay: true,
                                 hour: 0,
                                 minute: 0
@@ -144,7 +143,7 @@ export default class CalendarFull{
                             switch (inBetween){
                                 case DateRangeMatch.Exact:
                                     dayClass += ' selected';
-                                    (<DayTemplate>weeks[i][x]).selected = true;
+                                    (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).selected = true;
                                     break;
                                 case DateRangeMatch.Start:
                                     dayClass += ' selected selected-range-start';
@@ -158,17 +157,17 @@ export default class CalendarFull{
                             }
                         }
                         //Check for current date to highlight
-                        if(options.showCurrentDate && vYear === calendar.year.numericRepresentation && (<DayTemplate>weeks[i][x]).current){
+                        if(options.showCurrentDate && vYear === calendar.year.numericRepresentation && (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).current){
                             dayClass += ' current';
                         }
 
-                        html += `<div class="${dayClass}" data-day="${(<DayTemplate>weeks[i][x]).numericRepresentation}">`;
+                        html += `<div class="${dayClass}" data-day="${(<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation}">`;
                         if(options.showNoteCount){
-                            html += `<div class="day-notes">${CalendarFull.NoteIndicator(calendar, vYear, vMonth, <DayTemplate>weeks[i][x])}</div>`;
+                            html += `<div class="day-notes">${CalendarFull.NoteIndicator(calendar, vYear, vMonth, <SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x])}</div>`;
                         }
-                        html += (<DayTemplate>weeks[i][x]).name;
+                        html += (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).name;
                         if(options.showMoonPhases){
-                            html += `<div class="moons">${CalendarFull.MoonPhaseIcons(calendar, vYear, vMonth, <DayTemplate>weeks[i][x])}</div>`;
+                            html += `<div class="moons">${CalendarFull.MoonPhaseIcons(calendar, vYear, vMonth, <SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x])}</div>`;
                         }
                         html += '</div>';
                     } else {
@@ -232,7 +231,7 @@ export default class CalendarFull{
             const calendarIndex = calendarElement.getAttribute('data-calendar') || '';
             const calendar = CalManager.getCalendar(calendarIndex);
             if(calendar){
-                let options: SCRenderer.CalendarOptions = {id:''};
+                let options: SimpleCalendar.SCRenderer.CalendarOptions = {id:''};
                 const optionsInput = calendarElement.querySelector('.render-options');
                 if(optionsInput){
                     options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));
@@ -370,7 +369,7 @@ export default class CalendarFull{
      * @param {number} visibleMonth
      * @param {DayTemplate} day They day to check
      */
-    public static NoteIndicator(calendar: Calendar, visibleYear: number, visibleMonth: number, day: DayTemplate): string {
+    public static NoteIndicator(calendar: Calendar, visibleYear: number, visibleMonth: number, day: SimpleCalendar.HandlebarTemplateData.Day): string {
         let r = '';
         const notes = calendar.notes.filter(n => n.isVisible(visibleYear, visibleMonth, day.numericRepresentation));
         if(notes.length){
@@ -399,7 +398,7 @@ export default class CalendarFull{
      * @param {number} visibleMonth
      * @param {DayTemplate} day The day to check
      */
-    public static MoonPhaseIcons(calendar: Calendar, visibleYear: number, visibleMonth: number, day: DayTemplate): string {
+    public static MoonPhaseIcons(calendar: Calendar, visibleYear: number, visibleMonth: number, day: SimpleCalendar.HandlebarTemplateData.Day): string {
         let html = ''
         for(let i = 0; i < calendar.year.moons.length; i++){
             const mp = calendar.year.moons[i].getDateMoonPhase(calendar.year, visibleYear, visibleMonth, day.numericRepresentation);
