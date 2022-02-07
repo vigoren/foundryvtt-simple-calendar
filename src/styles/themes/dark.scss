@@ -54,6 +54,12 @@
       }
     }
 
+    //Top message Styling
+    .message{
+      background-color: $secondary-950;
+      border-color: $secondary-900 !important;
+    }
+
     //Calendar Styling
     .calendar{
       background-color: $primary-950;
@@ -345,6 +351,9 @@
         border-color: $primary-A400;
         &.active{
           background-color: $primary-800;
+        }
+        &.visible{
+          background-color: $tertiary-600;
         }
         &.clickable{
           &:hover{

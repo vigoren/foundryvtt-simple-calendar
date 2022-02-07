@@ -102,14 +102,15 @@ export function ToSeconds(calendar: Calendar, year: number, month: number, day: 
 
 /**
  * Gets the formatted display date for the passed in start and end date.
- * @param {Calendar} calendar The calendar to pull the date formatting from
- * @param {SCDateSelector.Date} startDate The starting datetime
- * @param {SCDateSelector.Date} endDate The ending datetime
- * @param {boolean} [dontIncludeSameDate=false] If to include the date if it is the same in the result (useful for just getting the time)
- * @param {boolean} [showYear=true] If to include the year in the display string
- * @param {string} [delimiter='-'] The delimiter to use between the 2 dates
+ * @param calendar The calendar to pull the date formatting from
+ * @param startDate The starting datetime
+ * @param endDate The ending datetime
+ * @param allDay
+ * @param [dontIncludeSameDate=false] If to include the date if it is the same in the result (useful for just getting the time)
+ * @param [showYear=true] If to include the year in the display string
+ * @param [delimiter='-'] The delimiter to use between the 2 dates
  */
-export function GetDisplayDate(calendar: Calendar, startDate: SimpleCalendar.SCDateSelector.Date, endDate: SimpleCalendar.SCDateSelector.Date, dontIncludeSameDate: boolean = false, showYear: boolean = true, delimiter: string = '-'){
+export function GetDisplayDate(calendar: Calendar, startDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime, allDay: boolean, dontIncludeSameDate: boolean = false, showYear: boolean = true, delimiter: string = '-'){
     const timeMask = calendar.generalSettings.dateFormat.time.replace(/:?[s]/g, '');
     let dateMask = calendar.generalSettings.dateFormat.date;
     if(!showYear){
@@ -125,10 +126,10 @@ export function GetDisplayDate(calendar: Calendar, startDate: SimpleCalendar.SCD
         startDateMask = `${dateMask}`;
     }
 
-    if(!startDate.allDay){
+    if(!allDay){
         startDateMask += ` ${timeMask}`;
     }
-    if(!endDate.allDay && !(startDate.hour === endDate.hour && startDate.minute === endDate.minute)){
+    if(!allDay && !(startDate.hour === endDate.hour && startDate.minute === endDate.minute)){
         endDateMask += ` ${timeMask}`;
     }
 
@@ -141,18 +142,18 @@ export function GetDisplayDate(calendar: Calendar, startDate: SimpleCalendar.SCD
 
 /**
  * If the two dates are the same or not
- * @param {SCDateSelector.Date} startDate
- * @param {SCDateSelector.Date} endDate
+ * @param startDate
+ * @param endDate
  */
-export function DateTheSame(startDate: SimpleCalendar.DateTime | SimpleCalendar.SCDateSelector.Date, endDate: SimpleCalendar.DateTime | SimpleCalendar.SCDateSelector.Date){
+export function DateTheSame(startDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime){
     return startDate.year === endDate.year && startDate.month == endDate.month && startDate.day === endDate.day;
 }
 
 /**
  * Calculates the number of days between two dates
- * @param {Calendar} calendar The calendar used to check the dates
- * @param {DateTimeParts} startDate The starting date
- * @param {DateTimeParts} endDate The ending date
+ * @param calendar The calendar used to check the dates
+ * @param startDate The starting date
+ * @param endDate The ending date
  */
 export function DaysBetweenDates(calendar: Calendar, startDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime){
     const sDays = calendar.year.dateToDays(startDate.year, startDate.month, startDate.day);
@@ -162,13 +163,12 @@ export function DaysBetweenDates(calendar: Calendar, startDate: SimpleCalendar.D
 
 /**
  * Checks if a passed in date is between 2 other dates. Will return a DateRangeMatch which indicates where it falls (Exact, Start, End, Between or None)
- * @param {Calendar} calendar The calendar to use to check the dates
- * @param {SCDateSelector.Date} checkDate The date to check
- * @param {SCDateSelector.Date} startDate The starting date to use
- * @param {SCDateSelector.Date} endDate The ending date to use
- * @constructor
+ * @param calendar The calendar to use to check the dates
+ * @param checkDate The date to check
+ * @param startDate The starting date to use
+ * @param endDate The ending date to use
  */
-export function IsDayBetweenDates(calendar: Calendar, checkDate: SimpleCalendar.SCDateSelector.Date, startDate: SimpleCalendar.SCDateSelector.Date, endDate: SimpleCalendar.SCDateSelector.Date){
+export function IsDayBetweenDates(calendar: Calendar, checkDate: SimpleCalendar.DateTime, startDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime){
     let between = DateRangeMatch.None;
     let checkSeconds = 0;
     let startSeconds = 0;

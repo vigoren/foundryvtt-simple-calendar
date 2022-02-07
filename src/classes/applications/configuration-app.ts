@@ -491,14 +491,14 @@ export default class ConfigurationApp extends FormApplication {
         this.uiElementStates.qsNextClicked = false;
         const ds = DateSelectorManager.GetSelector('quick-setup-predefined-calendar', {});
         let monthIndex, dayIndex = 0;
-        monthIndex = (<Calendar>this.object).year.months.findIndex(m => m.numericRepresentation === ds.selectedDate.startDate.month);
+        monthIndex = (<Calendar>this.object).year.months.findIndex(m => m.numericRepresentation === ds.selectedDate.start.month);
         if(monthIndex > -1) {
-            dayIndex = (<Calendar>this.object).year.months[monthIndex].days.findIndex(d => d.numericRepresentation === ds.selectedDate.startDate.day);
+            dayIndex = (<Calendar>this.object).year.months[monthIndex].days.findIndex(d => d.numericRepresentation === ds.selectedDate.start.day);
         }
         if(monthIndex > -1 && dayIndex > -1){
-            (<Calendar>this.object).year.numericRepresentation = ds.selectedDate.startDate.year;
-            (<Calendar>this.object).year.visibleYear = ds.selectedDate.startDate.year;
-            (<Calendar>this.object).year.selectedYear = ds.selectedDate.startDate.year;
+            (<Calendar>this.object).year.numericRepresentation = ds.selectedDate.start.year;
+            (<Calendar>this.object).year.visibleYear = ds.selectedDate.start.year;
+            (<Calendar>this.object).year.selectedYear = ds.selectedDate.start.year;
             (<Calendar>this.object).year.updateMonth(monthIndex, 'current', true, dayIndex);
         }
         this._tabs[0].active = "generalSettings";
@@ -1039,19 +1039,19 @@ export default class ConfigurationApp extends FormApplication {
      * @param {ConfigurationDateSelectors} dateSelectorType The type of date selector that was changed
      * @param {SCDateSelector.SelectedDate} selectedDate The returned data from the date selector
      */
-    public dateSelectorChange(seasonId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SimpleCalendar.SCDateSelector.Result){
+    public dateSelectorChange(seasonId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SimpleCalendar.DateTimeSelector.SelectedDates){
         //Season Changes
         const season = (<Calendar>this.object).year.seasons.find(s => s.id === seasonId);
         if(season){
             if(dateSelectorType === ConfigurationDateSelectors.seasonStartingDate){
-                const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
-                const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
+                const sMonthIndex = !selectedDate.start.month || selectedDate.start.month < 0? 0 : selectedDate.start.month;
+                const sDayIndex = !selectedDate.start.day || selectedDate.start.day < 0? 0 : selectedDate.start.day;
                 season.startingMonth = (<Calendar>this.object).year.months[sMonthIndex].numericRepresentation;
                 season.startingDay = (<Calendar>this.object).year.months[sMonthIndex].days[sDayIndex].numericRepresentation;
             } else if(dateSelectorType === ConfigurationDateSelectors.seasonSunriseSunsetTime){
                 const activeCalendar = CalManager.getActiveCalendar();
-                season.sunriseTime = ((selectedDate.startDate.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.startDate.minute || 0) * activeCalendar.year.time.secondsInMinute);
-                season.sunsetTime = ((selectedDate.endDate.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.endDate.minute || 0) * activeCalendar.year.time.secondsInMinute);
+                season.sunriseTime = ((selectedDate.start.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.start.minute || 0) * activeCalendar.year.time.secondsInMinute);
+                season.sunsetTime = ((selectedDate.end.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.end.minute || 0) * activeCalendar.year.time.secondsInMinute);
             }
         }
     }

@@ -1,4 +1,7 @@
 <div class="sc-main-wrapper">
+    {{#unless (eq '' message)}}
+        <div class="message">{{{message}}}</div>
+    {{/unless}}
     <div class="section calendar-section">
         <div class="calendar-display">
             {{#if uiElementStates.compactView}}
@@ -16,7 +19,7 @@
                 <div class="date-text">{{calendar.selectedDisplay}}</div>
             </div>
             {{else}}
-            {{sc-full-calendar id=calendar.calendarId date=calendar.visibleDate}}
+            {{sc-full-calendar id=calendar.calendarDisplayId calendarId=calendar.id date=calendar.visibleDate}}
             {{/if}}
         </div>
         <div class="sc-actions-list">
@@ -48,7 +51,7 @@
         <div class="sc-calendar-list sc-side-drawer {{#if uiElementStates.calendarDrawerOpen}}open{{else}}closed{{/if}}">
             <h2>{{localize 'FSC.Calendars'}}</h2>
             {{#each calendarList}}
-                <div class="calendar-display {{#if (eq id ../calendar.id)}}active{{/if}} {{#unless ../showChangeCalendarControls}}clickable{{/unless}}" data-calid="{{id}}">
+                <div class="calendar-display {{#if (eq id ../activeCalendarId)}}active{{else if (eq id ../calendar.id)}}visible{{/if}} {{#unless ../showChangeCalendarControls}}clickable{{/unless}}" data-calid="{{id}}">
                     <div class="details">
                         <div class="calendar-name">{{name}}</div>
                         <div class="calendar-date">
@@ -61,7 +64,7 @@
                         </div>
                         {{#if ../showChangeCalendarControls}}
                         <div class="calendar-actions">
-                            <button class="control save" {{#if (eq id ../calendar.id)}}disabled{{/if}}><span class="fa fa-check"></span> {{localize 'FSC.MakeActive'}}</button>
+                            <button class="control save" {{#if (eq id ../activeCalendarId)}}disabled{{/if}}><span class="fa fa-check"></span> {{localize 'FSC.MakeActive'}}</button>
                             <button class="control tertiary"><span class="fa fa-eye"></span> {{localize 'FSC.View'}}</button>
                         </div>
                         {{/if}}
@@ -189,7 +192,7 @@
     {{#if showClock}}
     <div class="section">
         <div class="clock-display">
-            {{sc-clock id=calendar.clockId}}
+            {{sc-clock id=calendar.clockDisplayId calendarId=calendar.id}}
         </div>
         <div class="sc-actions-list">
             {{#if changeDateTime}}

@@ -24,7 +24,7 @@ export class HandlebarsHelpers{
      */
     static DateSelector(options: any){
         if(options.hash.hasOwnProperty('id') ){
-            const dsOptions: SimpleCalendar.SCDateSelector.Options = {};
+            const dsOptions: SimpleCalendar.DateTimeSelector.Options = {};
             if(options.hash.hasOwnProperty('allowDateRangeSelection')){
                 dsOptions.allowDateRangeSelection = options.hash['allowDateRangeSelection'];
             }
@@ -79,7 +79,7 @@ export class HandlebarsHelpers{
      * @param options
      */
     static FullCalendar(options: any){
-        const renderOptions: SimpleCalendar.SCRenderer.CalendarOptions = {id:''};
+        const renderOptions: SimpleCalendar.Renderer.CalendarOptions = {id:''};
         let calendarId = '';
         if(options.hash.hasOwnProperty('allowChangeMonth')){
             renderOptions.allowChangeMonth = options.hash['allowChangeMonth'];
@@ -129,7 +129,7 @@ export class HandlebarsHelpers{
      * @param options
      */
     static Clock(options: any){
-        const renderOptions: SimpleCalendar.SCRenderer.ClockOptions = {id:''};
+        const renderOptions: SimpleCalendar.Renderer.ClockOptions = {id:''};
         let calendarId = '';
         if(options.hash.hasOwnProperty('id')){
             renderOptions.id = options.hash['id'];

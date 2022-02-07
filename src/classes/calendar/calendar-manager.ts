@@ -20,6 +20,11 @@ export default class CalendarManager {
      * @private
      */
     private activeId: string = '';
+    /**
+     * The current calendar ID of the visible calendar
+     * @private
+     */
+    private visibleId: string = '';
 
     /**
      * When loading in for the first time
@@ -29,6 +34,7 @@ export default class CalendarManager {
         if(!processed){
             const cal = this.getDefaultCalendar();
             this.activeId = cal.id;
+            this.visibleId = cal.id;
         }
     }
 
@@ -64,6 +70,7 @@ export default class CalendarManager {
                     }
                     if(i === 0 && this.activeId === ''){
                         this.activeId = calendars[i].id;
+                        this.visibleId = calendars[i].id;
                     }
                 }
             }
@@ -139,10 +146,16 @@ export default class CalendarManager {
 
     /**
      * Gets the currently active calendar
-     * @returns {Calendar}
      */
     public getActiveCalendar(): Calendar{
         return this.calendars[this.activeId];
+    }
+
+    /**
+     * Gets the currently visible calendar
+     */
+    public getVisibleCalendar(): Calendar {
+        return this.calendars[this.visibleId];
     }
 
     /**
@@ -184,6 +197,7 @@ export default class CalendarManager {
                 value.timeKeeper.pause();
             }
             this.activeId = newActive.id;
+            this.visibleId = newActive.id;
             if(newActive.timeKeeper.getStatus() === TimeKeeperStatus.Paused){
                 newActive.timeKeeper.start(true);
             }
@@ -196,6 +210,19 @@ export default class CalendarManager {
             //Weather Control: Updates on the date time change hook
             newActive.syncTime(true).catch(Logger.error);
             Hook.emit(SimpleCalendarHooks.DateTimeChange, newActive);
+        }
+    }
+
+    /**
+     * Sets the visible calendar to the calendar with the passed in ID
+     * @param id The ID of the new visible calendar
+     */
+    public setVisibleCalendar(id: string){
+        const newVisible = this.getCalendar(id);
+        if(newVisible){
+            this.visibleId = newVisible.id;
+            MainApplication.clockClass = newVisible.timeKeeper.getStatus();
+            MainApplication.updateApp();
         }
     }
 

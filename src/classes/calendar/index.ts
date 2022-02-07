@@ -137,8 +137,8 @@ export default class Calendar extends ConfigurationItemBase{
 
         return {
             ...super.toTemplate(),
-            calendarId: `sc_${this.id}_calendar`,
-            clockId: `sc_${this.id}_clock`,
+            calendarDisplayId: `sc_${this.id}_calendar`,
+            clockDisplayId: `sc_${this.id}_clock`,
             currentYear: this.year.toTemplate(),
             gameSystem: this.gameSystem,
             id: this.id,
@@ -360,7 +360,7 @@ export default class Calendar extends ConfigurationItemBase{
         this.notes.forEach((note) => {
             if((GameSettings.IsGm() || (!GameSettings.IsGm() && note.playerVisible))){
                 let match = 0;
-                const noteFormattedDate = GetDisplayDate(this,{year: note.year, month: note.month, day: note.day, hour: note.hour, minute: note.minute, allDay: note.allDay}, {...note.endDate, allDay: note.allDay}).toLowerCase();
+                const noteFormattedDate = GetDisplayDate(this,{year: note.year, month: note.month, day: note.day, hour: note.hour, minute: note.minute, seconds: 0}, note.endDate, note.allDay).toLowerCase();
                 const noteTitle = note.title.toLowerCase();
                 const noteContent = note.content.toLowerCase();
                 const author = GameSettings.GetUser(note.author);
@@ -508,13 +508,13 @@ export default class Calendar extends ConfigurationItemBase{
             const currentHour = time.hour;
             const currentMinute = time.minute;
 
-            const currentDate: SimpleCalendar.SCDateSelector.Date = {
+            const currentDate: SimpleCalendar.DateTime = {
                 year: this.year.numericRepresentation,
                 month: currentMonth? currentMonth.numericRepresentation : 1,
                 day: currentDay? currentDay.numericRepresentation : 1,
                 hour: currentHour,
                 minute: currentMinute,
-                allDay: false
+                seconds: 0
             };
             const noteRemindersCurrentDay = noteRemindersForPlayer.filter(n => {
                 if(n.repeats !== NoteRepeat.Never && !justTimeChange){

@@ -1239,8 +1239,8 @@ declare global{
 
             interface Calendar extends IDataItemBase {
                 calendarDisplay: string;
-                calendarId: string;
-                clockId: string;
+                calendarDisplayId: string;
+                clockDisplayId: string;
                 name: string;
                 id: string;
                 selectedDisplay: string;
@@ -1308,6 +1308,7 @@ declare global{
 
             interface MainAppData {
                 addNotes: boolean;
+                activeCalendarId: string;
                 calendar: CalendarData;
                 calendarList: any[];
                 changeDateTime: boolean;
@@ -1315,6 +1316,7 @@ declare global{
                 uiElementStates: any;
                 isGM: boolean;
                 isPrimary: boolean;
+                message: string;
                 reorderNotes: boolean;
                 search: any;
                 showClock: boolean;
@@ -1426,46 +1428,70 @@ declare global{
          * Contains the interfaces associated with the Simple Calendar date selector
          * @internal
          */
-        namespace SCDateSelector {
-            export interface SelectorList {
+        namespace DateTimeSelector {
+            /**
+             * The list of initialized date/time selectors
+             */
+            interface SelectorList {
                 [key: string]: DateSelector;
             }
 
-            export interface Options {
+            /**
+             * The different configuration options that can be specified for initializing a date/time selector
+             */
+            interface Options {
+                /** The calendar to use for generating the date selector */
                 calendar?: Calendar;
+                /** Function to be called when a date or dates have been selected */
                 onDateSelect?: Function;
+                /** Allow a range of dates to be selected */
                 allowDateRangeSelection?: boolean;
+                /** All for a range of time to be selected */
                 allowTimeRangeSelection?: boolean;
-                //If the year is a number input that can be changed
+                /** Is the year display number editable through an input */
                 editYear?: boolean;
+                /** How to open the date selector from the input box */
                 position?: DateSelectorPositions;
+                /** Show the year in the calendar display */
                 showCalendarYear?: boolean;
+                /** Show the date selection portion of the date/time selector */
                 showDateSelector?: boolean;
+                /** Show the time selector position of the date/time selector */
                 showTimeSelector?: boolean;
+                /** The selected starting date */
                 selectedStartDate?: DateTime,
+                /** The selected ending date */
                 selectedEndDate?: DateTime,
-                timeSelected?: boolean
+                /** If a time has been selected */
+                timeSelected?: boolean;
+                /** The string to use as a delimiter between the date and time */
                 timeDelimiter?: string;
             }
 
-            export interface Date{
-                year: number;
-                month: number;
-                day: number;
-                hour: number;
-                minute: number;
+            /**
+             * Dates used internally to a date/time selector to keep track of user interaction
+             * @internal
+             */
+            interface Dates {
+                /** The year/month that is currently visible in the date selector calendar */
+                visible: DateTime;
+                /** The selected start date/time of the date/time selector */
+                start: DateTime;
+                /** The selected end date/time of the date/time selector */
+                end: DateTime;
+                /** If the date is supposed to take place all day (no time has been selected yet) */
                 allDay: boolean;
             }
 
-            export interface SelectedDate {
-                visibleDate: SCDateSelector.Date;
-                startDate: SCDateSelector.Date;
-                endDate: SCDateSelector.Date;
-            }
-
-            export interface Result {
-                startDate: DateTimeParts;
-                endDate: DateTimeParts;
+            /**
+             * The date(s) that have been selected from the date/time selector
+             */
+            interface SelectedDates {
+                /** The start date/time of a date/time range, or if just a single date/time can be selected that date/time */
+                start: DateTimeParts;
+                /** The end date/time of a date/time range, or if just a single date/time this value will be the same as the start */
+                end: DateTimeParts;
+                /** If a time was selected or not */
                 timeSelected: boolean;
             }
         }
@@ -1474,72 +1500,72 @@ declare global{
          * Contains the interfaces associated with the Simple Calendar renderer
          * @internal
          */
-        namespace SCRenderer {
-
-            export interface Date {
-                year: number,
-                month: number,
-                day?: number
-            }
-
+        namespace Renderer {
+            /**
+             * The options that can be set for rendering a calendar display
+             */
             export interface CalendarOptions {
-                // If to add in the arrows for changing the visible month
+                /** If to add in the arrows for changing the visible month */
                 allowChangeMonth?: boolean;
-                //If to allow for the selecting of more than 1 day
+                /** If to allow for the selecting of more than 1 day */
                 allowSelectDateRange?: boolean;
-                //If to color the background to match the current seasons color
+                 /** If to color the background to match the current seasons color */
                 colorToMatchSeason?: boolean;
-                //Any custom css classes to add to the containing div
+                 /** Any custom css classes to add to the containing div */
                 cssClasses?: string;
-                //The currently visible date
-                date?: Date;
-                //If the year is a number input that can be changed
+                 /** The currently visible date */
+                date?: SimpleCalendar.Date;
+                 /** If the year is a number input that can be changed */
                 editYear?: boolean;
-                //The ID of the HTML element being added
+                 /** The ID of the HTML element being added */
                 id: string;
-                //The dates that are currently selected, if just single date mode use start
+                 /** The dates that are currently selected, if just single date mode use start */
                 selectedDates?: {
-                    start: Date,
-                    end: Date
+                    /** The selected starting date */
+                    start: SimpleCalendar.Date,
+                     /** The selected ending date */
+                    end: SimpleCalendar.Date
                 };
-                //If to highlight the current date for the calendar
+                 /** If to highlight the current date for the calendar */
                 showCurrentDate?: boolean;
-                //If to show the different moon phases on the calendar
+                 /** If to show the different moon phases on the calendar */
                 showMoonPhases?: boolean;
-                //If to show any note counts on the calendar
+                 /** If to show any note counts on the calendar */
                 showNoteCount?: boolean;
-                //If to show the season name
+                 /** If to show the season name */
                 showSeasonName?: boolean;
-                //If to show the year
+                 /** If to show the year */
                 showYear?: boolean;
             }
 
+            /**
+             * The options that can be set for rendering the clock
+             */
             export interface ClockOptions {
-                //The ID of the HTML element being added
+                /** The ID of the HTML element being added */
                 id: string;
-                //Any custom css classes to add to the containing div
+                 /** Any custom css classes to add to the containing div */
                 cssClasses?: string;
             }
 
+            /**
+             * The options that can be set for rendering the time selector
+             */
             export interface TimeSelectorOptions {
-                //The ID of the HTML element being added
+                /** The ID of the HTML element being added */
                 id: string;
-                //If to allow the selection of a range of time
+                 /** If to allow the selection of a range of time */
                 allowTimeRange?: boolean;
-                //This will disable the renderer's self updating after change. Will require the time selector to be updated externally to view changes.
+                 /** This will disable the renderer's self updating after change. Will require the time selector to be updated externally to view changes. */
                 disableSelfUpdate?: boolean;
-                //The selected time to show, if not using the time range just use the start
+                 /** The selected time to show, if not using the time range just use the start */
                 selectedTime?: {
-                    start: {
-                        hour: number;
-                        minute: number;
-                    },
-                    end: {
-                        hour: number;
-                        minute: number;
-                    }
+                     /** The selected starting time */
+                    start: SimpleCalendar.Time,
+                     /** The selected ending time */
+                    end: SimpleCalendar.Time
                 }
-                //The custom string to use as the delimiter between the time range inputs and display
+                 /** The custom string to use as the delimiter between the time range inputs and display */
                 timeDelimiter?: string;
             }
         }

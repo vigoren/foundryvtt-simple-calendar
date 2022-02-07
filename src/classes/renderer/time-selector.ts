@@ -6,14 +6,14 @@ import {CalManager} from "../index";
 
 export default class TimeSelector {
 
-    private static defaultOptions: SimpleCalendar.SCRenderer.TimeSelectorOptions = {
+    private static defaultOptions: SimpleCalendar.Renderer.TimeSelectorOptions = {
         id: '',
         allowTimeRange: true,
         disableSelfUpdate: false,
         timeDelimiter: '-'
     };
 
-    public static Render(calendar: Calendar, options: SimpleCalendar.SCRenderer.TimeSelectorOptions = {id: ''}): string{
+    public static Render(calendar: Calendar, options: SimpleCalendar.Renderer.TimeSelectorOptions = {id: ''}): string{
         options = deepMerge({}, this.defaultOptions, options);
         let html = `<div id="${options.id}" class="time-selector" data-calendar="${CalManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
@@ -80,7 +80,7 @@ export default class TimeSelector {
     }
 
     /**
-     * Hides all of the time selector dropdowns
+     * Hides all the time selector dropdowns
      * @param {string} timeSelectorId The ID of the time selector whose dropdowns to hide.
      */
     public static HideTimeDropdown(timeSelectorId: string){
@@ -101,13 +101,13 @@ export default class TimeSelector {
             const calendars = CalManager.getAllCalendars();
             if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
                 const calendar = calendars[calendarIndex];
-                let options: SimpleCalendar.SCRenderer.TimeSelectorOptions = {id:''};
+                let options: SimpleCalendar.Renderer.TimeSelectorOptions = {id:''};
                 const optionsInput = timeSelectorElement.querySelector('.render-options');
                 if(optionsInput){
                     options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));
                 }
                 if(!options.selectedTime){
-                    options.selectedTime = { start: { hour: 0, minute: 0 }, end: { hour: 0, minute: 0 } };
+                    options.selectedTime = { start: { hour: 0, minute: 0, seconds: 0 }, end: { hour: 0, minute: 0, seconds: 0 } };
                 }
                 let target = <HTMLElement>event.target;
                 let amount = 0;

@@ -24,6 +24,14 @@
       flex-direction: column;
       padding: $spacer-half;
 
+      .message{
+        padding: $spacer-half;
+        margin-bottom: $spacer-half;
+        border: 1px solid;
+        border-radius: 5px;
+        font-size: 0.75rem;
+      }
+
       .section{
         display: flex;
         flex-direction: row;
@@ -57,6 +65,7 @@
         flex-direction: row;
         justify-content: center;
         flex-wrap: wrap;
+        align-items: start;
 
         .control-group{
           position: relative;

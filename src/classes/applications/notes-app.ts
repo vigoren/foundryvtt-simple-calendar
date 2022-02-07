@@ -298,26 +298,26 @@ export class NotesApp extends FormApplication {
      * Called when the date selector date has been selected
      * @param selectedDate
      */
-    dateSelectorClick(selectedDate: SimpleCalendar.SCDateSelector.Result){
+    dateSelectorClick(selectedDate: SimpleCalendar.DateTimeSelector.SelectedDates){
         const activeCalendar = CalManager.getActiveCalendar();
-        const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
-        const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
-        const eMonthIndex = !selectedDate.endDate.month || selectedDate.endDate.month < 0? 0 : selectedDate.endDate.month;
-        const eDayIndex = !selectedDate.endDate.day || selectedDate.endDate.day < 0? 0 : selectedDate.endDate.day;
+        const sMonthIndex = !selectedDate.start.month || selectedDate.start.month < 0? 0 : selectedDate.start.month;
+        const sDayIndex = !selectedDate.start.day || selectedDate.start.day < 0? 0 : selectedDate.start.day;
+        const eMonthIndex = !selectedDate.end.month || selectedDate.end.month < 0? 0 : selectedDate.end.month;
+        const eDayIndex = !selectedDate.end.day || selectedDate.end.day < 0? 0 : selectedDate.end.day;
         const startMonthObj = activeCalendar.year.months[sMonthIndex];
         const endMonthObj = activeCalendar.year.months[eMonthIndex];
-        (<Note>this.object).year = selectedDate.startDate.year || 0;
+        (<Note>this.object).year = selectedDate.start.year || 0;
         (<Note>this.object).month = startMonthObj.numericRepresentation;
         (<Note>this.object).day = startMonthObj.days[sDayIndex].numericRepresentation;
         (<Note>this.object).allDay = !selectedDate.timeSelected;
-        (<Note>this.object).hour = selectedDate.startDate.hour || 0;
-        (<Note>this.object).minute = selectedDate.startDate.minute || 0;
+        (<Note>this.object).hour = selectedDate.start.hour || 0;
+        (<Note>this.object).minute = selectedDate.start.minute || 0;
         (<Note>this.object).endDate = {
-            year: selectedDate.endDate.year || 0,
+            year: selectedDate.end.year || 0,
             month: endMonthObj.numericRepresentation,
             day: endMonthObj.days[eDayIndex].numericRepresentation,
-            hour: selectedDate.endDate.hour || 0,
-            minute: selectedDate.endDate.minute || 0,
+            hour: selectedDate.end.hour || 0,
+            minute: selectedDate.end.minute || 0,
             seconds: 0
         };
 

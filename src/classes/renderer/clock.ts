@@ -5,7 +5,7 @@ import {Icons, TimeKeeperStatus} from "../../constants";
 import {CalManager} from "../index";
 
 export default class Clock {
-    private static defaultOptions: SimpleCalendar.SCRenderer.ClockOptions = {
+    private static defaultOptions: SimpleCalendar.Renderer.ClockOptions = {
         id: '',
         cssClasses: ''
     };
@@ -15,7 +15,7 @@ export default class Clock {
      * @param calendar
      * @param options
      */
-    public static Render(calendar: Calendar, options: SimpleCalendar.SCRenderer.ClockOptions = {id: ''}): string {
+    public static Render(calendar: Calendar, options: SimpleCalendar.Renderer.ClockOptions = {id: ''}): string {
         options = deepMerge({}, this.defaultOptions, options);
         const status = calendar.timeKeeper.getStatus();
         options.cssClasses += ` ${status}`;
@@ -34,7 +34,7 @@ export default class Clock {
      * @param calendar
      * @param options
      */
-    public static RenderTime(calendar: Calendar, options: SimpleCalendar.SCRenderer.ClockOptions){
+    public static RenderTime(calendar: Calendar, options: SimpleCalendar.Renderer.ClockOptions){
         return`<div class="current-time">${calendar.year.time.toString()}</div>`;
     }
 
@@ -65,7 +65,7 @@ export default class Clock {
             const calendarIndex = clockElement.getAttribute('data-calendar') || '';
             const calendar = CalManager.getCalendar(calendarIndex);
             if(calendar){
-                let options: SimpleCalendar.SCRenderer.ClockOptions = {id:''};
+                let options: SimpleCalendar.Renderer.ClockOptions = {id:''};
                 const optionsInput = clockElement.querySelector('.render-options');
                 if(optionsInput){
                     options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));

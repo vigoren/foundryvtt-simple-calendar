@@ -52,9 +52,8 @@ export class DateSelector {
     secondDaySelect: boolean = false;
     /**
      * The currently selected date
-     * @type {SCDateSelector.SelectedDate}
      */
-    selectedDate: SimpleCalendar.SCDateSelector.SelectedDate;
+    selectedDate: SimpleCalendar.DateTimeSelector.Dates;
     /**
      * A function to call when a date is selected
      * @type{Function | null}
@@ -74,53 +73,54 @@ export class DateSelector {
 
     /**
      * Constructor for a new Date Selector
-     * @param {string} id The unique ID of the selector to add
-     * @param {SCDateSelector.Options} options The options associated with setting up the new Date Selector
+     * @param id The unique ID of the selector to add
+     * @param options The options associated with setting up the new Date Selector
      */
-    constructor(id: string, options: SimpleCalendar.SCDateSelector.Options) {
+    constructor(id: string, options: SimpleCalendar.DateTimeSelector.Options) {
         this.id = id;
         this.calendarId = `${this.id}_calendar`;
         this.timeSelectorId = `${this.id}_time_selector`;
         this.showDateSelector = true;
         this.showTimeSelector = false;
         this.selectedDate = {
-            visibleDate:{
+            visible:{
                 year: 0,
                 month: 1,
                 day: 1,
-                allDay: true,
                 hour: 0,
-                minute: 0
+                minute: 0,
+                seconds: 0
             },
-            startDate: {
+            start: {
                 year: 0,
                 month: 1,
                 day: 1,
-                allDay: true,
                 hour: 0,
-                minute: 0
+                minute: 0,
+                seconds: 0
             },
-            endDate: {
+            end: {
                 year: 0,
                 month: 1,
                 day: 1,
-                allDay: true,
                 hour: 0,
-                minute: 0
-            }
+                minute: 0,
+                seconds: 0
+            },
+            allDay: true
         };
         this.applyOptions(options);
         if(options.selectedEndDate === undefined){
-            this.selectedDate.endDate = {
-                year: this.selectedDate.startDate.year,
-                month: this.selectedDate.startDate.month,
-                day: this.selectedDate.startDate.day,
-                hour: this.selectedDate.startDate.hour,
-                minute: this.selectedDate.startDate.minute,
-                allDay: this.selectedDate.startDate.allDay
+            this.selectedDate.end = {
+                year: this.selectedDate.start.year,
+                month: this.selectedDate.start.month,
+                day: this.selectedDate.start.day,
+                hour: this.selectedDate.start.hour,
+                minute: this.selectedDate.start.minute,
+                seconds: this.selectedDate.start.seconds
             };
         }
-        if(!this.selectedDate.startDate.allDay){
+        if(!this.selectedDate.allDay){
             this.addTime = true;
         }
     }
@@ -129,7 +129,7 @@ export class DateSelector {
      * Applies the passed in options object to the date selector
      * @param options
      */
-    applyOptions(options: SimpleCalendar.SCDateSelector.Options){
+    applyOptions(options: SimpleCalendar.DateTimeSelector.Options){
         if(options.calendar !== undefined){
             this.calendar = options.calendar;
         }
@@ -162,37 +162,37 @@ export class DateSelector {
             this.timeDelimiter = options.timeDelimiter;
         }
         if(options.selectedStartDate !== undefined){
-            this.selectedDate.startDate = {
+            this.selectedDate.start = {
                 year: options.selectedStartDate.year,
                 month: options.selectedStartDate.month,
                 day: options.selectedStartDate.day,
-                allDay: !this.showTimeSelector,
                 hour: options.selectedStartDate.hour,
-                minute: options.selectedStartDate.minute
+                minute: options.selectedStartDate.minute,
+                seconds: options.selectedStartDate.seconds
             };
-            this.selectedDate.visibleDate = {
-                year: this.selectedDate.startDate.year,
-                month: this.selectedDate.startDate.month,
-                day: this.selectedDate.startDate.day,
-                allDay: !this.selectedDate.startDate.allDay,
-                hour: this.selectedDate.startDate.hour,
-                minute: this.selectedDate.startDate.minute
+            this.selectedDate.visible = {
+                year: this.selectedDate.start.year,
+                month: this.selectedDate.start.month,
+                day: this.selectedDate.start.day,
+                hour: this.selectedDate.start.hour,
+                minute: this.selectedDate.start.minute,
+                seconds: this.selectedDate.start.seconds
             };
         }
         if(options.selectedEndDate !== undefined){
-            this.selectedDate.endDate = {
+            this.selectedDate.end = {
                 year: options.selectedEndDate.year,
                 month: options.selectedEndDate.month,
                 day: options.selectedEndDate.day,
-                allDay: !this.showTimeSelector,
                 hour: options.selectedEndDate.hour,
-                minute: options.selectedEndDate.minute
+                minute: options.selectedEndDate.minute,
+                seconds: options.selectedEndDate.seconds
             };
         }
         if(options.timeSelected !== undefined){
-            this.selectedDate.startDate.allDay = !options.timeSelected;
-            this.selectedDate.endDate.allDay = !options.timeSelected;
-            this.selectedDate.visibleDate.allDay = !options.timeSelected;
+            this.selectedDate.allDay = !options.timeSelected;
+        } else {
+            this.selectedDate.allDay = !this.showTimeSelector;
         }
     }
 
@@ -220,19 +220,20 @@ export class DateSelector {
                 showSeasonName: false,
                 showYear: this.showCalendarYear,
                 date: {
-                    month: this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.visibleDate.month),
-                    year: this.selectedDate.visibleDate.year
+                    month: this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.visible.month),
+                    year: this.selectedDate.visible.year,
+                    day: 0
                 },
                 selectedDates: {
                     start: {
-                        year: this.selectedDate.startDate.year,
-                        month: this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.startDate.month),
-                        day: this.selectedDate.startDate.day
+                        year: this.selectedDate.start.year,
+                        month: this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.start.month),
+                        day: this.selectedDate.start.day
                     },
                     end: {
-                        year: this.selectedDate.endDate.year,
-                        month: this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.endDate.month),
-                        day: this.selectedDate.endDate.day
+                        year: this.selectedDate.end.year,
+                        month: this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.end.month),
+                        day: this.selectedDate.end.day
                     }
                 }
             });
@@ -246,12 +247,14 @@ export class DateSelector {
                     disableSelfUpdate: true,
                     selectedTime: {
                         start: {
-                            hour: this.selectedDate.startDate.hour,
-                            minute: this.selectedDate.startDate.minute
+                            hour: this.selectedDate.start.hour,
+                            minute: this.selectedDate.start.minute,
+                            seconds: this.selectedDate.start.seconds
                         },
                         end: {
-                            hour: this.selectedDate.endDate.hour,
-                            minute: this.selectedDate.endDate.minute
+                            hour: this.selectedDate.end.hour,
+                            minute: this.selectedDate.end.minute,
+                            seconds: this.selectedDate.end.seconds
                         }
                     },
                     timeDelimiter: this.timeDelimiter
@@ -264,7 +267,7 @@ export class DateSelector {
             }
             timeSelectors += `</div>`;
         }
-        const displayDate = GetDisplayDate(this.calendar, this.selectedDate.startDate, this.selectedDate.endDate, (this.showTimeSelector && !this.showDateSelector), this.showCalendarYear, this.timeDelimiter);
+        const displayDate = GetDisplayDate(this.calendar, this.selectedDate.start, this.selectedDate.end, this.selectedDate.allDay, (this.showTimeSelector && !this.showDateSelector), this.showCalendarYear, this.timeDelimiter);
         returnHtml = `<input class="display-input" value="${displayDate}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar-wrapper${this.showTimeSelector && !this.showDateSelector? ' just-time' : ''}" style="display:${hideCalendar? 'none' : 'block'};">${calendar}${timeSelectors}</div>`;
         if(includeWrapper){
             returnHtml = `${wrapper}${returnHtml}</div>`
@@ -378,34 +381,34 @@ export class DateSelector {
     callOnDateSelect(){
         if(this.onDateSelect){
 
-            const startMonthIndex = this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.startDate.month);
-            const endMonthIndex = this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.endDate.month);
+            const startMonthIndex = this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.start.month);
+            const endMonthIndex = this.calendar.year.months.findIndex(m => m.numericRepresentation === this.selectedDate.end.month);
             let startDayIndex = 0;
             let endDayIndex = 0;
             if(startMonthIndex > -1){
-                startDayIndex = this.calendar.year.months[startMonthIndex].days.findIndex(d => d.numericRepresentation === this.selectedDate.startDate.day);
+                startDayIndex = this.calendar.year.months[startMonthIndex].days.findIndex(d => d.numericRepresentation === this.selectedDate.start.day);
             }
             if(endMonthIndex > -1){
-                endDayIndex = this.calendar.year.months[endMonthIndex].days.findIndex(d => d.numericRepresentation === this.selectedDate.endDate.day);
+                endDayIndex = this.calendar.year.months[endMonthIndex].days.findIndex(d => d.numericRepresentation === this.selectedDate.end.day);
             }
 
 
             const returnValue = {
                 startDate: {
-                    year: this.selectedDate.startDate.year,
+                    year: this.selectedDate.start.year,
                     month: startMonthIndex,
                     day: startDayIndex,
-                    hour: this.selectedDate.startDate.hour,
-                    minute: this.selectedDate.startDate.minute
+                    hour: this.selectedDate.start.hour,
+                    minute: this.selectedDate.start.minute
                 },
                 endDate: {
-                    year: this.selectedDate.endDate.year,
+                    year: this.selectedDate.end.year,
                     month: endMonthIndex,
                     day: endDayIndex,
-                    hour: this.selectedDate.endDate.hour,
-                    minute: this.selectedDate.endDate.minute
+                    hour: this.selectedDate.end.hour,
+                    minute: this.selectedDate.end.minute
                 },
-                timeSelected: !this.selectedDate.startDate.allDay
+                timeSelected: !this.selectedDate.allDay
             };
             this.onDateSelect(returnValue);
         }
@@ -464,26 +467,26 @@ export class DateSelector {
      * Processes the selecting of a day on the calendar
      * @param {SCRenderer.CalendarOptions} options The renderer options returned from the click event
      */
-    dayClick(options: SimpleCalendar.SCRenderer.CalendarOptions){
+    dayClick(options: SimpleCalendar.Renderer.CalendarOptions){
         if(options.selectedDates){
             let hideCalendar = true;
             if(!this.secondDaySelect){
-                this.selectedDate.startDate.year = options.selectedDates.start.year;
-                this.selectedDate.startDate.month = this.calendar.year.months[options.selectedDates.start.month].numericRepresentation;
-                this.selectedDate.startDate.day = options.selectedDates.start.day || 1;
-                this.selectedDate.endDate.year = options.selectedDates.start.year;
-                this.selectedDate.endDate.month = this.calendar.year.months[options.selectedDates.start.month].numericRepresentation;
-                this.selectedDate.endDate.day = options.selectedDates.start.day || 1;
+                this.selectedDate.start.year = options.selectedDates.start.year;
+                this.selectedDate.start.month = this.calendar.year.months[options.selectedDates.start.month].numericRepresentation;
+                this.selectedDate.start.day = options.selectedDates.start.day || 1;
+                this.selectedDate.end.year = options.selectedDates.start.year;
+                this.selectedDate.end.month = this.calendar.year.months[options.selectedDates.start.month].numericRepresentation;
+                this.selectedDate.end.day = options.selectedDates.start.day || 1;
                 this.secondDaySelect = true;
                 hideCalendar = !this.allowDateRangeSelection;
 
             }else{
-                this.selectedDate.startDate.year = options.selectedDates.start.year;
-                this.selectedDate.startDate.month = this.calendar.year.months[options.selectedDates.start.month].numericRepresentation;
-                this.selectedDate.startDate.day = options.selectedDates.start.day || 1;
-                this.selectedDate.endDate.year = options.selectedDates.end.year;
-                this.selectedDate.endDate.month = this.calendar.year.months[options.selectedDates.end.month].numericRepresentation;
-                this.selectedDate.endDate.day = options.selectedDates.end.day || 1;
+                this.selectedDate.start.year = options.selectedDates.start.year;
+                this.selectedDate.start.month = this.calendar.year.months[options.selectedDates.start.month].numericRepresentation;
+                this.selectedDate.start.day = options.selectedDates.start.day || 1;
+                this.selectedDate.end.year = options.selectedDates.end.year;
+                this.selectedDate.end.month = this.calendar.year.months[options.selectedDates.end.month].numericRepresentation;
+                this.selectedDate.end.day = options.selectedDates.end.day || 1;
             }
 
             if(hideCalendar){
@@ -501,10 +504,10 @@ export class DateSelector {
      * @param clickType
      * @param options
      */
-    changeMonthClick(clickType: CalendarClickEvents, options: SimpleCalendar.SCRenderer.CalendarOptions){
+    changeMonthClick(clickType: CalendarClickEvents, options: SimpleCalendar.Renderer.CalendarOptions){
         if(options.date){
-            this.selectedDate.visibleDate.year = options.date.year;
-            this.selectedDate.visibleDate.month = this.calendar.year.months[options.date.month].numericRepresentation;
+            this.selectedDate.visible.year = options.date.year;
+            this.selectedDate.visible.month = this.calendar.year.months[options.date.month].numericRepresentation;
         }
         this.activateListeners(null, false, false);
         if(this.showTimeSelector){
@@ -516,9 +519,9 @@ export class DateSelector {
      * Processes the callback from the Calendar Renderer's year change event
      * @param options
      */
-    changeYear(options: SimpleCalendar.SCRenderer.CalendarOptions){
+    changeYear(options: SimpleCalendar.Renderer.CalendarOptions){
         if(options.date){
-            this.selectedDate.visibleDate.year = options.date.year;
+            this.selectedDate.visible.year = options.date.year;
         }
         this.activateListeners(null, false, false);
         if(this.showTimeSelector){
@@ -533,12 +536,13 @@ export class DateSelector {
     addTimeClick(event: Event){
         event.stopPropagation();
         this.addTime = true;
-        this.selectedDate.startDate.allDay = false;
-        this.selectedDate.startDate.hour = 0;
-        this.selectedDate.startDate.minute = 0;
-        this.selectedDate.endDate.allDay = false;
-        this.selectedDate.endDate.hour = 0;
-        this.selectedDate.endDate.minute = 0;
+        this.selectedDate.allDay = false;
+        this.selectedDate.start.hour = 0;
+        this.selectedDate.start.minute = 0;
+        this.selectedDate.start.seconds = 0;
+        this.selectedDate.end.hour = 0;
+        this.selectedDate.end.minute = 0;
+        this.selectedDate.end.seconds = 0;
         this.update();
     }
 
@@ -549,12 +553,13 @@ export class DateSelector {
     removeTimeClick(event: Event){
         event.stopPropagation();
         this.addTime = false;
-        this.selectedDate.startDate.allDay = true;
-        this.selectedDate.startDate.hour = 0;
-        this.selectedDate.startDate.minute = 0;
-        this.selectedDate.endDate.allDay = true;
-        this.selectedDate.endDate.hour = 0;
-        this.selectedDate.endDate.minute = 0;
+        this.selectedDate.allDay = true;
+        this.selectedDate.start.hour = 0;
+        this.selectedDate.start.minute = 0;
+        this.selectedDate.start.seconds = 0;
+        this.selectedDate.end.hour = 0;
+        this.selectedDate.end.minute = 0;
+        this.selectedDate.end.seconds = 0;
         this.update();
     }
 
@@ -562,10 +567,10 @@ export class DateSelector {
      * Called when the time selector has benn changed
      * @param options
      */
-    timeChange(options: SimpleCalendar.SCRenderer.TimeSelectorOptions){
+    timeChange(options: SimpleCalendar.Renderer.TimeSelectorOptions){
         if(options.selectedTime){
             //If the day is the same, make sure that the end time is not before the start time
-            if(DateTheSame(this.selectedDate.startDate, this.selectedDate.endDate)){
+            if(DateTheSame(this.selectedDate.start, this.selectedDate.end)){
                 if(options.selectedTime.end.hour <= options.selectedTime.start.hour){
                     options.selectedTime.end.hour = options.selectedTime.start.hour;
 
@@ -575,10 +580,10 @@ export class DateSelector {
                 }
             }
 
-            this.selectedDate.startDate.hour = options.selectedTime.start.hour;
-            this.selectedDate.startDate.minute = options.selectedTime.start.minute;
-            this.selectedDate.endDate.hour = options.selectedTime.end.hour;
-            this.selectedDate.endDate.minute = options.selectedTime.end.minute;
+            this.selectedDate.start.hour = options.selectedTime.start.hour;
+            this.selectedDate.start.minute = options.selectedTime.start.minute;
+            this.selectedDate.end.hour = options.selectedTime.end.hour;
+            this.selectedDate.end.minute = options.selectedTime.end.minute;
             this.update();
             if(this.showTimeSelector && !this.showDateSelector){
                 this.callOnDateSelect();

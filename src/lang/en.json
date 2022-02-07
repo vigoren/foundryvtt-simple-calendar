@@ -62,6 +62,7 @@
   "FSC.Search.Options.Fields.Categories": "Categories",
   "FSC.Settings": "Settings",
   "FSC.View": "View",
+  "FSC.ViewingDifferentCalendar": "Some controls have been hidden because this is not the active calendar.",
 
 
   "FSC.Title": "Simple Calendar",

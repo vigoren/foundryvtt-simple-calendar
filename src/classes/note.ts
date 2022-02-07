@@ -156,7 +156,7 @@ export default class Note extends ConfigurationItemBase{
             authorDisplay: authDisplay,
             monthDisplay: this.monthDisplay,
             allDay: this.allDay,
-            displayDate: GetDisplayDate(activeCalendar,{year: this.year, month: this.month, day: this.day, hour: this.hour, minute: this.minute, allDay: this.allDay}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, hour: this.endDate.hour? this.endDate.hour : 0, minute: this.endDate.minute? this.endDate.minute : 0, allDay: this.allDay}, true),
+            displayDate: GetDisplayDate(activeCalendar,{year: this.year, month: this.month, day: this.day, hour: this.hour, minute: this.minute, seconds: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, hour: this.endDate.hour? this.endDate.hour : 0, minute: this.endDate.minute? this.endDate.minute : 0, seconds: 0}, this.allDay, true),
             hour: this.hour,
             minute: this.minute,
             endDate: this.endDate,
@@ -310,15 +310,15 @@ export default class Note extends ConfigurationItemBase{
                         sMonth = activeCalendar.year.months[sMonthIndex].numericRepresentation;
                         eMonth = activeCalendar.year.months[eMonthIndex].numericRepresentation;
 
-                        const sInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
-                        const eInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                        const sInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, hour: 0, minute: 0, seconds: 0}, {year: year, month: month, day: this.day, hour: 0, minute: 0, seconds: 0}, {year: eYear, month: eMonth, day: this.endDate.day, hour: 0, minute: 0, seconds: 0});
+                        const eInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, hour: 0, minute: 0, seconds: 0}, {year: sYear, month: sMonth, day: this.day, hour: 0, minute: 0, seconds: 0}, {year: year, month: month, day: this.endDate.day, hour: 0, minute: 0, seconds: 0});
                         if(sInBetween !== DateRangeMatch.None || eInBetween !== DateRangeMatch.None){
                             inBetween = DateRangeMatch.Middle;
                         }
                     }
                 }
                 else {
-                    inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: sMonth, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: eMonth, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, hour: 0, minute: 0, seconds: 0}, {year: year, month: sMonth, day: this.day, hour: 0, minute: 0, seconds: 0}, {year: year, month: eMonth, day: this.endDate.day, hour: 0, minute: 0, seconds: 0});
                 }
             } else if(this.repeats === NoteRepeat.Yearly){
                 let sYear = year;
@@ -327,17 +327,17 @@ export default class Note extends ConfigurationItemBase{
                     const yDiff = this.endDate.year - this.year;
                     sYear = year - yDiff;
                     eYear = year + yDiff;
-                    const sInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: eYear, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
-                    const eInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: sYear, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    const sInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, hour: 0, minute: 0, seconds: 0}, {year: year, month: this.month, day: this.day, hour: 0, minute: 0, seconds: 0}, {year: eYear, month: this.endDate.month, day: this.endDate.day, hour: 0, minute: 0, seconds: 0});
+                    const eInBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, hour: 0, minute: 0, seconds: 0}, {year: sYear, month: this.month, day: this.day, hour: 0, minute: 0, seconds: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, hour: 0, minute: 0, seconds: 0});
                     if(sInBetween !== DateRangeMatch.None || eInBetween !== DateRangeMatch.None){
                         inBetween = DateRangeMatch.Middle;
                     }
                 }
                 else{
-                    inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                    inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, hour: 0, minute: 0, seconds: 0}, {year: year, month: this.month, day: this.day, hour: 0, minute: 0, seconds: 0}, {year: year, month: this.endDate.month, day: this.endDate.day, hour: 0, minute: 0, seconds: 0});
                 }
             } else {
-                inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, allDay: true, hour: 0, minute: 0}, {year: this.year, month: this.month, day: this.day, allDay: true, hour: 0, minute: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, allDay: true, hour: 0, minute: 0});
+                inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, hour: 0, minute: 0, seconds: 0}, {year: this.year, month: this.month, day: this.day, hour: 0, minute: 0, seconds: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, hour: 0, minute: 0, seconds: 0});
             }
             dayVisible = inBetween !== DateRangeMatch.None;
         }
@@ -518,7 +518,7 @@ export default class Note extends ConfigurationItemBase{
                 endYear = currentVisibleYear;
             }
         }
-        display = GetDisplayDate(activeCalendar,{year: startYear, month: startMonth, day: startDay, hour: this.hour, minute: this.minute, allDay: this.allDay},{year: endYear, month: endMonth, day: endDay, hour: this.endDate.hour, minute: this.endDate.minute, allDay: this.allDay} );
+        display = GetDisplayDate(activeCalendar,{year: startYear, month: startMonth, day: startDay, hour: this.hour, minute: this.minute, seconds: 0},{year: endYear, month: endMonth, day: endDay, hour: this.endDate.hour, minute: this.endDate.minute, seconds: 0}, this.allDay );
         return display;
     }
 }

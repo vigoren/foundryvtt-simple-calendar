@@ -261,13 +261,13 @@ export default class SCController {
             const currentHour = time.hour;
             const currentMinute = time.minute;
 
-            const currentDate: SimpleCalendar.SCDateSelector.Date = {
+            const currentDate: SimpleCalendar.DateTime = {
                 year: this.activeCalendar.year.numericRepresentation,
                 month: currentMonth? currentMonth.numericRepresentation : 1,
                 day: currentDay? currentDay.numericRepresentation : 1,
                 hour: currentHour,
                 minute: currentMinute,
-                allDay: false
+                seconds: 0
             };
             const noteRemindersCurrentDay = noteRemindersForPlayer.filter(n => {
                 if(n.repeats !== NoteRepeat.Never && !justTimeChange){

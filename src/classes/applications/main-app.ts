@@ -35,6 +35,12 @@ export default class MainApp extends Application{
         return CalManager.getActiveCalendar();
     }
     /**
+     * Gets the current visible calendar
+     */
+    private get visibleCalendar(){
+        return CalManager.getVisibleCalendar();
+    }
+    /**
      * The CSS class associated with the animated clock
      */
     clockClass = 'stopped';
@@ -96,17 +102,31 @@ export default class MainApp extends Application{
      * @param {Application.RenderOptions | undefined} options The data options
      */
     getData(options?: Application.RenderOptions): SimpleCalendar.HandlebarTemplateData.MainAppData | Promise<SimpleCalendar.HandlebarTemplateData.MainAppData> {
-        let showSetCurrentDate = false;
-        const selectedMonth = this.activeCalendar.year.getMonth('selected');
-        if(selectedMonth){
-            const selectedDay = selectedMonth.getDay('selected');
-            if(selectedDay && !selectedDay.current){
-                showSetCurrentDate = true;
+        let showSetCurrentDate = false,
+            showDateControls = false,
+            showTimeControls = false,
+            changeDateTime = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime),
+            message = '';
+        //If the active and visible calendar are the same then show the controls as per the usual rules. Other wise do not show any controls
+        if(this.activeCalendar.id === this.visibleCalendar.id){
+            showDateControls = this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
+            showTimeControls = this.activeCalendar.generalSettings.showClock && this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
+
+            const selectedMonth = this.visibleCalendar.year.getMonth('selected');
+            if(selectedMonth){
+                const selectedDay = selectedMonth.getDay('selected');
+                if(selectedDay && !selectedDay.current){
+                    showSetCurrentDate = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime);
+                }
             }
+        } else if(changeDateTime){
+            message = GameSettings.Localize('FSC.ViewingDifferentCalendar');
         }
+
         return {
             addNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes),
-            calendar: this.activeCalendar.toTemplate(),
+            activeCalendarId: this.activeCalendar.id,
+            calendar: this.visibleCalendar.toTemplate(),
             calendarList: CalManager.getAllCalendars().map(c => {
                 const cd = c.getCurrentDate();
                 const ct = c.year.time.getCurrentTime();
@@ -118,17 +138,18 @@ export default class MainApp extends Application{
                     clockRunning: c.timeKeeper.getStatus() === TimeKeeperStatus.Started
                 };
             }),
-            changeDateTime: canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime),
+            changeDateTime: changeDateTime,
             clockClass: this.clockClass,
             isGM: GameSettings.IsGm(),
             isPrimary: SC.primary,
+            message: message,
             uiElementStates: this.uiElementStates,
             reorderNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.reorderNotes),
             search: this.search,
-            showClock: this.activeCalendar.generalSettings.showClock,
-            showDateControls: this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
-            showSetCurrentDate: canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime) && showSetCurrentDate,
-            showTimeControls: this.activeCalendar.generalSettings.showClock && this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty,
+            showClock: this.visibleCalendar.generalSettings.showClock,
+            showDateControls: showDateControls,
+            showSetCurrentDate: showSetCurrentDate,
+            showTimeControls: showTimeControls,
             showChangeCalendarControls: canUser((<Game>game).user, SC.globalConfiguration.permissions.changeActiveCalendar)
         };
     }
@@ -138,8 +159,8 @@ export default class MainApp extends Application{
      */
     public showApp(){
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)){
-            if(this.activeCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
-                this.activeCalendar.year.setCurrentToVisible();
+            if(this.visibleCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
+                this.visibleCalendar.year.setCurrentToVisible();
             }
             this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
 
@@ -167,11 +188,11 @@ export default class MainApp extends Application{
 
     /**
      * Overwrite the minimization function to reduce the calendar down to the compact form
-     * If the calendar is all ready in the compact form, restore to the full form
+     * If the calendar is already in the compact form, restore to the full form
      */
     async minimize(){
         this.uiElementStates.compactView = !this.uiElementStates.compactView;
-        this.activeCalendar.year.resetMonths('selected');
+        this.visibleCalendar.year.resetMonths('selected');
         this.toggleCalendarDrawer(true);
         this.toggleNoteDrawer(true);
         this.toggleSearchDrawer(true);
@@ -319,10 +340,10 @@ export default class MainApp extends Application{
                 } else {
                     appWindow.classList.remove('compact-view');
                     // Activate the full calendar display listeners
-                    Renderer.CalendarFull.ActivateListeners(`sc_${this.activeCalendar.id}_calendar`, this.changeMonth.bind(this), this.dayClick.bind(this));
+                    Renderer.CalendarFull.ActivateListeners(`sc_${this.visibleCalendar.id}_calendar`, this.changeMonth.bind(this), this.dayClick.bind(this));
                 }
                 // Activate the clock listeners
-                Renderer.Clock.ActivateListeners(`sc_${this.activeCalendar.id}_clock`);
+                Renderer.Clock.ActivateListeners(`sc_${this.visibleCalendar.id}_clock`);
 
                 //-----------------------
                 // Calendar Action List
@@ -359,12 +380,12 @@ export default class MainApp extends Application{
 
                     //Calendar View Click
                     appWindow.querySelectorAll('.sc-calendar-list .calendar-display .calendar-actions .tertiary').forEach(e => {
-                        //e.addEventListener('click', this.changeCalendar.bind(this));
+                        e.addEventListener('click', this.changeVisibleCalendar.bind(this));
                     });
                 } else {
                     //Calendar View Click
                     appWindow.querySelectorAll('.sc-calendar-list .calendar-display').forEach(e => {
-                        //e.addEventListener('click', this.changeCalendar.bind(this));
+                        e.addEventListener('click', this.changeVisibleCalendar.bind(this));
                     });
                 }
 
@@ -518,7 +539,19 @@ export default class MainApp extends Application{
                 const calendarId = wrapper.getAttribute('data-calid');
                 if(calendarId && this.activeCalendar.id !== calendarId){
                     CalManager.setActiveCalendar(calendarId);
-                    this.render(true);
+                }
+            }
+        }
+    }
+
+    public changeVisibleCalendar(e: Event){
+        const target = <HTMLElement>e.currentTarget;
+        if(target){
+            const wrapper = target.closest('.calendar-display');
+            if(wrapper){
+                const calendarId = wrapper.getAttribute('data-calid');
+                if(calendarId && this.visibleCalendar.id !== calendarId){
+                    CalManager.setVisibleCalendar(calendarId);
                 }
             }
         }
@@ -527,11 +560,11 @@ export default class MainApp extends Application{
     /**
      * Processes the callback from the Calendar Renderer's month change click
      * @param {CalendarClickEvents} clickType What was clicked, previous or next
-     * @param {SCRenderer.CalendarOptions} options The renderer's options associated with the calendar
+     * @param {Renderer.CalendarOptions} options The renderer's options associated with the calendar
      */
-    public changeMonth(clickType: CalendarClickEvents, options: SimpleCalendar.SCRenderer.CalendarOptions){
+    public changeMonth(clickType: CalendarClickEvents, options: SimpleCalendar.Renderer.CalendarOptions){
         this.toggleUnitSelector(true);
-        this.activeCalendar.year.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
+        this.visibleCalendar.year.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
         this.setWidthHeight();
     }
     
@@ -539,25 +572,25 @@ export default class MainApp extends Application{
      * Click event when a users clicks on a day
      * @param {SCRenderer.CalendarOptions} options The renderer options for the calendar who's day was clicked
      */
-    public dayClick(options: SimpleCalendar.SCRenderer.CalendarOptions){
+    public dayClick(options: SimpleCalendar.Renderer.CalendarOptions){
         this.toggleUnitSelector(true);
-        if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.activeCalendar.year.months.length){
+        if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.visibleCalendar.year.months.length){
             const selectedDay = options.selectedDates.start.day;
             let allReadySelected = false;
-            const currentlySelectedMonth = this.activeCalendar.year.getMonth('selected');
+            const currentlySelectedMonth = this.visibleCalendar.year.getMonth('selected');
             if(currentlySelectedMonth){
                 const currentlySelectedDay = currentlySelectedMonth.getDay('selected');
-                allReadySelected = currentlySelectedDay !== undefined && currentlySelectedDay.numericRepresentation === selectedDay && this.activeCalendar.year.selectedYear === options.selectedDates.start.year;
+                allReadySelected = currentlySelectedDay !== undefined && currentlySelectedDay.numericRepresentation === selectedDay && this.visibleCalendar.year.selectedYear === options.selectedDates.start.year;
             }
 
-            this.activeCalendar.year.resetMonths('selected');
+            this.visibleCalendar.year.resetMonths('selected');
             if(!allReadySelected){
-                const month = this.activeCalendar.year.months[options.selectedDates.start.month];
+                const month = this.visibleCalendar.year.months[options.selectedDates.start.month];
                 const dayIndex = month.days.findIndex(d => d.numericRepresentation === selectedDay);
                 if(dayIndex > -1){
                     month.selected = true;
                     month.days[dayIndex].selected = true;
-                    this.activeCalendar.year.selectedYear = this.activeCalendar.year.visibleYear;
+                    this.visibleCalendar.year.selectedYear = this.visibleCalendar.year.visibleYear;
                 }
             }
             this.updateApp();
@@ -569,7 +602,7 @@ export default class MainApp extends Application{
      * @param {Event} e The click event
      */
     public todayClick(e: Event) {
-        const selectedMonth = this.activeCalendar.year.getMonth('selected');
+        const selectedMonth = this.visibleCalendar.year.getMonth('selected');
         if(selectedMonth){
             selectedMonth.selected = false;
             const selectedDay = selectedMonth.getDay('selected');
@@ -577,16 +610,16 @@ export default class MainApp extends Application{
                 selectedDay.selected = false;
             }
         }
-        const visibleMonth = this.activeCalendar.year.getMonth('visible');
+        const visibleMonth = this.visibleCalendar.year.getMonth('visible');
         if(visibleMonth){
             visibleMonth.visible = false;
         }
-        const currentMonth = this.activeCalendar.year.getMonth();
+        const currentMonth = this.visibleCalendar.year.getMonth();
         if(currentMonth){
             const currentDay = currentMonth.getDay();
             if(currentDay){
-                this.activeCalendar.year.selectedYear = this.activeCalendar.year.numericRepresentation;
-                this.activeCalendar.year.visibleYear = this.activeCalendar.year.numericRepresentation;
+                this.visibleCalendar.year.selectedYear = this.visibleCalendar.year.numericRepresentation;
+                this.visibleCalendar.year.visibleYear = this.visibleCalendar.year.numericRepresentation;
                 currentMonth.visible = true;
                 currentMonth.selected = true;
                 currentDay.selected = true;
@@ -781,7 +814,7 @@ export default class MainApp extends Application{
             this.search.results = [];
             if(this.search.term){
 
-                this.search.results = this.activeCalendar.searchNotes(this.search.term, this.search.options.fields);
+                this.search.results = this.visibleCalendar.searchNotes(this.search.term, this.search.options.fields);
             }
             this.updateApp();
         }
@@ -862,7 +895,7 @@ export default class MainApp extends Application{
         e.stopPropagation();
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
         if(dataIndex){
-            const note = this.activeCalendar.notes.find(n=> n.id === dataIndex);
+            const note = this.visibleCalendar.notes.find(n=> n.id === dataIndex);
             if(note){
                 NotesApp.instance = new NotesApp(note, true);
                 NotesApp.instance.showApp();
@@ -956,7 +989,7 @@ export default class MainApp extends Application{
                     noteIDOrder.push(cid);
                 }
             }
-            this.activeCalendar.reorderNotesOnDay(noteIDOrder);
+            this.visibleCalendar.reorderNotesOnDay(noteIDOrder);
         }
     }
 

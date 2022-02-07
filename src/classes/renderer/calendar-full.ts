@@ -13,7 +13,7 @@ export default class CalendarFull{
      * The default options used when creating a full view calendar
      * @private
      */
-    private static defaultOptions: SimpleCalendar.SCRenderer.CalendarOptions = {
+    private static defaultOptions: SimpleCalendar.Renderer.CalendarOptions = {
         id: '',
         allowChangeMonth: true,
         allowSelectDateRange: false,
@@ -32,7 +32,7 @@ export default class CalendarFull{
      * @param calendar
      * @param options
      */
-    public static Render(calendar: Calendar, options: SimpleCalendar.SCRenderer.CalendarOptions = {id: ''}): string {
+    public static Render(calendar: Calendar, options: SimpleCalendar.Renderer.CalendarOptions = {id: ''}): string {
         options = deepMerge({}, this.defaultOptions, options);
 
         let monthYearFormat = calendar.generalSettings.dateFormat.monthYear;
@@ -131,15 +131,15 @@ export default class CalendarFull{
 
                         //Check for selected dates to highlight
                         if(ssMonth !== undefined && ssDay !== undefined && seMonth !== undefined && seDay !== undefined){
-                            const checkDate = {
+                            const checkDate: SimpleCalendar.DateTime = {
                                 year: options.showYear? vYear: 0,
                                 month: vMonth,
                                 day: (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation,
-                                allDay: true,
                                 hour: 0,
-                                minute: 0
+                                minute: 0,
+                                seconds: 0
                             }
-                            const inBetween = IsDayBetweenDates(calendar, checkDate, {year: ssYear, month: ssMonth, day: ssDay, allDay: true, minute: 0, hour: 0}, {year: seYear, month: seMonth, day: seDay, allDay: true, minute: 0, hour: 0});
+                            const inBetween = IsDayBetweenDates(calendar, checkDate, {year: ssYear, month: ssMonth, day: ssDay, hour: 0, minute: 0, seconds: 0}, {year: seYear, month: seMonth, day: seDay, hour: 0, minute: 0, seconds: 0});
                             switch (inBetween){
                                 case DateRangeMatch.Exact:
                                     dayClass += ' selected';
@@ -231,7 +231,7 @@ export default class CalendarFull{
             const calendarIndex = calendarElement.getAttribute('data-calendar') || '';
             const calendar = CalManager.getCalendar(calendarIndex);
             if(calendar){
-                let options: SimpleCalendar.SCRenderer.CalendarOptions = {id:''};
+                let options: SimpleCalendar.Renderer.CalendarOptions = {id:''};
                 const optionsInput = calendarElement.querySelector('.render-options');
                 if(optionsInput){
                     options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));
@@ -338,7 +338,8 @@ export default class CalendarFull{
                                 }
                                 options.date = {
                                     year: yearNumber,
-                                    month: monthIndex
+                                    month: monthIndex,
+                                    day:0
                                 };
                             }
                         }
