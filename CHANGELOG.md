@@ -113,6 +113,13 @@ The date/time selector that is used when choosing a date for notes or specifying
   - Added the ability to use the scroll wheel to change the number up or down in any of the text boxes.
   - Validation and changes are more consistent, they worked fine before but just feel better now.
 
+### Migration
+
+All the above changes have resulted in a change in how Simple Calendar stores data within FoundryVTT. Simple Calendar version 2 will detect if you are on a version 1 install and help users migrate their data over to the new format.
+
+It will also offer the option to remove the old data, to clean up the FoundryVTT databases. This is an optional step
+
+
 ### Quality of Life Changes
 
 - Added a new way to change time, you can now manually change the time by Rounds. 
@@ -124,8 +131,9 @@ The date/time selector that is used when choosing a date for notes or specifying
 - Fixed a bug where the display year in the calendar header would not update properly if the year being viewed was different from the current year.
 - Fixed a bug where clicking on a moon icon or note indicator would not select the day properly.
 - Fixed a bug with the Warhammer predefined calendar where the season starts were set to the wrong dates.
-- Fixed a bug where using Z or ZZ in the date/time formats would break the calendars configuration.
+- Fixed a bug where using Z or ZZ in the date/time formats would break the calendars' configuration.
 - Fixed a bug when using dates before the year zero year (negative timestamps) the real time clock would skip times near the end of an hour.
+- Fixed a bug with PF2E systems where the year in Simple Calendar would not match the year of the built-in world clock due to an update to the PF2E world clock.
 
 ### API Changes
 

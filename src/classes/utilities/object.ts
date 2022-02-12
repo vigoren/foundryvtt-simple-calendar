@@ -7,6 +7,14 @@ export function isObject(item: any): boolean {
 }
 
 /**
+ * If the passed in item is an empty object or not
+ * @param item
+ */
+export function isObjectEmpty(item: any): boolean {
+    return item && Object.keys(item).length === 0 && Object.getPrototypeOf(item) === Object.prototype;
+}
+
+/**
  * Preforms a light deep merge of any number of source objects into the target object
  * @param target
  * @param sources

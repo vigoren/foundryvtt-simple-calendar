@@ -1,0 +1,43 @@
+<div class="sc-migration-wrapper">
+    <h2>{{localize 'FSC.Migration.v1v2.Title'}}</h2>
+    <div>{{{localize 'FSC.Migration.v1v2.Help'}}}</div>
+    <div class="actions">
+        <button class="control primary calendar-migration" {{#if calendarButtonDisable}}disabled{{/if}}>{{localize 'FSC.Migration.CalendarDataButton'}}</button>
+        <button class="control primary note-migration" {{#if noteButtonDisable}}disabled{{/if}}>{{localize 'FSC.Migration.NoteDataButton'}}</button>
+    </div>
+    {{#if calendarMigrationRun}}
+        {{#if calendarMigrationSuccess}}
+            <div class="message success">
+                {{localize 'FSC.Migration.v1v2.CalendarDataSuccess'}}
+            </div>
+        {{else}}
+            <div class="message warn">
+                {{localize 'FSC.Migration.v1v2.CalendarDataError'}}
+            </div>
+        {{/if}}
+    {{/if}}
+    {{#if noteMigrationRun}}
+        {{#if noteMigrationSuccess}}
+            <div class="message success">
+                {{localize 'FSC.Migration.v1v2.NoteDataSuccess'}}
+            </div>
+        {{else}}
+            <div class="message warn">
+                {{localize 'FSC.Migration.v1v2.NoteDataError'}}
+            </div>
+        {{/if}}
+    {{/if}}
+    {{#if calendarMigrationRun}}
+        {{#if noteMigrationRun}}
+            <p>{{localize 'FSC.Migration.CleanData'}}</p>
+            <div class="actions">
+                <button class="control secondary clean-data" >{{localize 'FSC.Migration.CleanDataButton'}}</button>
+            </div>
+            {{#if cleanUpRun}}
+                <div class="message success">
+                    {{localize 'FSC.Migration.v1v2.CleanDataSuccess'}}
+                </div>
+            {{/if}}
+        {{/if}}
+    {{/if}}
+</div>

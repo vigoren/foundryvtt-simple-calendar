@@ -24,14 +24,6 @@
       flex-direction: column;
       padding: $spacer-half;
 
-      .message{
-        padding: $spacer-half;
-        margin-bottom: $spacer-half;
-        border: 1px solid;
-        border-radius: 5px;
-        font-size: 0.75rem;
-      }
-
       .section{
         display: flex;
         flex-direction: row;
@@ -111,7 +103,7 @@
 
             &.open{
               visibility: visible;
-              max-height: 150px;
+              max-height: 250px;
             }
             &.closed{
               visibility: hidden;
@@ -214,6 +206,7 @@
         border-radius: 5px;
         margin: $spacer-half;
         padding: $spacer-half;
+        cursor: pointer;
 
         &.clickable{
           cursor: pointer;

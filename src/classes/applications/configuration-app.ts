@@ -10,8 +10,7 @@ import {
     MoonYearResetOptions,
     PredefinedCalendars,
     SettingNames,
-    Themes,
-    YearNamingRules
+    Themes, YearNamingRules
 } from "../../constants";
 import Season from "../calendar/season";
 import Moon from "../calendar/moon";
@@ -52,6 +51,7 @@ export default class ConfigurationApp extends FormApplication {
      */
     private globalConfiguration: SimpleCalendar.GlobalConfigurationData = {
         id: '',
+        version: '',
         calendarsSameTimestamp: false,
         permissions: new UserPermissions(),
         secondsInCombatRound: 6,
@@ -182,7 +182,8 @@ export default class ConfigurationApp extends FormApplication {
                 theme: this.clientSettings.theme,
                 themes: {
                     'dark': 'FSC.Configuration.Theme.Dark',
-                    'light': 'FSC.Configuration.Theme.Light'
+                    'light': 'FSC.Configuration.Theme.Light',
+                    'classic': 'FSC.Configuration.Theme.Classic'
                 }
             },
             currentYear: (<Calendar>this.object).year,

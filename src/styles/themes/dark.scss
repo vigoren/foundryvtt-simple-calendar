@@ -30,7 +30,7 @@
       }
     }
     //Dialog Header
-    header{
+    header.window-header{
       background: $primary-1000;
       color: $white;
       font-size: 1rem;
@@ -56,8 +56,22 @@
 
     //Top message Styling
     .message{
-      background-color: $secondary-950;
-      border-color: $secondary-900 !important;
+      &.warn{
+        background-color: $secondary-950;
+        border-color: $secondary-900 !important;
+      }
+      &.success{
+        background-color: $success-950;
+        border-color: $success-900 !important;
+      }
+      &.info{
+        background-color: $primary-950;
+        border-color: $primary-900 !important;
+      }
+      &.danger{
+        background-color: $danger-1000;
+        border-color: $danger-950 !important;
+      }
     }
 
     //Calendar Styling
@@ -253,7 +267,7 @@
     }
 
     //Inputs
-    input, select{
+    input, select, option{
       background-color: $gray-700;
       border-color: $gray-500;
       color: $white;
@@ -351,14 +365,21 @@
         border-color: $primary-A400;
         &.active{
           background-color: $primary-800;
+          &.visible{
+            background-color: $primary-800;
+            &:hover{
+              background-color: $primary-800;
+            }
+          }
         }
         &.visible{
           background-color: $tertiary-600;
-        }
-        &.clickable{
           &:hover{
-            background-color: $primary-600;
+            background-color: $tertiary-600;
           }
+        }
+        &:hover{
+          background-color: $tertiary-400;
         }
         .calendar-actions{
           border-color: $primary-A400;
@@ -583,6 +604,14 @@
       }
       .notes{
         color: $primary-50;
+      }
+      input, select{
+        background-color: $gray-700;
+        border-color: $gray-500;
+        color: $white;
+        &:focus{
+          box-shadow: unset;
+        }
       }
     }
   }

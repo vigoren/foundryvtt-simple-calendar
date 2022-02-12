@@ -35,18 +35,21 @@ export default class CalendarManager {
             const cal = this.getDefaultCalendar();
             this.activeId = cal.id;
             this.visibleId = cal.id;
+        } else {
+            this.loadActiveCalendar();
         }
     }
 
     /**
      * Will save all calendars to Foundry's settings DB
      */
-    public saveCalendars(){
+    public async saveCalendars(){
         const calendarConfigurations: SimpleCalendar.CalendarData[] = [];
         for(const [key, value] of Object.entries(this.calendars)){
             calendarConfigurations.push(value.toConfig());
         }
-        return GameSettings.SaveObjectSetting(SettingNames.CalendarConfiguration, calendarConfigurations);
+        await GameSettings.SaveStringSetting(SettingNames.ActiveCalendar, this.calendars[this.activeId].id);
+        await GameSettings.SaveObjectSetting(SettingNames.CalendarConfiguration, calendarConfigurations);
     }
 
     /**
@@ -77,6 +80,16 @@ export default class CalendarManager {
         }
         MainApplication.updateApp();
         return calendars.length;
+    }
+
+    public loadActiveCalendar(): void {
+        const activeCalendarId= GameSettings.GetStringSettings(SettingNames.ActiveCalendar);
+        const cal = this.getCalendar(activeCalendarId);
+        if(cal){
+            this.activeId = cal.id;
+            this.visibleId = cal.id;
+        }
+        MainApplication.updateApp();
     }
 
     /**
@@ -179,10 +192,8 @@ export default class CalendarManager {
                     this.calendars[calendars[i].id] = calendars[i];
                 }
             }
-            //If the active calendar is no longer around then we need to reset it to the first calendar
-            if(!this.getActiveCalendar()){
-                this.setActiveCalendar(calendars[0].id);
-            }
+            this.setActiveCalendar(calendars[0].id);
+            this.setVisibleCalendar(calendars[0].id);
         }
     }
 
@@ -203,7 +214,7 @@ export default class CalendarManager {
             }
             (<Game>game).socket?.emit(SocketTypes.clock);
             MainApplication.clockClass = newActive.timeKeeper.getStatus();
-            MainApplication.updateApp();
+            GameSettings.SaveStringSetting(SettingNames.ActiveCalendar,newActive.id).catch(Logger.error);
 
             //TODO: Add check if we want to force the timestamps to change with the changing of the calendar
             //Simple Time: Updates on the world time changing

@@ -20,7 +20,8 @@ export default class GameSettingsRegistration{
             type: String,
             choices: {
                 'dark': GameSettings.Localize("FSC.Configuration.Theme.Dark"),
-                'light': GameSettings.Localize("FSC.Configuration.Theme.Light")
+                'light': GameSettings.Localize("FSC.Configuration.Theme.Light"),
+                'classic': GameSettings.Localize("FSC.Configuration.Theme.Classic")
             },
             default: 'dark',
             onChange: SCController.ThemeChange.bind(SCController)
@@ -79,6 +80,14 @@ export default class GameSettingsRegistration{
             default: [],
             onChange: CalManager.loadCalendars.bind(CalManager)
         });
+        (<Game>game).settings.register(ModuleName, SettingNames.ActiveCalendar, {
+            name: "Active Calendar",
+            scope: "world",
+            config: false,
+            type: String,
+            default: 'default',
+            onChange: CalManager.loadActiveCalendar.bind(CalManager)
+        });
         (<Game>game).settings.register(ModuleName, SettingNames.GlobalConfiguration, {
             name: "Global Configuration",
             scope: "world",
@@ -102,7 +111,8 @@ export default class GameSettingsRegistration{
             name: "Year Configuration",
             scope: "world",
             config: false,
-            type: Object
+            type: Object,
+            default: {}
         });
         (<Game>game).settings.register(ModuleName, SettingNames.WeekdayConfiguration, {
             name: "Weekday Configuration",

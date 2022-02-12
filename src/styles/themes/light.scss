@@ -56,8 +56,22 @@
 
     //Top message Styling
     .message{
-      background-color: $secondary-100;
-      border-color: $secondary !important;
+      &.warn{
+        background-color: $secondary-100;
+        border-color: $secondary !important;
+      }
+      &.success{
+        background-color: $success-100;
+        border-color: $success !important;
+      }
+      &.info{
+        background-color: $primary-100;
+        border-color: $primary !important;
+      }
+      &.danger{
+        background-color: $danger-100;
+        border-color: $danger!important;
+      }
     }
 
     //Calendar Styling
@@ -271,7 +285,7 @@
     }
 
     //Inputs
-    input, select{
+    input, select, option{
       background-color: $gray-400;
       color: $fontColor;
       &:focus{
@@ -369,14 +383,21 @@
         &.active{
           background-color: $primary;
           color: $white;
+          &.visible{
+            background-color: $primary-800;
+            &:hover{
+              background-color: $primary-800;
+            }
+          }
         }
         &.visible{
           background-color: $tertiary-200;
-        }
-        &.clickable{
           &:hover{
-            background-color: $primary-300;
+            background-color: $tertiary-200;
           }
+        }
+        &:hover{
+          background-color: $tertiary-300;
         }
         .calendar-actions{
           border-color: $primary-800;
@@ -601,6 +622,13 @@
       }
       .notes{
         color: $primary-1100;
+      }
+      input, select{
+        background-color: $gray-400;
+        color: $fontColor;
+        &:focus{
+          box-shadow: unset;
+        }
       }
     }
   }

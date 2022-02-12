@@ -9,7 +9,8 @@ module.exports = {
     mode: "production",
     entry: {
         "index": './src/index.ts',
-        "styles/calendar": './src/styles/index.scss'
+        "styles/calendar": './src/styles/index.scss',
+        "styles/themes/classic": './src/styles/themes/classic.scss'
     },
     optimization: {
         removeEmptyChunks: true,

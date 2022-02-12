@@ -9,18 +9,20 @@ import {
     CalManager,
     MainApplication,
     SC,
-    updateConfigurationApplication
+    updateConfigurationApplication, updateMigrationApplication, MigrationApplication
 } from "./classes";
 import {HandlebarsHelpers} from "./classes/api/handlebars-helpers";
 import GameSettingsRegistration from "./classes/foundry-interfacing/game-settings-registration";
 import CalendarManager from "./classes/calendar/calendar-manager";
 import MainApp from "./classes/applications/main-app";
 import ConfigurationApp from "./classes/applications/configuration-app";
+import MigrationApp from "./classes/applications/migration-app";
 
 updateCalManager(new CalendarManager());
 updateSC(new SCController());
 updateMainApplication(new MainApp());
 updateConfigurationApplication(new ConfigurationApp());
+updateMigrationApplication(new MigrationApp());
 
 //Expose the api
 (window as any).SimpleCalendar = {
@@ -44,6 +46,7 @@ Hooks.on('ready', () => {
     if(SC.clientSettings.openOnLoad){
         MainApplication.showApp();
     }
+    MigrationApplication.showMigration();
 });
 Hooks.on('getSceneControlButtons', SC.getSceneControlButtons.bind(SC));
 Hooks.on("updateWorldTime", SC.worldTimeUpdate.bind(SC));

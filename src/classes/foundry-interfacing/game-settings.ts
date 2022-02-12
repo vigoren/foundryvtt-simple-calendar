@@ -38,6 +38,17 @@ export class GameSettings {
     }
 
     /**
+     * Gets the current version of Simple Calendar
+     */
+    static GetModuleVersion(): string {
+        const mData = (<Game>game).modules.get(ModuleName);
+        if(mData){
+            return mData.data.version;
+        }
+        return '';
+    }
+
+    /**
      * Returns the localized string based on the key
      * @param {string} key The localization string key
      */

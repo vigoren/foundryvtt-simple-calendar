@@ -1,6 +1,6 @@
 <div class="sc-main-wrapper">
     {{#unless (eq '' message)}}
-        <div class="message">{{{message}}}</div>
+        <div class="message warn">{{{message}}}</div>
     {{/unless}}
     <div class="section calendar-section">
         <div class="calendar-display">
@@ -51,7 +51,7 @@
         <div class="sc-calendar-list sc-side-drawer {{#if uiElementStates.calendarDrawerOpen}}open{{else}}closed{{/if}}">
             <h2>{{localize 'FSC.Calendars'}}</h2>
             {{#each calendarList}}
-                <div class="calendar-display {{#if (eq id ../activeCalendarId)}}active{{else if (eq id ../calendar.id)}}visible{{/if}} {{#unless ../showChangeCalendarControls}}clickable{{/unless}}" data-calid="{{id}}">
+                <div class="calendar-display {{#if (eq id ../activeCalendarId)}}active{{/if}} {{#if (eq id ../calendar.id)}}visible{{/if}} {{#unless ../showChangeCalendarControls}}clickable{{/unless}}" data-calid="{{id}}">
                     <div class="details">
                         <div class="calendar-name">{{name}}</div>
                         <div class="calendar-date">
@@ -63,10 +63,11 @@
                             {{/if}}
                         </div>
                         {{#if ../showChangeCalendarControls}}
-                        <div class="calendar-actions">
-                            <button class="control save" {{#if (eq id ../activeCalendarId)}}disabled{{/if}}><span class="fa fa-check"></span> {{localize 'FSC.MakeActive'}}</button>
-                            <button class="control tertiary"><span class="fa fa-eye"></span> {{localize 'FSC.View'}}</button>
-                        </div>
+                            {{#unless (eq id ../activeCalendarId)}}
+                                <div class="calendar-actions">
+                                    <button class="control save"><span class="fa fa-check"></span> {{localize 'FSC.MakeActive'}}</button>
+                                </div>
+                            {{/unless}}
                         {{/if}}
                     </div>
                 </div>

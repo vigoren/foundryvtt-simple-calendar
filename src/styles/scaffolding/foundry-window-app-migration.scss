@@ -1,0 +1,18 @@
+@import "src/styles/variables";
+.simple-calendar{
+  .sc-migration-wrapper{
+    padding: $spacer-half;
+
+    .actions{
+      margin: $spacer-half 0;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-around;
+
+      button{
+        width: unset;
+      }
+    }
+  }
+}

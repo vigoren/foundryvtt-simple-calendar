@@ -4,16 +4,7 @@ import {DateSelector} from "../src/classes/date-selector";
 import Calendar from "../src/classes/calendar";
 import Note from "../src/classes/note";
 import UserPermissions from "../src/classes/configuration/user-permissions";
-import {
-    DateSelectorPositions,
-    GameSystems, GameWorldTimeIntegrations,
-    Icons,
-    LeapYearRules,
-    MoonYearResetOptions, NoteRepeat,
-    PredefinedCalendars,
-    PresetTimeOfDay, SimpleCalendarHooks, SocketTypes, Themes, TimeKeeperStatus,
-    YearNamingRules
-} from "../src/constants";
+import {  DateSelectorPositions, GameSystems, GameWorldTimeIntegrations, Icons, LeapYearRules, MoonYearResetOptions, NoteRepeat, PredefinedCalendars, PresetTimeOfDay, SimpleCalendarHooks, SocketTypes, Themes, TimeKeeperStatus, YearNamingRules } from "../src/constants";
 
 declare global{
     /**
@@ -1654,7 +1645,6 @@ declare global{
             numericRepresentation?: number;
         }
 
-
         /**
          * Interface for information about the app windows position
          * @internal
@@ -1766,7 +1756,7 @@ declare global{
             /** The current day */
             day: number
             /** The current time of day in seconds */
-            seconds: number
+            seconds: number;
         }
 
         /**
@@ -1893,6 +1883,8 @@ declare global{
          * @internal
          */
         interface GlobalConfigurationData extends IDataItemBase {
+            /** The current version of the module. */
+            version: string;
             /** If calendars should use the same timestamp. */
             calendarsSameTimestamp: boolean;
             /** All the set permissions for users. */

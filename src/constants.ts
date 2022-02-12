@@ -11,6 +11,12 @@ export const ModuleName = 'foundryvtt-simple-calendar';
 export const ModuleSocketName = `module.${ModuleName}`;
 
 /**
+ * The current version of the module
+ * @internal
+ */
+export const Version = `2.0.0-beta.1`
+
+/**
  * The name of the settings that are saved in the world settings database
  * @internal
  */
@@ -22,6 +28,7 @@ export enum SettingNames {
     AppPosition = 'app-position',
     CalendarConfigurationMenu= 'calendar-configuration-menu',
     CalendarConfiguration = 'calendar-configuration',
+    ActiveCalendar= 'active-calendar',
     GlobalConfiguration = 'global-configuration',
 
     YearConfiguration = 'year-config',
@@ -47,7 +54,18 @@ export enum Themes {
     /** The light theme */
     light = 'light',
     /** The Dark theme */
-    dark = 'dark'
+    dark = 'dark',
+    /** A theme based on how SC v1 looked */
+    classic = 'classic'
+}
+
+/**
+ * The different types of migrations that can happen
+ * @internal
+ */
+export enum MigrationTypes {
+    none = 'none',
+    v1To2 = 'v1-v2'
 }
 
 /**

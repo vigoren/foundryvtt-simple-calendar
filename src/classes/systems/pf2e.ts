@@ -14,6 +14,11 @@ export default class PF2E {
      */
     private static worldClockCodeChangeVersion = "2.14.4.8167";
     /**
+     * The version of PF2E where a fix was applied that change the value of the year zero that should be used
+     * @private
+     */
+    private static worldClockCodeChangeBackVersion = "3.0.1";
+    /**
      * Gets the world creation time in seconds
      * @return {number}
      */
@@ -34,9 +39,9 @@ export default class PF2E {
 
             // the PF2E System all calendars are based off of the gregorian calendar.
             // Now with update 2.15.0 all calendars are no longer adding arbitrary numbers to the display of the year but instead using the correct year
-            if(!adjustByDay && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0){
+            if(!adjustByDay && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) <= 0){
                 seconds += calendar.year.time.secondsPerDay;
-            } else if( adjustByDay && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) <= 0){
+            } else if( adjustByDay && (compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) <= 0 || compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) >= 0)){
                 seconds -= calendar.year.time.secondsPerDay;
             }
         }
@@ -53,7 +58,11 @@ export default class PF2E {
             //If we are using the Gregorian Calendar that ties into the pathfinder world we need to set the year zero to 1875
             // @ts-ignore
             if(game.pf2e.worldClock.dateTheme === 'AD'){
-                yearZero = compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0? 1970 : 1875;
+                if(compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) <= 0){
+                    yearZero = 1970;
+                } else {
+                    yearZero = 1875;
+                }
             }
             // @ts-ignore
             else if(game.pf2e.worldClock.dateTheme === 'CE'){
@@ -61,7 +70,11 @@ export default class PF2E {
             }
             // @ts-ignore
             else if(game.pf2e.worldClock.dateTheme === 'AR'){
-                yearZero = compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 ? 0 : 2700;
+                if(compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) <= 0){
+                    yearZero = 0;
+                } else {
+                    yearZero = 2700;
+                }
             }
         }
         return yearZero;
@@ -90,7 +103,11 @@ export default class PF2E {
         }
         // @ts-ignore
         else if(game.pf2e.worldClock.dateTheme === 'AR'){
-            adjust = 5;
+            if(compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) > 0){
+                adjust = 6;
+            } else {
+                adjust = 5;
+            }
         }
         return adjust
     }

@@ -1,0 +1,592 @@
+@import "../variables";
+.simple-calendar {
+  &.classic {
+    &.window-app {
+      background: inherit;
+    }
+
+    &.compact-view {
+      .sc-clock {
+        background: unset;
+      }
+
+      .time-keeper-buttons {
+        .control {
+          color: #000000;
+        }
+
+        .save {
+          color: #2f581d;
+        }
+
+        .secondary {
+          color: #de810d;
+
+          &:hover {
+            color: #de810d;
+          }
+        }
+
+        .delete {
+          color: #922121;
+        }
+      }
+    }
+
+    //Top message Styling
+    .message {
+      &.warn {
+        background-color: $secondary-100;
+        border-color: $secondary !important;
+      }
+
+      &.success {
+        background-color: $success-100;
+        border-color: $success !important;
+      }
+
+      &.info {
+        background-color: $primary-100;
+        border-color: $primary !important;
+      }
+
+      &.danger {
+        background-color: $danger-100;
+        border-color: $danger !important;
+      }
+    }
+
+    // All control button colors
+    .control {
+      border-color: $gray-600;
+      background-color: $gray-600;
+      color: $white;
+
+      &:hover, &.active {
+        text-shadow: unset;
+        color: $white;
+        background-color: $gray-500;
+      }
+
+      &:disabled {
+        color: $gray-300;
+        cursor: pointer;
+      }
+
+      &.primary {
+        background-color: #384582;
+        border-color: #384582;
+
+        &:hover, &.active {
+          background-color: #cad1f3;
+          color: #000;
+          text-shadow: 0 0 black;
+        }
+      }
+
+      &.secondary {
+        background-color: #de810d;
+        border-color: #de810d;
+        color: $fontColor;
+
+        &:hover, &.active {
+          background-color: $secondary-300;
+          color: $fontColor;
+        }
+      }
+
+      &.tertiary {
+        background-color: #603382;
+        border-color: #603382;
+
+        &:hover, &.active {
+          background-color: #cd9cf3;
+        }
+      }
+
+      &.delete {
+        background-color: #922121;
+        border-color: #922121;
+
+        &:hover, &.active {
+          background-color: #fbaeae;
+        }
+      }
+
+      &.save {
+        background-color: #2f581d;
+        border-color: #2f581d;
+
+        &:hover, &.active {
+          background-color: #9bce85;
+        }
+      }
+    }
+
+    .control-group {
+      .control {
+        border-right-color: $gray-500;
+
+        &:first-child {
+          border-left-color: $gray-600;
+        }
+
+        &:last-child {
+          border-right-color: $gray-600;
+        }
+
+        &.primary {
+          border-right-color: #cad1f3;
+
+          &:first-child {
+            border-left-color: #384582;
+          }
+
+          &:last-child {
+            border-right-color: #384582;
+          }
+        }
+
+        &.secondary {
+          border-right-color: $secondary-200;
+
+          &:first-child {
+            border-left-color: #de810d;
+          }
+
+          &:last-child {
+            border-right-color: #de810d;
+          }
+        }
+
+        &.tertiary {
+          border-right-color: #cd9cf3;
+
+          &:first-child {
+            border-left-color: #603382;
+          }
+
+          &:last-child {
+            border-right-color: #603382;
+          }
+        }
+
+        &.delete {
+          border-right-color: #fbaeae;
+
+          &:first-child {
+            border-left-color: #922121;
+          }
+
+          &:last-child {
+            border-right-color: #922121;
+          }
+        }
+
+        &.save {
+          border-right-color: #9bce85;
+
+          &:first-child {
+            border-left-color: #2f581d;
+          }
+
+          &:last-child {
+            border-right-color: #2f581d;
+          }
+        }
+      }
+    }
+
+    .controls.unit-controls {
+      .control-group {
+        .unit-list {
+          background-color: #384582;
+          border-color: #cad1f3;
+
+          li {
+            border-color: #cad1f3;
+
+            &.selected, &:hover {
+              background-color: #cad1f3;
+              color: #000000;
+            }
+          }
+        }
+      }
+    }
+
+    //Calendar Styling
+    .calendar {
+      background-color: #ffffff;
+      border-color: #c3c3c3;
+      color: #191813;
+
+      .calendar-header {
+        background-color: #ffffff;
+      }
+
+      .days {
+        .week {
+          .day {
+            &:hover {
+              background-color: #ddd;
+            }
+
+            &.current {
+              box-shadow: inset 0 0 5px #5c5cff;
+              background-color: #d2d2ff;
+
+              &:hover {
+                background-color: #5c5cff;
+              }
+            }
+
+            &.selected {
+              box-shadow: inset 0 0 5px #40a94d;
+              background-color: #eafff2;
+
+              &:hover {
+                background-color: #40a94d;
+              }
+            }
+
+            .day-notes {
+              .note-count {
+                background-color: #c30505;
+                color: #ffffff;
+
+                &.reminders {
+                  background-color: #384582;
+                }
+              }
+            }
+
+            .moons {
+              .moon-phase {
+                svg {
+                  filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    //Clock Styling
+    .sc-clock {
+      background-color: #ffffff;
+      border-color: #c3c3c3;
+
+      .animated-clock {
+        svg {
+          path {
+            fill: #c12121;
+            stroke: #c12121;
+          }
+        }
+      }
+
+      &.started {
+        .animated-clock {
+          svg {
+            path {
+              fill: green;
+              stroke: green;
+            }
+          }
+        }
+      }
+
+      &.paused {
+        .animated-clock {
+          svg {
+            path {
+              fill: #de810d;
+              stroke: #de810d;
+            }
+          }
+        }
+      }
+    }
+
+    //Date Selector Styling
+    .sc-date-selector-calendar-wrapper {
+      background-color: #ffffff;
+      border-color: #c3c3c3;
+      box-shadow: 2px 2px 2px $boxShadowColor;
+    }
+
+    //Time Selector Styling
+    .time-selector {
+      .sc-ts-inputs {
+        background-color: #ffffff;
+        border-color: #c3c3c3;
+
+        .dropdown {
+          background-color: #ffffff;
+          border-color: #c3c3c3;
+          box-shadow: 2px 2px 2px $boxShadowColor;
+
+          li {
+            &:nth-child(even) {
+              background-color: #d8d8d8;
+            }
+
+            &:hover {
+              background-color: #a8a8a8;
+            }
+          }
+        }
+      }
+    }
+
+    //Calendar List Styling
+    .sc-calendar-list {
+      .calendar-display {
+        color: #000000;
+        border-color: #cad1f3;
+
+        &.active {
+          background-color: #384582;
+          color: #ffffff;
+
+          &.visible {
+            background-color: #384582;
+
+            &:hover {
+              background-color: #384582;
+            }
+          }
+        }
+
+        &.visible {
+          color: #ffffff;
+          background-color: #603382;
+
+          &:hover {
+            background-color: #603382;
+          }
+        }
+
+        &:hover {
+          background-color: #cd9cf3;
+        }
+
+        .calendar-actions {
+          border-color: #cad1f3;
+        }
+
+        .animated-clock {
+          svg {
+            path {
+              fill: green;
+              stroke: green;
+            }
+          }
+        }
+      }
+    }
+
+    //Note List Styling
+    .sc-side-drawer {
+      background-color: #ffffff;
+      border-color: #000000;
+
+      .note-list {
+        .note {
+          border-color: gray;
+          background-color: #cacaca47;
+
+          &:hover {
+            background-color: #cbe0ff70;
+          }
+
+          &.drag-active {
+            background-color: #cbe0ff70;
+          }
+
+          .note-details-wrapper {
+            .note-details {
+              .note-category {
+                box-shadow: 1px 1px 5px #6b6b6b;
+                color: #ffffff;
+
+                &.player-visible {
+                  background-color: #2f581d;
+                  border-color: #2f581d;
+                }
+
+                &.not-player-visible {
+                  background-color: #922121;
+                  border-color: #922121;
+                }
+
+                &.reminder {
+                  background-color: #603382;
+                  border-color: #603382;
+                }
+
+                &.note-time {
+                  border-color: #444141;
+                  background-color: #444141;
+                }
+              }
+            }
+          }
+
+          .sorting-dragger {
+            border-color: #a5a5a5;
+            background-color: #c3c3c37a;
+            box-shadow: 1px 1px 5px #a5a5a5;
+          }
+        }
+      }
+    }
+
+    //Note Search Styling
+    .sc-note-search {
+      .search-box {
+        .control {
+          box-shadow: unset;
+          background-color: rgba(0, 0, 0, 0.05);
+          border-color: #7a7971;
+          color: #000000;
+        }
+      }
+    }
+
+    //Configuration Styling
+    .sc-configuration-wrapper {
+      .tabs {
+        .heading {
+          border-bottom-color: $gray-700;
+        }
+
+        .tab-section {
+          &.stripe {
+            background-color: #ffffff;
+            color: #000000;
+          }
+
+          .calendar-selector {
+            ul {
+              box-shadow: 1px 1px 5px #000000;
+
+              li {
+                background-color: $gray-100;
+                border-color: #000000;
+
+                &.active, &:hover {
+                  background-color: $gray-300;
+                }
+
+                &.new-calendar {
+                  color: #2f581d;
+                }
+              }
+            }
+          }
+        }
+
+        .item {
+          border-color: $gray-700;
+
+          &.active, &:hover {
+            background-color: $secondary;
+            color: $fontColor;
+          }
+        }
+      }
+
+      .tab-wrapper {
+        .warning {
+          background-color: $secondary-A500;
+          border-color: $secondary;
+          color: $fontColor;
+        }
+
+        .section {
+          h3 {
+            color: $primary-A200;
+          }
+        }
+
+        .f-table {
+          border-color: #9e9c9c;
+          background-color: $gray-200;
+          color: #000000;
+
+          .row {
+            &.head {
+              border-color: #9e9c9c;
+            }
+
+            &:nth-child(even) {
+              background-color: rgba($gray-500, 0.1);
+            }
+          }
+        }
+
+        .import-export {
+          .importing {
+            .progress {
+              background-color: $gray-700;
+              border-color: $gray-500;
+
+              .progress-bar {
+                background-color: $tertiary-300;
+              }
+            }
+          }
+        }
+
+        .quick-setup {
+          .predefined-list {
+            .predefined-calendar {
+              color: #603382;
+              border-color: #603382;
+              box-shadow: inset 0 0 5px #603382;
+
+              &.selected, &:hover {
+                border-color: #cd9cf3;
+                background-color: #cd9cf3;
+              }
+            }
+          }
+        }
+
+        .permissions {
+          .table-header {
+            border-color: $gray-600;
+          }
+        }
+
+        .about {
+          .row {
+            .card {
+              border-color: #9e9c9c;
+              background-color: $gray-200;
+            }
+          }
+        }
+      }
+    }
+
+    //Form Groups
+    .form-group {
+      border-color: #9e9c9c;
+      background-color: $gray-200;
+
+      label{
+        color: #000000;
+      }
+      &:hover {
+        background-color: $gray-300;
+      }
+      .notes {
+        color: $gray-800;
+      }
+    }
+  }
+}

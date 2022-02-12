@@ -377,17 +377,11 @@ export default class MainApp extends Application{
                     calendarActivate.forEach(e => {
                         e.addEventListener('click', this.changeCalendar.bind(this));
                     });
-
-                    //Calendar View Click
-                    appWindow.querySelectorAll('.sc-calendar-list .calendar-display .calendar-actions .tertiary').forEach(e => {
-                        e.addEventListener('click', this.changeVisibleCalendar.bind(this));
-                    });
-                } else {
-                    //Calendar View Click
-                    appWindow.querySelectorAll('.sc-calendar-list .calendar-display').forEach(e => {
-                        e.addEventListener('click', this.changeVisibleCalendar.bind(this));
-                    });
                 }
+                //Calendar View Click
+                appWindow.querySelectorAll('.sc-calendar-list .calendar-display').forEach(e => {
+                    e.addEventListener('click', this.changeVisibleCalendar.bind(this));
+                });
 
                 //-----------------------
                 // Note/Search Drawer

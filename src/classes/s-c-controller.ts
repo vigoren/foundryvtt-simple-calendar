@@ -42,6 +42,7 @@ export default class SCController {
         this.clientSettings = {id: '', theme: Themes.dark, openOnLoad: true, openCompact: false, rememberPosition: true, appPosition: {}};
         this.globalConfiguration = {
             id: '',
+            version: '',
             calendarsSameTimestamp: false,
             permissions: new UserPermissions(),
             secondsInCombatRound: 6,
@@ -50,8 +51,9 @@ export default class SCController {
     }
 
     public static ThemeChange(){
+        this.LoadThemeCSS();
         const newTheme = GameSettings.GetStringSettings(SettingNames.Theme);
-        const themes = [Themes.light, Themes.dark]
+        const themes = [Themes.light, Themes.dark, Themes.classic]
         //Update the main app
         const mainApp = document.getElementById(MainApp.appWindowId);
         if(mainApp){
@@ -66,6 +68,25 @@ export default class SCController {
         }
     }
 
+    /**
+     * Loads any extra css files required for the specified theme
+     * This is required for all themes other than Light and Dark
+     */
+    public static LoadThemeCSS(){
+        const theme = GameSettings.GetStringSettings(SettingNames.Theme);
+        if(theme !== Themes.dark && theme !== Themes.light){
+            const cssExists = document.head.querySelector(`theme-${theme}`);
+            if(cssExists === null){
+                const newStyle = document.createElement('link');
+                newStyle.setAttribute('id', `#theme-${theme}`);
+                newStyle.setAttribute('rel', 'stylesheet');
+                newStyle.setAttribute('type', 'text/css');
+                newStyle.setAttribute('href', `modules/foundryvtt-simple-calendar/styles/themes/${theme}.css`);
+                document.head.append(newStyle);
+            }
+        }
+    }
+
     public initialize(){
         this.sockets.initialize();
         this.checkNoteReminders();
@@ -75,6 +96,7 @@ export default class SCController {
      * Load the global configuration and apply it
      */
     public load(){
+        SCController.LoadThemeCSS();
         const globalConfiguration = <SimpleCalendar.GlobalConfigurationData>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
         this.globalConfiguration.permissions.loadFromSettings(globalConfiguration.permissions);
         this.globalConfiguration.secondsInCombatRound = globalConfiguration.secondsInCombatRound;
@@ -93,8 +115,11 @@ export default class SCController {
     public save(globalConfig: SimpleCalendar.GlobalConfigurationData | null = null, clientConfig: SimpleCalendar.ClientSettingsData | null = null){
         CalManager.saveCalendars().catch(Logger.error);
         if(globalConfig && clientConfig){
-            const gc = {
-                permissions: globalConfig.permissions.toConfig(),
+
+            const gc: SimpleCalendar.GlobalConfigurationData = {
+                id: '',
+                version: GameSettings.GetModuleVersion(),
+                permissions: globalConfig.permissions,
                 secondsInCombatRound: globalConfig.secondsInCombatRound,
                 calendarsSameTimestamp: globalConfig.calendarsSameTimestamp,
                 syncCalendars: globalConfig.syncCalendars
