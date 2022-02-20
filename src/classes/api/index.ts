@@ -468,7 +468,6 @@ export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: strin
         if(dayIndex >= month.days.length){
             dayIndex = month.days.length - 1;
         }
-        const day = month.days[dayIndex];
         let hour = date.hour && date.hour >= 0? date.hour : 0;
         if(hour >= activeCalendar.year.time.hoursInDay){
             hour = activeCalendar.year.time.hoursInDay - 1;
@@ -482,10 +481,10 @@ export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: strin
             second = activeCalendar.year.time.secondsInMinute - 1;
         }
         if(format){
-            return FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: hour, minute: minute, seconds: second}, format, activeCalendar);
+            return FormatDateTime({year: year, month: monthIndex, day: dayIndex, hour: hour, minute: minute, seconds: second}, format, activeCalendar);
         } else {
             return {
-                date: FormatDateTime({year: year, month: month.numericRepresentation, day: day.numericRepresentation, hour: 0, minute: 0, seconds:0}, activeCalendar.generalSettings.dateFormat.date, activeCalendar),
+                date: FormatDateTime({year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, seconds:0}, activeCalendar.generalSettings.dateFormat.date, activeCalendar),
                 time: FormatDateTime({year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds:second}, activeCalendar.generalSettings.dateFormat.time, activeCalendar)
             };
         }
@@ -906,6 +905,21 @@ export function getAllWeekdays(calendarId: string = 'active'): SimpleCalendar.We
 }
 
 /**
+ * Gets the details about the current active calendar.
+ *
+ * @returns The current active calendars configuration.
+ *
+ * @example
+ * ```javascript
+ * cosnt c = SimpleCalendar.api.getCurrentCalendar();
+ * console.log(c); // Will contain all the configuration data for the current calendar.
+ * ```
+ */
+export function getCurrentCalendar(): SimpleCalendar.CalendarData {
+    return CalManager.getActiveCalendar().toConfig();
+}
+
+/**
  * Gets the details about the current day for the specified calendar.
  *
  * @param calendarId Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used.
@@ -1037,11 +1051,11 @@ export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.
 export function getCurrentWeekday(calendarId: string = 'active'): SimpleCalendar.WeekdayData | null{
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(activeCalendar){
-        const month = activeCalendar.year.getMonth();
-        if(month){
-            const day = month.getDay();
-            if(day){
-                const weekdayIndex = activeCalendar.year.dayOfTheWeek(activeCalendar.year.numericRepresentation, month.numericRepresentation, day.numericRepresentation);
+        const monthIndex = activeCalendar.year.months.findIndex(m => m.current);
+        if(monthIndex > -1){
+            const dayIndex = activeCalendar.year.months[monthIndex].days.findIndex(d => d.current);
+            if(dayIndex > -1){
+                const weekdayIndex = activeCalendar.year.dayOfTheWeek(activeCalendar.year.numericRepresentation, monthIndex, dayIndex);
                 return activeCalendar.year.weekdays[weekdayIndex].toConfig();
             }
         }
@@ -1257,16 +1271,17 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
             }
 
             if(!date.month || !date.day){
-                const curMonth = activeCalendar.year.getMonth();
+                const monthIndex = activeCalendar.year.months.findIndex(m => m.current);
                 if(!date.month){
-                    date.month = curMonth? activeCalendar.year.months.findIndex(m => m.numericRepresentation === curMonth.numericRepresentation) : 0;
+                    date.month = monthIndex > -1? monthIndex : 0;
                 }
 
                 if(!date.day){
-                    if(curMonth){
-                        const curDay = curMonth.getDay();
-                        date.day = curDay? curMonth.days.findIndex(d => d.numericRepresentation === curDay.numericRepresentation) : 0;
-                    } else {
+                    date.day = -1;
+                    if(monthIndex > -1){
+                        date.day = activeCalendar.year.months[monthIndex].days.findIndex(d => d.current);
+                    }
+                    if(date.day === -1){
                         date.day = 0;
                     }
                 }

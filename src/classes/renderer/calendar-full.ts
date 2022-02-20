@@ -5,7 +5,7 @@ import {GetIcon} from "../utilities/visual";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {CalendarClickEvents, DateRangeMatch} from "../../constants";
 import RendererUtilities from "./utilities";
-import {CalManager} from "../index";
+import {CalManager, NManager} from "../index";
 
 export default class CalendarFull{
 
@@ -40,52 +40,36 @@ export default class CalendarFull{
             monthYearFormat = monthYearFormat.replace(/YN|YA|YZ|YY(?:YY)?/g, '');
         }
 
-        let vYear, vMonth = 1, vMonthIndex, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [], calendarStyle = '', seasonName = '';
+        let vYear, vMonthIndex = 0, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [], calendarStyle = '', seasonName = '';
         if(options.date){
             if(options.date.month >= 0 && options.date.month < calendar.year.months.length){
-                vMonth = calendar.year.months[options.date.month].numericRepresentation;
                 vMonthIndex = options.date.month;
-            } else {
-                vMonth = calendar.year.months[0].numericRepresentation;
-                vMonthIndex = 0;
             }
             vYear = options.date.year;
-            const visibleMonth = calendar.year.months[vMonthIndex]
-            if(visibleMonth){
-                weeks = calendar.year.daysIntoWeeks(visibleMonth, vYear, calendar.year.weekdays.length);
-            }
         } else {
             vYear = calendar.year.visibleYear;
-            const visibleMonth = calendar.year.getMonth('visible');
-            if(visibleMonth){
-                vMonth = visibleMonth.numericRepresentation;
-                weeks = calendar.year.daysIntoWeeks(visibleMonth, vYear, calendar.year.weekdays.length);
-            }
-            vMonthIndex = calendar.year.months.findIndex(m => m.numericRepresentation === vMonth);
+            vMonthIndex = calendar.year.getMonthIndex('visible');
         }
+        weeks = calendar.year.daysIntoWeeks(vMonthIndex, vYear, calendar.year.weekdays.length);
 
         //TODO: When Changing the year the same day and month are considered selected
         if(options.selectedDates){
             ssYear = options.selectedDates.start.year;
             seYear = options.selectedDates.end.year;
-            ssMonth = options.selectedDates.start.month > 0 && options.selectedDates.start.month < calendar.year.months.length? calendar.year.months[options.selectedDates.start.month].numericRepresentation : calendar.year.months[0].numericRepresentation;
-            seMonth = options.selectedDates.end.month > 0 && options.selectedDates.end.month < calendar.year.months.length? calendar.year.months[options.selectedDates.end.month].numericRepresentation : calendar.year.months[0].numericRepresentation;
-            ssDay = options.selectedDates.start.day || 1;
-            seDay = options.selectedDates.end.day || 1;
+            ssMonth = options.selectedDates.start.month > 0 && options.selectedDates.start.month < calendar.year.months.length? options.selectedDates.start.month : 0;
+            seMonth = options.selectedDates.end.month > 0 && options.selectedDates.end.month < calendar.year.months.length? options.selectedDates.end.month : 0;
+            ssDay = options.selectedDates.start.day || 0;
+            seDay = options.selectedDates.end.day || 0;
         } else {
             ssYear = seYear = calendar.year.selectedYear;
-            const selectedMonth = calendar.year.getMonth('selected');
-            if(selectedMonth){
-                ssMonth = seMonth = selectedMonth.numericRepresentation;
-                const selectedDay = selectedMonth.getDay('selected');
-                if(selectedDay){
-                    ssDay = seDay = selectedDay.numericRepresentation;
-                }
+            ssMonth = seMonth = calendar.year.getMonthIndex('selected');
+            if(ssMonth > -1){
+                ssDay = seDay = calendar.year.months[ssMonth].getDayIndex('selected');
             }
         }
 
         if(options.showSeasonName || options.colorToMatchSeason){
-            const season = calendar.year.getSeason(vMonthIndex, ssDay? ssDay : 1);
+            const season = calendar.year.getSeason(vMonthIndex, ssDay? ssDay : 0);
             seasonName = season.name;
             calendarStyle = `border-color: ${season.color};`;
         }
@@ -102,7 +86,7 @@ export default class CalendarFull{
         } else {
             html += `<span></span>`;
         }
-        html += `<span class="month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar, {year: options.editYear})}</span>`;
+        html += `<span class="month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonthIndex, day: 0, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar, {year: options.editYear})}</span>`;
         if(options.allowChangeMonth){
             html += `<a class="fa fa-chevron-right" title="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
         } else {
@@ -128,13 +112,14 @@ export default class CalendarFull{
                 for(let x = 0; x < weeks[i].length; x++){
                     if(weeks[i][x]){
                         let dayClass = 'day';
+                        const dayIndex = calendar.year.months[vMonthIndex].days.findIndex(d => d.numericRepresentation === (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation);
 
                         //Check for selected dates to highlight
                         if(ssMonth !== undefined && ssDay !== undefined && seMonth !== undefined && seDay !== undefined){
                             const checkDate: SimpleCalendar.DateTime = {
                                 year: options.showYear? vYear: 0,
-                                month: vMonth,
-                                day: (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation,
+                                month: vMonthIndex,
+                                day: dayIndex,
                                 hour: 0,
                                 minute: 0,
                                 seconds: 0
@@ -161,13 +146,13 @@ export default class CalendarFull{
                             dayClass += ' current';
                         }
 
-                        html += `<div class="${dayClass}" data-day="${(<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation}">`;
+                        html += `<div class="${dayClass}" data-day="${dayIndex}">`;
                         if(options.showNoteCount){
-                            html += `<div class="day-notes">${CalendarFull.NoteIndicator(calendar, vYear, vMonth, <SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x])}</div>`;
+                            html += `<div class="day-notes">${CalendarFull.NoteIndicator(calendar, vYear, vMonthIndex, dayIndex)}</div>`;
                         }
                         html += (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).name;
                         if(options.showMoonPhases){
-                            html += `<div class="moons">${CalendarFull.MoonPhaseIcons(calendar, vYear, vMonth, <SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x])}</div>`;
+                            html += `<div class="moons">${CalendarFull.MoonPhaseIcons(calendar, vYear, vMonthIndex, dayIndex)}</div>`;
                         }
                         html += '</div>';
                     } else {
@@ -282,8 +267,8 @@ export default class CalendarFull{
                                     }
                                     const dataDate = target.getAttribute('data-day');
                                     if(dataDate){
-                                        const dayNumber = parseInt(dataDate);
-                                        if(!isNaN(dayNumber)){
+                                        const dayIndex = parseInt(dataDate);
+                                        if(!isNaN(dayIndex)){
                                             const start = {year: 0, month: 0, day: 0};
                                             const end = {year: 0, month: 0, day: 0};
 
@@ -291,35 +276,35 @@ export default class CalendarFull{
                                                 if(!options.selectedDates || options.selectedDates.end.year !== null){
                                                     start.year = yearNumber;
                                                     start.month = monthIndex;
-                                                    start.day = dayNumber;
+                                                    start.day = dayIndex;
                                                     end.year = NaN;
                                                     end.month = NaN;
                                                     end.day = NaN;
                                                 } else {
                                                     start.year = options.selectedDates.start.year;
                                                     start.month = options.selectedDates.start.month;
-                                                    start.day = options.selectedDates.start.day || 1;
+                                                    start.day = options.selectedDates.start.day || 0;
                                                     end.year = yearNumber;
                                                     end.month = monthIndex;
-                                                    end.day = dayNumber;
+                                                    end.day = dayIndex;
 
                                                     // End date is less than start date
-                                                    if((start.day > dayNumber && start.month  === monthIndex  && start.year === yearNumber) || (start.month > monthIndex && start.year === yearNumber) || start.year > yearNumber){
+                                                    if((start.day > dayIndex && start.month  === monthIndex  && start.year === yearNumber) || (start.month > monthIndex && start.year === yearNumber) || start.year > yearNumber){
                                                         end.year = options.selectedDates.start.year;
                                                         end.month = options.selectedDates.start.month;
-                                                        end.day = options.selectedDates.start.day || 1;
+                                                        end.day = options.selectedDates.start.day || 0;
                                                         start.year = yearNumber;
                                                         start.month = monthIndex;
-                                                        start.day = dayNumber;
+                                                        start.day = dayIndex;
                                                     }
                                                 }
                                             } else {
                                                 start.year = yearNumber;
                                                 start.month = monthIndex;
-                                                start.day = dayNumber;
+                                                start.day = dayIndex;
                                                 end.year = yearNumber;
                                                 end.month = monthIndex;
-                                                end.day = dayNumber;
+                                                end.day = dayIndex;
                                             }
                                             options.selectedDates = {
                                                 start: start,
@@ -367,16 +352,15 @@ export default class CalendarFull{
      * Checks if the passed in day has any notes from the passed in calendar and generates the note indicators
      * @param {Calendar} calendar The calendar to pull the data from
      * @param {number} visibleYear
-     * @param {number} visibleMonth
-     * @param {DayTemplate} day They day to check
+     * @param {number} visibleMonthIndex
+     * @param dayIndex They day to check
      */
-    public static NoteIndicator(calendar: Calendar, visibleYear: number, visibleMonth: number, day: SimpleCalendar.HandlebarTemplateData.Day): string {
+    public static NoteIndicator(calendar: Calendar, visibleYear: number, visibleMonthIndex: number, dayIndex: number): string {
         let r = '';
-        const notes = calendar.notes.filter(n => n.isVisible(visibleYear, visibleMonth, day.numericRepresentation));
+        const notes = NManager.getNotesForDay(calendar.id, visibleYear, visibleMonthIndex, dayIndex);
         if(notes.length){
-            const userId = GameSettings.UserID();
-            const regularNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
-            const reminderNotes = notes.filter(n => n.remindUsers.indexOf(userId) !== -1);
+            const regularNotes = notes.filter(n => !n.userReminderRegistered());
+            const reminderNotes = notes.filter(n => n.userReminderRegistered());
 
             if(regularNotes.length){
                 const rCount = regularNotes.length < 100? regularNotes.length : 99;
@@ -396,14 +380,15 @@ export default class CalendarFull{
      * Gets the icons for all moon phases for the passed in day from the passed in calendar and generates the HTML
      * @param {Calendar} calendar The calendar to pull data from
      * @param {number} visibleYear
-     * @param {number} visibleMonth
-     * @param {DayTemplate} day The day to check
+     * @param {number} visibleMonthIndex
+     * @param dayIndex The day to check
      */
-    public static MoonPhaseIcons(calendar: Calendar, visibleYear: number, visibleMonth: number, day: SimpleCalendar.HandlebarTemplateData.Day): string {
+    public static MoonPhaseIcons(calendar: Calendar, visibleYear: number, visibleMonthIndex: number, dayIndex: number): string {
         let html = ''
         for(let i = 0; i < calendar.year.moons.length; i++){
-            const mp = calendar.year.moons[i].getDateMoonPhase(calendar.year, visibleYear, visibleMonth, day.numericRepresentation);
-            if(mp && (mp.singleDay || day.selected || day.current)){
+            const mp = calendar.year.moons[i].getDateMoonPhase(calendar.year, visibleYear, visibleMonthIndex, dayIndex);
+            const d = calendar.year.months[visibleMonthIndex].days[dayIndex];
+            if(mp && (mp.singleDay || d.selected || d.current)){
                 let moon = GetIcon(mp.icon, "#000000", calendar.year.moons[i].color);
                 html += `<span class="moon-phase ${mp.icon}" title="${calendar.year.moons[i].name} - ${mp.name}">${moon}</span>`;
             }

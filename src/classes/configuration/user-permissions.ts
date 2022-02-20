@@ -98,7 +98,9 @@ export default class UserPermissions extends ConfigurationItemBase{
             this.addNotes = config.addNotes;
             this.changeDateTime = config.changeDateTime;
             this.reorderNotes = config.reorderNotes;
-            this.changeActiveCalendar = config.changeActiveCalendar
+            if(config.hasOwnProperty('changeActiveCalendar')){
+                this.changeActiveCalendar = config.changeActiveCalendar
+            }
         }
     }
 }

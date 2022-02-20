@@ -3,12 +3,14 @@ import type MainApp from "./applications/main-app";
 import type SCController from "./s-c-controller";
 import ConfigurationApp from "./applications/configuration-app";
 import MigrationApp from "./applications/migration-app";
+import NoteManager from "./notes/note-manager";
 
 export let CalManager: CalendarManager;
 export let MainApplication: MainApp;
 export let ConfigurationApplication: ConfigurationApp;
 export let MigrationApplication: MigrationApp;
 export let SC: SCController;
+export let NManager: NoteManager;
 
 /**
  * Updates the global calendar manager to the passed in value, should only be called once
@@ -48,4 +50,12 @@ export function updateMigrationApplication(app: MigrationApp){
  */
 export function updateSC(sc: SCController){
     SC = sc;
+}
+
+/**
+ * Updates the global note manager to the passed in value, should only be called once
+ * @param manager
+ */
+export function updateNManager(manager: NoteManager){
+    NManager = manager;
 }

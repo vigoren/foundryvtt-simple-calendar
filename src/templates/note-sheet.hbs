@@ -1,0 +1,65 @@
+<form class="" editable="{{editable}}">
+    {{#if editMode}}
+        <h1>{{localize 'FSC.Notes.NewFor'}} {{dateDisplay}}</h1>
+        <div class="form-group open">
+            <label for="scNoteTitle">{{localize 'FSC.Notes.Title'}}</label>
+            <div class="form-fields">
+                <input value="{{data.name}}" placeholder="{{localize 'FSC.Notes.New'}}" type="text" id="scNoteTitle" />
+            </div>
+            <p class="notes">{{localize 'FSC.Notes.TitleHelp'}}</p>
+        </div>
+        <div class="form-group open date-selector">
+            <label for="{{dateSelectorId}}">{{localize 'FSC.Notes.DateTime.Title'}}</label>
+            <div class="form-fields">
+                {{sc-date-selector id=dateSelectorId showDateSelector=true showTimeSelector=true placeholderText='' allowDateRangeSelection=true timeSelected=timeSelected selectedStartDate=noteData.startDate selectedEndDate=noteData.endDate onDateSelect=dateSelectorSelect }}
+            </div>
+            <p class="notes">{{localize 'FSC.Notes.DateTime.Help'}}</p>
+        </div>
+        <div class="form-group open">
+            <label for="scNoteRepeats">{{localize 'FSC.Notes.Repeating'}}</label>
+            <div class="form-fields">
+                <select id="scNoteRepeats">
+                    {{selectOptions repeatOptions selected=noteData.repeats localize=true}}
+                </select>
+            </div>
+            <p class="notes">{{localize 'FSC.Notes.RepeatingHelp'}}</p>
+        </div>
+        <div class="form-group open">
+            <label>{{localize 'FSC.Configuration.Notes.NoteCategories'}}</label>
+            <div class="form-fields category-list">
+                {{#each allCategories}}
+                    <label class="note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{name}}" type="checkbox" name="scNoteCategories" {{checked selected}} /> {{name}}</label>
+                {{/each}}
+            </div>
+            <p class="notes">{{localize 'FSC.Configuration.Notes.NoteCategoriesHelp'}}</p>
+        </div>
+        <div class="form-group open">
+            <label>{{localize 'FSC.Notes.UserPermissionTitle'}}</label>
+            <div class="form-fields category-list">
+                {{#each users}}
+                    <label class="note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{id}}" type="checkbox" name="scUserPermissions" {{checked selected}} {{#if disabled}}disabled{{/if}} /> {{name}}</label>
+                {{/each}}
+            </div>
+            <p class="notes">{{localize 'FSC.Notes.UserPermissionHelp'}}</p>
+        </div>
+        <h2>{{localize 'FSC.Details'}}</h2>
+        <div class="editor-container">
+            {{editor target="content" content=data.content editable=true button=true owner=owner}}
+        </div>
+        <div class="edit-controls">
+            <button id="scSubmit" class="control save" type="submit" name="submit" title="{{localize 'FSC.Notes.Save'}}">
+                <i class="far fa-save"></i> {{localize 'FSC.Notes.Save'}}
+            </button>
+            <button class="control delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</button>
+        </div>
+    {{else}}
+        <h2>{{data.name}}</h2>
+
+        {{#if editable}}
+            <div class="edit-controls">
+                <button class="control primary fa fa-edit" id="scNoteEdit"> {{localize 'FSC.Edit'}}</button>
+                <button class="control delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</button>
+            </div>
+        {{/if}}
+    {{/if}}
+</form>

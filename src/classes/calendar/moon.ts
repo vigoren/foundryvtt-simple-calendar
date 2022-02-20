@@ -185,10 +185,10 @@ export default class Moon extends ConfigurationItemBase{
      * This phase will be within + or - 1 days of when the phase actually begins
      * @param {Year} year The year class to get the information from
      * @param {number} yearNum The year to use
-     * @param {number} monthNum The month to use
-     * @param {number} dayNum The day to use
+     * @param {number} monthIndex The month to use
+     * @param {number} dayIndex The day to use
      */
-    getDateMoonPhase(year: Year, yearNum: number, monthNum: number, dayNum: number): SimpleCalendar.MoonPhase{
+    getDateMoonPhase(year: Year, yearNum: number, monthIndex: number, dayIndex: number): SimpleCalendar.MoonPhase{
         let firstNewMoonDays = year.dateToDays(this.firstNewMoon.year, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
         let resetYearAdjustment = 0;
         if(this.firstNewMoon.yearReset === MoonYearResetOptions.LeapYear){
@@ -209,7 +209,7 @@ export default class Moon extends ConfigurationItemBase{
             }
         }
 
-        const daysSoFar = year.dateToDays(yearNum, monthNum, dayNum, true, true);
+        const daysSoFar = year.dateToDays(yearNum, monthIndex, dayIndex, true, true);
         const daysSinceReferenceMoon = daysSoFar - firstNewMoonDays + resetYearAdjustment;
         const moonCycles = daysSinceReferenceMoon / this.cycleLength;
         let daysIntoCycle = ((moonCycles - Math.floor(moonCycles)) * this.cycleLength) + this.cycleDayAdjust;

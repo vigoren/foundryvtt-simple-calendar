@@ -166,32 +166,33 @@ export default class Year extends ConfigurationItemBase {
                         });
                     }
                 }
-                const notes = activeCalendar.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
+                /*const notes = activeCalendar.notes.filter(n => n.isVisible(this.numericRepresentation, currentMonth.numericRepresentation, d.numericRepresentation));
                 const userId = GameSettings.UserID();
                 if(notes.length){
                     sNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
                     remNotes = notes.filter(n => n.remindUsers.indexOf(userId) !== -1);
-                }
+                }*/
             }
         }
 
         if(selectedMonth){
             const d = selectedMonth.getDay('selected');
             if(d){
-                const notes = activeCalendar.notes.filter(n => n.isVisible(this.selectedYear, selectedMonth.numericRepresentation, d.numericRepresentation));
+                /*const notes = activeCalendar.notes.filter(n => n.isVisible(this.selectedYear, selectedMonth.numericRepresentation, d.numericRepresentation));
                 const userId = GameSettings.UserID();
                 if(notes.length){
                     sNotes = notes.filter(n => n.remindUsers.indexOf(userId) === -1);
                     remNotes = notes.filter(n => n.remindUsers.indexOf(userId) !== -1);
-                }
+                }*/
             }
         }
 
         const currentSeason = this.getCurrentSeason();
 
         let weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [];
-        if(visibleMonth){
-            weeks = this.daysIntoWeeks(visibleMonth, this.visibleYear, this.weekdays.length);
+        const visibleMonthIndex = this.getMonthIndex('visible');
+        if(visibleMonthIndex > -1){
+            weeks = this.daysIntoWeeks(visibleMonthIndex, this.visibleYear, this.weekdays.length);
         }
         return {
             ...super.toTemplate(),
@@ -254,15 +255,15 @@ export default class Year extends ConfigurationItemBase {
 
     /**
      * Will take the days of the passed in month and break it into an array of weeks
-     * @param {Month} month The month to get the days from
-     * @param {number} year The year the month is in (for leap year calculation)
-     * @param {number} weekLength How many days there are in a week
+     * @param monthIndex The month to get the days from
+     * @param year The year the month is in (for leap year calculation)
+     * @param weekLength How many days there are in a week
      */
-    daysIntoWeeks(month: Month, year: number, weekLength: number): (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][]{
+    daysIntoWeeks(monthIndex: number, year: number, weekLength: number): (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][]{
         const weeks = [];
-        const dayOfWeekOffset = this.monthStartingDayOfWeek(month, year);
+        const dayOfWeekOffset = this.monthStartingDayOfWeek(monthIndex, year);
         const isLeapYear = this.leapYearRule.isLeapYear(year);
-        const days = month.getDaysForTemplate(isLeapYear);
+        const days = this.months[monthIndex].getDaysForTemplate(isLeapYear);
 
         if(days.length && weekLength > 0){
             const startingWeek = [];
@@ -347,6 +348,11 @@ export default class Year extends ConfigurationItemBase {
     getMonth(setting: string = 'current'){
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
         return this.months.find(m => m[verifiedSetting]);
+    }
+
+    getMonthIndex(setting: string = 'current'){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        return this.months.findIndex(m => m[verifiedSetting]);
     }
 
     /**
@@ -545,30 +551,25 @@ export default class Year extends ConfigurationItemBase {
 
     /**
      * Calculates the day of the week the first day of the currently visible month lands on
-     * @param {Month} month The month to get the starting day of the week for
+     * @param {Month} monthIndex The month to get the starting day of the week for
      * @param {number} year The year the check
      * @return {number}
      */
-    monthStartingDayOfWeek(month: Month, year: number): number {
-        if(month){
-            if(month.intercalary && !month.intercalaryInclude){
-                return 0;
-            } else {
-                return this.dayOfTheWeek(year, month.numericRepresentation, 1);
-            }
-        } else {
-            return 0;
+    monthStartingDayOfWeek(monthIndex: number, year: number): number {
+        if(monthIndex > -1 && monthIndex < this.months.length && !(this.months[monthIndex].intercalary && !this.months[monthIndex].intercalaryInclude)){
+            return this.dayOfTheWeek(year, monthIndex, 0);
         }
+        return 0;
     }
 
     /**
      * Calculates the day of the week a passed in day falls on based on its month and year
      * @param {number} year The year of the date to find its day of the week
-     * @param {number} targetMonth The month that the target day is in
-     * @param {number} targetDay  The day of the month that we want to check
+     * @param {number} monthIndex The month that the target day is in
+     * @param {number} dayIndex  The day of the month that we want to check
      * @return {number}
      */
-    dayOfTheWeek(year: number, targetMonth: number, targetDay: number): number{
+    dayOfTheWeek(year: number, monthIndex: number, dayIndex: number): number{
         if(this.weekdays.length){
             const activeCalendar = CalManager.getActiveCalendar();
             if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync){
@@ -578,12 +579,12 @@ export default class Year extends ConfigurationItemBase {
                 }
             }
 
-            const month = this.months.find(m => m.numericRepresentation === targetMonth);
+            const month = this.months[monthIndex];
             let daysSoFar;
             if(month && month.startingWeekday !== null){
-                daysSoFar = targetDay + month.startingWeekday - 2;
+                daysSoFar = dayIndex + month.startingWeekday - 1;
             } else {
-                daysSoFar = this.dateToDays(year, targetMonth, targetDay) + this.firstWeekday;
+                daysSoFar = this.dateToDays(year, monthIndex, dayIndex) + this.firstWeekday;
             }
             return (daysSoFar % this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
@@ -594,17 +595,16 @@ export default class Year extends ConfigurationItemBase {
     /**
      * Converts the passed in date to the number of days that make up that date
      * @param {number} year The year to convert
-     * @param {number} month The month to convert
-     * @param {number} day The day to convert
+     * @param {number} monthIndex The index of the month to convert
+     * @param {number} dayIndex The day to convert
      * @param {boolean} addLeapYearDiff If to add the leap year difference to the end result. Year 0 is not counted in the number of leap years so the total days will be off by that amount.
      * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
      */
-    dateToDays(year: number, month: number, day: number, addLeapYearDiff: boolean = false, ignoreIntercalaryRules: boolean = false){
+    dateToDays(year: number, monthIndex: number, dayIndex: number, addLeapYearDiff: boolean = false, ignoreIntercalaryRules: boolean = false){
         const beforeYearZero = year < this.yearZero;
         const daysPerYear = this.totalNumberOfDays(false, ignoreIntercalaryRules);
         const daysPerLeapYear = this.totalNumberOfDays(true, ignoreIntercalaryRules);
         const leapYearDayDifference = daysPerLeapYear - daysPerYear;
-        let monthIndex = this.months.findIndex(m => m.numericRepresentation === month);
         const isLeapYear = this.leapYearRule.isLeapYear(year);
         const numberOfLeapYears = this.leapYearRule.howManyLeapYears(year);
         const numberOfYZLeapYears = this.leapYearRule.howManyLeapYears(this.yearZero);
@@ -614,12 +614,15 @@ export default class Year extends ConfigurationItemBase {
         if(monthIndex < 0){
             monthIndex = 0;
         }
+        if(dayIndex < 0){
+            dayIndex = 0;
+        }
 
         if(beforeYearZero){
             procYear = procYear - 1;
         }
         //If the month has a day offset set we need to remove that from the days numeric representation or too many days are calculated.
-        day = day - this.months[monthIndex].numericRepresentationOffset;
+        let day = this.months[monthIndex].days[dayIndex].numericRepresentation - this.months[monthIndex].numericRepresentationOffset;
 
         let daysSoFar = (daysPerYear * procYear);
         if(day < 1){
@@ -827,20 +830,19 @@ export default class Year extends ConfigurationItemBase {
      * Gets the current season based on the current date
      */
     getCurrentSeason() {
-        let currentMonth = 0, currentDay = 0;
-
-        const month = this.getMonth('visible');
-        if(month){
-            currentMonth = this.months.findIndex(m=> m.numericRepresentation === month.numericRepresentation);
-            const day = month.getDay('selected') || month.getDay();
-            if(day){
-                currentDay = day.numericRepresentation;
-            } else {
-                currentDay = 1;
-            }
+        let monthIndex = this.getMonthIndex('visible');
+        if(monthIndex === -1){
+            monthIndex = 0;
         }
 
-        const season = this.getSeason(currentMonth, currentDay);
+        let dayIndex = this.months[monthIndex].getDayIndex('selected');
+        if(dayIndex === -1){
+            dayIndex = this.months[monthIndex].getDayIndex();
+            if(dayIndex === -1){
+                dayIndex = 0;
+            }
+        }
+        const season = this.getSeason(monthIndex, dayIndex);
         return {
             name: season.name,
             color: season.color
@@ -850,24 +852,20 @@ export default class Year extends ConfigurationItemBase {
     /**
      * Gets the season for the passed in month and day
      * @param {number} monthIndex The index of the month
-     * @param {number} day The day number
+     * @param {number} dayIndex The day number
      */
-    getSeason(monthIndex: number, day: number) {
-        let season = new Season('', 1, 1);
-        if(day > 0 && monthIndex >= 0){
+    getSeason(monthIndex: number, dayIndex: number) {
+        let season = new Season('', 0, 0);
+        if(dayIndex >= 0 && monthIndex >= 0){
             let currentSeason: Season | null = null;
-
             const sortedSeasons = this.seasons.sort((a, b) => {
-                const aIndex = this.months.findIndex(m => m.numericRepresentation === a.startingMonth);
-                const bIndex = this.months.findIndex(m => m.numericRepresentation === b.startingMonth);
-                return aIndex - bIndex || a.startingDay - b.startingDay;
+                return a.startingMonth - b.startingMonth || a.startingDay - b.startingDay;
             });
 
             for(let i = 0; i < sortedSeasons.length; i++){
-                const seasonMonthIndex = this.months.findIndex(m => m.numericRepresentation === sortedSeasons[i].startingMonth);
-                if(seasonMonthIndex === monthIndex && sortedSeasons[i].startingDay <= day){
+                if(sortedSeasons[i].startingMonth === monthIndex && sortedSeasons[i].startingDay <= dayIndex){
                     currentSeason = sortedSeasons[i];
-                } else if (seasonMonthIndex < monthIndex){
+                } else if (sortedSeasons[i].startingMonth < monthIndex){
                     currentSeason = sortedSeasons[i];
                 }
             }
@@ -878,10 +876,6 @@ export default class Year extends ConfigurationItemBase {
             if(currentSeason){
                 season = currentSeason.clone();
             }
-        }
-        if(this.months.length > 0){
-            season.startingMonth = this.months.findIndex(m => m.numericRepresentation === season.startingMonth);
-            season.startingDay = this.months[season.startingMonth >= 0? season.startingMonth : 0].days.findIndex(d => d.numericRepresentation === season.startingDay);
         }
         return season;
     }

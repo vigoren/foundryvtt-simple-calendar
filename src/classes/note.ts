@@ -352,7 +352,7 @@ export default class Note extends ConfigurationItemBase{
         const activeCalendar = CalManager.getActiveCalendar();
         let display: string = '';
 
-        let currentVisibleYear = activeCalendar.year.visibleYear;
+        /*let currentVisibleYear = activeCalendar.year.visibleYear;
         let currentVisibleMonthIndex = activeCalendar.year.months.findIndex(m => m.selected);
         if(currentVisibleMonthIndex === -1){
             currentVisibleMonthIndex = activeCalendar.year.months.findIndex(m => m.current);
@@ -518,7 +518,7 @@ export default class Note extends ConfigurationItemBase{
                 endYear = currentVisibleYear;
             }
         }
-        display = GetDisplayDate(activeCalendar,{year: startYear, month: startMonth, day: startDay, hour: this.hour, minute: this.minute, seconds: 0},{year: endYear, month: endMonth, day: endDay, hour: this.endDate.hour, minute: this.endDate.minute, seconds: 0}, this.allDay );
+        display = GetDisplayDate(activeCalendar,{year: startYear, month: startMonth, day: startDay, hour: this.hour, minute: this.minute, seconds: 0},{year: endYear, month: endMonth, day: endDay, hour: this.endDate.hour, minute: this.endDate.minute, seconds: 0}, this.allDay );*/
         return display;
     }
 }

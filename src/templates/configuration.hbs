@@ -190,10 +190,11 @@
                     <label>{{localize 'FSC.Export'}}</label>
                     <div class="form-fields">
                         <ul class="calendar-list">
-                            <li><label><input type="checkbox" data-id="global" checked /> {{localize 'FSC.Configuration.Global.Title'}}</label></li>
-                            <li><label><input type="checkbox" data-id="permissions" checked /> {{localize 'Permissions'}}</label></li>
+                            <li><label><input type="checkbox" data-id="global" checked /><span class="fa fa-cog"></span>&nbsp;{{localize 'FSC.Configuration.Global.Title'}}</label></li>
+                            <li><label><input type="checkbox" data-id="permissions" checked /><span class="fa fa-key"></span>&nbsp;{{localize 'Permissions'}}</label></li>
                             {{#each calendars}}
-                                <li><label><input type="checkbox" data-id="{{id}}" checked /> {{localize 'FSC.Calendar'}}: {{name}}</label></li>
+                                <li><label><input type="checkbox" data-id="{{id}}" checked /><strong><span class="fa fa-calendar"></span> {{name}}</strong>: {{localize 'FSC.CalendarConfiguration'}}</label></li>
+                                <li><label><input type="checkbox" data-id="{{id}}-notes" checked /><strong><span class="fa fa-sticky-note"></span> {{name}}</strong>: {{localize 'FSC.CalendarNotes'}}</label></li>
                             {{/each}}
                         </ul>
                         <button class="control secondary" id="exportCalendar"><i class="fa fa-file-export"></i> {{localize 'FSC.Export'}}</button>
@@ -1029,6 +1030,13 @@
                         <input value="{{generalSettings.noteDefaultVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{checked generalSettings.noteDefaultVisibility}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
+                </div>
+                <div class="form-group open">
+                    <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.Notes.PostNoteRemindersOnFoundryLoadTitle'}}</label>
+                    <div class="form-fields">
+                        <input value="{{generalSettings.postNoteRemindersOnFoundryLoad}}" type="checkbox" id="scPostNoteRemindersOnFoundryLoad" {{checked generalSettings.postNoteRemindersOnFoundryLoad}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Notes.PostNoteRemindersOnFoundryLoadHelp'}}</p>
                 </div>
             </div>
             <div class="settings-group open">

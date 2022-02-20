@@ -122,9 +122,9 @@ export default class Time extends ConfigurationItemBase{
 
     /**
      * Returns the current time as string parts
-     * @return {TimeTemplate}
+     * @return {Time}
      */
-    getCurrentTime(): SimpleCalendar.TimeTemplate{
+    getCurrentTime(): SimpleCalendar.Time{
         let s = this.seconds, m = 0, h = 0;
         if(s >= this.secondsInMinute){
             m = Math.floor(s / this.secondsInMinute);

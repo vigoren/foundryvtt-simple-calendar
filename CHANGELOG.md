@@ -125,6 +125,7 @@ It will also offer the option to remove the old data, to clean up the FoundryVTT
 - Added a new way to change time, you can now manually change the time by Rounds. 
   - This option has been added to the unit type selector. 
   - The number of seconds this changes the time by is based on "Seconds per Combat Round" setting.
+- Added a new note setting "Send Reminders On Login", if enabled when a player logs in any note reminder on the current day will be PM'd to them. This replaced to default of doing that step no matter what.
 
 ### Bug Fixes
 
@@ -152,6 +153,7 @@ None of these changes should be breaking to existing implementations using the A
 
 #### Multi Calendar Support
 
+- Added a function `SimpleCalendar.api.getCurrentCalendar()` that returns the configuration data for the current active calendar.
 - Added a new function `SimpleCalendar.api.getAllCalendars()` that returns a list of all calendars set up in Simple Calendar. (This does not include any predefined calendars)
 - Updated the API functions so that they can now take an additional optional parameter `calendarId` (where it made sense).
   - This parameter can be used to target a specific calendar for the API function to update/get data from. If the parameter is not specified then the current active calendar will be used.

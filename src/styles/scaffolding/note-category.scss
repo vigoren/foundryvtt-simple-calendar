@@ -1,0 +1,27 @@
+
+.simple-calendar{
+  .category-list, .form-fields.category-list{
+    flex-wrap: wrap;
+  }
+  label.note-category, .form-fields .note-category{
+    font-size: 0.725rem;
+    border-radius: 7px;
+    padding: .2rem .4rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    input{
+      width: 15px;
+      height: 15px;
+      flex: 0 15px;
+      margin-left: 0;
+    }
+
+    span{
+      margin-right: 0.15rem;
+    }
+  }
+}

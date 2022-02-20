@@ -18,3 +18,7 @@ export function getCheckBoxInputValue(selector: string, defaultVal: boolean, roo
     const el = <HTMLInputElement>root.querySelector(selector);
     return el? el.checked : defaultVal;
 }
+
+export function getCheckBoxGroupValues(groupName: string, root: Document | Element = document){
+    return Array.from(root.querySelectorAll(`input[name=${groupName}]:checked`)).map(v => (<HTMLInputElement>v).value)
+}

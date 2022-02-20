@@ -1,5 +1,5 @@
-import Note from "../note";
 import {GameSettings} from "../foundry-interfacing/game-settings";
+import NoteStub from "../notes/note-stub";
 
 export default class RendererUtilities{
     /**
@@ -7,7 +7,7 @@ export default class RendererUtilities{
      * @param {number} count How many notes there are
      * @param {Note[]} notes The notes for the indicator
      */
-    public static GenerateNoteIconTitle(count: number, notes: Note[]){
+    public static GenerateNoteIconTitle(count: number, notes: NoteStub[]){
         let rTitle = `${count} ${GameSettings.Localize('FSC.Configuration.General.Notes')}`;
         if(notes.length < 3){
             rTitle = GameSettings.Localize('FSC.Configuration.General.Notes') + ':\n';

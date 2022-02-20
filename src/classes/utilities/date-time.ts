@@ -16,23 +16,17 @@ export function FormatDateTime(date: SimpleCalendar.DateTime, mask: string, cale
     const token = /DO|d{1,4}|M{1,4}|YN|YA|YZ|YY(?:YY)?|([HhMmsD])\1?|[aA]/g;
     const literal = /\[([^]*?)\]/gm;
     const formatFlags: Record<string, (dateObj: SimpleCalendar.DateTime) => string> = {
-        "D": (dateObj: SimpleCalendar.DateTime) => String(dateObj.day),
-        "DD": (dateObj: SimpleCalendar.DateTime) => PadNumber(dateObj.day),
-        "DO": (dateObj: SimpleCalendar.DateTime) => `${dateObj.day}${ordinalSuffix(dateObj.day)}`,
+        "D": (dateObj: SimpleCalendar.DateTime) => String(calendar.year.months[dateObj.month].days[dateObj.day].numericRepresentation),
+        "DD": (dateObj: SimpleCalendar.DateTime) => PadNumber(calendar.year.months[dateObj.month].days[dateObj.day].numericRepresentation),
+        "DO": (dateObj: SimpleCalendar.DateTime) => `${String(calendar.year.months[dateObj.month].days[dateObj.day].numericRepresentation)}${ordinalSuffix(calendar.year.months[dateObj.month].days[dateObj.day].numericRepresentation)}`,
         "d": (dateObj: SimpleCalendar.DateTime) => String(calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
         "dd": (dateObj: SimpleCalendar.DateTime) => PadNumber(calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
-        "ddd": (dateObj: SimpleCalendar.DateTime) => `${calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name.substring(0, 3)}`,
+        "ddd": (dateObj: SimpleCalendar.DateTime) => `${calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].abbreviation}`,
         "dddd": (dateObj: SimpleCalendar.DateTime) => `${calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name}`,
-        "M": (dateObj: SimpleCalendar.DateTime) => String(dateObj.month),
-        "MM": (dateObj: SimpleCalendar.DateTime) => PadNumber(dateObj.month),
-        "MMM": (dateObj: SimpleCalendar.DateTime) => {
-            const month = calendar.year.months.find(m => m.numericRepresentation === dateObj.month);
-            return month? month.abbreviation : '';
-        },
-        "MMMM": (dateObj: SimpleCalendar.DateTime) => {
-            const month = calendar.year.months.find(m => m.numericRepresentation === dateObj.month);
-            return month? month.name : '';
-        },
+        "M": (dateObj: SimpleCalendar.DateTime) => String(calendar.year.months[dateObj.month].numericRepresentation),
+        "MM": (dateObj: SimpleCalendar.DateTime) => PadNumber(calendar.year.months[dateObj.month].numericRepresentation),
+        "MMM": (dateObj: SimpleCalendar.DateTime) => calendar.year.months[dateObj.month].abbreviation,
+        "MMMM": (dateObj: SimpleCalendar.DateTime) => calendar.year.months[dateObj.month].name,
         "YN": (dateObj: SimpleCalendar.DateTime) => calendar.year.getYearName(dateObj.year),
         "YA": (dateObj: SimpleCalendar.DateTime) => calendar.year.prefix,
         "YZ": (dateObj: SimpleCalendar.DateTime) => calendar.year.postfix,
@@ -79,20 +73,20 @@ export function FormatDateTime(date: SimpleCalendar.DateTime, mask: string, cale
  * Converts that year, month and day numbers into a total number of seconds for the current active calendar
  * @param {Calendar} calendar The calendar to use to convert a date to seconds
  * @param {number} year The year number
- * @param {number} month The month number
- * @param {number} day The day number
+ * @param {number} monthIndex The month number
+ * @param {number} dayIndex The day number
  * @param {boolean} [includeToday=true] If to include today's seconds in the calculation
  */
-export function ToSeconds(calendar: Calendar, year: number, month: number, day: number, includeToday: boolean = true){
+export function ToSeconds(calendar: Calendar, year: number, monthIndex: number, dayIndex: number, includeToday: boolean = true){
     //Get the days so for and add one to include the current day
-    let daysSoFar = calendar.year.dateToDays(year, month, day, true, true);
+    let daysSoFar = calendar.year.dateToDays(year, monthIndex, dayIndex, true, true);
     let totalSeconds = calendar.year.time.getTotalSeconds(daysSoFar, includeToday);
     // If this is a Pathfinder 2E game, subtract the world creation seconds
     if(calendar.gameSystem === GameSystems.PF2E && calendar.generalSettings.pf2eSync){
         const newYZ = PF2E.newYearZero();
         if(newYZ !== undefined){
             calendar.year.yearZero = newYZ;
-            daysSoFar = calendar.year.dateToDays(year, month, day, true, true);
+            daysSoFar = calendar.year.dateToDays(year, monthIndex, dayIndex, true, true);
         }
         daysSoFar++;
         totalSeconds =  calendar.year.time.getTotalSeconds(daysSoFar, includeToday) - PF2E.getWorldCreateSeconds(calendar, false);
@@ -137,7 +131,7 @@ export function GetDisplayDate(calendar: Calendar, startDate: SimpleCalendar.Dat
         endDateMask = ` ${delimiter} ${endDateMask}`;
     }
 
-    return `${FormatDateTime({year: startDate.year, month: startDate.month, day: startDate.day, hour: startDate.hour, minute: startDate.minute, seconds: 0}, startDateMask, calendar)}${FormatDateTime({year: endDate.year, month: endDate.month, day: endDate.day, hour: endDate.hour, minute: endDate.minute, seconds: 0}, endDateMask, calendar)}`;
+    return `${FormatDateTime(startDate, startDateMask, calendar)}${FormatDateTime(endDate, endDateMask, calendar)}`;
 }
 
 /**
@@ -170,29 +164,11 @@ export function DaysBetweenDates(calendar: Calendar, startDate: SimpleCalendar.D
  */
 export function IsDayBetweenDates(calendar: Calendar, checkDate: SimpleCalendar.DateTime, startDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime){
     let between = DateRangeMatch.None;
-    let checkSeconds = 0;
-    let startSeconds = 0;
-    let endSeconds = 0;
-
-    const sMonth = calendar.year.months.findIndex(m => m.numericRepresentation === startDate.month);
-    const cMonth = calendar.year.months.findIndex(m => m.numericRepresentation === checkDate.month);
-    const eMonth = calendar.year.months.findIndex(m => m.numericRepresentation === endDate.month);
-
-    if(sMonth > -1){
-        startSeconds = ToSeconds(calendar, startDate.year, startDate.month, startDate.day, false);
-    }
-    if(cMonth > -1){
-        checkSeconds = ToSeconds(calendar, checkDate.year, checkDate.month, checkDate.day, false);
-    }
-    if(eMonth > -1){
-        endSeconds = ToSeconds(calendar, endDate.year, endDate.month, endDate.day, false);
-    }
-
-    if(cMonth === -1 || sMonth === -1 || eMonth === -1){
-        between = DateRangeMatch.None;
-    }
+    let checkSeconds = ToSeconds(calendar, checkDate.year, checkDate.month, checkDate.day, false);
+    let startSeconds = ToSeconds(calendar, startDate.year, startDate.month, startDate.day, false);
+    let endSeconds = ToSeconds(calendar, endDate.year, endDate.month, endDate.day, false);
     //If the start and end date are the same as the check date
-    else if(checkSeconds === startSeconds && checkSeconds === endSeconds){
+    if(checkSeconds === startSeconds && checkSeconds === endSeconds){
         between = DateRangeMatch.Exact;
     }
     else if(checkSeconds === startSeconds){
@@ -291,7 +267,7 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
 export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: Calendar): number {
     let ts = 0;
     const clone = calendar.clone(false);
-    const currentMonth = clone.year.getMonth();
+    const monthIndex = clone.year.months.findIndex(m => m.current);
     const currentTime = clone.year.time.getCurrentTime();
     if (date.seconds === undefined) {
         date.seconds = currentTime.seconds;
@@ -310,19 +286,13 @@ export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: C
         date.year = clone.numericRepresentation;
     }
     if (date.month === undefined) {
-        if (currentMonth) {
-            date.month = clone.year.months.findIndex(m => m.numericRepresentation === currentMonth.numericRepresentation);
-        } else {
-            date.month = 0;
-        }
+        date.month = monthIndex > -1? monthIndex : 0;
     }
     if (date.day === undefined) {
         date.day = 0;
-        if (currentMonth) {
-            const currDay = currentMonth.getDay();
-            if (currDay) {
-                date.day = currentMonth.days.findIndex(d => d.numericRepresentation === currDay.numericRepresentation);
-            }
+        if (monthIndex > -1) {
+            const dayIndex = clone.year.months[monthIndex].days.findIndex(d => d.current);
+            date.day = dayIndex > -1? dayIndex : 0;
         }
     }
     clone.year.updateMonth(date.month, 'current', true, date.day);

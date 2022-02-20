@@ -4,7 +4,6 @@ import {NoteRepeat, SettingNames, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import Note from "./note";
-import {NotesApp} from "./applications/notes-app";
 import {CalManager, MainApplication} from "./index";
 import ConfigurationApp from "./applications/configuration-app";
 import MainApp from "./applications/main-app";
@@ -17,10 +16,6 @@ export default class SCController {
      * @type {boolean}
      */
     public primary: boolean = false;
-    /**
-     * Keeps track of the new note dialog, we only ever need 1 new note dialog.
-     */
-    public newNoteApp: NotesApp | undefined;
     /**
      * Gets the current active calendar
      */
@@ -243,41 +238,11 @@ export default class SCController {
     // Note Functionality
     //---------------------------
     /**
-     * Opens the new note application for creating a new note.
-     */
-    public openNewNoteApp(){
-        const currentMonth = this.activeCalendar.year.getMonth('selected') || this.activeCalendar.year.getMonth();
-        if(currentMonth){
-            const currentDay = currentMonth.getDay('selected') || currentMonth.getDay();
-            if(currentDay){
-                const year = this.activeCalendar.year.selectedYear || this.activeCalendar.year.numericRepresentation;
-                const newNote = new Note();
-                newNote.initialize(year, currentMonth.numericRepresentation, currentDay.numericRepresentation, currentMonth.name);
-                if(this.newNoteApp !== undefined && !this.newNoteApp.rendered){
-                    this.newNoteApp.closeApp();
-                    this.newNoteApp = undefined;
-                }
-                if(this.newNoteApp === undefined){
-                    this.newNoteApp = new NotesApp(newNote);
-                    this.newNoteApp.showApp();
-                } else {
-                    this.newNoteApp.bringToTop();
-                    this.newNoteApp.maximize().catch(Logger.error);
-                }
-            } else {
-                GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedDay"), 'warn');
-            }
-        } else {
-            GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Note.NoSelectedMonth"), 'warn');
-        }
-    }
-
-    /**
      * Checks to see if any note reminders needs to be sent to players for the current date.
      * @param {boolean} [justTimeChange=false] If only the time (hour, minute, second) has changed or not
      */
     public checkNoteReminders(justTimeChange: boolean = false){
-        const userID = GameSettings.UserID();
+        /*const userID = GameSettings.UserID();
         const noteRemindersForPlayer = this.activeCalendar.notes.filter(n => n.remindUsers.indexOf(userID) > -1);
         if(noteRemindersForPlayer.length){
             const currentMonth = this.activeCalendar.year.getMonth();
@@ -335,6 +300,6 @@ export default class SCController {
                 }).catch(Logger.error);
                 note.reminderSent = true;
             }
-        }
+        }*/
     }
 }

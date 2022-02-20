@@ -6,7 +6,7 @@ import {
     ConfigurationDateSelectors,
     GameWorldTimeIntegrations,
     Icons,
-    LeapYearRules,
+    LeapYearRules, ModuleName,
     MoonYearResetOptions,
     PredefinedCalendars,
     SettingNames,
@@ -712,6 +712,7 @@ export default class ConfigurationApp extends FormApplication {
             // Calendar: Note Settings
             //----------------------------------
             (<Calendar>this.object).generalSettings.noteDefaultVisibility = getCheckBoxInputValue('#scDefaultPlayerVisibility', true, this.appWindow);
+            (<Calendar>this.object).generalSettings.postNoteRemindersOnFoundryLoad = getCheckBoxInputValue('#scPostNoteRemindersOnFoundryLoad', true, this.appWindow);
             this.appWindow.querySelectorAll('.note-settings .note-categories .row:not(.head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).noteCategories.length){
@@ -1045,14 +1046,14 @@ export default class ConfigurationApp extends FormApplication {
         const season = (<Calendar>this.object).year.seasons.find(s => s.id === seasonId);
         if(season){
             if(dateSelectorType === ConfigurationDateSelectors.seasonStartingDate){
-                const sMonthIndex = !selectedDate.start.month || selectedDate.start.month < 0? 0 : selectedDate.start.month;
-                const sDayIndex = !selectedDate.start.day || selectedDate.start.day < 0? 0 : selectedDate.start.day;
+                const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
+                const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
                 season.startingMonth = (<Calendar>this.object).year.months[sMonthIndex].numericRepresentation;
                 season.startingDay = (<Calendar>this.object).year.months[sMonthIndex].days[sDayIndex].numericRepresentation;
             } else if(dateSelectorType === ConfigurationDateSelectors.seasonSunriseSunsetTime){
                 const activeCalendar = CalManager.getActiveCalendar();
-                season.sunriseTime = ((selectedDate.start.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.start.minute || 0) * activeCalendar.year.time.secondsInMinute);
-                season.sunsetTime = ((selectedDate.end.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.end.minute || 0) * activeCalendar.year.time.secondsInMinute);
+                season.sunriseTime = ((selectedDate.startDate.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.startDate.minute || 0) * activeCalendar.year.time.secondsInMinute);
+                season.sunsetTime = ((selectedDate.endDate.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.endDate.minute || 0) * activeCalendar.year.time.secondsInMinute);
             }
         }
     }
@@ -1178,7 +1179,7 @@ export default class ConfigurationApp extends FormApplication {
                 options[id] = (<HTMLInputElement>e).checked;
             }
         });
-
+        console.log(options);
         const data = {
             exportVersion: 2,
             globalConfig: options['global']? {
@@ -1187,13 +1188,26 @@ export default class ConfigurationApp extends FormApplication {
                 syncCalendars: this.globalConfiguration.syncCalendars
             } : {},
             permissions: options['permissions']? this.globalConfiguration.permissions.toConfig() : {},
-            calendars: <SimpleCalendar.CalendarData[]>[]
+            calendars: <SimpleCalendar.CalendarData[]>[],
+            notes: <Record<string, any[]>>{}
         };
 
         for(let i = 0; i < this.calendars.length; i++){
-            const config = this.calendars[i].toConfig()
+            const config = this.calendars[i].toConfig();
+            const realId = config.id.replace('_temp', '');
+
+            if(options[`${config.id}-notes`]){
+                data.notes[realId] = [];
+                (<Game>game).journal?.forEach(j => {
+                    const scFlag = <SimpleCalendar.NoteData>j.getFlag(ModuleName, 'noteData');
+                    if(scFlag && scFlag.calendarId && scFlag.calendarId === realId){
+                        data.notes[realId].push(j.toObject());
+                    }
+                });
+            }
+
             if(options[config.id]){
-                config.id = config.id.replace('_temp', '');
+                config.id = realId;
                 data.calendars.push(config);
             }
         }
@@ -1246,12 +1260,20 @@ export default class ConfigurationApp extends FormApplication {
                     res.calendars = [{id: 'default', name: 'Default'}];
                     res.globalConfig = {};
                     if(res.hasOwnProperty('generalSettings')){
-                        res.permissions = res.generalSettings.permissions;
-                        delete res.generalSettings.permissions;
+                        if(res.generalSettings.hasOwnProperty('permissions')){
+                            res.permissions = res.permissions || {};
+                            res.permissions.viewCalendar = res.generalSettings.permissions.viewCalendar;
+                            res.permissions.addNotes = res.generalSettings.permissions.addNotes;
+                            res.permissions.reorderNotes = res.generalSettings.permissions.reorderNotes;
+                            res.permissions.changeDateTime = res.generalSettings.permissions.changeDateTime;
+                            delete res.generalSettings.permissions;
+                        }
                         res.calendars[0].general = res.generalSettings;
                         delete res.generalSettings;
                     }
                     if(res.hasOwnProperty('currentDate')){
+                        res.currentDate.day--;
+                        res.currentDate.month--;
                         res.calendars[0].currentDate = res.currentDate;
                         delete res.currentDate;
                     }
@@ -1264,6 +1286,10 @@ export default class ConfigurationApp extends FormApplication {
                         delete res.monthSettings;
                     }
                     if(res.hasOwnProperty('moonSettings')){
+                        for(let i = 0; i < res.moonSettings.length; i++){
+                            res.moonSettings[i].firstNewMoon.month--;
+                            res.moonSettings[i].firstNewMoon.day--;
+                        }
                         res.calendars[0].moons = res.moonSettings;
                         delete res.moonSettings;
                     }
@@ -1272,6 +1298,10 @@ export default class ConfigurationApp extends FormApplication {
                         delete res.noteCategories;
                     }
                     if(res.hasOwnProperty('seasonSettings')){
+                        for(let i = 0; i < res.seasonSettings.length; i++){
+                            res.seasonSettings[i].startingMonth--;
+                            res.seasonSettings[i].startingDay--;
+                        }
                         res.calendars[0].seasons = res.seasonSettings;
                         delete res.seasonSettings;
                     }
@@ -1291,20 +1321,23 @@ export default class ConfigurationApp extends FormApplication {
                     }
                 }
                 if(res.hasOwnProperty('globalConfig') && !isObjectEmpty(res.globalConfig)){
-                    html += `<li><label><input type="checkbox" data-id="global" checked /> ${GameSettings.Localize('FSC.Configuration.Global.Title')}</label></li>`;
+                    html += `<li><label><input type="checkbox" data-id="global" checked /><span class="fa fa-cog"></span>&nbsp;${GameSettings.Localize('FSC.Configuration.Global.Title')}</label></li>`;
                 }
                 if(res.hasOwnProperty('permissions') && !isObjectEmpty(res.permissions)){
-                    html += `<li><label><input type="checkbox" data-id="permissions" checked /> ${GameSettings.Localize('Permissions')}</label></li>`;
+                    html += `<li><label><input type="checkbox" data-id="permissions" checked /><span class="fa fa-key"></span>&nbsp;${GameSettings.Localize('Permissions')}</label></li>`;
                 }
                 if(res.hasOwnProperty('calendars') && res.calendars.length){
                     for(let i = 0; i < res.calendars.length; i++){
-                        html += `<li><label><input type="checkbox" data-id="${res.calendars[i].id}" checked /> ${GameSettings.Localize('FSC.Calendar')}: ${res.calendars[i].name}</label><label>${GameSettings.Localize('FSC.ImportInto')}:&nbsp;<select data-for-cal="${res.calendars[i].id}">`;
+                        html += `<li><label><input type="checkbox" data-id="${res.calendars[i].id}" checked /><strong><span class="fa fa-calendar"></span> ${res.calendars[i].name}</strong>: ${GameSettings.Localize('FSC.CalendarConfiguration')}</label><label>${GameSettings.Localize('FSC.ImportInto')}:&nbsp;<select data-for-cal="${res.calendars[i].id}">`;
                         const selectedIndex = this.calendars.findIndex(c => c.id.indexOf(res.calendars[i].id) === 0);
                         html += `<option value="new" ${selectedIndex === -1? 'selected' : ''}>${GameSettings.Localize('FSC.NewCalendar')}</option>`;
                         for(let i = 0; i < this.calendars.length; i++){
                             html += `<option value="${this.calendars[i].id}" ${selectedIndex === i? 'selected' : ''}>${this.calendars[i].name}</option>`;
                         }
                         html += `</select></label></li>`;
+                        if(res.hasOwnProperty('notes') && res.notes.hasOwnProperty(res.calendars[i].id)){
+                            html += `<li><label><input type="checkbox" data-id="${res.calendars[i].id}-notes" checked /><strong><span class="fa fa-sticky-note"></span> ${res.calendars[i].name}</strong>: ${GameSettings.Localize('FSC.CalendarNotes')}</label></label></li>`;
+                        }
                     }
                 }
                 html += `</ul><button class="control save" id="importCalendar"><i class="fa fa-file-import"></i> ${GameSettings.Localize('FSC.Import')}</button>`;
@@ -1319,7 +1352,7 @@ export default class ConfigurationApp extends FormApplication {
      * @param data
      * @param event
      */
-    public importCalendarSave(data:any, event: Event){
+    public async importCalendarSave(data:any, event: Event){
         event.preventDefault();
         if(this.appWindow){
             if(data.hasOwnProperty('globalConfig') && !isObjectEmpty(data.globalConfig) && getCheckBoxInputValue('.import-export .importing .file-details input[data-id="global"]', true, this.appWindow)){
@@ -1332,6 +1365,8 @@ export default class ConfigurationApp extends FormApplication {
             }
             if(data.hasOwnProperty('calendars') && data.calendars.length){
                 for(let i = 0; i < data.calendars.length; i++){
+                    const calId = data.calendars[i].id;
+                    let newCalId = '';
                     if(getCheckBoxInputValue(`.import-export .importing .file-details input[data-id="${data.calendars[i].id}"]`, true, this.appWindow)){
                         const importInto = getTextInputValue(`.import-export .importing .file-details select[data-for-cal="${data.calendars[i].id}"]`, 'new', this.appWindow);
                         const importCalendar = this.calendars.find(c => c.id === importInto);
@@ -1341,6 +1376,25 @@ export default class ConfigurationApp extends FormApplication {
                         } else {
                             const newCalendar = CalManager.addTempCalendar(data.calendars[i].name);
                             newCalendar.loadFromSettings(data.calendars[i]);
+                            newCalId = newCalendar.id;
+                        }
+                    }
+                    if(data.hasOwnProperty('notes') && data.notes.hasOwnProperty(calId) && getCheckBoxInputValue(`.import-export .importing .file-details input[data-id="${calId}-notes"]`, true, this.appWindow)){
+                        const importInto = getTextInputValue(`.import-export .importing .file-details select[data-for-cal="${calId}"]`, 'new', this.appWindow);
+                        const importCalendar = this.calendars.find(c => c.id === importInto);
+
+                        for(let n = 0; n < data.notes[calId].length; n++){
+                            const journalEntryData = data.notes[calId][n];
+                            let inNewCalendar = false;
+                            if(journalEntryData.hasOwnProperty('flags') && journalEntryData.flags.hasOwnProperty(ModuleName) ** journalEntryData.flags[ModuleName].hasOwnProperty('noteData')){
+                                inNewCalendar = importCalendar !== undefined || newCalId !== '';
+                                journalEntryData.flags[ModuleName].noteData.calendarId = importCalendar? importCalendar.id : newCalId? newCalId : journalEntryData.flags[ModuleName].noteData.calendarId;
+                            }
+                            if(!inNewCalendar && (<Game>game).journal?.has(journalEntryData._id)){
+                                (<Game>game).journal?.get(journalEntryData._id)?.update(journalEntryData);
+                            } else {
+                                await JournalEntry.create(journalEntryData, {keepId: !inNewCalendar});
+                            }
                         }
                     }
                 }

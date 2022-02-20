@@ -65,11 +65,11 @@ export default class CalendarManager {
         if(calendars.length){
             for(let i = 0; i < calendars.length; i++){
                 if(calendars[i].id){
-                    const existingCalendar = this.getCalendar(calendars[i].id);
+                    let existingCalendar = this.getCalendar(calendars[i].id);
                     if(existingCalendar){
                         existingCalendar.loadFromSettings(calendars[i]);
                     } else {
-                        this.addCalendar(calendars[i].id, calendars[i].name || `Calendar ${i}`, calendars[i]);
+                        existingCalendar = this.addCalendar(calendars[i].id, calendars[i].name || `Calendar ${i}`, calendars[i]);
                     }
                     if(i === 0 && this.activeId === ''){
                         this.activeId = calendars[i].id;
@@ -299,6 +299,9 @@ export default class CalendarManager {
         //If the active calendar is no longer around then we need to reset it to the first calendar
         if(!this.getActiveCalendar()){
             this.setActiveCalendar(cloneIds[0].key);
+        }
+        if(!this.getVisibleCalendar()){
+            this.setVisibleCalendar(cloneIds[0].key);
         }
     }
 

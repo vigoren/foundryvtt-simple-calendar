@@ -1,6 +1,3 @@
-.simple-calendar-note {
-  @import "notes";
-}
 @import "scaffolding/calendar";
 @import "scaffolding/clock";
 @import "scaffolding/configuration";
@@ -11,7 +8,9 @@
 @import "scaffolding/foundry-window-app-compact";
 @import "scaffolding/foundry-window-app-migration";
 @import "scaffolding/message";
+@import "scaffolding/note-category";
 @import "scaffolding/note-list";
+@import "scaffolding/note-sheet";
 @import "scaffolding/time-selector";
 @import "themes/light";
 @import "themes/dark";

@@ -104,8 +104,8 @@ export default class Season extends ConfigurationItemBase{
             startDateSelectedDate: {year: 0, month: this.startingMonth, day: this.startingDay, hour: 0, minute: 0, seconds: 0},
             sunriseSelectorId: sunriseSelectorId,
             sunriseSelectorSelectedDates: {
-                start: {year: 0, month: 1, day: 1, hour: sunriseHour, minute: sunriseMinute, seconds: 0},
-                end: {year: 0, month: 1, day: 1, hour: sunsetHour, minute: sunsetMinute, seconds: 0}
+                start: {year: 0, month: 0, day: 0, hour: sunriseHour, minute: sunriseMinute, seconds: 0},
+                end: {year: 0, month: 0, day: 0, hour: sunsetHour, minute: sunsetMinute, seconds: 0}
             }
         };
         return data;

@@ -18,6 +18,9 @@
       margin: 0;
       padding: 0;
     }
+    &.date-selector{
+      overflow: visible;
+    }
     label{
       font-size: 1rem;
       font-weight: 600;

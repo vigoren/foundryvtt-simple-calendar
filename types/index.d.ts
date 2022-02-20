@@ -1262,6 +1262,7 @@ declare global{
                 /** If to show the clock below the calendar */
                 showClock: boolean;
                 noteDefaultVisibility: boolean;
+                postNoteRemindersOnFoundryLoad: boolean;
                 /** If the Pathfinder 2e world clock sync is turned on */
                 pf2eSync: boolean;
                 /** Formats used for display date and time information */
@@ -1479,9 +1480,9 @@ declare global{
              */
             interface SelectedDates {
                 /** The start date/time of a date/time range, or if just a single date/time can be selected that date/time */
-                start: DateTimeParts;
+                startDate: DateTimeParts;
                 /** The end date/time of a date/time range, or if just a single date/time this value will be the same as the start */
-                end: DateTimeParts;
+                endDate: DateTimeParts;
                 /** If a time was selected or not */
                 timeSelected: boolean;
             }
@@ -1863,6 +1864,8 @@ declare global{
             showClock: boolean;
             /** The default visibility for new notes added to the calendar */
             noteDefaultVisibility: boolean;
+            /** If note reminders should be PM'd to players when they log into foundry */
+            postNoteRemindersOnFoundryLoad: boolean;
             /** If the Pathfinder 2e world clock sync is turned on */
             pf2eSync: boolean;
             /** Formats used for display date and time information */
@@ -1986,6 +1989,18 @@ declare global{
             icon: Icons;
         }
 
+        interface NoteData {
+            calendarId: string;
+            startDate: DateTime;
+            endDate: DateTime;
+            allDay: boolean;
+            repeats: NoteRepeat;
+            order: number;
+            categories: string[];
+            remindUsers: string[];
+            reminderSent: boolean;
+        }
+
         /**
          * Interface for all information about note categories
          */
@@ -2105,16 +2120,6 @@ declare global{
             yearNamesStart: number;
             /** How to calculate what year name to give to a year. */
             yearNamingRule: YearNamingRules
-        }
-
-        /**
-         * Interface for displaying the time information
-         * @internal
-         */
-        interface TimeTemplate {
-            hour: number;
-            minute: number;
-            seconds: number;
         }
 
         /**

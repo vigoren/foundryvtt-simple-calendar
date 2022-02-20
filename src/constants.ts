@@ -111,6 +111,8 @@ export enum NoteRepeat {
     Yearly
 }
 
+export const NotesDirectoryName = `_simple_calendar_notes_directory`;
+
 /**
  * The different ways in which a date can match a date range
  * @internal

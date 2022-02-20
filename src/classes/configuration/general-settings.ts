@@ -15,6 +15,10 @@ export default class GeneralSettings extends ConfigurationItemBase{
      */
     noteDefaultVisibility: boolean = true;
     /**
+     * If the note reminders should be PM'd to the players when foundry is loaded in the browser
+     */
+    postNoteRemindersOnFoundryLoad: boolean = true;
+    /**
      * If to enable the PF2E World Clock Sync
      */
     pf2eSync: boolean = true;
@@ -43,6 +47,7 @@ export default class GeneralSettings extends ConfigurationItemBase{
         gs.gameWorldTimeIntegration = this.gameWorldTimeIntegration;
         gs.showClock = this.showClock;
         gs.noteDefaultVisibility = this.noteDefaultVisibility;
+        gs.postNoteRemindersOnFoundryLoad = this.postNoteRemindersOnFoundryLoad;
         gs.pf2eSync = this.pf2eSync;
         gs.dateFormat.date = this.dateFormat.date;
         gs.dateFormat.time = this.dateFormat.time;
@@ -59,6 +64,7 @@ export default class GeneralSettings extends ConfigurationItemBase{
             gameWorldTimeIntegration: this.gameWorldTimeIntegration,
             showClock: this.showClock,
             noteDefaultVisibility: this.noteDefaultVisibility,
+            postNoteRemindersOnFoundryLoad: this.postNoteRemindersOnFoundryLoad,
             pf2eSync: this.pf2eSync,
             dateFormat: this.dateFormat
         }
@@ -73,6 +79,7 @@ export default class GeneralSettings extends ConfigurationItemBase{
             gameWorldTimeIntegration: this.gameWorldTimeIntegration,
             showClock: this.showClock,
             noteDefaultVisibility: this.noteDefaultVisibility,
+            postNoteRemindersOnFoundryLoad: this.postNoteRemindersOnFoundryLoad,
             pf2eSync: this.pf2eSync,
             dateFormat: this.dateFormat
         };
@@ -95,6 +102,10 @@ export default class GeneralSettings extends ConfigurationItemBase{
 
             if(config.hasOwnProperty('dateFormat')){
                 this.dateFormat = config.dateFormat;
+            }
+
+            if(config.hasOwnProperty('postNoteRemindersOnFoundryLoad')){
+                this.postNoteRemindersOnFoundryLoad = config.postNoteRemindersOnFoundryLoad;
             }
         }
     }

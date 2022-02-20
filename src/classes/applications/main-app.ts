@@ -2,7 +2,6 @@ import {Logger} from "../logging";
 import type Month from "../calendar/month";
 import type Day from "../calendar/day";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {NotesApp} from "./notes-app";
 import {
     CalendarClickEvents,
     DateTimeUnits,
@@ -14,7 +13,7 @@ import {
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
 import {animateElement} from "../utilities/visual";
-import {CalManager, ConfigurationApplication, SC} from "../index";
+import {CalManager, ConfigurationApplication, SC, NManager} from "../index";
 import {FormatDateTime} from "../utilities/date-time";
 import{canUser} from "../utilities/permissions";
 
@@ -573,17 +572,16 @@ export default class MainApp extends Application{
             let allReadySelected = false;
             const currentlySelectedMonth = this.visibleCalendar.year.getMonth('selected');
             if(currentlySelectedMonth){
-                const currentlySelectedDay = currentlySelectedMonth.getDay('selected');
-                allReadySelected = currentlySelectedDay !== undefined && currentlySelectedDay.numericRepresentation === selectedDay && this.visibleCalendar.year.selectedYear === options.selectedDates.start.year;
+                const currentlySelectedDayIndex = currentlySelectedMonth.getDayIndex('selected');
+                allReadySelected = currentlySelectedDayIndex === selectedDay && this.visibleCalendar.year.selectedYear === options.selectedDates.start.year;
             }
 
             this.visibleCalendar.year.resetMonths('selected');
             if(!allReadySelected){
                 const month = this.visibleCalendar.year.months[options.selectedDates.start.month];
-                const dayIndex = month.days.findIndex(d => d.numericRepresentation === selectedDay);
-                if(dayIndex > -1){
+                if(selectedDay > -1){
                     month.selected = true;
-                    month.days[dayIndex].selected = true;
+                    month.days[selectedDay].selected = true;
                     this.visibleCalendar.year.selectedYear = this.visibleCalendar.year.visibleYear;
                 }
             }
@@ -877,7 +875,8 @@ export default class MainApp extends Application{
         if(!(<Game>game).users?.find(u => u.isGM && u.active)){
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
         } else {
-            SC.openNewNoteApp();
+            //SC.openNewNoteApp();
+            NManager.createNote(this.visibleCalendar, 'New Note').catch(Logger.error);
         }
     }
 
@@ -889,11 +888,7 @@ export default class MainApp extends Application{
         e.stopPropagation();
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
         if(dataIndex){
-            const note = this.visibleCalendar.notes.find(n=> n.id === dataIndex);
-            if(note){
-                NotesApp.instance = new NotesApp(note, true);
-                NotesApp.instance.showApp();
-            }
+            //TODO: Open up the relevant note here
         } else {
             Logger.error('No Data index on note element found.');
         }

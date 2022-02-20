@@ -44,10 +44,10 @@ export default class PredefinedCalendar{
                     new Weekday(7, 'Saturday')
                 ];
                 year.seasons = [
-                    new Season('Spring', 3, 20),
-                    new Season('Summer', 6, 20),
-                    new Season('Fall', 9, 22),
-                    new Season('Winter', 12, 21)
+                    new Season('Spring', 2, 19),
+                    new Season('Summer', 5, 19),
+                    new Season('Fall', 8, 21),
+                    new Season('Winter', 11, 20)
                 ];
                 year.time.hoursInDay = 24;
                 year.time.minutesInHour = 60;
@@ -74,8 +74,8 @@ export default class PredefinedCalendar{
                 ];
                 year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
                 year.moons[0].firstNewMoon.year = 2000;
-                year.moons[0].firstNewMoon.month = 1;
-                year.moons[0].firstNewMoon.day = 6;
+                year.moons[0].firstNewMoon.month = 0;
+                year.moons[0].firstNewMoon.day = 5;
                 year.moons[0].cycleDayAdjust = 0.5;
                 phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[0].phases = [
@@ -129,9 +129,9 @@ export default class PredefinedCalendar{
                     new Weekday(6, '6 Day')
                 ];
                 year.seasons = [
-                    new Season("Sun Descending", 3, 1),
-                    new Season("Sun Ascending", 7, 1),
-                    new Season("High Sun", 9, 1)
+                    new Season("Sun Descending", 2, 0),
+                    new Season("Sun Ascending", 6, 0),
+                    new Season("High Sun", 8, 0)
                 ];
                 year.seasons[2].color = '#ffa500';
                 year.seasons[0].color = '#cd4a39';
@@ -157,8 +157,8 @@ export default class PredefinedCalendar{
                 year.moons[0].color = "#7ace57";
                 year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
                 year.moons[0].firstNewMoon.year = 1;
-                year.moons[0].firstNewMoon.month = 1;
-                year.moons[0].firstNewMoon.day = 14;
+                year.moons[0].firstNewMoon.month = 0;
+                year.moons[0].firstNewMoon.day = 13;
                 phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
@@ -173,8 +173,8 @@ export default class PredefinedCalendar{
                 year.moons[1].color = "#ffd920";
                 year.moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
                 year.moons[1].firstNewMoon.year = 1;
-                year.moons[1].firstNewMoon.month = 3;
-                year.moons[1].firstNewMoon.day = 3;
+                year.moons[1].firstNewMoon.month = 2;
+                year.moons[1].firstNewMoon.day = 2;
                 phaseLength = Number(((year.moons[1].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[1].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
@@ -344,10 +344,10 @@ export default class PredefinedCalendar{
                     new Weekday(7, 'Da\'leysen')
                 ];
                 year.seasons = [
-                    new Season('Spring', 3, 13),
-                    new Season('Summer', 5, 26),
-                    new Season('Autumn', 8, 3),
-                    new Season('Winter', 11, 2)
+                    new Season('Spring', 2, 12),
+                    new Season('Summer', 4, 25),
+                    new Season('Autumn', 7, 2),
+                    new Season('Winter', 10, 1)
                 ];
                 year.time.hoursInDay = 24;
                 year.time.minutesInHour = 60;
@@ -375,8 +375,8 @@ export default class PredefinedCalendar{
                 ];
                 year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
                 year.moons[0].firstNewMoon.year = 810;
-                year.moons[0].firstNewMoon.month = 1;
-                year.moons[0].firstNewMoon.day = 9;
+                year.moons[0].firstNewMoon.month = 0;
+                year.moons[0].firstNewMoon.day = 8;
                 phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
@@ -391,8 +391,8 @@ export default class PredefinedCalendar{
                 year.moons[1].color = "#ab82f3";
                 year.moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
                 year.moons[1].firstNewMoon.year = 810;
-                year.moons[1].firstNewMoon.month = 3;
-                year.moons[1].firstNewMoon.day = 22;
+                year.moons[1].firstNewMoon.month = 2;
+                year.moons[1].firstNewMoon.day = 21;
                 phaseLength = Number(((year.moons[1].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[1].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
@@ -442,10 +442,10 @@ export default class PredefinedCalendar{
                 ];
 
                 year.seasons = [
-                    new Season('Spring', 2, 1),
-                    new Season('Summer', 4, 1),
-                    new Season('Fall', 6, 1),
-                    new Season('Winter', 8, 1)
+                    new Season('Spring', 1, 0),
+                    new Season('Summer', 3, 0),
+                    new Season('Fall', 5, 0),
+                    new Season('Winter', 7, 0)
                 ];
                 year.seasons[0].color = "#acffac";
                 year.seasons[1].color = "#ff9393";
@@ -475,8 +475,8 @@ export default class PredefinedCalendar{
                 ];
                 year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
                 year.moons[0].firstNewMoon.year = 0;
-                year.moons[0].firstNewMoon.month = 1;
-                year.moons[0].firstNewMoon.day = 1;
+                year.moons[0].firstNewMoon.month = 0;
+                year.moons[0].firstNewMoon.day = 0;
                 year.moons[0].cycleDayAdjust = 0;
                 phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[0].phases = [
@@ -523,10 +523,10 @@ export default class PredefinedCalendar{
                     new Weekday(7, 'Sunday')
                 ];
                 year.seasons = [
-                    new Season('Spring', 3, 1),
-                    new Season('Summer', 6, 1),
-                    new Season('Fall', 9, 1),
-                    new Season('Winter', 12, 1)
+                    new Season('Spring', 2, 0),
+                    new Season('Summer', 5, 0),
+                    new Season('Fall', 8, 0),
+                    new Season('Winter', 11, 0)
                 ];
                 year.time.hoursInDay = 24;
                 year.time.minutesInHour = 60;
@@ -554,8 +554,8 @@ export default class PredefinedCalendar{
                 year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.XYears;
                 year.moons[0].firstNewMoon.yearX = 4;
                 year.moons[0].firstNewMoon.year = 4700;
-                year.moons[0].firstNewMoon.month = 1;
-                year.moons[0].firstNewMoon.day = 8;
+                year.moons[0].firstNewMoon.month = 0;
+                year.moons[0].firstNewMoon.day = 7;
                 phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
@@ -603,10 +603,10 @@ export default class PredefinedCalendar{
                     new Weekday(7, 'Sunday')
                 ];
                 year.seasons = [
-                    new Season('Spring', 3, 1),
-                    new Season('Summer', 6, 1),
-                    new Season('Fall', 9, 1),
-                    new Season('Winter', 12, 1)
+                    new Season('Spring', 2, 0),
+                    new Season('Summer', 5, 0),
+                    new Season('Fall', 8, 0),
+                    new Season('Winter', 11, 0)
                 ];
                 year.time.hoursInDay = 24;
                 year.time.minutesInHour = 60;
@@ -634,8 +634,8 @@ export default class PredefinedCalendar{
                 year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.XYears;
                 year.moons[0].firstNewMoon.yearX = 4;
                 year.moons[0].firstNewMoon.year = 4700;
-                year.moons[0].firstNewMoon.month = 1;
-                year.moons[0].firstNewMoon.day = 8;
+                year.moons[0].firstNewMoon.month = 0;
+                year.moons[0].firstNewMoon.day = 7;
                 phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
@@ -691,11 +691,11 @@ export default class PredefinedCalendar{
                     new Weekday(7, 'Freeday')
                 ];
                 year.seasons = [
-                    new Season('Spring', 2, 1),
-                    new Season('Low Summer', 4, 1),
-                    new Season('High Summer', 7, 1),
-                    new Season('Fall', 10, 1),
-                    new Season('Winter', 12, 1)
+                    new Season('Spring', 1, 0),
+                    new Season('Low Summer', 3, 0),
+                    new Season('High Summer', 6, 0),
+                    new Season('Fall', 9, 0),
+                    new Season('Winter', 11, 0)
                 ];
                 year.seasons[0].color = "#E0C40B";
                 year.seasons[1].color = "#46B946";
@@ -726,8 +726,8 @@ export default class PredefinedCalendar{
                 ];
                 year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
                 year.moons[0].firstNewMoon.year = 590;
-                year.moons[0].firstNewMoon.month = 1;
-                year.moons[0].firstNewMoon.day = 25;
+                year.moons[0].firstNewMoon.month = 0;
+                year.moons[0].firstNewMoon.day = 24;
                 phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
@@ -742,8 +742,8 @@ export default class PredefinedCalendar{
                 year.moons[1].color = '#7FFFD4';
                 year.moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
                 year.moons[1].firstNewMoon.year = 590;
-                year.moons[1].firstNewMoon.month = 2;
-                year.moons[1].firstNewMoon.day = 12;
+                year.moons[1].firstNewMoon.month = 1;
+                year.moons[1].firstNewMoon.day = 11;
                 phaseLength = Number(((year.moons[1].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[1].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
@@ -806,10 +806,10 @@ export default class PredefinedCalendar{
                     new Weekday(10, '10th')
                 ];
                 year.seasons = [
-                    new Season('Spring', 3, 19),
-                    new Season('Summer', 6, 20),
-                    new Season('Fall', 9, 21),
-                    new Season('Winter', 12, 20)
+                    new Season('Spring', 2, 18),
+                    new Season('Summer', 5, 19),
+                    new Season('Fall', 8, 20),
+                    new Season('Winter', 11, 19)
                 ];
                 year.seasons[0].color = "#E0C40B";
                 year.seasons[1].color = "#46B946";
@@ -836,8 +836,8 @@ export default class PredefinedCalendar{
                 ];
                 year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.LeapYear;
                 year.moons[0].firstNewMoon.year = 1372;
-                year.moons[0].firstNewMoon.month = 1;
-                year.moons[0].firstNewMoon.day = 16;
+                year.moons[0].firstNewMoon.month = 0;
+                year.moons[0].firstNewMoon.day = 15;
                 year.moons[0].cycleDayAdjust = 0.5;
                 phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[0].phases = [
@@ -935,10 +935,10 @@ export default class PredefinedCalendar{
                     new Weekday(8, 'Festag')
                 ];
                 year.seasons = [
-                    new Season('Spring', 1, 17),
-                    new Season('Summer', 4, 18),
-                    new Season('Fall', 7, 17),
-                    new Season('Winter', 10, 18)
+                    new Season('Spring', 0, 16),
+                    new Season('Summer', 3, 17),
+                    new Season('Fall', 6, 16),
+                    new Season('Winter', 9, 17)
                 ];
                 year.seasons[0].color = "#E0C40B";
                 year.seasons[1].color = "#46B946";
@@ -965,8 +965,8 @@ export default class PredefinedCalendar{
                 ];
                 year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
                 year.moons[0].firstNewMoon.year = 2522;
-                year.moons[0].firstNewMoon.month = 1;
-                year.moons[0].firstNewMoon.day = 13;
+                year.moons[0].firstNewMoon.month = 0;
+                year.moons[0].firstNewMoon.day = 12;
                 phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
                 year.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},

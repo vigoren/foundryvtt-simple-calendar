@@ -100,6 +100,7 @@ export default class MigrationApp extends Application{
                 this.showApp();
             }
         }
+        return this.MigrationType !== MigrationTypes.none;
     }
 
     public runCalendarMigration(){

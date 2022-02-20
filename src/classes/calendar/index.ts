@@ -1,7 +1,6 @@
 import {
     GameSystems,
     GameWorldTimeIntegrations,
-    NoteRepeat,
     SettingNames,
     TimeKeeperStatus
 } from "../../constants";
@@ -18,10 +17,11 @@ import ConfigurationItemBase from "../configuration/configuration-item-base";
 import PF2E from "../systems/pf2e";
 import Renderer from "../renderer";
 import {generateUniqueId} from "../utilities/string";
-import {FormatDateTime, GetDisplayDate, ToSeconds} from "../utilities/date-time";
+import {FormatDateTime, ToSeconds} from "../utilities/date-time";
 import{canUser} from "../utilities/permissions";
 import {CalManager, MainApplication, SC} from "../index";
 import TimeKeeper from "../time/time-keeper";
+import NoteStub from "../notes/note-stub";
 
 export default class Calendar extends ConfigurationItemBase{
     /**
@@ -43,7 +43,7 @@ export default class Calendar extends ConfigurationItemBase{
      * List of all notes in the calendar
      * @type {Array.<Note>}
      */
-    public notes: Note[] = [];
+    public notes: NoteStub[] = [];
     /**
      * List of all categories associated with notes
      * @type{Array.<NoteCategory>}
@@ -101,7 +101,7 @@ export default class Calendar extends ConfigurationItemBase{
         c.generalSettings = this.generalSettings.clone();
         c.year = this.year.clone();
         if(includeNotes){
-            c.notes = this.notes.map(n => n.clone());
+            //c.notes = this.notes.map(n => n.clone());
             c.noteCategories = this.noteCategories.map(nc => {return {id: nc.id, name: nc.name, textColor: nc.textColor, color: nc.color}});
         }
         return c;
@@ -257,18 +257,15 @@ export default class Calendar extends ConfigurationItemBase{
 
             this.year.resetMonths('current');
             this.year.resetMonths('visible');
-            const currentMonth = config.currentDate.month;
-            const currentDay = config.currentDate.day;
-            const month = this.year.months.find(m => m.numericRepresentation === currentMonth);
-            if(month){
-                month.current = true;
-                month.visible = true;
-                const day = month.days.find(d => d.numericRepresentation === currentDay);
-                if(day){
-                    day.current = true;
+
+            if(config.currentDate.month > -1 && config.currentDate.month < this.year.months.length){
+                this.year.months[config.currentDate.month].current = true;
+                this.year.months[config.currentDate.month].visible = true;
+                if(config.currentDate.day > -1 && config.currentDate.day < this.year.months[config.currentDate.month].days.length){
+                    this.year.months[config.currentDate.month].days[config.currentDate.day].current = true;
                 } else {
                     Logger.warn('Saved current day could not be found in this month, perhaps number of days has changed. Setting current day to first day of month');
-                    month.days[0].current = true;
+                    this.year.months[config.currentDate.month].days[0].current = true;
                 }
             } else {
                 Logger.warn('Saved current month could not be found, perhaps months have changed. Setting current month to the first month');
@@ -297,19 +294,60 @@ export default class Calendar extends ConfigurationItemBase{
     getCurrentDate(){
         const newDate: SimpleCalendar.CurrentDateData = {
             year: this.year.numericRepresentation,
-            month: 1,
-            day: 1,
+            month: this.year.getMonthIndex(),
+            day: 0,
             seconds: this.year.time.seconds
         };
-        const currentMonth = this.year.getMonth();
-        if(currentMonth){
-            newDate.month = currentMonth.numericRepresentation;
-            const currentDay = currentMonth.getDay();
-            if(currentDay){
-                newDate.day = currentDay.numericRepresentation;
-            }
+        if(newDate.month === -1){
+            newDate.month = 0;
+        }
+        newDate.day = this.year.months[newDate.month].getDayIndex();
+        if(newDate.day === -1){
+            newDate.day = 0;
         }
         return newDate;
+    }
+
+    /**
+     * Gets the date and time for the selected date, or if not date is selected the current date
+     */
+    getDateTime(): SimpleCalendar.DateTime {
+        const dt: SimpleCalendar.DateTime = {
+            year: 0,
+            month: 0,
+            day: 0,
+            hour: 0,
+            minute: 0,
+            seconds: 0
+        };
+        const selectedMonth = this.year.getMonth('selected');
+        if(selectedMonth){
+            dt.year = this.year.selectedYear;
+            dt.month = this.year.months.findIndex(m => m.numericRepresentation === selectedMonth.numericRepresentation);
+            //dt.month = selectedMonth.numericRepresentation;
+            const selectedDay = selectedMonth.getDay('selected');
+            if(selectedDay){
+                dt.day = selectedMonth.days.findIndex(d => d.numericRepresentation === selectedDay.numericRepresentation);
+                //dt.day = selectedDay.numericRepresentation;
+            }
+        } else {
+            dt.year = this.year.numericRepresentation;
+            const currentMonth = this.year.getMonth();
+            if(currentMonth){
+                dt.month = this.year.months.findIndex(m => m.numericRepresentation === currentMonth.numericRepresentation);
+                //dt.month = currentMonth.numericRepresentation;
+                const currentDay = currentMonth.getDay();
+                if(currentDay){
+                    dt.day = currentMonth.days.findIndex(d => d.numericRepresentation === currentDay.numericRepresentation);
+                    //dt.day = currentDay.numericRepresentation;
+                }
+            }
+            const time = this.year.time.getCurrentTime();
+            dt.hour = time.hour;
+            dt.minute = time.minute;
+            dt.seconds = time.seconds;
+        }
+        return dt;
     }
 
     //---------------------------
@@ -328,9 +366,9 @@ export default class Calendar extends ConfigurationItemBase{
             const day = month.getDay('selected') || month.getDay();
             if(day){
                 this.notes.forEach((note) => {
-                    if(note.isVisible(year, month.numericRepresentation, day.numericRepresentation)){
-                        dayNotes.push(note);
-                    }
+                    //if(note.isVisible(year, month.numericRepresentation, day.numericRepresentation)){
+                    //    dayNotes.push(note);
+                    //}
                 });
             }
         }
@@ -357,7 +395,7 @@ export default class Calendar extends ConfigurationItemBase{
         const results: {match: number, note: Note}[] = [];
         term = term.toLowerCase();
 
-        this.notes.forEach((note) => {
+        /*this.notes.forEach((note) => {
             if((GameSettings.IsGm() || (!GameSettings.IsGm() && note.playerVisible))){
                 let match = 0;
                 const noteFormattedDate = GetDisplayDate(this,{year: note.year, month: note.month, day: note.day, hour: note.hour, minute: note.minute, seconds: 0}, note.endDate, note.allDay).toLowerCase();
@@ -464,7 +502,7 @@ export default class Calendar extends ConfigurationItemBase{
                     results.push({match: match, note: note});
                 }
             }
-        });
+        });*/
         results.sort((a: {match: number, note: Note}, b: {match: number, note: Note}) => b.match - a.match);
 
         return results.map(r => r.note.toTemplate());
@@ -499,64 +537,66 @@ export default class Calendar extends ConfigurationItemBase{
      * @param {boolean} [justTimeChange=false] If only the time (hour, minute, second) has changed or not
      */
     public checkNoteReminders(justTimeChange: boolean = false){
-        const userID = GameSettings.UserID();
-        const noteRemindersForPlayer = this.notes.filter(n => n.remindUsers.indexOf(userID) > -1);
-        if(noteRemindersForPlayer.length){
-            const currentMonth = this.year.getMonth();
-            const currentDay = currentMonth? currentMonth.getDay() : this.year.months[0].days[0];
-            const time = this.year.time.getCurrentTime();
-            const currentHour = time.hour;
-            const currentMinute = time.minute;
+        if(this.generalSettings.postNoteRemindersOnFoundryLoad){
+            /*const userID = GameSettings.UserID();
+            const noteRemindersForPlayer = this.notes.filter(n => n.remindUsers.indexOf(userID) > -1);
+            if(noteRemindersForPlayer.length){
+                const currentMonth = this.year.getMonth();
+                const currentDay = currentMonth? currentMonth.getDay() : this.year.months[0].days[0];
+                const time = this.year.time.getCurrentTime();
+                const currentHour = time.hour;
+                const currentMinute = time.minute;
 
-            const currentDate: SimpleCalendar.DateTime = {
-                year: this.year.numericRepresentation,
-                month: currentMonth? currentMonth.numericRepresentation : 1,
-                day: currentDay? currentDay.numericRepresentation : 1,
-                hour: currentHour,
-                minute: currentMinute,
-                seconds: 0
-            };
-            const noteRemindersCurrentDay = noteRemindersForPlayer.filter(n => {
-                if(n.repeats !== NoteRepeat.Never && !justTimeChange){
-                    if(n.repeats === NoteRepeat.Yearly){
-                        if(n.year !== currentDate.year){
-                            n.reminderSent = false;
-                        }
-                    } else if(n.repeats === NoteRepeat.Monthly){
-                        if(n.year !== currentDate.year || n.month !== currentDate.month || (n.month === currentDate.month && n.year !== currentDate.year)){
-                            n.reminderSent = false;
-                        }
-                    } else if(n.repeats === NoteRepeat.Weekly){
-                        if(n.year !== currentDate.year || n.month !== currentDate.month || n.day !== currentDate.day || (n.day === currentDate.day && (n.month !== currentDate.month || n.year !== currentDate.year))){
-                            n.reminderSent = false;
+                const currentDate: SimpleCalendar.DateTime = {
+                    year: this.year.numericRepresentation,
+                    month: currentMonth? currentMonth.numericRepresentation : 1,
+                    day: currentDay? currentDay.numericRepresentation : 1,
+                    hour: currentHour,
+                    minute: currentMinute,
+                    seconds: 0
+                };
+                const noteRemindersCurrentDay = noteRemindersForPlayer.filter(n => {
+                    if(n.repeats !== NoteRepeat.Never && !justTimeChange){
+                        if(n.repeats === NoteRepeat.Yearly){
+                            if(n.year !== currentDate.year){
+                                n.reminderSent = false;
+                            }
+                        } else if(n.repeats === NoteRepeat.Monthly){
+                            if(n.year !== currentDate.year || n.month !== currentDate.month || (n.month === currentDate.month && n.year !== currentDate.year)){
+                                n.reminderSent = false;
+                            }
+                        } else if(n.repeats === NoteRepeat.Weekly){
+                            if(n.year !== currentDate.year || n.month !== currentDate.month || n.day !== currentDate.day || (n.day === currentDate.day && (n.month !== currentDate.month || n.year !== currentDate.year))){
+                                n.reminderSent = false;
+                            }
                         }
                     }
-                }
-                //Check if the reminder has been sent or not and if the new day is between the notes start/end date
-                if(!n.reminderSent && n.isVisible(currentDate.year, currentDate.month, currentDate.day)){
-                    if(n.allDay){
-                        return true;
-                    } else if(currentDate.hour === n.hour){
-                        if(currentDate.minute >= n.minute){
+                    //Check if the reminder has been sent or not and if the new day is between the notes start/end date
+                    if(!n.reminderSent && n.isVisible(currentDate.year, currentDate.month, currentDate.day)){
+                        if(n.allDay){
+                            return true;
+                        } else if(currentDate.hour === n.hour){
+                            if(currentDate.minute >= n.minute){
+                                return true;
+                            }
+                        } else if(currentDate.hour > n.hour){
+                            return true;
+                        } else if(currentDate.year > n.year || currentDate.month > n.month || currentDate.day > n.day){
                             return true;
                         }
-                    } else if(currentDate.hour > n.hour){
-                        return true;
-                    } else if(currentDate.year > n.year || currentDate.month > n.month || currentDate.day > n.day){
-                        return true;
                     }
+                    return false;
+                });
+                for(let i = 0; i < noteRemindersCurrentDay.length; i++){
+                    const note = noteRemindersCurrentDay[i];
+                    ChatMessage.create({
+                        speaker: {alias: "Simple Calendar Reminder"},
+                        whisper: [userID],
+                        content: `<div style="margin-bottom: 0.5rem;font-size:0.75rem">${note.display()}</div><h2>${note.title}</h2>${note.content}`
+                    }).catch(Logger.error);
+                    note.reminderSent = true;
                 }
-                return false;
-            });
-            for(let i = 0; i < noteRemindersCurrentDay.length; i++){
-                const note = noteRemindersCurrentDay[i];
-                ChatMessage.create({
-                    speaker: {alias: "Simple Calendar Reminder"},
-                    whisper: [userID],
-                    content: `<div style="margin-bottom: 0.5rem;font-size:0.75rem">${note.display()}</div><h2>${note.title}</h2>${note.content}`
-                }).catch(Logger.error);
-                note.reminderSent = true;
-            }
+            }*/
         }
     }
 
@@ -569,10 +609,10 @@ export default class Calendar extends ConfigurationItemBase{
      */
     public toSeconds(){
         let totalSeconds = 0;
-        const month = this.year.getMonth();
-        if(month){
-            const day = month.getDay();
-            totalSeconds = ToSeconds(this, this.year.numericRepresentation, month.numericRepresentation, day? day.numericRepresentation : 1, true);
+        const monthIndex = this.year.months.findIndex(m => m.current);
+        if(monthIndex){
+            const dayIndex = this.year.months[monthIndex].days.findIndex(d => d.current);
+            totalSeconds = ToSeconds(this, this.year.numericRepresentation, monthIndex, dayIndex, true);
         }
         return totalSeconds;
     }

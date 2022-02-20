@@ -228,6 +228,11 @@ export default class Month extends ConfigurationItemBase {
         return this.days.find(d => d[verifiedSetting]);
     }
 
+    getDayIndex(setting: string = 'current'): number{
+        const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
+        return this.days.findIndex(d => d[verifiedSetting]);
+    }
+
     /**
      * Gets a list of all days template objects
      * @param {boolean} [isLeapYear=false] If the year is a leap year
