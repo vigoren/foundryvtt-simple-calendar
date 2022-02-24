@@ -174,6 +174,7 @@ export default class ConfigurationApp extends FormApplication {
 
         let data = {
             ...super.getData(options),
+            activeCalendarId: (<Calendar>this.object).id,
             calendars: this.calendars,
             clientSettings: {
                 openOnLoad: this.clientSettings.openOnLoad,
@@ -491,17 +492,10 @@ export default class ConfigurationApp extends FormApplication {
         this.uiElementStates.selectedPredefinedCalendar = ''
         this.uiElementStates.qsNextClicked = false;
         const ds = DateSelectorManager.GetSelector('quick-setup-predefined-calendar', {});
-        let monthIndex, dayIndex = 0;
-        monthIndex = (<Calendar>this.object).year.months.findIndex(m => m.numericRepresentation === ds.selectedDate.start.month);
-        if(monthIndex > -1) {
-            dayIndex = (<Calendar>this.object).year.months[monthIndex].days.findIndex(d => d.numericRepresentation === ds.selectedDate.start.day);
-        }
-        if(monthIndex > -1 && dayIndex > -1){
-            (<Calendar>this.object).year.numericRepresentation = ds.selectedDate.start.year;
-            (<Calendar>this.object).year.visibleYear = ds.selectedDate.start.year;
-            (<Calendar>this.object).year.selectedYear = ds.selectedDate.start.year;
-            (<Calendar>this.object).year.updateMonth(monthIndex, 'current', true, dayIndex);
-        }
+        (<Calendar>this.object).year.numericRepresentation = ds.selectedDate.start.year;
+        (<Calendar>this.object).year.visibleYear = ds.selectedDate.start.year;
+        (<Calendar>this.object).year.selectedYear = ds.selectedDate.start.year;
+        (<Calendar>this.object).year.updateMonth(ds.selectedDate.start.month, 'current', true, ds.selectedDate.start.day);
         this._tabs[0].active = "generalSettings";
         this.save(false, false).catch(Logger.error);
     }
@@ -839,7 +833,7 @@ export default class ConfigurationApp extends FormApplication {
     }
 
     /**
-     * Looks at all of the months and updates their numeric representation depending on if they are intercalary or not
+     * Looks at all the months and updates their numeric representation depending on if they are intercalary or not
      */
     public rebaseMonthNumbers(){
         let lastMonthNumber = 0;
@@ -1048,8 +1042,8 @@ export default class ConfigurationApp extends FormApplication {
             if(dateSelectorType === ConfigurationDateSelectors.seasonStartingDate){
                 const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
                 const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
-                season.startingMonth = (<Calendar>this.object).year.months[sMonthIndex].numericRepresentation;
-                season.startingDay = (<Calendar>this.object).year.months[sMonthIndex].days[sDayIndex].numericRepresentation;
+                season.startingMonth = sMonthIndex;
+                season.startingDay = sDayIndex;
             } else if(dateSelectorType === ConfigurationDateSelectors.seasonSunriseSunsetTime){
                 const activeCalendar = CalManager.getActiveCalendar();
                 season.sunriseTime = ((selectedDate.startDate.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.startDate.minute || 0) * activeCalendar.year.time.secondsInMinute);
@@ -1179,7 +1173,6 @@ export default class ConfigurationApp extends FormApplication {
                 options[id] = (<HTMLInputElement>e).checked;
             }
         });
-        console.log(options);
         const data = {
             exportVersion: 2,
             globalConfig: options['global']? {

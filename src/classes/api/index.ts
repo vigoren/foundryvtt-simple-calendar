@@ -19,7 +19,7 @@ import {
     YearNamingRules
 } from "../../constants";
 import PF2E from "../systems/pf2e";
-import {DateToTimestamp, FormatDateTime, TimestampToDate} from "../utilities/date-time";
+import {AdvanceTimeToPreset, DateToTimestamp, FormatDateTime, TimestampToDate} from "../utilities/date-time";
 import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Renderer from "../renderer";
@@ -105,37 +105,7 @@ export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string 
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(activeCalendar){
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)) {
-            let timeOfDay = 0;
-
-            if (preset === PresetTimeOfDay.Sunrise || preset === PresetTimeOfDay.Sunset) {
-                let month = activeCalendar.year.getMonth();
-                if (month) {
-                    let day = month.getDay();
-                    if (day) {
-                        timeOfDay = activeCalendar.year.getSunriseSunsetTime(activeCalendar.year.numericRepresentation, month, day, preset === PresetTimeOfDay.Sunrise, false);
-                        if (activeCalendar.year.time.seconds >= timeOfDay) {
-                            activeCalendar.year.changeDay(1, 'current');
-                            month = activeCalendar.year.getMonth();
-                            if (month) {
-                                day = month.getDay();
-                                if (day) {
-                                    timeOfDay = activeCalendar.year.getSunriseSunsetTime(activeCalendar.year.numericRepresentation, month, day, preset === PresetTimeOfDay.Sunrise, false);
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (preset === PresetTimeOfDay.Midday) {
-                timeOfDay = Math.floor(activeCalendar.year.time.secondsPerDay / 2);
-                if (activeCalendar.year.time.seconds >= timeOfDay) {
-                    activeCalendar.year.changeDay(1, 'current');
-                }
-            } else if (preset === PresetTimeOfDay.Midnight) {
-                activeCalendar.year.changeDay(1, 'current');
-            }
-            activeCalendar.year.time.seconds = timeOfDay;
-            CalManager.saveCalendars().catch(Logger.error);
-            activeCalendar.syncTime(true).catch(Logger.error);
+            AdvanceTimeToPreset(preset, activeCalendar.id).catch(Logger.error);
             return true;
         }
     }
@@ -1016,14 +986,8 @@ export function getCurrentMonth(calendarId: string = 'active'): SimpleCalendar.M
 export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.SeasonData{
     const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(cal){
-        const month = cal.year.getMonth();
-        if(month){
-            const mIndex = cal.year.months.findIndex(m => m.numericRepresentation == month.numericRepresentation);
-            const day = month.getDay();
-            if(day){
-                return cal.year.getSeason(mIndex, day.numericRepresentation).toConfig();
-            }
-        }
+        const monthDayIndex = cal.year.getMonthAndDayIndex();
+        return cal.year.getSeason(monthDayIndex.month || 0, monthDayIndex.day || 0).toConfig();
     } else {
         Logger.error(`SimpleCalendar.api.getCurrentSeason - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
@@ -1051,14 +1015,9 @@ export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.
 export function getCurrentWeekday(calendarId: string = 'active'): SimpleCalendar.WeekdayData | null{
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(activeCalendar){
-        const monthIndex = activeCalendar.year.months.findIndex(m => m.current);
-        if(monthIndex > -1){
-            const dayIndex = activeCalendar.year.months[monthIndex].days.findIndex(d => d.current);
-            if(dayIndex > -1){
-                const weekdayIndex = activeCalendar.year.dayOfTheWeek(activeCalendar.year.numericRepresentation, monthIndex, dayIndex);
-                return activeCalendar.year.weekdays[weekdayIndex].toConfig();
-            }
-        }
+        const monthDayIndex = activeCalendar.year.getMonthAndDayIndex();
+        const weekdayIndex = activeCalendar.year.dayOfTheWeek(activeCalendar.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0);
+        return activeCalendar.year.weekdays[weekdayIndex].toConfig();
     } else {
         Logger.error(`SimpleCalendar.api.getCurrentWeekday - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
@@ -1271,19 +1230,12 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
             }
 
             if(!date.month || !date.day){
-                const monthIndex = activeCalendar.year.months.findIndex(m => m.current);
+                const monthDayIndex = activeCalendar.year.getMonthAndDayIndex();
                 if(!date.month){
-                    date.month = monthIndex > -1? monthIndex : 0;
+                    date.month = monthDayIndex.month || 0;
                 }
-
                 if(!date.day){
-                    date.day = -1;
-                    if(monthIndex > -1){
-                        date.day = activeCalendar.year.months[monthIndex].days.findIndex(d => d.current);
-                    }
-                    if(date.day === -1){
-                        date.day = 0;
-                    }
+                    date.day = monthDayIndex.day || 0;
                 }
             }
 
@@ -1297,9 +1249,6 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
                 activeCalendar.year.months[date.month].visible = true;
 
                 const numberOfDays = isLeapYear? activeCalendar.year.months[date.month].numberOfLeapYearDays : activeCalendar.year.months[date.month].numberOfDays;
-                if(date.day > 0){
-                    date.day = date.day - 1;
-                }
                 if(date.day == -1 || date.day > numberOfDays){
                     date.day = numberOfDays - 1;
                 }

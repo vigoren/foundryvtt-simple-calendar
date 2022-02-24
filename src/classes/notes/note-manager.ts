@@ -3,6 +3,7 @@ import { NoteSheet } from "./note-sheet";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import Calendar from "../calendar";
 import NoteStub from "./note-stub";
+import {NManager} from "../index";
 
 
 export default class NoteManager{
@@ -94,5 +95,21 @@ export default class NoteManager{
     public getNotesForDay(calendarId: string, year: number, monthIndex: number, dayIndex: number){
         const calendarNotes = this.notes[calendarId] || [];
         return calendarNotes.filter(n => n.isVisible(calendarId, year, monthIndex, dayIndex));
+    }
+
+    public getNoteCountsForDay(calendarId: string, year: number, monthIndex: number, dayIndex: number){
+        const notesForDay = NManager.getNotesForDay(calendarId, year, monthIndex, dayIndex);
+        const results = {
+            count: 0,
+            reminderCount: 0
+        };
+        for(let i = 0; i < notesForDay.length; i++){
+            if(notesForDay[i].userReminderRegistered()){
+                results.reminderCount++;
+            } else {
+                results.count++;
+            }
+        }
+        return results;
     }
 }

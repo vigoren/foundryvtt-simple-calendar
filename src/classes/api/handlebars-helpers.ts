@@ -32,7 +32,7 @@ export class HandlebarsHelpers{
                 dsOptions.allowTimeRangeSelection = options.hash['allowTimeRangeSelection'];
             }
             if(options.hash.hasOwnProperty('calendar')){
-                dsOptions.calendar = options.hash['calendar'];
+                dsOptions.calendar = CalManager.getCalendar(options.hash['calendar']) || CalManager.getActiveCalendar();
             } else {
                 dsOptions.calendar = CalManager.getActiveCalendar();
             }

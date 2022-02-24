@@ -174,21 +174,19 @@ export class NoteSheet extends JournalSheet{
             const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
             const eMonthIndex = !selectedDate.endDate.month || selectedDate.endDate.month < 0? 0 : selectedDate.endDate.month;
             const eDayIndex = !selectedDate.endDate.day || selectedDate.endDate.day < 0? 0 : selectedDate.endDate.day;
-            const startMonthObj = calendar.year.months[sMonthIndex];
-            const endMonthObj = calendar.year.months[eMonthIndex];
 
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).startDate = {
                 year: selectedDate.startDate.year || 0,
-                month: startMonthObj.numericRepresentation,
-                day: startMonthObj.days[sDayIndex].numericRepresentation,
+                month: sMonthIndex,
+                day: sDayIndex,
                 hour: selectedDate.startDate.hour || 0,
                 minute: selectedDate.startDate.minute || 0,
                 seconds: selectedDate.startDate.seconds || 0
             };
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).endDate = {
                 year: selectedDate.endDate.year || 0,
-                month: endMonthObj.numericRepresentation,
-                day: endMonthObj.days[eDayIndex].numericRepresentation,
+                month: eMonthIndex,
+                day: eDayIndex,
                 hour: selectedDate.endDate.hour || 0,
                 minute: selectedDate.endDate.minute || 0,
                 seconds: selectedDate.endDate.seconds || 0

@@ -271,7 +271,6 @@ export class DateSelector {
             timeSelectors += `</div>`;
         }
         const displayDate = GetDisplayDate(this.calendar, this.selectedDate.start, this.selectedDate.end, this.selectedDate.allDay, (this.showTimeSelector && !this.showDateSelector), this.showCalendarYear, this.timeDelimiter);
-        console.log(this.selectedDate, displayDate);
         returnHtml = `<input class="display-input" value="${displayDate}" tabindex="0" type="text" readonly="readonly"><div class="sc-date-selector-calendar-wrapper${this.showTimeSelector && !this.showDateSelector? ' just-time' : ''}" style="display:${hideCalendar? 'none' : 'block'};">${calendar}${timeSelectors}</div>`;
         if(includeWrapper){
             returnHtml = `${wrapper}${returnHtml}</div>`

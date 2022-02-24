@@ -124,7 +124,7 @@ export default class Moon extends ConfigurationItemBase{
             dayList: []
         };
 
-        const month = year.months.find(m => m.numericRepresentation === data.firstNewMoon.month);
+        const month = year.months[data.firstNewMoon.month];
 
         if(month){
             data.dayList = month.days.map(d => d.toTemplate());
@@ -237,15 +237,13 @@ export default class Moon extends ConfigurationItemBase{
      * @param {string} property Which property to use when getting the year, month and day. Can be current, selected or visible
      * @param {DayTemplate|null} [dayToUse=null] The day to use instead of the day associated with the property
      */
-    getMoonPhase(year: Year, property = 'current', dayToUse: SimpleCalendar.HandlebarTemplateData.Day | null = null): SimpleCalendar.MoonPhase{
+    getMoonPhase(year: Year, property: string = 'current', dayToUse: number = 0): SimpleCalendar.MoonPhase{
         property = property.toLowerCase() as 'current' | 'selected' | 'visible';
         let yearNum = property === 'current'? year.numericRepresentation : property === 'selected'? year.selectedYear : year.visibleYear;
-        const month = year.getMonth(property);
-        if(month){
-            const day = property !== 'visible'? month.getDay(property) : dayToUse;
-            let monthNum = month.numericRepresentation;
-            let dayNum = day? day.numericRepresentation : 1;
-            return this.getDateMoonPhase(year, yearNum, monthNum, dayNum);
+        const monthIndex = year.getMonthIndex(property);
+        if(monthIndex > -1){
+            const dayIndex = property !== 'visible'? year.months[monthIndex].getDayIndex(property) : dayToUse;
+            return this.getDateMoonPhase(year, yearNum, monthIndex, dayIndex);
         }
         return this.phases[0];
     }

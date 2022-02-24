@@ -22,6 +22,7 @@ import{canUser} from "../utilities/permissions";
 import {CalManager, MainApplication, SC} from "../index";
 import TimeKeeper from "../time/time-keeper";
 import NoteStub from "../notes/note-stub";
+import Fuse from 'fuse.js'
 
 export default class Calendar extends ConfigurationItemBase{
     /**
@@ -111,28 +112,19 @@ export default class Calendar extends ConfigurationItemBase{
      * Creates a template for the calendar class
      */
     toTemplate(): SimpleCalendar.HandlebarTemplateData.Calendar{
-        let vMonth = 1, vMonthIndex = 0, vYear = this.year.visibleYear, sYear = this.year.selectedYear, sMonth = 1, sDay = 1;
-        const currentMonth = this.year.getMonth();
-        const selectedMonth = this.year.getMonth('selected');
-        const visibleMonth = this.year.getMonth('visible');
-        if(selectedMonth){
-            sMonth = selectedMonth.numericRepresentation;
-            const selectedDay = selectedMonth.getDay('selected');
-            if(selectedDay){
-                sDay = selectedDay.numericRepresentation;
-            }
-        } else if(currentMonth){
-            sYear = this.year.numericRepresentation;
-            sMonth = currentMonth.numericRepresentation;
-            const currentDay = currentMonth.getDay();
-            if(currentDay){
-                sDay = currentDay.numericRepresentation;
-            }
-        }
+        let sYear = this.year.selectedYear, sMonth, sDay;
 
-        if(visibleMonth){
-            vMonth = visibleMonth.numericRepresentation;
-            vMonthIndex = this.year.months.findIndex(m => m.numericRepresentation === vMonth);
+        const currentMonthDay = this.year.getMonthAndDayIndex();
+        const selectedMonthDay = this.year.getMonthAndDayIndex('selected');
+        const visibleMonthDay = this.year.getMonthAndDayIndex('visible');
+
+        if(selectedMonthDay.month !== undefined){
+            sMonth = selectedMonthDay.month;
+            sDay = selectedMonthDay.day || 0;
+        } else {
+            sYear = this.year.numericRepresentation;
+            sMonth = currentMonthDay.month || 0;
+            sDay = currentMonthDay.day || 0;
         }
 
         return {
@@ -144,10 +136,10 @@ export default class Calendar extends ConfigurationItemBase{
             id: this.id,
             name: this.name,
             notes: this.getNotesForDay().map(n => n.toTemplate()),
-            calendarDisplay: FormatDateTime({year: this.year.visibleYear, month: vMonth, day: 1, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear, this),
+            calendarDisplay: FormatDateTime({year: this.year.visibleYear, month: visibleMonthDay.month || 0, day: 0, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.monthYear, this),
             selectedDisplay: FormatDateTime({year: sYear, month: sMonth, day: sDay, hour: 0, minute: 0, seconds: 0}, this.generalSettings.dateFormat.date, this),
             timeDisplay: FormatDateTime({year: 0, month: 0, day: 0, ...this.year.time.getCurrentTime()}, this.generalSettings.dateFormat.time, this),
-            visibleDate: {year: vYear, month: vMonthIndex}
+            visibleDate: {year:  this.year.visibleYear, month: visibleMonthDay.month || 0}
         };
     }
 
@@ -291,21 +283,14 @@ export default class Calendar extends ConfigurationItemBase{
      * Gets the current date configuration object
      * @private
      */
-    getCurrentDate(){
-        const newDate: SimpleCalendar.CurrentDateData = {
+    getCurrentDate(): SimpleCalendar.CurrentDateData{
+        const monthDayIndex = this.year.getMonthAndDayIndex();
+        return {
             year: this.year.numericRepresentation,
-            month: this.year.getMonthIndex(),
-            day: 0,
+            month: monthDayIndex.month || 0,
+            day: monthDayIndex.day || 0,
             seconds: this.year.time.seconds
         };
-        if(newDate.month === -1){
-            newDate.month = 0;
-        }
-        newDate.day = this.year.months[newDate.month].getDayIndex();
-        if(newDate.day === -1){
-            newDate.day = 0;
-        }
-        return newDate;
     }
 
     /**
@@ -320,28 +305,17 @@ export default class Calendar extends ConfigurationItemBase{
             minute: 0,
             seconds: 0
         };
-        const selectedMonth = this.year.getMonth('selected');
-        if(selectedMonth){
+        const selectedMonthDayIndex = this.year.getMonthAndDayIndex('selected');
+        const currentMonthDayIndex = this.year.getMonthAndDayIndex();
+        if(selectedMonthDayIndex.month !== undefined){
             dt.year = this.year.selectedYear;
-            dt.month = this.year.months.findIndex(m => m.numericRepresentation === selectedMonth.numericRepresentation);
-            //dt.month = selectedMonth.numericRepresentation;
-            const selectedDay = selectedMonth.getDay('selected');
-            if(selectedDay){
-                dt.day = selectedMonth.days.findIndex(d => d.numericRepresentation === selectedDay.numericRepresentation);
-                //dt.day = selectedDay.numericRepresentation;
-            }
+            dt.month = selectedMonthDayIndex.month;
+            dt.day = selectedMonthDayIndex.day || 0;
         } else {
             dt.year = this.year.numericRepresentation;
-            const currentMonth = this.year.getMonth();
-            if(currentMonth){
-                dt.month = this.year.months.findIndex(m => m.numericRepresentation === currentMonth.numericRepresentation);
-                //dt.month = currentMonth.numericRepresentation;
-                const currentDay = currentMonth.getDay();
-                if(currentDay){
-                    dt.day = currentMonth.days.findIndex(d => d.numericRepresentation === currentDay.numericRepresentation);
-                    //dt.day = currentDay.numericRepresentation;
-                }
-            }
+            dt.month = currentMonthDayIndex.month || 0;
+            dt.day = currentMonthDayIndex.day || 0;
+
             const time = this.year.time.getCurrentTime();
             dt.hour = time.hour;
             dt.minute = time.minute;
@@ -394,6 +368,13 @@ export default class Calendar extends ConfigurationItemBase{
     public searchNotes(term: string, options: SimpleCalendar.SearchOptions.Fields): SimpleCalendar.HandlebarTemplateData.NoteTemplate[] {
         const results: {match: number, note: Note}[] = [];
         term = term.toLowerCase();
+
+        /*const f = new Fuse(this.notes, {
+            keys: ['name']
+        });
+        const res = f.search(term);
+
+        console.log(res);*/
 
         /*this.notes.forEach((note) => {
             if((GameSettings.IsGm() || (!GameSettings.IsGm() && note.playerVisible))){
@@ -608,13 +589,8 @@ export default class Calendar extends ConfigurationItemBase{
      * Converts current date into seconds
      */
     public toSeconds(){
-        let totalSeconds = 0;
-        const monthIndex = this.year.months.findIndex(m => m.current);
-        if(monthIndex){
-            const dayIndex = this.year.months[monthIndex].days.findIndex(d => d.current);
-            totalSeconds = ToSeconds(this, this.year.numericRepresentation, monthIndex, dayIndex, true);
-        }
-        return totalSeconds;
+        const monthDay = this.year.getMonthAndDayIndex();
+        return ToSeconds(this, this.year.numericRepresentation, monthDay.month || 0, monthDay.day || 0, true);
     }
 
     public changeDateTime(interval: SimpleCalendar.DateTimeParts, yearChangeUpdateMonth: boolean = true, syncChange: boolean = false){

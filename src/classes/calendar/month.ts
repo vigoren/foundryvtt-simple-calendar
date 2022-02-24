@@ -100,18 +100,6 @@ export default class Month extends ConfigurationItemBase {
     }
 
     /**
-     * Gets the display name for the month
-     * @return {string}
-     */
-    getDisplayName(): string {
-        if(this.numericRepresentation.toString() === this.name){
-            return this.name;
-        } else {
-            return `${this.name} (${this.numericRepresentation})`;
-        }
-    }
-
-    /**
      * Returns the configuration data for the month
      */
     toConfig(): SimpleCalendar.MonthData{
@@ -142,7 +130,6 @@ export default class Month extends ConfigurationItemBase {
         return {
             ...super.toTemplate(),
             abbreviation: this.abbreviation,
-            display: this.getDisplayName(),
             name: this.name,
             numericRepresentation: this.numericRepresentation,
             numericRepresentationOffset: this.numericRepresentationOffset,
@@ -261,18 +248,18 @@ export default class Month extends ConfigurationItemBase {
      * @param {string} [setting='current'] What setting on the day object to change
      */
     changeDay(amount: number, isLeapYear: boolean = false, setting: string = 'current'){
-        const targetDay = this.getDay(setting);
+        const targetDayIndex = this.getDayIndex(setting);
         let changeAmount = 0;
         const numberOfDays = isLeapYear? this.numberOfLeapYearDays : this.numberOfDays;
-        if(targetDay){
-            let index = this.days.findIndex(d => d.numericRepresentation === (targetDay.numericRepresentation)) + amount;
-            if((amount > 0 && index >= numberOfDays) || (amount < 0 && index < 0) || index < 0){
+        if(targetDayIndex > -1){
+            let newIndex = targetDayIndex + amount;
+            if((amount > 0 && newIndex >= numberOfDays) || (amount < 0 && newIndex < 0) || newIndex < 0){
                 Logger.debug(`On ${amount > 0? 'last' : 'first'} day of the month, changing to ${amount > 0? 'next' : 'previous'} month`);
                 this.resetDays(setting);
                 changeAmount = amount > 0? 1 : -1;
             } else {
-                Logger.debug(`New Day: ${this.days[index].numericRepresentation}`);
-                this.updateDay(index, isLeapYear, setting);
+                Logger.debug(`New Day: ${this.days[newIndex].numericRepresentation}`);
+                this.updateDay(newIndex, isLeapYear, setting);
             }
         }
         return changeAmount;
@@ -289,18 +276,18 @@ export default class Month extends ConfigurationItemBase {
 
     /**
      * Updates the setting for the day to true
-     * @param {number} day The Index of the day to update, -1 is for the last day of the month
+     * @param {number} dayIndex The Index of the day to update, -1 is for the last day of the month
      * @param {boolean} [isLeapYear=false] If the year is a leap year
      * @param {string} [setting='current'] The setting on the day to update. Can be either current or selected
      */
-    updateDay(day: number, isLeapYear: boolean = false, setting: string = 'current'){
+    updateDay(dayIndex: number, isLeapYear: boolean = false, setting: string = 'current'){
         const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
         const numberOfDays = isLeapYear? this.numberOfLeapYearDays : this.numberOfDays;
         this.resetDays(setting);
-        if(day < 0 || day >= numberOfDays){
+        if(dayIndex < 0 || dayIndex >= numberOfDays){
             this.days[numberOfDays - 1][verifiedSetting] = true;
-        } else if(this.days[day]){
-            this.days[day][verifiedSetting] = true;
+        } else if(this.days[dayIndex]){
+            this.days[dayIndex][verifiedSetting] = true;
         }
     }
 }

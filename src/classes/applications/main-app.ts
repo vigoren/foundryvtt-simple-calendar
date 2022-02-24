@@ -5,7 +5,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
     CalendarClickEvents,
     DateTimeUnits,
-    GameWorldTimeIntegrations,
+    GameWorldTimeIntegrations, PresetTimeOfDay,
     SettingNames,
     SocketTypes,
     TimeKeeperStatus
@@ -14,7 +14,7 @@ import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
 import {animateElement} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, SC, NManager} from "../index";
-import {FormatDateTime} from "../utilities/date-time";
+import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import{canUser} from "../utilities/permissions";
 
 
@@ -567,7 +567,7 @@ export default class MainApp extends Application{
      */
     public dayClick(options: SimpleCalendar.Renderer.CalendarOptions){
         this.toggleUnitSelector(true);
-        if(options.selectedDates && options.selectedDates.start.day && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.visibleCalendar.year.months.length){
+        if(options.selectedDates && options.selectedDates.start.day >= 0 && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.visibleCalendar.year.months.length){
             const selectedDay = options.selectedDates.start.day;
             let allReadySelected = false;
             const currentlySelectedMonth = this.visibleCalendar.year.getMonth('selected');
@@ -651,74 +651,8 @@ export default class MainApp extends Application{
                     this.activeCalendar.changeDateTime(interval, false);
                 }
             }
-        } else if(dataType && (dataType === 'dawn' || dataType === 'midday' || dataType === 'dusk' || dataType === 'midnight')){
-            this.timeOfDayControlClick(dataType);
-            CalManager.saveCalendars().catch(Logger.error);
-            //Sync the current time on apply, this will propagate to other modules
-            this.activeCalendar.syncTime(true).catch(Logger.error);
-        }
-    }
-
-    /**
-     * Processes the clicking to advance the calendar to the next defined time of day
-     * @param type
-     */
-    public timeOfDayControlClick(type: string){
-        let month = this.activeCalendar.year.getMonth();
-        let day: Day | undefined;
-        switch (type){
-            case 'dawn':
-                if(month){
-                    day = month.getDay();
-                    if(day){
-                        let sunriseTime = this.activeCalendar.year.getSunriseSunsetTime(this.activeCalendar.year.numericRepresentation, month, day, true, false);
-                        if(this.activeCalendar.year.time.seconds >= sunriseTime){
-                            this.activeCalendar.year.changeDay(1, 'current');
-                            month = this.activeCalendar.year.getMonth();
-                            if(month){
-                                day = month.getDay();
-                                if(day){
-                                    sunriseTime = this.activeCalendar.year.getSunriseSunsetTime(this.activeCalendar.year.numericRepresentation, month, day, true, false);
-                                    this.activeCalendar.year.time.seconds = sunriseTime;
-                                }
-                            }
-                        } else {
-                            this.activeCalendar.year.time.seconds = sunriseTime;
-                        }
-                    }
-                }
-                break;
-            case 'midday':
-                const halfDay = this.activeCalendar.year.time.secondsPerDay / 2;
-                if(this.activeCalendar.year.time.seconds >= halfDay){
-                    this.activeCalendar.year.changeDay(1, 'current');
-                }
-                this.activeCalendar.year.time.seconds = halfDay;
-                break;
-            case 'dusk':
-                if(month){
-                    day = month.getDay();
-                    if(day){
-                        let sunsetTime = this.activeCalendar.year.getSunriseSunsetTime(this.activeCalendar.year.numericRepresentation, month, day, false, false);
-                        if(this.activeCalendar.year.time.seconds >= sunsetTime){
-                            this.activeCalendar.year.changeDay(1, 'current');
-                            month = this.activeCalendar.year.getMonth();
-                            if(month){
-                                day = month.getDay();
-                                if(day){
-                                    sunsetTime = this.activeCalendar.year.getSunriseSunsetTime(this.activeCalendar.year.numericRepresentation, month, day, false, false);
-                                    this.activeCalendar.year.time.seconds = sunsetTime;
-                                }
-                            }
-                        } else {
-                            this.activeCalendar.year.time.seconds = sunsetTime;
-                        }
-                    }
-                }
-                break;
-            case 'midnight':
-                this.activeCalendar.changeDateTime({seconds: this.activeCalendar.year.time.secondsPerDay - this.activeCalendar.year.time.seconds});
-                break;
+        } else if(dataType && (dataType === 'sunrise' || dataType === 'midday' || dataType === 'sunset' || dataType === 'midnight')){
+            AdvanceTimeToPreset(<PresetTimeOfDay>dataType, this.activeCalendar.id).catch(Logger.error);
         }
     }
 
@@ -731,31 +665,29 @@ export default class MainApp extends Application{
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
             let validSelection = false;
             const selectedYear = this.activeCalendar.year.selectedYear;
+            const selectedMonthDayIndex = this.activeCalendar.year.getMonthAndDayIndex('selected');
             const selectedMonth = this.activeCalendar.year.getMonth('selected');
             if(selectedMonth){
-                const selectedDay = selectedMonth.getDay('selected');
-                if(selectedDay){
-                    Logger.debug(`Updating current date to selected day.`);
-                    validSelection = true;
-                    if(selectedYear !== this.activeCalendar.year.visibleYear || !selectedMonth.visible){
-                        const utsd = new Dialog({
-                            title: GameSettings.Localize('FSC.SetCurrentDateDialog.Title'),
-                            content: GameSettings.Localize('FSC.SetCurrentDateDialog.Content').replace('{DATE}', `${selectedMonth.name} ${selectedDay.numericRepresentation}, ${selectedYear}`),
-                            buttons:{
-                                yes: {
-                                    label: GameSettings.Localize('Yes'),
-                                    callback: this.setCurrentDate.bind(this, selectedYear, selectedMonth, selectedDay)
-                                },
-                                no: {
-                                    label: GameSettings.Localize('No')
-                                }
+                Logger.debug(`Updating current date to selected day.`);
+                validSelection = true;
+                if(selectedYear !== this.activeCalendar.year.visibleYear || !selectedMonth.visible){
+                    const utsd = new Dialog({
+                        title: GameSettings.Localize('FSC.SetCurrentDateDialog.Title'),
+                        content: GameSettings.Localize('FSC.SetCurrentDateDialog.Content').replace('{DATE}', FormatDateTime({year: selectedYear, month: selectedMonthDayIndex.month || 0, day: selectedMonthDayIndex.day || 0, hour: 0, minute: 0, seconds: 0}, "MMMM DD, YYYY", this.activeCalendar)),
+                        buttons:{
+                            yes: {
+                                label: GameSettings.Localize('Yes'),
+                                callback: this.setCurrentDate.bind(this, selectedYear, selectedMonthDayIndex.month || 0, selectedMonthDayIndex.day || 0)
                             },
-                            default: "no"
-                        });
-                        utsd.render(true);
-                    } else {
-                        this.setCurrentDate(selectedYear, selectedMonth, selectedDay);
-                    }
+                            no: {
+                                label: GameSettings.Localize('No')
+                            }
+                        },
+                        default: "no"
+                    });
+                    utsd.render(true);
+                } else {
+                    this.setCurrentDate(selectedYear, selectedMonthDayIndex.month || 0, selectedMonthDayIndex.day || 0);
                 }
             }
             if(!validSelection){
@@ -771,25 +703,25 @@ export default class MainApp extends Application{
     /**
      * Sets the current date for the calendar
      * @param {number} year The year number to set the date to
-     * @param {Month} month The month object to set as current
-     * @param {Day} day They day object to set as current
+     * @param {Month} monthIndex The month object to set as current
+     * @param {Day} dayIndex They day object to set as current
      */
-    public setCurrentDate(year: number, month: Month, day: Day){
+    public setCurrentDate(year: number, monthIndex: number, dayIndex: number){
         if(!GameSettings.IsGm() || !SC.primary){
             if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                 GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
             } else {
-                const socketData = <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>{year: year, month: month.numericRepresentation, day: day.numericRepresentation};
+                const socketData = <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>{year: year, month: monthIndex, day: dayIndex};
                 Logger.debug(`Sending Date Change to Primary GM: ${socketData.year}, ${socketData.month}, ${socketData.day}`);
                 GameSockets.emit({type: SocketTypes.date, data: socketData}).catch(Logger.error);
             }
         } else {
             this.activeCalendar.year.numericRepresentation = year;
             this.activeCalendar.year.resetMonths();
-            month.current = true;
-            month.selected = false;
-            day.current = true;
-            day.selected = false;
+            this.activeCalendar.year.months[monthIndex].current = true;
+            this.activeCalendar.year.months[monthIndex].selected = false;
+            this.activeCalendar.year.months[monthIndex].days[dayIndex].current = true;
+            this.activeCalendar.year.months[monthIndex].days[dayIndex].selected = false;
             CalManager.saveCalendars().catch(Logger.error);
             //Sync the current time on apply, this will propagate to other modules
             this.activeCalendar.syncTime().catch(Logger.error);

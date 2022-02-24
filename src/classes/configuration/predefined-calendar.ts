@@ -807,9 +807,9 @@ export default class PredefinedCalendar{
                 ];
                 year.seasons = [
                     new Season('Spring', 2, 18),
-                    new Season('Summer', 5, 19),
-                    new Season('Fall', 8, 20),
-                    new Season('Winter', 11, 19)
+                    new Season('Summer', 7, 19),
+                    new Season('Fall', 12, 20),
+                    new Season('Winter', 17, 19)
                 ];
                 year.seasons[0].color = "#E0C40B";
                 year.seasons[1].color = "#46B946";

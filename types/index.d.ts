@@ -586,6 +586,19 @@ declare global{
             export function getAllWeekdays(calendarId: string = 'active'): SimpleCalendar.WeekdayData[]
 
             /**
+             * Gets the details about the current active calendar.
+             *
+             * @returns The current active calendars configuration.
+             *
+             * @example
+             * ```javascript
+             * cosnt c = SimpleCalendar.api.getCurrentCalendar();
+             * console.log(c); // Will contain all the configuration data for the current calendar.
+             * ```
+             */
+            export function getCurrentCalendar(): SimpleCalendar.CalendarData
+
+            /**
              * Gets the details about the current day for the specified calendar.
              *
              * @param calendarId Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used.
@@ -1323,7 +1336,6 @@ declare global{
              */
             interface Month extends IDataItemBase {
                 abbreviation: string;
-                display: string;
                 name: string;
                 numericRepresentation: number;
                 numericRepresentationOffset: number;

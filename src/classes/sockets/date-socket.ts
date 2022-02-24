@@ -20,13 +20,7 @@ export default class DateSocket extends SocketBase{
      */
     public async process(data: SimpleCalendar.SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
         if(data.type === SocketTypes.date && GameSettings.IsGm() && SC.primary){
-            const month = calendar.year.months.find(m => m.numericRepresentation === (<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).month);
-            if(month){
-                const day = month.days.find(d => d.numericRepresentation === (<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).day);
-                if(day){
-                    MainApplication.setCurrentDate((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).year, month, day);
-                }
-            }
+            MainApplication.setCurrentDate((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).year, (<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).month, (<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>data.data).day);
             return true;
         }
         return false;

@@ -10,7 +10,7 @@ I am happy to say that Simple Calendar has finally had a big visual update. This
 
 #### Themes
 
-There are now different themes that can be applied to Simple Calendar to change how it looks! This release includes a Light and Dark theme. Additional themes or system specific themes may be added as time goes on.
+There are now different themes that can be applied to Simple Calendar to change how it looks! This release includes Light and Dark themes as well as a "Classic" theme (to match the aesthetic of Simple Calendar version 1).  Additional themes or system specific themes may be added as time goes on.
 
 I have tried to make sure that the light and dark themes are still easily usable for individuals with color blindness.
 
@@ -23,7 +23,7 @@ This section of the module has been 100% redesigned so that the full version is 
 - A refreshed clock display.
   - The clock icon has been updated to a better looking version.
   - The "Current Time" text has been removed to simplify the view
-- The controls for changing the date/time have been compacted into 1 control where users can choose which time unit (year, month, day, hour, minute, second) they wish to change.
+- The controls for changing the date/time have been compacted into 1 control where users can choose which time unit (year, month, day, hour, minute, round, second) they wish to change.
 - Simplified buttons for advancing to the next dawn, midday, dusk or midnight with new icons.
 - All other buttons have been moved to the right of the calendar and have been simplified with just an icon instead of an icon and text.
 - The notes list will now slide out to the right of the window when the notes button is clicked. This makes viewing notes easier and less intrusive to the calendar view.
@@ -32,6 +32,8 @@ This section of the module has been 100% redesigned so that the full version is 
 #### Compact View
 
 The compact view has also been completely redesigned to be more compact while still showing the same amount of information and functionality as before. It is now just slightly larger than the old calendar/weather widget.
+
+The button in the header to switch between compact and full views has been removed. To switch between the compact and full views simply double-click on the title bar.
 
 #### Configuration Dialog
 
