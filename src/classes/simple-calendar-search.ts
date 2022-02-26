@@ -41,7 +41,7 @@ export default class SimpleCalendarSearch extends FormApplication{
      * Returns the data used by handlebars to render the dialog
      * @param options
      */
-    getData(options?: Partial<FormApplication.Options>): Promise<FormApplication.Data<{}, FormApplication.Options>> | FormApplication.Data<{}, FormApplication.Options> {
+    getData(options?: Partial<FormApplicationOptions>): Promise<FormApplication.Data<{}, FormApplicationOptions>> | FormApplication.Data<{}, FormApplicationOptions> {
         let data = {
             ...super.getData(options),
             isGM: GameSettings.IsGm(),
