@@ -1,117 +1,122 @@
 {
-  "name": "foundryvtt-simple-calendar",
-  "title": "Simple Calendar",
-  "description": "A simple calendar module for keeping track of game days and events.",
-  "version": "1.3.75",
-  "author": "Dean Vigoren (Vigorator)",
-  "authors": [
-    {
-      "name": "Dean Vigoren (Vigorator)",
-      "url": "https://vig.vg",
-      "discord": "vigorator#8691",
-      "patreon": "vigorator",
-      "ko-fi": "vigorator"
-    }
-  ],
-  "minimumCoreVersion": "0.7.9",
-  "compatibleCoreVersion": "0.8.9",
-  "url": "https://github.com/vigoren/foundryvtt-simple-calendar",
-  "bugs": "https://github.com/vigoren/foundryvtt-simple-calendar/issues",
-  "allowBugReporter": true,
-  "readme": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/README.md",
-  "license": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE",
-  "manifest": "",
-  "download": "",
-  "esmodules":[
-    "./index.js"
-  ],
-  "styles": [
-    "./styles/calendar.css"
-  ],
-  "packs": [],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
-    },
-    {
-      "lang": "de",
-      "name": "Deutsch",
-      "path": "lang/de.json"
-    },
-    {
-      "lang": "zh-tw",
-      "name": "正體中文",
-      "path": "lang/zh-tw.json"
-    },
-    {
-      "lang": "es",
-      "name": "Español",
-      "path": "lang/es.json"
-    },
-    {
-      "lang": "ko",
-      "name": "한국어",
-      "path": "lang/ko.json"
-    },
-    {
-      "lang": "cs",
-      "name": "Čeština",
-      "path": "lang/cs.json"
-    },
-    {
-      "lang": "pt-BR",
-      "name": "Português (Brasil)",
-      "path": "lang/pt-BR.json"
-    },
-    {
-      "lang": "fr",
-      "name": "Français",
-      "path": "lang/fr.json"
-    }
-  ],
-  "socket": true,
-  "media": [
-    {
-      "type": "cover",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.png"
-    },
-    {
-      "type": "screenshot",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player-screenshot-1.png"
-    },
-    {
-      "type": "screenshot",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player-screenshot-2.png"
-    },
-    {
-      "type": "screenshot",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player-screenshot-3.png"
-    },
-    {
-      "type": "screenshot",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/compact-view.gif"
-    },
-    {
-      "type": "screenshot",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-1.png"
-    },
-    {
-      "type": "screenshot",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-2.png"
-    },
-    {
-      "type": "screenshot",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-3.png"
-    },
-    {
-      "type": "screenshot",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-4.png"
-    },
-    {
-      "type": "screenshot",
-      "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-compact-vew.png"
-    }
-  ]
+    "name": "foundryvtt-simple-calendar",
+    "title": "Simple Calendar",
+    "description": "A simple calendar module for keeping track of game days and events.",
+    "version": "v1.3.75",
+    "author": "Dean Vigoren (Vigorator)",
+    "authors": [
+        {
+            "name": "Dean Vigoren (Vigorator)",
+            "url": "https://vig.vg",
+            "discord": "vigorator#8691",
+            "patreon": "vigorator",
+            "ko-fi": "vigorator"
+        }
+    ],
+    "minimumCoreVersion": "0.7.9",
+    "compatibleCoreVersion": "0.8.9",
+    "url": "https://github.com/vigoren/foundryvtt-simple-calendar",
+    "bugs": "https://github.com/vigoren/foundryvtt-simple-calendar/issues",
+    "allowBugReporter": true,
+    "readme": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/README.md",
+    "license": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE",
+    "manifest": "https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json",
+    "download": "https://github.com/vigoren/foundryvtt-simple-calendar/releases/download/v1.3.75/module.zip",
+    "esmodules": [
+        "./index.js"
+    ],
+    "styles": [
+        "./styles/calendar.css"
+    ],
+    "packs": [],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        },
+        {
+            "lang": "de",
+            "name": "Deutsch",
+            "path": "lang/de.json"
+        },
+		{
+            "lang": "cn",
+            "name": "中文",
+            "path": "lang/cn.json"
+        },
+        {
+            "lang": "zh-tw",
+            "name": "正體中文",
+            "path": "lang/zh-tw.json"
+        },
+        {
+            "lang": "es",
+            "name": "Español",
+            "path": "lang/es.json"
+        },
+        {
+            "lang": "ko",
+            "name": "한국어",
+            "path": "lang/ko.json"
+        },
+        {
+            "lang": "cs",
+            "name": "Čeština",
+            "path": "lang/cs.json"
+        },
+        {
+            "lang": "pt-BR",
+            "name": "Português (Brasil)",
+            "path": "lang/pt-BR.json"
+        },
+        {
+            "lang": "fr",
+            "name": "Français",
+            "path": "lang/fr.json"
+        }
+    ],
+    "socket": true,
+    "media": [
+        {
+            "type": "cover",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.png"
+        },
+        {
+            "type": "screenshot",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player-screenshot-1.png"
+        },
+        {
+            "type": "screenshot",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player-screenshot-2.png"
+        },
+        {
+            "type": "screenshot",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player-screenshot-3.png"
+        },
+        {
+            "type": "screenshot",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/compact-view.gif"
+        },
+        {
+            "type": "screenshot",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-1.png"
+        },
+        {
+            "type": "screenshot",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-2.png"
+        },
+        {
+            "type": "screenshot",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-3.png"
+        },
+        {
+            "type": "screenshot",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-4.png"
+        },
+        {
+            "type": "screenshot",
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-compact-vew.png"
+        }
+    ]
 }
