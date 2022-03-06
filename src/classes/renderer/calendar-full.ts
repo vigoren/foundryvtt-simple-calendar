@@ -50,7 +50,7 @@ export default class CalendarFull{
             vYear = calendar.year.visibleYear;
             vMonthIndex = calendar.year.getMonthIndex('visible');
         }
-        weeks = calendar.year.daysIntoWeeks(vMonthIndex, vYear, calendar.year.weekdays.length);
+        weeks = calendar.daysIntoWeeks(vMonthIndex, vYear, calendar.weekdays.length);
 
         //TODO: When Changing the year the same day and month are considered selected
         if(options.selectedDates){
@@ -69,7 +69,7 @@ export default class CalendarFull{
         }
 
         if(options.showSeasonName || options.colorToMatchSeason){
-            const season = calendar.year.getSeason(vMonthIndex, ssDay? ssDay : 0);
+            const season = calendar.getSeason(vMonthIndex, ssDay? ssDay : 0);
             seasonName = season.name;
             calendarStyle = `border-color: ${season.color};`;
         }
@@ -99,7 +99,7 @@ export default class CalendarFull{
         }
         //Weekday Headings
         if(calendar.year.showWeekdayHeadings){
-            html += `<div class="weekdays">${calendar.year.weekdays.map(w => `<div class="weekday" title="${w.name}">${w.abbreviation}</div>`).join('')}</div>`;
+            html += `<div class="weekdays">${calendar.weekdays.map(w => `<div class="weekday" title="${w.name}">${w.abbreviation}</div>`).join('')}</div>`;
         }
         //Close header div
         html += '</div>';
@@ -359,8 +359,8 @@ export default class CalendarFull{
         let r = '';
         const notes = NManager.getNotesForDay(calendar.id, visibleYear, visibleMonthIndex, dayIndex);
         if(notes.length){
-            const regularNotes = notes.filter(n => !n.userReminderRegistered());
-            const reminderNotes = notes.filter(n => n.userReminderRegistered());
+            const regularNotes = notes.filter(n => !n.userReminderRegistered);
+            const reminderNotes = notes.filter(n => n.userReminderRegistered);
 
             if(regularNotes.length){
                 const rCount = regularNotes.length < 100? regularNotes.length : 99;
@@ -385,12 +385,12 @@ export default class CalendarFull{
      */
     public static MoonPhaseIcons(calendar: Calendar, visibleYear: number, visibleMonthIndex: number, dayIndex: number): string {
         let html = ''
-        for(let i = 0; i < calendar.year.moons.length; i++){
-            const mp = calendar.year.moons[i].getDateMoonPhase(calendar.year, visibleYear, visibleMonthIndex, dayIndex);
+        for(let i = 0; i < calendar.moons.length; i++){
+            const mp = calendar.moons[i].getDateMoonPhase(calendar.year, visibleYear, visibleMonthIndex, dayIndex);
             const d = calendar.year.months[visibleMonthIndex].days[dayIndex];
             if(mp && (mp.singleDay || d.selected || d.current)){
-                let moon = GetIcon(mp.icon, "#000000", calendar.year.moons[i].color);
-                html += `<span class="moon-phase ${mp.icon}" title="${calendar.year.moons[i].name} - ${mp.name}">${moon}</span>`;
+                let moon = GetIcon(mp.icon, "#000000", calendar.moons[i].color);
+                html += `<span class="moon-phase ${mp.icon}" title="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`;
             }
         }
         return html;

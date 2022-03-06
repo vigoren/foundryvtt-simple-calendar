@@ -1,17 +1,9 @@
 import Month from "./month";
 import {Logger} from "../logging";
-import {Weekday} from "./weekday";
 import LeapYear from "./leap-year";
-import Time from "../time/time";
-import {GameSystems, LeapYearRules, YearNamingRules} from "../../constants";
-import Season from "./season";
-import Moon from "./moon";
-import PF2E from "../systems/pf2e";
+import {LeapYearRules, YearNamingRules} from "../../constants";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {randomHash} from "../utilities/string";
-import {DaysBetweenDates, DateToTimestamp} from "../utilities/date-time";
-import {GetIcon} from "../utilities/visual";
-import {CalManager, NManager} from "../index";
 
 /**
  * Class for representing a year
@@ -43,11 +35,6 @@ export default class Year extends ConfigurationItemBase {
      */
     visibleYear: number;
     /**
-     * The days that make up a week
-     * @type {Array.<Weekday>}
-     */
-    weekdays: Weekday[] = [];
-    /**
      * If to show the weekday headings row or not on the calendar
      * @type {boolean}
      */
@@ -68,11 +55,6 @@ export default class Year extends ConfigurationItemBase {
      */
     leapYearRule: LeapYear;
     /**
-     * The time object responsible for all time related functionality
-     * @type {Time}
-     */
-    time: Time;
-    /**
      * If Simple Calendar has initiated a time change
      * @type {boolean}
      */
@@ -82,16 +64,6 @@ export default class Year extends ConfigurationItemBase {
      * @type {boolean}
      */
     combatChangeTriggered: boolean = false;
-    /**
-     * All of the seasons for this calendar
-     * @type {Array.<Season>}
-     */
-    seasons: Season[] = [];
-    /**
-     * All of the moons for this calendar
-     * @type {Array.<Moon>}
-     */
-    moons: Moon[] =[];
     /**
      * A list of names to pull from for naming a year
      * @type {Array.<string>}
@@ -117,7 +89,6 @@ export default class Year extends ConfigurationItemBase {
         this.selectedYear = numericRepresentation;
         this.visibleYear = numericRepresentation;
         this.leapYearRule = new LeapYear();
-        this.time = new Time();
     }
 
     /**
@@ -143,57 +114,10 @@ export default class Year extends ConfigurationItemBase {
      * @returns {SimpleCalendar.HandlebarTemplateData.Year}
      */
     toTemplate(): SimpleCalendar.HandlebarTemplateData.Year{
-        const activeCalendar = CalManager.getActiveCalendar();
-        const currentMonthDay = this.getMonthAndDayIndex();
-        const selectedMonthDay = this.getMonthAndDayIndex('selected');
-        const visibleMonth = this.getMonth('visible');
-
-        let sMoonsPhase = [], ncYear: number, ncMonth: number, ncDay: number;
-
-        if(selectedMonthDay.month !== undefined){
-            ncYear = this.selectedYear;
-            ncMonth = selectedMonthDay.month;
-            ncDay = selectedMonthDay.day || 0;
-        } else {
-            ncYear = this.numericRepresentation;
-            ncMonth = currentMonthDay.month || 0;
-            ncDay = currentMonthDay.day || 0;
-        }
-        const noteCounts = NManager.getNoteCountsForDay(activeCalendar.id, ncYear, ncMonth, ncDay);
-
-        if(this.moons.length){
-            for(let i = 0; i < this.moons.length; i++){
-                const phase = this.moons[i].getMoonPhase(this, 'current');
-                sMoonsPhase.push({
-                    name: this.moons[i].name,
-                    color: this.moons[i].color,
-                    phase: this.moons[i].getMoonPhase(this, 'current'),
-                    iconSVG: GetIcon(phase.icon, "#000000", this.moons[i].color)
-                });
-            }
-        }
-        const currentSeason = this.getCurrentSeason();
-
-        let weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [];
-        const visibleMonthIndex = this.getMonthIndex('visible');
-        if(visibleMonthIndex > -1){
-            weeks = this.daysIntoWeeks(visibleMonthIndex, this.visibleYear, this.weekdays.length);
-        }
         return {
             ...super.toTemplate(),
-            currentSeasonName: currentSeason.name,
-            currentSeasonColor: currentSeason.color,
             firstWeekday: this.firstWeekday,
             numericRepresentation: this.numericRepresentation,
-            selectedDayMoons: sMoonsPhase,
-            selectedDayNotes: {
-                reminders: noteCounts.reminderCount,
-                normal: noteCounts.count
-            },
-            showWeekdayHeaders: this.showWeekdayHeadings,
-            visibleMonth: visibleMonth?.toTemplate(this),
-            weekdays: this.weekdays.map(w => w.toTemplate()),
-            weeks: weeks,
             yearZero: this.yearZero,
             yearNames: this.yearNames,
             yearNamesStart: this.yearNamesStart,
@@ -239,52 +163,6 @@ export default class Year extends ConfigurationItemBase {
     }
 
     /**
-     * Will take the days of the passed in month and break it into an array of weeks
-     * @param monthIndex The month to get the days from
-     * @param year The year the month is in (for leap year calculation)
-     * @param weekLength How many days there are in a week
-     */
-    daysIntoWeeks(monthIndex: number, year: number, weekLength: number): (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][]{
-        const weeks = [];
-        const dayOfWeekOffset = this.monthStartingDayOfWeek(monthIndex, year);
-        const isLeapYear = this.leapYearRule.isLeapYear(year);
-        const days = this.months[monthIndex].getDaysForTemplate(isLeapYear);
-
-        if(days.length && weekLength > 0){
-            const startingWeek = [];
-            let dayOffset = 0;
-            for(let i = 0; i < weekLength; i++){
-                if(i<dayOfWeekOffset){
-                    startingWeek.push(false);
-                } else {
-                    const dayIndex = i - dayOfWeekOffset;
-                    if(dayIndex < days.length){
-                        startingWeek.push(days[dayIndex]);
-                        dayOffset++;
-                    } else {
-                        startingWeek.push(false);
-                    }
-                }
-            }
-            weeks.push(startingWeek);
-            const numWeeks = Math.ceil((days.length - dayOffset) / weekLength);
-            for(let i = 0; i < numWeeks; i++){
-                const w = [];
-                for(let d = 0; d < weekLength; d++){
-                    const dayIndex = dayOffset + (i * weekLength) + d;
-                    if(dayIndex < days.length){
-                        w.push(days[dayIndex]);
-                    } else {
-                        w.push(false);
-                    }
-                }
-                weeks.push(w);
-            }
-        }
-        return weeks;
-    }
-
-    /**
      * Creates a new year object with the exact same settings as this year
      * @return {Year}
      */
@@ -297,13 +175,9 @@ export default class Year extends ConfigurationItemBase {
         y.selectedYear = this.selectedYear;
         y.visibleYear = this.visibleYear;
         y.months = this.months.map(m => m.clone());
-        y.weekdays = this.weekdays.map(w => w.clone());
         y.leapYearRule = this.leapYearRule.clone();
         y.showWeekdayHeadings = this.showWeekdayHeadings;
         y.firstWeekday = this.firstWeekday;
-        y.time = this.time.clone();
-        y.seasons = this.seasons.map(s => s.clone());
-        y.moons = this.moons.map(m => m.clone());
         y.yearNames = this.yearNames.map(n => n);
         y.yearNamesStart = this.yearNamesStart;
         y.yearNamingRule = this.yearNamingRule;
@@ -544,49 +418,6 @@ export default class Year extends ConfigurationItemBase {
     }
 
     /**
-     * Calculates the day of the week the first day of the currently visible month lands on
-     * @param {Month} monthIndex The month to get the starting day of the week for
-     * @param {number} year The year the check
-     * @return {number}
-     */
-    monthStartingDayOfWeek(monthIndex: number, year: number): number {
-        if(monthIndex > -1 && monthIndex < this.months.length && !(this.months[monthIndex].intercalary && !this.months[monthIndex].intercalaryInclude)){
-            return this.dayOfTheWeek(year, monthIndex, 0);
-        }
-        return 0;
-    }
-
-    /**
-     * Calculates the day of the week a passed in day falls on based on its month and year
-     * @param {number} year The year of the date to find its day of the week
-     * @param {number} monthIndex The month that the target day is in
-     * @param {number} dayIndex  The day of the month that we want to check
-     * @return {number}
-     */
-    dayOfTheWeek(year: number, monthIndex: number, dayIndex: number): number{
-        if(this.weekdays.length){
-            const activeCalendar = CalManager.getActiveCalendar();
-            if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync){
-                const pf2eAdjust = PF2E.weekdayAdjust();
-                if(pf2eAdjust !== undefined){
-                    this.firstWeekday = pf2eAdjust;
-                }
-            }
-
-            const month = this.months[monthIndex];
-            let daysSoFar;
-            if(month && month.startingWeekday !== null){
-                daysSoFar = dayIndex + month.startingWeekday - 1;
-            } else {
-                daysSoFar = this.dateToDays(year, monthIndex, dayIndex) + this.firstWeekday;
-            }
-            return (daysSoFar % this.weekdays.length + this.weekdays.length) % this.weekdays.length;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
      * Converts the passed in date to the number of days that make up that date
      * @param {number} year The year to convert
      * @param {number} monthIndex The index of the month to convert
@@ -607,20 +438,19 @@ export default class Year extends ConfigurationItemBase {
 
         if(monthIndex < 0){
             monthIndex = 0;
-        }
-        if(dayIndex < 0){
-            dayIndex = 0;
+        } else if(monthIndex > this.months.length){
+            monthIndex = this.months.length - 1;
         }
 
-        if(beforeYearZero){
+        if(beforeYearZero) {
             procYear = procYear - 1;
         }
         //If the month has a day offset set we need to remove that from the days numeric representation or too many days are calculated.
-        let day = this.months[monthIndex].days[dayIndex].numericRepresentation - this.months[monthIndex].numericRepresentationOffset;
+        let daysIntoMonth = dayIndex - this.months[monthIndex].numericRepresentationOffset + 1;
 
         let daysSoFar = (daysPerYear * procYear);
-        if(day < 1){
-            day = 1;
+        if(daysIntoMonth < 1){
+            daysIntoMonth = 1;
         }
         if(beforeYearZero){
             if(isLeapYear){
@@ -638,7 +468,7 @@ export default class Year extends ConfigurationItemBase {
                     }
                 }
             }
-            daysSoFar += (isLeapYear? this.months[monthIndex].numberOfLeapYearDays : this.months[monthIndex].numberOfDays) - day;
+            daysSoFar += (isLeapYear? this.months[monthIndex].numberOfLeapYearDays : this.months[monthIndex].numberOfDays) - daysIntoMonth;
         } else {
             leapYearDays = Math.abs(numberOfLeapYears - numberOfYZLeapYears) * leapYearDayDifference;
             daysSoFar += leapYearDays;
@@ -653,7 +483,7 @@ export default class Year extends ConfigurationItemBase {
                     }
                 }
             }
-            daysSoFar += day;
+            daysSoFar += daysIntoMonth;
         }
         if(beforeYearZero){
             daysSoFar = daysSoFar + 1;
@@ -671,207 +501,6 @@ export default class Year extends ConfigurationItemBase {
             daysSoFar += leapYearDayDifference;
         }
         return beforeYearZero? daysSoFar * -1 : daysSoFar;
-    }
-
-    /**
-     * Convert a number of seconds to year, month, day, hour, minute, seconds
-     * @param {number} seconds The seconds to convert
-     */
-    secondsToDate(seconds: number): SimpleCalendar.DateTime{
-        const beforeYearZero = seconds < 0;
-        seconds = Math.abs(seconds);
-        let sec, min, hour, day = 0, dayCount, month = 0, year = 0;
-
-        dayCount = Math.floor(seconds / this.time.secondsPerDay);
-        seconds -= dayCount * this.time.secondsPerDay;
-
-        let timeOfDaySeconds = beforeYearZero? this.time.secondsPerDay - seconds : seconds;
-        hour = Math.floor(timeOfDaySeconds / (this.time.secondsInMinute * this.time.minutesInHour) ) % this.time.hoursInDay;
-        timeOfDaySeconds -= hour * (this.time.secondsInMinute * this.time.minutesInHour);
-        min = Math.floor(timeOfDaySeconds / this.time.secondsInMinute) % this.time.secondsInMinute;
-        timeOfDaySeconds -= min * this.time.secondsInMinute;
-        sec = timeOfDaySeconds % 60;
-
-        if(beforeYearZero){
-            year = this.yearZero - 1;
-            let isLeapYear = this.leapYearRule.isLeapYear(year);
-            month = this.months.length - 1;
-            day = isLeapYear? this.months[month].numberOfLeapYearDays - 1 : this.months[month].numberOfDays - 1;
-
-            if(sec === 0 && min === 0 && hour === 0){
-                dayCount--;
-            }
-            while(dayCount > 0){
-                const yearTotalDays = this.totalNumberOfDays(isLeapYear, true);
-                let monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
-                if(dayCount >= yearTotalDays){
-                    year = year - 1;
-                    isLeapYear = this.leapYearRule.isLeapYear(year);
-                    monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
-                    dayCount = dayCount - yearTotalDays;
-                } else if(dayCount >= monthDays){
-                    month = month - 1;
-                    //Check the new month to see if it has days for this year, if not then skip to the previous months until a month with days this year is found.
-                    let newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
-                    let safetyCounter = 0
-                    while(newMonthDays === 0 && safetyCounter <= this.months.length){
-                        month--;
-                        newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
-                        safetyCounter++;
-                    }
-                    day = isLeapYear? this.months[month].numberOfLeapYearDays - 1 : this.months[month].numberOfDays - 1;
-                    dayCount = dayCount - monthDays;
-                } else {
-                    day = day - 1;
-                    dayCount = dayCount - 1;
-                }
-            }
-        } else {
-            year = this.yearZero;
-            let isLeapYear = this.leapYearRule.isLeapYear(year);
-            month = 0;
-            day = 0;
-            while(dayCount > 0){
-                const yearTotalDays = this.totalNumberOfDays(isLeapYear, true);
-                const monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
-                if(dayCount >= yearTotalDays){
-                    year = year + 1;
-                    isLeapYear = this.leapYearRule.isLeapYear(year);
-                    dayCount = dayCount - yearTotalDays;
-                } else if(dayCount >= monthDays){
-                    month = month + 1;
-                    //Check the new month to see if it has days for this year, if not then skip to the next months until a month with days this year is found.
-                    let newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
-                    let safetyCounter = 0
-                    while(newMonthDays === 0 && safetyCounter <= this.months.length){
-                        month++;
-                        newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
-                        safetyCounter++;
-                    }
-                    dayCount = dayCount - monthDays;
-                } else {
-                    day = day + 1;
-                    dayCount = dayCount - 1;
-                }
-            }
-            if(year < 0){
-                day++;
-            }
-        }
-        return {
-            year: year,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: min,
-            seconds: sec
-        }
-    }
-
-    /**
-     * Convert the passed in seconds into an interval of larger time
-     * @param seconds
-     */
-    secondsToInterval(seconds: number): SimpleCalendar.DateTimeParts {
-        let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
-        if(sec >= this.time.secondsInMinute){
-            min = Math.floor(sec / this.time.secondsInMinute);
-            sec = sec - (min * this.time.secondsInMinute);
-        }
-        if(min >= this.time.minutesInHour){
-            hour = Math.floor(min / this.time.minutesInHour);
-            min = min - (hour * this.time.minutesInHour);
-        }
-        let dayCount = 0;
-        if(hour >= this.time.hoursInDay){
-            dayCount = Math.floor(hour / this.time.hoursInDay);
-            hour = hour - (dayCount * this.time.hoursInDay);
-        }
-
-        const daysInYear = this.totalNumberOfDays(false, false);
-        const averageDaysInMonth = daysInYear / this.months.map(m => !m.intercalary).length;
-
-        month = Math.floor(dayCount / averageDaysInMonth);
-        day = dayCount - Math.round(month * averageDaysInMonth);
-
-        year = Math.floor(month / this.months.length);
-        month = month - Math.round(year * this.months.length);
-
-        return {
-            seconds: sec,
-            minute: min,
-            hour: hour,
-            day: day,
-            month: month,
-            year: year
-        };
-    }
-
-    /**
-     * Updates the year's data with passed in date information
-     * @param {DateTimeParts} parsedDate Interface that contains all of the individual parts of a date and time
-     */
-    updateTime(parsedDate: SimpleCalendar.DateTime){
-        let isLeapYear = this.leapYearRule.isLeapYear(parsedDate.year);
-        this.numericRepresentation = parsedDate.year;
-        this.updateMonth(parsedDate.month, 'current', true);
-        this.months[parsedDate.month].updateDay(parsedDate.day, isLeapYear);
-        this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.seconds);
-    }
-
-
-    /**
-     * Gets the current season based on the current date
-     */
-    getCurrentSeason() {
-        let monthIndex = this.getMonthIndex('visible');
-        if(monthIndex === -1){
-            monthIndex = 0;
-        }
-
-        let dayIndex = this.months[monthIndex].getDayIndex('selected');
-        if(dayIndex === -1){
-            dayIndex = this.months[monthIndex].getDayIndex();
-            if(dayIndex === -1){
-                dayIndex = 0;
-            }
-        }
-        const season = this.getSeason(monthIndex, dayIndex);
-        return {
-            name: season.name,
-            color: season.color
-        };
-    }
-
-    /**
-     * Gets the season for the passed in month and day
-     * @param {number} monthIndex The index of the month
-     * @param {number} dayIndex The day number
-     */
-    getSeason(monthIndex: number, dayIndex: number) {
-        let season = new Season('', 0, 0);
-        if(dayIndex >= 0 && monthIndex >= 0){
-            let currentSeason: Season | null = null;
-            const sortedSeasons = this.seasons.sort((a, b) => {
-                return a.startingMonth - b.startingMonth || a.startingDay - b.startingDay;
-            });
-
-            for(let i = 0; i < sortedSeasons.length; i++){
-                if(sortedSeasons[i].startingMonth === monthIndex && sortedSeasons[i].startingDay <= dayIndex){
-                    currentSeason = sortedSeasons[i];
-                } else if (sortedSeasons[i].startingMonth < monthIndex){
-                    currentSeason = sortedSeasons[i];
-                }
-            }
-            if(currentSeason === null){
-                currentSeason = sortedSeasons[sortedSeasons.length - 1];
-            }
-
-            if(currentSeason){
-                season = currentSeason.clone();
-            }
-        }
-        return season;
     }
 
     /**
@@ -897,61 +526,5 @@ export default class Year extends ConfigurationItemBase {
         }
 
         return name;
-    }
-
-    /**
-     * Calculates the sunrise or sunset time for the passed in date, based on the the season setup
-     * @param {number} year The year of the date
-     * @param {Month} monthIndex The month object of the date
-     * @param {Day} dayIndex The day object of the date
-     * @param {boolean} [sunrise=true] If to calculate the sunrise or sunset
-     * @param {boolean} [calculateTimestamp=true] If to add the date timestamp to the sunrise/sunset time
-     */
-    getSunriseSunsetTime(year: number, monthIndex: number, dayIndex: number, sunrise: boolean = true, calculateTimestamp: boolean = true){
-        const activeCalendar = CalManager.getActiveCalendar();
-        const sortedSeasons = this.seasons.sort((a, b) => {
-            return a.startingMonth - b.startingMonth || a.startingDay - b.startingDay;
-        });
-        let seasonIndex = sortedSeasons.length - 1;
-        for(let i = 0; i < sortedSeasons.length; i++){
-            if(sortedSeasons[i].startingMonth === monthIndex && sortedSeasons[i].startingDay <= dayIndex){
-                seasonIndex = i;
-            } else if (sortedSeasons[i].startingMonth < monthIndex){
-                seasonIndex = i;
-            }
-        }
-        const nextSeasonIndex = (seasonIndex + 1) % this.seasons.length;
-        if(seasonIndex < sortedSeasons.length && nextSeasonIndex < sortedSeasons.length){
-            let season = sortedSeasons[seasonIndex];
-            const nextSeason = sortedSeasons[nextSeasonIndex];
-            let seasonYear = year;
-            let nextSeasonYear = seasonYear;
-
-            //If the current season is the last season of the year we need to check to see if the year for this season is the year before the current date
-            if(seasonIndex === sortedSeasons.length - 1){
-                if(monthIndex < sortedSeasons[seasonIndex].startingMonth || (sortedSeasons[seasonIndex].startingMonth === monthIndex && dayIndex < sortedSeasons[seasonIndex].startingDay)){
-                    seasonYear = year - 1;
-                }
-                nextSeasonYear = seasonYear + 1
-            }
-            const daysBetweenSeasonStartAndDay = DaysBetweenDates(activeCalendar,
-                { year: seasonYear, month: season.startingMonth, day: season.startingDay, hour: 0, minute: 0, seconds: 0 },
-                { year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, seconds: 0 }
-            );
-            const daysBetweenSeasons = DaysBetweenDates(activeCalendar,
-                { year: seasonYear, month: season.startingMonth, day: season.startingDay, hour: 0, minute: 0, seconds: 0 },
-                { year: nextSeasonYear, month: nextSeason.startingMonth, day: nextSeason.startingDay, hour: 0, minute: 0, seconds: 0 }
-            );
-            const diff = sunrise? nextSeason.sunriseTime - season.sunriseTime : nextSeason.sunsetTime - season.sunsetTime;
-            const averageChangePerDay = diff / daysBetweenSeasons;
-            const sunriseChangeForDay = daysBetweenSeasonStartAndDay * averageChangePerDay;
-            const finalSunriseTime = Math.round((sunrise? season.sunriseTime : season.sunsetTime) + sunriseChangeForDay);
-            if(calculateTimestamp){
-                return DateToTimestamp({ year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, seconds: 0 }, activeCalendar) + finalSunriseTime;
-            } else {
-                return finalSunriseTime;
-            }
-        }
-        return 0;
     }
 }

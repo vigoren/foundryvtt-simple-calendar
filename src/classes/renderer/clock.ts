@@ -35,7 +35,7 @@ export default class Clock {
      * @param options
      */
     public static RenderTime(calendar: Calendar, options: SimpleCalendar.Renderer.ClockOptions){
-        return`<div class="current-time">${calendar.year.time.toString()}</div>`;
+        return`<div class="current-time">${calendar.time.toString()}</div>`;
     }
 
     /**

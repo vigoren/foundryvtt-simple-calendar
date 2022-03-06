@@ -21,10 +21,10 @@ export function FormatDateTime(date: SimpleCalendar.DateTime, mask: string, cale
         "D": (dateObj: SimpleCalendar.DateTime) => String(calendar.year.months[dateObj.month].days[dateObj.day].numericRepresentation),
         "DD": (dateObj: SimpleCalendar.DateTime) => PadNumber(calendar.year.months[dateObj.month].days[dateObj.day].numericRepresentation),
         "DO": (dateObj: SimpleCalendar.DateTime) => `${String(calendar.year.months[dateObj.month].days[dateObj.day].numericRepresentation)}${ordinalSuffix(calendar.year.months[dateObj.month].days[dateObj.day].numericRepresentation)}`,
-        "d": (dateObj: SimpleCalendar.DateTime) => String(calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
-        "dd": (dateObj: SimpleCalendar.DateTime) => PadNumber(calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
-        "ddd": (dateObj: SimpleCalendar.DateTime) => `${calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].abbreviation}`,
-        "dddd": (dateObj: SimpleCalendar.DateTime) => `${calendar.year.weekdays[calendar.year.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name}`,
+        "d": (dateObj: SimpleCalendar.DateTime) => String(calendar.weekdays[calendar.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
+        "dd": (dateObj: SimpleCalendar.DateTime) => PadNumber(calendar.weekdays[calendar.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].numericRepresentation),
+        "ddd": (dateObj: SimpleCalendar.DateTime) => `${calendar.weekdays[calendar.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].abbreviation}`,
+        "dddd": (dateObj: SimpleCalendar.DateTime) => `${calendar.weekdays[calendar.dayOfTheWeek(dateObj.year, dateObj.month, dateObj.day)].name}`,
         "M": (dateObj: SimpleCalendar.DateTime) => String(calendar.year.months[dateObj.month].numericRepresentation),
         "MM": (dateObj: SimpleCalendar.DateTime) => PadNumber(calendar.year.months[dateObj.month].numericRepresentation),
         "MMM": (dateObj: SimpleCalendar.DateTime) => calendar.year.months[dateObj.month].abbreviation,
@@ -37,12 +37,12 @@ export function FormatDateTime(date: SimpleCalendar.DateTime, mask: string, cale
         "H": (dateObj: SimpleCalendar.DateTime) => String(dateObj.hour),
         "HH": (dateObj: SimpleCalendar.DateTime) => PadNumber(dateObj.hour),
         "h": (dateObj: SimpleCalendar.DateTime) => {
-            const halfDay = Math.floor(calendar.year.time.hoursInDay / 2);
+            const halfDay = Math.floor(calendar.time.hoursInDay / 2);
             const hour = dateObj.hour % halfDay || halfDay;
             return String(hour);
         },
         "hh": (dateObj: SimpleCalendar.DateTime) => {
-            const halfDay = Math.floor(calendar.year.time.hoursInDay / 2);
+            const halfDay = Math.floor(calendar.time.hoursInDay / 2);
             const hour = dateObj.hour % halfDay || halfDay;
             return PadNumber(hour);
         },
@@ -51,11 +51,11 @@ export function FormatDateTime(date: SimpleCalendar.DateTime, mask: string, cale
         "s": (dateObj: SimpleCalendar.DateTime) => String(dateObj.seconds),
         "ss": (dateObj: SimpleCalendar.DateTime) => PadNumber(dateObj.seconds),
         "A": (dateObj: SimpleCalendar.DateTime) => {
-            const halfDay = Math.floor(calendar.year.time.hoursInDay / 2);
+            const halfDay = Math.floor(calendar.time.hoursInDay / 2);
             return dateObj.hour >= halfDay? "PM" : "AM";
         },
         "a": (dateObj: SimpleCalendar.DateTime) => {
-            const halfDay = Math.floor(calendar.year.time.hoursInDay / 2);
+            const halfDay = Math.floor(calendar.time.hoursInDay / 2);
             return dateObj.hour >= halfDay? "pm" : "am";
         }
     };
@@ -88,7 +88,7 @@ export function FormatDateTime(date: SimpleCalendar.DateTime, mask: string, cale
 export function ToSeconds(calendar: Calendar, year: number, monthIndex: number, dayIndex: number, includeToday: boolean = true){
     //Get the days so for and add one to include the current day
     let daysSoFar = calendar.year.dateToDays(year, monthIndex, dayIndex, true, true);
-    let totalSeconds = calendar.year.time.getTotalSeconds(daysSoFar, includeToday);
+    let totalSeconds = calendar.time.getTotalSeconds(daysSoFar, includeToday);
     // If this is a Pathfinder 2E game, subtract the world creation seconds
     if(calendar.gameSystem === GameSystems.PF2E && calendar.generalSettings.pf2eSync){
         const newYZ = PF2E.newYearZero();
@@ -97,7 +97,7 @@ export function ToSeconds(calendar: Calendar, year: number, monthIndex: number, 
             daysSoFar = calendar.year.dateToDays(year, monthIndex, dayIndex, true, true);
         }
         daysSoFar++;
-        totalSeconds =  calendar.year.time.getTotalSeconds(daysSoFar, includeToday) - PF2E.getWorldCreateSeconds(calendar, false);
+        totalSeconds =  calendar.time.getTotalSeconds(daysSoFar, includeToday) - PF2E.getWorldCreateSeconds(calendar, false);
     }
     return totalSeconds;
 }
@@ -121,7 +121,7 @@ export function GetDisplayDate(calendar: Calendar, startDate: SimpleCalendar.Dat
     let startDateMask = ``;
     let endDateMask = ``;
 
-    if(!DateTheSame(startDate, endDate) && endDate.month !== 0 && endDate.day !== 0){
+    if(!DateTheSame(startDate, endDate)){
         startDateMask = `${dateMask}`;
         endDateMask = `${dateMask}`;
     } else if(!dontIncludeSameDate){
@@ -234,7 +234,7 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
         seconds += PF2E.getWorldCreateSeconds(calendar);
     }
 
-    const dateTime = calendar.year.secondsToDate(seconds);
+    const dateTime = calendar.secondsToDate(seconds);
     result.year = dateTime.year;
     result.month = dateTime.month;
     result.day = dateTime.day;
@@ -246,14 +246,14 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
     const day = month.days[dateTime.day];
     result.dayOffset = month.numericRepresentationOffset;
     result.yearZero = calendar.year.yearZero;
-    result.dayOfTheWeek = calendar.year.dayOfTheWeek(result.year, result.month, result.day);
-    result.currentSeason = calendar.year.getSeason(result.month, result.day + 1);
-    result.weekdays = calendar.year.weekdays.map(w => w.name);
+    result.dayOfTheWeek = calendar.dayOfTheWeek(result.year, result.month, result.day);
+    result.currentSeason = calendar.getSeason(result.month, result.day + 1);
+    result.weekdays = calendar.weekdays.map(w => w.name);
     result.showWeekdayHeadings = calendar.year.showWeekdayHeadings;
     result.isLeapYear = calendar.year.leapYearRule.isLeapYear(result.year);
-    result.sunrise = calendar.year.getSunriseSunsetTime(result.year, result.month, result.day, true);
-    result.sunset = calendar.year.getSunriseSunsetTime(result.year, result.month, result.day, false);
-    result.midday = DateToTimestamp({ year: result.year, month: result.month, day: result.day, hour: 0, minute: 0, seconds: 0 }, calendar) + Math.floor(calendar.year.time.secondsPerDay / 2);
+    result.sunrise = calendar.getSunriseSunsetTime(result.year, result.month, result.day, true);
+    result.sunset = calendar.getSunriseSunsetTime(result.year, result.month, result.day, false);
+    result.midday = DateToTimestamp({ year: result.year, month: result.month, day: result.day, hour: 0, minute: 0, seconds: 0 }, calendar) + Math.floor(calendar.time.secondsPerDay / 2);
 
     // Display Stuff
     result.display.year = dateTime.year.toString();
@@ -262,8 +262,8 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
     result.display.yearPostfix = calendar.year.postfix;
     result.display.month = month.numericRepresentation.toString();
     result.display.monthName = month.name;
-    if(calendar.year.weekdays.length > result.dayOfTheWeek){
-        result.display.weekday = calendar.year.weekdays[result.dayOfTheWeek].name;
+    if(calendar.weekdays.length > result.dayOfTheWeek){
+        result.display.weekday = calendar.weekdays[result.dayOfTheWeek].name;
     }
     result.display.day = day.numericRepresentation.toString();
     result.display.daySuffix = ordinalSuffix(day.numericRepresentation);
@@ -276,7 +276,7 @@ export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: C
     let ts = 0;
     const clone = calendar.clone(false);
     const monthIndex = clone.year.months.findIndex(m => m.current);
-    const currentTime = clone.year.time.getCurrentTime();
+    const currentTime = clone.time.getCurrentTime();
     if (date.seconds === undefined) {
         date.seconds = currentTime.seconds;
     }
@@ -305,7 +305,7 @@ export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: C
     }
     clone.year.updateMonth(date.month, 'current', true, date.day);
     clone.numericRepresentation = date.year;
-    clone.year.time.setTime(date.hour, date.minute, date.seconds);
+    clone.time.setTime(date.hour, date.minute, date.seconds);
     ts = clone.toSeconds();
     return ts;
 }
@@ -316,21 +316,21 @@ export async function AdvanceTimeToPreset(preset: PresetTimeOfDay, calendarId: s
         let timeOfDay = 0;
         if (preset === PresetTimeOfDay.Sunrise || preset === PresetTimeOfDay.Sunset) {
             let monthDayIndex = calendar.year.getMonthAndDayIndex();
-            timeOfDay = calendar.year.getSunriseSunsetTime(calendar.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0, preset === PresetTimeOfDay.Sunrise, false);
-            if (calendar.year.time.seconds >= timeOfDay) {
+            timeOfDay = calendar.getSunriseSunsetTime(calendar.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0, preset === PresetTimeOfDay.Sunrise, false);
+            if (calendar.time.seconds >= timeOfDay) {
                 calendar.year.changeDay(1, 'current');
                 monthDayIndex = calendar.year.getMonthAndDayIndex();
-                timeOfDay = calendar.year.getSunriseSunsetTime(calendar.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0, preset === PresetTimeOfDay.Sunrise, false);
+                timeOfDay = calendar.getSunriseSunsetTime(calendar.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0, preset === PresetTimeOfDay.Sunrise, false);
             }
         } else if (preset === PresetTimeOfDay.Midday) {
-            timeOfDay = Math.floor(calendar.year.time.secondsPerDay / 2);
-            if (calendar.year.time.seconds >= timeOfDay) {
+            timeOfDay = Math.floor(calendar.time.secondsPerDay / 2);
+            if (calendar.time.seconds >= timeOfDay) {
                 calendar.year.changeDay(1, 'current');
             }
         } else if (preset === PresetTimeOfDay.Midnight) {
             calendar.year.changeDay(1, 'current');
         }
-        calendar.year.time.seconds = timeOfDay;
+        calendar.time.seconds = timeOfDay;
         await CalManager.saveCalendars();
         await calendar.syncTime(true);
     }

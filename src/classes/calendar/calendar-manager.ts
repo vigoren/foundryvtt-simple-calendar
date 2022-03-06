@@ -125,7 +125,7 @@ export default class CalendarManager {
         if(!dCal){
             dCal = this.addCalendar('default', 'Default', {id: ''});
             //Set the default calendar type to be our Gregorian calendar
-            PredefinedCalendar.setToPredefined(dCal.year, PredefinedCalendars.Gregorian);
+            PredefinedCalendar.setToPredefined(dCal, PredefinedCalendars.Gregorian);
         }
         return dCal;
     }

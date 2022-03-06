@@ -265,7 +265,7 @@ export default class Note extends ConfigurationItemBase{
         const activeCalendar = CalManager.getActiveCalendar();
         const userVisible = (GameSettings.IsGm() || (!GameSettings.IsGm() && this.playerVisible));
         let dayVisible = false;
-        if(userVisible){
+        /*if(userVisible){
             let inBetween = DateRangeMatch.None;
             if(this.repeats === NoteRepeat.Weekly){
                 let noteStartDayOfWeek = 0, noteEndDayOfWeek = 0, targetDayOfWeek = 1;
@@ -340,7 +340,7 @@ export default class Note extends ConfigurationItemBase{
                 inBetween = IsDayBetweenDates(activeCalendar, {year: year, month: month, day: day, hour: 0, minute: 0, seconds: 0}, {year: this.year, month: this.month, day: this.day, hour: 0, minute: 0, seconds: 0}, {year: this.endDate.year, month: this.endDate.month, day: this.endDate.day, hour: 0, minute: 0, seconds: 0});
             }
             dayVisible = inBetween !== DateRangeMatch.None;
-        }
+        }*/
         return userVisible && dayVisible;
     }
 

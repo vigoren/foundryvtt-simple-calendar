@@ -1,6 +1,4 @@
 import {Logger} from "../logging";
-import type Month from "../calendar/month";
-import type Day from "../calendar/day";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
     CalendarClickEvents,
@@ -12,7 +10,7 @@ import {
 } from "../../constants";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
-import {animateElement} from "../utilities/visual";
+import {animateElement, GetIcon} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, SC, NManager} from "../index";
 import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import{canUser} from "../utilities/permissions";
@@ -105,7 +103,17 @@ export default class MainApp extends Application{
             showDateControls = false,
             showTimeControls = false,
             changeDateTime = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime),
-            message = '';
+            message = '',
+            compactViewDisplay= {
+                dateDisplay: '',
+                currentSeasonName: '',
+                selectedDayMoons: <any>[]
+            },
+            mainViewDisplay = {
+                calendarList: <any>[],
+                search: this.search,
+                showChangeCalendarControls: false
+            };
         //If the active and visible calendar are the same then show the controls as per the usual rules. Other wise do not show any controls
         if(this.activeCalendar.id === this.visibleCalendar.id){
             showDateControls = this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
@@ -121,14 +129,25 @@ export default class MainApp extends Application{
         } else if(changeDateTime){
             message = GameSettings.Localize('FSC.ViewingDifferentCalendar');
         }
+        if(this.uiElementStates.compactView){
+            compactViewDisplay.currentSeasonName = this.visibleCalendar.getCurrentSeason().name;
 
-        return {
-            addNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes),
-            activeCalendarId: this.activeCalendar.id,
-            calendar: this.visibleCalendar.toTemplate(),
-            calendarList: CalManager.getAllCalendars().map(c => {
+            if(this.visibleCalendar.moons.length){
+                for(let i = 0; i < this.visibleCalendar.moons.length; i++){
+                    const phase = this.visibleCalendar.moons[i].getMoonPhase(this.visibleCalendar.year, 'current');
+                    compactViewDisplay.selectedDayMoons.push({
+                        name: this.visibleCalendar.moons[i].name,
+                        color: this.visibleCalendar.moons[i].color,
+                        phase: phase,
+                        iconSVG: GetIcon(phase.icon, "#000000", this.visibleCalendar.moons[i].color)
+                    });
+                }
+            }
+        } else {
+            mainViewDisplay.showChangeCalendarControls = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeActiveCalendar);
+            mainViewDisplay.calendarList = CalManager.getAllCalendars().map(c => {
                 const cd = c.getCurrentDate();
-                const ct = c.year.time.getCurrentTime();
+                const ct = c.time.getCurrentTime();
                 return {
                     id: c.id,
                     name: c.name,
@@ -136,7 +155,15 @@ export default class MainApp extends Application{
                     time: c.generalSettings.showClock? FormatDateTime({year: 0, month: 1, day: 1, hour: ct.hour, minute: ct.minute, seconds: ct.seconds}, c.generalSettings.dateFormat.time, c) : '',
                     clockRunning: c.timeKeeper.getStatus() === TimeKeeperStatus.Started
                 };
-            }),
+            });
+        }
+
+        return {
+            compactViewDisplay: compactViewDisplay,
+            mainViewDisplay: mainViewDisplay,
+            addNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes),
+            activeCalendarId: this.activeCalendar.id,
+            calendar: this.visibleCalendar.toTemplate(),
             changeDateTime: changeDateTime,
             clockClass: this.clockClass,
             isGM: GameSettings.IsGm(),
@@ -144,12 +171,10 @@ export default class MainApp extends Application{
             message: message,
             uiElementStates: this.uiElementStates,
             reorderNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.reorderNotes),
-            search: this.search,
             showClock: this.visibleCalendar.generalSettings.showClock,
             showDateControls: showDateControls,
             showSetCurrentDate: showSetCurrentDate,
-            showTimeControls: showTimeControls,
-            showChangeCalendarControls: canUser((<Game>game).user, SC.globalConfiguration.permissions.changeActiveCalendar)
+            showTimeControls: showTimeControls
         };
     }
 

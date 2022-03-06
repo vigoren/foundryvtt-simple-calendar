@@ -5,6 +5,7 @@ import Calendar from "../src/classes/calendar";
 import Note from "../src/classes/note";
 import UserPermissions from "../src/classes/configuration/user-permissions";
 import {  DateSelectorPositions, GameSystems, GameWorldTimeIntegrations, Icons, LeapYearRules, MoonYearResetOptions, NoteRepeat, PredefinedCalendars, PresetTimeOfDay, SimpleCalendarHooks, SocketTypes, Themes, TimeKeeperStatus, YearNamingRules } from "../src/constants";
+import NoteStub from "../src/classes/notes/note-stub";
 
 declare global{
     /**
@@ -1242,16 +1243,18 @@ declare global{
         namespace HandlebarTemplateData{
 
             interface Calendar extends IDataItemBase {
-                calendarDisplay: string;
                 calendarDisplayId: string;
                 clockDisplayId: string;
                 name: string;
                 id: string;
-                selectedDisplay: string;
-                timeDisplay: string;
+                selectedDay: {
+                    dateDisplay: string;
+                    noteCount: number;
+                    noteReminderCount: number;
+                    notes: NoteStub[];
+                };
                 currentYear: Year;
                 gameSystem: GameSystems;
-                notes: NoteTemplate[];
                 visibleDate: {year: number, month: number};
             }
 
@@ -1312,10 +1315,11 @@ declare global{
             }
 
             interface MainAppData {
+                compactViewDisplay: any;
+                mainViewDisplay: any;
                 addNotes: boolean;
                 activeCalendarId: string;
                 calendar: CalendarData;
-                calendarList: any[];
                 changeDateTime: boolean;
                 clockClass: string;
                 uiElementStates: any;
@@ -1323,12 +1327,10 @@ declare global{
                 isPrimary: boolean;
                 message: string;
                 reorderNotes: boolean;
-                search: any;
                 showClock: boolean;
                 showDateControls: boolean;
                 showTimeControls: boolean;
                 showSetCurrentDate: boolean;
-                showChangeCalendarControls: boolean;
             }
 
             /**
@@ -1407,21 +1409,10 @@ declare global{
              * Interface for the year template that is passed to the HTML for rendering
              */
             interface Year extends IDataItemBase {
-                selectedDayMoons: any[];
-                selectedDayNotes: { reminders: number; normal: number; };
                 yearZero: number;
                 /** The numeric representation of the year */
                 numericRepresentation: number;
-                /** The months that make up the year */
-                visibleMonth: Month | undefined;
-                /** If to show the weekday headers on the calendar view */
-                showWeekdayHeaders: boolean;
-                /** The days of the week */
-                weekdays: Weekday[];
                 firstWeekday: number;
-                currentSeasonName: string;
-                currentSeasonColor: string;
-                weeks: (boolean | Day)[][];
                 yearNames: string[];
                 yearNamesStart: number;
                 yearNamingRule: YearNamingRules;
@@ -2138,6 +2129,7 @@ declare global{
          * @internal
          */
         interface NoteRepeats {
+            [index: number]: string,
             0: string,
             1?: string,
             2?: string,

@@ -40,9 +40,9 @@ export default class PF2E {
             // the PF2E System all calendars are based off of the gregorian calendar.
             // Now with update 2.15.0 all calendars are no longer adding arbitrary numbers to the display of the year but instead using the correct year
             if(!adjustByDay && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) <= 0){
-                seconds += calendar.year.time.secondsPerDay;
+                seconds += calendar.time.secondsPerDay;
             } else if( adjustByDay && (compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) <= 0 || compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) >= 0)){
-                seconds -= calendar.year.time.secondsPerDay;
+                seconds -= calendar.time.secondsPerDay;
             }
         }
         return seconds;

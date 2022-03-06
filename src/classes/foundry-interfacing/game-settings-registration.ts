@@ -66,6 +66,7 @@ export default class GameSettingsRegistration{
             label: "FSC.Configuration.Title",
             hint: "",
             icon: "fa fa-cog",
+            //@ts-ignore
             type: ConfigurationApp,
             restricted: true
         });

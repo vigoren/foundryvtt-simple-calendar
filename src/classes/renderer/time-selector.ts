@@ -36,14 +36,14 @@ export default class TimeSelector {
         let html = `<div class="sc-ts-inputs ${cssClass}">`;
         //Add Hours
         html += `<input class="sc-ts-hour" type="number" value="${PadNumber(selectedAmount.hour)}" /><ul class="dropdown hide sc-ts-hour-list">`;
-        for(let i = 0; i < calendar.year.time.hoursInDay; i++){
+        for(let i = 0; i < calendar.time.hoursInDay; i++){
             html += `<li>${PadNumber(i)}</li>`;
         }
         html += `</ul>`;
 
         //Ad Minutes
         html += `<span class="time-spacer">:</span><input class="sc-ts-minute" type="number" value="${PadNumber(selectedAmount.minute)}" /><ul class="dropdown hide sc-ts-minute-list">`;
-        for(let i = 0; i < calendar.year.time.minutesInHour; i+=5){
+        for(let i = 0; i < calendar.time.minutesInHour; i+=5){
             html += `<li>${PadNumber(i)}</li>`;
         }
         html += `</ul>`;
@@ -175,17 +175,17 @@ export default class TimeSelector {
                     options.selectedTime.end.minute = 0;
                 }
 
-                if(options.selectedTime.start.hour >= calendar.year.time.hoursInDay){
-                    options.selectedTime.start.hour = calendar.year.time.hoursInDay - 1;
+                if(options.selectedTime.start.hour >= calendar.time.hoursInDay){
+                    options.selectedTime.start.hour = calendar.time.hoursInDay - 1;
                 }
-                if(options.selectedTime.start.minute >= calendar.year.time.minutesInHour){
-                    options.selectedTime.start.minute = calendar.year.time.minutesInHour - 1;
+                if(options.selectedTime.start.minute >= calendar.time.minutesInHour){
+                    options.selectedTime.start.minute = calendar.time.minutesInHour - 1;
                 }
-                if(options.selectedTime.end.hour >= calendar.year.time.hoursInDay){
-                    options.selectedTime.end.hour = calendar.year.time.hoursInDay - 1;
+                if(options.selectedTime.end.hour >= calendar.time.hoursInDay){
+                    options.selectedTime.end.hour = calendar.time.hoursInDay - 1;
                 }
-                if(options.selectedTime.end.minute >= calendar.year.time.minutesInHour){
-                    options.selectedTime.end.minute = calendar.year.time.minutesInHour - 1;
+                if(options.selectedTime.end.minute >= calendar.time.minutesInHour){
+                    options.selectedTime.end.minute = calendar.time.minutesInHour - 1;
                 }
 
                 if(!options.disableSelfUpdate){

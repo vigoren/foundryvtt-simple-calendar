@@ -19,7 +19,7 @@ import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import {animateElement, animateFormGroup, GetContrastColor} from "../utilities/visual";
-import {CalManager, SC} from "../index";
+import {CalManager, ConfigurationApplication, SC} from "../index";
 import UserPermissions from "../configuration/user-permissions";
 import {deepMerge} from "../utilities/object";
 import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
@@ -82,12 +82,24 @@ export default class ConfigurationApp extends FormApplication {
         selectedPredefinedCalendar: '',
         timeFormatExample: ''
     };
-
     /**
      * The Calendar configuration constructor
      */
     constructor() {
         super({});
+    }
+
+    render(force?: boolean, options?: Application.RenderOptions<FormApplicationOptions>): unknown {
+        // Check to see if the object is empty, if it is this is likely the user clicking the button in
+        // FoundryVTTs module settings, and we need to initialize and show the actual configuration dialog
+        if(isObjectEmpty(this.object)){
+            ConfigurationApplication.initializeAndShowDialog();
+            return;
+        } else {
+            options = options? options : {};
+            options.classes = ["simple-calendar", GameSettings.GetStringSettings(SettingNames.Theme)];
+            return super.render(force, options);
+        }
     }
 
     /**
@@ -131,7 +143,7 @@ export default class ConfigurationApp extends FormApplication {
      * Shows the application window
      */
     public showApp(){
-        this.render(true, {classes: ["simple-calendar", GameSettings.GetStringSettings(SettingNames.Theme)]});
+        this.render(true);
     }
 
     /**
@@ -147,7 +159,7 @@ export default class ConfigurationApp extends FormApplication {
      */
     close(options?: FormApplication.CloseOptions): Promise<void> {
         CalManager.clearClones();
-        (<Calendar>this.object).year.seasons.forEach(s => {
+        (<Calendar>this.object).seasons.forEach(s => {
             DateSelectorManager.RemoveSelector(`sc_season_start_date_${s.id}`);
             DateSelectorManager.RemoveSelector(`sc_season_sunrise_time_${s.id}`);
         });
@@ -196,7 +208,7 @@ export default class ConfigurationApp extends FormApplication {
             leapYearRules: {none: 'FSC.Configuration.LeapYear.Rules.None', gregorian: 'FSC.Configuration.LeapYear.Rules.Gregorian', custom: 'FSC.Configuration.LeapYear.Rules.Custom'},
             months: (<Calendar>this.object).year.months.map(m => m.toTemplate()),
             monthStartingWeekdays: <{[key: string]: string}>{},
-            moons: (<Calendar>this.object).year.moons.map(m => m.toTemplate((<Calendar>this.object).year)),
+            moons: (<Calendar>this.object).moons.map(m => m.toTemplate((<Calendar>this.object).year)),
             moonIcons: <{[key: string]: string}>{},
             moonYearReset: {
                 none: 'FSC.Configuration.Moon.YearResetNo',
@@ -240,7 +252,7 @@ export default class ConfigurationApp extends FormApplication {
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorWinter")
                 }
             ],
-            seasons: (<Calendar>this.object).year.seasons.map(s => s.toTemplate((<Calendar>this.object).year)),
+            seasons: (<Calendar>this.object).seasons.map(s => s.toTemplate((<Calendar>this.object).year)),
             showLeapYearCustomMod: (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom,
             showLeapYearMonths: (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None,
             timeTrackers: {
@@ -250,7 +262,7 @@ export default class ConfigurationApp extends FormApplication {
                 'mixed': 'FSC.Configuration.General.Mixed'
             },
             uiElementStates: this.uiElementStates,
-            weekdays: (<Calendar>this.object).year.weekdays.map(w => w.toTemplate()),
+            weekdays: (<Calendar>this.object).weekdays.map(w => w.toTemplate()),
             yearNameBehaviourOptions: {
                 'default': 'Default',
                 'repeat': 'PLAYLIST.SoundRepeat',
@@ -268,8 +280,8 @@ export default class ConfigurationApp extends FormApplication {
         data.moonIcons[Icons.WaningCrescent] = GameSettings.Localize('FSC.Moon.Phase.WaningCrescent');
 
         data.monthStartingWeekdays['null'] = GameSettings.Localize('Default');
-        for(let i = 0; i < (<Calendar>this.object).year.weekdays.length; i++){
-            data.monthStartingWeekdays[(<Calendar>this.object).year.weekdays[i].numericRepresentation.toString()] = (<Calendar>this.object).year.weekdays[i].name;
+        for(let i = 0; i < (<Calendar>this.object).weekdays.length; i++){
+            data.monthStartingWeekdays[(<Calendar>this.object).weekdays[i].numericRepresentation.toString()] = (<Calendar>this.object).weekdays[i].name;
         }
 
         data.qsCalDate.year = currDate.year;
@@ -297,7 +309,7 @@ export default class ConfigurationApp extends FormApplication {
      */
     public activateListeners(html: JQuery<HTMLElement>) {
         super.activateListeners(html);
-        (<Calendar>this.object).year.seasons.forEach(s => {
+        (<Calendar>this.object).seasons.forEach(s => {
             DateSelectorManager.GetSelector(`sc_season_start_date_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonStartingDate)}).activateListeners();
             DateSelectorManager.GetSelector( `sc_season_sunrise_time_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonSunriseSunsetTime)}).activateListeners();
         });
@@ -427,7 +439,7 @@ export default class ConfigurationApp extends FormApplication {
         const calNameElement = <HTMLInputElement>document.getElementById('scAddCalendarName');
         if(calNameElement && calNameElement.value){
             const newCal = CalManager.addTempCalendar(calNameElement.value);
-            PredefinedCalendar.setToPredefined(newCal.year, PredefinedCalendars.Gregorian);
+            PredefinedCalendar.setToPredefined(newCal, PredefinedCalendars.Gregorian);
             this.calendars.push(newCal);
             this.object = newCal;
             this._tabs[0].active = "quickSetup";
@@ -470,7 +482,7 @@ export default class ConfigurationApp extends FormApplication {
 
     private quickSetupNextConfirm(){
         this.uiElementStates.qsNextClicked = !this.uiElementStates.qsNextClicked;
-        PredefinedCalendar.setToPredefined((<Calendar>this.object).year, <PredefinedCalendars>this.uiElementStates.selectedPredefinedCalendar);
+        PredefinedCalendar.setToPredefined((<Calendar>this.object), <PredefinedCalendars>this.uiElementStates.selectedPredefinedCalendar);
         this.updateApp();
     }
 
@@ -624,13 +636,13 @@ export default class ConfigurationApp extends FormApplication {
             (<Calendar>this.object).year.firstWeekday = <number>getNumericInputValue('#scWeekdayFirstDay', 0, false, this.appWindow);
             this.appWindow.querySelectorAll('.weekday-settings .weekdays>.row:not(.head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.weekdays.length){
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).weekdays.length){
                     const name = getTextInputValue('.weekday-name', 'New Weekday', e);
-                    if(name !== (<Calendar>this.object).year.weekdays[index].name){
-                        (<Calendar>this.object).year.weekdays[index].name = name;
-                        (<Calendar>this.object).year.weekdays[index].abbreviation = name.substring(0, 2);
+                    if(name !== (<Calendar>this.object).weekdays[index].name){
+                        (<Calendar>this.object).weekdays[index].name = name;
+                        (<Calendar>this.object).weekdays[index].abbreviation = name.substring(0, 2);
                     } else {
-                        (<Calendar>this.object).year.weekdays[index].abbreviation = getTextInputValue('.weekday-abbreviation', 'New', e);
+                        (<Calendar>this.object).weekdays[index].abbreviation = getTextInputValue('.weekday-abbreviation', 'New', e);
                     }
                 }
             });
@@ -656,9 +668,9 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             this.appWindow.querySelectorAll('.season-settings .seasons>.row:not(.head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.seasons.length){
-                    (<Calendar>this.object).year.seasons[index].name = getTextInputValue(".season-name", "New Season", e);
-                    (<Calendar>this.object).year.seasons[index].color = getTextInputValue(".season-color", "#FFFFFF", e);
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).seasons.length){
+                    (<Calendar>this.object).seasons[index].name = getTextInputValue(".season-name", "New Season", e);
+                    (<Calendar>this.object).seasons[index].color = getTextInputValue(".season-color", "#FFFFFF", e);
                 }
             });
 
@@ -667,40 +679,40 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             this.appWindow.querySelectorAll('.moon-settings .moons>.row:not(.head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
-                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.moons.length){
-                    (<Calendar>this.object).year.moons[index].name = getTextInputValue('.moon-name', 'New Moon', e);
-                    (<Calendar>this.object).year.moons[index].cycleLength = <number>getNumericInputValue('.moon-cycle-length', 29.53059, true, e);
-                    (<Calendar>this.object).year.moons[index].cycleDayAdjust = <number>getNumericInputValue('.moon-cycle-adjustment', 0, true, e);
-                    (<Calendar>this.object).year.moons[index].color = getTextInputValue('.moon-color', '#FFFFFF', e);
-                    (<Calendar>this.object).year.moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>getTextInputValue('.moon-year-reset', 'none', e);
-                    (<Calendar>this.object).year.moons[index].firstNewMoon.year = <number>getNumericInputValue('.moon-year', 0, false, e);
-                    (<Calendar>this.object).year.moons[index].firstNewMoon.yearX = <number>getNumericInputValue('.moon-year-x', 0, false, e);
-                    (<Calendar>this.object).year.moons[index].firstNewMoon.month = <number>getNumericInputValue('.moon-month', 1, false, e);
-                    (<Calendar>this.object).year.moons[index].firstNewMoon.day = <number>getNumericInputValue('.moon-day', 1, false, e);
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).moons.length){
+                    (<Calendar>this.object).moons[index].name = getTextInputValue('.moon-name', 'New Moon', e);
+                    (<Calendar>this.object).moons[index].cycleLength = <number>getNumericInputValue('.moon-cycle-length', 29.53059, true, e);
+                    (<Calendar>this.object).moons[index].cycleDayAdjust = <number>getNumericInputValue('.moon-cycle-adjustment', 0, true, e);
+                    (<Calendar>this.object).moons[index].color = getTextInputValue('.moon-color', '#FFFFFF', e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>getTextInputValue('.moon-year-reset', 'none', e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.year = <number>getNumericInputValue('.moon-year', 0, false, e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.yearX = <number>getNumericInputValue('.moon-year-x', 0, false, e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.month = <number>getNumericInputValue('.moon-month', 1, false, e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.day = <number>getNumericInputValue('.moon-day', 1, false, e);
 
                     e.querySelectorAll('.phases>.row:not(.head)').forEach(p => {
                         const phaseIndex = parseInt((<HTMLElement>p).getAttribute('data-index') || '');
-                        if(!isNaN(phaseIndex) && phaseIndex >= 0 && phaseIndex < (<Calendar>this.object).year.moons[index].phases.length){
-                            (<Calendar>this.object).year.moons[index].phases[phaseIndex].name = getTextInputValue('.moon-phase-name', 'New Phase', p);
-                            (<Calendar>this.object).year.moons[index].phases[phaseIndex].singleDay = getCheckBoxInputValue('.moon-phase-single-day', false, p);
-                            (<Calendar>this.object).year.moons[index].phases[phaseIndex].icon = <Icons>getTextInputValue('.moon-phase-icon', 'new', p);
+                        if(!isNaN(phaseIndex) && phaseIndex >= 0 && phaseIndex < (<Calendar>this.object).moons[index].phases.length){
+                            (<Calendar>this.object).moons[index].phases[phaseIndex].name = getTextInputValue('.moon-phase-name', 'New Phase', p);
+                            (<Calendar>this.object).moons[index].phases[phaseIndex].singleDay = getCheckBoxInputValue('.moon-phase-single-day', false, p);
+                            (<Calendar>this.object).moons[index].phases[phaseIndex].icon = <Icons>getTextInputValue('.moon-phase-icon', 'new', p);
                         }
                     });
 
-                    (<Calendar>this.object).year.moons[index].updatePhaseLength();
+                    (<Calendar>this.object).moons[index].updatePhaseLength();
                 }
             });
 
             //----------------------------------
             // Calendar: Time Settings
             //----------------------------------
-            (<Calendar>this.object).year.time.hoursInDay = <number>getNumericInputValue('#scHoursInDay', 24, false, this.appWindow);
-            (<Calendar>this.object).year.time.minutesInHour = <number>getNumericInputValue('#scMinutesInHour', 60, false, this.appWindow);
-            (<Calendar>this.object).year.time.secondsInMinute = <number>getNumericInputValue('#scSecondsInMinute', 60, false, this.appWindow);
+            (<Calendar>this.object).time.hoursInDay = <number>getNumericInputValue('#scHoursInDay', 24, false, this.appWindow);
+            (<Calendar>this.object).time.minutesInHour = <number>getNumericInputValue('#scMinutesInHour', 60, false, this.appWindow);
+            (<Calendar>this.object).time.secondsInMinute = <number>getNumericInputValue('#scSecondsInMinute', 60, false, this.appWindow);
             (<Calendar>this.object).generalSettings.showClock = getCheckBoxInputValue('#scShowClock', true, this.appWindow);
-            (<Calendar>this.object).year.time.gameTimeRatio = <number>getNumericInputValue('#scGameTimeRatio', 1, false, this.appWindow);
-            (<Calendar>this.object).year.time.updateFrequency = <number>getNumericInputValue('#scTimeUpdateFrequency', 1, false, this.appWindow);
-            (<Calendar>this.object).year.time.unifyGameAndClockPause = getCheckBoxInputValue('#scUnifyClockWithFoundryPause', false, this.appWindow);
+            (<Calendar>this.object).time.gameTimeRatio = <number>getNumericInputValue('#scGameTimeRatio', 1, false, this.appWindow);
+            (<Calendar>this.object).time.updateFrequency = <number>getNumericInputValue('#scTimeUpdateFrequency', 1, false, this.appWindow);
+            (<Calendar>this.object).time.unifyGameAndClockPause = getCheckBoxInputValue('#scUnifyClockWithFoundryPause', false, this.appWindow);
 
             //----------------------------------
             // Calendar: Note Settings
@@ -799,15 +811,15 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             // Calendar Config: Moons
             //----------------------------------
-            for(let i = 0; i < (<Calendar>this.object).year.moons.length; i++){
+            for(let i = 0; i < (<Calendar>this.object).moons.length; i++){
                 const row = this.appWindow.querySelector(`.moon-settings .moons>.row[data-index="${i}"]`);
                 if(row){
-                    animateFormGroup('.moon-year', (<Calendar>this.object).year.moons[i].firstNewMoon.yearReset === MoonYearResetOptions.None, row);
-                    animateFormGroup('.moon-year-x', (<Calendar>this.object).year.moons[i].firstNewMoon.yearReset === MoonYearResetOptions.XYears, row);
-                    for(let p = 0; p < (<Calendar>this.object).year.moons[i].phases.length; p++){
+                    animateFormGroup('.moon-year', (<Calendar>this.object).moons[i].firstNewMoon.yearReset === MoonYearResetOptions.None, row);
+                    animateFormGroup('.moon-year-x', (<Calendar>this.object).moons[i].firstNewMoon.yearReset === MoonYearResetOptions.XYears, row);
+                    for(let p = 0; p < (<Calendar>this.object).moons[i].phases.length; p++){
                         const pl = row.querySelector(`.phases>.row[data-index="${p}"] .moon-phase-length`);
                         if(pl){
-                            (<HTMLElement>pl).innerText = `${(<Calendar>this.object).year.moons[i].phases[p].length} ${GameSettings.Localize('FSC.Days')}`;
+                            (<HTMLElement>pl).innerText = `${(<Calendar>this.object).moons[i].phases[p].length} ${GameSettings.Localize('FSC.Days')}`;
                         }
                     }
                 }
@@ -866,11 +878,11 @@ export default class ConfigurationApp extends FormApplication {
                     this.rebaseMonthNumbers();
                     break;
                 case "weekday":
-                    const newWeekdayNumber = (<Calendar>this.object).year.weekdays.length + 1;
-                    (<Calendar>this.object).year.weekdays.push(new Weekday(newWeekdayNumber, 'New Weekday'));
+                    const newWeekdayNumber = (<Calendar>this.object).weekdays.length + 1;
+                    (<Calendar>this.object).weekdays.push(new Weekday(newWeekdayNumber, 'New Weekday'));
                     break;
                 case "season":
-                    (<Calendar>this.object).year.seasons.push(new Season('New Season', 1, 1));
+                    (<Calendar>this.object).seasons.push(new Season('New Season', 1, 1));
                     break;
                 case "moon":
                     const newMoon = new Moon('Moon', 29.53059);
@@ -892,20 +904,20 @@ export default class ConfigurationApp extends FormApplication {
                         {name: GameSettings.Localize('FSC.Moon.Phase.LastQuarter'), length: 1, icon: Icons.LastQuarter, singleDay: true},
                         {name: GameSettings.Localize('FSC.Moon.Phase.WaningCrescent'), length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                     ];
-                    (<Calendar>this.object).year.moons.push(newMoon);
+                    (<Calendar>this.object).moons.push(newMoon);
                     break;
                 case "moon-phase":
                     const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
                     if(dataMoonIndex){
                         const moonIndex = parseInt(dataMoonIndex);
-                        if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length){
-                            (<Calendar>this.object).year.moons[moonIndex].phases.push({
+                        if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).moons.length){
+                            (<Calendar>this.object).moons[moonIndex].phases.push({
                                 name: "Phase",
                                 length: 1,
                                 icon: Icons.NewMoon,
                                 singleDay: false
                             });
-                            (<Calendar>this.object).year.moons[moonIndex].updatePhaseLength();
+                            (<Calendar>this.object).moons[moonIndex].updatePhaseLength();
                         }
                     }
                     break;
@@ -951,31 +963,31 @@ export default class ConfigurationApp extends FormApplication {
                                 }
                                 break;
                             case "weekday":
-                                if(index < (<Calendar>this.object).year.weekdays.length){
-                                    (<Calendar>this.object).year.weekdays.splice(index, 1);
+                                if(index < (<Calendar>this.object).weekdays.length){
+                                    (<Calendar>this.object).weekdays.splice(index, 1);
                                     //Reindex the remaining months
-                                    for(let i = 0; i < (<Calendar>this.object).year.weekdays.length; i++){
-                                        (<Calendar>this.object).year.weekdays[i].numericRepresentation = i + 1;
+                                    for(let i = 0; i < (<Calendar>this.object).weekdays.length; i++){
+                                        (<Calendar>this.object).weekdays[i].numericRepresentation = i + 1;
                                     }
                                 }
                                 break;
                             case "season":
-                                if(index < (<Calendar>this.object).year.seasons.length){
-                                    (<Calendar>this.object).year.seasons.splice(index, 1);
+                                if(index < (<Calendar>this.object).seasons.length){
+                                    (<Calendar>this.object).seasons.splice(index, 1);
                                 }
                                 break;
                             case "moon":
-                                if(index < (<Calendar>this.object).year.moons.length){
-                                    (<Calendar>this.object).year.moons.splice(index, 1);
+                                if(index < (<Calendar>this.object).moons.length){
+                                    (<Calendar>this.object).moons.splice(index, 1);
                                 }
                                 break;
                             case "moon-phase":
                                 const dataMoonIndex = target.getAttribute('data-moon-index');
                                 if(dataMoonIndex){
                                     const moonIndex = parseInt(dataMoonIndex);
-                                    if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length && index < (<Calendar>this.object).year.moons[moonIndex].phases.length){
-                                        (<Calendar>this.object).year.moons[moonIndex].phases.splice(index, 1);
-                                        (<Calendar>this.object).year.moons[moonIndex].updatePhaseLength();
+                                    if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).moons.length && index < (<Calendar>this.object).moons[moonIndex].phases.length){
+                                        (<Calendar>this.object).moons[moonIndex].phases.splice(index, 1);
+                                        (<Calendar>this.object).moons[moonIndex].updatePhaseLength();
                                     }
                                 }
                                 break;
@@ -1000,20 +1012,20 @@ export default class ConfigurationApp extends FormApplication {
                         (<Calendar>this.object).year.months = [new Month('New Month', 1, 0, 30)];
                         break;
                     case "weekday":
-                        (<Calendar>this.object).year.weekdays = [];
+                        (<Calendar>this.object).weekdays = [];
                         break;
                     case "season":
-                        (<Calendar>this.object).year.seasons = [];
+                        (<Calendar>this.object).seasons = [];
                         break;
                     case "moon":
-                        (<Calendar>this.object).year.moons = [];
+                        (<Calendar>this.object).moons = [];
                         break;
                     case "moon-phase":
                         const dataMoonIndex = (<HTMLElement>e.currentTarget).getAttribute('data-moon-index');
                         if(dataMoonIndex){
                             const moonIndex = parseInt(dataMoonIndex);
-                            if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).year.moons.length){
-                                (<Calendar>this.object).year.moons[moonIndex].phases = [];
+                            if(!isNaN(moonIndex) && moonIndex < (<Calendar>this.object).moons.length){
+                                (<Calendar>this.object).moons[moonIndex].phases = [];
                             }
                         }
                         break;
@@ -1037,7 +1049,7 @@ export default class ConfigurationApp extends FormApplication {
      */
     public dateSelectorChange(seasonId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SimpleCalendar.DateTimeSelector.SelectedDates){
         //Season Changes
-        const season = (<Calendar>this.object).year.seasons.find(s => s.id === seasonId);
+        const season = (<Calendar>this.object).seasons.find(s => s.id === seasonId);
         if(season){
             if(dateSelectorType === ConfigurationDateSelectors.seasonStartingDate){
                 const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
@@ -1046,8 +1058,8 @@ export default class ConfigurationApp extends FormApplication {
                 season.startingDay = sDayIndex;
             } else if(dateSelectorType === ConfigurationDateSelectors.seasonSunriseSunsetTime){
                 const activeCalendar = CalManager.getActiveCalendar();
-                season.sunriseTime = ((selectedDate.startDate.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.startDate.minute || 0) * activeCalendar.year.time.secondsInMinute);
-                season.sunsetTime = ((selectedDate.endDate.hour || 0) * activeCalendar.year.time.minutesInHour * activeCalendar.year.time.secondsInMinute) + ((selectedDate.endDate.minute || 0) * activeCalendar.year.time.secondsInMinute);
+                season.sunriseTime = ((selectedDate.startDate.hour || 0) * activeCalendar.time.minutesInHour * activeCalendar.time.secondsInMinute) + ((selectedDate.startDate.minute || 0) * activeCalendar.time.secondsInMinute);
+                season.sunsetTime = ((selectedDate.endDate.hour || 0) * activeCalendar.time.minutesInHour * activeCalendar.time.secondsInMinute) + ((selectedDate.endDate.minute || 0) * activeCalendar.time.secondsInMinute);
             }
         }
     }

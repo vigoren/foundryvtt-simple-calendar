@@ -157,7 +157,7 @@ export default class SCController {
      * @param paused
      */
     public gamePaused(paused: boolean){
-        if(this.activeCalendar.year.time.unifyGameAndClockPause){
+        if(this.activeCalendar.time.unifyGameAndClockPause){
             if(!(<Game>game).paused){
                 this.activeCalendar.timeKeeper.start(true);
             } else {
@@ -185,13 +185,13 @@ export default class SCController {
     public createCombatant(combatant: Combatant, options: any, id: string){
         const combatList = (<Game>game).combats;
         //If combat is running or if the combat list is undefined, skip this check
-        if(!this.activeCalendar.year.time.combatRunning && combatList){
+        if(!this.activeCalendar.time.combatRunning && combatList){
             const combat = combatList.find(c => c.id === combatant.parent?.id);
             const scenes = (<Game>game).scenes;
             const activeScene = scenes? scenes.active? scenes.active.id : null : null;
             //If the combat has started and the current active scene is the scene for the combat then set that there is a combat running.
             if(combat && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
-                this.activeCalendar.year.time.combatRunning = true;
+                this.activeCalendar.time.combatRunning = true;
             }
         }
     }
@@ -207,7 +207,7 @@ export default class SCController {
         const scenes = (<Game>game).scenes;
         const activeScene = scenes? scenes.active? scenes.active.id : null : null;
         if(combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
-            this.activeCalendar.year.time.combatRunning = true;
+            this.activeCalendar.time.combatRunning = true;
 
             //If time does not have the advanceTime property the combat was just started
             if(time && time.hasOwnProperty('advanceTime')){
@@ -230,7 +230,7 @@ export default class SCController {
         const scenes = (<Game>game).scenes;
         const activeScene = scenes? scenes.active? scenes.active.id : null : null;
         if(activeScene !== null && combat.scene && combat.scene.id === activeScene){
-            this.activeCalendar.year.time.combatRunning = false;
+            this.activeCalendar.time.combatRunning = false;
         }
     }
 

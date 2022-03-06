@@ -64,7 +64,7 @@ export default class TimeKeeper{
         if(activeCalendar){
             if(this.status !== TimeKeeperStatus.Started ){
                 this.pauseClicked = false;
-                if(activeCalendar.year.time.unifyGameAndClockPause && !fromPause){
+                if(activeCalendar.time.unifyGameAndClockPause && !fromPause){
                     (<Game>game).togglePause(false, true);
                 }
                 if(this.intervalNumber === undefined) {
@@ -81,7 +81,7 @@ export default class TimeKeeper{
             } else {
                 this.pauseClicked = true;
                 this.updateStatus(TimeKeeperStatus.Paused);
-                if(activeCalendar.year.time.unifyGameAndClockPause){
+                if(activeCalendar.time.unifyGameAndClockPause){
                     (<Game>game).togglePause(true, true);
                 }
             }
@@ -98,7 +98,7 @@ export default class TimeKeeper{
             window.clearInterval(this.intervalNumber);
             window.clearInterval(this.saveIntervalNumber);
             const activeCalendar = CalManager.getCalendar(this.calendarId);
-            if(activeCalendar && activeCalendar.year.time.unifyGameAndClockPause){
+            if(activeCalendar && activeCalendar.time.unifyGameAndClockPause){
                 (<Game>game).togglePause(true, true);
             }
             this.intervalNumber = undefined;
@@ -141,8 +141,8 @@ export default class TimeKeeper{
         if(this.status === TimeKeeperStatus.Started){
             const activeCalendar = CalManager.getCalendar(this.calendarId);
             if(activeCalendar){
-                const changeAmount = activeCalendar.year.time.gameTimeRatio * this.updateFrequency;
-                const dayChange = activeCalendar.year.time.changeTime(0, 0, changeAmount);
+                const changeAmount = activeCalendar.time.gameTimeRatio * this.updateFrequency;
+                const dayChange = activeCalendar.time.changeTime(0, 0, changeAmount);
                 if(dayChange !== 0){
                     activeCalendar.year.changeDay(dayChange);
                     MainApplication.updateApp();
@@ -192,7 +192,7 @@ export default class TimeKeeper{
             if(newStatus !== null){
                 this.status = newStatus;
             } else if(this.intervalNumber !== undefined){
-                if(this.pauseClicked || (<Game>game).paused || activeCalendar.year.time.combatRunning){
+                if(this.pauseClicked || (<Game>game).paused || activeCalendar.time.combatRunning){
                     this.status = TimeKeeperStatus.Paused;
                 } else {
                     this.status = TimeKeeperStatus.Started;

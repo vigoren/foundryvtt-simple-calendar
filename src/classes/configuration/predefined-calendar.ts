@@ -1,24 +1,24 @@
-import Year from "../calendar/year";
 import {LeapYearRules, MoonYearResetOptions, Icons, PredefinedCalendars, YearNamingRules} from "../../constants";
 import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
 import Season from "../calendar/season";
 import Moon from "../calendar/moon";
+import Calendar from "../calendar";
 
 
 export default class PredefinedCalendar{
     
-    public static setToPredefined(year: Year, calendar: PredefinedCalendars){
+    public static setToPredefined(calendar: Calendar, calendarType: PredefinedCalendars){
         let phaseLength = 0;
         let updated = false;
-        switch (calendar){
+        switch (calendarType){
             case PredefinedCalendars.Gregorian:
                 const currentDate = new Date();
-                year.numericRepresentation = currentDate.getFullYear();
-                year.prefix = '';
-                year.postfix = '';
-                year.yearZero = 1970;
-                year.months = [
+                calendar.year.numericRepresentation = currentDate.getFullYear();
+                calendar.year.prefix = '';
+                calendar.year.postfix = '';
+                calendar.year.yearZero = 1970;
+                calendar.year.months = [
                     new Month("January", 1, 0, 31),
                     new Month("February", 2, 0, 28, 29),
                     new Month("March",3, 0, 31),
@@ -32,9 +32,9 @@ export default class PredefinedCalendar{
                     new Month("November", 11, 0, 30),
                     new Month("December", 12, 0, 31),
                 ];
-                year.showWeekdayHeadings = true;
-                year.firstWeekday = 4;
-                year.weekdays = [
+                calendar.year.showWeekdayHeadings = true;
+                calendar.year.firstWeekday = 4;
+                calendar.weekdays = [
                     new Weekday(1, 'Sunday'),
                     new Weekday(2, 'Monday'),
                     new Weekday(3, 'Tuesday'),
@@ -43,42 +43,42 @@ export default class PredefinedCalendar{
                     new Weekday(6, 'Friday'),
                     new Weekday(7, 'Saturday')
                 ];
-                year.seasons = [
+                calendar.seasons = [
                     new Season('Spring', 2, 19),
                     new Season('Summer', 5, 19),
                     new Season('Fall', 8, 21),
                     new Season('Winter', 11, 20)
                 ];
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.Gregorian;
-                year.leapYearRule.customMod = 0;
-                year.months[currentDate.getMonth()].current = true;
-                year.months[currentDate.getMonth()].days[currentDate.getDate()-1].current = true;
-                year.seasons[0].color = "#E0C40B";
-                year.seasons[1].color = "#46B946";
-                year.seasons[2].color = "#FF8E47";
-                year.seasons[3].color = "#479DFF";
-                year.seasons[0].sunriseTime = 21600;
-                year.seasons[1].sunriseTime = 21600;
-                year.seasons[2].sunriseTime = 21600;
-                year.seasons[3].sunriseTime = 21600;
-                year.seasons[0].sunsetTime = 64800;
-                year.seasons[1].sunsetTime = 64800;
-                year.seasons[2].sunsetTime = 64800;
-                year.seasons[3].sunsetTime = 64800;
-                year.moons = [
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.Gregorian;
+                calendar.year.leapYearRule.customMod = 0;
+                calendar.year.months[currentDate.getMonth()].current = true;
+                calendar.year.months[currentDate.getMonth()].days[currentDate.getDate()-1].current = true;
+                calendar.seasons[0].color = "#E0C40B";
+                calendar.seasons[1].color = "#46B946";
+                calendar.seasons[2].color = "#FF8E47";
+                calendar.seasons[3].color = "#479DFF";
+                calendar.seasons[0].sunriseTime = 21600;
+                calendar.seasons[1].sunriseTime = 21600;
+                calendar.seasons[2].sunriseTime = 21600;
+                calendar.seasons[3].sunriseTime = 21600;
+                calendar.seasons[0].sunsetTime = 64800;
+                calendar.seasons[1].sunsetTime = 64800;
+                calendar.seasons[2].sunsetTime = 64800;
+                calendar.seasons[3].sunsetTime = 64800;
+                calendar.moons = [
                     new Moon('Moon', 29.53059)
                 ];
-                year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
-                year.moons[0].firstNewMoon.year = 2000;
-                year.moons[0].firstNewMoon.month = 0;
-                year.moons[0].firstNewMoon.day = 5;
-                year.moons[0].cycleDayAdjust = 0.5;
-                phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[0].phases = [
+                calendar.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                calendar.moons[0].firstNewMoon.year = 2000;
+                calendar.moons[0].firstNewMoon.month = 0;
+                calendar.moons[0].firstNewMoon.day = 5;
+                calendar.moons[0].cycleDayAdjust = 0.5;
+                phaseLength = Number(((calendar.moons[0].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -88,17 +88,17 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
-                year.yearNames = [];
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.yearNames = [];
                 updated = true;
                 break;
             case PredefinedCalendars.DarkSun:
-                year.numericRepresentation = 1;
-                year.prefix = '';
-                year.postfix = '';
-                year.yearZero = 0;
-                year.months = [
+                calendar.year.numericRepresentation = 1;
+                calendar.year.prefix = '';
+                calendar.year.postfix = '';
+                calendar.year.yearZero = 0;
+                calendar.year.months = [
                     new Month('Scorch', 1, 0, 30),
                     new Month('Morrow', 2, 0, 30),
                     new Month('Rest', 3, 0, 30),
@@ -115,12 +115,12 @@ export default class PredefinedCalendar{
                     new Month('Smolder', 12, 0, 30),
                     new Month('Highest Sun', -3, 0, 5)
                 ];
-                year.months[4].intercalary = true;
-                year.months[9].intercalary = true;
-                year.months[14].intercalary = true;
-                year.showWeekdayHeadings = false;
-                year.firstWeekday = 0;
-                year.weekdays = [
+                calendar.year.months[4].intercalary = true;
+                calendar.year.months[9].intercalary = true;
+                calendar.year.months[14].intercalary = true;
+                calendar.year.showWeekdayHeadings = false;
+                calendar.year.firstWeekday = 0;
+                calendar.weekdays = [
                     new Weekday(1, '1 Day'),
                     new Weekday(2, '2 Day'),
                     new Weekday(3, '3 Day'),
@@ -128,39 +128,39 @@ export default class PredefinedCalendar{
                     new Weekday(5, '5 Day'),
                     new Weekday(6, '6 Day')
                 ];
-                year.seasons = [
+                calendar.seasons = [
                     new Season("Sun Descending", 2, 0),
                     new Season("Sun Ascending", 6, 0),
                     new Season("High Sun", 8, 0)
                 ];
-                year.seasons[2].color = '#ffa500';
-                year.seasons[0].color = '#cd4a39';
-                year.seasons[1].color = '#ff6a00';
-                year.seasons[0].sunriseTime = 21600;
-                year.seasons[1].sunriseTime = 21600;
-                year.seasons[2].sunriseTime = 21600;
-                year.seasons[0].sunsetTime = 64800;
-                year.seasons[1].sunsetTime = 64800;
-                year.seasons[2].sunsetTime = 64800;
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.None;
-                year.leapYearRule.customMod = 0;
-                year.months[0].current = true;
-                year.months[0].days[0].current = true;
-                year.moons = [
+                calendar.seasons[2].color = '#ffa500';
+                calendar.seasons[0].color = '#cd4a39';
+                calendar.seasons[1].color = '#ff6a00';
+                calendar.seasons[0].sunriseTime = 21600;
+                calendar.seasons[1].sunriseTime = 21600;
+                calendar.seasons[2].sunriseTime = 21600;
+                calendar.seasons[0].sunsetTime = 64800;
+                calendar.seasons[1].sunsetTime = 64800;
+                calendar.seasons[2].sunsetTime = 64800;
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.None;
+                calendar.year.leapYearRule.customMod = 0;
+                calendar.year.months[0].current = true;
+                calendar.year.months[0].days[0].current = true;
+                calendar.moons = [
                     new Moon('Ral', 34),
                     new Moon('Guthay', 125)
                 ];
-                year.moons[0].color = "#7ace57";
-                year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
-                year.moons[0].firstNewMoon.year = 1;
-                year.moons[0].firstNewMoon.month = 0;
-                year.moons[0].firstNewMoon.day = 13;
-                phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[0].phases = [
+                calendar.moons[0].color = "#7ace57";
+                calendar.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                calendar.moons[0].firstNewMoon.year = 1;
+                calendar.moons[0].firstNewMoon.month = 0;
+                calendar.moons[0].firstNewMoon.day = 13;
+                phaseLength = Number(((calendar.moons[0].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -170,13 +170,13 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.moons[1].color = "#ffd920";
-                year.moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
-                year.moons[1].firstNewMoon.year = 1;
-                year.moons[1].firstNewMoon.month = 2;
-                year.moons[1].firstNewMoon.day = 2;
-                phaseLength = Number(((year.moons[1].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[1].phases = [
+                calendar.moons[1].color = "#ffd920";
+                calendar.moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                calendar.moons[1].firstNewMoon.year = 1;
+                calendar.moons[1].firstNewMoon.month = 2;
+                calendar.moons[1].firstNewMoon.day = 2;
+                phaseLength = Number(((calendar.moons[1].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[1].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -186,9 +186,9 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.yearNamesStart = -101;
-                year.yearNamingRule = YearNamingRules.Repeat;
-                year.yearNames = [
+                calendar.year.yearNamesStart = -101;
+                calendar.year.yearNamingRule = YearNamingRules.Repeat;
+                calendar.year.yearNames = [
                     "Ral's Fury",
                     "Friend's Contemplation",
                     "Desert's Vengeance",
@@ -270,11 +270,11 @@ export default class PredefinedCalendar{
                 updated = true;
                 break;
             case PredefinedCalendars.Eberron:
-                year.numericRepresentation = 998;
-                year.prefix = '';
-                year.postfix = ' YK';
-                year.yearZero = 0;
-                year.months = [
+                calendar.year.numericRepresentation = 998;
+                calendar.year.prefix = '';
+                calendar.year.postfix = ' YK';
+                calendar.year.yearZero = 0;
+                calendar.year.months = [
                     new Month('Zarantyr', 1, 0, 28),
                     new Month('Olarune', 2, 0, 28),
                     new Month('Therendor', 3, 0, 28),
@@ -288,9 +288,9 @@ export default class PredefinedCalendar{
                     new Month('Aryth', 11, 0, 28),
                     new Month('Vult', 12, 0, 28)
                 ];
-                year.showWeekdayHeadings = true;
-                year.firstWeekday = 0;
-                year.weekdays = [
+                calendar.year.showWeekdayHeadings = true;
+                calendar.year.firstWeekday = 0;
+                calendar.weekdays = [
                     new Weekday(1, 'Sul'),
                     new Weekday(2, 'Mol'),
                     new Weekday(3, 'Zol'),
@@ -299,27 +299,27 @@ export default class PredefinedCalendar{
                     new Weekday(6, 'Far'),
                     new Weekday(7, 'Sar')
                 ];
-                year.seasons = [];
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.None;
-                year.leapYearRule.customMod = 0;
-                year.months[0].current = true;
-                year.months[0].days[0].current = true;
-                year.moons = []; //TODO: Maybe add all 12 moons?
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
-                year.yearNames = [];
+                calendar.seasons = [];
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.None;
+                calendar.year.leapYearRule.customMod = 0;
+                calendar.year.months[0].current = true;
+                calendar.year.months[0].days[0].current = true;
+                calendar.moons = []; //TODO: Maybe add all 12 moons?
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.yearNames = [];
                 updated = true;
                 break;
             case PredefinedCalendars.Exandrian:
-                year.numericRepresentation = 812;
-                year.prefix = '';
-                year.postfix = ' P.D.';
-                year.yearZero = 0;
-                year.months = [
+                calendar.year.numericRepresentation = 812;
+                calendar.year.prefix = '';
+                calendar.year.postfix = ' P.D.';
+                calendar.year.yearZero = 0;
+                calendar.year.months = [
                     new Month('Horisal', 1, 0, 29),
                     new Month('Misuthar', 2, 0, 30),
                     new Month('Dualahei', 3, 0, 30),
@@ -332,9 +332,9 @@ export default class PredefinedCalendar{
                     new Month('Cuersaar', 10, 0, 29),
                     new Month('Duscar', 11, 0, 32)
                 ];
-                year.showWeekdayHeadings = true;
-                year.firstWeekday = 3;
-                year.weekdays = [
+                calendar.year.showWeekdayHeadings = true;
+                calendar.year.firstWeekday = 3;
+                calendar.weekdays = [
                     new Weekday(1, 'Miresen'),
                     new Weekday(2, 'Grissen'),
                     new Weekday(3, 'Whelsen'),
@@ -343,42 +343,42 @@ export default class PredefinedCalendar{
                     new Weekday(6, 'Yulisen'),
                     new Weekday(7, 'Da\'leysen')
                 ];
-                year.seasons = [
+                calendar.seasons = [
                     new Season('Spring', 2, 12),
                     new Season('Summer', 4, 25),
                     new Season('Autumn', 7, 2),
                     new Season('Winter', 10, 1)
                 ];
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.None;
-                year.leapYearRule.customMod = 0;
-                year.months[0].current = true;
-                year.months[0].days[0].current = true;
-                year.seasons[0].color = "#E0C40B";
-                year.seasons[1].color = "#46B946";
-                year.seasons[2].color = "#FF8E47";
-                year.seasons[3].color = "#479DFF";
-                year.seasons[0].sunriseTime = 27000;
-                year.seasons[1].sunriseTime = 21600;
-                year.seasons[2].sunriseTime = 27000;
-                year.seasons[3].sunriseTime = 32400;
-                year.seasons[0].sunsetTime = 64800;
-                year.seasons[1].sunsetTime = 75600;
-                year.seasons[2].sunsetTime = 64800;
-                year.seasons[3].sunsetTime = 54000;
-                year.moons = [
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.None;
+                calendar.year.leapYearRule.customMod = 0;
+                calendar.year.months[0].current = true;
+                calendar.year.months[0].days[0].current = true;
+                calendar.seasons[0].color = "#E0C40B";
+                calendar.seasons[1].color = "#46B946";
+                calendar.seasons[2].color = "#FF8E47";
+                calendar.seasons[3].color = "#479DFF";
+                calendar.seasons[0].sunriseTime = 27000;
+                calendar.seasons[1].sunriseTime = 21600;
+                calendar.seasons[2].sunriseTime = 27000;
+                calendar.seasons[3].sunriseTime = 32400;
+                calendar.seasons[0].sunsetTime = 64800;
+                calendar.seasons[1].sunsetTime = 75600;
+                calendar.seasons[2].sunsetTime = 64800;
+                calendar.seasons[3].sunsetTime = 54000;
+                calendar.moons = [
                     new Moon('Catha', 33),
                     new Moon('Ruidus', 328)
                 ];
-                year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
-                year.moons[0].firstNewMoon.year = 810;
-                year.moons[0].firstNewMoon.month = 0;
-                year.moons[0].firstNewMoon.day = 8;
-                phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[0].phases = [
+                calendar.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                calendar.moons[0].firstNewMoon.year = 810;
+                calendar.moons[0].firstNewMoon.month = 0;
+                calendar.moons[0].firstNewMoon.day = 8;
+                phaseLength = Number(((calendar.moons[0].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -388,13 +388,13 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.moons[1].color = "#ab82f3";
-                year.moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
-                year.moons[1].firstNewMoon.year = 810;
-                year.moons[1].firstNewMoon.month = 2;
-                year.moons[1].firstNewMoon.day = 21;
-                phaseLength = Number(((year.moons[1].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[1].phases = [
+                calendar.moons[1].color = "#ab82f3";
+                calendar.moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                calendar.moons[1].firstNewMoon.year = 810;
+                calendar.moons[1].firstNewMoon.month = 2;
+                calendar.moons[1].firstNewMoon.day = 21;
+                phaseLength = Number(((calendar.moons[1].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[1].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -404,23 +404,23 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
-                year.yearNames = [];
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.yearNames = [];
                 updated = true;
                 break;
             case PredefinedCalendars.ForbiddenLands:
-                year.numericRepresentation = 1165;
-                year.prefix = '';
-                year.postfix = ' AS';
-                year.yearZero = 0;
-                year.showWeekdayHeadings = true;
-                year.firstWeekday = 0;
-                year.yearNames = [];
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.numericRepresentation = 1165;
+                calendar.year.prefix = '';
+                calendar.year.postfix = ' AS';
+                calendar.year.yearZero = 0;
+                calendar.year.showWeekdayHeadings = true;
+                calendar.year.firstWeekday = 0;
+                calendar.year.yearNames = [];
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
 
-                year.months = [
+                calendar.year.months = [
                     new Month('Winterwane', 1, 0, 46),
                     new Month('Springrise', 2, 0, 45),
                     new Month('Springwane', 3, 0, 46),
@@ -431,7 +431,7 @@ export default class PredefinedCalendar{
                     new Month('Winterrise', 8, 0, 45)
                 ];
 
-                year.weekdays = [
+                calendar.weekdays = [
                     new Weekday(1, 'Sunday'),
                     new Weekday(2, 'Moonday'),
                     new Weekday(3, 'Bloodday'),
@@ -441,45 +441,45 @@ export default class PredefinedCalendar{
                     new Weekday(7, 'Stillday')
                 ];
 
-                year.seasons = [
+                calendar.seasons = [
                     new Season('Spring', 1, 0),
                     new Season('Summer', 3, 0),
                     new Season('Fall', 5, 0),
                     new Season('Winter', 7, 0)
                 ];
-                year.seasons[0].color = "#acffac";
-                year.seasons[1].color = "#ff9393";
-                year.seasons[2].color = "#ffdf99";
-                year.seasons[3].color = "#a8a8ff";
-                year.seasons[0].sunriseTime = 21600;
-                year.seasons[1].sunriseTime = 21600;
-                year.seasons[2].sunriseTime = 21600;
-                year.seasons[3].sunriseTime = 21600;
-                year.seasons[0].sunsetTime = 64800;
-                year.seasons[1].sunsetTime = 64800;
-                year.seasons[2].sunsetTime = 64800;
-                year.seasons[3].sunsetTime = 64800;
+                calendar.seasons[0].color = "#acffac";
+                calendar.seasons[1].color = "#ff9393";
+                calendar.seasons[2].color = "#ffdf99";
+                calendar.seasons[3].color = "#a8a8ff";
+                calendar.seasons[0].sunriseTime = 21600;
+                calendar.seasons[1].sunriseTime = 21600;
+                calendar.seasons[2].sunriseTime = 21600;
+                calendar.seasons[3].sunriseTime = 21600;
+                calendar.seasons[0].sunsetTime = 64800;
+                calendar.seasons[1].sunsetTime = 64800;
+                calendar.seasons[2].sunsetTime = 64800;
+                calendar.seasons[3].sunsetTime = 64800;
 
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.None;
-                year.leapYearRule.customMod = 0;
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.None;
+                calendar.year.leapYearRule.customMod = 0;
 
-                year.months[1].current = true;
-                year.months[1].days[0].current = true;
+                calendar.year.months[1].current = true;
+                calendar.year.months[1].days[0].current = true;
 
-                year.moons = [
+                calendar.moons = [
                     new Moon('Moon', 30)
                 ];
-                year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
-                year.moons[0].firstNewMoon.year = 0;
-                year.moons[0].firstNewMoon.month = 0;
-                year.moons[0].firstNewMoon.day = 0;
-                year.moons[0].cycleDayAdjust = 0;
-                phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[0].phases = [
+                calendar.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                calendar.moons[0].firstNewMoon.year = 0;
+                calendar.moons[0].firstNewMoon.month = 0;
+                calendar.moons[0].firstNewMoon.day = 0;
+                calendar.moons[0].cycleDayAdjust = 0;
+                phaseLength = Number(((calendar.moons[0].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -493,11 +493,11 @@ export default class PredefinedCalendar{
                 updated = true;
                 break;
             case PredefinedCalendars.GolarianPF1E:
-                year.numericRepresentation = 4710;
-                year.prefix = '';
-                year.postfix = ' AR';
-                year.yearZero = 0;
-                year.months = [
+                calendar.year.numericRepresentation = 4710;
+                calendar.year.prefix = '';
+                calendar.year.postfix = ' AR';
+                calendar.year.yearZero = 0;
+                calendar.year.months = [
                     new Month('Abadius', 1, 0, 31),
                     new Month('Calistril', 2, 0, 28, 29),
                     new Month('Pharast', 3, 0, 31),
@@ -511,9 +511,9 @@ export default class PredefinedCalendar{
                     new Month('Neth', 11, 0, 30),
                     new Month('Kuthona', 12, 0, 31)
                 ];
-                year.showWeekdayHeadings = true;
-                year.firstWeekday = 6;
-                year.weekdays = [
+                calendar.year.showWeekdayHeadings = true;
+                calendar.year.firstWeekday = 6;
+                calendar.weekdays = [
                     new Weekday(1, 'Moonday'),
                     new Weekday(2, 'Toilday'),
                     new Weekday(3, 'Wealday'),
@@ -522,42 +522,42 @@ export default class PredefinedCalendar{
                     new Weekday(6, 'Starday'),
                     new Weekday(7, 'Sunday')
                 ];
-                year.seasons = [
+                calendar.seasons = [
                     new Season('Spring', 2, 0),
                     new Season('Summer', 5, 0),
                     new Season('Fall', 8, 0),
                     new Season('Winter', 11, 0)
                 ];
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.Custom;
-                year.leapYearRule.customMod = 8;
-                year.months[0].current = true;
-                year.months[0].days[0].current = true;
-                year.seasons[0].color = "#E0C40B";
-                year.seasons[1].color = "#46B946";
-                year.seasons[2].color = "#FF8E47";
-                year.seasons[3].color = "#479DFF";
-                year.seasons[0].sunriseTime = 21600;
-                year.seasons[1].sunriseTime = 21600;
-                year.seasons[2].sunriseTime = 21600;
-                year.seasons[3].sunriseTime = 21600;
-                year.seasons[0].sunsetTime = 64800;
-                year.seasons[1].sunsetTime = 64800;
-                year.seasons[2].sunsetTime = 64800;
-                year.seasons[3].sunsetTime = 64800;
-                year.moons = [
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.Custom;
+                calendar.year.leapYearRule.customMod = 8;
+                calendar.year.months[0].current = true;
+                calendar.year.months[0].days[0].current = true;
+                calendar.seasons[0].color = "#E0C40B";
+                calendar.seasons[1].color = "#46B946";
+                calendar.seasons[2].color = "#FF8E47";
+                calendar.seasons[3].color = "#479DFF";
+                calendar.seasons[0].sunriseTime = 21600;
+                calendar.seasons[1].sunriseTime = 21600;
+                calendar.seasons[2].sunriseTime = 21600;
+                calendar.seasons[3].sunriseTime = 21600;
+                calendar.seasons[0].sunsetTime = 64800;
+                calendar.seasons[1].sunsetTime = 64800;
+                calendar.seasons[2].sunsetTime = 64800;
+                calendar.seasons[3].sunsetTime = 64800;
+                calendar.moons = [
                     new Moon('Somal', 29.5)
                 ];
-                year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.XYears;
-                year.moons[0].firstNewMoon.yearX = 4;
-                year.moons[0].firstNewMoon.year = 4700;
-                year.moons[0].firstNewMoon.month = 0;
-                year.moons[0].firstNewMoon.day = 7;
-                phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[0].phases = [
+                calendar.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.XYears;
+                calendar.moons[0].firstNewMoon.yearX = 4;
+                calendar.moons[0].firstNewMoon.year = 4700;
+                calendar.moons[0].firstNewMoon.month = 0;
+                calendar.moons[0].firstNewMoon.day = 7;
+                phaseLength = Number(((calendar.moons[0].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -567,17 +567,17 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
-                year.yearNames = [];
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.yearNames = [];
                 updated = true;
                 break;
             case PredefinedCalendars.GolarianPF2E:
-                year.numericRepresentation = 4710;
-                year.prefix = '';
-                year.postfix = ' AR';
-                year.yearZero = 2700;
-                year.months = [
+                calendar.year.numericRepresentation = 4710;
+                calendar.year.prefix = '';
+                calendar.year.postfix = ' AR';
+                calendar.year.yearZero = 2700;
+                calendar.year.months = [
                     new Month('Abadius', 1, 0, 31),
                     new Month('Calistril', 2, 0, 28, 29),
                     new Month('Pharast', 3, 0, 31),
@@ -591,9 +591,9 @@ export default class PredefinedCalendar{
                     new Month('Neth', 11, 0, 30),
                     new Month('Kuthona', 12, 0, 31)
                 ];
-                year.showWeekdayHeadings = true;
-                year.firstWeekday = 6;
-                year.weekdays = [
+                calendar.year.showWeekdayHeadings = true;
+                calendar.year.firstWeekday = 6;
+                calendar.weekdays = [
                     new Weekday(1, 'Moonday'),
                     new Weekday(2, 'Toilday'),
                     new Weekday(3, 'Wealday'),
@@ -602,42 +602,42 @@ export default class PredefinedCalendar{
                     new Weekday(6, 'Starday'),
                     new Weekday(7, 'Sunday')
                 ];
-                year.seasons = [
+                calendar.seasons = [
                     new Season('Spring', 2, 0),
                     new Season('Summer', 5, 0),
                     new Season('Fall', 8, 0),
                     new Season('Winter', 11, 0)
                 ];
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.Custom;
-                year.leapYearRule.customMod = 4;
-                year.months[0].current = true;
-                year.months[0].days[0].current = true;
-                year.seasons[0].color = "#E0C40B";
-                year.seasons[1].color = "#46B946";
-                year.seasons[2].color = "#FF8E47";
-                year.seasons[3].color = "#479DFF";
-                year.seasons[0].sunriseTime = 21600;
-                year.seasons[1].sunriseTime = 21600;
-                year.seasons[2].sunriseTime = 21600;
-                year.seasons[3].sunriseTime = 21600;
-                year.seasons[0].sunsetTime = 64800;
-                year.seasons[1].sunsetTime = 64800;
-                year.seasons[2].sunsetTime = 64800;
-                year.seasons[3].sunsetTime = 64800;
-                year.moons = [
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.Custom;
+                calendar.year.leapYearRule.customMod = 4;
+                calendar.year.months[0].current = true;
+                calendar.year.months[0].days[0].current = true;
+                calendar.seasons[0].color = "#E0C40B";
+                calendar.seasons[1].color = "#46B946";
+                calendar.seasons[2].color = "#FF8E47";
+                calendar.seasons[3].color = "#479DFF";
+                calendar.seasons[0].sunriseTime = 21600;
+                calendar.seasons[1].sunriseTime = 21600;
+                calendar.seasons[2].sunriseTime = 21600;
+                calendar.seasons[3].sunriseTime = 21600;
+                calendar.seasons[0].sunsetTime = 64800;
+                calendar.seasons[1].sunsetTime = 64800;
+                calendar.seasons[2].sunsetTime = 64800;
+                calendar.seasons[3].sunsetTime = 64800;
+                calendar.moons = [
                     new Moon('Somal', 29.5)
                 ];
-                year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.XYears;
-                year.moons[0].firstNewMoon.yearX = 4;
-                year.moons[0].firstNewMoon.year = 4700;
-                year.moons[0].firstNewMoon.month = 0;
-                year.moons[0].firstNewMoon.day = 7;
-                phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[0].phases = [
+                calendar.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.XYears;
+                calendar.moons[0].firstNewMoon.yearX = 4;
+                calendar.moons[0].firstNewMoon.year = 4700;
+                calendar.moons[0].firstNewMoon.month = 0;
+                calendar.moons[0].firstNewMoon.day = 7;
+                phaseLength = Number(((calendar.moons[0].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -647,17 +647,17 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
-                year.yearNames = [];
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.yearNames = [];
                 updated = true;
                 break;
             case PredefinedCalendars.Greyhawk:
-                year.numericRepresentation = 591 ;
-                year.prefix = '';
-                year.postfix = ' cy';
-                year.yearZero = 0;
-                year.months = [
+                calendar.year.numericRepresentation = 591 ;
+                calendar.year.prefix = '';
+                calendar.year.postfix = ' cy';
+                calendar.year.yearZero = 0;
+                calendar.year.months = [
                     new Month('Needfest', -1, 0, 7),
                     new Month('Fireseek', 1, 0, 28),
                     new Month('Readying', 2, 0, 28),
@@ -675,13 +675,13 @@ export default class PredefinedCalendar{
                     new Month('Ready\'reat', 11, 0, 28),
                     new Month('Sunsebb', 12, 0, 28),
                 ];
-                year.months[0].intercalary = true;
-                year.months[4].intercalary = true;
-                year.months[8].intercalary = true;
-                year.months[12].intercalary = true;
-                year.showWeekdayHeadings = true;
-                year.firstWeekday = 0;
-                year.weekdays = [
+                calendar.year.months[0].intercalary = true;
+                calendar.year.months[4].intercalary = true;
+                calendar.year.months[8].intercalary = true;
+                calendar.year.months[12].intercalary = true;
+                calendar.year.showWeekdayHeadings = true;
+                calendar.year.firstWeekday = 0;
+                calendar.weekdays = [
                     new Weekday(1, 'Starday'),
                     new Weekday(2, 'Sunday'),
                     new Weekday(3, 'Moonday'),
@@ -690,46 +690,46 @@ export default class PredefinedCalendar{
                     new Weekday(6, 'Earthday'),
                     new Weekday(7, 'Freeday')
                 ];
-                year.seasons = [
+                calendar.seasons = [
                     new Season('Spring', 1, 0),
                     new Season('Low Summer', 3, 0),
                     new Season('High Summer', 6, 0),
                     new Season('Fall', 9, 0),
                     new Season('Winter', 11, 0)
                 ];
-                year.seasons[0].color = "#E0C40B";
-                year.seasons[1].color = "#46B946";
-                year.seasons[2].color = "#46B946";
-                year.seasons[3].color = "#FF8E47";
-                year.seasons[4].color = "#479DFF";
-                year.seasons[0].sunriseTime = 24300;
-                year.seasons[1].sunriseTime = 18840;
-                year.seasons[2].sunriseTime = 16500;
-                year.seasons[3].sunriseTime = 20400;
-                year.seasons[4].sunriseTime = 25740;
-                year.seasons[0].sunsetTime = 48360;
-                year.seasons[1].sunsetTime = 66540;
-                year.seasons[2].sunsetTime = 69540;
-                year.seasons[3].sunsetTime = 64140;
-                year.seasons[4].sunsetTime = 59160;
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.None;
-                year.leapYearRule.customMod = 0;
-                year.months[0].current = true;
-                year.months[0].days[0].current = true;
-                year.moons = [
+                calendar.seasons[0].color = "#E0C40B";
+                calendar.seasons[1].color = "#46B946";
+                calendar.seasons[2].color = "#46B946";
+                calendar.seasons[3].color = "#FF8E47";
+                calendar.seasons[4].color = "#479DFF";
+                calendar.seasons[0].sunriseTime = 24300;
+                calendar.seasons[1].sunriseTime = 18840;
+                calendar.seasons[2].sunriseTime = 16500;
+                calendar.seasons[3].sunriseTime = 20400;
+                calendar.seasons[4].sunriseTime = 25740;
+                calendar.seasons[0].sunsetTime = 48360;
+                calendar.seasons[1].sunsetTime = 66540;
+                calendar.seasons[2].sunsetTime = 69540;
+                calendar.seasons[3].sunsetTime = 64140;
+                calendar.seasons[4].sunsetTime = 59160;
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.None;
+                calendar.year.leapYearRule.customMod = 0;
+                calendar.year.months[0].current = true;
+                calendar.year.months[0].days[0].current = true;
+                calendar.moons = [
                     new Moon('Luna', 28),
                     new Moon('Celene', 91)
                 ];
-                year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
-                year.moons[0].firstNewMoon.year = 590;
-                year.moons[0].firstNewMoon.month = 0;
-                year.moons[0].firstNewMoon.day = 24;
-                phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[0].phases = [
+                calendar.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                calendar.moons[0].firstNewMoon.year = 590;
+                calendar.moons[0].firstNewMoon.month = 0;
+                calendar.moons[0].firstNewMoon.day = 24;
+                phaseLength = Number(((calendar.moons[0].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -739,13 +739,13 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.moons[1].color = '#7FFFD4';
-                year.moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
-                year.moons[1].firstNewMoon.year = 590;
-                year.moons[1].firstNewMoon.month = 1;
-                year.moons[1].firstNewMoon.day = 11;
-                phaseLength = Number(((year.moons[1].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[1].phases = [
+                calendar.moons[1].color = '#7FFFD4';
+                calendar.moons[1].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                calendar.moons[1].firstNewMoon.year = 590;
+                calendar.moons[1].firstNewMoon.month = 1;
+                calendar.moons[1].firstNewMoon.day = 11;
+                phaseLength = Number(((calendar.moons[1].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[1].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -755,17 +755,17 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
-                year.yearNames = [];
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.yearNames = [];
                 updated = true;
                 break;
             case PredefinedCalendars.Harptos:
-                year.numericRepresentation = 1495;
-                year.prefix = '';
-                year.postfix = ' DR';
-                year.yearZero = 0;
-                year.months = [
+                calendar.year.numericRepresentation = 1495;
+                calendar.year.prefix = '';
+                calendar.year.postfix = ' DR';
+                calendar.year.yearZero = 0;
+                calendar.year.months = [
                     new Month('Hammer', 1, 0, 30),
                     new Month('Midwinter', -1, 0, 1),
                     new Month('Alturiak', 2, 0, 30),
@@ -785,15 +785,15 @@ export default class PredefinedCalendar{
                     new Month('Feast Of the Moon', -6, 0, 1),
                     new Month('Nightal', 12, 0, 30)
                 ];
-                year.months[1].intercalary = true;
-                year.months[5].intercalary = true;
-                year.months[9].intercalary = true;
-                year.months[10].intercalary = true;
-                year.months[13].intercalary = true;
-                year.months[16].intercalary = true;
-                year.showWeekdayHeadings = false;
-                year.firstWeekday = 0;
-                year.weekdays = [
+                calendar.year.months[1].intercalary = true;
+                calendar.year.months[5].intercalary = true;
+                calendar.year.months[9].intercalary = true;
+                calendar.year.months[10].intercalary = true;
+                calendar.year.months[13].intercalary = true;
+                calendar.year.months[16].intercalary = true;
+                calendar.year.showWeekdayHeadings = false;
+                calendar.year.firstWeekday = 0;
+                calendar.weekdays = [
                     new Weekday(1, '1st'),
                     new Weekday(2, '2nd'),
                     new Weekday(3, '3rd'),
@@ -805,42 +805,42 @@ export default class PredefinedCalendar{
                     new Weekday(9, '9th'),
                     new Weekday(10, '10th')
                 ];
-                year.seasons = [
+                calendar.seasons = [
                     new Season('Spring', 2, 18),
                     new Season('Summer', 7, 19),
                     new Season('Fall', 12, 20),
                     new Season('Winter', 17, 19)
                 ];
-                year.seasons[0].color = "#E0C40B";
-                year.seasons[1].color = "#46B946";
-                year.seasons[2].color = "#FF8E47";
-                year.seasons[3].color = "#479DFF";
-                year.seasons[0].sunriseTime = 21600;
-                year.seasons[1].sunriseTime = 21600;
-                year.seasons[2].sunriseTime = 21600;
-                year.seasons[3].sunriseTime = 21600;
-                year.seasons[0].sunsetTime = 64800;
-                year.seasons[1].sunsetTime = 64800;
-                year.seasons[2].sunsetTime = 64800;
-                year.seasons[3].sunsetTime = 64800;
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.Custom;
-                year.leapYearRule.customMod = 4;
-                year.months[0].current = true;
-                year.months[0].days[0].current = true;
-                year.moons = [
+                calendar.seasons[0].color = "#E0C40B";
+                calendar.seasons[1].color = "#46B946";
+                calendar.seasons[2].color = "#FF8E47";
+                calendar.seasons[3].color = "#479DFF";
+                calendar.seasons[0].sunriseTime = 21600;
+                calendar.seasons[1].sunriseTime = 21600;
+                calendar.seasons[2].sunriseTime = 21600;
+                calendar.seasons[3].sunriseTime = 21600;
+                calendar.seasons[0].sunsetTime = 64800;
+                calendar.seasons[1].sunsetTime = 64800;
+                calendar.seasons[2].sunsetTime = 64800;
+                calendar.seasons[3].sunsetTime = 64800;
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.Custom;
+                calendar.year.leapYearRule.customMod = 4;
+                calendar.year.months[0].current = true;
+                calendar.year.months[0].days[0].current = true;
+                calendar.moons = [
                     new Moon('Selûne', 30.45)
                 ];
-                year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.LeapYear;
-                year.moons[0].firstNewMoon.year = 1372;
-                year.moons[0].firstNewMoon.month = 0;
-                year.moons[0].firstNewMoon.day = 15;
-                year.moons[0].cycleDayAdjust = 0.5;
-                phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[0].phases = [
+                calendar.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.LeapYear;
+                calendar.moons[0].firstNewMoon.year = 1372;
+                calendar.moons[0].firstNewMoon.month = 0;
+                calendar.moons[0].firstNewMoon.day = 15;
+                calendar.moons[0].cycleDayAdjust = 0.5;
+                phaseLength = Number(((calendar.moons[0].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -850,24 +850,24 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
-                year.yearNames = [];
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.yearNames = [];
                 updated = true;
                 break;
             case PredefinedCalendars.TravellerImperialCalendar:
-                year.numericRepresentation = 1000;
-                year.prefix = '';
-                year.postfix = '';
-                year.yearZero = 0;
-                year.months = [
+                calendar.year.numericRepresentation = 1000;
+                calendar.year.prefix = '';
+                calendar.year.postfix = '';
+                calendar.year.yearZero = 0;
+                calendar.year.months = [
                     new Month('Holiday', -1, 0, 1),
                     new Month('Year', 1,1, 364)
                 ];
-                year.months[0].intercalary = true;
-                year.showWeekdayHeadings = true;
-                year.firstWeekday = 0;
-                year.weekdays = [
+                calendar.year.months[0].intercalary = true;
+                calendar.year.showWeekdayHeadings = true;
+                calendar.year.firstWeekday = 0;
+                calendar.weekdays = [
                     new Weekday(1, 'Wonday'),
                     new Weekday(2, 'Tuday'),
                     new Weekday(3, 'Thirday'),
@@ -876,27 +876,27 @@ export default class PredefinedCalendar{
                     new Weekday(6, 'Sixday'),
                     new Weekday(7, 'Senday')
                 ];
-                year.seasons = [];
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.None;
-                year.leapYearRule.customMod = 0;
-                year.months[0].current = true;
-                year.months[0].days[0].current = true;
-                year.moons = [];
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
-                year.yearNames = [];
+                calendar.seasons = [];
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.None;
+                calendar.year.leapYearRule.customMod = 0;
+                calendar.year.months[0].current = true;
+                calendar.year.months[0].days[0].current = true;
+                calendar.moons = [];
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.yearNames = [];
                 updated = true;
                 break;
             case PredefinedCalendars.WarhammerImperialCalendar:
-                year.numericRepresentation = 2522;
-                year.prefix = '';
-                year.postfix = '';
-                year.yearZero = 0;
-                year.months = [
+                calendar.year.numericRepresentation = 2522;
+                calendar.year.prefix = '';
+                calendar.year.postfix = '';
+                calendar.year.yearZero = 0;
+                calendar.year.months = [
                     new Month('Hexenstag', -1, 0, 1),
                     new Month('Nachexen', 1, 0, 32),
                     new Month('Jahrdrung', 2, 0, 33),
@@ -916,15 +916,15 @@ export default class PredefinedCalendar{
                     new Month('Mondstille', -6, 0, 1),
                     new Month('Vorhexen', 12, 0, 33)
                 ];
-                year.months[0].intercalary = true;
-                year.months[3].intercalary = true;
-                year.months[7].intercalary = true;
-                year.months[9].intercalary = true;
-                year.months[12].intercalary = true;
-                year.months[16].intercalary = true;
-                year.showWeekdayHeadings = true;
-                year.firstWeekday = 0;
-                year.weekdays = [
+                calendar.year.months[0].intercalary = true;
+                calendar.year.months[3].intercalary = true;
+                calendar.year.months[7].intercalary = true;
+                calendar.year.months[9].intercalary = true;
+                calendar.year.months[12].intercalary = true;
+                calendar.year.months[16].intercalary = true;
+                calendar.year.showWeekdayHeadings = true;
+                calendar.year.firstWeekday = 0;
+                calendar.weekdays = [
                     new Weekday(1, 'Wellentag'),
                     new Weekday(2, 'Aubentag'),
                     new Weekday(3, 'Marktag'),
@@ -934,41 +934,41 @@ export default class PredefinedCalendar{
                     new Weekday(7, 'Angestag'),
                     new Weekday(8, 'Festag')
                 ];
-                year.seasons = [
+                calendar.seasons = [
                     new Season('Spring', 0, 16),
                     new Season('Summer', 3, 17),
                     new Season('Fall', 6, 16),
                     new Season('Winter', 9, 17)
                 ];
-                year.seasons[0].color = "#E0C40B";
-                year.seasons[1].color = "#46B946";
-                year.seasons[2].color = "#FF8E47";
-                year.seasons[3].color = "#479DFF";
-                year.seasons[0].sunriseTime = 21600;
-                year.seasons[1].sunriseTime = 21600;
-                year.seasons[2].sunriseTime = 21600;
-                year.seasons[3].sunriseTime = 21600;
-                year.seasons[0].sunsetTime = 64800;
-                year.seasons[1].sunsetTime = 64800;
-                year.seasons[2].sunsetTime = 64800;
-                year.seasons[3].sunsetTime = 64800;
-                year.time.hoursInDay = 24;
-                year.time.minutesInHour = 60;
-                year.time.secondsInMinute = 60;
-                year.time.gameTimeRatio = 1;
-                year.leapYearRule.rule = LeapYearRules.None;
-                year.leapYearRule.customMod = 0;
-                year.months[0].current = true;
-                year.months[0].days[0].current = true;
-                year.moons = [
+                calendar.seasons[0].color = "#E0C40B";
+                calendar.seasons[1].color = "#46B946";
+                calendar.seasons[2].color = "#FF8E47";
+                calendar.seasons[3].color = "#479DFF";
+                calendar.seasons[0].sunriseTime = 21600;
+                calendar.seasons[1].sunriseTime = 21600;
+                calendar.seasons[2].sunriseTime = 21600;
+                calendar.seasons[3].sunriseTime = 21600;
+                calendar.seasons[0].sunsetTime = 64800;
+                calendar.seasons[1].sunsetTime = 64800;
+                calendar.seasons[2].sunsetTime = 64800;
+                calendar.seasons[3].sunsetTime = 64800;
+                calendar.time.hoursInDay = 24;
+                calendar.time.minutesInHour = 60;
+                calendar.time.secondsInMinute = 60;
+                calendar.time.gameTimeRatio = 1;
+                calendar.year.leapYearRule.rule = LeapYearRules.None;
+                calendar.year.leapYearRule.customMod = 0;
+                calendar.year.months[0].current = true;
+                calendar.year.months[0].days[0].current = true;
+                calendar.moons = [
                     new Moon('Luna', 25)
                 ];
-                year.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
-                year.moons[0].firstNewMoon.year = 2522;
-                year.moons[0].firstNewMoon.month = 0;
-                year.moons[0].firstNewMoon.day = 12;
-                phaseLength = Number(((year.moons[0].cycleLength - 4) / 4).toPrecision(5));
-                year.moons[0].phases = [
+                calendar.moons[0].firstNewMoon.yearReset = MoonYearResetOptions.None;
+                calendar.moons[0].firstNewMoon.year = 2522;
+                calendar.moons[0].firstNewMoon.month = 0;
+                calendar.moons[0].firstNewMoon.day = 12;
+                phaseLength = Number(((calendar.moons[0].cycleLength - 4) / 4).toPrecision(5));
+                calendar.moons[0].phases = [
                     {name: "New Moon", length: 1, icon: Icons.NewMoon, singleDay: true},
                     {name: "Waxing Crescent", length: phaseLength, icon: Icons.WaxingCrescent, singleDay: false},
                     {name: "First Quarter", length: 1, icon: Icons.FirstQuarter, singleDay: true},
@@ -978,9 +978,9 @@ export default class PredefinedCalendar{
                     {name: "Last Quarter", length: 1, icon: Icons.LastQuarter, singleDay: true},
                     {name: "Waning Crescent", length: phaseLength, icon: Icons.WaningCrescent, singleDay: false}
                 ];
-                year.yearNamesStart = 0;
-                year.yearNamingRule = YearNamingRules.Default;
-                year.yearNames = [];
+                calendar.year.yearNamesStart = 0;
+                calendar.year.yearNamingRule = YearNamingRules.Default;
+                calendar.year.yearNames = [];
                 updated = true;
                 break;
         }

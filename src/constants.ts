@@ -11,12 +11,6 @@ export const ModuleName = 'foundryvtt-simple-calendar';
 export const ModuleSocketName = `module.${ModuleName}`;
 
 /**
- * The current version of the module
- * @internal
- */
-export const Version = `2.0.0-beta.1`
-
-/**
  * The name of the settings that are saved in the world settings database
  * @internal
  */

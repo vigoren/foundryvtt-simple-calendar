@@ -46,16 +46,16 @@ export class Hook{
                     };
                 }
             }
-            data.time = calendar.year.time.getCurrentTime();
-            data.season = calendar.year.getCurrentSeason();
+            data.time = calendar.time.getCurrentTime();
+            data.season = calendar.getCurrentSeason();
 
-            for(let i = 0; i < calendar.year.moons.length; i++){
-                const phase = calendar.year.moons[i].getMoonPhase(calendar.year);
+            for(let i = 0; i < calendar.moons.length; i++){
+                const phase = calendar.moons[i].getMoonPhase(calendar.year);
                 data.moons.push({
-                    name: calendar.year.moons[i].name,
-                    color: calendar.year.moons[i].color,
-                    cycleLength: calendar.year.moons[i].cycleLength,
-                    cycleDayAdjust: calendar.year.moons[i].cycleDayAdjust,
+                    name: calendar.moons[i].name,
+                    color: calendar.moons[i].color,
+                    cycleLength: calendar.moons[i].cycleLength,
+                    cycleDayAdjust: calendar.moons[i].cycleDayAdjust,
                     currentPhase: phase
                 });
             }

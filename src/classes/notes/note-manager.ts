@@ -81,6 +81,7 @@ export default class NoteManager{
 
     public loadNotes(){
         if(this.noteDirectory){
+            this.notes = {};
             for(let i = 0; i < this.noteDirectory.contents.length; i++){
                 const je = <JournalEntry>this.noteDirectory.contents[i];
                 const noteData = <SimpleCalendar.NoteData>je.getFlag(ModuleName, 'noteData');
@@ -104,7 +105,7 @@ export default class NoteManager{
             reminderCount: 0
         };
         for(let i = 0; i < notesForDay.length; i++){
-            if(notesForDay[i].userReminderRegistered()){
+            if(notesForDay[i].userReminderRegistered){
                 results.reminderCount++;
             } else {
                 results.count++;

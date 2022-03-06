@@ -83,15 +83,15 @@ export default class Season extends ConfigurationItemBase{
 
         let sunriseHour = 0, sunriseMinute = 0, sunsetHour = 0, sunsetMinute = 0;
         const activeCalendar = CalManager.getActiveCalendar();
-        sunriseMinute = Math.floor(this.sunriseTime / activeCalendar.year.time.secondsInMinute);
-        sunsetMinute = Math.floor(this.sunsetTime / activeCalendar.year.time.secondsInMinute);
-        if(sunriseMinute >= activeCalendar.year.time.minutesInHour){
-            sunriseHour = Math.floor(sunriseMinute / activeCalendar.year.time.minutesInHour);
-            sunriseMinute = sunriseMinute - (sunriseHour * activeCalendar.year.time.minutesInHour);
+        sunriseMinute = Math.floor(this.sunriseTime / activeCalendar.time.secondsInMinute);
+        sunsetMinute = Math.floor(this.sunsetTime / activeCalendar.time.secondsInMinute);
+        if(sunriseMinute >= activeCalendar.time.minutesInHour){
+            sunriseHour = Math.floor(sunriseMinute / activeCalendar.time.minutesInHour);
+            sunriseMinute = sunriseMinute - (sunriseHour * activeCalendar.time.minutesInHour);
         }
-        if(sunsetMinute >= activeCalendar.year.time.minutesInHour){
-            sunsetHour = Math.floor(sunsetMinute / activeCalendar.year.time.minutesInHour);
-            sunsetMinute = sunsetMinute - (sunsetHour * activeCalendar.year.time.minutesInHour);
+        if(sunsetMinute >= activeCalendar.time.minutesInHour){
+            sunsetHour = Math.floor(sunsetMinute / activeCalendar.time.minutesInHour);
+            sunsetMinute = sunsetMinute - (sunsetHour * activeCalendar.time.minutesInHour);
         }
 
         const data: SimpleCalendar.HandlebarTemplateData.Season =  {

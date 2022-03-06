@@ -3,12 +3,13 @@ import {
 } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/applications/formApplications/documentSheets/journalSheet";
 import {deepMerge} from "../utilities/object";
 import {ModuleName, NoteRepeat, SettingNames, Themes} from "../../constants";
-import {DateTheSame, FormatDateTime} from "../utilities/date-time";
+import {DateTheSame, DaysBetweenDates, FormatDateTime} from "../utilities/date-time";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {CalManager} from "../index";
+import {CalManager, MainApplication} from "../index";
 import {GetContrastColor} from "../utilities/visual";
 import {getCheckBoxGroupValues, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
+import MainApp from "../applications/main-app";
 
 export class NoteSheet extends JournalSheet{
 
@@ -68,11 +69,14 @@ export class NoteSheet extends JournalSheet{
     }
 
     protected _getHeaderButtons(): Application.HeaderButton[] {
-        const closeButton = super._getHeaderButtons().find(h => h.class === 'close');
-        if(closeButton){
-            return [closeButton];
+        const buttons = super._getHeaderButtons();
+        const reducedButtons = [];
+        for(let i = 0; i < buttons.length; i++){
+            if(buttons[i].class === 'close' || buttons[i].class === 'configure-sheet'){
+                reducedButtons.push(buttons[i]);
+            }
         }
-        return [];
+        return reducedButtons;
     }
 
     close(options?: FormApplication.CloseOptions): Promise<void> {
@@ -99,7 +103,7 @@ export class NoteSheet extends JournalSheet{
             timeSelected: false,
             dateSelectorId: this.dateSelectorId,
             dateSelectorSelect: this.dateSelectorSelect.bind(this),
-            repeatOptions: {0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
+            repeatOptions: <SimpleCalendar.NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
             allCategories: <any>[],
         };
 
@@ -149,6 +153,7 @@ export class NoteSheet extends JournalSheet{
         DateSelectorManager.ActivateSelector(this.dateSelectorId);
 
         if(this.appWindow){
+            this.updateNoteRepeatDropdown();
             //---------------------
             // Input Changes
             //---------------------
@@ -175,6 +180,8 @@ export class NoteSheet extends JournalSheet{
             const eMonthIndex = !selectedDate.endDate.month || selectedDate.endDate.month < 0? 0 : selectedDate.endDate.month;
             const eDayIndex = !selectedDate.endDate.day || selectedDate.endDate.day < 0? 0 : selectedDate.endDate.day;
 
+            (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).allDay = !selectedDate.timeSelected;
+
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).startDate = {
                 year: selectedDate.startDate.year || 0,
                 month: sMonthIndex,
@@ -191,6 +198,38 @@ export class NoteSheet extends JournalSheet{
                 minute: selectedDate.endDate.minute || 0,
                 seconds: selectedDate.endDate.seconds || 0
             };
+            this.updateNoteRepeatDropdown();
+        }
+    }
+
+    updateNoteRepeatDropdown(){
+        if(this.appWindow){
+            const selector = this.appWindow.querySelector('#scNoteRepeats');
+            const noteData = <SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData;
+            if(selector && noteData){
+                const calendar = CalManager.getCalendar(noteData.calendarId);
+                if(calendar){
+                    //Adjust the repeat options so that you can't repeat if the days between the start and end date are longer than the different options
+                    const daysBetween = DaysBetweenDates(calendar, noteData.startDate,noteData.endDate);
+                    let options: Record<string, string>= {'0': 'FSC.Notes.Repeat.Never', '1': 'FSC.Notes.Repeat.Weekly', '2': 'FSC.Notes.Repeat.Monthly', '3': 'FSC.Notes.Repeat.Yearly'};
+                    if(daysBetween >= calendar.year.totalNumberOfDays(false, true)){
+                        delete options['1'];
+                        delete options['2'];
+                        delete options['3'];
+                    } else if(daysBetween >= calendar.year.months[noteData.startDate.month].days.length){
+                        delete options['1'];
+                        delete options['2'];
+                    }else if(daysBetween >= calendar.weekdays.length){
+                        delete options['1'];
+                    }
+                    let optionsHTML = '';
+                    for(let k in options){
+                        const selected = noteData.repeats.toString() === k;
+                        optionsHTML += `<option value="${k}" ${selected? 'selected' : ''}>${GameSettings.Localize(options[k])}</option>`
+                    }
+                    selector.innerHTML = optionsHTML;
+                }
+            }
         }
     }
 
@@ -227,6 +266,7 @@ export class NoteSheet extends JournalSheet{
         e.preventDefault();
         await this.writeInputValuesToObjects();
         await (<JournalEntry>this.object).update(this.journalData);
+        MainApplication.updateApp();
         await this.close();
     }
 

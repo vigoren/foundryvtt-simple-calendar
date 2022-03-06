@@ -41,7 +41,7 @@ export default class PrimarySocket extends SocketBase {
         await GameSockets.emit(socketData);
         const timeKeeperSocketData = <SimpleCalendar.SimpleCalendarSocket.Data>{type: SocketTypes.clock, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}};
         await GameSockets.emit(timeKeeperSocketData);
-        if(activeCalendar.year.time.unifyGameAndClockPause){
+        if(activeCalendar.time.unifyGameAndClockPause){
             (<Game>game).togglePause(true, true);
         }
         await MainApplication.timeKeepingCheck();
