@@ -103,7 +103,7 @@
   "FSC.DateControls": "日期控制",
   "FSC.DateControlsHelp": "使用此控制器来改变游戏中的当前日期。",
   "FSC.NoDateControls": "Simple Calendar已配置为让另一个模块控制日期和时间。请使用该模块更新时间或更改Simple Calendar配置。",
-  "FSC.SetCurrentDate": "设为当前日期",
+  "FSC.SetCurrentDate": "设置当前日期",
   "FSC.SetCurrentDateDialog.Title": "确认改变当前日期",
   "FSC.SetCurrentDateDialog.Content": "你选择了将日期改变至当前不可见的一天！<br/>你确定要将当前日期更改为<strong>{DATE}</strong>？",
   "FSC.Apply": "应用",
