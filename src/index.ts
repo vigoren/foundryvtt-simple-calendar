@@ -9,7 +9,11 @@ import {
     CalManager,
     MainApplication,
     SC,
-    updateConfigurationApplication, updateMigrationApplication, MigrationApplication, updateNManager, NManager
+    updateConfigurationApplication,
+    updateMigrationApplication,
+    MigrationApplication,
+    updateNManager,
+    NManager
 } from "./classes";
 import {HandlebarsHelpers} from "./classes/api/handlebars-helpers";
 import GameSettingsRegistration from "./classes/foundry-interfacing/game-settings-registration";
@@ -43,10 +47,10 @@ Hooks.on('init', () => {
     SC.load();
 });
 Hooks.on('ready', async () => {
-    //Initialize the Simple Calendar Class
-    SC.initialize();
     //Initialize the note manager
     await NManager.initialize();
+    //Initialize the Simple Calendar Class
+    SC.initialize();
     //Check to see if we need to run a migration, if we do show the migration dialog otherwise show the main app
     if(!MigrationApplication.showMigration()){
         //If we are to open the main app on foundry load, open it

@@ -1,13 +1,13 @@
-.sc-date-selector{
+.fsc-date-selector{
   position: relative;
 }
 
-.sc-date-selector-calendar-wrapper{
+.fsc-date-selector-calendar-wrapper{
   position: absolute;
   z-index: 100;
   border: 1px solid;
 
-  &.just-time{
+  &.fsc-just-time{
     overflow-y: visible;
     padding: 0 0.5rem;
   }
@@ -30,7 +30,7 @@
   }
 
 
-  .sc-date-selector-calendar{
+  .fsc-date-selector-calendar{
     border: unset;
   }
 }

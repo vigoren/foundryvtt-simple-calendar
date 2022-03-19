@@ -1,5 +1,4 @@
 import Month from "./month";
-import {Logger} from "../logging";
 import LeapYear from "./leap-year";
 import {LeapYearRules, YearNamingRules} from "../../constants";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
@@ -131,7 +130,6 @@ export default class Year extends ConfigurationItemBase {
      */
     loadFromSettings(config: SimpleCalendar.YearData) {
         if(config && Object.keys(config).length){
-            Logger.debug('Setting the year from data.');
             if(config.hasOwnProperty('id')){
                 this.id = config.id;
             }
@@ -279,7 +277,6 @@ export default class Year extends ConfigurationItemBase {
         this.resetMonths(setting);
         //If the month we are going to show has no days, skip it
         if((isLeapYear && this.months[month].numberOfLeapYearDays === 0) || (!isLeapYear && this.months[month].numberOfDays === 0)){
-            Logger.debug(`The month "${this.months[month].name}" has no days skipping to ${next? 'next' : 'previous'} month.`);
             this.months[month][verifiedSetting] = true;
             return this.changeMonth((next? 1 : -1), setting, setDay);
         } else {
@@ -289,7 +286,6 @@ export default class Year extends ConfigurationItemBase {
         // If we are adjusting the current date we need to propagate that down to the days of the new month as well
         // We also need to set the visibility of the new month to true
         if(verifiedSetting === 'current'){
-            Logger.debug(`New Month: ${this.months[month].name}`);
             this.months[month].updateDay(currentDay, isLeapYear);
         }
     }
@@ -309,7 +305,6 @@ export default class Year extends ConfigurationItemBase {
             this.selectedYear = this.selectedYear + amount;
         } else {
             this.numericRepresentation = this.numericRepresentation + amount;
-            Logger.debug(`New Year: ${this.numericRepresentation}`);
         }
         if(this.months.length){
             if(updateMonth){
@@ -335,7 +330,6 @@ export default class Year extends ConfigurationItemBase {
             const month = this.months[i];
             if(month[verifiedSetting]){
                 if(next && (i + amount) >= this.months.length){
-                    Logger.debug(`Advancing the ${verifiedSetting} month (${i}) by more months (${amount}) than there are in the year (${this.months.length}), advancing the year by 1`);
                     this.changeYear(1, true, verifiedSetting, setDay);
                     const changeAmount = amount - (this.months.length - i);
                     if(changeAmount > 0){
@@ -371,11 +365,9 @@ export default class Year extends ConfigurationItemBase {
             let currentDayIndex = currentMonth.getDayIndex();
             const lastDayOfCurrentMonth = isLeapYear? currentMonth.numberOfLeapYearDays : currentMonth.numberOfDays;
             if(next && currentDayIndex + amount >= lastDayOfCurrentMonth){
-                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayIndex}) by more days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by 1`);
                 this.changeMonth(1, verifiedSetting, 0);
                 this.changeDay(amount - (lastDayOfCurrentMonth - currentDayIndex), verifiedSetting);
             } else if(!next && currentDayIndex + amount < 0){
-                Logger.debug(`Advancing the ${verifiedSetting} day (${currentDayIndex}) by less days (${amount}) than there are in the month (${lastDayOfCurrentMonth}), advancing the month by -1`);
                 this.changeMonth(-1, verifiedSetting, -1);
                 this.changeDay(amount + currentDayIndex + 1, verifiedSetting);
             } else{

@@ -5,21 +5,21 @@
       background: inherit;
     }
 
-    &.compact-view {
-      .sc-clock {
+    &.fsc-compact-view {
+      .fsc-clock {
         background: unset;
       }
 
-      .time-keeper-buttons {
-        .control {
+      .fsc-time-keeper-buttons {
+        .fsc-control {
           color: #000000;
         }
 
-        .save {
+        .fsc-save {
           color: #2f581d;
         }
 
-        .secondary {
+        .fsc-secondary {
           color: #de810d;
 
           &:hover {
@@ -27,37 +27,37 @@
           }
         }
 
-        .delete {
+        .fsc-delete {
           color: #922121;
         }
       }
     }
 
     //Top message Styling
-    .message {
-      &.warn {
+    .fsc-message {
+      &.fsc-warn {
         background-color: $secondary-100;
         border-color: $secondary !important;
       }
 
-      &.success {
+      &.fsc-success {
         background-color: $success-100;
         border-color: $success !important;
       }
 
-      &.info {
+      &.fsc-info {
         background-color: $primary-100;
         border-color: $primary !important;
       }
 
-      &.danger {
+      &.fsc-danger {
         background-color: $danger-100;
         border-color: $danger !important;
       }
     }
 
     // All control button colors
-    .control {
+    .fsc-control {
       border-color: $gray-600;
       background-color: $gray-600;
       color: $white;
@@ -73,7 +73,7 @@
         cursor: pointer;
       }
 
-      &.primary {
+      &.fsc-primary {
         background-color: #384582;
         border-color: #384582;
 
@@ -84,7 +84,7 @@
         }
       }
 
-      &.secondary {
+      &.fsc-secondary {
         background-color: #de810d;
         border-color: #de810d;
         color: $fontColor;
@@ -95,7 +95,7 @@
         }
       }
 
-      &.tertiary {
+      &.fsc-tertiary {
         background-color: #603382;
         border-color: #603382;
 
@@ -104,7 +104,7 @@
         }
       }
 
-      &.delete {
+      &.fsc-delete {
         background-color: #922121;
         border-color: #922121;
 
@@ -113,7 +113,7 @@
         }
       }
 
-      &.save {
+      &.fsc-save {
         background-color: #2f581d;
         border-color: #2f581d;
 
@@ -122,9 +122,8 @@
         }
       }
     }
-
-    .control-group {
-      .control {
+    .fsc-control-group {
+      .fsc-control {
         border-right-color: $gray-500;
 
         &:first-child {
@@ -135,7 +134,7 @@
           border-right-color: $gray-600;
         }
 
-        &.primary {
+        &.fsc-primary {
           border-right-color: #cad1f3;
 
           &:first-child {
@@ -147,7 +146,7 @@
           }
         }
 
-        &.secondary {
+        &.fsc-secondary {
           border-right-color: $secondary-200;
 
           &:first-child {
@@ -159,7 +158,7 @@
           }
         }
 
-        &.tertiary {
+        &.fsc-tertiary {
           border-right-color: #cd9cf3;
 
           &:first-child {
@@ -171,7 +170,7 @@
           }
         }
 
-        &.delete {
+        &.fsc-delete {
           border-right-color: #fbaeae;
 
           &:first-child {
@@ -183,7 +182,7 @@
           }
         }
 
-        &.save {
+        &.fsc-save {
           border-right-color: #9bce85;
 
           &:first-child {
@@ -196,17 +195,16 @@
         }
       }
     }
-
-    .controls.unit-controls {
-      .control-group {
-        .unit-list {
+    .fsc-controls.fsc-unit-controls {
+      .fsc-control-group {
+        .fsc-unit-list {
           background-color: #384582;
           border-color: #cad1f3;
 
           li {
             border-color: #cad1f3;
 
-            &.selected, &:hover {
+            &.fsc-selected, &:hover {
               background-color: #cad1f3;
               color: #000000;
             }
@@ -216,23 +214,23 @@
     }
 
     //Calendar Styling
-    .calendar {
+    .fsc-calendar {
       background-color: #ffffff;
       border-color: #c3c3c3;
       color: #191813;
 
-      .calendar-header {
+      .fsc-calendar-header {
         background-color: #ffffff;
       }
 
-      .days {
-        .week {
-          .day {
+      .fsc-days {
+        .fsc-week {
+          .fsc-day {
             &:hover {
               background-color: #ddd;
             }
 
-            &.current {
+            &.fsc-current {
               box-shadow: inset 0 0 5px #5c5cff;
               background-color: #d2d2ff;
 
@@ -241,7 +239,7 @@
               }
             }
 
-            &.selected {
+            &.fsc-selected {
               box-shadow: inset 0 0 5px #40a94d;
               background-color: #eafff2;
 
@@ -250,19 +248,19 @@
               }
             }
 
-            .day-notes {
-              .note-count {
+            .fsc-day-notes {
+              .fsc-note-count {
                 background-color: #c30505;
                 color: #ffffff;
 
-                &.reminders {
+                &.fsc-reminders {
                   background-color: #384582;
                 }
               }
             }
 
-            .moons {
-              .moon-phase {
+            .fsc-moons {
+              .fsc-moon-phase {
                 svg {
                   filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
                 }
@@ -274,11 +272,11 @@
     }
 
     //Clock Styling
-    .sc-clock {
+    .fsc-clock {
       background-color: #ffffff;
       border-color: #c3c3c3;
 
-      .animated-clock {
+      .fsc-animated-clock {
         svg {
           path {
             fill: #c12121;
@@ -288,7 +286,7 @@
       }
 
       &.started {
-        .animated-clock {
+        .fsc-animated-clock {
           svg {
             path {
               fill: green;
@@ -299,7 +297,7 @@
       }
 
       &.paused {
-        .animated-clock {
+        .fsc-animated-clock {
           svg {
             path {
               fill: #de810d;
@@ -311,19 +309,19 @@
     }
 
     //Date Selector Styling
-    .sc-date-selector-calendar-wrapper {
+    .fsc-date-selector-calendar-wrapper {
       background-color: #ffffff;
       border-color: #c3c3c3;
       box-shadow: 2px 2px 2px $boxShadowColor;
     }
 
     //Time Selector Styling
-    .time-selector {
-      .sc-ts-inputs {
+    .fsc-time-selector {
+      .fsc-ts-inputs {
         background-color: #ffffff;
         border-color: #c3c3c3;
 
-        .dropdown {
+        .fsc-dropdown {
           background-color: #ffffff;
           border-color: #c3c3c3;
           box-shadow: 2px 2px 2px $boxShadowColor;
@@ -342,16 +340,16 @@
     }
 
     //Calendar List Styling
-    .sc-calendar-list {
-      .calendar-display {
+    .fsc-calendar-list {
+      .fsc-calendar-display {
         color: #000000;
         border-color: #cad1f3;
 
-        &.active {
+        &.fsc-active {
           background-color: #384582;
           color: #ffffff;
 
-          &.visible {
+          &.fsc-visible {
             background-color: #384582;
 
             &:hover {
@@ -360,7 +358,7 @@
           }
         }
 
-        &.visible {
+        &.fsc-visible {
           color: #ffffff;
           background-color: #603382;
 
@@ -373,11 +371,11 @@
           background-color: #cd9cf3;
         }
 
-        .calendar-actions {
+        .fsc-calendar-actions {
           border-color: #cad1f3;
         }
 
-        .animated-clock {
+        .fsc-animated-clock {
           svg {
             path {
               fill: green;
@@ -389,12 +387,12 @@
     }
 
     //Note List Styling
-    .sc-side-drawer {
+    .fsc-side-drawer {
       background-color: #ffffff;
       border-color: #000000;
 
-      .note-list {
-        .note {
+      .fsc-note-list {
+        .fsc-note {
           border-color: gray;
           background-color: #cacaca47;
 
@@ -402,40 +400,35 @@
             background-color: #cbe0ff70;
           }
 
-          &.drag-active {
+          &.fsc-drag-active {
             background-color: #cbe0ff70;
           }
 
-          .note-details-wrapper {
-            .note-details {
-              .note-category {
+          .fsc-note-details-wrapper {
+            .fsc-note-details {
+              .fsc-note-category {
                 box-shadow: 1px 1px 5px #6b6b6b;
                 color: #ffffff;
 
-                &.player-visible {
+                &.fsc-player-visible {
                   background-color: #2f581d;
                   border-color: #2f581d;
                 }
 
-                &.not-player-visible {
+                &.fsc-not-player-visible {
                   background-color: #922121;
                   border-color: #922121;
                 }
 
-                &.reminder {
+                &.fsc-reminder {
                   background-color: #603382;
                   border-color: #603382;
-                }
-
-                &.note-time {
-                  border-color: #444141;
-                  background-color: #444141;
                 }
               }
             }
           }
 
-          .sorting-dragger {
+          .fsc-sorting-dragger {
             border-color: #a5a5a5;
             background-color: #c3c3c37a;
             box-shadow: 1px 1px 5px #a5a5a5;
@@ -445,9 +438,9 @@
     }
 
     //Note Search Styling
-    .sc-note-search {
-      .search-box {
-        .control {
+    .fsc-note-search {
+      .fsc-search-box {
+        .fsc-control {
           box-shadow: unset;
           background-color: rgba(0, 0, 0, 0.05);
           border-color: #7a7971;
@@ -456,20 +449,27 @@
       }
     }
 
+    //Categories
+    .fsc-note-category, label.fsc-note-category, .form-fields .fsc-note-category{
+      color: $white;
+      border-color: #444141;
+      background-color: #444141;
+    }
+
     //Configuration Styling
-    .sc-configuration-wrapper {
+    .fsc-configuration-wrapper {
       .tabs {
-        .heading {
+        .fsc-heading {
           border-bottom-color: $gray-700;
         }
 
-        .tab-section {
-          &.stripe {
+        .fsc-tab-section {
+          &.fsc-stripe {
             background-color: #ffffff;
             color: #000000;
           }
 
-          .calendar-selector {
+          .fsc-calendar-selector {
             ul {
               box-shadow: 1px 1px 5px #000000;
 
@@ -477,11 +477,11 @@
                 background-color: $gray-100;
                 border-color: #000000;
 
-                &.active, &:hover {
+                &.fsc-active, &:hover {
                   background-color: $gray-300;
                 }
 
-                &.new-calendar {
+                &.fsc-new-calendar {
                   color: #2f581d;
                 }
               }
@@ -489,36 +489,36 @@
           }
         }
 
-        .item {
+        .fsc-item {
           border-color: $gray-700;
 
-          &.active, &:hover {
+          &.fsc-active, &:hover {
             background-color: $secondary;
             color: $fontColor;
           }
         }
       }
 
-      .tab-wrapper {
-        .warning {
+      .fsc-tab-wrapper {
+        .fsc-warning {
           background-color: $secondary-A500;
           border-color: $secondary;
           color: $fontColor;
         }
 
-        .section {
+        .fsc-section {
           h3 {
             color: $primary-A200;
           }
         }
 
-        .f-table {
+        .fsc-f-table {
           border-color: #9e9c9c;
           background-color: $gray-200;
           color: #000000;
 
-          .row {
-            &.head {
+          .fsc-row {
+            &.fsc-head {
               border-color: #9e9c9c;
             }
 
@@ -528,27 +528,27 @@
           }
         }
 
-        .import-export {
-          .importing {
-            .progress {
+        .fsc-import-export {
+          .fsc-importing {
+            .fsc-progress {
               background-color: $gray-700;
               border-color: $gray-500;
 
-              .progress-bar {
+              .fsc-progress-bar {
                 background-color: $tertiary-300;
               }
             }
           }
         }
 
-        .quick-setup {
-          .predefined-list {
-            .predefined-calendar {
+        .fsc-quick-setup {
+          .fsc-predefined-list {
+            .fsc-predefined-calendar {
               color: #603382;
               border-color: #603382;
               box-shadow: inset 0 0 5px #603382;
 
-              &.selected, &:hover {
+              &.fsc-selected, &:hover {
                 border-color: #cd9cf3;
                 background-color: #cd9cf3;
               }
@@ -556,15 +556,15 @@
           }
         }
 
-        .permissions {
-          .table-header {
+        .fsc-permissions {
+          .fsc-table-header {
             border-color: $gray-600;
           }
         }
 
-        .about {
-          .row {
-            .card {
+        .fsc-about {
+          .fsc-row {
+            .fsc-card {
               border-color: #9e9c9c;
               background-color: $gray-200;
             }

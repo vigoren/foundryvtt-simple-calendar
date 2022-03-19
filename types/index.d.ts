@@ -2,7 +2,6 @@ export import SimpleCalendar = globalThis.SimpleCalendar
 export import HandlebarHelpers = globalThis.HandlebarHelpers
 import {DateSelector} from "../src/classes/date-selector";
 import Calendar from "../src/classes/calendar";
-import Note from "../src/classes/note";
 import UserPermissions from "../src/classes/configuration/user-permissions";
 import {  DateSelectorPositions, GameSystems, GameWorldTimeIntegrations, Icons, LeapYearRules, MoonYearResetOptions, NoteRepeat, PredefinedCalendars, PresetTimeOfDay, SimpleCalendarHooks, SocketTypes, Themes, TimeKeeperStatus, YearNamingRules } from "../src/constants";
 import NoteStub from "../src/classes/notes/note-stub";
@@ -1569,8 +1568,27 @@ declare global{
          * Contains the interfaces associated with the note search options
          * @internal
          */
-        namespace SearchOptions{
-            export interface Fields {
+        namespace Search{
+            type Document = {
+                id: string;
+                content: string | string[];
+            };
+            type Term = {
+                n: number;
+                idf: number;
+            };
+            type DocumentTerm = {
+                count: number;
+                freq:number;
+            };
+            type ProcessedDocument = Document & {
+                terms: Record<string, DocumentTerm>;
+                termCount: number;
+                tokens: string[];
+                score: number;
+            };
+
+            export interface OptionsFields {
                 date: boolean;
                 title: boolean;
                 details: boolean;
@@ -1590,48 +1608,34 @@ declare global{
              */
             export interface Data {
                 type: SocketTypes;
-                data: SimpleCalendarSocketJournal|SimpleCalendarSocketTime|SimpleCalendarPrimary|SimpleCalendarSocketDateTime|SimpleCalendarSocketDate|SimpleCalendarNoteReminder|SimpleCalendarEmitHook;
+                data: Partial<MainAppUpdate> | DateTimeChange | TimeKeeperStatus | Partial<Primary> | Partial<NoteUpdate> | Partial<EmitHook>;
             }
 
-            export interface SimpleCalendarSocketDateTime{
-                interval: DateTimeParts;
+            type MainAppUpdate = {
+                userId: string
             }
 
-            export interface SimpleCalendarSocketDate{
-                year: number;
-                month: number;
-                day: number;
+            type DateTimeChange = {
+                set: boolean,
+                interval: DateTimeParts
+            };
+
+            type Primary = {
+                primaryCheck: boolean;
+                amPrimary: boolean;
             }
 
-            /**
-             * Interface for socket data that has to do with the time
-             */
-            export interface SimpleCalendarSocketTime{
-                timeKeeperStatus: TimeKeeperStatus;
+            type NoteUpdate = {
+                journalId: string;
+                userId: string;
+                calendarId: string;
+                date: DateTime;
+                newOrder: string[];
             }
 
-            /**
-             * Interface for socket data that has to do with journals
-             */
-            export interface SimpleCalendarSocketJournal{
-                notes: Note[];
-            }
-
-            /**
-             * Interface for a GM to take over being the primary source
-             */
-            export interface SimpleCalendarPrimary{
-                primaryCheck?: boolean;
-                amPrimary?: boolean;
-            }
-
-            export interface SimpleCalendarNoteReminder{
-                justTimeChange?: boolean;
-            }
-
-            export interface SimpleCalendarEmitHook{
-                hook?: SimpleCalendarHooks;
-                param?: any;
+            type EmitHook = {
+                hook: SimpleCalendarHooks;
+                param: any;
             }
         }
 
@@ -2001,7 +2005,6 @@ declare global{
             order: number;
             categories: string[];
             remindUsers: string[];
-            reminderSent: boolean;
         }
 
         /**

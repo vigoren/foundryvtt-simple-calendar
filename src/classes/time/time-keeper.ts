@@ -68,7 +68,6 @@ export default class TimeKeeper{
                     (<Game>game).togglePause(false, true);
                 }
                 if(this.intervalNumber === undefined) {
-                    Logger.debug(`TimeKeeper Starting`);
                     this.intervalNumber = window.setInterval(this.interval.bind(this), 1000 * this.updateFrequency);
                     this.updateStatus();
                     if (GameSettings.IsGm() && SC.primary) {
@@ -94,7 +93,6 @@ export default class TimeKeeper{
     public stop(){
         this.pauseClicked = false;
         if(this.intervalNumber !== undefined){
-            Logger.debug(`TimeKeeper Stopping`);
             window.clearInterval(this.intervalNumber);
             window.clearInterval(this.saveIntervalNumber);
             const activeCalendar = CalManager.getCalendar(this.calendarId);
@@ -202,7 +200,6 @@ export default class TimeKeeper{
             }
             //If the status has changed, emit that change
             if(oldStatus !== this.status){
-                Logger.debug(`Updating Timer Status from ${oldStatus} to ${this.status}`);
                 Hook.emit(SimpleCalendarHooks.ClockStartStop, activeCalendar);
                 this.callListeners();
                 this.emitSocket();

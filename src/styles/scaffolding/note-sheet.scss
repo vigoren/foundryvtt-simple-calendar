@@ -3,29 +3,109 @@
 .simple-calendar{
   &.journal-sheet{
 
+    .window-content{
+      overflow-y: auto;
+    }
+
     form{
       display: flex;
       flex-direction: column;
+      overflow-y: auto;
 
-      .editor-container{
-        flex: 1;
-        .editor{
-          height: 100%;
-          border: 1px solid;
-          border-top: 0;
-          margin-top: -0.5rem;
+      > h1{
+        input{
+          height: unset;
+          margin-bottom: $spacer-half*0.5;
         }
       }
 
-      .edit-controls{
+      > h2{
+        border-bottom: 0;
+        margin-bottom: 0;
+      }
+
+      .fsc-editor-container{
+        flex: 1;
+        min-height: 300px;
+        .editor{
+          min-height: 300px;
+          height: 100%;
+          .tox.tox-tinymce{
+            min-height: 300px;
+          }
+        }
+      }
+
+      .fsc-edit-controls{
         flex: 0;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: center;
+        margin-top: $spacer-half;
         *{
           flex: 0 25%;
           margin-top: 0;
+        }
+      }
+
+      &.fsc-read-only{
+        .fsc-note-header{
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: space-between;
+
+          h1{
+            flex: 1 0 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            align-items: center;
+
+            .fsc-title-text{
+              flex: 1;
+              word-break: break-word;
+            }
+            .fsc-reminder{
+              flex: 0;
+              cursor: pointer;
+
+              &.fsc-selected{
+                color: #ffffff;
+                background-color: #2f581d;
+              }
+              label{
+                cursor: pointer;
+              }
+              span{
+                margin-right: 0;
+              }
+              input{
+                display: none;
+              }
+            }
+          }
+
+          .fsc-date{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-evenly;
+          }
+        }
+        .fsc-category-list{
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          justify-content: flex-end;
+          margin-top: $spacer-half;
+        }
+        .fsc-content{
+          margin-top: $spacer;
+          overflow-y: auto;
+          word-break: break-word;
         }
       }
     }

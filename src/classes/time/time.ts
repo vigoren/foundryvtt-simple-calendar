@@ -1,4 +1,3 @@
-import {Logger} from "../logging";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {FormatDateTime} from "../utilities/date-time";
 import {CalManager} from "../index";
@@ -172,10 +171,8 @@ export default class Time extends ConfigurationItemBase{
         second = +second.toFixed(3);
         const changeAmount  = (hour * this.minutesInHour * this.secondsInMinute) + (minute * this.secondsInMinute) + second;
         const newAmount = this.seconds + changeAmount;
-        Logger.debug(`Checking if ${newAmount} seconds is valid`);
         if(newAmount >= this.secondsPerDay) {
             //If the new time is more seconds than there are in a day, change to the next day
-            Logger.debug(`More time than in a day, changing time again with new seconds ${newAmount - this.secondsPerDay}`);
             this.seconds = 0;
             const dayChange = this.changeTime(0,0, newAmount - this.secondsPerDay);
             return dayChange + 1;
@@ -185,7 +182,6 @@ export default class Time extends ConfigurationItemBase{
             const dayChange = this.changeTime(0,0, newAmount);
             return dayChange + -1;
         }
-        Logger.debug(`Updating seconds to ${newAmount}`);
         this.seconds = newAmount;
         return 0;
     }
@@ -207,6 +203,5 @@ export default class Time extends ConfigurationItemBase{
         const currentWorldTime = (<Game>game).time.worldTime;
         let diff = seconds - currentWorldTime;
         const newTime = await (<Game>game).time.advance(diff);
-        Logger.debug(`Set New Game World Time: ${newTime}`);
     }
 }

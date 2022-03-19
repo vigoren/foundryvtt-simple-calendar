@@ -4,7 +4,6 @@ import {
     TimeKeeperStatus
 } from "../../constants";
 import Year from "./year";
-import Note from "../note";
 import Month from "./month";
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
@@ -21,7 +20,6 @@ import{canUser} from "../utilities/permissions";
 import {CalManager, MainApplication, NManager, SC} from "../index";
 import TimeKeeper from "../time/time-keeper";
 import NoteStub from "../notes/note-stub";
-import Fuse from 'fuse.js'
 import Time from "../time/time";
 
 export default class Calendar extends ConfigurationItemBase{
@@ -458,230 +456,6 @@ export default class Calendar extends ConfigurationItemBase{
         return 0;
     }
 
-    //---------------------------
-    // Note Functionality
-    //---------------------------
-    /**
-     * Searches the title and content of all notes to get a list that matches the passed in term. The results are sorted by relevancy
-     * @param {String} term
-     * @param {SearchOptions.Fields} options
-     */
-    public searchNotes(term: string, options: SimpleCalendar.SearchOptions.Fields): SimpleCalendar.HandlebarTemplateData.NoteTemplate[] {
-        const results: {match: number, note: Note}[] = [];
-        term = term.toLowerCase();
-
-        /*const f = new Fuse(this.notes, {
-            keys: ['name']
-        });
-        const res = f.search(term);
-
-        console.log(res);*/
-
-        /*this.notes.forEach((note) => {
-            if((GameSettings.IsGm() || (!GameSettings.IsGm() && note.playerVisible))){
-                let match = 0;
-                const noteFormattedDate = GetDisplayDate(this,{year: note.year, month: note.month, day: note.day, hour: note.hour, minute: note.minute, seconds: 0}, note.endDate, note.allDay).toLowerCase();
-                const noteTitle = note.title.toLowerCase();
-                const noteContent = note.content.toLowerCase();
-                const author = GameSettings.GetUser(note.author);
-                const authorName = author? author.name? author.name.toLowerCase() : '' : '';
-                const categories = note.categories.map(c=> c.toLowerCase());
-
-                //Search for the direct term match in the formatted date and give that a heavy weight (equivalent to 1000 matches)
-                if(options.date){
-                    if(RegExp(term).test(noteFormattedDate)){
-                        match += 1000;
-                    }
-                }
-
-                //Search for the direct term match in the title and give that a heavy weight (equivalent to 500 matches)
-                if(options.title){
-                    if(RegExp(term).test(noteTitle)){
-                        match += 500;
-                    }
-                }
-
-                //Search for the direct term match in the content and give that a medium weight (equivalent to 100 matches)
-                if(options.details){
-                    if(RegExp(term).test(noteContent)){
-                        match += 100;
-                    }
-                }
-
-                //Search for the direct term match in the authors name and give it a heavy weight
-                if(options.author){
-                    if(author && RegExp(term).test(authorName)){
-                        match += 500;
-                    }
-                }
-
-                if(options.categories){
-                    if(categories.indexOf(term) > -1){
-                        match += 500;
-                    }
-                }
-
-                const terms = term.split(' ');
-                for(var i = 0; i < terms.length; i++){
-                    if(options.date){
-                        //Check to see if the term exists anywhere as its own word, give that a weight of 2
-                        if(RegExp('\\b'+terms[i]+'\\b').test(noteFormattedDate)){
-                            match += 50;
-                        }
-                        //Check to see if the term appears anywhere (even in other words). give that a weight of 1
-                        else if(noteFormattedDate.indexOf(terms[i]) > -1){
-                            match+=30;
-                        }
-                    }
-
-                    if(options.title){
-                        //Check to see if the term exists anywhere as its own word, give that a weight of 2
-                        if(RegExp('\\b'+terms[i]+'\\b').test(noteTitle)){
-                            match += 20;
-                        }
-                        //Check to see if the term appears anywhere (even in other words). give that a weight of 1
-                        else if(noteTitle.indexOf(terms[i]) > -1){
-                            match+=10;
-                        }
-                    }
-
-                    if(options.author){
-                        //Check to see if the term exists anywhere as its own word, give that a weight of 2
-                        if(author && RegExp('\\b'+terms[i]+'\\b').test(authorName)){
-                            match += 20;
-                        }
-                        //Check to see if the term appears anywhere (even in other words). give that a weight of 1
-                        else if(author && authorName.indexOf(terms[i]) > -1){
-                            match+=10;
-                        }
-                    }
-
-                    if(options.details){
-                        //Check to see if the term exists anywhere as its own word, give that a weight of 2
-                        if(RegExp('\\b'+terms[i]+'\\b').test(noteContent)){
-                            match += 2;
-                        }
-                        //Check to see if the term appears anywhere (even in other words). give that a weight of 1
-                        else if(noteContent.indexOf(terms[i]) > -1){
-                            match++;
-                        }
-                    }
-
-                    if(options.categories){
-                        categories.forEach(c => {
-                            //Check to see if the term exists anywhere as its own word, give that a weight of 2
-                            if(RegExp('\\b'+terms[i]+'\\b').test(c)){
-                                match += 20;
-                            }
-                            //Check to see if the term appears anywhere (even in other words). give that a weight of 1
-                            else if(c.indexOf(terms[i]) > -1){
-                                match++;
-                            }
-                        });
-                    }
-                }
-                if(match > 0){
-                    results.push({match: match, note: note});
-                }
-            }
-        });*/
-        results.sort((a: {match: number, note: Note}, b: {match: number, note: Note}) => b.match - a.match);
-
-        return results.map(r => r.note.toTemplate());
-    }
-
-    /**
-     * Takes a list of note IDs and will order the notes on the current day to match the passed in order.
-     * @param newOrderedIds
-     */
-    public reorderNotesOnDay(newOrderedIds: string[]){
-        /*const dayNotes = this.getNotesForDay();
-        for(let i = 0; i < newOrderedIds.length; i++){
-            const n = dayNotes.find(n => n.id === newOrderedIds[i]);
-            if(n){
-                n.order = i;
-            }
-        }
-        let currentNotes = (<SimpleCalendar.NoteConfig[]>GameSettings.GetObjectSettings(SettingNames.Notes)).map(n => {
-            const note = new Note();
-            note.loadFromSettings(n);
-            return note;
-        });
-        currentNotes = currentNotes.map(n => {
-            const dayNote = dayNotes.find(dn => dn.id === n.id);
-            return dayNote? dayNote : n;
-        });
-        GameSettings.SaveObjectSetting(SettingNames.Notes, currentNotes.map(n => n.toConfig())).catch(Logger.error);*/
-    }
-
-    /**
-     * Checks to see if any note reminders needs to be sent to players for the current date.
-     * @param {boolean} [justTimeChange=false] If only the time (hour, minute, second) has changed or not
-     */
-    public checkNoteReminders(justTimeChange: boolean = false){
-        if(this.generalSettings.postNoteRemindersOnFoundryLoad){
-            /*const userID = GameSettings.UserID();
-            const noteRemindersForPlayer = this.notes.filter(n => n.remindUsers.indexOf(userID) > -1);
-            if(noteRemindersForPlayer.length){
-                const currentMonth = this.year.getMonth();
-                const currentDay = currentMonth? currentMonth.getDay() : this.year.months[0].days[0];
-                const time = this.year.time.getCurrentTime();
-                const currentHour = time.hour;
-                const currentMinute = time.minute;
-
-                const currentDate: SimpleCalendar.DateTime = {
-                    year: this.year.numericRepresentation,
-                    month: currentMonth? currentMonth.numericRepresentation : 1,
-                    day: currentDay? currentDay.numericRepresentation : 1,
-                    hour: currentHour,
-                    minute: currentMinute,
-                    seconds: 0
-                };
-                const noteRemindersCurrentDay = noteRemindersForPlayer.filter(n => {
-                    if(n.repeats !== NoteRepeat.Never && !justTimeChange){
-                        if(n.repeats === NoteRepeat.Yearly){
-                            if(n.year !== currentDate.year){
-                                n.reminderSent = false;
-                            }
-                        } else if(n.repeats === NoteRepeat.Monthly){
-                            if(n.year !== currentDate.year || n.month !== currentDate.month || (n.month === currentDate.month && n.year !== currentDate.year)){
-                                n.reminderSent = false;
-                            }
-                        } else if(n.repeats === NoteRepeat.Weekly){
-                            if(n.year !== currentDate.year || n.month !== currentDate.month || n.day !== currentDate.day || (n.day === currentDate.day && (n.month !== currentDate.month || n.year !== currentDate.year))){
-                                n.reminderSent = false;
-                            }
-                        }
-                    }
-                    //Check if the reminder has been sent or not and if the new day is between the notes start/end date
-                    if(!n.reminderSent && n.isVisible(currentDate.year, currentDate.month, currentDate.day)){
-                        if(n.allDay){
-                            return true;
-                        } else if(currentDate.hour === n.hour){
-                            if(currentDate.minute >= n.minute){
-                                return true;
-                            }
-                        } else if(currentDate.hour > n.hour){
-                            return true;
-                        } else if(currentDate.year > n.year || currentDate.month > n.month || currentDate.day > n.day){
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-                for(let i = 0; i < noteRemindersCurrentDay.length; i++){
-                    const note = noteRemindersCurrentDay[i];
-                    ChatMessage.create({
-                        speaker: {alias: "Simple Calendar Reminder"},
-                        whisper: [userID],
-                        content: `<div style="margin-bottom: 0.5rem;font-size:0.75rem">${note.display()}</div><h2>${note.title}</h2>${note.content}`
-                    }).catch(Logger.error);
-                    note.reminderSent = true;
-                }
-            }*/
-        }
-    }
-
     //-------------------------------
     // Date/Time Management
     //-------------------------------
@@ -966,7 +740,6 @@ export default class Calendar extends ConfigurationItemBase{
     async syncTime(force: boolean = false){
         // Only if the time tracking rules are set to self or mixed
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
-            Logger.debug(`Year.syncTime()`);
             const totalSeconds = this.toSeconds();
             // If the calculated seconds are different from what is set in the game world time, update the game world time to match sc's time
             if(totalSeconds !== (<Game>game).time.worldTime || force){
@@ -984,8 +757,6 @@ export default class Calendar extends ConfigurationItemBase{
      * @param {number} changeAmount The amount that the time has changed by
      */
     setFromTime(newTime: number, changeAmount: number){
-        Logger.debug('Year.setFromTime()');
-
         // If this is a Pathfinder 2E game, add the world creation seconds
         if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
             newTime += PF2E.getWorldCreateSeconds(this);
@@ -993,7 +764,6 @@ export default class Calendar extends ConfigurationItemBase{
         if(changeAmount !== 0){
             // If the tracking rules are for self or mixed and the clock is running then we make the change.
             if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.timeKeeper.getStatus() === TimeKeeperStatus.Started){
-                Logger.debug(`Tracking Rule: Self/Mixed\nClock Is Running, no need to update the date.`)
                 const parsedDate = this.secondsToDate(newTime);
                 this.updateTime(parsedDate);
                 Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.timeKeeper.getStatus());
@@ -1004,7 +774,6 @@ export default class Calendar extends ConfigurationItemBase{
             }
             // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
             else if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.year.timeChangeTriggered || this.year.combatChangeTriggered)){
-                Logger.debug(`Tracking Rule: Self.\nTriggered Change: Simple Calendar/Combat Turn. Applying Change!`);
                 //If we didn't request the change (from a combat change) we need to update the internal time to match the new world time
                 if(!this.year.timeChangeTriggered){
                     const parsedDate = this.secondsToDate(newTime);
@@ -1019,18 +788,14 @@ export default class Calendar extends ConfigurationItemBase{
                 // If we didn't (locally) request this change then parse the new time into years, months, days and seconds and set those values
             // This covers other modules/built in features updating the world time and Simple Calendar updating to reflect those changes
             else if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.ThirdParty || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && !this.year.timeChangeTriggered){
-                Logger.debug('Tracking Rule: ThirdParty.\nTriggered Change: External Change. Applying Change!');
                 const parsedDate = this.secondsToDate(newTime);
                 this.updateTime(parsedDate);
                 //We need to save the change so that when the game is reloaded simple calendar will display the correct time
                 if(GameSettings.IsGm() && SC.primary){
                     CalManager.saveCalendars().catch(Logger.error);
                 }
-            } else {
-                Logger.debug(`Not Applying Change!`);
             }
         }
-        Logger.debug('Resetting time change triggers.');
         this.year.timeChangeTriggered = false;
         this.year.combatChangeTriggered = false;
     }

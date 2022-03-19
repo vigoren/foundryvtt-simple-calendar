@@ -20,10 +20,10 @@ export default class Clock {
         const status = calendar.timeKeeper.getStatus();
         options.cssClasses += ` ${status}`;
 
-        let html = `<div id="${options.id}" class="sc-clock ${options.cssClasses} ${status === TimeKeeperStatus.Started? 'animate': ''}" data-calendar="${calendar.id}">`;
+        let html = `<div id="${options.id}" class="fsc-clock ${options.cssClasses} ${status === TimeKeeperStatus.Started? 'fsc-animate': ''}" data-calendar="${calendar.id}">`;
         //Hidden Options
-        html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
-        html += `<div class="animated-clock">${GetIcon(Icons.Clock)}</div>`;
+        html += `<input class="fsc-render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
+        html += `<div class="fsc-animated-clock">${GetIcon(Icons.Clock)}</div>`;
         html += this.RenderTime(calendar, options);
         html += `</div>`;
         return html;
@@ -35,7 +35,7 @@ export default class Clock {
      * @param options
      */
     public static RenderTime(calendar: Calendar, options: SimpleCalendar.Renderer.ClockOptions){
-        return`<div class="current-time">${calendar.time.toString()}</div>`;
+        return`<div class="fsc-current-time">${calendar.time.toString()}</div>`;
     }
 
     /**
@@ -66,7 +66,7 @@ export default class Clock {
             const calendar = CalManager.getCalendar(calendarIndex);
             if(calendar){
                 let options: SimpleCalendar.Renderer.ClockOptions = {id:''};
-                const optionsInput = clockElement.querySelector('.render-options');
+                const optionsInput = clockElement.querySelector('.fsc-render-options');
                 if(optionsInput){
                     options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));
                 }
@@ -74,14 +74,14 @@ export default class Clock {
                 const temp = document.createElement('div');
                 temp.innerHTML = newHTML;
                 if(temp.firstChild) {
-                    const timeElement = clockElement.querySelector('.current-time');
+                    const timeElement = clockElement.querySelector('.fsc-current-time');
                     if(timeElement){
                         timeElement.replaceWith(temp.firstChild);
                         if(!clockElement.classList.contains(status)){
-                            clockElement.classList.remove(TimeKeeperStatus.Started, TimeKeeperStatus.Stopped, TimeKeeperStatus.Paused, 'animate');
+                            clockElement.classList.remove(TimeKeeperStatus.Started, TimeKeeperStatus.Stopped, TimeKeeperStatus.Paused, 'fsc-animate');
                             clockElement.classList.add(status);
                             if(status === TimeKeeperStatus.Started){
-                                clockElement.classList.add('animate');
+                                clockElement.classList.add('fsc-animate');
                             }
                         }
                     }

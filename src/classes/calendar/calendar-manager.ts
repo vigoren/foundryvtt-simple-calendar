@@ -3,7 +3,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {PredefinedCalendars, SettingNames, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../../constants";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import {Logger} from "../logging";
-import {MainApplication} from "../index";
+import {MainApplication, NManager} from "../index";
 import {Hook} from "../api/hook";
 
 /**
@@ -78,6 +78,7 @@ export default class CalendarManager {
                 }
             }
         }
+        NManager.checkNoteReminders(this.activeId);
         MainApplication.updateApp();
         return calendars.length;
     }

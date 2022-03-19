@@ -74,19 +74,19 @@ export default class CalendarFull{
             calendarStyle = `border-color: ${season.color};`;
         }
 
-        let html = `<div id="${options.id}" class="calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${calendar.id}">`;
+        let html = `<div id="${options.id}" class="fsc-calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${calendar.id}">`;
         //Hidden Options
-        html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
+        html += `<input class="fsc-render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
         //Put the header together
-        html += `<div class="calendar-header">`;
+        html += `<div class="fsc-calendar-header">`;
         //Visible date change and current date
-        html += `<div class="current-date">`;
+        html += `<div class="fsc-current-date">`;
         if(options.allowChangeMonth){
             html += `<a class="fa fa-chevron-left" title="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
         } else {
             html += `<span></span>`;
         }
-        html += `<span class="month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonthIndex, day: 0, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar, {year: options.editYear})}</span>`;
+        html += `<span class="fsc-month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonthIndex, day: 0, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar, {year: options.editYear})}</span>`;
         if(options.allowChangeMonth){
             html += `<a class="fa fa-chevron-right" title="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
         } else {
@@ -95,23 +95,23 @@ export default class CalendarFull{
         html += '</div>';
         //Season Name
         if(options.showSeasonName){
-            html += `<div class="season">${seasonName}</div>`;
+            html += `<div class="fsc-season">${seasonName}</div>`;
         }
         //Weekday Headings
         if(calendar.year.showWeekdayHeadings){
-            html += `<div class="weekdays">${calendar.weekdays.map(w => `<div class="weekday" title="${w.name}">${w.abbreviation}</div>`).join('')}</div>`;
+            html += `<div class="fsc-weekdays">${calendar.weekdays.map(w => `<div class="fsc-weekday" title="${w.name}">${w.abbreviation}</div>`).join('')}</div>`;
         }
         //Close header div
         html += '</div>';
 
         //Generate day list
-        html += `<div class="days">`;
+        html += `<div class="fsc-days">`;
         for(let i = 0; i < weeks.length; i++){
             if(weeks[i]){
-                html += `<div class="week">`;
+                html += `<div class="fsc-week">`;
                 for(let x = 0; x < weeks[i].length; x++){
                     if(weeks[i][x]){
-                        let dayClass = 'day';
+                        let dayClass = 'fsc-day';
                         const dayIndex = calendar.year.months[vMonthIndex].days.findIndex(d => d.numericRepresentation === (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation);
 
                         //Check for selected dates to highlight
@@ -127,36 +127,36 @@ export default class CalendarFull{
                             const inBetween = IsDayBetweenDates(calendar, checkDate, {year: ssYear, month: ssMonth, day: ssDay, hour: 0, minute: 0, seconds: 0}, {year: seYear, month: seMonth, day: seDay, hour: 0, minute: 0, seconds: 0});
                             switch (inBetween){
                                 case DateRangeMatch.Exact:
-                                    dayClass += ' selected';
+                                    dayClass += ' fsc-selected';
                                     (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).selected = true;
                                     break;
                                 case DateRangeMatch.Start:
-                                    dayClass += ' selected selected-range-start';
+                                    dayClass += ' fsc-selected fsc-selected-range-start';
                                     break;
                                 case DateRangeMatch.Middle:
-                                    dayClass += ' selected selected-range-mid';
+                                    dayClass += ' fsc-selected fsc-selected-range-mid';
                                     break;
                                 case DateRangeMatch.End:
-                                    dayClass += ' selected selected-range-end';
+                                    dayClass += ' fsc-selected fsc-selected-range-end';
                                     break;
                             }
                         }
                         //Check for current date to highlight
                         if(options.showCurrentDate && vYear === calendar.year.numericRepresentation && (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).current){
-                            dayClass += ' current';
+                            dayClass += ' fsc-current';
                         }
 
                         html += `<div class="${dayClass}" data-day="${dayIndex}">`;
                         if(options.showNoteCount){
-                            html += `<div class="day-notes">${CalendarFull.NoteIndicator(calendar, vYear, vMonthIndex, dayIndex)}</div>`;
+                            html += `<div class="fsc-day-notes">${CalendarFull.NoteIndicator(calendar, vYear, vMonthIndex, dayIndex)}</div>`;
                         }
                         html += (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).name;
                         if(options.showMoonPhases){
-                            html += `<div class="moons">${CalendarFull.MoonPhaseIcons(calendar, vYear, vMonthIndex, dayIndex)}</div>`;
+                            html += `<div class="fsc-moons">${CalendarFull.MoonPhaseIcons(calendar, vYear, vMonthIndex, dayIndex)}</div>`;
                         }
                         html += '</div>';
                     } else {
-                        html += '<div class="empty-day"></div>'
+                        html += '<div class="fsc-empty-day"></div>'
                     }
                 }
                 html += '</div>';
@@ -180,20 +180,20 @@ export default class CalendarFull{
     public static ActivateListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null, onYearChange: Function | null = null){
         const calendarElement = document.getElementById(calendarId);
         if(calendarElement){
-            const prev = <HTMLElement>calendarElement.querySelector('.calendar-header .current-date .fa-chevron-left');
+            const prev = <HTMLElement>calendarElement.querySelector('.fsc-calendar-header .fsc-current-date .fa-chevron-left');
             if(prev){
                 prev.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.previous, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             }
-            const next = <HTMLElement>calendarElement.querySelector('.calendar-header .current-date .fa-chevron-right');
+            const next = <HTMLElement>calendarElement.querySelector('.fsc-calendar-header .fsc-current-date .fa-chevron-right');
             if(next){
                 next.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.next, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             }
-            const yearInput = <HTMLElement>calendarElement.querySelector('.calendar-header .current-date .month-year input[type=number]');
+            const yearInput = <HTMLElement>calendarElement.querySelector('.fsc-calendar-header .fsc-current-date .fsc-month-year input[type=number]');
             if(yearInput){
                 yearInput.addEventListener('click', (e)=> e.preventDefault());
                 yearInput.addEventListener('change', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.year, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             }
-            calendarElement.querySelectorAll('.days .day').forEach(el => {
+            calendarElement.querySelectorAll('.fsc-days .fsc-day').forEach(el => {
                 el.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.day, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             });
         }
@@ -217,11 +217,11 @@ export default class CalendarFull{
             const calendar = CalManager.getCalendar(calendarIndex);
             if(calendar){
                 let options: SimpleCalendar.Renderer.CalendarOptions = {id:''};
-                const optionsInput = calendarElement.querySelector('.render-options');
+                const optionsInput = calendarElement.querySelector('.fsc-render-options');
                 if(optionsInput){
                     options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));
                 }
-                const currentMonthYear = <HTMLElement>calendarElement.querySelector('.month-year');
+                const currentMonthYear = <HTMLElement>calendarElement.querySelector('.fsc-month-year');
                 if(currentMonthYear){
                     const dataVis = currentMonthYear.getAttribute('data-visible');
                     if(dataVis){
@@ -261,7 +261,7 @@ export default class CalendarFull{
                                 } else if(clickType === CalendarClickEvents.day){
                                     let target = <HTMLElement>event.target;
                                     //If a child of the day div is clicked get the closest day
-                                    const closestDay = target.closest('.day');
+                                    const closestDay = target.closest('.fsc-day');
                                     if(closestDay){
                                         target = <HTMLElement>closestDay;
                                     }
@@ -365,12 +365,12 @@ export default class CalendarFull{
             if(regularNotes.length){
                 const rCount = regularNotes.length < 100? regularNotes.length : 99;
                 let rTitle = RendererUtilities.GenerateNoteIconTitle(rCount, regularNotes);
-                r = `<span class="note-count" title="${rTitle}">${rCount}</span>`;
+                r = `<span class="fsc-note-count" title="${rTitle}">${rCount}</span>`;
             }
             if(reminderNotes.length){
                 const remCount = reminderNotes.length < 100? reminderNotes.length : 99;
                 let remTitle = RendererUtilities.GenerateNoteIconTitle(remCount, reminderNotes);
-                r += `<span class="note-count reminders" title="${remTitle}">${remCount}</span>`;
+                r += `<span class="fsc-note-count fsc-reminders" title="${remTitle}">${remCount}</span>`;
             }
         }
         return r;
@@ -390,7 +390,7 @@ export default class CalendarFull{
             const d = calendar.year.months[visibleMonthIndex].days[dayIndex];
             if(mp && (mp.singleDay || d.selected || d.current)){
                 let moon = GetIcon(mp.icon, "#000000", calendar.moons[i].color);
-                html += `<span class="moon-phase ${mp.icon}" title="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`;
+                html += `<span class="fsc-moon-phase ${mp.icon}" title="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`;
             }
         }
         return html;

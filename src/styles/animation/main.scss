@@ -1,41 +1,33 @@
 @import "../variables";
 .simple-calendar{
   &.window-app{
-    &.compact-view{
-      .sc-main-wrapper {
-        .sc-side-drawer {
-          &.animate {
+    &.fsc-compact-view{
+      .fsc-main-wrapper {
+        .fsc-side-drawer {
+          &.fsc-animate {
             transition: left 500ms, height 500ms;
           }
         }
       }
     }
-
-    .sc-header-bar{
-      .sc-calendar-list{
-        &.animate{
-          transition: opacity 500ms;
-        }
-      }
-    }
-    .sc-main-wrapper{
-      .controls{
-        &.unit-controls{
-          .control-group{
-            .unit-list{
+    .fsc-main-wrapper{
+      .fsc-controls{
+        &.fsc-unit-controls{
+          .fsc-control-group{
+            .fsc-unit-list{
               transition: max-height 500ms;
             }
           }
         }
       }
-      .sc-side-drawer{
-        &.animate{
+      .fsc-side-drawer{
+        &.fsc-animate{
           transition: left 500ms;
         }
       }
-      .sc-calendar-list{
-        .animated-clock{
-          &.animate{
+      .fsc-calendar-list{
+        .fsc-animated-clock{
+          &.fsc-animate{
             svg{
               #c_arm_s{
                 transform-origin: center;
@@ -49,9 +41,9 @@
           }
         }
       }
-      .sc-note-search{
-        .search-options{
-          &.animate{
+      .fsc-note-search{
+        .fsc-search-options{
+          &.fsc-animate{
             transition: max-height 500ms;
           }
         }

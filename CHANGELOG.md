@@ -46,6 +46,8 @@ The configuration dialog has also been completely redesigned to support multiple
 
 #### Notes Dialog
 
+The note dialog has been redesigned as well to match the look and feel of the other dialogs
+
 ### Multiple Calendar Support
 
 Simple Calendar now support having multiple calendars within the module!
@@ -94,15 +96,41 @@ A display options tab has been added where the options for specifying your date 
 
 ### Note Improvements
 
+#### Journal Entries
+
+The main change in this update to the notes is now notes are stored as journal entries instead of in the settings. This makes way more sense as a note is closest to a journal entire within foundry.  
+
+- Simple Calendar will create its own journal entries folder where all notes will be saved. 
+- Simple Calendar notes have their own sheet associated with them, this means that opening up a journal entire for a note from th sidebar will open it up in the correct display.
+- The display and styling of the note sheet has been redone to match with the new aesthetic for Simple Calendar.
+- Players can now add notes without the GM needing to be logged in (provided they have the correct permissions to do so)
+- There are still two situations where the GM will need to be logged in for players to do certain actions with the notes:
+  - Toggling if to be reminded of a note only if the player wanting to be reminded did not create the note.
+  - Re-ordering notes on a day.
+
+#### User Permissions
+
+With the change to using journal entires for notes how permissions are done for notes has changed.
+
+- To add notes players MUST have the Create Journal Entries permission level.
+- The "Player Viewable" option has changed on notes from being a single check box to allowing you to specify which players can see the note.
+- The configuration setting "Note Default Player Visibility" will now check all players under "Player Viewable" when creating a new note.
+
 #### Note Search Updates
 
-The searching for notes has been improved since the initial quick search added. The improvements are:
+The searching for notes has been improved since the initial quick search added. The smaller improvements are:
 
 - Search is part of the main calendar display instead of its own dialog now.
 - Hitting enter on the search text box will now trigger a search.
 - Note author is now also searched against.
 - Note categories are now also searched against.
 - Added options to choose which fields on a note to search.
+ 
+The big improvement to searching is that the algorithm has been completely rewritten. The new algorithm provides much better relevancy ranking of notes as well as fuzzy matching to offer results even when typos are entered in the search terms.
+
+For the search nerds out there it is a custom algorithm that utilizes the Okapi BM25 search method for great relevancy matching as well as a Levenshtein Distance search to provide support for fuzzy matching. 
+
+I have run some stress tests on the new algorithm and have been happy with the results. With a data set that consists of 25,000 notes that contain 3.75 million total words the average search time was under 10 seconds on my computer (Using Chrome with an AMD 5800X). I don't think anyone is storing near that many notes in Foundry so I feel safe in this is an acceptable amount of time for searching.
 
 
 ### Improved Date/Time Selector

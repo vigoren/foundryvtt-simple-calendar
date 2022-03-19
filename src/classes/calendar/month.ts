@@ -226,15 +226,11 @@ export default class Month extends ConfigurationItemBase {
      */
     getDaysForTemplate(isLeapYear: boolean = false): SimpleCalendar.HandlebarTemplateData.Day[] {
         let dt = this.days.map(d => d.toTemplate());
-        Logger.debug(`Getting Day Templates for ${this.name}, there are a max of ${dt.length} days`);
         if(this.numberOfDays !== this.numberOfLeapYearDays){
             const diff = this.numberOfLeapYearDays - this.numberOfDays;
-            Logger.debug(`There is a difference of "${diff}" between the normal number of days and number of days in a leap year.`);
             if(diff > 0 && !isLeapYear){
-                Logger.debug(`It is not a leap year so trim off the extra leap days to get ${dt.length - diff} days`);
                 return dt.slice(0, dt.length - diff);
             } else if(diff < 0 && isLeapYear){
-                Logger.debug(`It is a leap year so trim off the extra normal days to get ${dt.length + diff} days`);
                 return dt.slice(0, dt.length - Math.abs(diff));
             }
         }
@@ -254,11 +250,9 @@ export default class Month extends ConfigurationItemBase {
         if(targetDayIndex > -1){
             let newIndex = targetDayIndex + amount;
             if((amount > 0 && newIndex >= numberOfDays) || (amount < 0 && newIndex < 0) || newIndex < 0){
-                Logger.debug(`On ${amount > 0? 'last' : 'first'} day of the month, changing to ${amount > 0? 'next' : 'previous'} month`);
                 this.resetDays(setting);
                 changeAmount = amount > 0? 1 : -1;
             } else {
-                Logger.debug(`New Day: ${this.days[newIndex].numericRepresentation}`);
                 this.updateDay(newIndex, isLeapYear, setting);
             }
         }

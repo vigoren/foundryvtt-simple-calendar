@@ -2,21 +2,21 @@
 .simple-calendar{
   &.light{
 
-    &.compact-view{
-      .sc-clock{
+    &.fsc-compact-view{
+      .fsc-clock{
         background-color: $primary-100;
       }
-      .time-keeper-buttons{
-        .save{
+      .fsc-time-keeper-buttons{
+        .fsc-save{
           color: $success-900;
         }
-        .secondary{
+        .fsc-secondary{
           color: $secondary;
           &:hover{
             color: $secondary;
           }
         }
-        .delete{
+        .fsc-delete{
           color: $danger-900;
         }
       }
@@ -55,27 +55,27 @@
     }
 
     //Top message Styling
-    .message{
-      &.warn{
+    .fsc-message{
+      &.fsc-warn{
         background-color: $secondary-100;
         border-color: $secondary !important;
       }
-      &.success{
+      &.fsc-success{
         background-color: $success-100;
         border-color: $success !important;
       }
-      &.info{
+      &.fsc-info{
         background-color: $primary-100;
         border-color: $primary !important;
       }
-      &.danger{
+      &.fsc-danger{
         background-color: $danger-100;
         border-color: $danger!important;
       }
     }
 
     //Calendar Styling
-    .calendar{
+    .fsc-calendar{
       background-color: $primary-100;
       border-color: $primary-950;
       color: $fontColor;
@@ -85,41 +85,41 @@
         border-color:$primary-600;
       }
 
-      .calendar-header{
+      .fsc-calendar-header{
         background-color: $primary-100;
       }
 
-      .days{
-        .week{
-          .day{
+      .fsc-days{
+        .fsc-week{
+          .fsc-day{
             &:hover{
               background-color: $gray-300;
             }
-            &.current{
+            &.fsc-current{
               box-shadow: inset 0 0 5px $primary-900;
               background-color: $primary-300;
               &:hover{
                 background-color: $primary;
               }
             }
-            &.selected{
+            &.fsc-selected{
               box-shadow: inset 0 0 5px $success-900;
               background-color: $success-300;
               &:hover{
                 background-color: $success;
               }
             }
-            .day-notes{
-              .note-count{
+            .fsc-day-notes{
+              .fsc-note-count{
                 background-color: $secondary;
                 color: $fontColor;
-                &.reminders{
+                &.fsc-reminders{
                   background-color: $tertiary-300;
                 }
               }
             }
-            .moons{
-              .moon-phase {
+            .fsc-moons{
+              .fsc-moon-phase {
                 svg {
                   filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.4));
                 }
@@ -131,7 +131,7 @@
     }
 
     // All control button colors
-    .control{
+    .fsc-control{
       border-color: $gray-500;
       background-color: $gray-500;
       color: $fontColor;
@@ -144,7 +144,7 @@
         color: $gray-700;
         cursor: pointer;
       }
-      &.primary {
+      &.fsc-primary {
         background-color: $primary-A200;
         border-color: $primary-A200;
 
@@ -157,7 +157,7 @@
           border-color: $primary-T200;
         }
       }
-      &.secondary {
+      &.fsc-secondary {
         background-color: $secondary-400;
         border-color: $secondary-400;
 
@@ -170,7 +170,7 @@
           border-color: $secondary-T400;
         }
       }
-      &.tertiary{
+      &.fsc-tertiary{
         background-color: $tertiary-A100;
         border-color: $tertiary-A100;
 
@@ -183,7 +183,7 @@
           border-color: $tertiary-T100;
         }
       }
-      &.delete {
+      &.fsc-delete {
         background-color: $danger-A500;
         border-color: $danger-A500;
 
@@ -196,7 +196,7 @@
           border-color: $danger-T400;
         }
       }
-      &.save {
+      &.fsc-save {
         background-color: $success-400;
         border-color: $success-400;
 
@@ -210,8 +210,8 @@
         }
       }
     }
-    .control-group{
-      .control{
+    .fsc-control-group{
+      .fsc-control{
         border-right-color: $gray-700;
         &:first-child{
           border-left-color: $gray-500;
@@ -220,7 +220,7 @@
           border-right-color: $gray-500;
         }
 
-        &.primary{
+        &.fsc-primary{
           border-right-color: $primary-400;
           &:first-child{
             border-left-color: $primary-A200;
@@ -229,7 +229,7 @@
             border-right-color: $primary-A200;
           }
         }
-        &.secondary{
+        &.fsc-secondary{
           border-right-color: $secondary-800;
           &:first-child{
             border-left-color: $secondary-300;
@@ -238,7 +238,7 @@
             border-right-color: $secondary-300;
           }
         }
-        &.tertiary{
+        &.fsc-tertiary{
           border-right-color: $tertiary-400;
           &:first-child{
             border-left-color: $tertiary-A200;
@@ -247,7 +247,7 @@
             border-right-color: $tertiary-A200;
           }
         }
-        &.delete{
+        &.fsc-delete{
           border-right-color: $danger-800;
           &:first-child{
             border-left-color: $danger-A500;
@@ -256,7 +256,7 @@
             border-right-color: $danger-A500;
           }
         }
-        &.save{
+        &.fsc-save{
           border-right-color: $success-800;
           &:first-child{
             border-left-color: $success-400;
@@ -267,16 +267,16 @@
         }
       }
     }
-    .controls.unit-controls{
-      .control-group{
-        .unit-list{
+    .fsc-controls.fsc-unit-controls{
+      .fsc-control-group{
+        .fsc-unit-list{
           background-color: $primary-A200;
           border-color: $primary-A400;
           color: $fontColor;
 
           li{
             border-color: $primary-A400;
-            &.selected, &:hover{
+            &.fsc-selected, &:hover{
               background-color: $primary-A100;
             }
           }
@@ -294,10 +294,10 @@
     }
 
     //Clock Styling
-    .sc-clock{
+    .fsc-clock{
       background-color: $primary-100;
       border-color: $primary-950;
-      .animated-clock{
+      .fsc-animated-clock{
         svg{
           filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
           path{
@@ -307,7 +307,7 @@
         }
       }
       &.started{
-        .animated-clock{
+        .fsc-animated-clock{
           svg{
             path{
               fill: $success-600;
@@ -317,7 +317,7 @@
         }
       }
       &.paused{
-        .animated-clock{
+        .fsc-animated-clock{
           svg{
             path{
               fill: $secondary-800;
@@ -329,16 +329,16 @@
     }
 
     //Date Selector Styling
-    .sc-date-selector-calendar-wrapper{
+    .fsc-date-selector-calendar-wrapper{
       background-color: $primary-100;
       border-color: $primary-100;
       box-shadow: 2px 2px 2px $boxShadowColor;
     }
 
     //Time Selector Styling
-    .time-selector{
+    .fsc-time-selector{
       color: $fontColor;
-      .sc-ts-inputs{
+      .fsc-ts-inputs{
         background-color: $gray-500;
         input{
           color: $fontColor;
@@ -347,7 +347,7 @@
             background-color: $gray-400;
           }
         }
-        .dropdown{
+        .fsc-dropdown{
           background-color: $gray-500;
           border-color: $gray-500;
           box-shadow: 2px 2px 2px $boxShadowColor;
@@ -370,27 +370,27 @@
     }
 
     //Calendar List Styling
-    .sc-calendar-list{
+    .fsc-calendar-list{
       scrollbar-color: $primary $primary-600;
       &::-webkit-scrollbar-thumb{
         background: $primary;
         border-color:$primary-600;
       }
 
-      .calendar-display{
+      .fsc-calendar-display{
         color: $fontColor;
         border-color: $primary-800;
-        &.active{
+        &.fsc-active{
           background-color: $primary;
           color: $white;
-          &.visible{
+          &.fsc-visible{
             background-color: $primary-800;
             &:hover{
               background-color: $primary-800;
             }
           }
         }
-        &.visible{
+        &.fsc-visible{
           background-color: $tertiary-200;
           &:hover{
             background-color: $tertiary-200;
@@ -399,10 +399,10 @@
         &:hover{
           background-color: $tertiary-300;
         }
-        .calendar-actions{
+        .fsc-calendar-actions{
           border-color: $primary-800;
         }
-        .animated-clock{
+        .fsc-animated-clock{
           svg{
             path{
               fill: $success-400;
@@ -414,54 +414,50 @@
     }
 
     //Note List Styling
-    .sc-side-drawer{
+    .fsc-side-drawer{
       background-color: $primary-100;
       border-color: $primary-900;
 
       h2{
         border-bottom-color: $secondary;
       }
-      .note-list{
+      .fsc-note-list{
         scrollbar-color: $primary $primary-600;
         &::-webkit-scrollbar-thumb{
           background: $primary;
           border-color:$primary-600;
         }
-        .note{
+        .fsc-note{
           border-color: $primary-200;
           &:hover {
             background-color: $primary-300;
           }
-          &.drag-active{
+          &.fsc-drag-active{
             background-color: $primary-300;
           }
 
-          .note-details-wrapper{
-            .note-details{
-              .note-category{
+          .fsc-note-details-wrapper{
+            .fsc-note-details{
+              .fsc-note-category{
                 box-shadow: 1px 1px 5px $fontColor;
 
-                &.player-visible{
+                &.fsc-player-visible{
                   background-color: $success-400;
                   border-color: $success-400;
                 }
-                &.not-player-visible{
+                &.fsc-not-player-visible{
                   background-color: $danger-400;
                   border-color: $danger-400;
                 }
-                &.reminder{
+                &.fsc-reminder{
                   background-color: $tertiary-200;
                   border-color: $tertiary-200;
-                }
-                &.note-time{
-                  border-color: $gray-500;
-                  background-color: $gray-500;
                 }
               }
             }
           }
 
-          .sorting-dragger{
+          .fsc-sorting-dragger{
             border-color: $gray-500;
             background-color: $gray-500;
             box-shadow: 1px 1px 5px $fontColor;
@@ -471,9 +467,9 @@
     }
 
     //Note Search Styling
-    .sc-note-search{
-      .search-box{
-        .control{
+    .fsc-note-search{
+      .fsc-search-box{
+        .fsc-control{
           box-shadow: unset;
           background-color: $gray-400;
           border-color: #7a7971;
@@ -481,37 +477,44 @@
       }
     }
 
+    //Categories
+    .fsc-note-category, label.fsc-note-category, .form-fields .fsc-note-category{
+      color: $fontColor;
+      border-color: $gray-500;
+      background-color: $gray-500;
+    }
+
     //Configuration Styling
-    .sc-configuration-wrapper{
+    .fsc-configuration-wrapper{
       .tabs{
         scrollbar-color: $primary $primary-600;
         &::-webkit-scrollbar-thumb{
           background: $primary;
           border-color:$primary-600;
         }
-        .heading{
+        .fsc-heading{
           color: $primary-600;
           border-top-color: $primary-200;
           border-bottom-color: $gray-500;
         }
-        .tab-section{
-          &.stripe{
+        .fsc-tab-section{
+          &.fsc-stripe{
             background-color: $primary-100;
           }
-          .calendar-selector{
+          .fsc-calendar-selector{
             ul{
               box-shadow: 1px 1px 5px #000000;
               li{
                 background-color: $primary-200;
                 border-color: $primary-400;
 
-                &.active,&:hover{
+                &.fsc-active,&:hover{
                   background-color: $primary-A400;
                   color: $fontColor;
                 }
-                &.new-calendar{
+                &.fsc-new-calendar{
                   color: $success-900;
-                  &.active,&:hover{
+                  &.fsc-active,&:hover{
                     color: $fontColor;
                   }
                 }
@@ -519,16 +522,16 @@
             }
           }
         }
-        .item{
+        .fsc-item{
           border-color: $gray-500;
 
-          &.active, &:hover{
+          &.fsc-active, &:hover{
             background-color: $tertiary;
             color: $white;
           }
         }
       }
-      .tab-wrapper{
+      .fsc-tab-wrapper{
         scrollbar-color: $primary $primary-600;
         &::-webkit-scrollbar-thumb{
           background: $primary;
@@ -538,51 +541,51 @@
           border-color: $tertiary;
         }
 
-        .warning{
+        .fsc-warning{
           background-color: $secondary-A500;
           border-color: $secondary;
           color: $fontColor;
         }
-        .section{
+        .fsc-section{
           h3{
             color: $primary-A200;
           }
         }
-        .f-table{
+        .fsc-f-table{
           background-color: $primary-100;
           border-color: $gray-500;
-          .row{
-            &.head{
+          .fsc-row{
+            &.fsc-head{
               border-color: $gray-500;
             }
             &:nth-child(even) {
               background-color: rgba($primary-1000,0.1);
             }
-            .options{
+            .fsc-options{
               h3{
                 border-color: $tertiary;
               }
             }
           }
         }
-        .import-export{
-          .importing{
-            .progress{
+        .fsc-import-export{
+          .fsc-importing{
+            .fsc-progress{
               background-color: $gray-300;
               border-color: $gray-500;
-              .progress-bar{
+              .fsc-progress-bar{
                 background-color: $tertiary-300;
               }
             }
           }
         }
-        .quick-setup{
-          .predefined-list{
-            .predefined-calendar{
+        .fsc-quick-setup{
+          .fsc-predefined-list{
+            .fsc-predefined-calendar{
               color: $primary-1000;
               border-color: $primary-950;
               box-shadow: inset 0 0 5px $primary-400;
-              &.selected, &:hover{
+              &.fsc-selected, &:hover{
                 border-color: $primary-400;
                 background-color: $primary-950;
                 color: $white;
@@ -591,17 +594,17 @@
             }
           }
         }
-        .permissions{
-          .table-header{
+        .fsc-permissions{
+          .fsc-table-header{
             border-color: $gray-600;
           }
         }
-        .about{
+        .fsc-about{
           h1{
             border-color: $primary;
           }
-          .row{
-            .card{
+          .fsc-row{
+            .fsc-card{
               border-color: $primary-400;
               background-color: $primary-100;
             }
@@ -628,6 +631,32 @@
         color: $fontColor;
         &:focus{
           box-shadow: unset;
+        }
+      }
+    }
+
+    //Journal Sheet
+    &.journal-sheet{
+      a.entity-link, a.content-link, a.inline-roll{
+        background-color: $primary-100;
+        border-color: $primary-700;
+        i {
+          color: $tertiary;
+        }
+        &:hover{
+          i{
+            color:$tertiary-400;
+          }
+        }
+      }
+      .tox.tox-tinymce .tox-edit-area__iframe{
+        background-color: $white;
+      }
+      .fsc-content{
+        scrollbar-color: $primary $primary-600;
+        &::-webkit-scrollbar-thumb{
+          background: $primary;
+          border-color:$primary-600;
         }
       }
     }

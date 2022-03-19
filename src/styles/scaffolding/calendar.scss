@@ -1,5 +1,5 @@
 @import "../variables";
-.calendar {
+.fsc-calendar {
   border: 1px solid;
   padding: 0 5px 5px;
   margin: 0 0 $spacer-half;
@@ -7,9 +7,9 @@
   overflow-y: auto;
   position: relative;
 
-  &.display-only{
-    .calendar-header{
-      .current-date{
+  &.fsc-display-only{
+    .fsc-calendar-header{
+      .fsc-current-date{
         a:first-child, a:last-child{
           cursor: default;
           &:hover{
@@ -18,9 +18,9 @@
         }
       }
     }
-    .days{
-      .week{
-        .day{
+    .fsc-days{
+      .fsc-week{
+        .fsc-day{
           cursor: default;
           &:hover{
             background-color: unset;
@@ -30,14 +30,14 @@
     }
   }
 
-  .calendar-header{
+  .fsc-calendar-header{
     position: sticky;
     top: 0;
     z-index: 100;
     padding: 5px 0;
     margin-bottom: 5px;
 
-    .current-date{
+    .fsc-current-date{
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -52,7 +52,7 @@
         margin: 2px 5px 0;
       }
 
-      .month-year{
+      .fsc-month-year{
         text-align: center;
         input[type="number"] {
           width: 6ch;
@@ -61,7 +61,7 @@
 
     }
 
-    .season{
+    .fsc-season{
       text-align: center;
       margin: -8px auto 10px;
       font-size: 12px;
@@ -69,13 +69,13 @@
       font-weight: 600;
     }
 
-    .weekdays{
+    .fsc-weekdays{
       display: flex;
       flex-direction: row;
       flex-wrap: nowrap;
       justify-content: center;
 
-      .weekday{
+      .fsc-weekday{
         width: 40px;
         text-align: center;
         font-weight: 600;
@@ -83,25 +83,25 @@
     }
   }
 
-  .days{
+  .fsc-days{
     display: flex;
     flex-direction: column;
     align-items: center;
     flex-wrap: nowrap;
 
-    .week{
+    .fsc-week{
       display: flex;
       flex-direction: row;
       margin: 2px 0;
 
-      .empty-day{
+      .fsc-empty-day{
         width: 40px;
         height: 40px;
         text-align: center;
         padding-top: 12px;
       }
 
-      .day{
+      .fsc-day{
         position: relative;
         width: 40px;
         height: 40px;
@@ -110,24 +110,24 @@
         border-radius: 20px;
         cursor: pointer;
 
-        &.selected-range-start{
+        &.fsc-selected-range-start{
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
         }
-        &.selected-range-mid{
+        &.fsc-selected-range-mid{
           border-radius: 0;
         }
-        &.selected-range-end{
+        &.fsc-selected-range-end{
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
         }
 
-        .day-notes{
+        .fsc-day-notes{
           position: absolute;
           top: -3px;
           right: 0;
           display: flex;
-          .note-count{
+          .fsc-note-count{
             width: 16px;
             height: 16px;
             font-size: 12px;
@@ -137,7 +137,7 @@
             border-radius: 8px;
             box-shadow: 1px 1px 5px;
 
-            &.reminders{
+            &.fsc-reminders{
               margin-right: 0;
             }
           }
@@ -145,13 +145,13 @@
 
 
 
-        .moons{
+        .fsc-moons{
           position: absolute;
           right: 2px;
           display: flex;
           flex-direction: row;
 
-          .moon-phase{
+          .fsc-moon-phase{
             svg{
               width: 20px;
               height: 20px;

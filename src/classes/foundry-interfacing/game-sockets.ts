@@ -20,7 +20,7 @@ export default class GameSockets{
      * Emits the passed in data on the modules socket
      * @param {*} data
      */
-    public static async emit(data: any): Promise<boolean> {
+    public static async emit(data: SimpleCalendar.SimpleCalendarSocket.Data): Promise<boolean> {
         const socket = (<Game>game).socket;
         if(socket){
             await socket.emit(ModuleSocketName, data);

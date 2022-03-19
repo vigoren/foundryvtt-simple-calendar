@@ -1,23 +1,24 @@
 import {
     ConcreteJournalEntry
 } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/applications/formApplications/documentSheets/journalSheet";
-import {deepMerge} from "../utilities/object";
-import {ModuleName, NoteRepeat, SettingNames, Themes} from "../../constants";
+import {ModuleName, NoteRepeat, SettingNames, SocketTypes, Themes} from "../../constants";
 import {DateTheSame, DaysBetweenDates, FormatDateTime} from "../utilities/date-time";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {CalManager, MainApplication} from "../index";
+import {CalManager, MainApplication, NManager} from "../index";
 import {GetContrastColor} from "../utilities/visual";
 import {getCheckBoxGroupValues, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
-import MainApp from "../applications/main-app";
+import GameSockets from "../foundry-interfacing/game-sockets";
 
 export class NoteSheet extends JournalSheet{
+
+    private resized: boolean = false;
 
     private editMode: boolean = false;
 
     private readonly dateSelectorId: string;
 
-    private static appWindowId: string = 'simple-calendar-note-journal-form';
+    private static appWindowId: string = 'fsc-simple-calendar-note-journal-form';
 
     private journalData = {
         name: '',
@@ -81,6 +82,7 @@ export class NoteSheet extends JournalSheet{
 
     close(options?: FormApplication.CloseOptions): Promise<void> {
         this.editMode = false;
+        this.resized = false;
         return super.close(options);
     }
 
@@ -93,76 +95,123 @@ export class NoteSheet extends JournalSheet{
 
     getData(options?: Partial<JournalSheet.Options>): Promise<JournalSheet.Data<JournalSheet.Options>> | JournalSheet.Data<JournalSheet.Options> {
         this.copyData();
-        const noteData = <SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData;
         let newOptions = {
+            ...super.getData(),
             editable: this.isEditable,
             editMode: this.editMode,
-            dateDisplay: '',
-            noteData: {},
-            users: <any>[],
-            timeSelected: false,
-            dateSelectorId: this.dateSelectorId,
-            dateSelectorSelect: this.dateSelectorSelect.bind(this),
-            repeatOptions: <SimpleCalendar.NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
-            allCategories: <any>[],
+            name: '',
+            display: {
+                date: '',
+                reminder: false,
+                repeats: 0,
+                repeatsDisplay: '',
+                author: {colorText: '', color: '', name: ''},
+                categories: <any>[],
+                enrichedContent: ''
+            },
+            edit: {
+                dateDisplay: '',
+                repeats: NoteRepeat.Never,
+                noteData: {},
+                users: <any>[],
+                timeSelected: false,
+                dateSelectorId: this.dateSelectorId,
+                dateSelectorSelect: this.dateSelectorSelect.bind(this),
+                repeatOptions: <SimpleCalendar.NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
+                allCategories: <any>[]
+            }
         };
 
-        if(noteData){
-            const calendar = CalManager.getCalendar(noteData.calendarId);
-            let dateDisplay = '';
-
-
-
-            newOptions.noteData = noteData;
-            newOptions.timeSelected = !noteData.allDay;
-
-            const users = (<Game>game).users;
-            if(users){
-                newOptions.users = users.map(u => {return {
-                    name: u.name,
-                    id: u.id,
-                    color: u.data.color,
-                    textColor: GetContrastColor(u.color || ''),
-                    selected: this.object.testUserPermission(u, 2),
-                    disabled: u.id === (<Game>game).user?.id
-                }});
-            }
-
-            if(calendar){
-                dateDisplay = <string>FormatDateTime(noteData.startDate, 'MMMM DD, YYYY', calendar);
-                if(!DateTheSame(noteData.startDate, noteData.endDate)){
-                    dateDisplay += ` - ${FormatDateTime(noteData.endDate, 'MMMM DD, YYYY', calendar)}`;
+        const noteStub = NManager.getNoteStub(<JournalEntry>this.object);
+        if(noteStub){
+            newOptions.name = noteStub.title;
+            if(this.editMode){
+                newOptions.edit.noteData = noteStub.noteData || {};
+                newOptions.edit.timeSelected = !noteStub.allDay;
+                newOptions.edit.repeats = noteStub.repeats;
+                const users = (<Game>game).users;
+                if(users){
+                    newOptions.edit.users = users.map(u => {return {
+                        name: u.name,
+                        id: u.id,
+                        color: u.data.color,
+                        textColor: GetContrastColor(u.color || ''),
+                        selected: this.object.testUserPermission(u, 2),
+                        disabled: u.id === (<Game>game).user?.id
+                    }});
                 }
-                newOptions.dateDisplay = dateDisplay;
-                newOptions.allCategories = calendar.noteCategories.map(nc => {
-                    return {
-                        name: nc.name,
-                        color : nc.color,
-                        textColor: nc.textColor,
-                        selected: noteData.categories.find(c => c === nc.name) !== undefined
+                const noteData = noteStub.noteData;
+                if(noteData){
+                    const calendar = CalManager.getCalendar(noteData.calendarId);
+                    if(calendar){
+                        newOptions.edit.dateDisplay = <string>FormatDateTime(noteData.startDate, 'MMMM DD, YYYY', calendar);
+                        if(!DateTheSame(noteData.startDate, noteData.endDate)){
+                            newOptions.edit.dateDisplay += ` - ${FormatDateTime(noteData.endDate, 'MMMM DD, YYYY', calendar)}`;
+                        }
+                        newOptions.edit.allCategories = calendar.noteCategories.map(nc => {
+                            return {
+                                name: nc.name,
+                                color : nc.color,
+                                textColor: nc.textColor,
+                                selected: noteData.categories.find(c => c === nc.name) !== undefined
+                            }
+                        });
                     }
-                });
+                }
+            } else {
+                newOptions.display.date = noteStub.fullDisplayDate;
+                newOptions.display.reminder = noteStub.userReminderRegistered;
+                newOptions.display.repeats = noteStub.repeats;
+                newOptions.display.repeatsDisplay = GameSettings.Localize(newOptions.edit.repeatOptions[noteStub.repeats] || '');
+                newOptions.display.author = noteStub.authorDisplay || {colorText: '', color: '', name: ''};
+                newOptions.display.categories = noteStub.categories;
+                newOptions.display.enrichedContent = TextEditor.enrichHTML(noteStub.content);
             }
         }
-        return deepMerge(super.getData(options), newOptions);
+        return newOptions;
+    }
+
+    setHeight(){
+        if(this.appWindow && !this.resized){
+            const form = this.appWindow.getElementsByTagName('form');
+            if(form && form.length){
+                let height = 30;
+                height += form[0].offsetHeight;
+                if(this.editMode && height < 785){
+                    height = 785;
+                }
+                const maxHeight = window.outerHeight * .75;
+                if(height > maxHeight){
+                    height = maxHeight;
+                }
+                this.setPosition({height: height, width: 720});
+            }
+        }
     }
 
     activateListeners(html: JQuery) {
         super.activateListeners(html);
         this.appWindow = document.getElementById(`${NoteSheet.appWindowId}-${this.object.id}`);
-        DateSelectorManager.ActivateSelector(this.dateSelectorId);
-
         if(this.appWindow){
-            this.updateNoteRepeatDropdown();
-            //---------------------
-            // Input Changes
-            //---------------------
-            this.appWindow.querySelectorAll("input, select").forEach(e => {
-                e.addEventListener('change', async () => {
-                    await this.writeInputValuesToObjects();
+            this.setHeight();
+            if(this.editMode){
+                DateSelectorManager.ActivateSelector(this.dateSelectorId);
+                this.updateNoteRepeatDropdown();
+                //---------------------
+                // Input Changes
+                //---------------------
+                this.appWindow.querySelectorAll("input, select").forEach(e => {
+                    e.addEventListener('change', async () => {
+                        await this.writeInputValuesToObjects();
+                    });
                 });
-            });
-
+            } else {
+                //---------------------
+                // Reminder Button Click
+                //---------------------
+                this.appWindow.querySelector('#scNoteReminder')?.removeAttribute('disabled');
+                this.appWindow.querySelector('#scNoteReminder')?.addEventListener('click', this.reminderChange.bind(this));
+            }
             //---------------------
             // Save/Edit/Delete Buttons
             //---------------------
@@ -170,6 +219,11 @@ export class NoteSheet extends JournalSheet{
             this.appWindow.querySelector('#scNoteEdit')?.addEventListener('click', this.edit.bind(this));
             this.appWindow.querySelector('#scNoteDelete')?.addEventListener('click', this.delete.bind(this));
         }
+    }
+
+    protected _onResize(event: Event) {
+        this.resized = true;
+        super._onResize(event);
     }
 
     async dateSelectorSelect(selectedDate: SimpleCalendar.DateTimeSelector.SelectedDates){
@@ -256,8 +310,40 @@ export class NoteSheet extends JournalSheet{
         }
     }
 
+    async reminderChange(){
+        const user = (<Game>game).user;
+        if(user){
+            const userId = user.id;
+            //If the current user can edit the journal entry, then just edit it
+            if((<JournalEntry>this.object).testUserPermission(user, 3)) {
+
+                const userIndex = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.indexOf(userId);
+                if(userId !== '' && userIndex === -1){
+                    (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.push(userId);
+                } else if(userId !== '' && userIndex !== -1) {
+                    (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.splice(userIndex, 1);
+                }
+                await (<JournalEntry>this.object).update(this.journalData);
+            }
+            //Otherwise, we need to send it to the GM to make the change
+            else {
+                const socket = <SimpleCalendar.SimpleCalendarSocket.Data>{
+                    type: SocketTypes.noteUpdate,
+                    data: {
+                        userId: userId,
+                        journalId: (<JournalEntry>this.object).id
+                    }
+                };
+                await GameSockets.emit(socket);
+            }
+            this.render(true);
+            MainApplication.updateApp();
+        }
+    }
+
     async edit(e: Event){
         e.preventDefault();
+        this.resized = false;
         this.editMode = true;
         this.render(true);
     }
@@ -267,7 +353,10 @@ export class NoteSheet extends JournalSheet{
         await this.writeInputValuesToObjects();
         await (<JournalEntry>this.object).update(this.journalData);
         MainApplication.updateApp();
-        await this.close();
+        this.resized = false;
+        this.editMode = false;
+        this.render(true);
+        //await this.close();
     }
 
     delete(e: Event){
@@ -292,6 +381,8 @@ export class NoteSheet extends JournalSheet{
     }
 
     async deleteConfirm(){
+        NManager.removeNoteStub((<JournalEntry>this.object));
+        MainApplication.updateApp();
         await (<JournalEntry>this.object).delete();
         await this.close();
     }

@@ -5,17 +5,14 @@ export default class ConfigurationItemBase{
 
     /**
      * A unique ID for this configuration item
-     * @type {string}
      */
     id: string;
     /**
      * The numeric representation of this weekday
-     * @type {number}
      */
     numericRepresentation: number;
     /**
      * The name of the weekday
-     * @type {string}
      */
     name: string;
 
@@ -48,7 +45,7 @@ export default class ConfigurationItemBase{
 
     /**
      * Creates a template for the configuration item base
-     * @param {Year|null} [year=null] The year object to use when generating the template
+     * @param year The year object to use when generating the template
      */
     toTemplate(year: Year | null = null): SimpleCalendar.IDataItemBase {
         return {
@@ -60,7 +57,7 @@ export default class ConfigurationItemBase{
 
     /**
      * Sets the properties for this class to options set in the passed in configuration object
-     * @param {IDataItemBase} config The configuration object for this class
+     * @param config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.IDataItemBase): void{
         this.id = config.id;

@@ -1,10 +1,9 @@
 import Sockets from "./sockets";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {NoteRepeat, SettingNames, Themes, TimeKeeperStatus} from "../constants";
+import {SettingNames, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
-import Note from "./note";
-import {CalManager, MainApplication} from "./index";
+import {CalManager, MainApplication, NManager} from "./index";
 import ConfigurationApp from "./applications/configuration-app";
 import MainApp from "./applications/main-app";
 import UserPermissions from "./configuration/user-permissions";
@@ -13,7 +12,6 @@ import {canUser} from "./utilities/permissions";
 export default class SCController {
     /**
      * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
-     * @type {boolean}
      */
     public primary: boolean = false;
     /**
@@ -61,6 +59,11 @@ export default class SCController {
             configApp.classList.remove(...themes);
             configApp.classList.add(newTheme);
         }
+        //Update Open Journals
+        document.querySelectorAll('.journal-sheet.simple-calendar').forEach(j => {
+            j.classList.remove(...themes);
+            j.classList.add(newTheme);
+        });
     }
 
     /**
@@ -70,10 +73,10 @@ export default class SCController {
     public static LoadThemeCSS(){
         const theme = GameSettings.GetStringSettings(SettingNames.Theme);
         if(theme !== Themes.dark && theme !== Themes.light){
-            const cssExists = document.head.querySelector(`theme-${theme}`);
+            const cssExists = document.head.querySelector(`#theme-${theme}`);
             if(cssExists === null){
                 const newStyle = document.createElement('link');
-                newStyle.setAttribute('id', `#theme-${theme}`);
+                newStyle.setAttribute('id', `theme-${theme}`);
                 newStyle.setAttribute('rel', 'stylesheet');
                 newStyle.setAttribute('type', 'text/css');
                 newStyle.setAttribute('href', `modules/foundryvtt-simple-calendar/styles/themes/${theme}.css`);
@@ -84,7 +87,7 @@ export default class SCController {
 
     public initialize(){
         this.sockets.initialize();
-        this.checkNoteReminders();
+        NManager.checkNoteReminders(this.activeCalendar.id, true);
     }
 
     /**
@@ -172,7 +175,6 @@ export default class SCController {
      * @param {number} delta How much the newTime has changed from the old time in seconds
      */
     public worldTimeUpdate(newTime: number, delta: number){
-        Logger.debug(`World Time Update, new time: ${newTime}. Delta of: ${delta}.`);
         this.activeCalendar.setFromTime(newTime, delta);
     }
 
@@ -203,7 +205,6 @@ export default class SCController {
      * @param {Object} time The amount of time that has advanced
      */
     public combatUpdate(combat: Combat, round: RoundData, time: any){
-        Logger.debug('Combat Update');
         const scenes = (<Game>game).scenes;
         const activeScene = scenes? scenes.active? scenes.active.id : null : null;
         if(combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
@@ -212,7 +213,6 @@ export default class SCController {
             //If time does not have the advanceTime property the combat was just started
             if(time && time.hasOwnProperty('advanceTime')){
                 if(time.advanceTime !== 0){
-                    Logger.debug('Combat Change Triggered');
                     this.activeCalendar.year.combatChangeTriggered = true;
                 } else {
                     // System does not advance time when combat rounds change, check our own settings
@@ -226,80 +226,10 @@ export default class SCController {
      * Triggered when a combat is finished and removed
      */
     public combatDelete(combat: Combat){
-        Logger.debug('Combat Ended');
         const scenes = (<Game>game).scenes;
         const activeScene = scenes? scenes.active? scenes.active.id : null : null;
         if(activeScene !== null && combat.scene && combat.scene.id === activeScene){
             this.activeCalendar.time.combatRunning = false;
         }
-    }
-
-    //---------------------------
-    // Note Functionality
-    //---------------------------
-    /**
-     * Checks to see if any note reminders needs to be sent to players for the current date.
-     * @param {boolean} [justTimeChange=false] If only the time (hour, minute, second) has changed or not
-     */
-    public checkNoteReminders(justTimeChange: boolean = false){
-        /*const userID = GameSettings.UserID();
-        const noteRemindersForPlayer = this.activeCalendar.notes.filter(n => n.remindUsers.indexOf(userID) > -1);
-        if(noteRemindersForPlayer.length){
-            const currentMonth = this.activeCalendar.year.getMonth();
-            const currentDay = currentMonth? currentMonth.getDay() : this.activeCalendar.year.months[0].days[0];
-            const time = this.activeCalendar.year.time.getCurrentTime();
-            const currentHour = time.hour;
-            const currentMinute = time.minute;
-
-            const currentDate: SimpleCalendar.DateTime = {
-                year: this.activeCalendar.year.numericRepresentation,
-                month: currentMonth? currentMonth.numericRepresentation : 1,
-                day: currentDay? currentDay.numericRepresentation : 1,
-                hour: currentHour,
-                minute: currentMinute,
-                seconds: 0
-            };
-            const noteRemindersCurrentDay = noteRemindersForPlayer.filter(n => {
-                if(n.repeats !== NoteRepeat.Never && !justTimeChange){
-                    if(n.repeats === NoteRepeat.Yearly){
-                        if(n.year !== currentDate.year){
-                            n.reminderSent = false;
-                        }
-                    } else if(n.repeats === NoteRepeat.Monthly){
-                        if(n.year !== currentDate.year || n.month !== currentDate.month || (n.month === currentDate.month && n.year !== currentDate.year)){
-                            n.reminderSent = false;
-                        }
-                    } else if(n.repeats === NoteRepeat.Weekly){
-                        if(n.year !== currentDate.year || n.month !== currentDate.month || n.day !== currentDate.day || (n.day === currentDate.day && (n.month !== currentDate.month || n.year !== currentDate.year))){
-                            n.reminderSent = false;
-                        }
-                    }
-                }
-                //Check if the reminder has been sent or not and if the new day is between the notes start/end date
-                if(!n.reminderSent && n.isVisible(currentDate.year, currentDate.month, currentDate.day)){
-                    if(n.allDay){
-                        return true;
-                    } else if(currentDate.hour === n.hour){
-                        if(currentDate.minute >= n.minute){
-                            return true;
-                        }
-                    } else if(currentDate.hour > n.hour){
-                        return true;
-                    } else if(currentDate.year > n.year || currentDate.month > n.month || currentDate.day > n.day){
-                        return true;
-                    }
-                }
-                return false;
-            });
-            for(let i = 0; i < noteRemindersCurrentDay.length; i++){
-                const note = noteRemindersCurrentDay[i];
-                ChatMessage.create({
-                    speaker: {alias: "Simple Calendar Reminder"},
-                    whisper: [userID],
-                    content: `<div style="margin-bottom: 0.5rem;font-size:0.75rem">${note.display()}</div><h2>${note.title}</h2>${note.content}`
-                }).catch(Logger.error);
-                note.reminderSent = true;
-            }
-        }*/
     }
 }

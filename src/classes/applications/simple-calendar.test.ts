@@ -219,7 +219,7 @@ describe('Simple Calendar Class Tests', () => {
         expect(MainApp.instance.primary).toBe(true);
 
 
-        d.type = SocketTypes.dateTime;
+        d.type = SocketTypes.dateTimeChange;
         // @ts-ignore
         game.user.isGM = false;
         MainApp.instance.primary = false;
@@ -287,7 +287,7 @@ describe('Simple Calendar Class Tests', () => {
         await MainApp.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(0);
 
-        d.type = SocketTypes.noteReminders;
+        d.type = SocketTypes.noteUpdate;
         await MainApp.instance.processSocket(d);
         expect(renderSpy).toHaveBeenCalledTimes(0);
 

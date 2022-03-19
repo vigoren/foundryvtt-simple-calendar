@@ -1,6 +1,6 @@
 @import "src/styles/variables";
 .simple-calendar{
-  .control {
+  .fsc-control {
     font-family: Roboto, sans-serif;
     border: 1px solid;
     padding: 0.15rem 0.5rem;
@@ -13,11 +13,11 @@
       font-family: "Font Awesome 5 Free";
     }
   }
-  .control-group{
+  .fsc-control-group{
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    .control{
+    .fsc-control{
       border-left: 0 solid;
       border-radius: 0;
       margin:0;

@@ -34,7 +34,6 @@ export default class PrimarySocket extends SocketBase {
      * Emit the hook saying we are the primary GM
      */
     async primaryCheckTimeoutCall(){
-        Logger.debug('No primary GM found, taking over as primary');
         const activeCalendar = CalManager.getActiveCalendar();
         SC.primary = true;
         const socketData = <SimpleCalendar.SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: SC.primary}};
@@ -60,7 +59,7 @@ export default class PrimarySocket extends SocketBase {
             if(numberOfGMs > 1){
                 const socket = <SimpleCalendar.SimpleCalendarSocket.Data>{
                     type: SocketTypes.primary,
-                    data: <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary> {
+                    data: <SimpleCalendar.SimpleCalendarSocket.Primary> {
                         primaryCheck: true
                     }
                 };
@@ -94,24 +93,20 @@ export default class PrimarySocket extends SocketBase {
         if (data.type === SocketTypes.primary){
             if(GameSettings.IsGm()){
                 // Another client is asking if anyone is the primary GM, respond accordingly
-                if((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary>data.data).primaryCheck){
-                    Logger.debug(`Checking if I am the primary`);
+                if((<SimpleCalendar.SimpleCalendarSocket.Primary>data.data).primaryCheck){
                     await GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{
                         type: SocketTypes.primary,
-                        data: <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary> {
+                        data: <SimpleCalendar.SimpleCalendarSocket.Primary> {
                             amPrimary: SC.primary
                         }
                     });
                 }
                 // Another client has emitted that they are the primary, stop my check and set myself to not being the primary
                 // This CAN lead to no primary if 2 GMs finish their primary check at the same time. This is best resolved by 1 gm reloading the page.
-                else if((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary !== undefined){
-                    if((<SimpleCalendar.SimpleCalendarSocket.SimpleCalendarPrimary>data.data).amPrimary){
-                        Logger.debug('A primary GM is all ready present.');
+                else if((<SimpleCalendar.SimpleCalendarSocket.Primary>data.data).amPrimary !== undefined){
+                    if((<SimpleCalendar.SimpleCalendarSocket.Primary>data.data).amPrimary){
                         this.otherPrimaryFound = true;
                         SC.primary = false;
-                    } else {
-                        Logger.debug('We are all ready waiting to take over as primary.');
                     }
                 }
             }

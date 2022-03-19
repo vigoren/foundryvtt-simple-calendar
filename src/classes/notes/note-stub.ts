@@ -7,14 +7,13 @@ import {GetContrastColor} from "../utilities/visual";
 export default class NoteStub{
     public entryId: string;
 
-    public title: string;
+    public reminderSent: boolean = false;
 
-    constructor(journalEntryId: string, title: string) {
+    constructor(journalEntryId: string) {
         this.entryId = journalEntryId;
-        this.title = title;
     }
 
-    private get noteData(){
+    public get noteData(){
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         if(journalEntry){
             return <SimpleCalendar.NoteData>journalEntry.getFlag(ModuleName, "noteData");
@@ -28,6 +27,43 @@ export default class NoteStub{
             return noteData.allDay;
         }
         return true;
+    }
+
+    public get content(): string {
+        const journalEntry = (<Game>game).journal?.get(this.entryId);
+        return journalEntry?.data.content || '';
+    }
+
+    public get title(): string{
+        const journalEntry = (<Game>game).journal?.get(this.entryId);
+        return journalEntry?.name || '';
+    }
+
+    public get repeats(): NoteRepeat{
+        const nd = this.noteData;
+        if(nd){
+            return nd.repeats;
+        }
+        return NoteRepeat.Never;
+    }
+
+    public get order(): number {
+        const nd = this.noteData;
+        if(nd){
+            return nd.order;
+        }
+        return 0;
+    }
+
+    public async setOrder(num: number) {
+        const journalEntry = (<Game>game).journal?.get(this.entryId);
+        if(journalEntry){
+            const nd = <SimpleCalendar.NoteData>journalEntry.getFlag(ModuleName, "noteData");
+            if(nd){
+                nd.order = num;
+                await journalEntry.setFlag(ModuleName, "noteData", nd);
+            }
+        }
     }
 
     public get authorDisplay(){
@@ -61,6 +97,51 @@ export default class NoteStub{
     }
 
     public get displayDate(): string{
+        return this.getDisplayDate(false);
+    }
+
+    public get fullDisplayDate(): string{
+        return this.getDisplayDate(true);
+    }
+
+    public get playerVisible(){
+        const journalEntry = (<Game>game).journal?.get(this.entryId);
+        if(journalEntry){
+            for(let k in journalEntry.data.permission){
+                const permissionLevel = journalEntry.data.permission[k] || 0;
+                if(permissionLevel >= 2){
+                    const user = (<Game>game).users?.get(k);
+                    if(user && !user.isGM){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public get userReminderRegistered(): boolean{
+        let registered = false;
+        if(this.canUserView()){
+            const noteData = this.noteData;
+            const user = (<Game>game).user;
+            if(noteData && user){
+                registered = noteData.remindUsers.indexOf(user.id) > -1;
+            }
+        }
+        return registered;
+    }
+
+    public canUserView(): boolean {
+        const journalEntry = (<Game>game).journal?.get(this.entryId);
+        const user = (<Game>game).user;
+        if(journalEntry && user){
+            return GameSettings.IsGm() || journalEntry.testUserPermission(user, 2);
+        }
+        return false;
+    }
+
+    private getDisplayDate(full: boolean): string{
         const noteData = this.noteData;
         if(noteData){
             const calendar = CalManager.getCalendar(noteData.calendarId);
@@ -175,48 +256,11 @@ export default class NoteStub{
                         endYear = currentVisibleYear;
                     }
                 }
-                display = GetDisplayDate(calendar,{year: startYear, month: startMonth, day: startDay, hour: noteData.startDate.hour, minute: noteData.startDate.minute, seconds: 0},{year: endYear, month: endMonth, day: endDay, hour: noteData.endDate.hour, minute: noteData.endDate.minute, seconds: 0}, noteData.allDay, true);
+                display = GetDisplayDate(calendar,{year: startYear, month: startMonth, day: startDay, hour: noteData.startDate.hour, minute: noteData.startDate.minute, seconds: 0},{year: endYear, month: endMonth, day: endDay, hour: noteData.endDate.hour, minute: noteData.endDate.minute, seconds: 0}, noteData.allDay, !full);
                 return display;
             }
         }
         return '';
-    }
-
-    public get playerVisible(){
-        const journalEntry = (<Game>game).journal?.get(this.entryId);
-        if(journalEntry){
-            for(let k in journalEntry.data.permission){
-                const permissionLevel = journalEntry.data.permission[k] || 0;
-                if(permissionLevel >= 2){
-                    const user = (<Game>game).users?.get(k);
-                    if(user && !user.isGM){
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    public get userReminderRegistered(): boolean{
-        let registered = false;
-        if(this.canUserView()){
-            const noteData = this.noteData;
-            const user = (<Game>game).user;
-            if(noteData && user){
-                registered = noteData.remindUsers.indexOf(user.id) > -1;
-            }
-        }
-        return registered;
-    }
-
-    public canUserView(): boolean {
-        const journalEntry = (<Game>game).journal?.get(this.entryId);
-        const user = (<Game>game).user;
-        if(journalEntry && user){
-            return GameSettings.IsGm() || journalEntry.testUserPermission(user, 2);
-        }
-        return false;
     }
 
     public isVisible(calendarId: string, year: number, monthIndex: number, dayIndex: number){

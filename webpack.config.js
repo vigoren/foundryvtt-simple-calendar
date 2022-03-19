@@ -2,7 +2,8 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const CircularDependencyPlugin = require('circular-dependency-plugin')
+const CircularDependencyPlugin = require('circular-dependency-plugin');
+const MangleCssClassPlugin = require('mangle-css-class-webpack-plugin');
 
 
 module.exports = {
@@ -45,6 +46,11 @@ module.exports = {
                 { context: './docs', from : 'UpdatingDateTime.md', to : './docs' },
             ]
         }),
+        new MangleCssClassPlugin({
+            classNameRegExp: 'fsc-[a-z\-][a-zA-Z0-9_\-]*',
+            reserveClassName: ['fa', 'fas', 'far'],
+            ignorePrefix: ['fsc-']
+        }),
         new MiniCssExtractPlugin({
             filename: "[name].css"
         })
@@ -64,8 +70,7 @@ module.exports = {
                     {
                         loader: 'css-loader',
                         options: {
-                            url: { filter: (url, resourcePath) => {return url.indexOf('/systems') !== 0;}
-                            }
+                            url: { filter: (url, resourcePath) => {return url.indexOf('/systems') !== 0;}}
                         }
                     },
                     // Compiles Sass to CSS

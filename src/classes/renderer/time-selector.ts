@@ -15,14 +15,14 @@ export default class TimeSelector {
 
     public static Render(calendar: Calendar, options: SimpleCalendar.Renderer.TimeSelectorOptions = {id: ''}): string{
         options = deepMerge({}, this.defaultOptions, options);
-        let html = `<div id="${options.id}" class="time-selector" data-calendar="${CalManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
+        let html = `<div id="${options.id}" class="fsc-time-selector" data-calendar="${CalManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
-        html += `<input class="render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/><span class="far fa-clock"></span>`;
+        html += `<input class="fsc-render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/><span class="far fa-clock"></span>`;
 
         if(options.allowTimeRange){
-            html += this.RenderTimeInputGroup(calendar, 'start-time', options.selectedTime?.start);
-            html += `<span class="time-spacer">${options.timeDelimiter}</span>`;
-            html += this.RenderTimeInputGroup(calendar, 'end-time', options.selectedTime?.end);
+            html += this.RenderTimeInputGroup(calendar, 'fsc-start-time', options.selectedTime?.start);
+            html += `<span class="fsc-time-spacer">${options.timeDelimiter}</span>`;
+            html += this.RenderTimeInputGroup(calendar, 'fsc-end-time', options.selectedTime?.end);
         } else{
             html += this.RenderTimeInputGroup(calendar, '', options.selectedTime?.start);
         }
@@ -33,16 +33,16 @@ export default class TimeSelector {
     }
 
     private static RenderTimeInputGroup(calendar: Calendar, cssClass: string = '', selectedAmount = {hour: 0, minute: 0}){
-        let html = `<div class="sc-ts-inputs ${cssClass}">`;
+        let html = `<div class="fsc-ts-inputs ${cssClass}">`;
         //Add Hours
-        html += `<input class="sc-ts-hour" type="number" value="${PadNumber(selectedAmount.hour)}" /><ul class="dropdown hide sc-ts-hour-list">`;
+        html += `<input class="fsc-ts-hour" data-list="fsc-ts-hour-list" type="number" value="${PadNumber(selectedAmount.hour)}" /><ul class="fsc-dropdown fsc-hide fsc-ts-hour-list">`;
         for(let i = 0; i < calendar.time.hoursInDay; i++){
             html += `<li>${PadNumber(i)}</li>`;
         }
         html += `</ul>`;
 
         //Ad Minutes
-        html += `<span class="time-spacer">:</span><input class="sc-ts-minute" type="number" value="${PadNumber(selectedAmount.minute)}" /><ul class="dropdown hide sc-ts-minute-list">`;
+        html += `<span class="fsc-time-spacer">:</span><input class="fsc-ts-minute" data-list="fsc-ts-minute-list" type="number" value="${PadNumber(selectedAmount.minute)}" /><ul class="fsc-dropdown fsc-hide fsc-ts-minute-list">`;
         for(let i = 0; i < calendar.time.minutesInHour; i+=5){
             html += `<li>${PadNumber(i)}</li>`;
         }
@@ -59,21 +59,21 @@ export default class TimeSelector {
                 timeSelectorElement.parentElement.addEventListener('click', TimeSelector.HideTimeDropdown.bind(TimeSelector, timeSelectorId))
             }
             //Hour Click
-            timeSelectorElement.querySelectorAll('.sc-ts-inputs .sc-ts-hour').forEach(h => {
+            timeSelectorElement.querySelectorAll('.fsc-ts-inputs .fsc-ts-hour').forEach(h => {
                 h.addEventListener('change', TimeSelector.ChangeEventListener.bind(TimeSelector, timeSelectorId, TimeSelectorEvents.change, onTimeChange));
                 h.addEventListener('click', TimeSelector.InputClickEventListener.bind(TimeSelector, timeSelectorId));
                 h.addEventListener('wheel', TimeSelector.ChangeEventListener.bind(TimeSelector, timeSelectorId, TimeSelectorEvents.wheel, onTimeChange));
             });
 
             //minute Click
-            timeSelectorElement.querySelectorAll('.sc-ts-inputs .sc-ts-minute').forEach(m => {
+            timeSelectorElement.querySelectorAll('.fsc-ts-inputs .fsc-ts-minute').forEach(m => {
                 m.addEventListener('change', TimeSelector.ChangeEventListener.bind(TimeSelector, timeSelectorId, TimeSelectorEvents.change, onTimeChange));
                 m.addEventListener('click', TimeSelector.InputClickEventListener.bind(TimeSelector, timeSelectorId));
                 m.addEventListener('wheel', TimeSelector.ChangeEventListener.bind(TimeSelector, timeSelectorId, TimeSelectorEvents.wheel, onTimeChange));
             });
 
             //Dropdown Item Click
-            timeSelectorElement.querySelectorAll('.sc-ts-inputs .dropdown').forEach(d => {
+            timeSelectorElement.querySelectorAll('.fsc-ts-inputs .fsc-dropdown').forEach(d => {
                 d.addEventListener('click', TimeSelector.ChangeEventListener.bind(TimeSelector, timeSelectorId, TimeSelectorEvents.dropdownClick, onTimeChange));
             });
         }
@@ -86,8 +86,8 @@ export default class TimeSelector {
     public static HideTimeDropdown(timeSelectorId: string){
         const timeSelectorElement = document.getElementById(timeSelectorId);
         if(timeSelectorElement){
-            timeSelectorElement.querySelectorAll('.dropdown').forEach(n => {
-                n.classList.add('hide');
+            timeSelectorElement.querySelectorAll('.fsc-dropdown').forEach(n => {
+                n.classList.add('fsc-hide');
             });
         }
     }
@@ -102,7 +102,7 @@ export default class TimeSelector {
             if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
                 const calendar = calendars[calendarIndex];
                 let options: SimpleCalendar.Renderer.TimeSelectorOptions = {id:''};
-                const optionsInput = timeSelectorElement.querySelector('.render-options');
+                const optionsInput = timeSelectorElement.querySelector('.fsc-render-options');
                 if(optionsInput){
                     options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));
                 }
@@ -117,9 +117,9 @@ export default class TimeSelector {
                 if(eventType === TimeSelectorEvents.change || eventType === TimeSelectorEvents.wheel){
                     amount = parseInt((<HTMLInputElement>target).value);
                     if(!isNaN(amount)){
-                        isHours =  target.classList.contains('sc-ts-hour');
+                        isHours =  target.classList.contains('fsc-ts-hour');
                         if(target.parentElement){
-                            isStart = target.parentElement.classList.contains('start-time');
+                            isStart = target.parentElement.classList.contains('fsc-start-time');
                         }
                     } else {
                         amount = 0;
@@ -131,9 +131,9 @@ export default class TimeSelector {
                 } else if(eventType === TimeSelectorEvents.dropdownClick){
                     amount = parseInt(target.innerText);
                     if(!isNaN(amount) && target.parentElement){
-                        isHours =  target.parentElement.classList.contains('sc-ts-hour-list');
+                        isHours =  target.parentElement.classList.contains('fsc-ts-hour-list');
                         if(target.parentElement.parentElement) {
-                            isStart = target.parentElement.parentElement.classList.contains('start-time');
+                            isStart = target.parentElement.parentElement.classList.contains('fsc-start-time');
                         }
                     }
                 }
@@ -216,8 +216,10 @@ export default class TimeSelector {
         TimeSelector.HideTimeDropdown(timeSelectorId);
         let target = <HTMLElement>event.target;
         if(target && target.parentElement){
-            const cssClass = target.classList.toString() + '-list';
-            target.parentElement.querySelector(`.${cssClass}`)?.classList.remove('hide');
+            const listClass = target.getAttribute('data-list');
+            if(listClass){
+                target.parentElement.querySelector(`.${listClass}`)?.classList.remove('fsc-hide');
+            }
         }
     }
 }

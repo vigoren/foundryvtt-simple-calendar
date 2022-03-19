@@ -1,57 +1,39 @@
 @import "../variables";
 .simple-calendar{
-  .sc-configuration-wrapper{
-    .progress{
-      .progress-bar{
+  .fsc-configuration-wrapper{
+    .fsc-progress{
+      .fsc-progress-bar{
         transition: width 100ms;
       }
     }
-    .tab-section{
-      &.calendar-selector{
+    .fsc-tab-section{
+      &.fsc-calendar-selector{
         ul {
-          &.animate {
+          &.fsc-animate {
             transition: max-height 500ms;
           }
         }
       }
     }
-    .tab-wrapper{
-      .settings-group{
-        &.animate {
+    .fsc-tab-wrapper{
+      .fsc-settings-group{
+        &.fsc-animate {
           transition: opacity 400ms;
         }
       }
       .form-group{
-        &.animate {
+        &.fsc-animate {
           transition: max-height 200ms;
         }
       }
-      .options{
-        &.animate {
+      .fsc-options{
+        &.fsc-animate {
           transition: max-height 400ms;
         }
       }
-      .section{
-        &.animate {
+      .fsc-section{
+        &.fsc-animate {
           transition: opacity 500ms;
-        }
-      }
-    }
-  }
-}
-
-
-.simple-calendar-configuration{
-  &.window-app{
-    .window-content{
-      form{
-        opacity: 0;
-        transition: opacity 2s;
-      }
-
-      &.open{
-        form{
-          opacity: 1;
         }
       }
     }

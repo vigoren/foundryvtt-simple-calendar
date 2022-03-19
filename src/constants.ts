@@ -154,13 +154,13 @@ export enum YearNamingRules{
  * @internal
  */
 export enum SocketTypes {
+    mainAppUpdate = 'main-app-update',
     primary = 'primary',
     clock = 'clock',
     checkClockRunning = 'check-clock-running',
     journal = 'journal',
-    dateTime = 'date-time',
-    date = 'date',
-    noteReminders = 'note-reminder',
+    dateTimeChange = 'date-time-change',
+    noteUpdate = 'note-update',
     emitHook = 'emit-hook'
 }
 

@@ -1,9 +1,9 @@
 
 .simple-calendar{
-  .category-list, .form-fields.category-list{
+  .fsc-category-list, .form-fields.fsc-category-list{
     flex-wrap: wrap;
   }
-  .note-category, label.note-category, .form-fields .note-category{
+  .fsc-note-category, label.fsc-note-category, .form-fields .fsc-note-category{
     font-size: 0.725rem;
     border-radius: 7px;
     padding: .2rem .4rem;
@@ -21,7 +21,7 @@
     }
 
     span{
-      margin-right: 0.15rem;
+      margin-right: 0.35rem;
     }
   }
 }

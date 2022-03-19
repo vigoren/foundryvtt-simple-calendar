@@ -19,54 +19,54 @@
         border-color:$primary-600;
       }
     }
-    .sc-main-wrapper{
+    .fsc-main-wrapper{
       display: flex;
       flex-direction: column;
       padding: $spacer-half;
 
-      .section{
+      .fsc-section{
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
 
-        .clock-display, .calendar-display{
+        .fsc-clock-display, .fsc-calendar-display{
           flex: 1;
         }
 
         &:last-child{
-          .controls {
+          .fsc-controls {
             margin-bottom: 0;
           }
         }
       }
-      .spacer{
+      .fsc-spacer{
         margin: 0 0 $spacer-half 0;
         flex: 1;
       }
-      .spacer-small{
+      .fsc-spacer-small{
         height: $spacer-half;
       }
     }
-    .controls{
+    .fsc-controls{
       flex: 1;
       display: flex;
       flex-direction: column;
       margin-bottom: $spacer-half;
 
-      &.unit-controls{
+      &.fsc-unit-controls{
         flex-direction: row;
         justify-content: center;
         flex-wrap: wrap;
         align-items: start;
 
-        .control-group{
+        .fsc-control-group{
           position: relative;
           margin-right: $spacer-half*0.5;
           &:last-child{
             margin-right: 0;
           }
 
-          .selector{
+          .fsc-selector{
             &::after{
               font-family: "Font Awesome 5 Free";
               content: "\f0d7";
@@ -80,7 +80,7 @@
             }
           }
 
-          .unit-list{
+          .fsc-unit-list{
             margin: 0;
             list-style: none;
             position: absolute;
@@ -101,11 +101,11 @@
               }
             }
 
-            &.open{
+            &.fsc-open{
               visibility: visible;
               max-height: 250px;
             }
-            &.closed{
+            &.fsc-closed{
               visibility: hidden;
             }
           }
@@ -115,7 +115,7 @@
         }
       }
 
-      .control-group{
+      .fsc-control-group{
         justify-content: center;
         margin-bottom: $spacer-half;
 
@@ -132,7 +132,7 @@
       }
     }
 
-    .sc-actions-list{
+    .fsc-actions-list{
       flex: 0 0 62px;
       display: flex;
       flex-direction: column;
@@ -146,13 +146,13 @@
         margin: 0 0 $spacer-half 0;
       }
 
-      .time-keeper-buttons{
+      .fsc-time-keeper-buttons{
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         margin: auto 0;
 
-        .control{
+        .fsc-control{
           font-size: 12px;
           padding: 0.125rem 0;
           margin-right: 2px;
@@ -164,13 +164,13 @@
         }
       }
 
-      .primary-loader{
+      .fsc-primary-loader{
         text-align: center;
         margin: auto 0;
       }
     }
 
-    .sc-side-drawer{
+    .fsc-side-drawer{
       position: absolute;
       top: 30px;
       left: 25%;
@@ -181,10 +181,10 @@
       min-width: 300px;
       z-index: -1;
       box-shadow: 2px 2px 10px #000000ab;
-      &.closed{
+      &.fsc-closed{
         visibility: hidden;
       }
-      &.open{
+      &.fsc-open{
         visibility: visible;
         left: 100%;
       }
@@ -196,10 +196,10 @@
       }
     }
 
-    .sc-calendar-list{
+    .fsc-calendar-list{
       overflow-y: auto;
 
-      .calendar-display{
+      .fsc-calendar-display{
         display: flex;
         flex-direction: row;
         border: 1px solid;
@@ -208,20 +208,20 @@
         padding: $spacer-half;
         cursor: pointer;
 
-        &.clickable{
+        &.fsc-clickable{
           cursor: pointer;
         }
 
-        .details{
+        .fsc-details{
           flex: 1;
         }
 
-        .calendar-name{
+        .fsc-calendar-name{
           font-size: 1.125rem;
           font-weight: 600;
           margin-bottom: $spacer-half * 0.5;
         }
-        .calendar-date{
+        .fsc-calendar-date{
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
@@ -232,14 +232,14 @@
             margin-right: $spacer-half * 0.5;
           }
 
-          .animated-clock{
+          .fsc-animated-clock{
             svg{
               width: 14px;
               height: 14px;
             }
           }
         }
-        .calendar-actions{
+        .fsc-calendar-actions{
           display: flex;
           flex-direction: row;
           margin: $spacer-half (-$spacer-half) (-$spacer-half) ;
@@ -261,16 +261,16 @@
       }
     }
 
-    .sc-note-list{
+    .fsc--note-list{
       display: flex;
       flex-direction: column;
     }
 
-    .sc-note-search{
+    .fsc-note-search{
       display: flex;
       flex-direction: column;
 
-      .search-box{
+      .fsc-search-box{
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
@@ -282,7 +282,7 @@
           border-bottom-right-radius: 0;
           border-right-width: 0;
         }
-        .control{
+        .fsc-control{
           width: 35px;
           border-radius: 0;
           margin-left: 0;
@@ -302,14 +302,14 @@
         }
       }
 
-      .search-options-header{
+      .fsc-search-options-header{
         padding: 0 $spacer-half ($spacer-half * 0.25);
         margin: 0;
         border-bottom: 1px solid;
         cursor: pointer;
       }
 
-      .search-options{
+      .fsc-search-options{
         padding: 0 $spacer-half $spacer-half;
         overflow: hidden;
         border-left: 1px solid;
@@ -317,10 +317,10 @@
         border-bottom: 1px solid;
         max-height: 0;
 
-        &.closed{
+        &.fsc-closed{
           visibility: hidden;
         }
-        &.open{
+        &.fsc-open{
           visibility: visible;
           max-height: 200px;
         }
@@ -332,7 +332,7 @@
           }
         }
 
-        .search-fields{
+        .fsc-search-fields{
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
@@ -355,7 +355,7 @@
         }
       }
 
-      .note-list{
+      .fsc-note-list{
         padding-top: $spacer-half;
       }
     }

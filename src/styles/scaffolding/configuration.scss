@@ -1,5 +1,5 @@
 @import "../variables";
-#simple-calendar-configuration-application-form{
+#fsc-simple-calendar-configuration-application-form{
   &.window-app{
     .window-content{
       overflow-x: hidden;
@@ -8,7 +8,7 @@
   }
 }
 .simple-calendar{
-  .sc-configuration-wrapper{
+  .fsc-configuration-wrapper{
     position: relative;
     display: flex;
     flex-direction: row;
@@ -25,20 +25,20 @@
       overflow-x: visible;
       padding-bottom: 30px;
 
-      .tab-section{
+      .fsc-tab-section{
         flex: unset;
         display: flex;
         flex-direction: column;
 
         &:first-child{
-          .heading{
+          .fsc-heading{
             border-top-width: 0;
           }
         }
 
-        .calendar-selector{
+        .fsc-calendar-selector{
           position: relative;
-          .heading{
+          .fsc-heading{
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -64,10 +64,10 @@
             overflow: hidden;
             list-style: none;
 
-            &.closed{
+            &.fsc-closed{
               visibility: hidden;
             }
-            &.open{
+            &.fsc-open{
               visibility: visible;
               max-height: 300px;
             }
@@ -81,7 +81,7 @@
               align-items: center;
               justify-content: space-between;
 
-              .control{
+              .fsc-control{
                 width: unset;
                 font-size: 0.75rem;
                 line-height: 0.875rem;
@@ -90,14 +90,14 @@
           }
         }
 
-        .item{
+        .fsc-item{
           border-bottom: 1px solid;
           &:last-child{
             border-bottom: unset;
           }
         }
       }
-      .heading{
+      .fsc-heading{
         flex: unset;
         padding: $spacer-half $spacer-half $spacer-half ($spacer-half*0.5);
         text-align: left;
@@ -106,7 +106,7 @@
         border-top: 1px solid;
         border-bottom: 1px solid;
       }
-      .sub-heading{
+      .fsc-sub-heading{
         flex: unset;
         padding: $spacer-half;
         text-align: left;
@@ -114,17 +114,17 @@
         font-weight: 600;
         border-bottom: 1px solid;
       }
-      .item{
+      .fsc-item{
         flex: unset;
         padding: $spacer-half $spacer-half $spacer-half $spacer;
         text-align: left;
         text-decoration: none;
         font-weight: 600;
 
-        &.active, &:hover{
+        &.fsc-active, &:hover{
           text-shadow: unset;
         }
-        &.active{
+        &.fsc-active{
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
@@ -140,7 +140,7 @@
       }
     }
     //Actual Tabs
-    .tab-wrapper{
+    .fsc-tab-wrapper{
       flex: 1;
       overflow-x: hidden;
       overflow-y: auto;
@@ -153,13 +153,13 @@
         }
       }
 
-      .settings-group{
+      .fsc-settings-group{
         opacity: 0;
-        &.open{
+        &.fsc-open{
           visibility: visible;
           opacity: 1;
         }
-        &.closed{
+        &.fsc-closed{
           visibility: hidden;
           height: 0;
           overflow: hidden;
@@ -168,7 +168,7 @@
 
 
 
-      .warning{
+      .fsc-warning{
         padding: 16px;
         text-align: center;
         border: 1px solid;
@@ -176,11 +176,11 @@
         margin: 0 auto;
       }
 
-      .section-wrapper{
+      .fsc-section-wrapper{
         position: relative;
       }
 
-      .section{
+      .fsc-section{
         margin: $spacer 0;
         opacity: 0;
 
@@ -188,70 +188,70 @@
           margin-top: 0;
         }
 
-        &.open{
+        &.fsc-open{
           visibility: visible;
           opacity: 1;
         }
-        &.closed{
+        &.fsc-closed{
           visibility: hidden;
           height: 0;
           overflow: hidden;
         }
       }
 
-      .control-section{
+      .fsc-control-section{
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         align-items: center;
         justify-content: space-evenly;
 
-        .control{
+        .fsc-control{
           flex: 0 0 25%;
         }
       }
 
-      .f-table{
+      .fsc-f-table{
         display: flex;
         flex-direction: column;
         border: 1px solid;
         margin-bottom: $spacer-half;
-        .row{
+        .fsc-row{
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
           align-items: center;
           padding: $spacer-half 0;
-          &.head{
+          &.fsc-head{
             font-weight: 600;
             text-align: center;
             border-bottom: 1px solid;
           }
-          .col{
+          .fsc-col{
             flex: 1;
             text-align: center;
             margin: 0 ($spacer-half * 0.5);
             input{
               text-align: left;
             }
-            .month-show-advanced{
+            .fsc-month-show-advanced{
               span{
                 font-weight: normal;
                 margin-left: ($spacer-half * 0.5);
               }
             }
           }
-          .options{
+          .fsc-options{
             flex: 0 0 100%;
             padding: .25rem 2rem;
             max-height: 0;
             overflow: hidden;
 
-            &.open{
+            &.fsc-open{
               visibility: visible;
               max-height: 500px;
             }
-            &.closed{
+            &.fsc-closed{
               visibility: hidden;
             }
 
@@ -267,10 +267,10 @@
           }
         }
 
-        &.moons{
-          .row{
-            .options{
-              &.open{
+        &.fsc-moons{
+          .fsc-row{
+            .fsc-options{
+              &.fsc-open{
                 max-height: fit-content;
               }
             }
@@ -278,12 +278,12 @@
         }
       }
 
-      .table-actions{
+      .fsc-table-actions{
         display: flex;
         flex-direction: row;
         margin-bottom: 1rem;
 
-        .spacer{
+        .fsc-spacer{
           flex: 1 1;
         }
         button{
@@ -294,23 +294,23 @@
       //----------------
       // Config Tabs
       //----------------
-      .import-export{
-        .importing{
+      .fsc-import-export{
+        .fsc-importing{
           flex-direction: column;
-          .progress{
+          .fsc-progress{
             margin-top: $spacer-half;
             border: 1px solid;
             width: 100%;
-            &.hide{
+            &.fsc-hide{
               display: none;
             }
-            .progress-bar{
+            .fsc-progress-bar{
               height: 1rem;
               width: 0;
             }
           }
-          .file-details{
-            .calendar-list{
+          .fsc-file-details{
+            .fsc-calendar-list{
               li{
                 display: flex;
                 flex-direction: row;
@@ -320,18 +320,18 @@
                 margin: $spacer-half 0;
               }
             }
-            .save{
+            .fsc-save{
               width: 200px;
               margin: 0 auto;
             }
           }
         }
         .form-group{
-          &.open{
+          &.fsc-open{
             max-height: fit-content;
             align-items: flex-start;
           }
-          .calendar-list{
+          .fsc-calendar-list{
             list-style: none;
             margin: 0;
             padding: 0;
@@ -352,14 +352,14 @@
           }
         }
       }
-      .new-calendar{
+      .fsc-new-calendar{
         button{
           max-width: 200px;
           margin: 0.5rem auto;
         }
       }
-      .quick-setup{
-        .section{
+      .fsc-quick-setup{
+        .fsc-section{
           position: absolute;
           top: 0;
           left: 0;
@@ -369,19 +369,19 @@
             overflow: visible;
           }
         }
-        .predefined-list{
+        .fsc-predefined-list{
           display: grid;
           justify-items: stretch;
           grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
           grid-gap: $spacer;
           align-items: center;
 
-          .predefined-calendar{
+          .fsc-predefined-calendar{
             padding: $spacer-half;
             border: 1px solid;
             border-radius: 10px;
             cursor: pointer;
-            &.selected{
+            &.fsc-selected{
               display: flex;
               flex-direction: row;
               flex-wrap: nowrap;
@@ -397,12 +397,12 @@
           }
         }
       }
-      .permissions{
-        .table-header{
+      .fsc-permissions{
+        .fsc-table-header{
           padding: ($spacer-half * 0.5) $spacer-half;
           border: 1px solid;
           border-radius: 0;
-          .index{
+          .fsc-index{
             flex: 0 0 200px;
             text-align: left;
           }
@@ -410,14 +410,14 @@
             text-align: center;
           }
         }
-        .permissions-list{
+        .fsc-permissions-list{
           list-style: none;
           margin: 0;
           padding: 0;
           max-height: 400px;
           overflow: hidden auto;
           scrollbar-width: thin;
-          .permission{
+          .fsc-permission{
             margin: -1px 0 0;
             label{
               flex: 0 0 200px;
@@ -429,24 +429,24 @@
         }
       }
 
-      .about{
-        .logo{
+      .fsc-about{
+        .fsc-logo{
           width: 100px;
           margin: 0 auto;
         }
         h1{
           text-align: center;
         }
-        .description{
+        .fsc-description{
           margin-bottom: $spacer;
         }
 
-        .row{
+        .fsc-row{
           display: flex;
           flex-direction: row;
           margin-bottom: $spacer-half;
 
-          .card{
+          .fsc-card{
             flex: 1;
             border: 1px solid;
             border-radius: 5px;
@@ -464,7 +464,7 @@
           }
         }
 
-        .translations{
+        .fsc-translations{
           table{
             border: 1px solid;
             width: 400px;
@@ -472,7 +472,7 @@
         }
       }
     }
-    .config-save{
+    .fsc-config-save{
       position: absolute;
       text-align: center;
       width: 100%;

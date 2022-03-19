@@ -6,26 +6,26 @@
     max-height: 0;
     overflow: hidden;
 
-    &.border-none{
+    &.fsc-border-none{
       border-width: 0;
     }
-    &.open{
+    &.fsc-open{
       visibility: visible;
       max-height: 150px;
     }
-    &.closed{
+    &.fsc-closed{
       visibility: hidden;
       margin: 0;
       padding: 0;
     }
-    &.date-selector{
+    &.fsc-date-selector{
       overflow: visible;
     }
     label{
       font-size: 1rem;
       font-weight: 600;
     }
-    .example{
+    .fsc-example{
       flex: 0 0 100%;
       text-align: right;
       padding: $spacer-half 0 0 0;

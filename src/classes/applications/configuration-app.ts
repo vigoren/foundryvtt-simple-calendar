@@ -31,7 +31,7 @@ export default class ConfigurationApp extends FormApplication {
      * ID used for the application window when rendered on the page
      * @type{string}
      */
-    public static appWindowId: string = 'simple-calendar-configuration-application-form';
+    public static appWindowId: string = 'fsc-simple-calendar-configuration-application-form';
     /**
      * The HTML element representing the application window
      * @type {HTMLElement | null}
@@ -255,6 +255,7 @@ export default class ConfigurationApp extends FormApplication {
             seasons: (<Calendar>this.object).seasons.map(s => s.toTemplate((<Calendar>this.object).year)),
             showLeapYearCustomMod: (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom,
             showLeapYearMonths: (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None,
+            time: (<Calendar>this.object).time,
             timeTrackers: {
                 none: 'FSC.Configuration.General.None',
                 self: 'FSC.Configuration.General.Self',
@@ -325,32 +326,32 @@ export default class ConfigurationApp extends FormApplication {
             //---------------------
             // Calendar Picker / Add new calendar
             //---------------------
-            this.appWindow.querySelector('.tabs .calendar-selector .heading')?.addEventListener('click', this.toggleCalendarSelector.bind(this, false));
-            this.appWindow.querySelectorAll('.tabs .calendar-selector ul li[data-calendar]').forEach(e => {
+            this.appWindow.querySelector('.tabs .fsc-calendar-selector .fsc-heading')?.addEventListener('click', this.toggleCalendarSelector.bind(this, false));
+            this.appWindow.querySelectorAll('.tabs .fsc-calendar-selector ul li[data-calendar]').forEach(e => {
                 e.addEventListener('click', this.calendarClick.bind(this));
             });
-            this.appWindow.querySelectorAll('.tabs .calendar-selector ul li[data-calendar] .control').forEach(e => {
+            this.appWindow.querySelectorAll('.tabs .fsc-calendar-selector ul li[data-calendar] .fsc-control').forEach(e => {
                 e.addEventListener('click', this.removeCalendarClick.bind(this));
             });
-            this.appWindow.querySelector('.tab-wrapper .new-calendar .save')?.addEventListener('click', this.addNewCalendar.bind(this));
+            this.appWindow.querySelector('.fsc-tab-wrapper .fsc-new-calendar .fsc-save')?.addEventListener('click', this.addNewCalendar.bind(this));
             //---------------------
             // Quick Setup
             //---------------------
             //Predefined Calendar clicked
-            this.appWindow.querySelectorAll('.quick-setup .predefined-list .predefined-calendar').forEach(e => {
+            this.appWindow.querySelectorAll('.fsc-quick-setup .fsc-predefined-list .fsc-predefined-calendar').forEach(e => {
                 e.addEventListener('click', this.predefinedCalendarClick.bind(this));
             });
             //Next button clicked
-            this.appWindow.querySelector('.quick-setup .control-section .qs-next')?.addEventListener('click', this.quickSetupNextClick.bind(this));
+            this.appWindow.querySelector('.fsc-quick-setup .fsc-control-section .fsc-qs-next')?.addEventListener('click', this.quickSetupNextClick.bind(this));
             //Back button clicked
-            this.appWindow.querySelector('.quick-setup .control-section .qs-back')?.addEventListener('click', this.quickSetupBackClick.bind(this));
+            this.appWindow.querySelector('.fsc-quick-setup .fsc-control-section .fsc-qs-back')?.addEventListener('click', this.quickSetupBackClick.bind(this));
             //Save button clicked
-            this.appWindow.querySelector('.quick-setup .control-section .qs-save')?.addEventListener('click', this.quickSetupSaveClick.bind(this));
+            this.appWindow.querySelector('.fsc-quick-setup .fsc-control-section .fsc-qs-save')?.addEventListener('click', this.quickSetupSaveClick.bind(this));
 
             //---------------------
             // Month Show/Hide Advanced
             //---------------------
-            this.appWindow.querySelectorAll(".month-show-advanced").forEach(e => {
+            this.appWindow.querySelectorAll(".fsc-month-show-advanced").forEach(e => {
                 e.addEventListener('click', this.toggleMonthShowAdvanced.bind(this));
             });
             //---------------------
@@ -365,14 +366,14 @@ export default class ConfigurationApp extends FormApplication {
             //---------------------
             // Date Format Table open/close
             //---------------------
-            this.appWindow.querySelector('.date-format-token-show')?.addEventListener('click', this.dateFormatTableClick.bind(this));
+            this.appWindow.querySelector('.fsc-date-format-token-show')?.addEventListener('click', this.dateFormatTableClick.bind(this));
             //---------------------
             // Add To/Remove From Table
             //---------------------
-            this.appWindow.querySelectorAll(`.table-actions .save`).forEach(e => {
+            this.appWindow.querySelectorAll(`.fsc-table-actions .fsc-save`).forEach(e => {
                 e.addEventListener('click', this.addToTable.bind(this));
             });
-            this.appWindow.querySelectorAll(`.control.delete`).forEach(e => {
+            this.appWindow.querySelectorAll(`.fsc-control.fsc-delete`).forEach(e => {
                 e.addEventListener('click', this.removeFromTable.bind(this));
             });
             //---------------------
@@ -389,7 +390,7 @@ export default class ConfigurationApp extends FormApplication {
 
     private toggleCalendarSelector(forceHide: boolean = false){
         if(this.appWindow){
-            const cList = this.appWindow.querySelector(".tabs .calendar-selector ul");
+            const cList = this.appWindow.querySelector(".tabs .fsc-calendar-selector ul");
             if(cList){
                 animateElement(cList, 500, forceHide);
             }
@@ -450,13 +451,13 @@ export default class ConfigurationApp extends FormApplication {
     private predefinedCalendarClick(e: Event){
         const element = <HTMLElement>e.target;
         if(element && this.appWindow){
-            const allReadySelected = element.classList.contains('selected');
-            this.appWindow.querySelectorAll(`.quick-setup .predefined-list .predefined-calendar`).forEach(e => {
-                e.classList.remove('selected');
+            const allReadySelected = element.classList.contains('fsc-selected');
+            this.appWindow.querySelectorAll(`.fsc-quick-setup .fsc-predefined-list .fsc-predefined-calendar`).forEach(e => {
+                e.classList.remove('fsc-selected');
             });
-            const nextBttn = this.appWindow.querySelector('.quick-setup .control-section .qs-next');
+            const nextBttn = this.appWindow.querySelector('.fsc-quick-setup .fsc-control-section .fsc-qs-next');
             if(!allReadySelected){
-                element.classList.add('selected');
+                element.classList.add('fsc-selected');
                 const cal = element.getAttribute('data-calendar');
                 if(cal){
                     this.uiElementStates.selectedPredefinedCalendar = cal;
@@ -490,8 +491,8 @@ export default class ConfigurationApp extends FormApplication {
         e.preventDefault();
         this.uiElementStates.qsNextClicked = !this.uiElementStates.qsNextClicked;
         if(this.appWindow){
-            const step1 = this.appWindow.querySelector('.quick-setup .predefined');
-            const step2 = this.appWindow.querySelector('.quick-setup .settings');
+            const step1 = this.appWindow.querySelector('.fsc-quick-setup .fsc-predefined');
+            const step2 = this.appWindow.querySelector('.fsc-quick-setup .fsc-settings');
             if(step1 && step2){
                 animateElement(step1, 500);
                 animateElement(step2, 500);
@@ -516,7 +517,7 @@ export default class ConfigurationApp extends FormApplication {
         e.preventDefault();
         const target = <HTMLElement>e.currentTarget;
         if(target){
-            const row = <HTMLElement>target.closest('.row');
+            const row = <HTMLElement>target.closest('.fsc-row');
             if(row){
                 const index = parseInt(row.getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.months.length){
@@ -587,27 +588,27 @@ export default class ConfigurationApp extends FormApplication {
 
             (<Calendar>this.object).year.yearNamingRule = <YearNamingRules>getTextInputValue("#scYearNameBehaviour", <string>YearNamingRules.Default, this.appWindow);
             (<Calendar>this.object).year.yearNamesStart = <number>getNumericInputValue('#scYearNamesStart', 0, false, this.appWindow);
-            this.appWindow.querySelectorAll('.year-settings .year-names>.row:not(.head)').forEach(e => {
+            this.appWindow.querySelectorAll('.fsc-year-settings .fsc-year-names>.fsc-row:not(.fsc-head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.yearNames.length){
-                    (<Calendar>this.object).year.yearNames[index] = getTextInputValue(".year-name", "New Named Year", e);
+                    (<Calendar>this.object).year.yearNames[index] = getTextInputValue(".fsc-year-name", "New Named Year", e);
                 }
             });
 
             //----------------------------------
             // Calendar: Month Settings
             //----------------------------------
-            this.appWindow.querySelectorAll('.month-settings .months>.row:not(.head)').forEach(e => {
+            this.appWindow.querySelectorAll('.fsc-month-settings .fsc-months>.fsc-row:not(.fsc-head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.months.length){
-                    const name = getTextInputValue(".month-name", "New Month", e);
+                    const name = getTextInputValue(".fsc-month-name", "New Month", e);
                     if(name !== (<Calendar>this.object).year.months[index].name ){
                         (<Calendar>this.object).year.months[index].abbreviation = name.substring(0, 3);
                     } else {
-                        (<Calendar>this.object).year.months[index].abbreviation = getTextInputValue(".month-abbreviation", "New Month", e);
+                        (<Calendar>this.object).year.months[index].abbreviation = getTextInputValue(".fsc-month-abbreviation", "New Month", e);
                     }
                     (<Calendar>this.object).year.months[index].name = name;
-                    const days = <number>getNumericInputValue('.month-days', 1, false, e);
+                    const days = <number>getNumericInputValue('.fsc-month-days', 1, false, e);
                     if(days !== (<Calendar>this.object).year.months[index].numberOfDays){
                         (<Calendar>this.object).year.months[index].numberOfDays = days;
                         if((<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None){
@@ -615,18 +616,18 @@ export default class ConfigurationApp extends FormApplication {
                         }
                         this.updateMonthDays((<Calendar>this.object).year.months[index]);
                     }
-                    const intercalary = getCheckBoxInputValue(".month-intercalary", false, e);
+                    const intercalary = getCheckBoxInputValue(".fsc-month-intercalary", false, e);
                     if(intercalary !== (<Calendar>this.object).year.months[index].intercalary){
                         (<Calendar>this.object).year.months[index].intercalary = intercalary;
                         this.rebaseMonthNumbers();
                     }
-                    const intercalaryInclude = getCheckBoxInputValue(".month-intercalary-include", false, e);
+                    const intercalaryInclude = getCheckBoxInputValue(".fsc-month-intercalary-include", false, e);
                     if(intercalaryInclude !== (<Calendar>this.object).year.months[index].intercalaryInclude){
                         (<Calendar>this.object).year.months[index].intercalaryInclude = intercalaryInclude;
                         this.rebaseMonthNumbers();
                     }
-                    (<Calendar>this.object).year.months[index].numericRepresentationOffset = <number>getNumericInputValue(".month-numeric-representation-offset", 0, false, e);
-                    (<Calendar>this.object).year.months[index].startingWeekday = getNumericInputValue(".month-starting-weekday", null, false, e);
+                    (<Calendar>this.object).year.months[index].numericRepresentationOffset = <number>getNumericInputValue(".fsc-month-numeric-representation-offset", 0, false, e);
+                    (<Calendar>this.object).year.months[index].startingWeekday = getNumericInputValue(".fsc-month-starting-weekday", null, false, e);
                 }
             });
             //----------------------------------
@@ -634,15 +635,15 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             (<Calendar>this.object).year.showWeekdayHeadings = getCheckBoxInputValue('#scShowWeekdayHeaders', true, this.appWindow);
             (<Calendar>this.object).year.firstWeekday = <number>getNumericInputValue('#scWeekdayFirstDay', 0, false, this.appWindow);
-            this.appWindow.querySelectorAll('.weekday-settings .weekdays>.row:not(.head)').forEach(e => {
+            this.appWindow.querySelectorAll('.fsc-weekday-settings .fsc-weekdays>.fsc-row:not(.fsc-head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).weekdays.length){
-                    const name = getTextInputValue('.weekday-name', 'New Weekday', e);
+                    const name = getTextInputValue('.fsc-weekday-name', 'New Weekday', e);
                     if(name !== (<Calendar>this.object).weekdays[index].name){
                         (<Calendar>this.object).weekdays[index].name = name;
                         (<Calendar>this.object).weekdays[index].abbreviation = name.substring(0, 2);
                     } else {
-                        (<Calendar>this.object).weekdays[index].abbreviation = getTextInputValue('.weekday-abbreviation', 'New', e);
+                        (<Calendar>this.object).weekdays[index].abbreviation = getTextInputValue('.fsc-weekday-abbreviation', 'New', e);
                     }
                 }
             });
@@ -652,10 +653,10 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             (<Calendar>this.object).year.leapYearRule.rule = <LeapYearRules>getTextInputValue('#scLeapYearRule', 'none', this.appWindow);
             (<Calendar>this.object).year.leapYearRule.customMod = <number>getNumericInputValue('#scLeapYearCustomMod', 0, false, this.appWindow);
-            this.appWindow.querySelectorAll('.leapyear-settings .months>.row:not(.head)').forEach(e => {
+            this.appWindow.querySelectorAll('.fsc-leapyear-settings .fsc-months>.fsc-row:not(.fsc-head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).year.months.length){
-                    const days = <number>getNumericInputValue('.month-leap-days', 0, false, e);
+                    const days = <number>getNumericInputValue('.fsc-month-leap-days', 0, false, e);
                     if(days !== (<Calendar>this.object).year.months[index].numberOfLeapYearDays){
                         (<Calendar>this.object).year.months[index].numberOfLeapYearDays = days;
                         this.updateMonthDays((<Calendar>this.object).year.months[index]);
@@ -666,36 +667,36 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             // Calendar: Season Settings
             //----------------------------------
-            this.appWindow.querySelectorAll('.season-settings .seasons>.row:not(.head)').forEach(e => {
+            this.appWindow.querySelectorAll('.fsc-season-settings .fsc-seasons>.fsc-row:not(.fsc-head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).seasons.length){
-                    (<Calendar>this.object).seasons[index].name = getTextInputValue(".season-name", "New Season", e);
-                    (<Calendar>this.object).seasons[index].color = getTextInputValue(".season-color", "#FFFFFF", e);
+                    (<Calendar>this.object).seasons[index].name = getTextInputValue(".fsc-season-name", "New Season", e);
+                    (<Calendar>this.object).seasons[index].color = getTextInputValue(".fsc-season-color", "#FFFFFF", e);
                 }
             });
 
             //----------------------------------
             // Calendar: Moon Settings
             //----------------------------------
-            this.appWindow.querySelectorAll('.moon-settings .moons>.row:not(.head)').forEach(e => {
+            this.appWindow.querySelectorAll('.fsc-moon-settings .fsc-moons>.fsc-row:not(.fsc-head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).moons.length){
-                    (<Calendar>this.object).moons[index].name = getTextInputValue('.moon-name', 'New Moon', e);
-                    (<Calendar>this.object).moons[index].cycleLength = <number>getNumericInputValue('.moon-cycle-length', 29.53059, true, e);
-                    (<Calendar>this.object).moons[index].cycleDayAdjust = <number>getNumericInputValue('.moon-cycle-adjustment', 0, true, e);
-                    (<Calendar>this.object).moons[index].color = getTextInputValue('.moon-color', '#FFFFFF', e);
-                    (<Calendar>this.object).moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>getTextInputValue('.moon-year-reset', 'none', e);
-                    (<Calendar>this.object).moons[index].firstNewMoon.year = <number>getNumericInputValue('.moon-year', 0, false, e);
-                    (<Calendar>this.object).moons[index].firstNewMoon.yearX = <number>getNumericInputValue('.moon-year-x', 0, false, e);
-                    (<Calendar>this.object).moons[index].firstNewMoon.month = <number>getNumericInputValue('.moon-month', 1, false, e);
-                    (<Calendar>this.object).moons[index].firstNewMoon.day = <number>getNumericInputValue('.moon-day', 1, false, e);
+                    (<Calendar>this.object).moons[index].name = getTextInputValue('.fsc-moon-name', 'New Moon', e);
+                    (<Calendar>this.object).moons[index].cycleLength = <number>getNumericInputValue('.fsc-moon-cycle-length', 29.53059, true, e);
+                    (<Calendar>this.object).moons[index].cycleDayAdjust = <number>getNumericInputValue('.fsc-moon-cycle-adjustment', 0, true, e);
+                    (<Calendar>this.object).moons[index].color = getTextInputValue('.fsc-moon-color', '#FFFFFF', e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>getTextInputValue('.fsc-moon-year-reset', 'none', e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.year = <number>getNumericInputValue('.fsc-moon-year', 0, false, e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.yearX = <number>getNumericInputValue('.fsc-moon-year-x', 0, false, e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.month = <number>getNumericInputValue('.fsc-moon-month', 1, false, e);
+                    (<Calendar>this.object).moons[index].firstNewMoon.day = <number>getNumericInputValue('.fsc-moon-day', 1, false, e);
 
-                    e.querySelectorAll('.phases>.row:not(.head)').forEach(p => {
+                    e.querySelectorAll('.fsc-phases>.fsc-row:not(.fsc-head)').forEach(p => {
                         const phaseIndex = parseInt((<HTMLElement>p).getAttribute('data-index') || '');
                         if(!isNaN(phaseIndex) && phaseIndex >= 0 && phaseIndex < (<Calendar>this.object).moons[index].phases.length){
-                            (<Calendar>this.object).moons[index].phases[phaseIndex].name = getTextInputValue('.moon-phase-name', 'New Phase', p);
-                            (<Calendar>this.object).moons[index].phases[phaseIndex].singleDay = getCheckBoxInputValue('.moon-phase-single-day', false, p);
-                            (<Calendar>this.object).moons[index].phases[phaseIndex].icon = <Icons>getTextInputValue('.moon-phase-icon', 'new', p);
+                            (<Calendar>this.object).moons[index].phases[phaseIndex].name = getTextInputValue('.fsc-moon-phase-name', 'New Phase', p);
+                            (<Calendar>this.object).moons[index].phases[phaseIndex].singleDay = getCheckBoxInputValue('.fsc-moon-phase-single-day', false, p);
+                            (<Calendar>this.object).moons[index].phases[phaseIndex].icon = <Icons>getTextInputValue('.fsc-moon-phase-icon', 'new', p);
                         }
                     });
 
@@ -719,11 +720,11 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             (<Calendar>this.object).generalSettings.noteDefaultVisibility = getCheckBoxInputValue('#scDefaultPlayerVisibility', true, this.appWindow);
             (<Calendar>this.object).generalSettings.postNoteRemindersOnFoundryLoad = getCheckBoxInputValue('#scPostNoteRemindersOnFoundryLoad', true, this.appWindow);
-            this.appWindow.querySelectorAll('.note-settings .note-categories .row:not(.head)').forEach(e => {
+            this.appWindow.querySelectorAll('.fsc-note-settings .fsc-note-categories .fsc-row:not(.fsc-head)').forEach(e => {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).noteCategories.length){
-                    (<Calendar>this.object).noteCategories[index].name = getTextInputValue(".note-category-name", "New Category", e);
-                    (<Calendar>this.object).noteCategories[index].color = getTextInputValue(".note-category-color", "New Category", e);
+                    (<Calendar>this.object).noteCategories[index].name = getTextInputValue(".fsc-note-category-name", "New Category", e);
+                    (<Calendar>this.object).noteCategories[index].color = getTextInputValue(".fsc-note-category-color", "New Category", e);
                     (<Calendar>this.object).noteCategories[index].textColor = GetContrastColor((<Calendar>this.object).noteCategories[index].color);
                 }
             });
@@ -761,13 +762,13 @@ export default class ConfigurationApp extends FormApplication {
             // Calendar Config: Month
             //----------------------------------
             for(let i = 0; i < (<Calendar>this.object).year.months.length; i++){
-                const row = this.appWindow.querySelector(`.month-settings .months>.row[data-index="${i}"]`);
+                const row = this.appWindow.querySelector(`.fsc-month-settings .fsc-months>.fsc-row[data-index="${i}"]`);
                 if(row){
                     //Show Advanced Stuff
-                    const button = row.querySelector('.month-show-advanced');
-                    const options = row.querySelector('.options');
+                    const button = row.querySelector('.fsc-month-show-advanced');
+                    const options = row.querySelector('.fsc-options');
                     if(button && options){
-                        if((options.classList.contains('closed') && (<Calendar>this.object).year.months[i].showAdvanced) || (options.classList.contains('open') && !(<Calendar>this.object).year.months[i].showAdvanced)){
+                        if((options.classList.contains('fsc-closed') && (<Calendar>this.object).year.months[i].showAdvanced) || (options.classList.contains('fsc-open') && !(<Calendar>this.object).year.months[i].showAdvanced)){
                             animateElement(options, 400);
                         }
                         if((<Calendar>this.object).year.months[i].showAdvanced){
@@ -781,10 +782,10 @@ export default class ConfigurationApp extends FormApplication {
                         }
                     }
                     //Intercalary Stuff
-                    animateFormGroup('.month-intercalary-include', (<Calendar>this.object).year.months[i].intercalary, row);
+                    animateFormGroup('.fsc-month-intercalary-include', (<Calendar>this.object).year.months[i].intercalary, row);
 
                     //Month Number
-                    const mn = row.querySelector('.month-number');
+                    const mn = row.querySelector('.fsc-month-number');
                     if(mn){
                         (<HTMLElement>mn).innerText = (<Calendar>this.object).year.months[i].numericRepresentation < 0 ? 'IC' : (<Calendar>this.object).year.months[i].numericRepresentation.toString();
                     }
@@ -797,14 +798,14 @@ export default class ConfigurationApp extends FormApplication {
             animateFormGroup('#scLeapYearCustomMod', (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom);
             let fg = this.appWindow.querySelector('#scLeapYearMonthList');
             if(fg){
-                if((fg.classList.contains('closed') && (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None) || (fg.classList.contains('open') && (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None)){
+                if((fg.classList.contains('fsc-closed') && (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None) || (fg.classList.contains('fsc-open') && (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.None)){
                     animateElement(fg, 400);
                 } else if((<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None){
-                    fg.classList.remove('closed');
-                    fg.classList.add('open');
+                    fg.classList.remove('fsc-closed');
+                    fg.classList.add('fsc-open');
                 } else {
-                    fg.classList.add('closed');
-                    fg.classList.remove('open');
+                    fg.classList.add('fsc-closed');
+                    fg.classList.remove('fsc-open');
                 }
             }
 
@@ -812,12 +813,12 @@ export default class ConfigurationApp extends FormApplication {
             // Calendar Config: Moons
             //----------------------------------
             for(let i = 0; i < (<Calendar>this.object).moons.length; i++){
-                const row = this.appWindow.querySelector(`.moon-settings .moons>.row[data-index="${i}"]`);
+                const row = this.appWindow.querySelector(`.fsc-moon-settings .fsc-moons>.fsc-row[data-index="${i}"]`);
                 if(row){
-                    animateFormGroup('.moon-year', (<Calendar>this.object).moons[i].firstNewMoon.yearReset === MoonYearResetOptions.None, row);
-                    animateFormGroup('.moon-year-x', (<Calendar>this.object).moons[i].firstNewMoon.yearReset === MoonYearResetOptions.XYears, row);
+                    animateFormGroup('.fsc-moon-year', (<Calendar>this.object).moons[i].firstNewMoon.yearReset === MoonYearResetOptions.None, row);
+                    animateFormGroup('.fsc-moon-year-x', (<Calendar>this.object).moons[i].firstNewMoon.yearReset === MoonYearResetOptions.XYears, row);
                     for(let p = 0; p < (<Calendar>this.object).moons[i].phases.length; p++){
-                        const pl = row.querySelector(`.phases>.row[data-index="${p}"] .moon-phase-length`);
+                        const pl = row.querySelector(`.fsc-phases>.fsc-row[data-index="${p}"] .fsc-moon-phase-length`);
                         if(pl){
                             (<HTMLElement>pl).innerText = `${(<Calendar>this.object).moons[i].phases[p].length} ${GameSettings.Localize('FSC.Days')}`;
                         }
@@ -833,11 +834,11 @@ export default class ConfigurationApp extends FormApplication {
     private dateFormatTableClick(){
         this.uiElementStates.dateFormatTableExpanded = !this.uiElementStates.dateFormatTableExpanded;
         if(this.appWindow){
-            const collapseArea = this.appWindow.querySelector(`.display-options .tokens .collapse-data`);
+            const collapseArea = this.appWindow.querySelector(`.fsc-display-options .fsc-tokens .fsc-collapse-data`);
             if(collapseArea){
                 (<HTMLElement>collapseArea).style.display = this.uiElementStates.dateFormatTableExpanded? 'block' : 'none';
             }
-            const a = this.appWindow.querySelector(`.display-options .tokens .date-format-token-show .fa`);
+            const a = this.appWindow.querySelector(`.fsc-display-options .fsc-tokens .fsc-date-format-token-show .fa`);
             if(a){
                 (<HTMLElement>a).className = `fa ${this.uiElementStates.dateFormatTableExpanded? 'fa-chevron-up' : 'fa-chevron-down'}`;
             }
@@ -941,7 +942,7 @@ export default class ConfigurationApp extends FormApplication {
         const target = <HTMLElement>e.currentTarget;
         if(target){
             const filteredSetting = target.getAttribute('data-type');
-            const row = target.closest('.row');
+            const row = target.closest('.fsc-row');
             const dataIndex = target.getAttribute('data-index');
             if(row && !dataIndex){
                 const rowDataIndex = (<HTMLElement>row).getAttribute('data-index');
@@ -1083,7 +1084,6 @@ export default class ConfigurationApp extends FormApplication {
         let currentDay = null;
         if(monthCurrentDay){
             if(monthCurrentDay.numericRepresentation >= month.numberOfDays){
-                Logger.debug('The current day falls outside of the months new days, setting to first day of the month.');
                 currentDay = 0;
             } else {
                 currentDay = monthCurrentDay.numericRepresentation;
@@ -1179,7 +1179,7 @@ export default class ConfigurationApp extends FormApplication {
         event.preventDefault();
 
         const options:Record<string, boolean> = {};
-        this.appWindow?.querySelectorAll(`.import-export .calendar-list input`).forEach(e => {
+        this.appWindow?.querySelectorAll(`.fsc-import-export .fsc-calendar-list input`).forEach(e => {
             const id = e.getAttribute('data-id');
             if(id){
                 options[id] = (<HTMLInputElement>e).checked;
@@ -1227,7 +1227,7 @@ export default class ConfigurationApp extends FormApplication {
         const target = <HTMLInputElement>event.target;
         if(target && target.files && target.files.length){
             if(target.files[0].type === 'application/json'){
-                this.appWindow?.querySelector(`.import-export .progress`)?.classList.remove('hide');
+                this.appWindow?.querySelector(`.fsc-import-export .fsc-progress`)?.classList.remove('fsc-hide');
                 const reader = new FileReader();
                 reader.onprogress = this.importCalendarProgress.bind(this);
                 reader.onload = this.importCalendarRead.bind(this);
@@ -1241,7 +1241,7 @@ export default class ConfigurationApp extends FormApplication {
      * @param e
      */
     public importCalendarProgress(e: Event){
-        const bar = this.appWindow?.querySelector(`.import-export .progress .progress-bar`);
+        const bar = this.appWindow?.querySelector(`.fsc-import-export .fsc-progress .fsc-progress-bar`);
         if(bar){
             (<HTMLElement>bar).style.width = `${((<ProgressEvent>e).loaded / (<ProgressEvent>e).total) * 100}%`;
         }
@@ -1253,12 +1253,12 @@ export default class ConfigurationApp extends FormApplication {
      */
     public importCalendarRead(e: Event){
         this.importCalendarProgress(e);
-        this.appWindow?.querySelector(`.import-export .progress`)?.classList.add('hide');
+        this.appWindow?.querySelector(`.fsc-import-export .fsc-progress`)?.classList.add('fsc-hide');
         const reader = <FileReader>e.target;
         if(reader && reader.result && this.appWindow){
-            const fDetail = this.appWindow.querySelector('.import-export .importing .file-details');
+            const fDetail = this.appWindow.querySelector('.fsc-import-export .fsc-importing .fsc-file-details');
             if(fDetail){
-                let html = `<p>${GameSettings.Localize('FSC.Configuration.ImportExport.ImportDetailsText')}</p><ul class="calendar-list">`;
+                let html = `<p>${GameSettings.Localize('FSC.Configuration.ImportExport.ImportDetailsText')}</p><ul class="fsc-calendar-list">`;
                 const res = JSON.parse(reader.result.toString());
                 if(!res.hasOwnProperty('exportVersion')){
                     //v1 support - Convert v1 format into v2 format
@@ -1345,7 +1345,7 @@ export default class ConfigurationApp extends FormApplication {
                         }
                     }
                 }
-                html += `</ul><button class="control save" id="importCalendar"><i class="fa fa-file-import"></i> ${GameSettings.Localize('FSC.Import')}</button>`;
+                html += `</ul><button class="fsc-control fsc-save" id="importCalendar"><i class="fa fa-file-import"></i> ${GameSettings.Localize('FSC.Import')}</button>`;
                 fDetail.innerHTML = html;
                 fDetail.querySelector('#importCalendar')?.addEventListener('click', this.importCalendarSave.bind(this, res));
             }
@@ -1360,20 +1360,20 @@ export default class ConfigurationApp extends FormApplication {
     public async importCalendarSave(data:any, event: Event){
         event.preventDefault();
         if(this.appWindow){
-            if(data.hasOwnProperty('globalConfig') && !isObjectEmpty(data.globalConfig) && getCheckBoxInputValue('.import-export .importing .file-details input[data-id="global"]', true, this.appWindow)){
+            if(data.hasOwnProperty('globalConfig') && !isObjectEmpty(data.globalConfig) && getCheckBoxInputValue('.fsc-import-export .fsc-importing .fsc-file-details input[data-id="global"]', true, this.appWindow)){
                 this.globalConfiguration.secondsInCombatRound = data.globalConfig.secondsInCombatRound;
                 this.globalConfiguration.calendarsSameTimestamp = data.globalConfig.calendarsSameTimestamp;
                 this.globalConfiguration.syncCalendars = data.globalConfig.syncCalendars;
             }
-            if(data.hasOwnProperty('permissions') && !isObjectEmpty(data.permissions) && getCheckBoxInputValue('.import-export .importing .file-details input[data-id="permissions"]', true, this.appWindow)){
+            if(data.hasOwnProperty('permissions') && !isObjectEmpty(data.permissions) && getCheckBoxInputValue('.fsc-import-export .fsc-importing .fsc-file-details input[data-id="permissions"]', true, this.appWindow)){
                 this.globalConfiguration.permissions.loadFromSettings(data.permissions);
             }
             if(data.hasOwnProperty('calendars') && data.calendars.length){
                 for(let i = 0; i < data.calendars.length; i++){
                     const calId = data.calendars[i].id;
                     let newCalId = '';
-                    if(getCheckBoxInputValue(`.import-export .importing .file-details input[data-id="${data.calendars[i].id}"]`, true, this.appWindow)){
-                        const importInto = getTextInputValue(`.import-export .importing .file-details select[data-for-cal="${data.calendars[i].id}"]`, 'new', this.appWindow);
+                    if(getCheckBoxInputValue(`.fsc-import-export .fsc-importing .fsc-file-details input[data-id="${data.calendars[i].id}"]`, true, this.appWindow)){
+                        const importInto = getTextInputValue(`.fsc-import-export .fsc-importing .fsc-file-details select[data-for-cal="${data.calendars[i].id}"]`, 'new', this.appWindow);
                         const importCalendar = this.calendars.find(c => c.id === importInto);
                         delete data.calendars[i].id;
                         if(importCalendar){
@@ -1384,8 +1384,8 @@ export default class ConfigurationApp extends FormApplication {
                             newCalId = newCalendar.id;
                         }
                     }
-                    if(data.hasOwnProperty('notes') && data.notes.hasOwnProperty(calId) && getCheckBoxInputValue(`.import-export .importing .file-details input[data-id="${calId}-notes"]`, true, this.appWindow)){
-                        const importInto = getTextInputValue(`.import-export .importing .file-details select[data-for-cal="${calId}"]`, 'new', this.appWindow);
+                    if(data.hasOwnProperty('notes') && data.notes.hasOwnProperty(calId) && getCheckBoxInputValue(`.fsc-import-export .fsc-importing .fsc-file-details input[data-id="${calId}-notes"]`, true, this.appWindow)){
+                        const importInto = getTextInputValue(`.fsc-import-export .fsc-importing .fsc-file-details select[data-for-cal="${calId}"]`, 'new', this.appWindow);
                         const importCalendar = this.calendars.find(c => c.id === importInto);
 
                         for(let n = 0; n < data.notes[calId].length; n++){

@@ -1,8 +1,8 @@
-.time-selector{
+.fsc-time-selector{
   display: flex;
   justify-content: space-evenly;
   margin: 0.5rem 0;
-  .sc-ts-inputs{
+  .fsc-ts-inputs{
     position: relative;
     display: flex;
     flex-direction: row;
@@ -19,7 +19,7 @@
       text-align: center;
     }
 
-    .dropdown{
+    .fsc-dropdown{
       position: absolute;
       bottom: 23px;
       width: 3rem;
@@ -30,15 +30,15 @@
       z-index: 100;
       overflow-y: scroll;
 
-      &.hide{
+      &.fsc-hide{
         display: none;
       }
 
 
-      &.sc-ts-hour-list{
+      &.fsc-ts-hour-list{
         left: 2px;
       }
-      &.sc-ts-minute-list{
+      &.fsc-ts-minute-list{
         right: 0;
       }
 
@@ -49,7 +49,7 @@
     }
   }
 
-  .time-spacer{
+  .fsc-time-spacer{
     font-size: 1.5rem;
     margin-top: -4px;
     padding: 0 0.25rem
@@ -62,7 +62,7 @@
   }
 }
 
-.add-time, .remove-time{
+.fsc-add-time, .fsc-remove-time{
   display: flex;
   justify-content: space-evenly;
   margin: 1rem 0;

@@ -194,7 +194,6 @@ export default class Moon extends ConfigurationItemBase{
         if(this.firstNewMoon.yearReset === MoonYearResetOptions.LeapYear){
             let lyYear = year.leapYearRule.previousLeapYear(yearNum);
             if(lyYear !== null){
-                Logger.debug(`Resetting moon calculation first day to year: ${lyYear}`);
                 firstNewMoonDays = year.dateToDays(lyYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
                 if(yearNum !== lyYear){
                     resetYearAdjustment += year.leapYearRule.fraction(yearNum);

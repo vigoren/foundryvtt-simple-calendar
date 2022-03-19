@@ -1,6 +1,6 @@
 @import "src/styles/variables";
 .simple-calendar{
-  &.window-app.compact-view {
+  &.window-app.fsc-compact-view {
     header {
       flex: 0 0 10px;
 
@@ -8,7 +8,7 @@
         display: none;
       }
     }
-    .sc-main-wrapper{
+    .fsc-main-wrapper{
       padding: $spacer-half * 0.5;
       button{
         font-size: 0.625rem;
@@ -18,30 +18,30 @@
           height: 0.875rem;
         }
       }
-      .season{
+      .fsc-season{
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         justify-content: space-between;
         align-items: center;
-        .season-text{
+        .fsc-season-text{
           font-size: 0.75rem;
           flex: 1;
           text-align: center;
         }
       }
-      .date{
+      .fsc-date{
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         justify-content: space-between;
         margin-bottom: 0.25rem;
-        .date-text{
+        .fsc-date-text{
           flex: 1;
           text-align: center;
         }
       }
-      .moons{
+      .fsc-moons{
         flex: 0;
         display: flex;
         flex-direction: row;
@@ -52,12 +52,12 @@
           filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
         }
       }
-      .sc-clock{
+      .fsc-clock{
         border: unset;
         padding: 0;
         margin: 0 $spacer-half $spacer-half 0;
 
-        .animated-clock{
+        .fsc-animated-clock{
           svg{
             width: 20px;
             height: 20px;
@@ -65,33 +65,33 @@
           }
         }
 
-        .current-time{
+        .fsc-current-time{
           font-size: 0.875rem;
         }
       }
-      .time-keeper-buttons{
-        .control{
+      .fsc-time-keeper-buttons{
+        .fsc-control{
           background: unset;
           border: unset;
           box-shadow: unset;
         }
       }
-      .unit-controls{
-        .control{
+      .fsc-unit-controls{
+        .fsc-control{
           margin-bottom: 0;
         }
       }
 
-      .sc-side-drawer{
+      .fsc-side-drawer{
         top: 10px;
         height: calc(100% - 10px);
 
-        &.open{
+        &.fsc-open{
           height: 200px;
         }
       }
     }
-    .sc-actions-list{
+    .fsc-sc-actions-list{
       padding: 0;
       flex-basis: 35px;
     }

@@ -113,18 +113,18 @@ export function GetIcon(icon: Icons, strokeColor: string = "#000000", fillColor:
  */
 export function animateElement(element: Element, duration: number, forceHide: boolean = false){
     let openState = false;
-    if(element && !element.classList.contains('animate')){
-        if(element.classList.contains('open') || forceHide){
-            element.classList.add('animate');
-            element.classList.remove('open');
+    if(element && !element.classList.contains('fsc-animate')){
+        if(element.classList.contains('fsc-open') || forceHide){
+            element.classList.add('fsc-animate');
+            element.classList.remove('fsc-open');
             openState = false;
-            setTimeout(((nl: Element) => { nl.classList.add('closed'); }).bind(null, element), duration);
+            setTimeout(((nl: Element) => { nl.classList.add('fsc-closed'); }).bind(null, element), duration);
         } else {
-            element.classList.add('animate', 'open');
-            element.classList.remove('closed');
+            element.classList.add('fsc-animate', 'fsc-open');
+            element.classList.remove('fsc-closed');
             openState = true;
         }
-        setTimeout(((nl: Element) => { nl.classList.remove('animate'); }).bind(null, element), duration);
+        setTimeout(((nl: Element) => { nl.classList.remove('fsc-animate'); }).bind(null, element), duration);
     }
     return openState;
 }
@@ -132,14 +132,14 @@ export function animateElement(element: Element, duration: number, forceHide: bo
 export function animateFormGroup(selector: string, check: boolean, element: Document | Element = document){
     const fg = element.querySelector(selector)?.closest('.form-group');
     if(fg){
-        if((fg.classList.contains('closed') && check) || fg.classList.contains('open') && !check){
+        if((fg.classList.contains('fsc-closed') && check) || fg.classList.contains('fsc-open') && !check){
             animateElement(fg, 200);
         } else if(check){
-            fg.classList.remove('closed');
-            fg.classList.add('open');
+            fg.classList.remove('fsc-closed');
+            fg.classList.add('fsc-open');
         } else {
-            fg.classList.add('closed');
-            fg.classList.remove('open');
+            fg.classList.add('fsc-closed');
+            fg.classList.remove('fsc-open');
         }
     }
 }

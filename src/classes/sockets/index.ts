@@ -4,14 +4,13 @@ import {Logger} from "../logging";
 import ClockSocket from "./clock-socket";
 import SocketBase from "./socket-base";
 import CheckClockRunningSocket from "./check-clock-running-socket";
-import DateSocket from "./date-socket";
-import DateTimeSocket from "./date-time-socket";
-import EmitHookSocket from "./emit-hook-socket";
-import JournalSocket from "./journal-socket";
-import NoteRemindersSocket from "./note-reminders-socket";
+import DateTimeChangeSocket from "./date-time-change-socket";
+import EmitHookSocket from "./emit-hook-socket"
+import NoteUpdateSocket from "./note-update-socket";
 import PrimarySocket from "./primary-socket";
 import {Hook} from "../api/hook";
 import {CalManager, MainApplication} from "../index";
+import MainAppUpdateSocket from "./main-app-update";
 
 export default class Sockets {
 
@@ -22,14 +21,14 @@ export default class Sockets {
     private sockets: SocketBase[] = [];
 
     constructor() {
+        this.sockets.push(new MainAppUpdateSocket());
+        this.sockets.push(new PrimarySocket());
         this.sockets.push(new CheckClockRunningSocket());
         this.sockets.push(new ClockSocket());
-        this.sockets.push(new DateSocket());
-        this.sockets.push(new DateTimeSocket());
+        this.sockets.push(new DateTimeChangeSocket());
         this.sockets.push(new EmitHookSocket());
-        this.sockets.push(new JournalSocket());
-        this.sockets.push(new NoteRemindersSocket());
-        this.sockets.push(new PrimarySocket());
+        this.sockets.push(new NoteUpdateSocket());
+
     }
 
     /**
@@ -53,7 +52,6 @@ export default class Sockets {
      * @param {SimpleCalendarSocket.Data} data The data received
      */
     async process(data: SimpleCalendar.SimpleCalendarSocket.Data){
-        Logger.debug(`Processing ${data.type} socket emit`);
         const activeCalendar = CalManager.getActiveCalendar();
         for(let i = 0; i < this.sockets.length; i++){
             // If this socket processed the data, then no need to check the other sockets.

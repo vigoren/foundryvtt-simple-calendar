@@ -14,6 +14,7 @@ import {animateElement, GetIcon} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, SC, NManager} from "../index";
 import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import{canUser} from "../utilities/permissions";
+import NoteStub from "../notes/note-stub";
 
 
 /**
@@ -24,7 +25,7 @@ export default class MainApp extends Application{
      * The ID used for the application window within foundry
      * @type {string}
      */
-    public static appWindowId: string = 'simple-calendar-application';
+    public static appWindowId: string = 'fsc-simple-calendar-application';
     /**
      * Gets the current active calendar
      */
@@ -49,13 +50,13 @@ export default class MainApp extends Application{
 
 
     uiElementStates = {
-        calendarDrawerOpen: false,
+        "fsc-calendar-list": false,
+        "fsc-note-list": false,
+        "fsc-note-search": false,
         compactView: false,
         dateTimeUnitOpen: false,
         dateTimeUnit: DateTimeUnits.Day,
         dateTimeUnitText: 'FSC.Day',
-        noteDrawerOpen: false,
-        searchDrawerOpen: false,
         searchOptionsOpen: false,
         calendarListOpen: false,
 
@@ -63,9 +64,9 @@ export default class MainApp extends Application{
 
     search = {
         term: '',
-        results: <SimpleCalendar.HandlebarTemplateData.NoteTemplate[]>[],
+        results: <NoteStub[]>[],
         options: {
-            fields: <SimpleCalendar.SearchOptions.Fields>{
+            fields: <SimpleCalendar.Search.OptionsFields>{
                 date: true,
                 title: true,
                 details: true,
@@ -204,22 +205,13 @@ export default class MainApp extends Application{
     }
 
     /**
-     * Closes the application window
-     */
-    public closeApp(){
-        this.close().catch(error => Logger.error(error));
-    }
-
-    /**
      * Overwrite the minimization function to reduce the calendar down to the compact form
      * If the calendar is already in the compact form, restore to the full form
      */
     async minimize(){
         this.uiElementStates.compactView = !this.uiElementStates.compactView;
         this.visibleCalendar.year.resetMonths('selected');
-        this.toggleCalendarDrawer(true);
-        this.toggleNoteDrawer(true);
-        this.toggleSearchDrawer(true);
+        this.hideDrawers();
         this.setWidthHeight();
         this.render(true);
     }
@@ -229,9 +221,7 @@ export default class MainApp extends Application{
      */
     async maximize(){
         this.uiElementStates.compactView = false;
-        this.toggleCalendarDrawer(true);
-        this.toggleNoteDrawer(true);
-        this.toggleSearchDrawer(true);
+        this.hideDrawers();
         this.setWidthHeight();
         this.render(true);
     }
@@ -241,36 +231,40 @@ export default class MainApp extends Application{
      */
     setWidthHeight(){
         let width = 0, height = 0;
-        const main = <HTMLElement>document.querySelector('#simple-calendar-application');
+        const main = <HTMLElement>document.querySelector(`#${MainApp.appWindowId}`);
         if(main){
             const header = <HTMLElement>main.querySelector('.window-header');
             if(header){
                 height += header.offsetHeight;
             }
-            const wrapper = <HTMLElement>main.querySelector('.sc-main-wrapper');
-            if(wrapper){
-                if(this.uiElementStates.compactView){
+            const wrapper = <HTMLElement>main.querySelector('.fsc-main-wrapper');
+            if(wrapper) {
+                if (this.uiElementStates.compactView) {
                     height += 24; //Height of top bar
                     height += 8; // Window Padding
                     width = 300;
                 } else {
-                    wrapper.querySelectorAll(".section").forEach((s, index) => {
+                    wrapper.querySelectorAll(".fsc-section").forEach((s, index) => {
                         height += (<HTMLElement>s).offsetHeight;
                     });
-                    const currentDate = <HTMLElement>wrapper.querySelector('.calendar .calendar-header .current-date');
-                    const week = <HTMLElement>wrapper.querySelector('.calendar .days .week');
-                    const clock = <HTMLElement>wrapper.querySelector('.clock-display .sc-clock');
+                    const currentDate = <HTMLElement>wrapper.querySelector('.fsc-calendar .fsc-calendar-header .fsc-current-date');
+                    const week = <HTMLElement>wrapper.querySelector('.fsc-calendar .fsc-days .fsc-week');
+                    const clock = <HTMLElement>wrapper.querySelector('.fsc-clock-display .fsc-clock');
                     let currentDateWidth = 0, weekWidth = 0, clockWidth = 0;
 
-                    if(currentDate){
-                        Array.from(currentDate.children).forEach(c => {currentDateWidth += (<HTMLElement>c).offsetWidth;});
+                    if (currentDate) {
+                        Array.from(currentDate.children).forEach(c => {
+                            currentDateWidth += (<HTMLElement>c).offsetWidth;
+                        });
                         currentDateWidth += 20; //Margins on prev/next buttons
                     }
-                    if(week){
+                    if (week) {
                         weekWidth = week.offsetWidth;
                     }
-                    if(clock){
-                        Array.from(clock.children).forEach(c => {clockWidth += (<HTMLElement>c).offsetWidth;});
+                    if (clock) {
+                        Array.from(clock.children).forEach(c => {
+                            clockWidth += (<HTMLElement>c).offsetWidth;
+                        });
                         clockWidth += 8; //Clock Icon Margin
                     }
                     width = Math.max(currentDateWidth, weekWidth, clockWidth);
@@ -310,7 +304,6 @@ export default class MainApp extends Application{
                 const rect = elementToUse.getBoundingClientRect();
                 const insideViewPort = rect.top >= calendarRect.top && rect.left >= calendarRect.left && rect.bottom <= calendarRect.bottom && rect.right <= calendarRect.right;
                 if(!insideViewPort){
-                    Logger.debug(`The Current/Selected day is not in the viewport, updating the day list scroll top position.`);
                     calendar[0].scrollTop = rect.top - calendarRect.top - (calendarHeight/ 2);
                 }
             }
@@ -324,7 +317,7 @@ export default class MainApp extends Application{
     public appDragEnd(e: Event){
         //@ts-ignore
         this._onDragMouseUp(e);
-        const app = document.getElementById('simple-calendar-application');
+        const app = document.getElementById(MainApp.appWindowId);
         if(app){
             const appPos: SimpleCalendar.AppPosition = {};
             appPos.top = parseFloat(app.style.top);
@@ -339,12 +332,11 @@ export default class MainApp extends Application{
      * @protected
      */
     public activateListeners(html: JQuery<HTMLElement>) {
-        Logger.debug('Simple-Calendar activateListeners()');
         if(html.hasOwnProperty("length")) {
             this.setWidthHeight();
             this.ensureCurrentDateIsVisible(html);
 
-            const appWindow = document.getElementById('simple-calendar-application');
+            const appWindow = document.getElementById(MainApp.appWindowId);
             if(appWindow){
                 //Window Drag Listener
                 const header = appWindow.querySelector('header');
@@ -360,9 +352,9 @@ export default class MainApp extends Application{
                 });
 
                 if(this.uiElementStates.compactView){
-                    appWindow.classList.add('compact-view');
+                    appWindow.classList.add('fsc-compact-view');
                 } else {
-                    appWindow.classList.remove('compact-view');
+                    appWindow.classList.remove('fsc-compact-view');
                     // Activate the full calendar display listeners
                     Renderer.CalendarFull.ActivateListeners(`sc_${this.visibleCalendar.id}_calendar`, this.changeMonth.bind(this), this.dayClick.bind(this));
                 }
@@ -373,75 +365,75 @@ export default class MainApp extends Application{
                 // Calendar Action List
                 //-----------------------
                 // Calendar List Click
-                appWindow.querySelector(".sc-actions-list .calendar-list")?.addEventListener('click', this.toggleCalendarDrawer.bind(this, false));
+                appWindow.querySelector(".fsc-actions-list .fsc-calendars")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-calendar-list'));
                 //Configuration Button Click
-                appWindow.querySelector(".sc-actions-list .configure-button")?.addEventListener('click', this.configurationClick.bind(this));
+                appWindow.querySelector(".fsc-actions-list .fsc-configure-button")?.addEventListener('click', this.configurationClick.bind(this));
                 //Search button click
-                appWindow.querySelector(".sc-actions-list .search")?.addEventListener('click', this.toggleSearchDrawer.bind(this, false));
+                appWindow.querySelector(".fsc-actions-list .fsc-search")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-note-search'));
                 // Add new note click
-                appWindow.querySelector(".sc-actions-list .add-note")?.addEventListener('click', this.addNote.bind(this));
+                appWindow.querySelector(".fsc-actions-list .fsc-add-note")?.addEventListener('click', this.addNote.bind(this));
                 // Note Drawer Toggle
-                appWindow.querySelector(".sc-actions-list .notes")?.addEventListener('click', this.toggleNoteDrawer.bind(this, false));
-                appWindow.querySelector(".sc-actions-list .reminder-notes")?.addEventListener('click', this.toggleNoteDrawer.bind(this, false));
+                appWindow.querySelector(".fsc-actions-list .fsc-notes")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-note-list'));
+                appWindow.querySelector(".fsc-actions-list .fsc-reminder-notes")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-note-list'));
                 // Today button click
-                appWindow.querySelector('.sc-actions-list .today')?.addEventListener('click', this.todayClick.bind(this));
+                appWindow.querySelector('.fsc-actions-list .fsc-today')?.addEventListener('click', this.todayClick.bind(this));
                 // Set Current Date
-                appWindow.querySelector('.sc-actions-list .btn-apply')?.addEventListener('click', this.dateControlApply.bind(this));
+                appWindow.querySelector('.fsc-actions-list .fsc-btn-apply')?.addEventListener('click', this.dateControlApply.bind(this));
                 // Real Time Clock
-                appWindow.querySelector(".time-start")?.addEventListener('click', this.startTime.bind(this));
-                appWindow.querySelector(".time-stop")?.addEventListener('click', this.stopTime.bind(this));
+                appWindow.querySelector(".fsc-time-start")?.addEventListener('click', this.startTime.bind(this));
+                appWindow.querySelector(".fsc-time-stop")?.addEventListener('click', this.stopTime.bind(this));
 
                 //-----------------------
                 // Calendar Drawer
                 //-----------------------
                 //Calendar Active Click
-                const calendarActivate =  appWindow.querySelectorAll('.sc-calendar-list .calendar-display .calendar-actions .save');
+                const calendarActivate =  appWindow.querySelectorAll('.fsc-calendar-list .fsc-calendar-display .fsc-calendar-actions .fsc-save');
 
                 if(calendarActivate.length){
                     calendarActivate.forEach(e => {
-                        e.addEventListener('click', this.changeCalendar.bind(this));
+                        e.addEventListener('click', this.changeCalendar.bind(this, false));
                     });
                 }
                 //Calendar View Click
-                appWindow.querySelectorAll('.sc-calendar-list .calendar-display').forEach(e => {
-                    e.addEventListener('click', this.changeVisibleCalendar.bind(this));
+                appWindow.querySelectorAll('.fsc-calendar-list .fsc-calendar-display').forEach(e => {
+                    e.addEventListener('click', this.changeCalendar.bind(this, true));
                 });
 
                 //-----------------------
                 // Note/Search Drawer
                 //-----------------------
                 // Note Click/Drag
-                appWindow.querySelectorAll(".sc-note-list .note").forEach(n => {
+                appWindow.querySelectorAll(".fsc-note-list .fsc-note").forEach(n => {
                     n.addEventListener('click', this.viewNote.bind(this));
                     n.addEventListener('drag', this.noteDrag.bind(this));
                     n.addEventListener('dragend', this.noteDragEnd.bind(this));
                 });
-                appWindow.querySelectorAll(".sc-note-search .note-list .note").forEach(n => {
+                appWindow.querySelectorAll(".fsc-note-search .fsc-note-list .fsc-note").forEach(n => {
                     n.addEventListener('click', this.viewNote.bind(this));
                 });
                 //Search Click
-                appWindow.querySelector(".sc-note-search .search-box .fa-search")?.addEventListener('click', this.searchClick.bind(this));
+                appWindow.querySelector(".fsc-note-search .fsc-search-box .fa-search")?.addEventListener('click', this.searchClick.bind(this));
                 //Search Clear Click
-                appWindow.querySelector(".sc-note-search .search-box .fa-times")?.addEventListener('click', this.searchClearClick.bind(this));
+                appWindow.querySelector(".fsc-note-search .fsc-search-box .fa-times")?.addEventListener('click', this.searchClearClick.bind(this));
                 //Search Input Key Up
-                appWindow.querySelector(".sc-note-search .search-box input")?.addEventListener('keyup', this.searchBoxChange.bind(this));
+                appWindow.querySelector(".fsc-note-search .fsc-search-box input")?.addEventListener('keyup', this.searchBoxChange.bind(this));
                 //Search Options Header Click
-                appWindow.querySelector(".sc-note-search .search-options-header")?.addEventListener('click', this.searchOptionsToggle.bind(this, false));
+                appWindow.querySelector(".fsc-note-search .fsc-search-options-header")?.addEventListener('click', this.searchOptionsToggle.bind(this, false));
                 //Search Options Fields Change
-                appWindow.querySelectorAll(".sc-note-search .search-fields input").forEach(n => {
+                appWindow.querySelectorAll(".fsc-note-search .fsc-search-fields input").forEach(n => {
                     n.addEventListener('change', this.searchOptionsFieldsChange.bind(this));
                 });
 
                 //-----------------------
                 // Date/Time Controls
                 //-----------------------
-                appWindow.querySelectorAll(".unit-controls .selector").forEach(s => {
+                appWindow.querySelectorAll(".fsc-unit-controls .fsc-selector").forEach(s => {
                     s.addEventListener('click', this.toggleUnitSelector.bind(this, false));
                 });
-                appWindow.querySelectorAll(".unit-controls .unit-list li").forEach(c => {
+                appWindow.querySelectorAll(".fsc-unit-controls .fsc-unit-list li").forEach(c => {
                     c.addEventListener('click', this.changeUnit.bind(this));
                 });
-                appWindow.querySelectorAll(".controls .control").forEach(c => {
+                appWindow.querySelectorAll(".fsc-controls .fsc-control").forEach(c => {
                     c.addEventListener('click', this.timeUnitClick.bind(this));
                 });
             }
@@ -449,49 +441,31 @@ export default class MainApp extends Application{
     }
 
     /**
-     * Opens and closes the note drawer
-     * @param forceHide Force the drawer to hide
+     * Toggles the passed in side drawer to show or hide
+     * @param selector The unique class name of the drawer we want to toggle
      */
-    public toggleCalendarDrawer(forceHide: boolean = false){
-        if(!forceHide){
-            this.toggleSearchDrawer(true);
-            this.toggleNoteDrawer(true);
-        }
-        const cList = document.querySelector(".sc-calendar-list");
-        if(cList){
-            this.uiElementStates.calendarDrawerOpen = animateElement(cList, 500, forceHide);
-        }
-    }
-
-    /**
-     * Opens and closes the note drawer
-     * @param forceHide Force the drawer to hide
-     */
-    public toggleNoteDrawer(forceHide: boolean = false){
-        if(!forceHide){
-            this.toggleSearchDrawer(true);
-            this.toggleCalendarDrawer(true);
-        }
-        const noteList = document.querySelector(".sc-note-list");
-        if(noteList){
-            this.uiElementStates.noteDrawerOpen = animateElement(noteList, 500, forceHide);
-        }
-    }
-
-    /**
-     * Opens and closes the search drawer
-     * @param forceHide Force the drawer to hide
-     */
-    public toggleSearchDrawer(forceHide: boolean = false){
-        if(!forceHide){
-            this.toggleNoteDrawer(true);
-            this.toggleCalendarDrawer(true);
-        }
+    public toggleDrawer(selector: string){
+        this.hideDrawers(selector);
         this.searchOptionsToggle(true);
-        const noteList = document.querySelector(".sc-note-search");
-        if(noteList){
-            this.uiElementStates.searchDrawerOpen = animateElement(noteList, 500, forceHide);
+        const cList = document.querySelector(`.${selector}`);
+        if(cList){
+            const member = selector.toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search';
+            this.uiElementStates[member] = animateElement(cList, 500, false);
         }
+    }
+
+    /**
+     * Hides all drawers, except one that contains the excluded class
+     * @param exclude The unique class name of the drawer to exclude from being hidden
+     */
+    public hideDrawers(exclude: string = ''){
+        document.querySelectorAll('.fsc-side-drawer').forEach(e => {
+            if(!e.classList.contains(exclude)){
+                animateElement(e, 500, true);
+                const member = e.classList[1].toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search';
+                this.uiElementStates[member] = false;
+            }
+        });
     }
 
     /**
@@ -499,7 +473,7 @@ export default class MainApp extends Application{
      * @param forceHide
      */
     public toggleUnitSelector(forceHide: boolean = false){
-        let unitList = document.querySelector(`.sc-main-wrapper .unit-list`);
+        let unitList = document.querySelector(`.fsc-main-wrapper .fsc-unit-list`);
         if(unitList){
             this.uiElementStates.dateTimeUnitOpen = animateElement(unitList, 500, forceHide);
         }
@@ -549,27 +523,18 @@ export default class MainApp extends Application{
         }
     }
 
-    public changeCalendar(e: Event){
+    public changeCalendar(visible: boolean, e: Event){
         const target = <HTMLElement>e.currentTarget;
         if(target){
-            const wrapper = target.closest('.calendar-display');
+            const wrapper = target.closest('.fsc-calendar-display');
             if(wrapper){
                 const calendarId = wrapper.getAttribute('data-calid');
-                if(calendarId && this.activeCalendar.id !== calendarId){
-                    CalManager.setActiveCalendar(calendarId);
-                }
-            }
-        }
-    }
-
-    public changeVisibleCalendar(e: Event){
-        const target = <HTMLElement>e.currentTarget;
-        if(target){
-            const wrapper = target.closest('.calendar-display');
-            if(wrapper){
-                const calendarId = wrapper.getAttribute('data-calid');
-                if(calendarId && this.visibleCalendar.id !== calendarId){
-                    CalManager.setVisibleCalendar(calendarId);
+                if(calendarId){
+                    if(!visible && this.activeCalendar.id !== calendarId){
+                        CalManager.setActiveCalendar(calendarId);
+                    } else if(visible && this.visibleCalendar.id !== calendarId){
+                        CalManager.setVisibleCalendar(calendarId);
+                    }
                 }
             }
         }
@@ -588,7 +553,7 @@ export default class MainApp extends Application{
     
     /**
      * Click event when a users clicks on a day
-     * @param {SCRenderer.CalendarOptions} options The renderer options for the calendar who's day was clicked
+     * @param options The renderer options for the calendar who's day was clicked
      */
     public dayClick(options: SimpleCalendar.Renderer.CalendarOptions){
         this.toggleUnitSelector(true);
@@ -619,18 +584,8 @@ export default class MainApp extends Application{
      * @param {Event} e The click event
      */
     public todayClick(e: Event) {
-        const selectedMonth = this.visibleCalendar.year.getMonth('selected');
-        if(selectedMonth){
-            selectedMonth.selected = false;
-            const selectedDay = selectedMonth.getDay('selected');
-            if(selectedDay){
-                selectedDay.selected = false;
-            }
-        }
-        const visibleMonth = this.visibleCalendar.year.getMonth('visible');
-        if(visibleMonth){
-            visibleMonth.visible = false;
-        }
+        this.visibleCalendar.year.resetMonths('selected');
+        this.visibleCalendar.year.resetMonths('visible');
         const currentMonth = this.visibleCalendar.year.getMonth();
         if(currentMonth){
             const currentDay = currentMonth.getDay();
@@ -668,9 +623,8 @@ export default class MainApp extends Application{
                     if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                         GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
                     } else {
-                        const socketData = <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDateTime>{interval: interval};
-                        Logger.debug(`Sending Date/Time Change to Primary GM`);
-                        GameSockets.emit({type: SocketTypes.dateTime, data: socketData}).catch(Logger.error);
+                        const socketData = {set: false, interval: interval};
+                        GameSockets.emit({type: SocketTypes.dateTimeChange, data: socketData}).catch(Logger.error);
                     }
                 } else {
                     this.activeCalendar.changeDateTime(interval, false);
@@ -693,7 +647,6 @@ export default class MainApp extends Application{
             const selectedMonthDayIndex = this.activeCalendar.year.getMonthAndDayIndex('selected');
             const selectedMonth = this.activeCalendar.year.getMonth('selected');
             if(selectedMonth){
-                Logger.debug(`Updating current date to selected day.`);
                 validSelection = true;
                 if(selectedYear !== this.activeCalendar.year.visibleYear || !selectedMonth.visible){
                     const utsd = new Dialog({
@@ -736,9 +689,8 @@ export default class MainApp extends Application{
             if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                 GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
             } else {
-                const socketData = <SimpleCalendar.SimpleCalendarSocket.SimpleCalendarSocketDate>{year: year, month: monthIndex, day: dayIndex};
-                Logger.debug(`Sending Date Change to Primary GM: ${socketData.year}, ${socketData.month}, ${socketData.day}`);
-                GameSockets.emit({type: SocketTypes.date, data: socketData}).catch(Logger.error);
+                const socketData = {set: true, interval: {year: year, month: monthIndex, day: dayIndex}};
+                GameSockets.emit({type: SocketTypes.dateTimeChange, data: socketData}).catch(Logger.error);
             }
         } else {
             this.activeCalendar.year.numericRepresentation = year;
@@ -762,8 +714,7 @@ export default class MainApp extends Application{
             this.search.term = searchInput.value;
             this.search.results = [];
             if(this.search.term){
-
-                this.search.results = this.visibleCalendar.searchNotes(this.search.term, this.search.options.fields);
+                this.search.results = NManager.searchNotes(this.visibleCalendar.id, this.search.term, this.search.options.fields);
             }
             this.updateApp();
         }
@@ -795,7 +746,7 @@ export default class MainApp extends Application{
      * @param forceClose
      */
     public searchOptionsToggle(forceClose: boolean = false){
-        let so = document.querySelector(`.sc-note-search .search-options`);
+        let so = document.querySelector(`.fsc-note-search .fsc-search-options`);
         if(so){
             this.uiElementStates.searchOptionsOpen = animateElement(so, 500, forceClose);
         }
@@ -810,7 +761,7 @@ export default class MainApp extends Application{
         if(element){
             const field = element.getAttribute('data-field');
             if(field && this.search.options.fields.hasOwnProperty(field)){
-                this.search.options.fields[field as keyof SimpleCalendar.SearchOptions.Fields] = element.checked;
+                this.search.options.fields[field as keyof SimpleCalendar.Search.OptionsFields] = element.checked;
             }
         }
     }
@@ -832,7 +783,6 @@ export default class MainApp extends Application{
         if(!(<Game>game).users?.find(u => u.isGM && u.active)){
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
         } else {
-            //SC.openNewNoteApp();
             NManager.createNote(this.visibleCalendar, 'New Note').catch(Logger.error);
         }
     }
@@ -845,7 +795,7 @@ export default class MainApp extends Application{
         e.stopPropagation();
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
         if(dataIndex){
-            //TODO: Open up the relevant note here
+            NManager.showNote(dataIndex);
         } else {
             Logger.error('No Data index on note element found.');
         }
@@ -935,7 +885,16 @@ export default class MainApp extends Application{
                     noteIDOrder.push(cid);
                 }
             }
-            this.visibleCalendar.reorderNotesOnDay(noteIDOrder);
+            if(!GameSettings.IsGm() || !SC.primary){
+                if(!(<Game>game).users?.find(u => u.isGM && u.active)){
+                    GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
+                } else {
+                    const socketData = {calendarId: this.visibleCalendar.id, date: this.visibleCalendar.getDateTime(), newOrder: noteIDOrder};
+                    GameSockets.emit({type: SocketTypes.noteUpdate, data: socketData}).catch(Logger.error);
+                }
+            } else {
+                NManager.orderNotesOnDay(this.visibleCalendar.id, noteIDOrder, this.visibleCalendar.getDateTime()).catch(Logger.error);
+            }
         }
     }
 

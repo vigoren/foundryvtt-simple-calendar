@@ -1,25 +1,43 @@
-import {ModuleName, NoteRepeat, NotesDirectoryName} from "../../constants";
-import { NoteSheet } from "./note-sheet";
+import {ModuleName, NoteRepeat, NotesDirectoryName, SettingNames, SocketTypes} from "../../constants";
+import {NoteSheet} from "./note-sheet";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import Calendar from "../calendar";
 import NoteStub from "./note-stub";
-import {NManager} from "../index";
+import {CalManager, MainApplication, NManager} from "../index";
+import GameSockets from "../foundry-interfacing/game-sockets";
+import {Logger} from "../logging";
+import {BM25Levenshtein} from "../utilities/search";
 
 
+/**
+ * Manages all interactions with notes within Simple Calendar
+ */
 export default class NoteManager{
 
+    /**
+     * A dictionary of notes organized by calendar ID
+     * @private
+     */
     private notes: Record<string, NoteStub[]> = {};
 
+    /**
+     * The journal folder where all notes are stored
+     */
     public noteDirectory: Folder | undefined;
 
+    /**
+     * Initializes the note manager
+     */
     public async initialize(){
         this.registerNoteSheets();
         await this.createJournalDirectory();
         this.loadNotes();
     }
 
+    /**
+     * Registers the Simple Calendar note sheet with foundry
+     */
     public registerNoteSheets(){
-        //@ts-ignore
         Journal.registerSheet(ModuleName, NoteSheet, {
             types: ['base'],
             makeDefault: false,
@@ -27,6 +45,9 @@ export default class NoteManager{
         });
     }
 
+    /**
+     * Checks to see if the journal director for SC notes exists and creates it if it does not
+     */
     public async createJournalDirectory(){
         const journalDirectory = (<Game>game).journal?.directory;
         if(journalDirectory){
@@ -53,8 +74,7 @@ export default class NoteManager{
             repeats: NoteRepeat.Never,
             order: 0,
             categories: [],
-            remindUsers: [],
-            reminderSent: false
+            remindUsers: []
         };
 
         const perms: Partial<Record<string, 0 | 1 | 2 | 3>> = {};
@@ -74,8 +94,27 @@ export default class NoteManager{
             permission: perms
         });
         if(newJE){
+            this.addNoteStub(newJE, calendar.id);
             const sheet = new NoteSheet(newJE);
             sheet.render(true, {}, true);
+            MainApplication.updateApp();
+        }
+    }
+
+    public addNoteStub(journalEntry: JournalEntry, calendarId: string){
+        if(!this.notes.hasOwnProperty(calendarId)){
+            this.notes[calendarId] = [];
+        }
+        this.notes[calendarId].push(new NoteStub(journalEntry.id || ''));
+    }
+
+    public removeNoteStub(journalEntry: JournalEntry){
+        const noteData = <SimpleCalendar.NoteData>journalEntry.getFlag(ModuleName, 'noteData');
+        if(noteData && this.notes.hasOwnProperty(noteData.calendarId)){
+            const index = this.notes[noteData.calendarId].findIndex(n => n.entryId === journalEntry.id);
+            if(index >= 0){
+                this.notes[noteData.calendarId].splice(index, 1);
+            }
         }
     }
 
@@ -85,17 +124,35 @@ export default class NoteManager{
             for(let i = 0; i < this.noteDirectory.contents.length; i++){
                 const je = <JournalEntry>this.noteDirectory.contents[i];
                 const noteData = <SimpleCalendar.NoteData>je.getFlag(ModuleName, 'noteData');
-                if(!this.notes.hasOwnProperty(noteData.calendarId)){
-                    this.notes[noteData.calendarId] = [];
-                }
-                this.notes[noteData.calendarId].push(new NoteStub(je.id || '', je.name || ''))
+                this.addNoteStub(je, noteData.calendarId);
             }
         }
     }
 
+    public showNote(journalId: string){
+        const journalEntry = (<Game>game).journal?.get(journalId);
+        if(journalEntry && journalEntry.sheet){
+            if(journalEntry.sheet.rendered){
+                journalEntry.sheet.bringToTop();
+            } else {
+                journalEntry.sheet.render(true);
+            }
+        }
+    }
+
+    public getNoteStub(journalEntry: JournalEntry): NoteStub | undefined{
+        const noteData = <SimpleCalendar.NoteData>journalEntry.getFlag(ModuleName, 'noteData');
+        if(noteData && this.notes.hasOwnProperty(noteData.calendarId)){
+            return this.notes[noteData.calendarId].find(n => n.entryId === journalEntry.id);
+        }
+        return undefined;
+    }
+
     public getNotesForDay(calendarId: string, year: number, monthIndex: number, dayIndex: number){
         const calendarNotes = this.notes[calendarId] || [];
-        return calendarNotes.filter(n => n.isVisible(calendarId, year, monthIndex, dayIndex));
+        const rawNotes = calendarNotes.filter(n => n.isVisible(calendarId, year, monthIndex, dayIndex));
+        rawNotes.sort(NoteManager.dayNoteSort);
+        return rawNotes;
     }
 
     public getNoteCountsForDay(calendarId: string, year: number, monthIndex: number, dayIndex: number){
@@ -110,6 +167,107 @@ export default class NoteManager{
             } else {
                 results.count++;
             }
+        }
+        return results;
+    }
+
+    public async orderNotesOnDay(calendarId: string, newOrderedIds: string[], day: SimpleCalendar.DateTime){
+        const dayNotes = this.getNotesForDay(calendarId, day.year, day.month, day.day);
+        for(let i = 0; i < newOrderedIds.length; i++){
+            const n = dayNotes.find(n => n.entryId === newOrderedIds[i]);
+            if(n){
+                await n.setOrder(i);
+            }
+        }
+        await GameSockets.emit({type: SocketTypes.mainAppUpdate, data:{}});
+
+    }
+
+    /**
+     * Sort function for the list of notes on a day. Sorts by order, then hour then minute
+     * @param {NoteStub} a The first note to compare
+     * @param {NoteStub} b The second noe to compare
+     * @private
+     */
+    private static dayNoteSort(a: NoteStub, b: NoteStub): number {
+        const nda = a.noteData, ndb = b.noteData;
+        if(nda && ndb){
+            return nda.order - ndb.order || nda.startDate.hour - ndb.startDate.hour || nda.startDate.minute - ndb.startDate.minute;
+        }
+        return 0;
+    }
+
+    public checkNoteReminders(calendarId: string, initialLoad: boolean = false){
+        const calendar = CalManager.getCalendar(calendarId);
+        if(calendar && (!initialLoad || (initialLoad && calendar.generalSettings.postNoteRemindersOnFoundryLoad)) && this.notes[calendarId]){
+            const noteList = this.notes[calendarId];
+            const currentDate = calendar.getCurrentDate();
+            for(let i = 0; i < noteList.length; i++){
+                const note = noteList[i];
+                //Current user wants to be reminded of this note and the note is visible on this day
+                if(!note.reminderSent && note.userReminderRegistered && note.isVisible(calendarId, currentDate.year, currentDate.month, currentDate.day)){
+                    const nd = note.noteData;
+                    if(nd){
+                        let sendReminder = nd.allDay;
+                        //If this is an all day event
+                        if(!nd.allDay){
+                            const nSeconds = (nd.startDate.hour * calendar.time.minutesInHour * calendar.time.secondsInMinute) + (nd.startDate.minute * calendar.time.secondsInMinute) + nd.startDate.seconds;
+                            sendReminder = currentDate.seconds >= nSeconds;
+                        }
+                        if(sendReminder){
+                            note.reminderSent = true;
+                            ChatMessage.create({
+                                speaker: {alias: "Simple Calendar Reminder"},
+                                whisper: [GameSettings.UserID()],
+                                content: `<div class='simple-calendar ${GameSettings.GetStringSettings(SettingNames.Theme)}'><h2>${note.title}</h2><div style="display: flex;"><div class="note-category"><span class="fa fa-calendar"></span> ${note.fullDisplayDate}</div></div>${note.content}</div>`
+                            }).catch(Logger.error);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public resetNoteReminderSent(calendarId: string){
+        //TODO: Look into calling this so repeating notes can be called again
+        const noteList = this.notes[calendarId];
+        if(noteList){
+            for(let i = 0; i < noteList.length; i++){
+                noteList[i].reminderSent = false;
+            }
+        }
+    }
+
+    public searchNotes(calendarId: string, term: string, options: SimpleCalendar.Search.OptionsFields):  NoteStub[]{
+        const noteList = this.notes[calendarId];
+        let results: NoteStub[] = [];
+        if(noteList){
+            //prepare the note list for searching
+            const nl: SimpleCalendar.Search.Document[] = [];
+            for(let i = 0; i < noteList.length; i++){
+                const docCont: string[] = [];
+                if(options.title){
+                    docCont.push(noteList[i].title);
+                }
+                if(options.details){
+                    let tmp = document.createElement("DIV");
+                    tmp.innerHTML = noteList[i].content;
+                    docCont.push((tmp.textContent || tmp.innerText || "").replace(/\r?\n|\r/g, ' '));
+                }
+                if(options.date){
+                    docCont.push(noteList[i].fullDisplayDate);
+                }
+                if(options.author){
+                    docCont.push(noteList[i].authorDisplay?.name || '');
+                }
+                if(options.categories){
+                    docCont.push(noteList[i].categories.map(c => c.name).join(', '));
+                }
+                nl.push({id: noteList[i].entryId, content: docCont});
+            }
+            const bm25 = new BM25Levenshtein(nl);
+            const r = bm25.search(term);
+            results = noteList.filter(ns => r.indexOf(ns.entryId) !== -1);
         }
         return results;
     }

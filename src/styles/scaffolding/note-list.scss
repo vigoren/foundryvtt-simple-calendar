@@ -1,9 +1,9 @@
 @import "../variables";
 
-.note-list {
+.fsc-note-list {
   overflow-x: hidden;
   overflow-y: auto;
-  .note{
+  .fsc-note{
     padding: 0.25rem 0.5rem;
     display: flex;
     flex-direction: row;
@@ -11,19 +11,20 @@
     flex-wrap: nowrap;
     border-bottom: 1px solid;
 
-    .note-details-wrapper{
+    .fsc-note-details-wrapper{
       display: block;
-      .note-title{
+      .fsc-note-title{
         margin: 0 0 0.5rem;
         font-size: 1.25rem;
+        word-break: break-word;
       }
 
-      .note-details{
+      .fsc-note-details{
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
 
-        .note-icon{
+        .fsc-note-icon{
           span{
             margin-right: 0;
           }
@@ -31,7 +32,7 @@
       }
     }
 
-    .sorting-dragger{
+    .fsc-sorting-dragger{
       padding: 0.5rem;
       margin: auto 0;
       border: 1px solid;
@@ -43,8 +44,8 @@
       cursor: pointer;
     }
 
-    &.drag-active{
-      .note-details-wrapper{
+    &.fsc-drag-active{
+      .fsc-note-details-wrapper{
         visibility: hidden;
       }
     }
