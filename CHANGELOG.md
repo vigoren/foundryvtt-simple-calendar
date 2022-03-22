@@ -16,6 +16,8 @@ I have tried to make sure that the light and dark themes are still easily usable
 
 #### Main Calendar
 
+![Dark Theme](./docs/images/sc-v2-themes.gif)
+
 This section of the module has been 100% redesigned so that the full version is much more compact and easy to use. It features:
 
 - A refreshed calendar display.
@@ -31,11 +33,15 @@ This section of the module has been 100% redesigned so that the full version is 
 
 #### Compact View
 
+![Dark Theme](./docs/images/sc-v2-themes-comp.gif)
+
 The compact view has also been completely redesigned to be more compact while still showing the same amount of information and functionality as before. It is now just slightly larger than the old calendar/weather widget.
 
 The button in the header to switch between compact and full views has been removed. To switch between the compact and full views simply double-click on the title bar.
 
 #### Configuration Dialog
+
+![Dark Theme](./docs/images/sc-v2-themes-config.gif)
 
 The configuration dialog has also been completely redesigned to support multiple calendars and hopefully reduce some confusion around configuring a calendar. It features:
 
@@ -46,7 +52,12 @@ The configuration dialog has also been completely redesigned to support multiple
 
 #### Notes Dialog
 
-The note dialog has been redesigned as well to match the look and feel of the other dialogs
+![Dark Theme](./docs/images/sc-v2-themes-notes.gif)
+
+The note dialog has been redesigned as well to match the look and feel of the other dialogs!
+
+- A refreshed display for editing notes
+- A refreshed display for viewing notes
 
 ### Multiple Calendar Support
 
@@ -156,6 +167,7 @@ It will also offer the option to remove the old data, to clean up the FoundryVTT
   - This option has been added to the unit type selector. 
   - The number of seconds this changes the time by is based on "Seconds per Combat Round" setting.
 - Added a new note setting "Send Reminders On Login", if enabled when a player logs in any note reminder on the current day will be PM'd to them. This replaced to default of doing that step no matter what.
+- Adjusted how moon phase icons are displayed. If a day has more than 2 moon phases showing only the first phase will be down with a down arrow. Hovering over that moon phase/arrow will display a popup dialog that shows the phase for every moon on that day.
 
 ### Bug Fixes
 
@@ -189,6 +201,12 @@ None of these changes should be breaking to existing implementations using the A
   - This parameter can be used to target a specific calendar for the API function to update/get data from. If the parameter is not specified then the current active calendar will be used.
   - This means that current systems/modules/macros that use the API will not need to update their function calls unless they want to add the ability to target calendars that are not the one currently being used.
 
+#### Note Support
+
+- Added a function `SimpleCalendar.api.getNotes()` that returns all notes that the current player can see. Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
+- Added a function `SimpleCalendar.api.getNotesForDay(year, month, day)` that returns all notes that the current player can see for the date specified. . Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
+- Added a function `SimpleCalendar.api.addNote()` that will add a new note of the specified content to the specified date of the specified calendar. This function will return the newly created JournalEntry that contains the notes' data.
+
 #### Handlebar Helpers
 
 - Removed 2 Handlebar helpers, day-has-note and day-moon-phase. These were used internally and are no longer required.
@@ -196,9 +214,6 @@ None of these changes should be breaking to existing implementations using the A
   - These calendars support basic interactivity, change which month is being viewed and selecting a day when it is clicked, with the option to pass in your own function to extend this functionality.
   - These calendars can use the default Simple Calendar styling or be customized.
 - Added a new function `SimpleCalendar.api.activateFullCalendarListeners()` ([docs](./docs/API.md#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick)) that is used to activate all the basic interactivity for calendars rendered with the [sc-full-calendar](./docs/API.md#sc-full-calendar) Handlebar helper.
-- Added a new Handlebar helper [sc-date-selector](./docs/API.md#sc-date-selector) that can be used to render the custom date selector interface that Simple Calendar uses for picking the date(s) for notes, seasons starting month and seasons sunrise/sunset times.
-- Added a new section `SimpleCalendar.api.DateSelector` ([docs](./docs/API.md#simplecalendarapidateselector)) that contains functions for creating, removing and enabling interactivity for date selectors.
-
 #### Removal of Depreciated Items
 
 - With the release of Foundry v9 depreciated properties from the [Date Object](https://simplecalendar.info/interfaces/SimpleCalendarInterfaces.DateData.html) have been removed:

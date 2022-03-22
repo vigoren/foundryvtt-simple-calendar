@@ -7,6 +7,7 @@ import {CalManager, MainApplication, NManager} from "../index";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import {Logger} from "../logging";
 import {BM25Levenshtein} from "../utilities/search";
+import {render} from "sass";
 
 
 /**
@@ -64,7 +65,7 @@ export default class NoteManager{
         }
     }
 
-    public async createNote(calendar: Calendar,  title: string){
+    public async addNewNote(calendar: Calendar, title: string){
         const dateTime = calendar.getDateTime();
         const noteData: SimpleCalendar.NoteData = {
             calendarId: calendar.id,
@@ -76,13 +77,16 @@ export default class NoteManager{
             categories: [],
             remindUsers: []
         };
+        await this.createNote(title, '', noteData, calendar);
+    }
 
+    public async createNote(title: string, content: string, noteData: SimpleCalendar.NoteData, calendar: Calendar, renderSheet: boolean = true): Promise<StoredDocument<JournalEntry> | null>{
         const perms: Partial<Record<string, 0 | 1 | 2 | 3>> = {};
         (<Game>game).users?.forEach(u => perms[u.id] = (<Game>game).user?.id === u.id? 3 : calendar.generalSettings.noteDefaultVisibility? 2 : 0);
         const newJE = await JournalEntry.create({
             name: title,
             folder: this.noteDirectory?.id,
-            content: '',
+            content: content,
             flags: {
                 core: {
                     sheetClass: `${ModuleName}.${NoteSheet.name}`
@@ -95,10 +99,14 @@ export default class NoteManager{
         });
         if(newJE){
             this.addNoteStub(newJE, calendar.id);
-            const sheet = new NoteSheet(newJE);
-            sheet.render(true, {}, true);
+            if(renderSheet){
+                const sheet = new NoteSheet(newJE);
+                sheet.render(true, {}, true);
+            }
             MainApplication.updateApp();
+            return newJE;
         }
+        return null;
     }
 
     public addNoteStub(journalEntry: JournalEntry, calendarId: string){
@@ -146,6 +154,11 @@ export default class NoteManager{
             return this.notes[noteData.calendarId].find(n => n.entryId === journalEntry.id);
         }
         return undefined;
+    }
+
+    public getNotes(calendarId: string){
+        const calendarNotes = this.notes[calendarId] || [];
+        return calendarNotes.filter(n => n.canUserView());
     }
 
     public getNotesForDay(calendarId: string, year: number, monthIndex: number, dayIndex: number){
@@ -245,25 +258,27 @@ export default class NoteManager{
             //prepare the note list for searching
             const nl: SimpleCalendar.Search.Document[] = [];
             for(let i = 0; i < noteList.length; i++){
-                const docCont: string[] = [];
-                if(options.title){
-                    docCont.push(noteList[i].title);
+                if(noteList[i].canUserView()){
+                    const docCont: string[] = [];
+                    if(options.title){
+                        docCont.push(noteList[i].title);
+                    }
+                    if(options.details){
+                        let tmp = document.createElement("DIV");
+                        tmp.innerHTML = noteList[i].content;
+                        docCont.push((tmp.textContent || tmp.innerText || "").replace(/\r?\n|\r/g, ' '));
+                    }
+                    if(options.date){
+                        docCont.push(noteList[i].fullDisplayDate);
+                    }
+                    if(options.author){
+                        docCont.push(noteList[i].authorDisplay?.name || '');
+                    }
+                    if(options.categories){
+                        docCont.push(noteList[i].categories.map(c => c.name).join(', '));
+                    }
+                    nl.push({id: noteList[i].entryId, content: docCont});
                 }
-                if(options.details){
-                    let tmp = document.createElement("DIV");
-                    tmp.innerHTML = noteList[i].content;
-                    docCont.push((tmp.textContent || tmp.innerText || "").replace(/\r?\n|\r/g, ' '));
-                }
-                if(options.date){
-                    docCont.push(noteList[i].fullDisplayDate);
-                }
-                if(options.author){
-                    docCont.push(noteList[i].authorDisplay?.name || '');
-                }
-                if(options.categories){
-                    docCont.push(noteList[i].categories.map(c => c.name).join(', '));
-                }
-                nl.push({id: noteList[i].entryId, content: docCont});
             }
             const bm25 = new BM25Levenshtein(nl);
             const r = bm25.search(term);

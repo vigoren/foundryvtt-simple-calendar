@@ -96,12 +96,15 @@ export enum PredefinedCalendars{
 
 /**
  * The different intervals a note can repeat
- * @internal
  */
 export enum NoteRepeat {
+    /** The note will never repeat */
     Never,
+    /** The note will repeat every week */
     Weekly,
+    /** The note will repeat every month on the same days */
     Monthly,
+    /** The note will repeat every year on the same days */
     Yearly
 }
 

@@ -33,8 +33,7 @@ updateNManager(new NoteManager());
 //Expose the api
 (window as any).SimpleCalendar = {
     api: API,
-    Hooks: SimpleCalendarHooks,
-    test: NManager.createNote
+    Hooks: SimpleCalendarHooks
 };
 
 Hooks.on('init', () => {

@@ -152,7 +152,7 @@ export default class CalendarFull{
                         }
                         html += (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).name;
                         if(options.showMoonPhases){
-                            html += `<div class="fsc-moons">${CalendarFull.MoonPhaseIcons(calendar, vYear, vMonthIndex, dayIndex)}</div>`;
+                            html += `<div class="fsc-moons">${CalendarFull.MoonPhaseIcons(calendar, vYear, vMonthIndex, dayIndex, x !== 0 && x === weeks[i].length - 1, i === weeks.length - 1)}</div>`;
                         }
                         html += '</div>';
                     } else {
@@ -382,16 +382,24 @@ export default class CalendarFull{
      * @param {number} visibleYear
      * @param {number} visibleMonthIndex
      * @param dayIndex The day to check
+     * @param lastDayOfWeek If this day is the last day of the week
+     * @param lastWeekOfMonth if this is the last week of the month
      */
-    public static MoonPhaseIcons(calendar: Calendar, visibleYear: number, visibleMonthIndex: number, dayIndex: number): string {
-        let html = ''
+    public static MoonPhaseIcons(calendar: Calendar, visibleYear: number, visibleMonthIndex: number, dayIndex: number, lastDayOfWeek: boolean = false, lastWeekOfMonth: boolean = false): string {
+        let html;
+        const moonHtml: string[] = [];
         for(let i = 0; i < calendar.moons.length; i++){
             const mp = calendar.moons[i].getDateMoonPhase(calendar.year, visibleYear, visibleMonthIndex, dayIndex);
             const d = calendar.year.months[visibleMonthIndex].days[dayIndex];
             if(mp && (mp.singleDay || d.selected || d.current)){
                 let moon = GetIcon(mp.icon, "#000000", calendar.moons[i].color);
-                html += `<span class="fsc-moon-phase ${mp.icon}" title="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`;
+                moonHtml.push(`<span class="fsc-moon-phase ${mp.icon}" title="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`)
             }
+        }
+        if(moonHtml.length < 3){
+            html = moonHtml.join('');
+        } else {
+            html = `<div class="fsc-moon-group-wrapper">${moonHtml[0]}<span class="fsc-moon-phase fa fa-caret-down"></span><div class="fsc-moon-group ${lastDayOfWeek? "fsc-left" : "fsc-right"} ${lastWeekOfMonth? "fsc-bottom" : "fsc-top"}">${moonHtml.join('')}</div></div>`;
         }
         return html;
     }

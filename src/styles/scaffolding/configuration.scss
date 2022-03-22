@@ -1,9 +1,9 @@
 @import "../variables";
-#fsc-simple-calendar-configuration-application-form{
+.fsc-simple-calendar-configuration{
   &.window-app{
     .window-content{
-      overflow-x: hidden;
-      overflow-y: hidden;
+      overflow-x: hidden!important;
+      overflow-y: hidden!important;
     }
   }
 }

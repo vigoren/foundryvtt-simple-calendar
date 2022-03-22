@@ -45,7 +45,45 @@
         flex: 0;
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        position: relative;
+
+        &:hover {
+          .fsc-moon-group-wrapper {
+            .fsc-moon-group {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+              position: absolute;
+              top: -5px;
+              left: -6px;
+              z-index: 100;
+              border: 1px solid;
+              border-radius: 5px;
+              padding: 0.25rem;
+              width: 55px;
+              .fsc-moon-phase{
+                margin-bottom: 2px;
+              }
+            }
+          }
+        }
+
+        .fsc-moon-group-wrapper{
+          display: flex;
+          margin-right: -7px;
+          .fa{
+            font-size: 11px;
+            margin-left: -6px;
+            margin-top: 3px;
+            z-index: 1;
+
+          }
+          .fsc-moon-group{
+            display: none;
+          }
+        }
+
         svg{
           height: 15px;
           width: 15px;

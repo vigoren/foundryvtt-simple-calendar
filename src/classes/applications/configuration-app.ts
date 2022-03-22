@@ -6,11 +6,13 @@ import {
     ConfigurationDateSelectors,
     GameWorldTimeIntegrations,
     Icons,
-    LeapYearRules, ModuleName,
+    LeapYearRules,
+    ModuleName,
     MoonYearResetOptions,
     PredefinedCalendars,
     SettingNames,
-    Themes, YearNamingRules
+    Themes,
+    YearNamingRules
 } from "../../constants";
 import Season from "../calendar/season";
 import Moon from "../calendar/moon";
@@ -97,7 +99,7 @@ export default class ConfigurationApp extends FormApplication {
             return;
         } else {
             options = options? options : {};
-            options.classes = ["simple-calendar", GameSettings.GetStringSettings(SettingNames.Theme)];
+            options.classes = ["simple-calendar", "fsc-simple-calendar-configuration", GameSettings.GetStringSettings(SettingNames.Theme)];
             return super.render(force, options);
         }
     }
@@ -131,7 +133,7 @@ export default class ConfigurationApp extends FormApplication {
         options.template = "modules/foundryvtt-simple-calendar/templates/configuration.html";
         options.title = "FSC.Configuration.Title";
         options.id = this.appWindowId;
-        options.classes = ["simple-calendar"];
+        options.classes = ["simple-calendar", "fsc-simple-calendar-configuration"];
         options.resizable = true;
         options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
         options.height = 700;
@@ -1142,8 +1144,8 @@ export default class ConfigurationApp extends FormApplication {
 
     /**
      * When the save button is clicked, apply those changes to the game settings and re-load the calendars across all players
-     * @param {boolean} close If to close the dialog after save
-     * @param {Event} e The click event
+     * @param close If to close the dialog after save
+     * @param e The click event
      */
     public async saveClick(close: boolean, e: Event) {
         e.preventDefault();
@@ -1152,8 +1154,8 @@ export default class ConfigurationApp extends FormApplication {
 
     /**
      * Saves the current settings
-     * @param {boolean} close If to close the application window after saving
-     * @param {boolean} updateFromForm If to update the data model from the form content
+     * @param close If to close the application window after saving
+     * @param updateFromForm If to update the data model from the form content
      */
     public async save(close: boolean, updateFromForm: boolean = true){
         if(updateFromForm){

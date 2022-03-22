@@ -141,9 +141,7 @@ describe('Simple Calendar Class Tests', () => {
     test('Process Socket', async () => {
         const d: SimpleCalendarSocket.Data = {
             type: SocketTypes.clock,
-            data: {
-                timeKeeperStatus: TimeKeeperStatus.Stopped
-            }
+            data: TimeKeeperStatus.Stopped
         };
         //@ts-ignore
         MainApp.instance.element = {

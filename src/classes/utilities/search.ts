@@ -231,7 +231,7 @@ export class BM25Levenshtein {
                     //Check to see if there is a partial match
                     const partialScore = Object.keys(this.documents[k].terms).filter(t => t.indexOf(queryTerm) !== -1).length;
                     //Do a fuzzy check to see if there are additional matches
-                    const fuzzyScore = Object.keys(this.documents[k].terms).map(t => {return this.levenshteinDistance(t, queryTerm)/(t.length > queryTerm.length? queryTerm.length : t.length)}).filter(a => a < 1).reduce((s, a) => s+(1-a), 0);
+                    const fuzzyScore = Object.keys(this.documents[k].terms).map(t => {return this.levenshteinDistance(t, queryTerm)/3}).filter(a => a < 1).reduce((s, a) => s+(1-a), 0);
                     this.documents[k].score += (partialScore * 0.00125) + (fuzzyScore * 0.0025);
                 }
             }

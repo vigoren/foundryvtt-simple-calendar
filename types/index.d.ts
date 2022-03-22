@@ -27,6 +27,7 @@ declare global{
             export {YearNamingRules};
             export {PresetTimeOfDay};
             export {GameWorldTimeIntegrations};
+            export {NoteRepeat};
 
             /**
              * This function is used to activate event listeners for calendars displayed with the {@link HandlebarHelpers.sc-full-calendar}.
@@ -42,6 +43,28 @@ declare global{
              * ```
              */
             export function activateFullCalendarListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null): void
+
+            /**
+             * This function adds a new note to the calendar
+             *
+             * @param title The title of the new note
+             * @param content The contents of the new note
+             * @param starDate The date and time the note starts
+             * @param endDate The date and time the note ends (can be the same as the start date)
+             * @param allDay If the note lasts all day or if it has a specific time duration. Whether to ignore the time portion of the start and end dates.
+             * @param repeats If the note repeats and how often it does
+             * @param categories A list of note categories to assign to this note
+             * @param calendarId Optional parameter to specify the ID of the calendar to add the note too. If not provided the current active calendar will be used.
+             *
+             * @returns The newly created JournalEntry that contains the note data, or null if there was an error encountered.
+             *
+             * @example
+             * ```javascript
+             * const newJournal = await SimpleCalendar.api.addNote('Christmas Day','Presents!', {year: 2022, month: 11, day: 24, hour: 0, minute: 0, seconds: 0}, {year: 2022, month: 11, day: 24, hour: 0, minute: 0, seconds: 0}, true, SimpleCalendar.api.NoteRepeat.Yearly, ['Holiday']);
+             * // Will create a new note on Christmas day of 2022 that lasts all day and repeats yearly.
+             * ```
+             */
+            export async function addNote(title: string, content: string, starDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime, allDay: boolean, repeats: NoteRepeat, categories: string[], calendarId: string = 'active'): Promise<StoredDocument<JournalEntry> | null>
 
             /**
              * Advance the date and time to match the next preset time.
@@ -735,6 +758,38 @@ declare global{
              * ```
              */
             export function getLeapYearConfiguration(calendarId: string = 'active'): SimpleCalendar.LeapYearData | null
+
+            /**
+             * Gets all notes that the current user is able to see for the specified calendar.
+             *
+             * @param calendarId Optional parameter to specify the ID of the calendar to get the notes from. If not provided the current active calendar will be used.
+             *
+             * @returns A list of [JournalEntries](https://foundryvtt.com/api/JournalEntry.html) that contain the note data.
+             *
+             * @example
+             * ```javascript
+             * // Returns an array of JournalEntry objects
+             * SimpleCalendar.api.getNotes();
+             *```
+             */
+            export function getNotes(calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[]
+
+            /**
+             * Gets all notes that the current user is able to see for the specified date from the specified calendar.
+             * @param year The year of the date to get the notes for.
+             * @param month The index of the month to get the notes for.
+             * @param day The index of the day to get the notes for.
+             * @param calendarId Optional parameter to specify the ID of the calendar to get the notes from. If not provided the current active calendar will be used.
+             *
+             * @returns A list of [JournalEntries](https://foundryvtt.com/api/JournalEntry.html)  that contain the note data.
+             *
+             * @example
+             * ```javascript
+             * // Returns an array of JournalEntry objects
+             * SimpleCalendar.api.getNotesForDay(2022, 11, 24);
+             * ```
+             */
+            export function getNotesForDay(year: number, month: number, day: number, calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[]
 
             /**
              * Get the details about how time is configured for the specified calendar.
@@ -2264,7 +2319,7 @@ declare global{
          *
          * **Examples**:
          */
-        "sc-date-selector",
+        //"sc-date-selector",
         /**
          * This handlebar helper is used to generate the HTML for displaying a clock view for the current time of the specified calendar.
          *

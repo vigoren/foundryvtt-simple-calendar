@@ -22,6 +22,7 @@ export class NoteSheet extends JournalSheet{
 
     private journalData = {
         name: '',
+        content: '',
         flags: <Record<string,any>>{},
         permission: <Partial<Record<string, 0 | 1 | 2 | 3>>>{}
     };
@@ -65,6 +66,7 @@ export class NoteSheet extends JournalSheet{
 
     copyData(){
         this.journalData.name = this.object.data.name;
+        this.journalData.content = this.object.data.content;
         this.journalData.flags = mergeObject({}, this.object.data.flags);
         this.journalData.permission = mergeObject({}, this.object.data.permission);
     }
@@ -307,6 +309,9 @@ export class NoteSheet extends JournalSheet{
                     this.journalData.permission [usersWithView[i]] = 3;
                 }
             }
+            if(this.editors['content']){
+                this.journalData.content = this.editors['content'].mce?.getContent() || '';
+            }
         }
     }
 
@@ -352,6 +357,7 @@ export class NoteSheet extends JournalSheet{
         e.preventDefault();
         await this.writeInputValuesToObjects();
         await (<JournalEntry>this.object).update(this.journalData);
+        //await this.saveEditor('content'); //TODO: This breaks how we save things, need to fix
         MainApplication.updateApp();
         this.resized = false;
         this.editMode = false;

@@ -59,7 +59,7 @@ export default class MainApp extends Application{
         dateTimeUnitText: 'FSC.Day',
         searchOptionsOpen: false,
         calendarListOpen: false,
-
+        primaryCheckRunning: true
     };
 
     search = {
@@ -783,7 +783,7 @@ export default class MainApp extends Application{
         if(!(<Game>game).users?.find(u => u.isGM && u.active)){
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
         } else {
-            NManager.createNote(this.visibleCalendar, 'New Note').catch(Logger.error);
+            NManager.addNewNote(this.visibleCalendar, 'New Note').catch(Logger.error);
         }
     }
 

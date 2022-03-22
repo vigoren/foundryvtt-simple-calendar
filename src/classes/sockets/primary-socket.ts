@@ -1,7 +1,6 @@
 import SocketBase from "./socket-base";
 import {SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {Logger} from "../logging";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import {Hook} from "../api/hook";
 import {CalManager, MainApplication, SC} from "../index";
@@ -38,7 +37,7 @@ export default class PrimarySocket extends SocketBase {
         SC.primary = true;
         const socketData = <SimpleCalendar.SimpleCalendarSocket.Data>{type: SocketTypes.primary, data: {amPrimary: SC.primary}};
         await GameSockets.emit(socketData);
-        const timeKeeperSocketData = <SimpleCalendar.SimpleCalendarSocket.Data>{type: SocketTypes.clock, data: {timeKeeperStatus: TimeKeeperStatus.Stopped}};
+        const timeKeeperSocketData = <SimpleCalendar.SimpleCalendarSocket.Data>{type: SocketTypes.clock, data: TimeKeeperStatus.Stopped};
         await GameSockets.emit(timeKeeperSocketData);
         if(activeCalendar.time.unifyGameAndClockPause){
             (<Game>game).togglePause(true, true);
@@ -71,6 +70,7 @@ export default class PrimarySocket extends SocketBase {
                             if(!this.otherPrimaryFound){
                                 this.primaryCheckTimeoutCall();
                             }
+                            MainApplication.uiElementStates.primaryCheckRunning = false;
                             r(true);
                         }).bind(this, resolve), this.checkDuration);
                     });
@@ -80,6 +80,7 @@ export default class PrimarySocket extends SocketBase {
                 return true;
             }
         } else {
+            MainApplication.uiElementStates.primaryCheckRunning = false;
             return true;
         }
     }

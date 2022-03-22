@@ -166,6 +166,12 @@ export default class NoteStub{
                     let noteStartDayOfWeek = calendar.dayOfTheWeek(noteData.startDate.year, startMonth, startDay);
                     let noteEndDayOfWeek = calendar.dayOfTheWeek(noteData.endDate.year, endMonth, endDay);
                     let currentDayOfWeek = calendar.dayOfTheWeek(currentVisibleYear, visibleMonthDay.month || 0, visibleMonthDay.day || 0);
+                    let noteLength = noteEndDayOfWeek - noteStartDayOfWeek;
+                    if(noteLength < 0){
+                        noteLength = calendar.weekdays.length + noteLength;
+                    }
+                    noteLength++;
+
                     startMonth = visibleMonthDay.month || 0;
                     endMonth = visibleMonthDay.month || 0;
                     let noteStartDiff = currentDayOfWeek - noteStartDayOfWeek;
@@ -176,36 +182,39 @@ export default class NoteStub{
                     if(noteEndDiff < 0){
                         noteEndDiff = calendar.weekdays.length + noteEndDiff;
                     }
-                    startDay = (visibleMonthDay.day || 0) - noteStartDiff;
-                    endDay = (visibleMonthDay.day || 0) + noteEndDiff;
-                    let safetyCount = 0;
-                    while(startDay < 0){
-                        startMonth--;
-                        if(startMonth < 0){
-                            startYear--;
-                            startMonth = calendar.year.months.length - 1;
+                    console.log(noteLength, noteStartDiff, noteEndDiff);
+                    if((noteStartDiff + noteEndDiff) < noteLength){
+                        startDay = (visibleMonthDay.day || 0) - noteStartDiff;
+                        endDay = (visibleMonthDay.day || 0) + noteEndDiff;
+                        let safetyCount = 0;
+                        while(startDay < 0){
+                            startMonth--;
+                            if(startMonth < 0){
+                                startYear--;
+                                startMonth = calendar.year.months.length - 1;
+                            }
+                            const isLeapYear = calendar.year.leapYearRule.isLeapYear(startYear);
+                            startDay = calendar.year.months[startMonth][isLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'] + startDay;
+                            safetyCount++;
+                            if(safetyCount > calendar.year.months.length){
+                                break;
+                            }
                         }
-                        const isLeapYear = calendar.year.leapYearRule.isLeapYear(startYear);
-                        startDay = calendar.year.months[startMonth][isLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'] + startDay;
-                        safetyCount++;
-                        if(safetyCount > calendar.year.months.length){
-                            break;
-                        }
-                    }
 
-                    let endIsLeapYear = calendar.year.leapYearRule.isLeapYear(endYear);
-                    safetyCount = 0;
-                    while(endDay >= calendar.year.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays']){
-                        endDay = endDay - calendar.year.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'];
-                        endMonth++;
-                        if(endMonth >= calendar.year.months.length){
-                            endYear++;
-                            endMonth = 0;
-                            endIsLeapYear = calendar.year.leapYearRule.isLeapYear(endYear);
-                        }
-                        safetyCount++;
-                        if(safetyCount > calendar.year.months.length){
-                            break;
+                        let endIsLeapYear = calendar.year.leapYearRule.isLeapYear(endYear);
+                        safetyCount = 0;
+                        while(endDay >= calendar.year.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays']){
+                            endDay = endDay - calendar.year.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'];
+                            endMonth++;
+                            if(endMonth >= calendar.year.months.length){
+                                endYear++;
+                                endMonth = 0;
+                                endIsLeapYear = calendar.year.leapYearRule.isLeapYear(endYear);
+                            }
+                            safetyCount++;
+                            if(safetyCount > calendar.year.months.length){
+                                break;
+                            }
                         }
                     }
                 } else if(noteData.repeats === NoteRepeat.Monthly){

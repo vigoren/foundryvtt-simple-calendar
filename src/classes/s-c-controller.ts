@@ -1,6 +1,6 @@
 import Sockets from "./sockets";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {SettingNames, Themes, TimeKeeperStatus} from "../constants";
+import {SettingNames, SocketTypes, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import {CalManager, MainApplication, NManager} from "./index";
@@ -8,6 +8,7 @@ import ConfigurationApp from "./applications/configuration-app";
 import MainApp from "./applications/main-app";
 import UserPermissions from "./configuration/user-permissions";
 import {canUser} from "./utilities/permissions";
+import GameSockets from "./foundry-interfacing/game-sockets";
 
 export default class SCController {
     /**
@@ -129,7 +130,9 @@ export default class SCController {
             GameSettings.SaveBooleanSetting(SettingNames.RememberPosition, clientConfig.rememberPosition, false).catch(Logger.error);
             GameSettings.SaveObjectSetting(SettingNames.AppPosition, clientConfig.appPosition, false).catch(Logger.error);
             //Save the global configuration (triggers the load function)
-            GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc).catch(Logger.error);
+            GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc)
+                .then(() => GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}}))
+                .catch(Logger.error);
         }
     }
 

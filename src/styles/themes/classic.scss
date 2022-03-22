@@ -9,7 +9,19 @@
       .fsc-clock {
         background: unset;
       }
+      .fsc-moons {
+        .fsc-moon-group-wrapper {
+          .fa {
+            text-shadow: -2px -1px 0px $white;
+          }
 
+          .fsc-moon-group {
+            background-color: $white;
+            border-color: $fontColor!important;
+            box-shadow: 1px 1px 5px $boxShadowColor;
+          }
+        }
+      }
       .fsc-time-keeper-buttons {
         .fsc-control {
           color: #000000;
@@ -226,6 +238,7 @@
       .fsc-days {
         .fsc-week {
           .fsc-day {
+            border-color: $gray-500;
             &:hover {
               background-color: #ddd;
             }
@@ -260,6 +273,16 @@
             }
 
             .fsc-moons {
+              .fsc-moon-group-wrapper {
+                .fa{
+                  text-shadow: -2px -1px 0px $white;
+                }
+                .fsc-moon-group {
+                  background-color: $white;
+                  border-color: $fontColor;
+                  box-shadow: 1px 1px 5px $boxShadowColor;
+                }
+              }
               .fsc-moon-phase {
                 svg {
                   filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));

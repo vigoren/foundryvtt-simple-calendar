@@ -215,9 +215,7 @@ export default class TimeKeeper{
         if(GameSettings.IsGm() && SC.primary){
             const socketData = <SimpleCalendar.SimpleCalendarSocket.Data>{
                 type: SocketTypes.clock,
-                data: {
-                    timeKeeperStatus: this.status
-                }
+                data: this.status
             };
             GameSockets.emit(socketData).catch(Logger.error);
         }

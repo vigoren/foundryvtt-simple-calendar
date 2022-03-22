@@ -10,9 +10,22 @@
                 <div class="fsc-season-text">{{compactViewDisplay.currentSeasonName}}</div>
                 {{/if}}
                 <div class="fsc-moons">
-                    {{#each compactViewDisplay.selectedDayMoons}}
-                    <div class="fsc-moon-phase {{phase.icon}}" title="{{name}} - {{phase.name}}">{{{iconSVG}}}</div>
-                    {{/each}}
+                    {{#if (gt compactViewDisplay.selectedDayMoons.length 2)}}
+                    <div class="fsc-moon-group-wrapper">
+                        <div class="fsc-moon-phase {{compactViewDisplay.selectedDayMoons.0.phase.icon}}" title="{{compactViewDisplay.selectedDayMoons.0.name}} - {{compactViewDisplay.selectedDayMoons.0.phase.name}}">{{{compactViewDisplay.selectedDayMoons.0.iconSVG}}}</div>
+                        <span class="fsc-moon-phase fa fa-caret-down"></span>
+                        <div class="fsc-moon-group">
+                            {{#each compactViewDisplay.selectedDayMoons}}
+                                <div class="fsc-moon-phase {{phase.icon}}" title="{{name}} - {{phase.name}}">{{{iconSVG}}}</div>
+                            {{/each}}
+                        </div>
+                    </div>
+                    {{else}}
+                        {{#each compactViewDisplay.selectedDayMoons}}
+                            <div class="fsc-moon-phase {{phase.icon}}" title="{{name}} - {{phase.name}}">{{{iconSVG}}}</div>
+                        {{/each}}
+                    {{/if}}
+
                 </div>
             </div>
             <div class="fsc-date">
@@ -204,7 +217,7 @@
                 <button class="fsc-control fsc-time-stop {{#if (eq clockClass 'stopped')}} {{else}} fsc-delete{{/if}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></button>
             </div>
 
-            {{else}}
+            {{else if uiElementStates.primaryCheckRunning}}
             <div class="fsc-primary-loader"><i class="fas fa-spinner fa-spin"></i></div>
             {{/if}}
             {{/if}}
