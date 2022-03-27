@@ -288,13 +288,13 @@ export default class MainApp extends Application{
      * @param {JQuery} html
      */
     ensureCurrentDateIsVisible(html: JQuery){
-        const calendar = (<JQuery>html).find(".calendar");
+        const calendar = (<JQuery>html).find(".fsc-calendar");
         const calendarHeight = calendar.outerHeight();
 
         //This only needs to be processed if the calendar is more than 499px tall
         if(calendarHeight && calendarHeight >= 500){
-            const currentDay = calendar.find('.day.current');
-            const selectedDay = calendar.find('.day.selected');
+            const currentDay = calendar.find('.fsc-day.fsc-current');
+            const selectedDay = calendar.find('.fsc-day.fsc-selected');
 
             //Prefer to use the selected day as the main day to focus on rather than the current day
             let elementToUse = null;

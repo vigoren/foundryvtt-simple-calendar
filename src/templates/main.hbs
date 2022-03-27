@@ -230,11 +230,11 @@
         <div class="fsc-controls fsc-unit-controls">
             {{#if showDateControls}}
             <div class="fsc-control-group">
-                <button class="fsc-control fsc-primary fa fa-angle-double-left" title="{{localize 'FSC.MoveDayBack'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-5"></button>
-                <button class="fsc-control fsc-primary fa fa-angle-left" title="{{localize 'FSC.MoveDayBack'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-1"></button>
+                <button class="fsc-control fsc-primary fa fa-angle-double-left" title="{{localize 'FSC.MoveBackwardFive' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-5"></button>
+                <button class="fsc-control fsc-primary fa fa-angle-left" title="{{localize 'FSC.MoveBackwardOne' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-1"></button>
                 <button class="fsc-control fsc-primary fsc-selector" data-unit="time">{{localize uiElementStates.dateTimeUnitText}}&nbsp;</button>
-                <button class="fsc-control fsc-primary fa fa-angle-right" title="{{localize 'FSC.MoveDayForward'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="1"></button>
-                <button class="fsc-control fsc-primary fa fa-angle-double-right" title="{{localize 'FSC.MoveDayForward'}}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="5"></button>
+                <button class="fsc-control fsc-primary fa fa-angle-right" title="{{localize 'FSC.MoveForwardOne' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="1"></button>
+                <button class="fsc-control fsc-primary fa fa-angle-double-right" title="{{localize 'FSC.MoveForwardFive' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="5"></button>
                 <ul class="fsc-unit-list fsc-time-units {{#if uiElementStates.dateTimeUnitOpen}} fsc-open{{else}} fsc-closed{{/if}}">
                     {{#if showTimeControls}}
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'seconds')}} fsc-selected{{/if}}" data-unit="seconds">{{localize 'FSC.Second'}}</li>
