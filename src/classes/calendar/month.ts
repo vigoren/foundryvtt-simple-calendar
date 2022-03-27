@@ -1,7 +1,7 @@
 import Day from "./day";
-import {Logger} from "../logging";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import Year from "./year";
+import Calendar from "./index";
 
 /**
  * Class representing a month
@@ -119,13 +119,12 @@ export default class Month extends ConfigurationItemBase {
 
     /**
      * Creates a month template to be used when rendering the month in HTML
-     * @param {Year} [year=null] The year object
-     * @return {MonthTemplate}
+     * @param calendar The year object
      */
-    toTemplate(year: Year | null = null): SimpleCalendar.HandlebarTemplateData.Month {
+    toTemplate(calendar: Calendar | null = null): SimpleCalendar.HandlebarTemplateData.Month {
         let isLeapYear = false;
-        if(year){
-            isLeapYear = year.leapYearRule.isLeapYear(year.visibleYear);
+        if(calendar){
+            isLeapYear = calendar.year.leapYearRule.isLeapYear(calendar.year.visibleYear);
         }
         return {
             ...super.toTemplate(),

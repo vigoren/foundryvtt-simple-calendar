@@ -3,7 +3,7 @@ import {deepMerge} from "../utilities/object";
 import {FormatDateTime, IsDayBetweenDates} from "../utilities/date-time";
 import {GetIcon} from "../utilities/visual";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {CalendarClickEvents, DateRangeMatch} from "../../constants";
+import {CalendarClickEvents, CalendarViews, DateRangeMatch} from "../../constants";
 import RendererUtilities from "./utilities";
 import {CalManager, NManager} from "../index";
 
@@ -24,7 +24,8 @@ export default class CalendarFull{
         showSeasonName: true,
         showNoteCount: true,
         showMoonPhases: true,
-        showYear: true
+        showYear: true,
+        view: CalendarViews.Month
     };
 
     /**
@@ -35,6 +36,27 @@ export default class CalendarFull{
     public static Render(calendar: Calendar, options: SimpleCalendar.Renderer.CalendarOptions = {id: ''}): string {
         options = deepMerge({}, this.defaultOptions, options);
 
+        let HTML = '';
+        if(options.view === CalendarViews.Month){
+            HTML = this.Build(calendar, options);
+        } else if(options.view === CalendarViews.Year){
+            HTML = `<div class="fsc-year-view">`
+            options.showYear = false;
+            options.allowChangeMonth = false;
+            for(let i = 0; i < calendar.months.length; i++){
+                options.date = {
+                    year:  calendar.year.visibleYear,
+                    month: i,
+                    day: 0
+                };
+                HTML += this.Build(calendar, options);
+            }
+            HTML += '</div>';
+        }
+        return HTML;
+    }
+
+    private static Build(calendar: Calendar, options: SimpleCalendar.Renderer.CalendarOptions = {id: ''}): string{
         let monthYearFormat = calendar.generalSettings.dateFormat.monthYear;
         if(!options.showYear){
             monthYearFormat = monthYearFormat.replace(/YN|YA|YZ|YY(?:YY)?/g, '');
@@ -42,13 +64,13 @@ export default class CalendarFull{
 
         let vYear, vMonthIndex = 0, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [], calendarStyle = '', seasonName = '';
         if(options.date){
-            if(options.date.month >= 0 && options.date.month < calendar.year.months.length){
+            if(options.date.month >= 0 && options.date.month < calendar.months.length){
                 vMonthIndex = options.date.month;
             }
             vYear = options.date.year;
         } else {
             vYear = calendar.year.visibleYear;
-            vMonthIndex = calendar.year.getMonthIndex('visible');
+            vMonthIndex = calendar.getMonthIndex('visible');
         }
         weeks = calendar.daysIntoWeeks(vMonthIndex, vYear, calendar.weekdays.length);
 
@@ -56,15 +78,15 @@ export default class CalendarFull{
         if(options.selectedDates){
             ssYear = options.selectedDates.start.year;
             seYear = options.selectedDates.end.year;
-            ssMonth = options.selectedDates.start.month > 0 && options.selectedDates.start.month < calendar.year.months.length? options.selectedDates.start.month : 0;
-            seMonth = options.selectedDates.end.month > 0 && options.selectedDates.end.month < calendar.year.months.length? options.selectedDates.end.month : 0;
+            ssMonth = options.selectedDates.start.month > 0 && options.selectedDates.start.month < calendar.months.length? options.selectedDates.start.month : 0;
+            seMonth = options.selectedDates.end.month > 0 && options.selectedDates.end.month < calendar.months.length? options.selectedDates.end.month : 0;
             ssDay = options.selectedDates.start.day || 0;
             seDay = options.selectedDates.end.day || 0;
         } else {
             ssYear = seYear = calendar.year.selectedYear;
-            ssMonth = seMonth = calendar.year.getMonthIndex('selected');
+            ssMonth = seMonth = calendar.getMonthIndex('selected');
             if(ssMonth > -1){
-                ssDay = seDay = calendar.year.months[ssMonth].getDayIndex('selected');
+                ssDay = seDay = calendar.months[ssMonth].getDayIndex('selected');
             }
         }
 
@@ -112,7 +134,7 @@ export default class CalendarFull{
                 for(let x = 0; x < weeks[i].length; x++){
                     if(weeks[i][x]){
                         let dayClass = 'fsc-day';
-                        const dayIndex = calendar.year.months[vMonthIndex].days.findIndex(d => d.numericRepresentation === (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation);
+                        const dayIndex = calendar.months[vMonthIndex].days.findIndex(d => d.numericRepresentation === (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation);
 
                         //Check for selected dates to highlight
                         if(ssMonth !== undefined && ssDay !== undefined && seMonth !== undefined && seDay !== undefined){
@@ -236,13 +258,13 @@ export default class CalendarFull{
                                     while(loop){
                                         if(clickType === CalendarClickEvents.previous){
                                             if(monthIndex === 0){
-                                                monthIndex = calendar.year.months.length - 1;
+                                                monthIndex = calendar.months.length - 1;
                                                 yearNumber--;
                                             } else {
                                                 monthIndex--;
                                             }
                                         } else {
-                                            if(monthIndex === (calendar.year.months.length - 1)){
+                                            if(monthIndex === (calendar.months.length - 1)){
                                                 monthIndex = 0;
                                                 yearNumber++;
                                             }else {
@@ -250,11 +272,11 @@ export default class CalendarFull{
                                             }
                                         }
                                         const isLeapYear = calendar.year.leapYearRule.isLeapYear(yearNumber);
-                                        if((isLeapYear && calendar.year.months[monthIndex].numberOfLeapYearDays > 0) || (!isLeapYear && calendar.year.months[monthIndex].numberOfDays > 0)){
+                                        if((isLeapYear && calendar.months[monthIndex].numberOfLeapYearDays > 0) || (!isLeapYear && calendar.months[monthIndex].numberOfDays > 0)){
                                             loop = false;
                                         }
                                         loopCount++;
-                                        if(loopCount === calendar.year.months.length){
+                                        if(loopCount === calendar.months.length){
                                             loop = false;
                                         }
                                     }
@@ -389,8 +411,8 @@ export default class CalendarFull{
         let html;
         const moonHtml: string[] = [];
         for(let i = 0; i < calendar.moons.length; i++){
-            const mp = calendar.moons[i].getDateMoonPhase(calendar.year, visibleYear, visibleMonthIndex, dayIndex);
-            const d = calendar.year.months[visibleMonthIndex].days[dayIndex];
+            const mp = calendar.moons[i].getDateMoonPhase(calendar, visibleYear, visibleMonthIndex, dayIndex);
+            const d = calendar.months[visibleMonthIndex].days[dayIndex];
             if(mp && (mp.singleDay || d.selected || d.current)){
                 let moon = GetIcon(mp.icon, "#000000", calendar.moons[i].color);
                 moonHtml.push(`<span class="fsc-moon-phase ${mp.icon}" title="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`)

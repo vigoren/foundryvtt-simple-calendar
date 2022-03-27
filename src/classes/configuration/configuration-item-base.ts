@@ -1,5 +1,5 @@
 import {generateUniqueId} from "../utilities/string";
-import Year from "../calendar/year";
+import Calendar from "../calendar";
 
 export default class ConfigurationItemBase{
 
@@ -45,9 +45,9 @@ export default class ConfigurationItemBase{
 
     /**
      * Creates a template for the configuration item base
-     * @param year The year object to use when generating the template
+     * @param calendar
      */
-    toTemplate(year: Year | null = null): SimpleCalendar.IDataItemBase {
+    toTemplate(calendar: Calendar | null = null): SimpleCalendar.IDataItemBase {
         return {
             id: this.id,
             name: this.name,

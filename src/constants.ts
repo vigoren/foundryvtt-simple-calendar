@@ -300,6 +300,15 @@ export enum TimeKeeperStatus {
 }
 
 /**
+ * Which view the calendar should render
+ * @internal
+ */
+export enum CalendarViews {
+    Month = 'Month',
+    Year = 'year'
+}
+
+/**
  * The associated click events for a calendar view
  * @internal
  */

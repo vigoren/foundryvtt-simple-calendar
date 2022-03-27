@@ -67,6 +67,8 @@ In the configuration GMs can now add new and remove existing calendars, switch b
 
 The main Calendar interface also has a new button (that shows when more than 1 calendar has been added) that allows you to switch between which calendar you are currently viewing as well as which calendar is currently active. The listing of calendars will also show you the current date and time for each calendar.
 
+You can also choose to sync time changes across all calendars. This change is done by determining the change in seconds and adjusting the other calendars by that number of seconds. This way if another calendar has days that are different in length they will update accurately.
+
 ### Configuration Changes
 
 The configuration dialog can now be opened by GMs and players. GM only options are hidden for players, but any player specific options will be shown to the players.
@@ -85,8 +87,8 @@ Four new settings have been added to the Module Settings dialog of Foundry. Thes
 #### Import/Export
 
 The importing and exporting of calendar settings has been improved.
-- **Exporting**: You can now choose what to export, specific calendars, permissions or the global configuration settings.
-- **Importing**: When importing the file will be parsed and show what was found inside and allow you to choose if to import it or not. For calendar configurations you can also choose which calendar to import those settings into or to import them into a new calendar.
+- **Exporting**: You can now choose what to export, specific calendars, notes, permissions or the global configuration settings.
+- **Importing**: When importing the file will be parsed and show what was found inside and allow you to choose if to import it or not. For calendar configurations and notes you can also choose which calendar to import them into or to import them into a new calendar.
 
 You will be able to import configurations from version 1.x of Simple Calendar so any saved configurations will not be lost!
 
@@ -156,9 +158,11 @@ The date/time selector that is used when choosing a date for notes or specifying
 
 ### Migration
 
-All the above changes have resulted in a change in how Simple Calendar stores data within FoundryVTT. Simple Calendar version 2 will detect if you are on a version 1 install and help users migrate their data over to the new format.
+All the above changes have resulted in a change in how Simple Calendar stores data within FoundryVTT. Simple Calendar version 2 will detect if you are on a version 1 install and migrate users data over to the new format. The old data is then cleaned up.
 
-It will also offer the option to remove the old data, to clean up the FoundryVTT databases. This is an optional step
+During the beta the cleanup operation has been disabled, so no data is permanganate deleted and a new function, `SimpleCalendar.Migration.run()` has been added to re-run the migration as many times as desired. Once the full release is made this function will be removed and the cleanup code will be re-enabled.
+
+
 
 
 ### Quality of Life Changes
@@ -177,6 +181,7 @@ It will also offer the option to remove the old data, to clean up the FoundryVTT
 - Fixed a bug where using Z or ZZ in the date/time formats would break the calendars' configuration.
 - Fixed a bug when using dates before the year zero year (negative timestamps) the real time clock would skip times near the end of an hour.
 - Fixed a bug with PF2E systems where the year in Simple Calendar would not match the year of the built-in world clock due to an update to the PF2E world clock.
+- Fixed a bug where the visible month would reset back to the month of the current date while the real time clock is running.
 
 ### API Changes
 
@@ -186,8 +191,9 @@ None of these changes should be breaking to existing implementations using the A
 
 #### General Changes
 
-- Added a new property `SimpleCalendar.api.Icons` that contains a list of all available icons within Simple Calendar.
+- Added a new property [`SimpleCalendar.api.Icons`](https://simplecalendar.info/api/enums/SimpleCalendar.api.Icons.html) that contains a list of all available icons within Simple Calendar.
 - **Important**: Depreciating the property `SimpleCalendar.api.MoonIcons`. This has been replaced with the Icons property and will be removed when FoundryVTT v10 Stable has been released.
+- Updated the [`SimpleCalendar.api.formateDate()`](https://simplecalendar.info/api/modules/SimpleCalendar.api.html#formatDateTime) function to also take in an optional format string to format the date/time in any custom way. If no format string is provided it will return an object with the date formatted using the formats from the configuration, otherwise it will return the formatted string
 
 #### Bug Fixes
 
@@ -195,28 +201,28 @@ None of these changes should be breaking to existing implementations using the A
 
 #### Multi Calendar Support
 
-- Added a function `SimpleCalendar.api.getCurrentCalendar()` that returns the configuration data for the current active calendar.
-- Added a new function `SimpleCalendar.api.getAllCalendars()` that returns a list of all calendars set up in Simple Calendar. (This does not include any predefined calendars)
-- Updated the API functions so that they can now take an additional optional parameter `calendarId` (where it made sense).
+- Added a function [`SimpleCalendar.api.getCurrentCalendar()`](https://simplecalendar.info/api/modules/SimpleCalendar.api.html#getCurrentCalendar) that returns the configuration data for the current active calendar.
+- Added a new function [`SimpleCalendar.api.getAllCalendars()`](https://simplecalendar.info/api/modules/SimpleCalendar.api.html#getAllCalendars) that returns a list of all calendars set up in Simple Calendar. (This does not include any predefined calendars)
+- Updated all API functions so that they can now take an additional optional parameter `calendarId` (where it made sense).
   - This parameter can be used to target a specific calendar for the API function to update/get data from. If the parameter is not specified then the current active calendar will be used.
   - This means that current systems/modules/macros that use the API will not need to update their function calls unless they want to add the ability to target calendars that are not the one currently being used.
 
 #### Note Support
 
-- Added a function `SimpleCalendar.api.getNotes()` that returns all notes that the current player can see. Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
-- Added a function `SimpleCalendar.api.getNotesForDay(year, month, day)` that returns all notes that the current player can see for the date specified. . Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
-- Added a function `SimpleCalendar.api.addNote()` that will add a new note of the specified content to the specified date of the specified calendar. This function will return the newly created JournalEntry that contains the notes' data.
+- Added a function [`SimpleCalendar.api.getNotes()`](https://simplecalendar.info/api/modules/SimpleCalendar.api.html#getNotes) that returns all notes that the current player can see. Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
+- Added a function [`SimpleCalendar.api.getNotesForDay(year, month, day)`](https://simplecalendar.info/api/modules/SimpleCalendar.api.html#getNotesForDay) that returns all notes that the current player can see for the date specified. . Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
+- Added a function [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/api/modules/SimpleCalendar.api.html#addNote) that will add a new note of the specified content to the specified date of the specified calendar. This function will return the newly created JournalEntry that contains the notes' data.
 
 #### Handlebar Helpers
 
 - Removed 2 Handlebar helpers, day-has-note and day-moon-phase. These were used internally and are no longer required.
-- Added a new Handlebar helper [sc-full-calendar](./docs/API.md#sc-full-calendar) that can be used to render a full calendar view of the current date or passed in date.
+- Added a new Handlebar helper [sc-full-calendar](https://simplecalendar.info/api/enums/HandlebarHelpers.html#sc_full_calendar) that can be used to render a full calendar view of the current date or passed in date.
   - These calendars support basic interactivity, change which month is being viewed and selecting a day when it is clicked, with the option to pass in your own function to extend this functionality.
   - These calendars can use the default Simple Calendar styling or be customized.
-- Added a new function `SimpleCalendar.api.activateFullCalendarListeners()` ([docs](./docs/API.md#simplecalendarapiactivatefullcalendarlistenerscalendarid-onmonthchange-ondayclick)) that is used to activate all the basic interactivity for calendars rendered with the [sc-full-calendar](./docs/API.md#sc-full-calendar) Handlebar helper.
+- Added a new function [`SimpleCalendar.api.activateFullCalendarListeners()`](https://simplecalendar.info/api/modules/SimpleCalendar.api.html#activateFullCalendarListeners) that is used to activate all the basic interactivity for calendars rendered with the [sc-full-calendar](https://simplecalendar.info/api/enums/HandlebarHelpers.html#sc_full_calendar) Handlebar helper.
 #### Removal of Depreciated Items
 
-- With the release of Foundry v9 depreciated properties from the [Date Object](https://simplecalendar.info/interfaces/SimpleCalendarInterfaces.DateData.html) have been removed:
+- With the release of Foundry v9 depreciated properties from the [Date Object](https://simplecalendar.info/api/interfaces/SimpleCalendar.DateData.html) have been removed:
   - _**dayDisplay**_: Please use display.day instead.
   - _**monthName**_: Please use display.monthName instead.
   - **_yearName_**: Please use display.yearName instead.

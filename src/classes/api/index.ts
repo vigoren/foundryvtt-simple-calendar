@@ -180,17 +180,13 @@ export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string 
  * ```
  */
 export function changeDate(interval: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean{
-    if(calendarId === 'active'){
-        return CalManager.getActiveCalendar().changeDateTime(interval, false);
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(activeCalendar){
+        return activeCalendar.changeDateTime(interval, {updateMonth: false, showWarning: true});
     } else {
-        const cal = CalManager.getCalendar(calendarId);
-        if(cal){
-            return cal.changeDateTime(interval, false);
-        } else {
-            Logger.error(`SimpleCalendar.api.changeDate - Unable to find a calendar with the passed in ID of "${calendarId}"`);
-        }
-        return false;
+        Logger.error(`SimpleCalendar.api.changeDate - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
+    return false;
 }
 
 /**
@@ -269,14 +265,14 @@ export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}
                 month = Math.floor(Math.random() * (endingDate.month - startingDate.month + 1)) + startingDate.month;
             }
         } else {
-            month = Math.floor(Math.random() * activeCalendar.year.months.length);
+            month = Math.floor(Math.random() * activeCalendar.months.length);
         }
 
-        if(month < 0 || month >= activeCalendar.year.months.length){
-            month = activeCalendar.year.months.length - 1;
+        if(month < 0 || month >= activeCalendar.months.length){
+            month = activeCalendar.months.length - 1;
         }
 
-        let monthObject = activeCalendar.year.months[month];
+        let monthObject = activeCalendar.months[month];
         /**
          * Chose a random day
          *      If the starting and ending day are the same use that day
@@ -471,10 +467,10 @@ export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: strin
     if(activeCalendar){
         const year = date.year? date.year : 0;
         let monthIndex = date.month && date.month >= 0? date.month : 0;
-        if(monthIndex >= activeCalendar.year.months.length){
-            monthIndex = activeCalendar.year.months.length - 1;
+        if(monthIndex >= activeCalendar.months.length){
+            monthIndex = activeCalendar.months.length - 1;
         }
-        const month = activeCalendar.year.months[monthIndex];
+        const month = activeCalendar.months[monthIndex];
         let dayIndex = date.day && date.day >= 0? date.day : 0;
         if(dayIndex >= month.days.length){
             dayIndex = month.days.length - 1;
@@ -687,7 +683,7 @@ export function getAllCalendars(): SimpleCalendar.CalendarData[] {
 export function getAllMonths(calendarId: string = 'active'): SimpleCalendar.MonthData[] {
     const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(cal){
-        return cal.year.months.map(m => m.toConfig());
+        return cal.months.map(m => m.toConfig());
     } else {
         Logger.error(`SimpleCalendar.api.getAllMonths - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return [];
@@ -784,7 +780,7 @@ export function getAllMoons(calendarId: string = 'active'): SimpleCalendar.MoonD
     if(activeCalendar){
         return activeCalendar.moons.map(m => {
             const c = m.toConfig();
-            c.currentPhase = m.getMoonPhase(activeCalendar.year);
+            c.currentPhase = m.getMoonPhase(activeCalendar);
             return c;
         });
     } else {
@@ -951,7 +947,7 @@ export function getCurrentCalendar(): SimpleCalendar.CalendarData {
 export function getCurrentDay(calendarId: string = 'active'): SimpleCalendar.DayData | null {
     const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(cal){
-        const month = cal.year.getMonth();
+        const month = cal.getMonth();
         if(month){
             const day = month.getDay();
             if(day){
@@ -992,7 +988,7 @@ export function getCurrentDay(calendarId: string = 'active'): SimpleCalendar.Day
 export function getCurrentMonth(calendarId: string = 'active'): SimpleCalendar.MonthData | null{
     const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(cal){
-        const month = cal.year.getMonth();
+        const month = cal.getMonth();
         if(month){
             return month.toConfig();
         }
@@ -1027,7 +1023,7 @@ export function getCurrentMonth(calendarId: string = 'active'): SimpleCalendar.M
 export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.SeasonData{
     const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(cal){
-        const monthDayIndex = cal.year.getMonthAndDayIndex();
+        const monthDayIndex = cal.getMonthAndDayIndex();
         return cal.getSeason(monthDayIndex.month || 0, monthDayIndex.day || 0).toConfig();
     } else {
         Logger.error(`SimpleCalendar.api.getCurrentSeason - Unable to find a calendar with the passed in ID of "${calendarId}"`);
@@ -1056,7 +1052,7 @@ export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.
 export function getCurrentWeekday(calendarId: string = 'active'): SimpleCalendar.WeekdayData | null{
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(activeCalendar){
-        const monthDayIndex = activeCalendar.year.getMonthAndDayIndex();
+        const monthDayIndex = activeCalendar.getMonthAndDayIndex();
         const weekdayIndex = activeCalendar.dayOfTheWeek(activeCalendar.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0);
         return activeCalendar.weekdays[weekdayIndex].toConfig();
     } else {
@@ -1134,11 +1130,11 @@ export function getLeapYearConfiguration(calendarId: string = 'active'): SimpleC
  *
  * @param calendarId Optional parameter to specify the ID of the calendar to get the notes from. If not provided the current active calendar will be used.
  *
- * @returns A list of Journal entries that contain the note data.
+ * @returns A list of [JournalEntry](https://foundryvtt.com/api/JournalEntry.html) that contain the note data.
  *
  * @example
  * ```javascript
- * // Returns an array of [JournalEntry](https://foundryvtt.com/api/JournalEntry.html) objects
+ * // Returns an array of JournalEntry objects
  * SimpleCalendar.api.getNotes();
  *```
  */
@@ -1154,11 +1150,11 @@ export function getNotes(calendarId: string = 'active'): (StoredDocument<Journal
  * @param day The index of the day to get the notes for.
  * @param calendarId Optional parameter to specify the ID of the calendar to get the notes from. If not provided the current active calendar will be used.
  *
- * @returns A list of Journal entries that contain the note data.
+ * @returns A list of [JournalEntry](https://foundryvtt.com/api/JournalEntry.html) that contain the note data.
  *
  * @example
  * ```javascript
- * // Returns an array of [JournalEntry](https://foundryvtt.com/api/JournalEntry.html) objects
+ * // Returns an array of JournalEntry objects
  * SimpleCalendar.api.getNotesForDay(2022, 11, 24);
  * ```
  */
@@ -1266,20 +1262,10 @@ export function secondsToInterval(seconds: number, calendarId: string = 'active'
 export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean{
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(activeCalendar){
-        if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
-            const seconds = dateToTimestamp(date);
-            activeCalendar.updateTime(activeCalendar.secondsToDate(seconds));
-            CalManager.saveCalendars().catch(Logger.error);
-            activeCalendar.syncTime().catch(Logger.error);
-            MainApplication.updateApp();
-            return true;
-        } else {
-            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
-        }
+        return activeCalendar.setDateTime(date, {showWarning: true});
     } else {
         Logger.error(`SimpleCalendar.api.setDate - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
-
     return false;
 }
 
@@ -1299,17 +1285,17 @@ export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string =
  * ```
  */
 export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, compact: boolean = false, calendarId: string = 'active'): void {
-    //TODO: Set the visible calendar to the passed in calendar ID
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
 
     if(activeCalendar){
+        CalManager.setVisibleCalendar(activeCalendar.id);
         if(date !== null){
             if(!date.year){
                 date.year = activeCalendar.year.numericRepresentation;
             }
 
             if(!date.month || !date.day){
-                const monthDayIndex = activeCalendar.year.getMonthAndDayIndex();
+                const monthDayIndex = activeCalendar.getMonthAndDayIndex();
                 if(!date.month){
                     date.month = monthDayIndex.month || 0;
                 }
@@ -1321,19 +1307,19 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
             if(Number.isInteger(date.year) && Number.isInteger(date.month) && Number.isInteger(date.day)){
                 const isLeapYear = activeCalendar.year.leapYearRule.isLeapYear(date.year);
                 activeCalendar.year.visibleYear = date.year;
-                if(date.month === -1 || date.month > activeCalendar.year.months.length){
-                    date.month = activeCalendar.year.months.length - 1;
+                if(date.month === -1 || date.month > activeCalendar.months.length){
+                    date.month = activeCalendar.months.length - 1;
                 }
-                activeCalendar.year.resetMonths('visible');
-                activeCalendar.year.months[date.month].visible = true;
+                activeCalendar.resetMonths('visible');
+                activeCalendar.months[date.month].visible = true;
 
-                const numberOfDays = isLeapYear? activeCalendar.year.months[date.month].numberOfLeapYearDays : activeCalendar.year.months[date.month].numberOfDays;
+                const numberOfDays = isLeapYear? activeCalendar.months[date.month].numberOfLeapYearDays : activeCalendar.months[date.month].numberOfDays;
                 if(date.day == -1 || date.day > numberOfDays){
                     date.day = numberOfDays - 1;
                 }
-                activeCalendar.year.resetMonths('selected');
-                activeCalendar.year.months[date.month].days[date.day].selected = true;
-                activeCalendar.year.months[date.month].selected = true;
+                activeCalendar.resetMonths('selected');
+                activeCalendar.months[date.month].days[date.day].selected = true;
+                activeCalendar.months[date.month].selected = true;
                 activeCalendar.year.selectedYear = activeCalendar.year.visibleYear;
             } else {
                 Logger.error('Main.api.showCalendar: Invalid date passed in.');
@@ -1450,38 +1436,38 @@ export function timestampPlusInterval(currentSeconds: number, interval: SimpleCa
         const dateTime = clone.secondsToDate(currentSeconds);
         clone.updateTime(dateTime);
         if(interval.year){
-            clone.year.changeYear(interval.year, false, 'current');
+            clone.changeYear(interval.year, false, 'current');
         }
         if(interval.month){
             //If a large number of months are passed in then
-            if(interval.month > clone.year.months.length){
-                let years = Math.floor(interval.month/clone.year.months.length);
-                interval.month = interval.month - (years * clone.year.months.length);
-                clone.year.changeYear(years, false, 'current');
+            if(interval.month > clone.months.length){
+                let years = Math.floor(interval.month/clone.months.length);
+                interval.month = interval.month - (years * clone.months.length);
+                clone.changeYear(years, false, 'current');
             }
-            clone.year.changeMonth(interval.month, 'current');
+            clone.changeMonth(interval.month, 'current');
         }
         if(interval.day){
-            clone.year.changeDayBulk(interval.day);
+            clone.changeDayBulk(interval.day);
         }
         if(interval.hour && interval.hour > clone.time.hoursInDay){
             const days = Math.floor(interval.hour / clone.time.hoursInDay);
             interval.hour = interval.hour - (days * clone.time.hoursInDay);
-            clone.year.changeDayBulk(days);
+            clone.changeDayBulk(days);
         }
         if(interval.minute && interval.minute > (clone.time.hoursInDay * clone.time.minutesInHour)){
             const days = Math.floor(interval.minute / (clone.time.hoursInDay * clone.time.minutesInHour));
             interval.minute = interval.minute - (days * (clone.time.hoursInDay * clone.time.minutesInHour));
-            clone.year.changeDayBulk(days);
+            clone.changeDayBulk(days);
         }
         if(interval.seconds && interval.seconds > clone.time.secondsPerDay){
             const days = Math.floor(interval.seconds / clone.time.secondsPerDay);
             interval.seconds = interval.seconds - (days * clone.time.secondsPerDay);
-            clone.year.changeDayBulk(days);
+            clone.changeDayBulk(days);
         }
         const dayChange = clone.time.changeTime(interval.hour, interval.minute, interval.seconds);
         if(dayChange !== 0){
-            clone.year.changeDay(dayChange);
+            clone.changeDay(dayChange);
         }
         return clone.toSeconds();
     } else {

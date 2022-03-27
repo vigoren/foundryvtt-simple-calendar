@@ -2,7 +2,8 @@ import {SettingNames} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import Calendar from "../calendar";
 import UserPermissions from "../configuration/user-permissions";
-import {SC} from "../index";
+import {CalManager, NManager, SC} from "../index";
+import {deepMerge} from "../utilities/object";
 
 /**
  * Class for handling the migration from Simple Calendar V1 to V2
@@ -28,11 +29,43 @@ export default class V1ToV2{
             weekdays: <SimpleCalendar.WeekdayData[]>GameSettings.GetObjectSettings(SettingNames.WeekdayConfiguration),
             year: <SimpleCalendar.YearData>GameSettings.GetObjectSettings(SettingNames.YearConfiguration)
         };
+
+        //Month and Day storage changed from actual number to index so need to adjust the current date, seasons and moons
+        if(legacySettings.months){
+            if(legacySettings.currentDate){
+                legacySettings.currentDate.month = legacySettings.months.findIndex(m => m.numericRepresentation === legacySettings.currentDate?.month);
+                if(legacySettings.currentDate.month < 0){
+                    legacySettings.currentDate.month = 0;
+                }
+                legacySettings.currentDate.day--;
+            }
+            if(legacySettings.seasons){
+                for(let i = 0; i < legacySettings.seasons.length; i++){
+                    const monthNum = legacySettings.seasons[i].startingMonth;
+                    legacySettings.seasons[i].startingMonth = legacySettings.months.findIndex(m => m.numericRepresentation === monthNum);
+                    if(legacySettings.seasons[i].startingMonth < 0){
+                        legacySettings.seasons[i].startingMonth = 0;
+                    }
+                    legacySettings.seasons[i].startingDay--;
+                }
+            }
+            if(legacySettings.moons){
+                for(let i = 0; i < legacySettings.moons.length; i++){
+                    const monthNum = legacySettings.moons[i].firstNewMoon.month;
+                    legacySettings.moons[i].firstNewMoon.month = legacySettings.months.findIndex(m => m.numericRepresentation === monthNum);
+                    if(legacySettings.moons[i].firstNewMoon.month < 0){
+                        legacySettings.moons[i].firstNewMoon.month = 0;
+                    }
+                    legacySettings.moons[i].firstNewMoon.day--;
+                }
+            }
+        }
+
         //Create a new calendar loading the legacy settings
         const newCalendar = new Calendar('default', 'Default', legacySettings);
         //Validate the new calendar. As long as the months have a length the calendar should be valid
         let isValid = false;
-        if(newCalendar.year && newCalendar.year.months.length){
+        if(newCalendar.year && newCalendar.months.length){
             isValid = true;
         }
         return isValid ? newCalendar : null;
@@ -68,7 +101,49 @@ export default class V1ToV2{
         return perms && settings;
     }
 
-    public static runNoteMigration(): boolean {
+    public static async runNoteMigration(): Promise<boolean> {
+        const oldNotes = <any[]>GameSettings.GetObjectSettings(SettingNames.Notes);
+        const calendar = CalManager.getActiveCalendar();
+        for(let i = 0; i < oldNotes.length; i++){
+            const oldNote = oldNotes[i];
+            const newNoteData: SimpleCalendar.NoteData = {
+                allDay: oldNote.allDay,
+                calendarId: calendar.id,
+                repeats: oldNote.repeats,
+                order: oldNote.order,
+                categories: oldNote.categories,
+                remindUsers: oldNote.remindUsers,
+                startDate: {
+                    year: oldNote.year,
+                    month: calendar.months.findIndex(m => m.numericRepresentation === oldNote.month),
+                    day: oldNote.day - 1,
+                    hour: oldNote.hour,
+                    minute: oldNote.minute,
+                    seconds: 0
+                },
+                endDate: {
+                    year: oldNote.endDate.year,
+                    month: calendar.months.findIndex(m => m.numericRepresentation === oldNote.endDate.month),
+                    day: oldNote.endDate.day - 1,
+                    hour: oldNote.endDate.hour,
+                    minute: oldNote.endDate.minute,
+                    seconds: 0
+                }
+            };
+            if(newNoteData.startDate.month < 0){
+                newNoteData.startDate.month = 0;
+            }
+            if(newNoteData.endDate.month < 0){
+                newNoteData.endDate.month = 0;
+            }
+
+            const newJe = await NManager.createNote(oldNote.title, oldNote.content, newNoteData, calendar, false, false);
+            if(newJe){
+                const newPerms: Partial<Record<string, 0 | 1 | 2 | 3>> = {};
+                Object.keys(newJe.data.permission).forEach(p => { newPerms[p] = p === oldNote.author? 3 : oldNote.playerVisible? 2 : 0 });
+                await newJe.update({permission: newPerms})
+            }
+        }
         return true;
     }
 

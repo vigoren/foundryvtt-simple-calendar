@@ -7,7 +7,6 @@ import {CalManager, MainApplication, NManager} from "../index";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import {Logger} from "../logging";
 import {BM25Levenshtein} from "../utilities/search";
-import {render} from "sass";
 
 
 /**
@@ -80,7 +79,7 @@ export default class NoteManager{
         await this.createNote(title, '', noteData, calendar);
     }
 
-    public async createNote(title: string, content: string, noteData: SimpleCalendar.NoteData, calendar: Calendar, renderSheet: boolean = true): Promise<StoredDocument<JournalEntry> | null>{
+    public async createNote(title: string, content: string, noteData: SimpleCalendar.NoteData, calendar: Calendar, renderSheet: boolean = true, updateMain: boolean = true): Promise<StoredDocument<JournalEntry> | null>{
         const perms: Partial<Record<string, 0 | 1 | 2 | 3>> = {};
         (<Game>game).users?.forEach(u => perms[u.id] = (<Game>game).user?.id === u.id? 3 : calendar.generalSettings.noteDefaultVisibility? 2 : 0);
         const newJE = await JournalEntry.create({
@@ -103,7 +102,9 @@ export default class NoteManager{
                 const sheet = new NoteSheet(newJE);
                 sheet.render(true, {}, true);
             }
-            MainApplication.updateApp();
+            if(updateMain){
+                MainApplication.updateApp();
+            }
             return newJE;
         }
         return null;
@@ -162,7 +163,7 @@ export default class NoteManager{
     }
 
     public getNotesForDay(calendarId: string, year: number, monthIndex: number, dayIndex: number){
-        const calendarNotes = this.notes[calendarId] || [];
+        const calendarNotes: NoteStub[] = this.notes[calendarId] || [];
         const rawNotes = calendarNotes.filter(n => n.isVisible(calendarId, year, monthIndex, dayIndex));
         rawNotes.sort(NoteManager.dayNoteSort);
         return rawNotes;

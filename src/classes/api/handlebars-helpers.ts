@@ -67,6 +67,9 @@ export class HandlebarsHelpers{
             if(options.hash.hasOwnProperty('timeDelimiter')){
                 dsOptions.timeDelimiter = options.hash['timeDelimiter'];
             }
+            if(options.hash.hasOwnProperty('useCloneCalendars')){
+                dsOptions.useCloneCalendars = options.hash['useCloneCalendars'];
+            }
             const id = options.hash['id'];
             const ds = DateSelectorManager.GetSelector(id, dsOptions);
             return new Handlebars.SafeString(ds.build());

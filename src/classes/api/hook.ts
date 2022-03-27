@@ -30,7 +30,7 @@ export class Hook{
                 postfix: calendar.year.postfix,
                 isLeapYear: calendar.year.leapYearRule.isLeapYear(calendar.year.numericRepresentation)
             };
-            const currentMonth = calendar.year.getMonth();
+            const currentMonth = calendar.getMonth();
             if(currentMonth){
                 data.month = {
                     name: currentMonth.name,
@@ -50,7 +50,7 @@ export class Hook{
             data.season = calendar.getCurrentSeason();
 
             for(let i = 0; i < calendar.moons.length; i++){
-                const phase = calendar.moons[i].getMoonPhase(calendar.year);
+                const phase = calendar.moons[i].getMoonPhase(calendar);
                 data.moons.push({
                     name: calendar.moons[i].name,
                     color: calendar.moons[i].color,

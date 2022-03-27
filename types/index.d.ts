@@ -3,7 +3,23 @@ export import HandlebarHelpers = globalThis.HandlebarHelpers
 import {DateSelector} from "../src/classes/date-selector";
 import Calendar from "../src/classes/calendar";
 import UserPermissions from "../src/classes/configuration/user-permissions";
-import {  DateSelectorPositions, GameSystems, GameWorldTimeIntegrations, Icons, LeapYearRules, MoonYearResetOptions, NoteRepeat, PredefinedCalendars, PresetTimeOfDay, SimpleCalendarHooks, SocketTypes, Themes, TimeKeeperStatus, YearNamingRules } from "../src/constants";
+import {
+    CalendarViews,
+    DateSelectorPositions,
+    GameSystems,
+    GameWorldTimeIntegrations,
+    Icons,
+    LeapYearRules,
+    MoonYearResetOptions,
+    NoteRepeat,
+    PredefinedCalendars,
+    PresetTimeOfDay,
+    SimpleCalendarHooks,
+    SocketTypes,
+    Themes,
+    TimeKeeperStatus,
+    YearNamingRules
+} from "../src/constants";
 import NoteStub from "../src/classes/notes/note-stub";
 
 declare global{
@@ -237,7 +253,7 @@ declare global{
              * // Returns {date: 'December 31, 2021', time: '23:59:59'}
              *
              * SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, minute: 313, second: 314},"DD/MM/YYYY HH:mm:ss A")
-             * // Returns ""
+             * // Returns "31/12/2021 23:59:00 PM"
              * ```
              */
             export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: string = '', calendarId: string = 'active'): string | {date: string, time: string}
@@ -1515,6 +1531,8 @@ declare global{
                 timeSelected?: boolean;
                 /** The string to use as a delimiter between the date and time */
                 timeDelimiter?: string;
+                /** If to use the cloned calendar lists when generating this date delector */
+                useCloneCalendars?: boolean;
             }
 
             /**
@@ -1585,6 +1603,8 @@ declare global{
                 showSeasonName?: boolean;
                  /** If to show the year */
                 showYear?: boolean;
+                /** The view of the calendar */
+                view?: CalendarViews;
             }
 
             /**
@@ -1616,6 +1636,8 @@ declare global{
                 }
                  /** The custom string to use as the delimiter between the time range inputs and display */
                 timeDelimiter?: string;
+                /** If to use clones of the calendars to pull data for the time selector, used in the configuration dialog */
+                useCalendarClones?: boolean
             }
         }
 
@@ -1958,6 +1980,8 @@ declare global{
             secondsInCombatRound: number;
             /** If to sync all time changes across each calendar. */
             syncCalendars: boolean;
+            /** If to show the notes folder in the journal entries tab. */
+            showNotesFolder: boolean;
         }
 
         /**
@@ -2236,6 +2260,15 @@ declare global{
          * Type representing a date and time with optional parameters
          */
         type DateTimeParts = Partial<Date> & Partial<Time>;
+
+        type DateChangeOptions = {
+            showWarning?: boolean;
+            updateMonth?: boolean;
+            save?: boolean;
+            sync?: boolean;
+            updateApp?: boolean;
+            fromCalSync?: boolean;
+        };
 
     }
 

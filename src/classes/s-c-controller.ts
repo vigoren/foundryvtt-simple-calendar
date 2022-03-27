@@ -40,7 +40,8 @@ export default class SCController {
             calendarsSameTimestamp: false,
             permissions: new UserPermissions(),
             secondsInCombatRound: 6,
-            syncCalendars: false
+            syncCalendars: false,
+            showNotesFolder: false
         };
     }
 
@@ -101,6 +102,7 @@ export default class SCController {
         this.globalConfiguration.secondsInCombatRound = globalConfiguration.secondsInCombatRound;
         this.globalConfiguration.calendarsSameTimestamp = globalConfiguration.calendarsSameTimestamp;
         this.globalConfiguration.syncCalendars = globalConfiguration.syncCalendars;
+        this.globalConfiguration.showNotesFolder = globalConfiguration.showNotesFolder;
         this.clientSettings.theme = <Themes>GameSettings.GetStringSettings(SettingNames.Theme);
         this.clientSettings.openOnLoad = GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad);
         this.clientSettings.openCompact = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
@@ -121,7 +123,8 @@ export default class SCController {
                 permissions: globalConfig.permissions,
                 secondsInCombatRound: globalConfig.secondsInCombatRound,
                 calendarsSameTimestamp: globalConfig.calendarsSameTimestamp,
-                syncCalendars: globalConfig.syncCalendars
+                syncCalendars: globalConfig.syncCalendars,
+                showNotesFolder: globalConfig.showNotesFolder
             };
             //Save the client settings
             GameSettings.SaveStringSetting(SettingNames.Theme, clientConfig.theme, false).catch(Logger.error);
@@ -154,6 +157,31 @@ export default class SCController {
                     button: true,
                     onClick: MainApplication.showApp.bind(MainApplication)
                 });
+            }
+        }
+    }
+
+    /**
+     * Checks settings to see if the note directory should be shown or hidden from the journal directory
+     */
+    public async renderJournalDirectory(tab: JournalDirectory, jquery: JQuery){
+        await NManager.createJournalDirectory();
+        if(!this.globalConfiguration.showNotesFolder && NManager.noteDirectory){
+            const folder = jquery.find(`.folder[data-folder-id='${NManager.noteDirectory.id}']`);
+            if(folder){
+                folder.remove();
+            }
+        }
+    }
+
+    /**
+     * Checks settings to see if the note directory should be shown or hidden from the journal sheet directory dropdown
+     */
+    public renderJournalSheet(sheet: JournalSheet, jquery:JQuery){
+        if(!this.globalConfiguration.showNotesFolder && NManager.noteDirectory){
+            const option = jquery.find(`option[value='${NManager.noteDirectory.id}']`);
+            if(option){
+                option.remove();
             }
         }
     }
@@ -216,7 +244,7 @@ export default class SCController {
             //If time does not have the advanceTime property the combat was just started
             if(time && time.hasOwnProperty('advanceTime')){
                 if(time.advanceTime !== 0){
-                    this.activeCalendar.year.combatChangeTriggered = true;
+                    this.activeCalendar.combatChangeTriggered = true;
                 } else {
                     // System does not advance time when combat rounds change, check our own settings
                     this.activeCalendar.processOwnCombatRoundTime(combat);

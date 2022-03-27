@@ -1,19 +1,19 @@
 import SCController from "./classes/s-c-controller";
 import * as API from "./classes/api";
 import {Logger} from "./classes/logging";
-import {SimpleCalendarHooks} from "./constants";
+import {MigrationTypes, SimpleCalendarHooks} from "./constants";
 import {
-    updateCalManager,
-    updateMainApplication,
-    updateSC,
     CalManager,
     MainApplication,
-    SC,
-    updateConfigurationApplication,
-    updateMigrationApplication,
     MigrationApplication,
+    NManager,
+    SC,
+    updateCalManager,
+    updateConfigurationApplication,
+    updateMainApplication,
+    updateMigrationApplication,
     updateNManager,
-    NManager
+    updateSC
 } from "./classes";
 import {HandlebarsHelpers} from "./classes/api/handlebars-helpers";
 import GameSettingsRegistration from "./classes/foundry-interfacing/game-settings-registration";
@@ -33,7 +33,14 @@ updateNManager(new NoteManager());
 //Expose the api
 (window as any).SimpleCalendar = {
     api: API,
-    Hooks: SimpleCalendarHooks
+    Hooks: SimpleCalendarHooks,
+    Migration: {
+        run: () => {
+            Logger.warn(`This function is only available during the Version 2 Beta testing.`)
+            MigrationApplication.MigrationType = MigrationTypes.v1To2;
+            return MigrationApplication.run();
+        }
+    }
 };
 
 Hooks.on('init', () => {
@@ -44,14 +51,22 @@ Hooks.on('init', () => {
     CalManager.initialize();
     //Load the global configuration settings
     SC.load();
+
 });
-Hooks.on('ready', async () => {
-    //Initialize the note manager
-    await NManager.initialize();
-    //Initialize the Simple Calendar Class
-    SC.initialize();
+Hooks.on('ready',async () => {
+    MigrationApplication.initialize();
     //Check to see if we need to run a migration, if we do show the migration dialog otherwise show the main app
-    if(!MigrationApplication.showMigration()){
+    if(MigrationApplication.showMigration){
+        await MigrationApplication.run();
+        //Initialize the note manager
+        await NManager.initialize();
+        //Initialize the Simple Calendar Class
+        SC.initialize();
+    } else {
+        //Initialize the note manager
+        await NManager.initialize();
+        //Initialize the Simple Calendar Class
+        SC.initialize();
         //If we are to open the main app on foundry load, open it
         if(SC.clientSettings.openOnLoad){
             MainApplication.showApp();
@@ -59,6 +74,8 @@ Hooks.on('ready', async () => {
     }
 });
 Hooks.on('getSceneControlButtons', SC.getSceneControlButtons.bind(SC));
+Hooks.on('renderJournalDirectory', SC.renderJournalDirectory.bind(SC));
+Hooks.on('renderJournalSheet', SC.renderJournalSheet.bind(SC));
 Hooks.on("updateWorldTime", SC.worldTimeUpdate.bind(SC));
 Hooks.on('createCombatant', SC.createCombatant.bind(SC));
 Hooks.on("updateCombat", SC.combatUpdate.bind(SC));

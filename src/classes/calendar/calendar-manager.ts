@@ -3,7 +3,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {PredefinedCalendars, SettingNames, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../../constants";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import {Logger} from "../logging";
-import {MainApplication, NManager} from "../index";
+import {MainApplication, NManager, SC} from "../index";
 import {Hook} from "../api/hook";
 
 /**
@@ -25,6 +25,13 @@ export default class CalendarManager {
      * @private
      */
     private visibleId: string = '';
+
+    /**
+     * If we should sync the change with all calendars
+     */
+    public get syncWithAllCalendars(){
+        return SC.globalConfiguration.syncCalendars && Object.keys(this.calendars).length > 1;
+    }
 
     /**
      * When loading in for the first time
@@ -79,7 +86,10 @@ export default class CalendarManager {
             }
         }
         NManager.checkNoteReminders(this.activeId);
-        MainApplication.updateApp();
+        const cal = this.getVisibleCalendar();
+        if(cal && cal.timeKeeper.getStatus() !== TimeKeeperStatus.Started){
+            MainApplication.updateApp();
+        }
         return calendars.length;
     }
 
@@ -145,6 +155,22 @@ export default class CalendarManager {
     }
 
     /**
+     * Sorts the calendars so that the default calendar is always first.
+     * @param a
+     * @param b
+     * @private
+     */
+    private static sortCalendars(a: Calendar, b: Calendar){
+        if(a.id === 'default' || a.id === 'default_temp'){
+            return -1;
+        }
+        if(b.id === 'default' || b.id === 'default_temp'){
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
      * Gets an array of all calendars
      * @returns {Calendar[]}
      */
@@ -155,7 +181,7 @@ export default class CalendarManager {
                 cals.push(value);
             }
         }
-        return cals;
+        return cals.sort(CalendarManager.sortCalendars);
     }
 
     /**
@@ -217,7 +243,6 @@ export default class CalendarManager {
             MainApplication.clockClass = newActive.timeKeeper.getStatus();
             GameSettings.SaveStringSetting(SettingNames.ActiveCalendar,newActive.id).catch(Logger.error);
 
-            //TODO: Add check if we want to force the timestamps to change with the changing of the calendar
             //Simple Time: Updates on the world time changing
             //Weather Control: Updates on the date time change hook
             newActive.syncTime(true).catch(Logger.error);
@@ -264,7 +289,7 @@ export default class CalendarManager {
                 cals.push(clone);
             }
         }
-        return cals;
+        return cals.sort(CalendarManager.sortCalendars);
     }
 
     /**
@@ -313,6 +338,19 @@ export default class CalendarManager {
         for(const [key, value] of Object.entries(this.calendars)){
             if(value.id.endsWith('_temp')){
                 delete this.calendars[key];
+            }
+        }
+    }
+
+    /**
+     * Sync the interval change with all calendars, except the current active calendar.
+     * @param interval
+     */
+    public syncWithCalendars(interval: SimpleCalendar.DateTimeParts){
+        const active = this.getActiveCalendar();
+        for(const [key, value] of Object.entries(this.calendars)){
+            if(key !== active.id){
+                value.changeDateTime(interval, {sync: false, save: false, updateApp: false, fromCalSync: true});
             }
         }
     }

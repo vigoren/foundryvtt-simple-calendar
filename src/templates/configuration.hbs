@@ -70,6 +70,13 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInCombatRoundHelp'}}</p>
                 </div>
+                <div class="form-group fsc-open">
+                    <label for="scSyncCalendars">{{localize 'FSC.Configuration.Global.ShowNoteFolder.Title'}}</label>
+                    <div class="form-fields">
+                        <input value="{{globalConfiguration.showNotesFolder}}" type="checkbox" id="scShowNoteFolder" {{checked globalConfiguration.showNotesFolder}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Global.ShowNoteFolder.Description'}}</p>
+                </div>
             </div>
             {{/if}}
             <div class="fsc-section fsc-open">
@@ -823,10 +830,10 @@
                                 <input class="fsc-season-name" value="{{name}}" type="text"  title="{{localize 'FSC.Configuration.Season.NameHelp'}}" />
                             </div>
                             <div class="fsc-col">
-                                {{sc-date-selector id=startDateSelectorId calendar=../activeCalendarId showDateSelector=true showTimeSelector=false showCalendarYear=false selectedStartDate=startDateSelectedDate }}
+                                {{sc-date-selector id=startDateSelectorId calendar=../activeCalendarId showDateSelector=true showTimeSelector=false showCalendarYear=false useCloneCalendars=true selectedStartDate=startDateSelectedDate }}
                             </div>
                             <div class="fsc-col">
-                                {{sc-date-selector id=sunriseSelectorId calendar=../activeCalendarId showDateSelector=false showTimeSelector=true allowDateRangeSelection=false allowTimeRangeSelection=true timeDelimiter='/' selectedStartDate=sunriseSelectorSelectedDates.start selectedEndDate=sunriseSelectorSelectedDates.end}}
+                                {{sc-date-selector id=sunriseSelectorId calendar=../activeCalendarId showDateSelector=false showTimeSelector=true allowDateRangeSelection=false allowTimeRangeSelection=true timeDelimiter='/' useCloneCalendars=true selectedStartDate=sunriseSelectorSelectedDates.start selectedEndDate=sunriseSelectorSelectedDates.end}}
                             </div>
                             <div class="fsc-col">
                                 <input type="color" value="{{color}}" class="fsc-season-color" title="{{localize 'FSC.Configuration.Season.Color'}}" list="scSeasonColors" />

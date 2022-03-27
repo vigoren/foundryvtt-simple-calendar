@@ -2,7 +2,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {MigrationTypes, SettingNames, Themes} from "../../constants";
 import {Logger} from "../logging";
 import V1ToV2 from "../migrations/v1-to-v2";
-import {CalManager, SC} from "../index";
+import {CalManager, MainApplication, SC} from "../index";
 import {isObjectEmpty} from "../utilities/object";
 
 export default class MigrationApp extends Application{
@@ -10,25 +10,16 @@ export default class MigrationApp extends Application{
      * The ID used for the application window within foundry
      * @type {string}
      */
-    public static appWindowId: string = 'simple-calendar-migration-application';
+    public static appWindowId: string = 'fsc-migration-application';
 
-    /**
-     * The HTML element representing the application window
-     * @type {HTMLElement | null}
-     * @private
-     */
-    private appWindow: HTMLElement | null = null;
-
-    private MigrationType: MigrationTypes = MigrationTypes.none;
+    public MigrationType: MigrationTypes = MigrationTypes.none;
 
     private displayData = {
-        calendarButtonDisable: false,
-        calendarMigrationRun: false,
-        calendarMigrationSuccess: false,
-        noteButtonDisable: false,
-        noteMigrationRun: false,
-        noteMigrationSuccess: false,
-        cleanUpRun: false
+        calendarMigrationStatusIcon: 'fa-sync fa-spin fsc-running',
+        globalConfigMigrationStatusIcon: 'fa-sync fa-spin fsc-running',
+        notesMigrationStatusIcon: 'fa-sync fa-spin fsc-running',
+        cleanUpMigrationStatusIcon: 'fa-sync fa-spin fsc-running',
+        migrationDone: false
     };
 
     /**
@@ -66,66 +57,105 @@ export default class MigrationApp extends Application{
     public getData(options?: Partial<ApplicationOptions>): object | Promise<object> {
         return {
             ...super.getData(options),
-            ...this.displayData
+            display: this.displayData,
+            headingTitle: this.headingTitle,
+            description: this.description
         };
     }
 
-    /**
-     *
-     * @param html
-     */
-    public activateListeners(html: JQuery) {
-        super.activateListeners(html);
-        this.appWindow = document.getElementById(MigrationApp.appWindowId);
-        if(this.appWindow){
-            this.appWindow.querySelector('.calendar-migration')?.addEventListener('click', this.runCalendarMigration.bind(this));
-            this.appWindow.querySelector('.note-migration')?.addEventListener('click', this.runNoteMigration.bind(this));
-            this.appWindow.querySelector('.clean-data')?.addEventListener('click', this.runCleanData.bind(this));
+    get headingTitle(){
+        let t = '';
+        switch (this.MigrationType){
+            case MigrationTypes.v1To2:
+                t = 'FSC.Migration.v1v2.Title';
+                break;
+        }
+        return t;
+    }
+
+    get description(){
+        let t = '';
+        switch (this.MigrationType){
+            case MigrationTypes.v1To2:
+                t = 'FSC.Migration.v1v2.Help';
+                break;
+        }
+        return t;
+    }
+
+    public initialize(){
+        if(GameSettings.IsGm()) {
+            this.determineMigrationType();
         }
     }
 
-    public showMigration(){
-        //Only the primary GM can do this
-        if(GameSettings.IsGm() && SC.primary){
-            const genConfig = <SimpleCalendar.GlobalConfigurationData>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
-            const oldYearConfig = GameSettings.GetObjectSettings(SettingNames.YearConfiguration);
-            //Check to see if the old year config is empty, if it is then this is a new installation
-            //Check to see if we need to update from v1 to 2
-            //If there is no version property on the general configuration object then we are still on version 1
-            if(isObjectEmpty(oldYearConfig) && isObjectEmpty(genConfig) ){
-                this.MigrationType = MigrationTypes.none;
-            } else if(!isObjectEmpty(oldYearConfig) && !genConfig.hasOwnProperty('version')){
-                Logger.info('Migration required from Simple Calendar v1 to Version 2');
-                this.MigrationType = MigrationTypes.v1To2;
+    private determineMigrationType(){
+        const genConfig = <SimpleCalendar.GlobalConfigurationData>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
+        const oldYearConfig = GameSettings.GetObjectSettings(SettingNames.YearConfiguration);
+        //Check to see if the old year config is empty, if it is then this is a new installation
+        //Check to see if we need to update from v1 to 2
+        //If there is no version property on the general configuration object then we are still on version 1
+        if(isObjectEmpty(oldYearConfig) && isObjectEmpty(genConfig) ){
+            this.MigrationType = MigrationTypes.none;
+        } else if(!isObjectEmpty(oldYearConfig) && !genConfig.hasOwnProperty('version')){
+            Logger.info('Migration required from Simple Calendar v1 to Version 2');
+            this.MigrationType = MigrationTypes.v1To2;
+        }
+    }
+
+    public get showMigration(){
+        return this.MigrationType !== MigrationTypes.none;
+    }
+
+    public async run(){
+        Logger.info(`Running Migration!`);
+        this.showApp();
+        const cm = this.runCalendarMigration();
+        this.showApp();
+        if(cm){
+            const nm = await this.runNoteMigration();
+            this.showApp();
+            if(nm){
+                //this.runCleanData();
+                this.displayData.migrationDone = true;
+                MainApplication.showApp();
+                this.showApp();
+            } else {
+                this.displayData.cleanUpMigrationStatusIcon = 'fa-ban fsc-cancel';
                 this.showApp();
             }
+        } else {
+            this.displayData.notesMigrationStatusIcon = 'fa-ban fsc-cancel';
+            this.displayData.cleanUpMigrationStatusIcon = 'fa-ban fsc-cancel';
+            this.showApp();
         }
-        return this.MigrationType !== MigrationTypes.none;
     }
 
     public runCalendarMigration(){
         Logger.info('Migrating Calendar Configuration...');
-
         if(this.MigrationType == MigrationTypes.v1To2){
             const newCalendar = V1ToV2.runCalendarMigration();
             if(newCalendar !== null){
                 CalManager.setCalendars([newCalendar]);
+                this.displayData.calendarMigrationStatusIcon = 'fa-check-circle fsc-completed';
                 Logger.info('Calendar Configuration successfully migrated!');
                 Logger.info('Migrating Permissions and General Settings...');
                 if(V1ToV2.runGlobalConfigurationMigration()){
                     Logger.info('Permissions and General Settings successfully migrated!');
-                    this.displayData.calendarButtonDisable = true;
-                    this.displayData.calendarMigrationSuccess = true;
+                    this.displayData.globalConfigMigrationStatusIcon = 'fa-check-circle fsc-completed';
                     this.saveMigratedData();
+                    return true;
                 } else {
                     Logger.error('There was an error converting the existing permissions and general settings to the new permissions and general settings data model.');
+                    this.displayData.globalConfigMigrationStatusIcon = 'fa-times-circle fsc-error';
                 }
             } else {
                 Logger.error('There was an error converting the existing calendar configuration to the new calendar data model.');
+                this.displayData.calendarMigrationStatusIcon = 'fa-times-circle fsc-error';
+                this.displayData.globalConfigMigrationStatusIcon = 'fa-ban fsc-cancel';
             }
         }
-        this.displayData.calendarMigrationRun = true;
-        this.showApp();
+        return false;
     }
 
     public saveMigratedData(){
@@ -139,29 +169,28 @@ export default class MigrationApp extends Application{
         });
     }
 
-    public runNoteMigration(){
+    public async runNoteMigration(){
         Logger.info('Migrating Calendar Notes...');
 
         if(this.MigrationType == MigrationTypes.v1To2){
-            if(V1ToV2.runNoteMigration()){
+            if(await V1ToV2.runNoteMigration()){
                 Logger.info('Calendar Notes successfully migrated!');
-                this.displayData.noteButtonDisable = true;
-                this.displayData.noteMigrationSuccess = true;
+                this.displayData.notesMigrationStatusIcon = 'fa-check-circle fsc-completed';
+                return true;
             } else {
                 Logger.error('There was an error converting the existing notes to journal entries.');
+                this.displayData.notesMigrationStatusIcon = 'fa-times-circle fsc-error';
             }
-            this.displayData.noteMigrationRun = true;
-            this.showApp();
         }
+        return false;
     }
 
     public runCleanData(){
         Logger.info('Clearing all old data...');
         if(this.MigrationType == MigrationTypes.v1To2){
             V1ToV2.cleanUpOldData().catch(Logger.error);
-            this.displayData.cleanUpRun = true;
             Logger.info('All old data has been cleared.');
-            this.showApp();
+            this.displayData.cleanUpMigrationStatusIcon = 'fa-check-circle fsc-completed';
         }
     }
 }

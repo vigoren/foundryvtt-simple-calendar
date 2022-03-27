@@ -140,18 +140,9 @@ export default class TimeKeeper{
             const activeCalendar = CalManager.getCalendar(this.calendarId);
             if(activeCalendar){
                 const changeAmount = activeCalendar.time.gameTimeRatio * this.updateFrequency;
-                const dayChange = activeCalendar.time.changeTime(0, 0, changeAmount);
-                if(dayChange !== 0){
-                    activeCalendar.year.changeDay(dayChange);
-                    MainApplication.updateApp();
-                }
-                if (GameSettings.IsGm() && SC.primary) {
-                    if(activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
-                        //Main.instance.updateApp();
-                        GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
-                    } else {
-                        activeCalendar.syncTime().catch(Logger.error);
-                    }
+                activeCalendar.changeDateTime({seconds: changeAmount}, {updateApp: false, save: false});
+                if (GameSettings.IsGm() && SC.primary && activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None) {
+                    GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: this.status }).catch(Logger.error);
                 }
                 Hook.emit(SimpleCalendarHooks.DateTimeChange, activeCalendar, changeAmount);
                 this.callListeners();
@@ -169,7 +160,7 @@ export default class TimeKeeper{
             const activeCalendar = CalManager.getCalendar(this.calendarId);
             if (activeCalendar && GameSettings.IsGm() && SC.primary) {
                 if(activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
-                    GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: { timeKeeperStatus: this.status } }).catch(Logger.error);
+                    GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: this.status }).catch(Logger.error);
                 } else {
                     activeCalendar.syncTime().catch(Logger.error);
                 }

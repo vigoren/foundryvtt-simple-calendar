@@ -136,7 +136,9 @@ export default class NoteStub{
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         const user = (<Game>game).user;
         if(journalEntry && user){
-            return GameSettings.IsGm() || journalEntry.testUserPermission(user, 2);
+            // GM's always are considered to have ownership of a journal entry,
+            // so we need to test if the permission is actually set to 0 before using the built-in test
+            return !!(journalEntry.data.permission[user.id] !== 0 && journalEntry.testUserPermission(user, 2));
         }
         return false;
     }
@@ -148,9 +150,9 @@ export default class NoteStub{
             if(calendar){
                 let display: string = '';
                 let currentVisibleYear = calendar.year.selectedYear || calendar.year.visibleYear;
-                let visibleMonthDay = calendar.year.getMonthAndDayIndex('selected');
+                let visibleMonthDay = calendar.getMonthAndDayIndex('selected');
                 if(visibleMonthDay.month === undefined){
-                    visibleMonthDay = calendar.year.getMonthAndDayIndex();
+                    visibleMonthDay = calendar.getMonthAndDayIndex();
                 }
 
                 let startYear = noteData.startDate.year;
@@ -182,7 +184,6 @@ export default class NoteStub{
                     if(noteEndDiff < 0){
                         noteEndDiff = calendar.weekdays.length + noteEndDiff;
                     }
-                    console.log(noteLength, noteStartDiff, noteEndDiff);
                     if((noteStartDiff + noteEndDiff) < noteLength){
                         startDay = (visibleMonthDay.day || 0) - noteStartDiff;
                         endDay = (visibleMonthDay.day || 0) + noteEndDiff;
@@ -191,28 +192,28 @@ export default class NoteStub{
                             startMonth--;
                             if(startMonth < 0){
                                 startYear--;
-                                startMonth = calendar.year.months.length - 1;
+                                startMonth = calendar.months.length - 1;
                             }
                             const isLeapYear = calendar.year.leapYearRule.isLeapYear(startYear);
-                            startDay = calendar.year.months[startMonth][isLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'] + startDay;
+                            startDay = calendar.months[startMonth][isLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'] + startDay;
                             safetyCount++;
-                            if(safetyCount > calendar.year.months.length){
+                            if(safetyCount > calendar.months.length){
                                 break;
                             }
                         }
 
                         let endIsLeapYear = calendar.year.leapYearRule.isLeapYear(endYear);
                         safetyCount = 0;
-                        while(endDay >= calendar.year.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays']){
-                            endDay = endDay - calendar.year.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'];
+                        while(endDay >= calendar.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays']){
+                            endDay = endDay - calendar.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'];
                             endMonth++;
-                            if(endMonth >= calendar.year.months.length){
+                            if(endMonth >= calendar.months.length){
                                 endYear++;
                                 endMonth = 0;
                                 endIsLeapYear = calendar.year.leapYearRule.isLeapYear(endYear);
                             }
                             safetyCount++;
-                            if(safetyCount > calendar.year.months.length){
+                            if(safetyCount > calendar.months.length){
                                 break;
                             }
                         }
@@ -225,28 +226,28 @@ export default class NoteStub{
                     if (noteData.startDate.month !== noteData.endDate.month) {
                         if(noteData.startDate.day <= (visibleMonthDay.day || 0)){
                             endMonth = (visibleMonthDay.month || 0) + 1;
-                            if(endMonth >= calendar.year.months.length){
+                            if(endMonth >= calendar.months.length){
                                 endMonth = 0;
                                 endYear = currentVisibleYear + 1;
                             }
                         } else if(noteData.endDate.day >= (visibleMonthDay.day || 0)){
                             startMonth = (visibleMonthDay.month || 0) - 1;
                             if(startMonth < 0){
-                                startMonth = calendar.year.months.length - 1;
+                                startMonth = calendar.months.length - 1;
                                 startYear = currentVisibleYear - 1;
                             }
                         }
                     }
                     // Check if the selected start day is more days than the current month has, if so adjust the end day to the max number of day.
-                    if(noteData.startDate.day >= calendar.year.months[startMonth].days.length){
+                    if(noteData.startDate.day >= calendar.months[startMonth].days.length){
                         const isLeapYear = calendar.year.leapYearRule.isLeapYear(startYear);
-                        startDay = (isLeapYear? calendar.year.months[startMonth].numberOfLeapYearDays : calendar.year.months[startMonth].numberOfDays) - 1;
+                        startDay = (isLeapYear? calendar.months[startMonth].numberOfLeapYearDays : calendar.months[startMonth].numberOfDays) - 1;
                     }
 
                     // Check if the selected end day is more days than the current month has, if so adjust the end day to the max number of day.
-                    if(noteData.endDate.day >= calendar.year.months[endMonth].days.length){
+                    if(noteData.endDate.day >= calendar.months[endMonth].days.length){
                         const isLeapYear = calendar.year.leapYearRule.isLeapYear(endYear);
-                        endDay = (isLeapYear? calendar.year.months[endMonth].numberOfLeapYearDays : calendar.year.months[endMonth].numberOfDays) - 1;
+                        endDay = (isLeapYear? calendar.months[endMonth].numberOfLeapYearDays : calendar.months[endMonth].numberOfDays) - 1;
                     }
                 } else if(noteData.repeats === NoteRepeat.Yearly){
                     if(noteData.startDate.year !== noteData.endDate.year){
@@ -306,10 +307,10 @@ export default class NoteStub{
                     let sYear = year;
                     let eYear = year;
                     if(adjustedStartMonth < 0){
-                        adjustedStartMonth = calendar.year.months.length - 1;
+                        adjustedStartMonth = calendar.months.length - 1;
                         sYear--;
                     }
-                    if(adjustedEndMonth >= calendar.year.months.length){
+                    if(adjustedEndMonth >= calendar.months.length){
                         adjustedEndMonth = 0;
                         eYear++;
                     }

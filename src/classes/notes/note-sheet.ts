@@ -138,7 +138,7 @@ export class NoteSheet extends JournalSheet{
                         id: u.id,
                         color: u.data.color,
                         textColor: GetContrastColor(u.color || ''),
-                        selected: this.object.testUserPermission(u, 2),
+                        selected: !!(this.object.data.permission[u.id] !== 0 && this.object.testUserPermission(u, 2)),
                         disabled: u.id === (<Game>game).user?.id
                     }});
                 }
@@ -268,11 +268,11 @@ export class NoteSheet extends JournalSheet{
                     //Adjust the repeat options so that you can't repeat if the days between the start and end date are longer than the different options
                     const daysBetween = DaysBetweenDates(calendar, noteData.startDate,noteData.endDate);
                     let options: Record<string, string>= {'0': 'FSC.Notes.Repeat.Never', '1': 'FSC.Notes.Repeat.Weekly', '2': 'FSC.Notes.Repeat.Monthly', '3': 'FSC.Notes.Repeat.Yearly'};
-                    if(daysBetween >= calendar.year.totalNumberOfDays(false, true)){
+                    if(daysBetween >= calendar.totalNumberOfDays(false, true)){
                         delete options['1'];
                         delete options['2'];
                         delete options['3'];
-                    } else if(daysBetween >= calendar.year.months[noteData.startDate.month].days.length){
+                    } else if(daysBetween >= calendar.months[noteData.startDate.month].days.length){
                         delete options['1'];
                         delete options['2'];
                     }else if(daysBetween >= calendar.weekdays.length){
@@ -356,8 +356,8 @@ export class NoteSheet extends JournalSheet{
     async save(e: Event){
         e.preventDefault();
         await this.writeInputValuesToObjects();
+        console.log(this.journalData);
         await (<JournalEntry>this.object).update(this.journalData);
-        //await this.saveEditor('content'); //TODO: This breaks how we save things, need to fix
         MainApplication.updateApp();
         this.resized = false;
         this.editMode = false;

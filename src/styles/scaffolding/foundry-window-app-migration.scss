@@ -1,17 +1,25 @@
 @import "src/styles/variables";
 .simple-calendar{
-  .sc-migration-wrapper{
+  .fsc-migration-wrapper{
     padding: $spacer-half;
 
-    .actions{
-      margin: $spacer-half 0;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-around;
+    .fsc-migration-actions{
+      list-style: none;
+      margin: 0;
+      padding: 0;
 
-      button{
-        width: unset;
+      li{
+        margin: $spacer;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+      }
+      .fsc-status-indicator{
+        margin-right: $spacer;
+      }
+      .fsc-migration-status{
+        flex: 1;
       }
     }
   }

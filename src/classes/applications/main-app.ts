@@ -120,7 +120,7 @@ export default class MainApp extends Application{
             showDateControls = this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
             showTimeControls = this.activeCalendar.generalSettings.showClock && this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
 
-            const selectedMonth = this.visibleCalendar.year.getMonth('selected');
+            const selectedMonth = this.visibleCalendar.getMonth('selected');
             if(selectedMonth){
                 const selectedDay = selectedMonth.getDay('selected');
                 if(selectedDay && !selectedDay.current){
@@ -135,7 +135,7 @@ export default class MainApp extends Application{
 
             if(this.visibleCalendar.moons.length){
                 for(let i = 0; i < this.visibleCalendar.moons.length; i++){
-                    const phase = this.visibleCalendar.moons[i].getMoonPhase(this.visibleCalendar.year, 'current');
+                    const phase = this.visibleCalendar.moons[i].getMoonPhase(this.visibleCalendar, 'current');
                     compactViewDisplay.selectedDayMoons.push({
                         name: this.visibleCalendar.moons[i].name,
                         color: this.visibleCalendar.moons[i].color,
@@ -185,7 +185,7 @@ export default class MainApp extends Application{
     public showApp(){
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)){
             if(this.visibleCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
-                this.visibleCalendar.year.setCurrentToVisible();
+                this.visibleCalendar.setCurrentToVisible();
             }
             this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
 
@@ -210,7 +210,7 @@ export default class MainApp extends Application{
      */
     async minimize(){
         this.uiElementStates.compactView = !this.uiElementStates.compactView;
-        this.visibleCalendar.year.resetMonths('selected');
+        this.visibleCalendar.resetMonths('selected');
         this.hideDrawers();
         this.setWidthHeight();
         this.render(true);
@@ -250,8 +250,13 @@ export default class MainApp extends Application{
                     const currentDate = <HTMLElement>wrapper.querySelector('.fsc-calendar .fsc-calendar-header .fsc-current-date');
                     const week = <HTMLElement>wrapper.querySelector('.fsc-calendar .fsc-days .fsc-week');
                     const clock = <HTMLElement>wrapper.querySelector('.fsc-clock-display .fsc-clock');
-                    let currentDateWidth = 0, weekWidth = 0, clockWidth = 0;
+                    const yearView = <HTMLElement>wrapper.querySelector('.fsc-year-view');
+                    let currentDateWidth = 0, weekWidth = 0, clockWidth = 0, yearViewWidth = 0;
 
+                    if(yearView){
+                        yearViewWidth = yearView.offsetWidth;
+                        yearViewWidth += 16; //Spacing between calendars
+                    }
                     if (currentDate) {
                         Array.from(currentDate.children).forEach(c => {
                             currentDateWidth += (<HTMLElement>c).offsetWidth;
@@ -267,7 +272,7 @@ export default class MainApp extends Application{
                         });
                         clockWidth += 8; //Clock Icon Margin
                     }
-                    width = Math.max(currentDateWidth, weekWidth, clockWidth);
+                    width = Math.max(currentDateWidth, weekWidth, clockWidth, yearViewWidth);
                     width += 10; //Calendar Padding
                     width += 70; //Action list width + Margin
                     width += 16; // Window Padding
@@ -547,7 +552,7 @@ export default class MainApp extends Application{
      */
     public changeMonth(clickType: CalendarClickEvents, options: SimpleCalendar.Renderer.CalendarOptions){
         this.toggleUnitSelector(true);
-        this.visibleCalendar.year.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
+        this.visibleCalendar.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
         this.setWidthHeight();
     }
     
@@ -557,18 +562,18 @@ export default class MainApp extends Application{
      */
     public dayClick(options: SimpleCalendar.Renderer.CalendarOptions){
         this.toggleUnitSelector(true);
-        if(options.selectedDates && options.selectedDates.start.day >= 0 && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.visibleCalendar.year.months.length){
+        if(options.selectedDates && options.selectedDates.start.day >= 0 && options.selectedDates.start.month >= 0 && options.selectedDates.start.month < this.visibleCalendar.months.length){
             const selectedDay = options.selectedDates.start.day;
             let allReadySelected = false;
-            const currentlySelectedMonth = this.visibleCalendar.year.getMonth('selected');
+            const currentlySelectedMonth = this.visibleCalendar.getMonth('selected');
             if(currentlySelectedMonth){
                 const currentlySelectedDayIndex = currentlySelectedMonth.getDayIndex('selected');
                 allReadySelected = currentlySelectedDayIndex === selectedDay && this.visibleCalendar.year.selectedYear === options.selectedDates.start.year;
             }
 
-            this.visibleCalendar.year.resetMonths('selected');
+            this.visibleCalendar.resetMonths('selected');
             if(!allReadySelected){
-                const month = this.visibleCalendar.year.months[options.selectedDates.start.month];
+                const month = this.visibleCalendar.months[options.selectedDates.start.month];
                 if(selectedDay > -1){
                     month.selected = true;
                     month.days[selectedDay].selected = true;
@@ -584,9 +589,9 @@ export default class MainApp extends Application{
      * @param {Event} e The click event
      */
     public todayClick(e: Event) {
-        this.visibleCalendar.year.resetMonths('selected');
-        this.visibleCalendar.year.resetMonths('visible');
-        const currentMonth = this.visibleCalendar.year.getMonth();
+        this.visibleCalendar.resetMonths('selected');
+        this.visibleCalendar.resetMonths('visible');
+        const currentMonth = this.visibleCalendar.getMonth();
         if(currentMonth){
             const currentDay = currentMonth.getDay();
             if(currentDay){
@@ -627,7 +632,7 @@ export default class MainApp extends Application{
                         GameSockets.emit({type: SocketTypes.dateTimeChange, data: socketData}).catch(Logger.error);
                     }
                 } else {
-                    this.activeCalendar.changeDateTime(interval, false);
+                    this.activeCalendar.changeDateTime(interval, {updateMonth: false, showWarning: true});
                 }
             }
         } else if(dataType && (dataType === 'sunrise' || dataType === 'midday' || dataType === 'sunset' || dataType === 'midnight')){
@@ -644,8 +649,8 @@ export default class MainApp extends Application{
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
             let validSelection = false;
             const selectedYear = this.activeCalendar.year.selectedYear;
-            const selectedMonthDayIndex = this.activeCalendar.year.getMonthAndDayIndex('selected');
-            const selectedMonth = this.activeCalendar.year.getMonth('selected');
+            const selectedMonthDayIndex = this.activeCalendar.getMonthAndDayIndex('selected');
+            const selectedMonth = this.activeCalendar.getMonth('selected');
             if(selectedMonth){
                 validSelection = true;
                 if(selectedYear !== this.activeCalendar.year.visibleYear || !selectedMonth.visible){
@@ -668,11 +673,6 @@ export default class MainApp extends Application{
                     this.setCurrentDate(selectedYear, selectedMonthDayIndex.month || 0, selectedMonthDayIndex.day || 0);
                 }
             }
-            if(!validSelection){
-                CalManager.saveCalendars().catch(Logger.error);
-                //Sync the current time on apply, this will propagate to other modules
-                this.activeCalendar.syncTime().catch(Logger.error);
-            }
         } else {
             GameSettings.UiNotification(GameSettings.Localize("FSC.Error.Calendar.GMCurrent"), 'warn');
         }
@@ -693,15 +693,7 @@ export default class MainApp extends Application{
                 GameSockets.emit({type: SocketTypes.dateTimeChange, data: socketData}).catch(Logger.error);
             }
         } else {
-            this.activeCalendar.year.numericRepresentation = year;
-            this.activeCalendar.year.resetMonths();
-            this.activeCalendar.year.months[monthIndex].current = true;
-            this.activeCalendar.year.months[monthIndex].selected = false;
-            this.activeCalendar.year.months[monthIndex].days[dayIndex].current = true;
-            this.activeCalendar.year.months[monthIndex].days[dayIndex].selected = false;
-            CalManager.saveCalendars().catch(Logger.error);
-            //Sync the current time on apply, this will propagate to other modules
-            this.activeCalendar.syncTime().catch(Logger.error);
+            this.activeCalendar.setDateTime({year: year, month: monthIndex, day: dayIndex},{updateApp: false, showWarning: true});
         }
     }
 

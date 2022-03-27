@@ -70,6 +70,8 @@ export class DateSelector {
 
     editYear: boolean = false;
 
+    useCloneCalendars: boolean = false;
+
 
     /**
      * Constructor for a new Date Selector
@@ -194,6 +196,9 @@ export class DateSelector {
         } else {
             this.selectedDate.allDay = !this.showTimeSelector;
         }
+        if(options.useCloneCalendars){
+            this.useCloneCalendars = options.useCloneCalendars;
+        }
     }
 
     /**
@@ -257,7 +262,8 @@ export class DateSelector {
                             seconds: this.selectedDate.end.seconds
                         }
                     },
-                    timeDelimiter: this.timeDelimiter
+                    timeDelimiter: this.timeDelimiter,
+                    useCalendarClones: this.useCloneCalendars
                 });
                 if(this.showDateSelector){
                     timeSelectors += `<div class="fsc-remove-time"><button class="fsc-control fsc-delete"><i class="fa fa-times"></i> ${GameSettings.Localize('FSC.RemoveTime')}</button></div>`;

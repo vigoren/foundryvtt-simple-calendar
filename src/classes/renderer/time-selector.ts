@@ -10,12 +10,13 @@ export default class TimeSelector {
         id: '',
         allowTimeRange: true,
         disableSelfUpdate: false,
-        timeDelimiter: '-'
+        timeDelimiter: '-',
+        useCalendarClones: false
     };
 
     public static Render(calendar: Calendar, options: SimpleCalendar.Renderer.TimeSelectorOptions = {id: ''}): string{
         options = deepMerge({}, this.defaultOptions, options);
-        let html = `<div id="${options.id}" class="fsc-time-selector" data-calendar="${CalManager.getAllCalendars().findIndex(c => c.id === calendar.id)}">`;
+        let html = `<div id="${options.id}" class="fsc-time-selector" data-calendar="${CalManager.getAllCalendars(options.useCalendarClones).findIndex(c => c.id === calendar.id)}">`;
         //Hidden Options
         html += `<input class="fsc-render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/><span class="far fa-clock"></span>`;
 
@@ -97,15 +98,15 @@ export default class TimeSelector {
         event.preventDefault();
         const timeSelectorElement = document.getElementById(timeSelectorId);
         if(timeSelectorElement){
+            let options: SimpleCalendar.Renderer.TimeSelectorOptions = {id:''};
+            const optionsInput = timeSelectorElement.querySelector('.fsc-render-options');
+            if(optionsInput){
+                options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));
+            }
             const calendarIndex = parseInt(timeSelectorElement.getAttribute('data-calendar') || '');
-            const calendars = CalManager.getAllCalendars();
+            const calendars = CalManager.getAllCalendars(options.useCalendarClones);
             if(!isNaN(calendarIndex) && calendarIndex >= 0 && calendarIndex < calendars.length){
                 const calendar = calendars[calendarIndex];
-                let options: SimpleCalendar.Renderer.TimeSelectorOptions = {id:''};
-                const optionsInput = timeSelectorElement.querySelector('.fsc-render-options');
-                if(optionsInput){
-                    options = JSON.parse(decodeURIComponent((<HTMLInputElement>optionsInput).value));
-                }
                 if(!options.selectedTime){
                     options.selectedTime = { start: { hour: 0, minute: 0, seconds: 0 }, end: { hour: 0, minute: 0, seconds: 0 } };
                 }

@@ -24,7 +24,7 @@ export default class DateTimeChangeSocket extends SocketBase{
             if(d.set){
                 MainApplication.setCurrentDate(d.interval.year || 0, d.interval.month || 0, d.interval.day || 0);
             } else {
-                calendar.changeDateTime(d.interval, false);
+                calendar.changeDateTime(d.interval, {updateMonth: false});
             }
             return true;
         }

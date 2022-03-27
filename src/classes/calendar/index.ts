@@ -1,6 +1,6 @@
 import {
     GameSystems,
-    GameWorldTimeIntegrations,
+    GameWorldTimeIntegrations, LeapYearRules,
     TimeKeeperStatus
 } from "../../constants";
 import Year from "./year";
@@ -21,6 +21,7 @@ import {CalManager, MainApplication, NManager, SC} from "../index";
 import TimeKeeper from "../time/time-keeper";
 import NoteStub from "../notes/note-stub";
 import Time from "../time/time";
+import {deepMerge} from "../utilities/object";
 
 export default class Calendar extends ConfigurationItemBase{
     /**
@@ -38,6 +39,10 @@ export default class Calendar extends ConfigurationItemBase{
      * @type {Year}
      */
     year: Year;
+    /**
+     * A list of all the months for this calendar
+     */
+    months: Month[] = [];
     /**
      * The days that make up a week
      */
@@ -68,6 +73,14 @@ export default class Calendar extends ConfigurationItemBase{
      * The Time Keeper class used for the in game clock
      */
     timeKeeper: TimeKeeper;
+    /**
+     * If Simple Calendar has initiated a time change
+     */
+    timeChangeTriggered: boolean = false;
+    /**
+     * If a combat change has been triggered
+     */
+    combatChangeTriggered: boolean = false;
 
     /**
      * Construct a new Calendar class
@@ -116,6 +129,7 @@ export default class Calendar extends ConfigurationItemBase{
         c.gameSystem = this.gameSystem;
         c.generalSettings = this.generalSettings.clone();
         c.year = this.year.clone();
+        c.months = this.months.map(m => m.clone());
         c.weekdays = this.weekdays.map(w => w.clone());
         c.seasons = this.seasons.map(s => s.clone());
         c.moons = this.moons.map(m => m.clone());
@@ -133,9 +147,9 @@ export default class Calendar extends ConfigurationItemBase{
     toTemplate(): SimpleCalendar.HandlebarTemplateData.Calendar{
         let sYear = this.year.selectedYear, sMonth, sDay;
 
-        const currentMonthDay = this.year.getMonthAndDayIndex();
-        const selectedMonthDay = this.year.getMonthAndDayIndex('selected');
-        const visibleMonthDay = this.year.getMonthAndDayIndex('visible');
+        const currentMonthDay = this.getMonthAndDayIndex();
+        const selectedMonthDay = this.getMonthAndDayIndex('selected');
+        const visibleMonthDay = this.getMonthAndDayIndex('visible');
 
         if(selectedMonthDay.month !== undefined){
             sMonth = selectedMonthDay.month;
@@ -172,7 +186,7 @@ export default class Calendar extends ConfigurationItemBase{
             currentDate: this.getCurrentDate(),
             general: this.generalSettings.toConfig(),
             leapYear: this.year.leapYearRule.toConfig(),
-            months: this.year.months.map(m => m.toConfig()),
+            months: this.months.map(m => m.toConfig()),
             moons: this.moons.map(m => m.toConfig()),
             noteCategories: this.noteCategories,
             seasons: this.seasons.map(s => s.toConfig()),
@@ -201,12 +215,12 @@ export default class Calendar extends ConfigurationItemBase{
         }
 
         if(config.months || config.monthSettings){
-            this.year.months = [];
+            this.months = [];
             const configMonths: SimpleCalendar.MonthData[] = config.months || config.monthSettings || [];
             for(let i = 0; i < configMonths.length; i++){
                 const newMonth = new Month();
                 newMonth.loadFromSettings(configMonths[i]);
-                this.year.months.push(newMonth);
+                this.months.push(newMonth);
             }
         }
 
@@ -269,33 +283,33 @@ export default class Calendar extends ConfigurationItemBase{
             this.year.selectedYear = config.currentDate.year;
             this.year.visibleYear = config.currentDate.year;
 
-            this.year.resetMonths('current');
-            this.year.resetMonths('visible');
+            this.resetMonths('current');
+            this.resetMonths('visible');
 
-            if(config.currentDate.month > -1 && config.currentDate.month < this.year.months.length){
-                this.year.months[config.currentDate.month].current = true;
-                this.year.months[config.currentDate.month].visible = true;
-                if(config.currentDate.day > -1 && config.currentDate.day < this.year.months[config.currentDate.month].days.length){
-                    this.year.months[config.currentDate.month].days[config.currentDate.day].current = true;
+            if(config.currentDate.month > -1 && config.currentDate.month < this.months.length){
+                this.months[config.currentDate.month].current = true;
+                this.months[config.currentDate.month].visible = true;
+                if(config.currentDate.day > -1 && config.currentDate.day < this.months[config.currentDate.month].days.length){
+                    this.months[config.currentDate.month].days[config.currentDate.day].current = true;
                 } else {
                     Logger.warn('Saved current day could not be found in this month, perhaps number of days has changed. Setting current day to first day of month');
-                    this.year.months[config.currentDate.month].days[0].current = true;
+                    this.months[config.currentDate.month].days[0].current = true;
                 }
             } else {
                 Logger.warn('Saved current month could not be found, perhaps months have changed. Setting current month to the first month');
-                this.year.months[0].current = true;
-                this.year.months[0].visible = true;
-                this.year.months[0].days[0].current = true;
+                this.months[0].current = true;
+                this.months[0].visible = true;
+                this.months[0].days[0].current = true;
             }
             this.time.seconds = config.currentDate.seconds;
             if(this.time.seconds === undefined){
                 this.time.seconds = 0;
             }
-        } else if(this.year.months.length) {
+        } else if(this.months.length) {
             Logger.warn('No current date setting found, setting default current date.');
-            this.year.months[0].current = true;
-            this.year.months[0].visible = true;
-            this.year.months[0].days[0].current = true;
+            this.months[0].current = true;
+            this.months[0].visible = true;
+            this.months[0].days[0].current = true;
         } else {
             Logger.error('Error setting the current date.');
         }
@@ -306,7 +320,7 @@ export default class Calendar extends ConfigurationItemBase{
      * @private
      */
     getCurrentDate(): SimpleCalendar.CurrentDateData{
-        const monthDayIndex = this.year.getMonthAndDayIndex();
+        const monthDayIndex = this.getMonthAndDayIndex();
         return {
             year: this.year.numericRepresentation,
             month: monthDayIndex.month || 0,
@@ -327,8 +341,8 @@ export default class Calendar extends ConfigurationItemBase{
             minute: 0,
             seconds: 0
         };
-        const selectedMonthDayIndex = this.year.getMonthAndDayIndex('selected');
-        const currentMonthDayIndex = this.year.getMonthAndDayIndex();
+        const selectedMonthDayIndex = this.getMonthAndDayIndex('selected');
+        const currentMonthDayIndex = this.getMonthAndDayIndex();
         if(selectedMonthDayIndex.month !== undefined){
             dt.year = this.year.selectedYear;
             dt.month = selectedMonthDayIndex.month;
@@ -350,14 +364,14 @@ export default class Calendar extends ConfigurationItemBase{
      * Gets the current season based on the current date
      */
     getCurrentSeason() {
-        let monthIndex = this.year.getMonthIndex('visible');
+        let monthIndex = this.getMonthIndex('visible');
         if(monthIndex === -1){
             monthIndex = 0;
         }
 
-        let dayIndex = this.year.months[monthIndex].getDayIndex('selected');
+        let dayIndex = this.months[monthIndex].getDayIndex('selected');
         if(dayIndex === -1){
-            dayIndex = this.year.months[monthIndex].getDayIndex();
+            dayIndex = this.months[monthIndex].getDayIndex();
             if(dayIndex === -1){
                 dayIndex = 0;
             }
@@ -367,6 +381,39 @@ export default class Calendar extends ConfigurationItemBase{
             name: season.name,
             color: season.color
         };
+    }
+
+    /**
+     * Returns the month where the passed in setting is tru
+     * @param {string} [setting='current'] The setting to look for. Can be visible, current or selected
+     */
+    getMonth(setting: string = 'current'){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        return this.months.find(m => m[verifiedSetting]);
+    }
+
+    getMonthIndex(setting: string = 'current'){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        return this.months.findIndex(m => m[verifiedSetting]);
+    }
+
+    getMonthAndDayIndex(setting: string = 'current'){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        const result: Partial<SimpleCalendar.Date> = {
+            month: 0,
+            day: 0
+        };
+        const mIndex = this.months.findIndex(m => m[verifiedSetting]);
+        if(mIndex > -1){
+            result.month = mIndex;
+            const dIndex = this.months[mIndex].getDayIndex(verifiedSetting);
+            if(dIndex > -1){
+                result.day = dIndex;
+            }
+        } else {
+            result.month = undefined;
+        }
+        return result;
     }
 
     /**
@@ -470,7 +517,7 @@ export default class Calendar extends ConfigurationItemBase{
         const weeks = [];
         const dayOfWeekOffset = this.monthStartingDayOfWeek(monthIndex, year);
         const isLeapYear = this.year.leapYearRule.isLeapYear(year);
-        const days = this.year.months[monthIndex].getDaysForTemplate(isLeapYear);
+        const days = this.months[monthIndex].getDaysForTemplate(isLeapYear);
 
         if(days.length && weekLength > 0){
             const startingWeek = [];
@@ -523,12 +570,12 @@ export default class Calendar extends ConfigurationItemBase{
                 }
             }
 
-            const month = this.year.months[monthIndex];
+            const month = this.months[monthIndex];
             let daysSoFar;
             if(month && month.startingWeekday !== null){
                 daysSoFar = dayIndex + month.startingWeekday - 1;
             } else {
-                daysSoFar = this.year.dateToDays(year, monthIndex, dayIndex) + this.year.firstWeekday;
+                daysSoFar = this.dateToDays(year, monthIndex, dayIndex) + this.year.firstWeekday;
             }
             return (daysSoFar % this.weekdays.length + this.weekdays.length) % this.weekdays.length;
         } else {
@@ -543,10 +590,274 @@ export default class Calendar extends ConfigurationItemBase{
      * @return {number}
      */
     monthStartingDayOfWeek(monthIndex: number, year: number): number {
-        if(monthIndex > -1 && monthIndex < this.year.months.length && !(this.year.months[monthIndex].intercalary && !this.year.months[monthIndex].intercalaryInclude)){
+        if(monthIndex > -1 && monthIndex < this.months.length && !(this.months[monthIndex].intercalary && !this.months[monthIndex].intercalaryInclude)){
             return this.dayOfTheWeek(year, monthIndex, 0);
         }
         return 0;
+    }
+
+    /**
+     * Resents the setting for all months and days to false
+     * @param {string} [setting='current']
+     */
+    resetMonths(setting: string = 'current'){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        this.months.forEach(m => {if(setting!=='visible'){m.resetDays(setting);} m[verifiedSetting] = false;});
+    }
+
+    setCurrentToVisible(){
+        this.year.visibleYear = this.year.numericRepresentation;
+        this.resetMonths('visible');
+        const curMonth = this.getMonth();
+        if(curMonth){
+            curMonth.visible = true;
+        }
+    }
+
+    /**
+     * Updates the specified setting for the specified month, also handles instances if the new month has 0 days
+     * @param month The index of the new month, -1 will be the last month
+     * @param setting The setting to update, can be 'visible', 'current' or 'selected'
+     * @param next If the change moved the calendar forward(true) or back(false) this is used to determine the direction to go if the new month has 0 days
+     * @param setDay If to set the months day to a specific one
+     */
+    updateMonth(month: number, setting: string, next: boolean, setDay: null | number = null){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        const yearToUse = verifiedSetting === 'current'? this.year.numericRepresentation : verifiedSetting === 'visible'? this.year.visibleYear : this.year.selectedYear;
+        const isLeapYear = this.year.leapYearRule.isLeapYear(yearToUse);
+        if(month === -1 || month >= this.months.length){
+            month = this.months.length - 1;
+        }
+        //Get the current months current day
+        let currentDay = next? 0 : -1;
+
+        if(setDay !== null){
+            currentDay = setDay;
+        } else {
+            const currentMonthDayIndex = this.getMonthAndDayIndex();
+            currentDay = currentMonthDayIndex.day || 0;
+        }
+
+        //Reset all the months settings
+        this.resetMonths(setting);
+        //If the month we are going to show has no days, skip it
+        if((isLeapYear && this.months[month].numberOfLeapYearDays === 0) || (!isLeapYear && this.months[month].numberOfDays === 0)){
+            this.months[month][verifiedSetting] = true;
+            return this.changeMonth((next? 1 : -1), setting, setDay);
+        } else {
+            this.months[month][verifiedSetting] = true;
+        }
+
+        // If we are adjusting the current date we need to propagate that down to the days of the new month as well
+        // We also need to set the visibility of the new month to true
+        if(verifiedSetting === 'current'){
+            this.months[month].updateDay(currentDay, isLeapYear);
+        }
+    }
+
+    /**
+     * Changes the number of the currently active year
+     * @param amount The amount to change the year by
+     * @param updateMonth If to also update month
+     * @param setting The month property we are changing. Can be 'visible', 'current' or 'selected'
+     * @param setDay If to set the months day to a specific one
+     */
+    changeYear(amount: number, updateMonth: boolean = true, setting: string = 'visible', setDay: null | number = null){
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        if(verifiedSetting === 'visible'){
+            this.year.visibleYear = this.year.visibleYear + amount;
+        } else if(verifiedSetting === 'selected'){
+            this.year.selectedYear = this.year.selectedYear + amount;
+        } else {
+            this.year.numericRepresentation = this.year.numericRepresentation + amount;
+        }
+        if(this.months.length){
+            if(updateMonth){
+                let mIndex = 0;
+                if(amount === -1){
+                    mIndex = this.months.length - 1;
+                }
+                this.updateMonth(mIndex, setting, (amount > 0), setDay);
+            }
+        }
+    }
+
+    /**
+     * Changes the current, visible or selected month forward or back one month
+     * @param amount If we are moving forward (true) or back (false) one month
+     * @param setting The month property we are changing. Can be 'visible', 'current' or 'selected'
+     * @param setDay If to set the months day to a specific one
+     */
+    changeMonth(amount: number, setting: string = 'visible', setDay: null | number = null): void{
+        const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
+        const next = amount > 0;
+        for(let i = 0; i < this.months.length; i++){
+            const month = this.months[i];
+            if(month[verifiedSetting]){
+                if(next && (i + amount) >= this.months.length){
+                    this.changeYear(1, true, verifiedSetting, setDay);
+                    const changeAmount = amount - (this.months.length - i);
+                    if(changeAmount > 0){
+                        this.changeMonth(changeAmount,verifiedSetting, setDay);
+                    }
+                } else if(!next && (i + amount) < 0){
+                    this.changeYear(-1, true, verifiedSetting, setDay);
+                    const changeAmount = amount + i + 1;
+                    if(changeAmount < 0){
+                        this.changeMonth(changeAmount,verifiedSetting, setDay);
+                    }
+                }
+                else {
+                    this.updateMonth(i+amount, setting, next, setDay);
+                }
+                break;
+            }
+        }
+    }
+
+    /**
+     * Changes the current or selected day forward or back one day
+     * @param {number} amount The number of days to change, positive forward, negative backwards
+     * @param {string} [setting='current'] The day property we are changing. Can be 'current' or 'selected'
+     */
+    changeDay(amount: number, setting: string = 'current'){
+        const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
+        const yearToUse = verifiedSetting === 'current' ? this.year.numericRepresentation : this.year.selectedYear;
+        const isLeapYear = this.year.leapYearRule.isLeapYear(yearToUse);
+        const currentMonth = this.getMonth();
+        if (currentMonth) {
+            const next = amount > 0;
+            let currentDayIndex = currentMonth.getDayIndex();
+            const lastDayOfCurrentMonth = isLeapYear? currentMonth.numberOfLeapYearDays : currentMonth.numberOfDays;
+            if(next && currentDayIndex + amount >= lastDayOfCurrentMonth){
+                this.changeMonth(1, verifiedSetting, 0);
+                this.changeDay(amount - (lastDayOfCurrentMonth - currentDayIndex), verifiedSetting);
+            } else if(!next && currentDayIndex + amount < 0){
+                this.changeMonth(-1, verifiedSetting, -1);
+                this.changeDay(amount + currentDayIndex + 1, verifiedSetting);
+            } else{
+                currentMonth.changeDay(amount, isLeapYear, verifiedSetting);
+            }
+        }
+    }
+
+    /**
+     * Changes the current or selected day by the passed in amount. Adjusting for number of years first
+     * @param amount
+     * @param setting
+     */
+    changeDayBulk(amount: number, setting: string = 'current'){
+        let isLeapYear = this.year.leapYearRule.isLeapYear(this.year.numericRepresentation);
+        let numberOfDays = this.totalNumberOfDays(isLeapYear, true);
+        while(amount > numberOfDays){
+            this.changeYear(1, false, setting);
+            amount -= numberOfDays;
+            isLeapYear = this.year.leapYearRule.isLeapYear(this.year.numericRepresentation);
+            numberOfDays = this.totalNumberOfDays(isLeapYear, true);
+        }
+        this.changeDay(amount, setting);
+    }
+
+    /**
+     * Generates the total number of days in a year
+     * @param {boolean} [leapYear=false] If to count the total number of days in a leap year
+     * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
+     * @return {number}
+     */
+    totalNumberOfDays(leapYear: boolean = false, ignoreIntercalaryRules: boolean = false): number {
+        let total = 0;
+        this.months.forEach((m) => {
+            if((m.intercalary && m.intercalaryInclude) || !m.intercalary || ignoreIntercalaryRules){
+                total += leapYear? m.numberOfLeapYearDays : m.numberOfDays;
+            }
+        });
+        return total;
+    }
+
+    /**
+     * Converts the passed in date to the number of days that make up that date
+     * @param {number} year The year to convert
+     * @param {number} monthIndex The index of the month to convert
+     * @param {number} dayIndex The day to convert
+     * @param {boolean} addLeapYearDiff If to add the leap year difference to the end result. Year 0 is not counted in the number of leap years so the total days will be off by that amount.
+     * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
+     */
+    dateToDays(year: number, monthIndex: number, dayIndex: number, addLeapYearDiff: boolean = false, ignoreIntercalaryRules: boolean = false){
+        const beforeYearZero = year < this.year.yearZero;
+        const daysPerYear = this.totalNumberOfDays(false, ignoreIntercalaryRules);
+        const daysPerLeapYear = this.totalNumberOfDays(true, ignoreIntercalaryRules);
+        const leapYearDayDifference = daysPerLeapYear - daysPerYear;
+        const isLeapYear = this.year.leapYearRule.isLeapYear(year);
+        const numberOfLeapYears = this.year.leapYearRule.howManyLeapYears(year);
+        const numberOfYZLeapYears = this.year.leapYearRule.howManyLeapYears(this.year.yearZero);
+        let leapYearDays;
+        let procYear = Math.abs(year - this.year.yearZero);
+
+        if(monthIndex < 0){
+            monthIndex = 0;
+        } else if(monthIndex > this.months.length){
+            monthIndex = this.months.length - 1;
+        }
+
+        if(beforeYearZero) {
+            procYear = procYear - 1;
+        }
+        //If the month has a day offset set we need to remove that from the days numeric representation or too many days are calculated.
+        let daysIntoMonth = dayIndex - this.months[monthIndex].numericRepresentationOffset + 1;
+
+        let daysSoFar = (daysPerYear * procYear);
+        if(daysIntoMonth < 1){
+            daysIntoMonth = 1;
+        }
+        if(beforeYearZero){
+            if(isLeapYear){
+                leapYearDays = (numberOfYZLeapYears - (numberOfLeapYears + 1)) * leapYearDayDifference;
+            } else {
+                leapYearDays = (numberOfYZLeapYears - numberOfLeapYears) * leapYearDayDifference;
+            }
+            daysSoFar += leapYearDays;
+            for(let i = this.months.length - 1; i >= 0; i--){
+                if(i > monthIndex && (ignoreIntercalaryRules || !this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
+                    if(isLeapYear){
+                        daysSoFar = daysSoFar + this.months[i].numberOfLeapYearDays;
+                    } else {
+                        daysSoFar = daysSoFar + this.months[i].numberOfDays;
+                    }
+                }
+            }
+            daysSoFar += (isLeapYear? this.months[monthIndex].numberOfLeapYearDays : this.months[monthIndex].numberOfDays) - daysIntoMonth;
+        } else {
+            leapYearDays = Math.abs(numberOfLeapYears - numberOfYZLeapYears) * leapYearDayDifference;
+            daysSoFar += leapYearDays;
+
+            for(let i = 0; i < this.months.length; i++){
+                //Only look at the month preceding the month we want and is not intercalary or is intercalary if the include setting is set otherwise skip
+                if(i < monthIndex && (ignoreIntercalaryRules || !this.months[i].intercalary || (this.months[i].intercalary && this.months[i].intercalaryInclude))){
+                    if(isLeapYear){
+                        daysSoFar = daysSoFar + this.months[i].numberOfLeapYearDays;
+                    } else {
+                        daysSoFar = daysSoFar + this.months[i].numberOfDays;
+                    }
+                }
+            }
+            daysSoFar += daysIntoMonth;
+        }
+        if(beforeYearZero){
+            daysSoFar = daysSoFar + 1;
+            if(year <= 0 && this.year.leapYearRule.rule !== LeapYearRules.None){
+                if(this.year.yearZero === 0 && !isLeapYear){
+                    daysSoFar -= leapYearDayDifference;
+                } else if(this.year.yearZero !== 0 && isLeapYear){
+                    daysSoFar += leapYearDayDifference;
+                }
+            }
+        } else {
+            daysSoFar = daysSoFar - 1;
+        }
+        if(year > 0 && this.year.yearZero === 0 && this.year.leapYearRule.rule !== LeapYearRules.None){
+            daysSoFar += leapYearDayDifference;
+        }
+        return beforeYearZero? daysSoFar * -1 : daysSoFar;
     }
 
     /**
@@ -571,31 +882,31 @@ export default class Calendar extends ConfigurationItemBase{
         if(beforeYearZero){
             year = this.year.yearZero - 1;
             let isLeapYear = this.year.leapYearRule.isLeapYear(year);
-            month = this.year.months.length - 1;
-            day = isLeapYear? this.year.months[month].numberOfLeapYearDays - 1 : this.year.months[month].numberOfDays - 1;
+            month = this.months.length - 1;
+            day = isLeapYear? this.months[month].numberOfLeapYearDays - 1 : this.months[month].numberOfDays - 1;
 
             if(sec === 0 && min === 0 && hour === 0){
                 dayCount--;
             }
             while(dayCount > 0){
-                const yearTotalDays = this.year.totalNumberOfDays(isLeapYear, true);
-                let monthDays = isLeapYear? this.year.months[month].numberOfLeapYearDays : this.year.months[month].numberOfDays;
+                const yearTotalDays = this.totalNumberOfDays(isLeapYear, true);
+                let monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
                 if(dayCount >= yearTotalDays){
                     year = year - 1;
                     isLeapYear = this.year.leapYearRule.isLeapYear(year);
-                    monthDays = isLeapYear? this.year.months[month].numberOfLeapYearDays : this.year.months[month].numberOfDays;
+                    monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
                     dayCount = dayCount - yearTotalDays;
                 } else if(dayCount >= monthDays){
                     month = month - 1;
                     //Check the new month to see if it has days for this year, if not then skip to the previous months until a month with days this year is found.
-                    let newMonthDays = isLeapYear? this.year.months[month].numberOfLeapYearDays : this.year.months[month].numberOfDays;
+                    let newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
                     let safetyCounter = 0
-                    while(newMonthDays === 0 && safetyCounter <= this.year.months.length){
+                    while(newMonthDays === 0 && safetyCounter <= this.months.length){
                         month--;
-                        newMonthDays = isLeapYear? this.year.months[month].numberOfLeapYearDays : this.year.months[month].numberOfDays;
+                        newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
                         safetyCounter++;
                     }
-                    day = isLeapYear? this.year.months[month].numberOfLeapYearDays - 1 : this.year.months[month].numberOfDays - 1;
+                    day = isLeapYear? this.months[month].numberOfLeapYearDays - 1 : this.months[month].numberOfDays - 1;
                     dayCount = dayCount - monthDays;
                 } else {
                     day = day - 1;
@@ -608,8 +919,8 @@ export default class Calendar extends ConfigurationItemBase{
             month = 0;
             day = 0;
             while(dayCount > 0){
-                const yearTotalDays = this.year.totalNumberOfDays(isLeapYear, true);
-                const monthDays = isLeapYear? this.year.months[month].numberOfLeapYearDays : this.year.months[month].numberOfDays;
+                const yearTotalDays = this.totalNumberOfDays(isLeapYear, true);
+                const monthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
                 if(dayCount >= yearTotalDays){
                     year = year + 1;
                     isLeapYear = this.year.leapYearRule.isLeapYear(year);
@@ -617,11 +928,11 @@ export default class Calendar extends ConfigurationItemBase{
                 } else if(dayCount >= monthDays){
                     month = month + 1;
                     //Check the new month to see if it has days for this year, if not then skip to the next months until a month with days this year is found.
-                    let newMonthDays = isLeapYear? this.year.months[month].numberOfLeapYearDays : this.year.months[month].numberOfDays;
+                    let newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
                     let safetyCounter = 0
-                    while(newMonthDays === 0 && safetyCounter <= this.year.months.length){
+                    while(newMonthDays === 0 && safetyCounter <= this.months.length){
                         month++;
-                        newMonthDays = isLeapYear? this.year.months[month].numberOfLeapYearDays : this.year.months[month].numberOfDays;
+                        newMonthDays = isLeapYear? this.months[month].numberOfLeapYearDays : this.months[month].numberOfDays;
                         safetyCounter++;
                     }
                     dayCount = dayCount - monthDays;
@@ -664,14 +975,14 @@ export default class Calendar extends ConfigurationItemBase{
             hour = hour - (dayCount * this.time.hoursInDay);
         }
 
-        const daysInYear = this.year.totalNumberOfDays(false, false);
-        const averageDaysInMonth = daysInYear / this.year.months.map(m => !m.intercalary).length;
+        const daysInYear = this.totalNumberOfDays(false, false);
+        const averageDaysInMonth = daysInYear / this.months.map(m => !m.intercalary).length;
 
         month = Math.floor(dayCount / averageDaysInMonth);
         day = dayCount - Math.round(month * averageDaysInMonth);
 
-        year = Math.floor(month / this.year.months.length);
-        month = month - Math.round(year * this.year.months.length);
+        year = Math.floor(month / this.months.length);
+        month = month - Math.round(year * this.months.length);
 
         return {
             seconds: sec,
@@ -687,48 +998,104 @@ export default class Calendar extends ConfigurationItemBase{
      * Converts current date into seconds
      */
     public toSeconds(){
-        const monthDay = this.year.getMonthAndDayIndex();
+        const monthDay = this.getMonthAndDayIndex();
         return ToSeconds(this, this.year.numericRepresentation, monthDay.month || 0, monthDay.day || 0, true);
     }
 
-    public changeDateTime(interval: SimpleCalendar.DateTimeParts, yearChangeUpdateMonth: boolean = true, syncChange: boolean = false){
+    public changeDateTime(interval: SimpleCalendar.DateTimeParts, options: SimpleCalendar.DateChangeOptions = {}){
+        options = deepMerge({}, {updateMonth: true, updateApp: true, save: true, sync: true, showWarning: false}, options);
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
+            let initialTimestamp = NaN;
+            if(CalManager.syncWithAllCalendars){
+                initialTimestamp = this.toSeconds();
+            }
             let change = false;
             if(interval.year){
-                this.year.changeYear(interval.year, yearChangeUpdateMonth, 'current');
+                this.changeYear(interval.year, options.updateMonth, 'current');
                 change = true;
             }
             if(interval.month){
-                this.year.changeMonth(interval.month, 'current');
+                this.changeMonth(interval.month, 'current');
                 change = true;
             }
             if(interval.day){
-                this.year.changeDay(interval.day);
+                this.changeDay(interval.day);
                 change = true;
             }
             if(interval.hour || interval.minute || interval.seconds){
                 const dayChange = this.time.changeTime(interval.hour, interval.minute, interval.seconds);
                 if(dayChange !== 0){
-                    this.year.changeDay(dayChange);
+                    this.changeDay(dayChange);
                 }
                 change = true;
             }
 
-            if(change && !syncChange){
-                if(SC.globalConfiguration.syncCalendars){
-                    const calendars = CalManager.getAllCalendars();
-                    for(let i = 0; i < calendars.length; i++){
-                        if(calendars[i].id !== this.id){
-                            calendars[i].changeDateTime(interval, yearChangeUpdateMonth, true);
-                        }
-                    }
+            if(change){
+                if(!options.fromCalSync && CalManager.syncWithAllCalendars && !isNaN(initialTimestamp)){
+                    let changeInSeconds = this.toSeconds() - initialTimestamp;
+                    CalManager.syncWithCalendars({seconds: changeInSeconds});
                 }
+                if(options.save){
+                    CalManager.saveCalendars().catch(Logger.error);
+                }
+                if(options.sync){
+                    this.syncTime().catch(Logger.error);
+                }
+                if(options.updateApp){
+                    MainApplication.updateApp();
+                }
+            }
+            return true;
+        } else if(options.showWarning){
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
+        }
+        return false;
+    }
+
+    public setDateTime(date: SimpleCalendar.DateTimeParts, options: SimpleCalendar.DateChangeOptions = {}){
+        options = deepMerge({}, {updateMonth: true, updateApp: true, save: true, sync: true, showWarning: false}, options);
+        if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
+            let initialTimestamp = NaN;
+            if(CalManager.syncWithAllCalendars){
+                initialTimestamp = this.toSeconds();
+            }
+            const processedDate: SimpleCalendar.DateTime = { year: date.year || 0, month: date.month || 0, day: date.day || 0, hour: date.hour || 0, minute: date.minute || 0, seconds: date.seconds || 0 };
+            const monthDayIndex = this.getMonthAndDayIndex();
+            const currentTime = this.time.getCurrentTime();
+            if (date.seconds === undefined) {
+                processedDate.seconds = currentTime.seconds;
+            }
+            if (date.minute === undefined) {
+                processedDate.minute = currentTime.minute;
+            }
+            if (date.hour === undefined) {
+                processedDate.hour = currentTime.hour;
+            }
+            if (date.year === undefined) {
+                processedDate.year = this.year.numericRepresentation;
+            }
+            if (date.month === undefined) {
+                processedDate.month = monthDayIndex.month || 0;
+            }
+            if (date.day === undefined) {
+                processedDate.day = monthDayIndex.day || 0;
+            }
+            this.updateTime(processedDate);
+            if(!options.fromCalSync && CalManager.syncWithAllCalendars && !isNaN(initialTimestamp)){
+                let changeInSeconds = this.toSeconds() - initialTimestamp;
+                CalManager.syncWithCalendars({seconds: changeInSeconds});
+            }
+            if(options.save){
                 CalManager.saveCalendars().catch(Logger.error);
+            }
+            if(options.sync){
                 this.syncTime().catch(Logger.error);
+            }
+            if(options.updateApp){
                 MainApplication.updateApp();
             }
             return true;
-        } else {
+        } else if(options.showWarning){
             GameSettings.UiNotification(GameSettings.Localize('FSC.Warn.Macros.GMUpdate'), 'warn');
         }
         return false;
@@ -738,13 +1105,14 @@ export default class Calendar extends ConfigurationItemBase{
      * Sets the current game world time to match what our current time is
      */
     async syncTime(force: boolean = false){
+        let totalSeconds = NaN;
         // Only if the time tracking rules are set to self or mixed
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime) && (this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed)){
-            const totalSeconds = this.toSeconds();
+            totalSeconds = this.toSeconds();
             // If the calculated seconds are different from what is set in the game world time, update the game world time to match sc's time
             if(totalSeconds !== (<Game>game).time.worldTime || force){
                 //Let the local functions know that we already updated this time
-                this.year.timeChangeTriggered = true;
+                this.timeChangeTriggered = true;
                 //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
                 await this.time.setWorldTime(totalSeconds);
             }
@@ -765,39 +1133,30 @@ export default class Calendar extends ConfigurationItemBase{
             // If the tracking rules are for self or mixed and the clock is running then we make the change.
             if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.timeKeeper.getStatus() === TimeKeeperStatus.Started){
                 const parsedDate = this.secondsToDate(newTime);
-                this.updateTime(parsedDate);
+                this.setDateTime(parsedDate, {updateApp: (this.time.updateFrequency * this.time.gameTimeRatio) !== changeAmount, sync: false, save: false});
                 Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.timeKeeper.getStatus());
-                //Something else has changed the world time and we need to update everything to reflect that.
-                if((this.time.updateFrequency * this.time.gameTimeRatio) !== changeAmount){
-                    MainApplication.updateApp();
-                }
             }
             // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
-            else if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.year.timeChangeTriggered || this.year.combatChangeTriggered)){
+            else if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.timeChangeTriggered || this.combatChangeTriggered)){
                 //If we didn't request the change (from a combat change) we need to update the internal time to match the new world time
-                if(!this.year.timeChangeTriggered){
+                if(!this.timeChangeTriggered){
                     const parsedDate = this.secondsToDate(newTime);
-                    this.updateTime(parsedDate);
                     // If the current player is the GM then we need to save this new value to the database
                     // Since the current date is updated this will trigger an update on all players as well
-                    if(GameSettings.IsGm() && SC.primary){
-                        CalManager.saveCalendars().catch(Logger.error);
-                    }
+                    this.setDateTime(parsedDate, {updateApp: false, sync: false, save: GameSettings.IsGm() && SC.primary});
                 }
             }
                 // If we didn't (locally) request this change then parse the new time into years, months, days and seconds and set those values
             // This covers other modules/built in features updating the world time and Simple Calendar updating to reflect those changes
-            else if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.ThirdParty || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && !this.year.timeChangeTriggered){
+            else if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.ThirdParty || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && !this.timeChangeTriggered){
                 const parsedDate = this.secondsToDate(newTime);
-                this.updateTime(parsedDate);
-                //We need to save the change so that when the game is reloaded simple calendar will display the correct time
-                if(GameSettings.IsGm() && SC.primary){
-                    CalManager.saveCalendars().catch(Logger.error);
-                }
+                // If the current player is the GM then we need to save this new value to the database
+                // Since the current date is updated this will trigger an update on all players as well
+                this.setDateTime(parsedDate, {updateApp: false, sync: false, save: GameSettings.IsGm() && SC.primary});
             }
         }
-        this.year.timeChangeTriggered = false;
-        this.year.combatChangeTriggered = false;
+        this.timeChangeTriggered = false;
+        this.combatChangeTriggered = false;
     }
 
     /**
@@ -812,13 +1171,9 @@ export default class Calendar extends ConfigurationItemBase{
             roundsPassed = combat.round - combat['previous'].round;
         }
         if(roundSeconds !== 0 && roundsPassed !== 0){
-            const parsedDate = this.secondsToDate(this.toSeconds() + (roundSeconds * roundsPassed));
-            this.updateTime(parsedDate);
             // If the current player is the GM then we need to save this new value to the database
             // Since the current date is updated this will trigger an update on all players as well
-            if(GameSettings.IsGm() && SC.primary){
-                CalManager.saveCalendars().catch(Logger.error);
-            }
+            this.changeDateTime({seconds: roundSeconds * roundsPassed}, {updateApp: false, sync: false, save: GameSettings.IsGm() && SC.primary})
         }
     }
 
@@ -829,8 +1184,8 @@ export default class Calendar extends ConfigurationItemBase{
     updateTime(parsedDate: SimpleCalendar.DateTime){
         let isLeapYear = this.year.leapYearRule.isLeapYear(parsedDate.year);
         this.year.numericRepresentation = parsedDate.year;
-        this.year.updateMonth(parsedDate.month, 'current', true);
-        this.year.months[parsedDate.month].updateDay(parsedDate.day, isLeapYear);
+        this.updateMonth(parsedDate.month, 'current', true);
+        this.months[parsedDate.month].updateDay(parsedDate.day, isLeapYear);
         this.time.setTime(parsedDate.hour, parsedDate.minute, parsedDate.seconds);
     }
 }

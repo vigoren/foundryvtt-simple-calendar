@@ -18,6 +18,7 @@ export default class GameSettingsRegistration{
             scope: "client",
             config: true,
             type: String,
+            // @ts-ignore
             choices: {
                 'dark': GameSettings.Localize("FSC.Configuration.Theme.Dark"),
                 'light': GameSettings.Localize("FSC.Configuration.Theme.Light"),
@@ -66,7 +67,6 @@ export default class GameSettingsRegistration{
             label: "FSC.Configuration.Title",
             hint: "",
             icon: "fa fa-cog",
-            //@ts-ignore
             type: ConfigurationApp,
             restricted: true
         });

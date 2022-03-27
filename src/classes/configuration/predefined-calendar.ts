@@ -18,7 +18,7 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = '';
                 calendar.year.yearZero = 1970;
-                calendar.year.months = [
+                calendar.months = [
                     new Month("January", 1, 0, 31),
                     new Month("February", 2, 0, 28, 29),
                     new Month("March",3, 0, 31),
@@ -55,8 +55,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.Gregorian;
                 calendar.year.leapYearRule.customMod = 0;
-                calendar.year.months[currentDate.getMonth()].current = true;
-                calendar.year.months[currentDate.getMonth()].days[currentDate.getDate()-1].current = true;
+                calendar.months[currentDate.getMonth()].current = true;
+                calendar.months[currentDate.getMonth()].days[currentDate.getDate()-1].current = true;
                 calendar.seasons[0].color = "#E0C40B";
                 calendar.seasons[1].color = "#46B946";
                 calendar.seasons[2].color = "#FF8E47";
@@ -98,7 +98,7 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = '';
                 calendar.year.yearZero = 0;
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Scorch', 1, 0, 30),
                     new Month('Morrow', 2, 0, 30),
                     new Month('Rest', 3, 0, 30),
@@ -115,9 +115,9 @@ export default class PredefinedCalendar{
                     new Month('Smolder', 12, 0, 30),
                     new Month('Highest Sun', -3, 0, 5)
                 ];
-                calendar.year.months[4].intercalary = true;
-                calendar.year.months[9].intercalary = true;
-                calendar.year.months[14].intercalary = true;
+                calendar.months[4].intercalary = true;
+                calendar.months[9].intercalary = true;
+                calendar.months[14].intercalary = true;
                 calendar.year.showWeekdayHeadings = false;
                 calendar.year.firstWeekday = 0;
                 calendar.weekdays = [
@@ -148,8 +148,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.None;
                 calendar.year.leapYearRule.customMod = 0;
-                calendar.year.months[0].current = true;
-                calendar.year.months[0].days[0].current = true;
+                calendar.months[0].current = true;
+                calendar.months[0].days[0].current = true;
                 calendar.moons = [
                     new Moon('Ral', 34),
                     new Moon('Guthay', 125)
@@ -274,7 +274,7 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = ' YK';
                 calendar.year.yearZero = 0;
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Zarantyr', 1, 0, 28),
                     new Month('Olarune', 2, 0, 28),
                     new Month('Therendor', 3, 0, 28),
@@ -306,8 +306,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.None;
                 calendar.year.leapYearRule.customMod = 0;
-                calendar.year.months[0].current = true;
-                calendar.year.months[0].days[0].current = true;
+                calendar.months[0].current = true;
+                calendar.months[0].days[0].current = true;
                 calendar.moons = []; //TODO: Maybe add all 12 moons?
                 calendar.year.yearNamesStart = 0;
                 calendar.year.yearNamingRule = YearNamingRules.Default;
@@ -319,7 +319,7 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = ' P.D.';
                 calendar.year.yearZero = 0;
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Horisal', 1, 0, 29),
                     new Month('Misuthar', 2, 0, 30),
                     new Month('Dualahei', 3, 0, 30),
@@ -355,8 +355,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.None;
                 calendar.year.leapYearRule.customMod = 0;
-                calendar.year.months[0].current = true;
-                calendar.year.months[0].days[0].current = true;
+                calendar.months[0].current = true;
+                calendar.months[0].days[0].current = true;
                 calendar.seasons[0].color = "#E0C40B";
                 calendar.seasons[1].color = "#46B946";
                 calendar.seasons[2].color = "#FF8E47";
@@ -420,7 +420,7 @@ export default class PredefinedCalendar{
                 calendar.year.yearNamesStart = 0;
                 calendar.year.yearNamingRule = YearNamingRules.Default;
 
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Winterwane', 1, 0, 46),
                     new Month('Springrise', 2, 0, 45),
                     new Month('Springwane', 3, 0, 46),
@@ -467,8 +467,8 @@ export default class PredefinedCalendar{
                 calendar.year.leapYearRule.rule = LeapYearRules.None;
                 calendar.year.leapYearRule.customMod = 0;
 
-                calendar.year.months[1].current = true;
-                calendar.year.months[1].days[0].current = true;
+                calendar.months[1].current = true;
+                calendar.months[1].days[0].current = true;
 
                 calendar.moons = [
                     new Moon('Moon', 30)
@@ -497,7 +497,7 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = ' AR';
                 calendar.year.yearZero = 0;
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Abadius', 1, 0, 31),
                     new Month('Calistril', 2, 0, 28, 29),
                     new Month('Pharast', 3, 0, 31),
@@ -534,8 +534,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.Custom;
                 calendar.year.leapYearRule.customMod = 8;
-                calendar.year.months[0].current = true;
-                calendar.year.months[0].days[0].current = true;
+                calendar.months[0].current = true;
+                calendar.months[0].days[0].current = true;
                 calendar.seasons[0].color = "#E0C40B";
                 calendar.seasons[1].color = "#46B946";
                 calendar.seasons[2].color = "#FF8E47";
@@ -577,7 +577,7 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = ' AR';
                 calendar.year.yearZero = 2700;
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Abadius', 1, 0, 31),
                     new Month('Calistril', 2, 0, 28, 29),
                     new Month('Pharast', 3, 0, 31),
@@ -614,8 +614,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.Custom;
                 calendar.year.leapYearRule.customMod = 4;
-                calendar.year.months[0].current = true;
-                calendar.year.months[0].days[0].current = true;
+                calendar.months[0].current = true;
+                calendar.months[0].days[0].current = true;
                 calendar.seasons[0].color = "#E0C40B";
                 calendar.seasons[1].color = "#46B946";
                 calendar.seasons[2].color = "#FF8E47";
@@ -657,7 +657,7 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = ' cy';
                 calendar.year.yearZero = 0;
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Needfest', -1, 0, 7),
                     new Month('Fireseek', 1, 0, 28),
                     new Month('Readying', 2, 0, 28),
@@ -675,10 +675,10 @@ export default class PredefinedCalendar{
                     new Month('Ready\'reat', 11, 0, 28),
                     new Month('Sunsebb', 12, 0, 28),
                 ];
-                calendar.year.months[0].intercalary = true;
-                calendar.year.months[4].intercalary = true;
-                calendar.year.months[8].intercalary = true;
-                calendar.year.months[12].intercalary = true;
+                calendar.months[0].intercalary = true;
+                calendar.months[4].intercalary = true;
+                calendar.months[8].intercalary = true;
+                calendar.months[12].intercalary = true;
                 calendar.year.showWeekdayHeadings = true;
                 calendar.year.firstWeekday = 0;
                 calendar.weekdays = [
@@ -718,8 +718,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.None;
                 calendar.year.leapYearRule.customMod = 0;
-                calendar.year.months[0].current = true;
-                calendar.year.months[0].days[0].current = true;
+                calendar.months[0].current = true;
+                calendar.months[0].days[0].current = true;
                 calendar.moons = [
                     new Moon('Luna', 28),
                     new Moon('Celene', 91)
@@ -765,7 +765,7 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = ' DR';
                 calendar.year.yearZero = 0;
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Hammer', 1, 0, 30),
                     new Month('Midwinter', -1, 0, 1),
                     new Month('Alturiak', 2, 0, 30),
@@ -785,12 +785,12 @@ export default class PredefinedCalendar{
                     new Month('Feast Of the Moon', -6, 0, 1),
                     new Month('Nightal', 12, 0, 30)
                 ];
-                calendar.year.months[1].intercalary = true;
-                calendar.year.months[5].intercalary = true;
-                calendar.year.months[9].intercalary = true;
-                calendar.year.months[10].intercalary = true;
-                calendar.year.months[13].intercalary = true;
-                calendar.year.months[16].intercalary = true;
+                calendar.months[1].intercalary = true;
+                calendar.months[5].intercalary = true;
+                calendar.months[9].intercalary = true;
+                calendar.months[10].intercalary = true;
+                calendar.months[13].intercalary = true;
+                calendar.months[16].intercalary = true;
                 calendar.year.showWeekdayHeadings = false;
                 calendar.year.firstWeekday = 0;
                 calendar.weekdays = [
@@ -829,8 +829,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.Custom;
                 calendar.year.leapYearRule.customMod = 4;
-                calendar.year.months[0].current = true;
-                calendar.year.months[0].days[0].current = true;
+                calendar.months[0].current = true;
+                calendar.months[0].days[0].current = true;
                 calendar.moons = [
                     new Moon('Selûne', 30.45)
                 ];
@@ -860,11 +860,11 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = '';
                 calendar.year.yearZero = 0;
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Holiday', -1, 0, 1),
                     new Month('Year', 1,1, 364)
                 ];
-                calendar.year.months[0].intercalary = true;
+                calendar.months[0].intercalary = true;
                 calendar.year.showWeekdayHeadings = true;
                 calendar.year.firstWeekday = 0;
                 calendar.weekdays = [
@@ -883,8 +883,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.None;
                 calendar.year.leapYearRule.customMod = 0;
-                calendar.year.months[0].current = true;
-                calendar.year.months[0].days[0].current = true;
+                calendar.months[0].current = true;
+                calendar.months[0].days[0].current = true;
                 calendar.moons = [];
                 calendar.year.yearNamesStart = 0;
                 calendar.year.yearNamingRule = YearNamingRules.Default;
@@ -896,7 +896,7 @@ export default class PredefinedCalendar{
                 calendar.year.prefix = '';
                 calendar.year.postfix = '';
                 calendar.year.yearZero = 0;
-                calendar.year.months = [
+                calendar.months = [
                     new Month('Hexenstag', -1, 0, 1),
                     new Month('Nachexen', 1, 0, 32),
                     new Month('Jahrdrung', 2, 0, 33),
@@ -916,12 +916,12 @@ export default class PredefinedCalendar{
                     new Month('Mondstille', -6, 0, 1),
                     new Month('Vorhexen', 12, 0, 33)
                 ];
-                calendar.year.months[0].intercalary = true;
-                calendar.year.months[3].intercalary = true;
-                calendar.year.months[7].intercalary = true;
-                calendar.year.months[9].intercalary = true;
-                calendar.year.months[12].intercalary = true;
-                calendar.year.months[16].intercalary = true;
+                calendar.months[0].intercalary = true;
+                calendar.months[3].intercalary = true;
+                calendar.months[7].intercalary = true;
+                calendar.months[9].intercalary = true;
+                calendar.months[12].intercalary = true;
+                calendar.months[16].intercalary = true;
                 calendar.year.showWeekdayHeadings = true;
                 calendar.year.firstWeekday = 0;
                 calendar.weekdays = [
@@ -958,8 +958,8 @@ export default class PredefinedCalendar{
                 calendar.time.gameTimeRatio = 1;
                 calendar.year.leapYearRule.rule = LeapYearRules.None;
                 calendar.year.leapYearRule.customMod = 0;
-                calendar.year.months[0].current = true;
-                calendar.year.months[0].days[0].current = true;
+                calendar.months[0].current = true;
+                calendar.months[0].days[0].current = true;
                 calendar.moons = [
                     new Moon('Luna', 25)
                 ];

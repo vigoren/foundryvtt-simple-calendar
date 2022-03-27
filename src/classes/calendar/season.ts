@@ -1,4 +1,3 @@
-import Year from "./year";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {CalManager} from "../index";
 
@@ -75,9 +74,8 @@ export default class Season extends ConfigurationItemBase{
 
     /**
      * Creates a template of the season used to render its information
-     * @param {Year} year The year to look in for the months and days list
      */
-    toTemplate(year: Year): SimpleCalendar.HandlebarTemplateData.Season{
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.Season{
         const startDateSelectorId = `sc_season_start_date_${this.id}`;
         const sunriseSelectorId = `sc_season_sunrise_time_${this.id}`;
 
@@ -94,21 +92,27 @@ export default class Season extends ConfigurationItemBase{
             sunsetMinute = sunsetMinute - (sunsetHour * activeCalendar.time.minutesInHour);
         }
 
-        const data: SimpleCalendar.HandlebarTemplateData.Season =  {
+        return {
             ...super.toTemplate(),
             name: this.name,
             startingMonth: this.startingMonth,
             startingDay: this.startingDay,
             color: this.color,
             startDateSelectorId: startDateSelectorId,
-            startDateSelectedDate: {year: 0, month: this.startingMonth, day: this.startingDay, hour: 0, minute: 0, seconds: 0},
+            startDateSelectedDate: {
+                year: 0,
+                month: this.startingMonth,
+                day: this.startingDay,
+                hour: 0,
+                minute: 0,
+                seconds: 0
+            },
             sunriseSelectorId: sunriseSelectorId,
             sunriseSelectorSelectedDates: {
                 start: {year: 0, month: 0, day: 0, hour: sunriseHour, minute: sunriseMinute, seconds: 0},
                 end: {year: 0, month: 0, day: 0, hour: sunsetHour, minute: sunsetMinute, seconds: 0}
             }
         };
-        return data;
     }
 
     /**
