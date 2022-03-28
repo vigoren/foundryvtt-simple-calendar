@@ -160,7 +160,7 @@ The date/time selector that is used when choosing a date for notes or specifying
 
 All the above changes have resulted in a change in how Simple Calendar stores data within FoundryVTT. Simple Calendar version 2 will detect if you are on a version 1 install and migrate users data over to the new format. The old data is then cleaned up.
 
-During the beta the cleanup operation has been disabled, so no data is permanganate deleted and a new function, `SimpleCalendar.Migration.run()` has been added to re-run the migration as many times as desired. Once the full release is made this function will be removed and the cleanup code will be re-enabled.
+During the beta the cleanup operation has been disabled, so no data is permanently deleted and a new function, `SimpleCalendar.Migration.run()` has been added to re-run the migration as many times as desired. Once the full release is made this function will be removed and the cleanup code will be re-enabled.
 
 
 
@@ -188,6 +188,8 @@ During the beta the cleanup operation has been disabled, so no data is permangan
 To go along with the large changelist to the Simple Calendar module the API has also undergone some large changes. 
 
 None of these changes should be breaking to existing implementations using the API but please read over all the changes to make sure your Systems/Modules/Macros are not impacted.
+
+The documentation for the API has also moved to [https://simplecalendar.info/api/index.html](https://simplecalendar.info/api/index.html). This site will be home to all documentation around Simple Calendar but for right now it just contains the up-to-date API documentation.
 
 #### General Changes
 
