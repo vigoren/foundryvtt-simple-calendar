@@ -20,7 +20,7 @@ import {saveAs} from "file-saver";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {animateElement, animateFormGroup, GetContrastColor} from "../utilities/visual";
+import {animateElement, animateFormGroup, GetContrastColor, GetIcon} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import UserPermissions from "../configuration/user-permissions";
 import {deepMerge} from "../utilities/object";
@@ -46,6 +46,8 @@ export default class ConfigurationApp extends FormApplication {
      * @private
      */
     private calendars: Calendar[] = [];
+
+    private predefindCalendars: any[] = [];
     /**
      * A copy of the global configuration options to be edited in the configuration dialog.
      * @type {GlobalConfigurationData}
@@ -82,6 +84,7 @@ export default class ConfigurationApp extends FormApplication {
         dateFormatTableExpanded: false,
         monthYearFormatExample: '',
         qsNextClicked: false,
+        qsAddNotes: true,
         selectedPredefinedCalendar: '',
         timeFormatExample: ''
     };
@@ -96,7 +99,7 @@ export default class ConfigurationApp extends FormApplication {
         // Check to see if the object is empty, if it is this is likely the user clicking the button in
         // FoundryVTTs module settings, and we need to initialize and show the actual configuration dialog
         if(isObjectEmpty(this.object)){
-            ConfigurationApplication.initializeAndShowDialog();
+            ConfigurationApplication.initializeAndShowDialog().catch(Logger.error);
             return;
         } else {
             options = options? options : {};
@@ -108,7 +111,7 @@ export default class ConfigurationApp extends FormApplication {
     /**
      * Sets up the data for the dialog and shows it
      */
-    initializeAndShowDialog(){
+    async initializeAndShowDialog(){
         this.calendars = CalManager.cloneCalendars();
         this.object = this.calendars[0];//Temp until we get better calendar picking
         SC.load();
@@ -119,6 +122,16 @@ export default class ConfigurationApp extends FormApplication {
         this.globalConfiguration.showNotesFolder = SC.globalConfiguration.showNotesFolder;
         this.clientSettings = deepMerge({}, SC.clientSettings);
         this._tabs[0].active = "globalSettings";
+
+        if(this.predefindCalendars.length === 0){
+            try{
+                const prefRes = await fetch(`modules/${ModuleName}/predefined-calendars/calendar-list.json`);
+                this.predefindCalendars = await prefRes.json();
+            } catch (e: any){
+                Logger.error(e);
+                this.predefindCalendars = [];
+            }
+        }
 
         if(!this.rendered){
             this.showApp();
@@ -220,19 +233,7 @@ export default class ConfigurationApp extends FormApplication {
                 'x-years': 'FSC.Configuration.Moon.YearResetX'
             },
             noteCategories: <SimpleCalendar.NoteCategory[]>[],
-            predefined: [
-                {key: PredefinedCalendars.Gregorian, label: 'FSC.Configuration.LeapYear.Rules.Gregorian'},
-                {key: PredefinedCalendars.DarkSun, label: 'Dark Sun'},
-                {key: PredefinedCalendars.Eberron, label: 'Eberron'},
-                {key: PredefinedCalendars.Exandrian, label: 'Exandrian'},
-                {key: PredefinedCalendars.ForbiddenLands, label: 'Forbidden Lands'},
-                {key: PredefinedCalendars.Harptos, label: 'Forgotten Realms: Harptos'},
-                {key: PredefinedCalendars.GolarianPF1E, label: 'Golarian: Pathfinder 1E'},
-                {key: PredefinedCalendars.GolarianPF2E, label: 'Golarian: Pathfinder 2E'},
-                {key: PredefinedCalendars.Greyhawk, label: 'Greyhawk'},
-                {key: PredefinedCalendars.TravellerImperialCalendar, label: 'Traveller: Imperial Calendar'},
-                {key: PredefinedCalendars.WarhammerImperialCalendar, label: 'Warhammer: Imperial Calendar'}
-            ],
+            predefined: this.predefindCalendars,
             qsCalDate: {year: 1, month: 0, day: 0, hour: 0, minute: 0, allDay: true},
             seasonColors: [
                 {
@@ -240,11 +241,11 @@ export default class ConfigurationApp extends FormApplication {
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorWhite")
                 },
                 {
-                    value: '#E0C40B',
+                    value: '#46B946',
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorSpring")
                 },
                 {
-                    value: '#46B946',
+                    value: '#E0C40B',
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorSummer")
                 },
                 {
@@ -256,6 +257,7 @@ export default class ConfigurationApp extends FormApplication {
                     display: GameSettings.Localize("FSC.Configuration.Season.ColorWinter")
                 }
             ],
+            seasonIcons: <{[key: string]: string}>{},
             seasons: (<Calendar>this.object).seasons.map(s => s.toTemplate()),
             showLeapYearCustomMod: (<Calendar>this.object).year.leapYearRule.rule === LeapYearRules.Custom,
             showLeapYearMonths: (<Calendar>this.object).year.leapYearRule.rule !== LeapYearRules.None,
@@ -274,6 +276,14 @@ export default class ConfigurationApp extends FormApplication {
                 'random': 'FSC.Random'
             }
         };
+
+        data.seasonIcons[Icons.None] = GameSettings.Localize('FSC.Configuration.LeapYear.Rules.None');
+        data.seasonIcons[Icons.Spring] = GameSettings.Localize("FSC.Configuration.Season.ColorSpring");
+        data.seasonIcons[Icons.Summer] = GameSettings.Localize("FSC.Configuration.Season.ColorSummer");
+        data.seasonIcons[Icons.Fall] = GameSettings.Localize("FSC.Configuration.Season.ColorFall");
+        data.seasonIcons[Icons.Winter] = GameSettings.Localize("FSC.Configuration.Season.ColorWinter");
+        data.seasonIcons[Icons.Sunrise] = GameSettings.Localize("FSC.Dawn");
+        data.seasonIcons[Icons.Sunset] = GameSettings.Localize("FSC.Dusk");
 
         data.moonIcons[Icons.NewMoon] = GameSettings.Localize('FSC.Moon.Phase.New');
         data.moonIcons[Icons.WaxingCrescent] = GameSettings.Localize('FSC.Moon.Phase.WaxingCrescent');
@@ -439,12 +449,12 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
-    private addNewCalendar(e: Event){
+    private async addNewCalendar(e: Event){
         e.preventDefault();
         const calNameElement = <HTMLInputElement>document.getElementById('scAddCalendarName');
         if(calNameElement && calNameElement.value){
             const newCal = CalManager.addTempCalendar(calNameElement.value);
-            PredefinedCalendar.setToPredefined(newCal, PredefinedCalendars.Gregorian);
+            await PredefinedCalendar.setToPredefined(newCal, PredefinedCalendars.Gregorian);
             this.calendars.push(newCal);
             this.object = newCal;
             this._tabs[0].active = "quickSetup";
@@ -453,7 +463,7 @@ export default class ConfigurationApp extends FormApplication {
     }
 
     private predefinedCalendarClick(e: Event){
-        const element = <HTMLElement>e.target;
+        const element = (<HTMLElement>e.target)?.closest('.fsc-predefined-calendar');
         if(element && this.appWindow){
             const allReadySelected = element.classList.contains('fsc-selected');
             this.appWindow.querySelectorAll(`.fsc-quick-setup .fsc-predefined-list .fsc-predefined-calendar`).forEach(e => {
@@ -485,9 +495,9 @@ export default class ConfigurationApp extends FormApplication {
         this.confirmationDialog('overwrite', 'predefined', {name: (<Calendar>this.object).name});
     }
 
-    private quickSetupNextConfirm(){
+    private async quickSetupNextConfirm(){
         this.uiElementStates.qsNextClicked = !this.uiElementStates.qsNextClicked;
-        PredefinedCalendar.setToPredefined((<Calendar>this.object), <PredefinedCalendars>this.uiElementStates.selectedPredefinedCalendar);
+        await PredefinedCalendar.setToPredefined((<Calendar>this.object), <PredefinedCalendars>this.uiElementStates.selectedPredefinedCalendar, this.uiElementStates.qsAddNotes);
         this.updateApp();
     }
 
@@ -508,6 +518,7 @@ export default class ConfigurationApp extends FormApplication {
         e.preventDefault();
         this.uiElementStates.selectedPredefinedCalendar = ''
         this.uiElementStates.qsNextClicked = false;
+        this.uiElementStates.qsAddNotes = true;
         const ds = DateSelectorManager.GetSelector('quick-setup-predefined-calendar', {});
         (<Calendar>this.object).year.numericRepresentation = ds.selectedDate.start.year;
         (<Calendar>this.object).year.visibleYear = ds.selectedDate.start.year;
@@ -568,6 +579,11 @@ export default class ConfigurationApp extends FormApplication {
             this.globalConfiguration.permissions.changeActiveCalendar.player = getCheckBoxInputValue('#scChangeActiveCalP', false, this.appWindow);
             this.globalConfiguration.permissions.changeActiveCalendar.trustedPlayer = getCheckBoxInputValue('#scChangeActiveCalTP', false, this.appWindow);
             this.globalConfiguration.permissions.changeActiveCalendar.assistantGameMaster = getCheckBoxInputValue('#scChangeActiveCalAGM', false, this.appWindow);
+
+            //----------------------------------
+            // Calendar: Quick Setup
+            //----------------------------------
+            this.uiElementStates.qsAddNotes = getCheckBoxInputValue('#scQSAddNotes', true, this.appWindow);
 
             //----------------------------------
             // Calendar: General Settings
@@ -676,6 +692,7 @@ export default class ConfigurationApp extends FormApplication {
                 const index = parseInt((<HTMLElement>e).getAttribute('data-index') || '');
                 if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).seasons.length){
                     (<Calendar>this.object).seasons[index].name = getTextInputValue(".fsc-season-name", "New Season", e);
+                    (<Calendar>this.object).seasons[index].icon = <Icons>getTextInputValue(".fsc-season-icon", Icons.None, e);
                     (<Calendar>this.object).seasons[index].color = getTextInputValue(".fsc-season-color", "#FFFFFF", e);
                 }
             });

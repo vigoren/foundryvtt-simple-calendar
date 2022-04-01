@@ -368,7 +368,7 @@
   "FSC.Description": "Descrição",
   "FSC.ExampleResult": "Exemplos de Resultado",
   "FSC.Token": "Data/Hora",
-  "FSC.Search": "Buscar",
+  "FSC.Search.Title": "Buscar",
   "FSC.SearchNotes": "Buscar Notas",
   "FSC.SearchEmpty": "Nenhum resultado encontrado.",
   "FSC.Notes.Reminder": "Me lembre!",

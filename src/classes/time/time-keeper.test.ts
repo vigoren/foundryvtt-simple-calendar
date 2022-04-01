@@ -3,30 +3,43 @@
  */
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
-import "../../__mocks__/application";
-import "../../__mocks__/handlebars";
-import "../../__mocks__/event";
+import "../../../__mocks__/application";
+import "../../../__mocks__/handlebars";
+import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";
-import "../../__mocks__/dialog";
-import "../../__mocks__/hooks";
+import "../../../__mocks__/dialog";
+import "../../../__mocks__/hooks";
 
 import TimeKeeper from "./time-keeper";
-import MainApp from "../applications/main-app";
 import {GameWorldTimeIntegrations, TimeKeeperStatus} from "../../constants";
-import Year from "../calendar/year";
-import Month from "../calendar/month";
+import {CalManager, SC, updateCalManager, updateSC} from "../index";
+import CalendarManager from "../calendar/calendar-manager";
+import Calendar from "../calendar";
+import SCController from "../s-c-controller";
+import {Hook} from "../api/hook";
+import GameSockets from "../foundry-interfacing/game-sockets";
 
 describe('Time Keeper Class Tests', () => {
     let tk: TimeKeeper
 
     beforeEach(() => {
         jest.spyOn(console, 'error').mockImplementation();
-        tk = new TimeKeeper(1);
-        MainApp.instance = new MainApp();
+        updateCalManager(new CalendarManager());
+        updateSC(new SCController());
+        tk = new TimeKeeper('test',1);
+        //@ts-ignore
+        game.paused = true;
+        //@ts-ignore
+        game.user.isGM = false;
+        SC.primary = false;
+        //@ts-ignore
+        tk.intervalNumber = undefined;
     });
 
 
-    test('Start/Stop', () => {
+    test('Start/Stop/Pause', () => {
+        const tCal = new Calendar('', '');
+        jest.spyOn(CalManager, 'getCalendar').mockReturnValue(tCal);
         //@ts-ignore
         game.paused = false;
         tk.start();
@@ -56,7 +69,7 @@ describe('Time Keeper Class Tests', () => {
 
         //@ts-ignore
         game.user.isGM = true;
-        MainApp.instance.primary = true;
+        SC.primary = true;
 
         tk.start();
         //@ts-ignore
@@ -70,8 +83,7 @@ describe('Time Keeper Class Tests', () => {
         //@ts-ignore
         expect(tk.saveIntervalNumber).toBeUndefined();
 
-        MainApp.instance.activeCalendar.year = new Year(0);
-        MainApp.instance.activeCalendar.year.time.unifyGameAndClockPause = true;
+        tCal.time.unifyGameAndClockPause = true;
         tk.start();
         //@ts-ignore
         expect(tk.intervalNumber).toBeDefined();
@@ -89,6 +101,21 @@ describe('Time Keeper Class Tests', () => {
         expect(tk.intervalNumber).toBeUndefined();
         //@ts-ignore
         expect(tk.saveIntervalNumber).toBeUndefined();
+
+        //@ts-ignore
+        tk.status = TimeKeeperStatus.Stopped;
+        //@ts-ignore
+        expect(tk.pauseClicked).toBe(false);
+        tk.pause();
+        //@ts-ignore
+        expect(tk.pauseClicked).toBe(false);
+        //@ts-ignore
+        tk.status = TimeKeeperStatus.Started;
+        tk.pause();
+        //@ts-ignore
+        expect(tk.pauseClicked).toBe(true);
+        //@ts-ignore
+        expect(tk.status).toBe(TimeKeeperStatus.Paused);
     });
 
     test('Get Status', () => {
@@ -96,111 +123,127 @@ describe('Time Keeper Class Tests', () => {
     });
 
     test('Set Status', () => {
-        const o = MainApp.instance.element;
-        //@ts-ignore
-        MainApp.instance.element = {
-            find: jest.fn().mockReturnValue({
-                removeClass: jest.fn().mockReturnValue({addClass: jest.fn()})
-            })
-        };
-
-        tk.setStatus(TimeKeeperStatus.Paused);
-        expect(tk.getStatus()).toBe(TimeKeeperStatus.Paused);
-
+        const tCal = new Calendar('', '');
+        jest.spyOn(CalManager, 'getCalendar').mockReturnValue(tCal);
+        expect(tk.getStatus()).toBe(TimeKeeperStatus.Stopped);
         tk.setStatus(TimeKeeperStatus.Started);
         expect(tk.getStatus()).toBe(TimeKeeperStatus.Started);
-
-        //@ts-ignore
-        MainApp.instance.element = o;
-    });
-
-    test('Set Clock Time', () => {
-        const o = MainApp.instance.element;
-        //@ts-ignore
-        MainApp.instance.element = {
-            find: jest.fn().mockReturnValue({
-                removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
-                text: jest.fn()
-            })
-        };
-
-        tk.setClockTime('');
-        //@ts-ignore
-        expect(MainApp.instance.element.find).toHaveBeenCalled();
-        MainApp.instance.activeCalendar.year = new Year(0);
-        tk.setClockTime('');
-        //@ts-ignore
-        expect(MainApp.instance.element.find).toHaveBeenCalled();
-
-        //@ts-ignore
-        MainApp.instance.element = o;
     });
 
     test('Interval', () => {
-        const o = MainApp.instance.element;
-        //@ts-ignore
-        MainApp.instance.element = {
-            find: jest.fn().mockReturnValue({
-                removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
-                text: jest.fn()
-            })
-        };
-
-        //@ts-ignore
-        tk.interval();
-
-        MainApp.instance.activeCalendar.year = new Year(0);
-        MainApp.instance.activeCalendar.year.months.push(new Month('M',1,0,10));
-        MainApp.instance.activeCalendar.year.months[0].current = true;
-        MainApp.instance.activeCalendar.year.months[0].days[0].current = true;
-        //@ts-ignore
-        tk.interval();
-
+        const tCal = new Calendar('', '');
+        jest.spyOn(CalManager, 'getCalendar').mockReturnValue(tCal);
+        jest.spyOn(tCal, 'changeDateTime').mockImplementation(() => {return true;});
+        jest.spyOn(Hook, 'emit').mockImplementation(() => {});
+        jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true;});
         //@ts-ignore
         game.paused = false;
-        tk.start();
-        //@ts-ignore
-        tk.interval();
 
-        MainApp.instance.activeCalendar.year.time.seconds = MainApp.instance.activeCalendar.year.time.secondsPerDay - 1;
         //@ts-ignore
         tk.interval();
+        expect(CalManager.getCalendar).not.toHaveBeenCalledTimes(2);
+        expect(tCal.changeDateTime).not.toHaveBeenCalled();
+
+        //@ts-ignore
+        tk.intervalNumber = 2;
+        //@ts-ignore
+        tk.interval();
+        expect(CalManager.getCalendar).toHaveBeenCalledTimes(3);
+        expect(tCal.changeDateTime).toHaveBeenCalledTimes(1);
+        expect(Hook.emit).toHaveBeenCalled();
 
         //@ts-ignore
         game.user.isGM = true;
-        MainApp.instance.primary = true;
-
+        SC.primary = true;
+        tCal.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
         //@ts-ignore
         tk.interval();
-
-        MainApp.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
-
-        //@ts-ignore
-        tk.interval();
-
-        tk.stop();
-        //@ts-ignore
-        MainApp.instance.element = o;
     });
 
     test('Save Interval', () => {
+        const tCal = new Calendar('', '');
+        jest.spyOn(CalManager, 'getCalendar').mockReturnValue(tCal);
+        jest.spyOn(CalManager, 'saveCalendars').mockImplementation(async () => {});
+        jest.spyOn(tCal, 'syncTime').mockImplementation(async () => {});
+        jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true;});
+        //@ts-ignore
+        game.paused = false;
+
         //@ts-ignore
         tk.saveInterval();
+        expect(CalManager.getCalendar).not.toHaveBeenCalled();
+        expect(CalManager.saveCalendars).not.toHaveBeenCalled();
 
-        MainApp.instance.activeCalendar.year = new Year(0);
+        //@ts-ignore
+        tk.status = TimeKeeperStatus.Started;
 
         //@ts-ignore
         tk.saveInterval();
+        expect(CalManager.getCalendar).toHaveBeenCalledTimes(1);
+
         //@ts-ignore
         game.user.isGM = true;
-        MainApp.instance.primary = true;
+        SC.primary = true;
 
         //@ts-ignore
         tk.saveInterval();
+        expect(CalManager.getCalendar).toHaveBeenCalledTimes(2);
 
-        MainApp.instance.activeCalendar.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
+        tCal.generalSettings.gameWorldTimeIntegration = GameWorldTimeIntegrations.None;
+        //@ts-ignore
+        tk.saveInterval();
+        expect(CalManager.getCalendar).toHaveBeenCalledTimes(3)
+    });
+
+    test('Update Status', () => {
+        const tCal = new Calendar('', '');
+        jest.spyOn(CalManager, 'getCalendar').mockReturnValue(tCal);
 
         //@ts-ignore
-        tk.interval();
+        tk.updateStatus();
+        expect(tk.getStatus()).toBe(TimeKeeperStatus.Stopped);
+
+        //@ts-ignore
+        tk.updateStatus(TimeKeeperStatus.Paused);
+        expect(tk.getStatus()).toBe(TimeKeeperStatus.Paused);
+
+        //@ts-ignore
+        tk.intervalNumber = 2;
+        //@ts-ignore
+        tk.updateStatus();
+        expect(tk.getStatus()).toBe(TimeKeeperStatus.Paused);
+
+        //@ts-ignore
+        game.paused = false;
+        //@ts-ignore
+        tk.updateStatus();
+        expect(tk.getStatus()).toBe(TimeKeeperStatus.Started);
+    });
+
+    test('Emit Socket', () => {
+        //@ts-ignore
+        game.user.isGM = true;
+        SC.primary = true;
+
+        //@ts-ignore
+        tk.emitSocket();
+    });
+
+    test('Register Update Listener', () => {
+        tk.registerUpdateListener('test', () => {});
+        //@ts-ignore
+        expect(tk.updateListeners.length).toBe(1);
+
+        tk.registerUpdateListener('test', () => {});
+        //@ts-ignore
+        expect(tk.updateListeners.length).toBe(1);
+    });
+
+    test('Call Listeners', () => {
+        const testFN = jest.fn();
+        tk.registerUpdateListener('test', testFN);
+        //@ts-ignore
+        tk.callListeners();
+        expect(testFN).toHaveBeenCalled();
     });
 });

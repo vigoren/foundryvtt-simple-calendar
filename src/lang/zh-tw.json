@@ -340,7 +340,7 @@
 "FSC.Description": "描述",
 "FSC.ExampleResult": "範例結果",
 "FSC.Token": "表示格式",
-"FSC.Search": "搜尋",
+"FSC.Search.Title": "搜尋",
 "FSC.SearchNotes": "搜尋筆記",
 "FSC.SearchEmpty": "沒有搜尋結果",
 "FSC.Import": "匯入",

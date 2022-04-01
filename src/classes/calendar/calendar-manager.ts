@@ -36,10 +36,10 @@ export default class CalendarManager {
     /**
      * When loading in for the first time
      */
-    public initialize(){
+    public async initialize(){
         const processed = this.loadCalendars();
         if(!processed){
-            const cal = this.getDefaultCalendar();
+            const cal = await this.getDefaultCalendar();
             this.activeId = cal.id;
             this.visibleId = cal.id;
         } else {
@@ -131,12 +131,12 @@ export default class CalendarManager {
      * Gets the default calendar, if the default does not exist create it
      * @returns {Calendar} The default calendar
      */
-    public getDefaultCalendar(): Calendar{
+    public async getDefaultCalendar(): Promise<Calendar>{
         let dCal = this.getCalendar('default');
         if(!dCal){
             dCal = this.addCalendar('default', 'Default', {id: ''});
             //Set the default calendar type to be our Gregorian calendar
-            PredefinedCalendar.setToPredefined(dCal, PredefinedCalendars.Gregorian);
+            await PredefinedCalendar.setToPredefined(dCal, PredefinedCalendars.Gregorian);
         }
         return dCal;
     }

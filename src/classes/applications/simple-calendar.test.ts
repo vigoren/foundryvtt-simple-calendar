@@ -339,34 +339,6 @@ describe('Simple Calendar Class Tests', () => {
         expect(r[0].label).toBe('FSC.Full');
     });
 
-    test('Get Scene Control Buttons', () => {
-        const controls: any[] = [{name:'test', tools:[]}];
-        MainApp.instance.getSceneControlButtons(controls);
-        expect(controls.length).toBe(1);
-        expect(controls[0].tools.length).toBe(0);
-        MainApp.instance.activeCalendar.year = y;
-        MainApp.instance.getSceneControlButtons(controls);
-        expect(controls.length).toBe(1);
-        expect(controls[0].tools.length).toBe(0);
-        controls.push({name:'token'});
-        MainApp.instance.getSceneControlButtons(controls);
-        expect(controls.length).toBe(2);
-        expect(controls[0].tools.length).toBe(0);
-        controls[1].tools = [];
-        MainApp.instance.getSceneControlButtons(controls);
-        expect(controls.length).toBe(2);
-        expect(controls[0].tools.length).toBe(0);
-        expect(controls[1].tools.length).toBe(1);
-
-        MainApp.instance.activeCalendar.generalSettings.permissions.viewCalendar.player = false;
-        MainApp.instance.activeCalendar.generalSettings.permissions.viewCalendar.trustedPlayer = false;
-        MainApp.instance.activeCalendar.generalSettings.permissions.viewCalendar.assistantGameMaster = false;
-        MainApp.instance.getSceneControlButtons(controls);
-        expect(controls.length).toBe(2);
-        expect(controls[0].tools.length).toBe(0);
-        expect(controls[1].tools.length).toBe(1);
-    });
-
     test('Show App', () => {
         // @ts-ignore
         game.user.isGM = false;
@@ -1187,125 +1159,9 @@ describe('Simple Calendar Class Tests', () => {
 
     });
 
-    test('Game Paused', () => {
-        const o = MainApp.instance.element;
-        //@ts-ignore
-        MainApp.instance.element = {
-            find: jest.fn().mockReturnValue({
-                removeClass: jest.fn().mockReturnValue({addClass: jest.fn()}),
-                text: jest.fn()
-            })
-        };
-        MainApp.instance.gamePaused(true);
-        MainApp.instance.activeCalendar.year = y;
-        MainApp.instance.gamePaused(true);
-        y.time.unifyGameAndClockPause = true;
-        MainApp.instance.gamePaused(true);
-        //@ts-ignore
-        game.paused = false;
-        MainApp.instance.gamePaused(true);
-        //@ts-ignore
-        MainApp.instance.element = o;
-    });
 
-    test('World Time Update', () => {
-        MainApp.instance.worldTimeUpdate(100, 10);
-        MainApp.instance.activeCalendar.year = y;
-        MainApp.instance.worldTimeUpdate(100, 10);
-        expect(y.time.seconds).toBe(100);
-    });
 
-    test('Create Combatant', () => {
-        const orig = (<Game>game).combats;
-        const origScenes = (<Game>game).scenes;
-        (<Game>game).combats = undefined;
-        //@ts-ignore
-        MainApp.instance.createCombatant({}, {}, "");
-        expect(MainApp.instance.activeCalendar.year.time.combatRunning).toBe(false);
 
-        //@ts-ignore
-        (<Game>game).combats = {size: 1, find: jest.fn((v)=>{return v.call(undefined, {id: 'cid'})? {id: 'cid', started: false, scene: {id:"sid"}} : null; }) };
-        //@ts-ignore
-        MainApp.instance.createCombatant({parent: null}, {}, "");
-        expect(MainApp.instance.activeCalendar.year.time.combatRunning).toBe(false);
-
-        //@ts-ignore
-        (<Game>game).combats = {size: 1, find: jest.fn((v)=>{return v.call(undefined, {id: 'cid'})? {id: 'cid', started: false, scene: {id:"sid"}} : null; }) };
-        //@ts-ignore
-        game.scenes = {active: null};
-        //@ts-ignore
-        MainApp.instance.createCombatant({parent: {id: 'cid'}}, {}, "");
-        expect(MainApp.instance.activeCalendar.year.time.combatRunning).toBe(false);
-
-        //@ts-ignore
-        (<Game>game).combats = {size: 1, find: jest.fn((v)=>{return v.call(undefined, {id: 'cid'})? {id: 'cid', started: true, scene: {id:"sid"}} : null; }) };
-        //@ts-ignore
-        game.scenes = {active: {id: 'sid'}};
-        //@ts-ignore
-        MainApp.instance.createCombatant({parent: {id: 'cid'}}, {}, "");
-        expect(MainApp.instance.activeCalendar.year.time.combatRunning).toBe(true);
-
-        MainApp.instance.activeCalendar.year.time.combatRunning = false;
-        //@ts-ignore
-        game.scenes = null;
-        //@ts-ignore
-        MainApp.instance.createCombatant({parent: {id: 'cid'}}, {}, "");
-        expect(MainApp.instance.activeCalendar.year.time.combatRunning).toBe(true);
-
-        (<Game>game).combats = orig;
-        (<Game>game).scenes = origScenes;
-    });
-
-    test('Combat Update', () => {
-        //@ts-ignore
-        MainApp.instance.combatUpdate({started: true}, {}, {advanceTime: 2});
-        MainApp.instance.activeCalendar.year = y;
-        //@ts-ignore
-        game.scenes = {active: null};
-        //@ts-ignore
-        MainApp.instance.combatUpdate({}, {}, {});
-        expect(y.time.combatRunning).toBe(false);
-        //@ts-ignore
-        game.scenes = {active: {id: '123'}};
-        //@ts-ignore
-        MainApp.instance.combatUpdate({started: true}, {}, {});
-        expect(y.time.combatRunning).toBe(false);
-        //@ts-ignore
-        MainApp.instance.combatUpdate({started: true, scene: {id:"123"}}, {}, {});
-        expect(y.time.combatRunning).toBe(true);
-        //@ts-ignore
-        MainApp.instance.combatUpdate({started: true, scene: {id:"123"}}, {}, {advanceTime: 2});
-        expect(y.combatChangeTriggered).toBe(true);
-        //@ts-ignore
-        MainApp.instance.combatUpdate({started: true, scene: {id:"123"}}, {}, {advanceTime: 0});
-        expect(y.combatChangeTriggered).toBe(true);
-
-        //@ts-ignore
-        game.scenes = null;
-    });
-
-    test('Combat Delete', () => {
-        MainApp.instance.activeCalendar.year = y;
-        y.time.combatRunning = true;
-        //@ts-ignore
-        MainApp.instance.combatDelete({});
-        expect(y.time.combatRunning).toBe(true);
-
-        //@ts-ignore
-        game.scenes = {active: null};
-        //@ts-ignore
-        MainApp.instance.combatDelete({});
-        expect(y.time.combatRunning).toBe(true);
-
-        //@ts-ignore
-        game.scenes = {active: {id: '123'}};
-        //@ts-ignore
-        MainApp.instance.combatDelete({started: true, scene: {id:"123"}});
-        expect(y.time.combatRunning).toBe(false);
-
-        //@ts-ignore
-        game.scenes = null;
-    });
 
     test('Start Time', () => {
 

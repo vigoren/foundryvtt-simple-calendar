@@ -370,7 +370,7 @@
   "FSC.Description": "Description",
   "FSC.ExampleResult": "Example des résultats",
   "FSC.Token": "Jetons",
-  "FSC.Search": "Recherche",
+  "FSC.Search.Title": "Recherche",
   "FSC.SearchNotes": "Recherche dans les Notes",
   "FSC.SearchEmpty": "Aucun résultat trouvé.",
   "FSC.Configuration.General.DisplayOptions": "Afficher les Options",

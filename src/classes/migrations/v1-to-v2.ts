@@ -47,6 +47,20 @@ export default class V1ToV2{
                         legacySettings.seasons[i].startingMonth = 0;
                     }
                     legacySettings.seasons[i].startingDay--;
+                    switch (legacySettings.seasons[i].color){
+                        case "#fffce8":
+                            legacySettings.seasons[i].color = "#46B946";
+                            break;
+                        case "#f3fff3":
+                            legacySettings.seasons[i].color = "#E0C40B";
+                            break;
+                        case "#fff7f2":
+                            legacySettings.seasons[i].color = "#FF8E47";
+                            break;
+                        case "#f2f8ff":
+                            legacySettings.seasons[i].color = "#479DFF";
+                            break;
+                    }
                 }
             }
             if(legacySettings.moons){

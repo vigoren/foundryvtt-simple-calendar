@@ -1,5 +1,5 @@
 import Calendar from "../calendar";
-import {DateRangeMatch, GameSystems, PresetTimeOfDay} from "../../constants";
+import {DateRangeMatch, GameSystems, Icons, PresetTimeOfDay} from "../../constants";
 import PF2E from "../systems/pf2e";
 import {PadNumber, ordinalSuffix} from "./string";
 import {deepMerge} from "./object";
@@ -189,6 +189,11 @@ export function IsDayBetweenDates(calendar: Calendar, checkDate: SimpleCalendar.
     return between;
 }
 
+/**
+ * Changes the passed in timestamp to a date in the passed in calendar
+ * @param seconds The timestamp to be converted
+ * @param calendar The calendar to use to do the conversion
+ */
 export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCalendar.DateData{
     const result: SimpleCalendar.DateData = {
         year: 0,
@@ -209,6 +214,7 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
             id: '',
             name: '',
             color: '',
+            icon: Icons.None,
             sunsetTime: 0,
             sunriseTime: 0,
             startingDay: 0,
@@ -272,6 +278,11 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
     return result;
 }
 
+/**
+ * Changes the passed in date/time and converts it to a timestamp for the passed in calendar
+ * @param date The date and time parts to convert to a timestamp
+ * @param calendar The calendar to use to do the conversion
+ */
 export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: Calendar): number {
     let ts = 0;
     const clone = calendar.clone(false);
@@ -310,6 +321,11 @@ export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: C
     return ts;
 }
 
+/**
+ * Advance the current date/time for the passed in calendar ID to the passed in preset
+ * @param preset The time of day preset to change to
+ * @param calendarId The ID of the calendar to adjust
+ */
 export async function AdvanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string){
     const calendar = CalManager.getCalendar(calendarId);
     if(calendar){

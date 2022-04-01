@@ -112,7 +112,7 @@
   "FSC.Apply": "Aplicar",
   "FSC.AdvancedOptions": "Opciones avanzadas",
   "FSC.Today": "Hoy",
-  "FSC.Search": "Buscar",
+  "FSC.Search.Title": "Buscar",
   "FSC.SearchNotes": "Buscar notas",
   "FSC.SearchEmpty": "No se han encontrado resultados",
   "FSC.Configure": "Configurar",

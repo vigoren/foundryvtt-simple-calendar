@@ -1,5 +1,6 @@
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import {CalManager} from "../index";
+import {Icons} from "../../constants";
 
 /**
  * All content around a season
@@ -31,6 +32,10 @@ export default class Season extends ConfigurationItemBase{
      * @type{number}
      */
     sunsetTime: number = 0;
+    /**
+     * An Icon to assign to the season
+     */
+    icon: Icons = Icons.None;
 
     /**
      * The Season Constructor
@@ -52,6 +57,7 @@ export default class Season extends ConfigurationItemBase{
         const t = new Season(this.name, this.startingMonth, this.startingDay);
         t.id = this.id;
         t.color = this.color;
+        t.icon = this.icon;
         t.sunriseTime = this.sunriseTime;
         t.sunsetTime = this.sunsetTime;
         return t;
@@ -67,6 +73,7 @@ export default class Season extends ConfigurationItemBase{
             startingMonth: this.startingMonth,
             startingDay: this.startingDay,
             color: this.color,
+            icon: this.icon,
             sunriseTime: this.sunriseTime,
             sunsetTime: this.sunsetTime
         }
@@ -98,6 +105,7 @@ export default class Season extends ConfigurationItemBase{
             startingMonth: this.startingMonth,
             startingDay: this.startingDay,
             color: this.color,
+            icon: this.icon,
             startDateSelectorId: startDateSelectorId,
             startDateSelectedDate: {
                 year: 0,
@@ -134,6 +142,9 @@ export default class Season extends ConfigurationItemBase{
             }
             if(config.hasOwnProperty('sunsetTime')){
                 this.sunsetTime = config.sunsetTime;
+            }
+            if(config.hasOwnProperty('icon')){
+                this.icon = config.icon;
             }
         }
     }

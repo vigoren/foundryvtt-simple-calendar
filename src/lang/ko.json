@@ -109,7 +109,7 @@
   "FSC.Apply": "적용",
   "FSC.AdvancedOptions": "고급 옵션",
   "FSC.Today": "오늘",
-  "FSC.Search": "검색",
+  "FSC.Search.Title": "검색",
   "FSC.SearchNotes": "노트 검색",
   "FSC.SearchEmpty": "결과 없음",
   "FSC.Configure": "설정",

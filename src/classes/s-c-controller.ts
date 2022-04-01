@@ -10,6 +10,9 @@ import UserPermissions from "./configuration/user-permissions";
 import {canUser} from "./utilities/permissions";
 import GameSockets from "./foundry-interfacing/game-sockets";
 
+/**
+ * The global Simple Calendar Controller class
+ */
 export default class SCController {
     /**
      * If this GM is considered the primary GM, if so all requests from players are filtered through this account.
@@ -23,12 +26,15 @@ export default class SCController {
     }
     /**
      * The sockets class for communicating with the connected players over our own socket
-     * @type {Sockets}
      */
     sockets: Sockets;
-
+    /**
+     * The client specific settings for Simple Calendar
+     */
     public clientSettings: SimpleCalendar.ClientSettingsData;
-
+    /**
+     * The global configuration settings for Simple Calendar
+     */
     public globalConfiguration: SimpleCalendar.GlobalConfigurationData;
 
     constructor() {
@@ -45,6 +51,9 @@ export default class SCController {
         };
     }
 
+    /**
+     * Called when the theme being used has changed and all currently open dialogs need to be updated to the new theme
+     */
     public static ThemeChange(){
         this.LoadThemeCSS();
         const newTheme = GameSettings.GetStringSettings(SettingNames.Theme);
@@ -87,6 +96,10 @@ export default class SCController {
         }
     }
 
+    /**
+     * Initialize the sockets
+     * Check for note reminders
+     */
     public initialize(){
         this.sockets.initialize();
         NManager.checkNoteReminders(this.activeCalendar.id, true);

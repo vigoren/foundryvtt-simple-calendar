@@ -3,34 +3,35 @@
  */
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
-import "../../__mocks__/application";
-import "../../__mocks__/handlebars";
-import "../../__mocks__/event";
+import "../../../__mocks__/application";
+import "../../../__mocks__/handlebars";
+import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";
-import "../../__mocks__/hooks";
-import Time from "./time";
-import MainApp from "../applications/main-app";
+import "../../../__mocks__/hooks";
+import Time from "./index";
+import Calendar from "../calendar";
+import {CalManager, updateCalManager} from "../index";
+import CalendarManager from "../calendar/calendar-manager";
 
 describe('Time Tests', () => {
     let t: Time;
 
     beforeEach(()=>{
+        updateCalManager(new CalendarManager());
         t = new Time();
     });
 
     test('Properties', () => {
-        expect(Object.keys(t).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(12); //Make sure no new properties have been added
         expect(t.hoursInDay).toBe(24);
         expect(t.minutesInHour).toBe(60);
         expect(t.secondsInMinute).toBe(60);
         expect(t.gameTimeRatio).toBe(1);
         expect(t.seconds).toBe(0);
         expect(t.secondsPerDay).toBe(86400);
-        expect(t.timeKeeper).toBeDefined();
         expect(t.combatRunning).toBe(false);
         expect(t.updateFrequency).toBe(1);
-        expect(t.unifyGameAndClockPause).toBe(false)
-        expect(t.secondsInCombatRound).toBe(6);
+        expect(t.unifyGameAndClockPause).toBe(false);
     });
 
     test('Clone', () => {
@@ -60,7 +61,6 @@ describe('Time Tests', () => {
         expect(t.hoursInDay).toBe(2);
         expect(t.unifyGameAndClockPause).toBe(false);
         expect(t.updateFrequency).toBe(1);
-        expect(t.secondsInCombatRound).toBe(5);
     });
 
     test('Get Current Time', () => {
@@ -70,7 +70,8 @@ describe('Time Tests', () => {
     });
 
     test('To String', () => {
-        MainApp.instance = new MainApp();
+        const tCal = new Calendar('', '');
+        jest.spyOn(CalManager, 'getActiveCalendar').mockReturnValue(tCal);
         expect(t.toString()).toBe('00:00:00');
     });
 

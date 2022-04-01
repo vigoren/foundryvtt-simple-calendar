@@ -763,7 +763,7 @@ export default class MainApp extends Application{
      * @param {Event} e The click event
      */
     public configurationClick(e: Event) {
-        ConfigurationApplication.initializeAndShowDialog();
+        ConfigurationApplication.initializeAndShowDialog().catch(Logger.error);
     }
 
     /**

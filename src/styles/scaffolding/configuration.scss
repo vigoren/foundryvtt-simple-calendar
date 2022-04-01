@@ -14,6 +14,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     max-height: 100%;
+    padding:0;
     //List of tabs on the left
     .tabs{
       flex: 0 0 10rem;
@@ -392,6 +393,21 @@
                 font-weight: 900;
                 content: '\f00c';
                 padding-left: $spacer-half * 0.5;
+              }
+            }
+            .fsc-predefined-calendar-details{
+              flex: 1;
+              font-weight: 600;
+            }
+            .fsc-predefined-calendar-includes{
+              font-size: 0.75rem;
+              font-weight: 500;
+              margin-top: $spacer-half * 0.5;
+              padding-left: $spacer-half;
+              padding-top: $spacer-half * 0.5;
+              border-top: 1px solid;
+              .fa{
+                margin-left: $spacer-half * 0.5;
               }
             }
           }

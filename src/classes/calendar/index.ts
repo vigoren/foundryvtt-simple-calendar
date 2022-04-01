@@ -20,7 +20,7 @@ import{canUser} from "../utilities/permissions";
 import {CalManager, MainApplication, NManager, SC} from "../index";
 import TimeKeeper from "../time/time-keeper";
 import NoteStub from "../notes/note-stub";
-import Time from "../time/time";
+import Time from "../time";
 import {deepMerge} from "../utilities/object";
 
 export default class Calendar extends ConfigurationItemBase{
@@ -1173,7 +1173,7 @@ export default class Calendar extends ConfigurationItemBase{
         if(roundSeconds !== 0 && roundsPassed !== 0){
             // If the current player is the GM then we need to save this new value to the database
             // Since the current date is updated this will trigger an update on all players as well
-            this.changeDateTime({seconds: roundSeconds * roundsPassed}, {updateApp: false, sync: false, save: GameSettings.IsGm() && SC.primary})
+            this.changeDateTime({seconds: roundSeconds * roundsPassed}, {updateApp: false, sync: true, save: GameSettings.IsGm() && SC.primary})
         }
     }
 

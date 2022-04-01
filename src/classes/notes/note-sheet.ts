@@ -177,7 +177,7 @@ export class NoteSheet extends JournalSheet{
         if(this.appWindow && !this.resized){
             const form = this.appWindow.getElementsByTagName('form');
             if(form && form.length){
-                let height = 30;
+                let height = 46;
                 height += form[0].offsetHeight;
                 if(this.editMode && height < 785){
                     height = 785;

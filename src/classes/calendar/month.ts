@@ -1,6 +1,5 @@
 import Day from "./day";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
-import Year from "./year";
 import Calendar from "./index";
 
 /**

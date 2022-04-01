@@ -123,7 +123,7 @@ The main change in this update to the notes is now notes are stored as journal e
 
 #### User Permissions
 
-With the change to using journal entires for notes how permissions are done for notes has changed.
+With the change to using journal entries for notes how permissions are done for notes has changed.
 
 - To add notes players MUST have the Create Journal Entries permission level.
 - The "Player Viewable" option has changed on notes from being a single check box to allowing you to specify which players can see the note.
@@ -172,6 +172,8 @@ During the beta the cleanup operation has been disabled, so no data is permanent
   - The number of seconds this changes the time by is based on "Seconds per Combat Round" setting.
 - Added a new note setting "Send Reminders On Login", if enabled when a player logs in any note reminder on the current day will be PM'd to them. This replaced to default of doing that step no matter what.
 - Adjusted how moon phase icons are displayed. If a day has more than 2 moon phases showing only the first phase will be down with a down arrow. Hovering over that moon phase/arrow will display a popup dialog that shows the phase for every moon on that day.
+- Added the ability to set an icon for each season. This will be displayed next to the season name on the calendar.
+- Moved predefined calendars configurations and the list of predefined calendars to their own json files. They are only downloaded when required, reducing the overall footprint of the module when loaded.
 
 ### Bug Fixes
 

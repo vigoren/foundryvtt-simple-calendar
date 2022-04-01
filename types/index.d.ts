@@ -1444,6 +1444,7 @@ declare global{
                 startingMonth: number;
                 startingDay: number;
                 color: string;
+                icon: Icons;
                 startDateSelectorId: string;
                 startDateSelectedDate: DateTime;
                 sunriseSelectorId: string;
@@ -2146,6 +2147,8 @@ declare global{
             sunsetTime: number;
             /** The color of the season */
             color: string;
+            /** The icon associated with the season */
+            icon: Icons;
             /**
              * The custom color for the season
              * @deprecated This is no longer used

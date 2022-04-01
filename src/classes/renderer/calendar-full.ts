@@ -62,7 +62,7 @@ export default class CalendarFull{
             monthYearFormat = monthYearFormat.replace(/YN|YA|YZ|YY(?:YY)?/g, '');
         }
 
-        let vYear, vMonthIndex = 0, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [], calendarStyle = '', seasonName = '';
+        let vYear, vMonthIndex = 0, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [], calendarStyle = '', seasonIcon = '', seasonName = '';
         if(options.date){
             if(options.date.month >= 0 && options.date.month < calendar.months.length){
                 vMonthIndex = options.date.month;
@@ -93,6 +93,7 @@ export default class CalendarFull{
         if(options.showSeasonName || options.colorToMatchSeason){
             const season = calendar.getSeason(vMonthIndex, ssDay? ssDay : 0);
             seasonName = season.name;
+            seasonIcon = GetIcon(season.icon, season.color, season.color);
             calendarStyle = `border-color: ${season.color};`;
         }
 
@@ -117,7 +118,7 @@ export default class CalendarFull{
         html += '</div>';
         //Season Name
         if(options.showSeasonName){
-            html += `<div class="fsc-season">${seasonName}</div>`;
+            html += `<div class="fsc-season">${seasonIcon}${seasonName}</div>`;
         }
         //Weekday Headings
         if(calendar.year.showWeekdayHeadings){

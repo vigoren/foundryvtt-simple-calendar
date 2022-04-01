@@ -62,11 +62,23 @@
     }
 
     .fsc-season{
-      text-align: center;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
       margin: -8px auto 10px;
       font-size: 12px;
       font-style: italic;
       font-weight: 600;
+
+      svg{
+        height: 15px;
+        margin-right: $spacer-half * 0.5;
+      }
+      span{
+        margin-right: $spacer-half * 0.5;
+      }
     }
 
     .fsc-weekdays{

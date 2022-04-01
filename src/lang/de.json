@@ -351,7 +351,7 @@
   "FSC.Description": "Beschreibung",
   "FSC.ExampleResult": "Beispiel Ergebnisse",
   "FSC.Token": "Token",
-  "FSC.Search": "Suche",
+  "FSC.Search.Title": "Suche",
   "FSC.SearchNotes": "Notizen Suchen",
   "FSC.SearchEmpty": "Keine Ergebnisse gefunden.",
   "FSC.Notes.Date": "Notiz Datum",

@@ -393,7 +393,7 @@ export async function configureCalendar(calendarData: PredefinedCalendars | Simp
         const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
         if(activeCalendar){
             if(typeof calendarData === "string"){
-                res = PredefinedCalendar.setToPredefined(activeCalendar, <PredefinedCalendars>calendarData);
+                res = await PredefinedCalendar.setToPredefined(activeCalendar, <PredefinedCalendars>calendarData);
             } else if(Object.keys(calendarData).length) {
                 activeCalendar.loadFromSettings(calendarData);
                 res = true;
@@ -1028,7 +1028,7 @@ export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.
     } else {
         Logger.error(`SimpleCalendar.api.getCurrentSeason - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
-    return {id:'', name: '', color: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0};
+    return {id:'', name: '', icon: Icons.None, color: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0};
 }
 
 /**

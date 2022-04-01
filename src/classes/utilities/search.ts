@@ -99,7 +99,7 @@ export class BM25Levenshtein {
         }
     }
 
-    _min(d0: number, d1: number, d2: number, bx: number, ay: number) {
+    private static _min(d0: number, d1: number, d2: number, bx: number, ay: number) {
         return d0 < d1 || d2 < d1
             ? d0 > d2
                 ? d2 + 1
@@ -115,10 +115,7 @@ export class BM25Levenshtein {
      * @param b
      * @private
      */
-    private levenshteinDistance(a: string, b: string){
-        if (a === b) {
-            return 0;
-        }
+    private static levenshteinDistance(a: string, b: string){
         if (a.length > b.length) {
             const tmp = a;
             a = b;
@@ -178,10 +175,10 @@ export class BM25Levenshtein {
             for (y = 0; y < len; y += 2) {
                 dy = vector[y];
                 ay = vector[y + 1];
-                d0 = this._min(dy, d0, d1, bx0, ay);
-                d1 = this._min(d0, d1, d2, bx1, ay);
-                d2 = this._min(d1, d2, d3, bx2, ay);
-                dd = this._min(d2, d3, dd, bx3, ay);
+                d0 = BM25Levenshtein._min(dy, d0, d1, bx0, ay);
+                d1 = BM25Levenshtein._min(d0, d1, d2, bx1, ay);
+                d2 = BM25Levenshtein._min(d1, d2, d3, bx2, ay);
+                dd = BM25Levenshtein._min(d2, d3, dd, bx3, ay);
                 vector[y] = dd;
                 d3 = d2;
                 d2 = d1;
@@ -195,7 +192,7 @@ export class BM25Levenshtein {
             dd = ++x;
             for (y = 0; y < len; y += 2) {
                 dy = vector[y];
-                vector[y] = dd = this._min(dy, d0, dd, bx0, vector[y + 1]);
+                vector[y] = dd = BM25Levenshtein._min(dy, d0, dd, bx0, vector[y + 1]);
                 d0 = dy;
             }
         }
@@ -231,7 +228,7 @@ export class BM25Levenshtein {
                     //Check to see if there is a partial match
                     const partialScore = Object.keys(this.documents[k].terms).filter(t => t.indexOf(queryTerm) !== -1).length;
                     //Do a fuzzy check to see if there are additional matches
-                    const fuzzyScore = Object.keys(this.documents[k].terms).map(t => {return this.levenshteinDistance(t, queryTerm)/3}).filter(a => a < 1).reduce((s, a) => s+(1-a), 0);
+                    const fuzzyScore = Object.keys(this.documents[k].terms).map(t => {return BM25Levenshtein.levenshteinDistance(t, queryTerm)/3}).filter(a => a < 1).reduce((s, a) => s+(1-a), 0);
                     this.documents[k].score += (partialScore * 0.00125) + (fuzzyScore * 0.0025);
                 }
             }

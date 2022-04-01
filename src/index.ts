@@ -43,12 +43,12 @@ updateNManager(new NoteManager());
     }
 };
 
-Hooks.on('init', () => {
+Hooks.on('init', async () => {
     //Register Handlebar Helpers and our game settings
     HandlebarsHelpers.Register();
     GameSettingsRegistration.Register();
     //Initialize the calendar manager (loads the calendars and their settings)
-    CalManager.initialize();
+    await CalManager.initialize();
     //Load the global configuration settings
     SC.load();
 

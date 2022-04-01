@@ -209,6 +209,8 @@ export enum GameWorldTimeIntegrations {
  * All SVG icons that are available to use with the sc-icon handlebar helper
  */
 export enum Icons {
+    /** An empty Icon */
+    None = 'none',
     /** The Simple Calendar Logo */
     Logo = 'logo',
     /** The clock icon used in the animated clock */
@@ -236,7 +238,15 @@ export enum Icons {
     /** The icon that represents last quarter moon */
     LastQuarter = 'last-quarter',
     /** The icon that represents waning crescent moon */
-    WaningCrescent = 'waning-crescent'
+    WaningCrescent = 'waning-crescent',
+    /** The icon that represents the season spring */
+    Spring = 'spring',
+    /** The icon that represents the season summer */
+    Summer = 'summer',
+    /** The icon that represents the season fall */
+    Fall = 'fall',
+    /** The icon that represents the season winter */
+    Winter = 'winter'
 }
 
 /**

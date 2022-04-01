@@ -98,6 +98,18 @@ export function GetIcon(icon: Icons, strokeColor: string = "#000000", fillColor:
             iString = WaxingGibbousIcon;
             fillSearch = /fill="#ffffff"/g;
             break;
+        case Icons.Spring:
+            iString = `<span class="fa fa-seedling" style="color:${strokeColor};"></span>`;
+            break;
+        case Icons.Summer:
+            iString = `<span class="fa fa-sun" style="color:${strokeColor};"></span>`;
+            break;
+        case Icons.Fall:
+            iString = `<span class="fa fa-leaf" style="color:${strokeColor};"></span>`;
+            break;
+        case Icons.Winter:
+            iString = `<span class="fa fa-snowflake" style="color:${strokeColor};"></span>`;
+            break;
     }
 
     iString = iString.replace(/stroke="#000000"/g, `stroke="${strokeColor}"`);
@@ -118,17 +130,37 @@ export function animateElement(element: Element, duration: number, forceHide: bo
             element.classList.add('fsc-animate');
             element.classList.remove('fsc-open');
             openState = false;
-            setTimeout(((nl: Element) => { nl.classList.add('fsc-closed'); }).bind(null, element), duration);
+            setTimeout(timeoutCall.bind(null, element, true, 'fsc-closed'), duration);
         } else {
             element.classList.add('fsc-animate', 'fsc-open');
             element.classList.remove('fsc-closed');
             openState = true;
         }
-        setTimeout(((nl: Element) => { nl.classList.remove('fsc-animate'); }).bind(null, element), duration);
+        setTimeout(timeoutCall.bind(null, element, false, 'fsc-animate'), duration);
     }
     return openState;
 }
 
+/**
+ * Function that is called after the animate element timeout is finished
+ * @param element The element that was being animated
+ * @param add If a class is being added or removed
+ * @param cssClass The class to add/remove
+ */
+export function timeoutCall(element: Element, add: boolean, cssClass: string){
+    if(add){
+        element.classList.add(cssClass);
+    } else {
+        element.classList.remove(cssClass);
+    }
+}
+
+/**
+ * Animates a form group
+ * @param selector The selector to get an element within the form group
+ * @param check If we are opening or closing the group
+ * @param element The root element to search for the selector
+ */
 export function animateFormGroup(selector: string, check: boolean, element: Document | Element = document){
     const fg = element.querySelector(selector)?.closest('.form-group');
     if(fg){

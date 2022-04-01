@@ -232,9 +232,30 @@
                         <p class="notes">{{localize 'FSC.Configuration.QuickSetup.ChoosePredefinedDescription'}}</p>
                         <div class="fsc-predefined-list">
                             {{#each predefined}}
-                                <div class="fsc-predefined-calendar {{#if (eq ../uiElementStates.selectedPredefinedCalendar key)}} fsc-selected{{/if}}" data-calendar="{{key}}">{{localize label}}</div>
+                                <div class="fsc-predefined-calendar {{#if (eq ../uiElementStates.selectedPredefinedCalendar key)}} fsc-selected{{/if}}" data-calendar="{{key}}">
+                                    <div class="fsc-predefined-calendar-details">
+                                        {{localize label}}
+                                        <div class="fsc-predefined-calendar-includes">
+                                            {{localize "FSC.Includes"}}:
+                                            {{#if config}}
+                                                <span class="fa fa-calendar" title="{{localize "FSC.CalendarConfiguration"}}"></span>
+                                            {{/if}}
+                                            {{#if notes}}
+                                                <span class="fa fa-sticky-note" title="{{localize "FSC.CalendarNotes"}}"></span>
+                                            {{/if}}
+                                        </div>
+                                    </div>
+
+                                </div>
                             {{/each}}
                         </div>
+                    </div>
+                    <div class="form-group fsc-open">
+                        <label for="scQSAddNotes">{{localize 'FSC.Configuration.QuickSetup.ImportNotes'}}</label>
+                        <div class="form-fields">
+                            <input value="{{uiElementStates.qsAddNotes}}" type="checkbox" id="scQSAddNotes" {{checked uiElementStates.qsAddNotes}} />
+                        </div>
+                        <p class="notes">{{localize 'FSC.Configuration.QuickSetup.ImportNotesDescription'}}</p>
                     </div>
                     <div class="fsc-control-section">
                         <button class="fsc-control fsc-primary fsc-qs-next" {{#unless uiElementStates.selectedPredefinedCalendar}}style="display: none;" {{/unless}}>{{localize 'FSC.Next'}}&nbsp;<span class="fa fa-arrow-right"></span></button>
@@ -821,6 +842,7 @@
                         <div title="{{localize 'FSC.Configuration.Season.NameHelp'}}" class="fsc-col">{{localize 'FSC.Configuration.Season.Name'}}</div>
                         <div title="{{localize 'FSC.Configuration.Season.StartingDateHelp'}}" class="fsc-col">{{localize 'FSC.Configuration.Season.StartingDate'}}</div>
                         <div title="{{localize 'FSC.Configuration.Season.SunriseSunsetHelp'}}" class="fsc-col">{{localize 'FSC.Configuration.Season.SunriseSunset'}}</div>
+                        <div title="{{localize 'FSC.Configuration.Season.IconHelp'}}" class="fsc-col">{{localize 'FSC.Configuration.Season.Icon'}}</div>
                         <div title="{{localize 'FSC.Configuration.Season.ColorHelp'}}" class="fsc-col">{{localize 'FSC.Configuration.Season.Color'}}</div>
                         <div class="fsc-col"></div>
                     </div>
@@ -834,6 +856,11 @@
                             </div>
                             <div class="fsc-col">
                                 {{sc-date-selector id=sunriseSelectorId calendar=../activeCalendarId showDateSelector=false showTimeSelector=true allowDateRangeSelection=false allowTimeRangeSelection=true timeDelimiter='/' useCloneCalendars=true selectedStartDate=sunriseSelectorSelectedDates.start selectedEndDate=sunriseSelectorSelectedDates.end}}
+                            </div>
+                            <div class="fsc-col">
+                                <select class="fsc-season-icon" title="{{localize 'FSC.Configuration.Season.Icon'}}">
+                                    {{selectOptions ../seasonIcons selected=icon }}
+                                </select>
                             </div>
                             <div class="fsc-col">
                                 <input type="color" value="{{color}}" class="fsc-season-color" title="{{localize 'FSC.Configuration.Season.Color'}}" list="scSeasonColors" />

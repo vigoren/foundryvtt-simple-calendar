@@ -16,7 +16,7 @@ import Note from "../note";
 import LeapYear from "../calendar/leap-year";
 import {GameWorldTimeIntegrations, LeapYearRules} from "../../constants";
 import Mock = jest.Mock;
-import Time from "../time/time";
+import Time from "../time";
 import Season from "../calendar/season";
 import Moon from "../calendar/moon";
 import {GeneralSettingsData, UserPermissionsData} from "../../interfaces";
