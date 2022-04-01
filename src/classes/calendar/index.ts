@@ -379,7 +379,8 @@ export default class Calendar extends ConfigurationItemBase{
         const season = this.getSeason(monthIndex, dayIndex);
         return {
             name: season.name,
-            color: season.color
+            color: season.color,
+            icon: season.icon
         };
     }
 

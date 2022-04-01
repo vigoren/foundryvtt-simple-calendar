@@ -108,6 +108,7 @@ export default class MainApp extends Application{
             compactViewDisplay= {
                 dateDisplay: '',
                 currentSeasonName: '',
+                currentSeasonIcon: '',
                 selectedDayMoons: <any>[]
             },
             mainViewDisplay = {
@@ -131,7 +132,9 @@ export default class MainApp extends Application{
             message = GameSettings.Localize('FSC.ViewingDifferentCalendar');
         }
         if(this.uiElementStates.compactView){
-            compactViewDisplay.currentSeasonName = this.visibleCalendar.getCurrentSeason().name;
+            const season = this.visibleCalendar.getCurrentSeason();
+            compactViewDisplay.currentSeasonName = season.name;
+            compactViewDisplay.currentSeasonIcon = GetIcon(season.icon, season.color, season.color);
 
             if(this.visibleCalendar.moons.length){
                 for(let i = 0; i < this.visibleCalendar.moons.length; i++){

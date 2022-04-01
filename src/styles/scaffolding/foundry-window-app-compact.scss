@@ -25,9 +25,22 @@
         justify-content: space-between;
         align-items: center;
         .fsc-season-text{
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          justify-content: center;
+          align-items: center;
+          font-style: italic;
+          font-weight: 600;
           font-size: 0.75rem;
           flex: 1;
-          text-align: center;
+          svg{
+            height: 15px;
+            margin-right: $spacer-half * 0.5;
+          }
+          span{
+            margin-right: $spacer-half * 0.5;
+          }
         }
       }
       .fsc-date{

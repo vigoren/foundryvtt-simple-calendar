@@ -7,7 +7,7 @@
             {{#if uiElementStates.compactView}}
             <div class="fsc-season">
                 {{#if compactViewDisplay.currentSeasonName }}
-                <div class="fsc-season-text">{{compactViewDisplay.currentSeasonName}}</div>
+                <div class="fsc-season-text">{{{compactViewDisplay.currentSeasonIcon}}}{{compactViewDisplay.currentSeasonName}}</div>
                 {{/if}}
                 <div class="fsc-moons">
                     {{#if (gt compactViewDisplay.selectedDayMoons.length 2)}}
