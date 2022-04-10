@@ -189,6 +189,9 @@
   "FSC.Delete": "Delete",
   "FSC.DeleteConfirm": "Confirm Delete",
   "FSC.DeleteConfirmText": "Do you really want to delete this note?",
+  "FSC.DiscardChanges": "Discard Changes",
+  "FSC.NoteDirty": "Unsaved Changes",
+  "FSC.NoteDirtyText": "There are unsaved changes for this note, close anyway? Changes will be lost.",
 
   "FSC.ChangeNextMonth": "Change to Next Month",
   "FSC.ChangePreviousMonth": "Change to Previous Month",

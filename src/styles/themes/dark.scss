@@ -642,6 +642,9 @@
 
     //Journal Sheet
     &.journal-sheet{
+      h1{
+        border-color: $secondary;
+      }
       a.entity-link, a.content-link, a.inline-roll{
         background-color: $primary-700;
         border-color: $primary-400;

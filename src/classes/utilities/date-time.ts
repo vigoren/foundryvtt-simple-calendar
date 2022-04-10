@@ -273,8 +273,8 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
     }
     result.display.day = day.numericRepresentation.toString();
     result.display.daySuffix = ordinalSuffix(day.numericRepresentation);
-    result.display.time = FormatDateTime({year: 0, month: 0, day: 0, hour: result.hour, minute: result.minute, seconds: result.second}, calendar.generalSettings.dateFormat.time, calendar);
-    result.display.date = FormatDateTime({year: result.year, month: result.month, day: result.day, hour: 0, minute: 0, seconds: 0}, calendar.generalSettings.dateFormat.date, calendar);
+    result.display.time = FormatDateTime({year: result.year, month: result.month, day: result.day, hour: result.hour, minute: result.minute, seconds: result.second}, calendar.generalSettings.dateFormat.time, calendar);
+    result.display.date = FormatDateTime({year: result.year, month: result.month, day: result.day, hour: result.hour, minute: result.minute, seconds: result.second}, calendar.generalSettings.dateFormat.date, calendar);
     return result;
 }
 

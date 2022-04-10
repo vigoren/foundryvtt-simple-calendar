@@ -1,4 +1,3 @@
-import {GameSettings} from "../foundry-interfacing/game-settings";
 import {CalManager} from "../index";
 import {DateRangeMatch, ModuleName, NoteRepeat} from "../../constants";
 import {GetDisplayDate, IsDayBetweenDates} from "../utilities/date-time";
@@ -69,15 +68,24 @@ export default class NoteStub{
     public get authorDisplay(){
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         if(journalEntry){
-            for(let k in journalEntry.data.permission){
-                if(journalEntry.data.permission[k] === 3){
-                    const author = (<Game>game).users?.get(k);
-                    if(author){
-                        return {
-                            name: author.name || '',
-                            color: author.data.color || '',
-                            colorText: GetContrastColor(author.data.color || '')
-                        };
+            const noteData = <SimpleCalendar.NoteData>journalEntry.getFlag(ModuleName, 'noteData');
+            if(noteData.fromPredefined){
+                return {
+                    name: "System",
+                    color: '',
+                    colorText: ''
+                };
+            } else {
+                for(let k in journalEntry.data.permission){
+                    if(journalEntry.data.permission[k] === 3){
+                        const author = (<Game>game).users?.get(k);
+                        if(author){
+                            return {
+                                name: author.name || '',
+                                color: author.data.color || '',
+                                colorText: GetContrastColor(author.data.color || '')
+                            };
+                        }
                     }
                 }
             }
@@ -130,6 +138,14 @@ export default class NoteStub{
             }
         }
         return registered;
+    }
+
+    public get fromPredefined(): boolean {
+        const nd = this.noteData;
+        if(nd && nd.fromPredefined !== undefined){
+            return  nd.fromPredefined;
+        }
+        return false;
     }
 
     public canUserView(): boolean {

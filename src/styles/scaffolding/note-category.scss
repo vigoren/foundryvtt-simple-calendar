@@ -16,12 +16,13 @@
     input{
       width: 15px;
       height: 15px;
-      flex: 0 15px;
+      flex: 0 0 15px;
       margin-left: 0;
     }
 
     span{
       margin-right: 0.35rem;
+      white-space: nowrap;
     }
   }
 }

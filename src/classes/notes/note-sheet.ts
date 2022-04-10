@@ -12,6 +12,8 @@ import GameSockets from "../foundry-interfacing/game-sockets";
 
 export class NoteSheet extends JournalSheet{
 
+    private dirty: boolean = false;
+
     private resized: boolean = false;
 
     private editMode: boolean = false;
@@ -27,6 +29,7 @@ export class NoteSheet extends JournalSheet{
         permission: <Partial<Record<string, 0 | 1 | 2 | 3>>>{}
     };
 
+    private hookID = 0;
     /**
      * The HTML element representing the application window
      * @private
@@ -37,6 +40,8 @@ export class NoteSheet extends JournalSheet{
         super(object, options);
 
         this.dateSelectorId = `scNoteDate_${this.object.id}`;
+
+        this.hookID = Hooks.on('renderNoteSheet', this.setHeight.bind(this));
     }
 
     static get defaultOptions(){
@@ -83,9 +88,42 @@ export class NoteSheet extends JournalSheet{
     }
 
     close(options?: FormApplication.CloseOptions): Promise<void> {
-        this.editMode = false;
-        this.resized = false;
-        return super.close(options);
+        if(this.dirty){
+            console.log('Form is dirty');
+            const dialog = new Dialog({
+                title: GameSettings.Localize('FSC.NoteDirty'),
+                content: GameSettings.Localize("FSC.NoteDirtyText"),
+                buttons:{
+                    yes: {
+                        icon: '<i class="fas fa-trash"></i>',
+                        label: GameSettings.Localize('FSC.DiscardChanges'),
+                        callback: this.isDirtyDialogClose.bind(this, false)
+                    },
+                    save: {
+                        icon: '<i class="fas fa-save"></i>',
+                        label: GameSettings.Localize('FSC.Save'),
+                        callback: this.isDirtyDialogClose.bind(this, true)
+                    }
+                },
+                default: "save"
+            });
+            dialog.render(true);
+            return Promise.resolve();
+        } else{
+            this.dirty = false;
+            this.editMode = false;
+            this.resized = false;
+            Hooks.off('renderNoteSheet', this.hookID);
+            return super.close(options);
+        }
+    }
+
+    async isDirtyDialogClose(save: boolean){
+        this.dirty = false;
+        if(save){
+            await this.save(new Event('click'));
+        }
+        return this.close();
     }
 
     render(force?: boolean, options?: Application.RenderOptions<JournalSheet.Options>, startInEditMode?: boolean): this {
@@ -177,8 +215,30 @@ export class NoteSheet extends JournalSheet{
         if(this.appWindow && !this.resized){
             const form = this.appWindow.getElementsByTagName('form');
             if(form && form.length){
-                let height = 46;
-                height += form[0].offsetHeight;
+                let height = 46;//Header height and padding of form
+                if(this.editMode){
+                    const form = <HTMLElement>this.appWindow.querySelector('form');
+                    if(form){
+                        height += form.scrollHeight;
+                    }
+                } else {
+                    const nHeader = <HTMLElement>this.appWindow.querySelector('.fsc-note-header');
+                    const nContent = <HTMLElement>this.appWindow.querySelector('.fsc-content');
+                    const nEditControls = <HTMLElement>this.appWindow.querySelector('.fsc-edit-controls');
+                    if(nHeader){
+                        const cs = window.getComputedStyle(nHeader);
+                        height += nHeader.offsetHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
+                    }
+                    if(nContent){
+                        const cs = window.getComputedStyle(nContent);
+                        height += nContent.scrollHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
+                    }
+                    if(nEditControls){
+                        const cs = window.getComputedStyle(nEditControls);
+                        height += nEditControls.offsetHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
+                    }
+                }
+
                 if(this.editMode && height < 785){
                     height = 785;
                 }
@@ -195,7 +255,6 @@ export class NoteSheet extends JournalSheet{
         super.activateListeners(html);
         this.appWindow = document.getElementById(`${NoteSheet.appWindowId}-${this.object.id}`);
         if(this.appWindow){
-            this.setHeight();
             if(this.editMode){
                 DateSelectorManager.ActivateSelector(this.dateSelectorId);
                 this.updateNoteRepeatDropdown();
@@ -312,6 +371,7 @@ export class NoteSheet extends JournalSheet{
             if(this.editors['content']){
                 this.journalData.content = this.editors['content'].mce?.getContent() || '';
             }
+            this.dirty = true;
         }
     }
 
@@ -356,13 +416,13 @@ export class NoteSheet extends JournalSheet{
     async save(e: Event){
         e.preventDefault();
         await this.writeInputValuesToObjects();
-        console.log(this.journalData);
+        (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).fromPredefined = false;
         await (<JournalEntry>this.object).update(this.journalData);
         MainApplication.updateApp();
         this.resized = false;
         this.editMode = false;
+        this.dirty = false;
         this.render(true);
-        //await this.close();
     }
 
     delete(e: Event){

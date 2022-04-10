@@ -1,7 +1,7 @@
 /**
  * This file mocks the FoundryVTT game global so that it can be used in testing
  */
-import {GameWorldTimeIntegrations, Icons, MoonYearResetOptions, SettingNames} from "../src/constants";
+import {GameWorldTimeIntegrations, SettingNames} from "../src/constants";
 
 //@ts-ignore
 const local: Localization = {
@@ -110,7 +110,8 @@ const game = {
         }),
         forEach: jest.fn((v)=>{
             return v.call(undefined, user)
-        })
+        }),
+        filter: () => {return [user];}
     },
     scenes: null,
     system: {
@@ -119,7 +120,18 @@ const game = {
             version: "1.2.3"
         }
     },
-    togglePause: jest.fn()
+    togglePause: jest.fn(),
+    journal: {
+        get: (id: string, obj: any) => {
+            if (id) {
+                return {
+                    getFlag: jest.fn().mockReturnValue({calendarId: 'test', startDate: {}, endDate: {}, allDay: true, repeats: 0, order: 0, categories: [], remindUsers: ['qwe']}),
+                    update: jest.fn()
+                };
+            }
+            return null;
+        }
+    }
 };
 
 // @ts-ignore

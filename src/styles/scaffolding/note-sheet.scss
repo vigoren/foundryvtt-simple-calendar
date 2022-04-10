@@ -99,12 +99,10 @@
         .fsc-category-list{
           display: flex;
           flex-direction: row;
-          flex-wrap: nowrap;
           justify-content: flex-end;
-          margin-top: $spacer-half;
         }
         .fsc-content{
-          margin-top: $spacer;
+          margin: $spacer-half;
           overflow-y: auto;
           word-break: break-word;
         }

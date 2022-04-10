@@ -22,7 +22,7 @@
                 <label>{{localize 'FSC.Configuration.Notes.NoteCategories'}}</label>
                 <div class="form-fields fsc-category-list">
                     {{#each edit.allCategories}}
-                        <label class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{name}}" type="checkbox" name="scNoteCategories" {{checked selected}} /> {{name}}</label>
+                        <label class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{name}}" type="checkbox" name="scNoteCategories" {{checked selected}} /><span>{{name}}</span></label>
                     {{/each}}
                 </div>
                 <p class="notes">{{localize 'FSC.Configuration.Notes.NoteCategoriesHelp'}}</p>
@@ -31,7 +31,7 @@
                 <label>{{localize 'FSC.Notes.UserPermissionTitle'}}</label>
                 <div class="form-fields fsc-category-list">
                     {{#each edit.users}}
-                        <label class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{id}}" type="checkbox" name="scUserPermissions" {{checked selected}} {{#if disabled}}disabled{{/if}} /> {{name}}</label>
+                        <label class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{id}}" type="checkbox" name="scUserPermissions" {{checked selected}} {{#if disabled}}disabled{{/if}} /><span>{{name}}</span></label>
                     {{/each}}
                 </div>
                 <p class="notes">{{localize 'FSC.Notes.UserPermissionHelp'}}</p>
@@ -62,15 +62,15 @@
                         <span class="fas fa-sync"></span>  {{display.repeatsDisplay}}
                     </div>
                 {{/if}}
+                <div class="fsc-note-category" style="background-color: {{display.author.color}}; color:{{display.author.textColor}}" title="{{localize 'FSC.Notes.Author'}}">
+                    <span class="fa fa-pencil-alt"></span> {{display.author.name}}
+                </div>
             </div>
-            <div class="fsc-note-category" style="background-color: {{display.author.color}}; color:{{display.author.textColor}}" title="{{localize 'FSC.Notes.Author'}}">
-                <span class="fa fa-pencil-alt"></span> {{display.author.name}}
+            <div class="fsc-category-list">
+                {{#each display.categories}}
+                    <div class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}">{{name}}</div>
+                {{/each}}
             </div>
-        </div>
-        <div class="fsc-category-list">
-            {{#each display.categories}}
-                <div class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}">{{name}}</div>
-            {{/each}}
         </div>
         <div class="fsc-content">
             {{{display.enrichedContent}}}

@@ -51,15 +51,20 @@ export default class NoteManager{
     public async createJournalDirectory(){
         const journalDirectory = (<Game>game).journal?.directory;
         if(journalDirectory){
-            this.noteDirectory = journalDirectory.folders.find(f => f.name === NotesDirectoryName);
+            this.noteDirectory = journalDirectory.folders.find(f => f.getFlag(ModuleName,'root'));
             if(!this.noteDirectory && GameSettings.IsGm()){
                 //TODO: Set the permissions on this created folder
                 await Folder.create({
                     name: NotesDirectoryName,
                     type: 'JournalEntry',
-                    parent: null
+                    parent: null,
+                    flags: {
+                        [ModuleName]: {
+                            root: true
+                        }
+                    }
                 });
-                this.noteDirectory = journalDirectory.folders.find(f => f.name === NotesDirectoryName);
+                this.noteDirectory = journalDirectory.folders.find(f => f.getFlag(ModuleName,'root'));
             }
         }
     }

@@ -17,7 +17,6 @@ import WaxingGibbousIcon from "../../icons/moon-waxing-gibbous.svg";
 /**
  * Finds the "best" contrast color for the passed in color
  * @param color
- * @constructor
  */
 export function GetContrastColor(color: string){
     let contrastColor = "#000000";
@@ -29,7 +28,7 @@ export function GetContrastColor(color: string){
         if (color.length === 3) {
             color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
         }
-        var r = parseInt(color.slice(0, 2), 16),
+        const r = parseInt(color.slice(0, 2), 16),
             g = parseInt(color.slice(2, 4), 16),
             b = parseInt(color.slice(4, 6), 16);
         contrastColor = (r * 0.299 + g * 0.587 + b * 0.114) > 186? '#000000' : '#FFFFFF'

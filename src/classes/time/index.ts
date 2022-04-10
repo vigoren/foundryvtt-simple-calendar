@@ -147,7 +147,8 @@ export default class Time extends ConfigurationItemBase{
     toString(): string{
         const t = this.getCurrentTime();
         const activeCalendar = CalManager.getActiveCalendar();
-        return FormatDateTime({year: 0, month: 1, day: 1, ...t}, activeCalendar.generalSettings.dateFormat.time, activeCalendar);
+        let mdIndex = activeCalendar.getMonthAndDayIndex();
+        return FormatDateTime({year: activeCalendar.year.numericRepresentation, month: mdIndex.month || 0, day: mdIndex.day || 0, ...t}, activeCalendar.generalSettings.dateFormat.time, activeCalendar);
     }
 
     /**

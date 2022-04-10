@@ -2085,6 +2085,7 @@ declare global{
             order: number;
             categories: string[];
             remindUsers: string[];
+            fromPredefined?: boolean;
         }
 
         /**

@@ -1,7 +1,6 @@
 import SocketBase from "./socket-base";
 import {SocketTypes} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {Logger} from "../logging";
 import type Calendar from "../calendar";
 import {MainApplication, SC} from "../index";
 
