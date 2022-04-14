@@ -108,10 +108,12 @@ const game = {
         find: jest.fn((v)=>{
             return v.call(undefined, {isGM: false, active: true});
         }),
-        forEach: jest.fn((v)=>{
-            return v.call(undefined, user)
-        }),
-        filter: () => {return [user];}
+        forEach: (v: any) => {
+            return v.call(undefined, {id: ''});
+        },
+        filter: (v: any) => {
+            return v.call(undefined, user);
+        }
     },
     scenes: null,
     system: {
@@ -126,7 +128,8 @@ const game = {
             if (id) {
                 return {
                     getFlag: jest.fn().mockReturnValue({calendarId: 'test', startDate: {}, endDate: {}, allDay: true, repeats: 0, order: 0, categories: [], remindUsers: ['qwe']}),
-                    update: jest.fn()
+                    update: jest.fn(),
+                    delete: async () => {}
                 };
             }
             return null;
@@ -145,3 +148,6 @@ global.ui = {
         error: jest.fn((message: string) => {})
     }
 };
+
+// @ts-ignore
+global.getRoute = (a: string) => {return a;};

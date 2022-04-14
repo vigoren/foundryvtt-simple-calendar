@@ -1,122 +1,115 @@
 /**
  * @jest-environment jsdom
  */
-import "../../__mocks__/handlebars";
+import "../../../__mocks__/handlebars";
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
-import "../../__mocks__/application";
-import "../../__mocks__/event";
+import "../../../__mocks__/application";
+import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";
 
 import {HandlebarsHelpers} from "./handlebars-helpers";
-import MainApp from "../applications/main-app";
-import Note from "../note";
+import {CalManager, updateCalManager} from "../index";
+import CalendarManager from "../calendar/calendar-manager";
+import Calendar from "../calendar";
+import DateSelectorManager from "../date-selector/date-selector-manager";
+import Renderer from "../renderer";
+import * as VUtils from "../utilities/visual";
+
 
 describe('Handlebars Helpers Tests', () => {
+    let tCal: Calendar;
 
     beforeEach(() => {
-        MainApp.instance = new MainApp();
+        updateCalManager(new CalendarManager());
+        tCal = new Calendar('','');
+        jest.spyOn(CalManager, 'getActiveCalendar').mockImplementation(() => {return tCal;});
     });
 
     test('Register', () => {
         HandlebarsHelpers.Register();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(3);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
     });
 
     test('Date Selector', () => {
+        //@ts-ignore
+        jest.spyOn(DateSelectorManager, 'GetSelector').mockImplementation(() => {return {build: () => {return '';}};});
         const options: any = {hash:{}};
         expect(HandlebarsHelpers.DateSelector(options)).toBe('');
-        MainApp.instance.settingUpdate();
         options.hash['id'] = 'test';
         expect(HandlebarsHelpers.DateSelector(options)).toBeDefined();
+        expect(DateSelectorManager.GetSelector).toHaveBeenCalledTimes(1);
+
+        options.hash = {
+            id: 'a',
+            allowDateRangeSelection: true,
+            allowTimeRangeSelection: true,
+            calendar: '',
+            editYear: false,
+            onDateSelect: () => {},
+            position: {top:0, left:0},
+            showCalendarYear: true,
+            showDateSelector: true,
+            selectedEndDate: {},
+            timeSelected: false,
+            selectedStartDate: {},
+            showTimeSelector: true,
+            timeDelimiter: '-',
+            useCloneCalendars: false
+        };
+        expect(HandlebarsHelpers.DateSelector(options)).toBeDefined();
+        expect(DateSelectorManager.GetSelector).toHaveBeenCalledTimes(2);
     });
 
-    test('Day Has Notes', () => {
-        // @ts-ignore
-        game.user.isGM = true;
+    test('Full Calendar', () => {
+        jest.spyOn(Renderer.CalendarFull, 'Render').mockImplementation(() => {return '';});
         const options: any = {hash:{}};
-        expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
-        options.hash['day'] = {numericRepresentation: 1};
-        expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
-        MainApp.instance.settingUpdate();
-        if(MainApp.instance.activeCalendar.year){
-            MainApp.instance.activeCalendar.year.months[0].visible = false;
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
-            MainApp.instance.activeCalendar.year.months[0].visible = true;
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
-            options.hash['day'].numericRepresentation = 2;
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
+        expect(HandlebarsHelpers.FullCalendar(options)).toEqual({"v": ""});
 
-            MainApp.instance.activeCalendar.notes = [];
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBe('');
-            for(let i = 0; i < 2; i++){
-                var n = new Note()
-                n.title = i.toString();
-                n.year = MainApp.instance.activeCalendar.year.numericRepresentation;
-                n.month = 1;
-                n.day = 2;
-                n.endDate.year = n.year;
-                n.endDate.month = n.month;
-                n.endDate.day = n.day;
-                MainApp.instance.activeCalendar.notes.push(n);
-            }
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
-            MainApp.instance.activeCalendar.notes = [];
-            for(let i = 0; i < 100; i++){
-                var n = new Note()
-                n.year = MainApp.instance.activeCalendar.year.numericRepresentation;
-                n.month = 1;
-                n.day = 2;
-                n.endDate.year = n.year;
-                n.endDate.month = n.month;
-                n.endDate.day = n.day;
-                MainApp.instance.activeCalendar.notes.push(n);
-            }
-            expect(MainApp.instance.activeCalendar.notes.length).toBe(100);
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
-
-            MainApp.instance.activeCalendar.notes = [];
-            var n = new Note()
-            n.year = MainApp.instance.activeCalendar.year.numericRepresentation;
-            n.month = 1;
-            n.day = 2;
-            n.endDate.year = n.year;
-            n.endDate.month = n.month;
-            n.endDate.day = n.day;
-            n.remindUsers.push('');
-            MainApp.instance.activeCalendar.notes.push(n);
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
-
-            MainApp.instance.activeCalendar.notes = [];
-            for(let i = 0; i < 100; i++){
-                var n = new Note()
-                n.year = MainApp.instance.activeCalendar.year.numericRepresentation;
-                n.month = 1;
-                n.day = 2;
-                n.endDate.year = n.year;
-                n.endDate.month = n.month;
-                n.endDate.day = n.day;
-                n.remindUsers.push('');
-                MainApp.instance.activeCalendar.notes.push(n);
-            }
-            expect(MainApp.instance.activeCalendar.notes.length).toBe(100);
-            expect(HandlebarsHelpers.DayHasNotes(options)).toBeDefined();
-
-        } else {
-            fail('Current year is not set');
-        }
-
+        options.hash = {
+            allowChangeMonth: true,
+            colorToMatchSeason: true,
+            cssClasses: '',
+            date: {},
+            editYear: true,
+            id:'',
+            calendarId: '',
+            showCurrentDate: true,
+            showSeasonName: true,
+            showNoteCount: true,
+            showMoonPhases: true,
+            showYear: true
+        };
+        expect(HandlebarsHelpers.FullCalendar(options)).toBeDefined()
     });
 
-    test('Day Moon Phase', () => {
+    test('Clock', () => {
+        jest.spyOn(Renderer.Clock, 'Render').mockImplementation(() => {return '';});
         const options: any = {hash:{}};
-        expect(HandlebarsHelpers.DayMoonPhase(options)).toBe('');
-        options.hash['day'] = {numericRepresentation: 1};
-        MainApp.instance.settingUpdate();
-        if(MainApp.instance.activeCalendar.year){
-            expect(HandlebarsHelpers.DayMoonPhase(options)).toBeDefined();
-            MainApp.instance.activeCalendar.year.moons[0].phases[0].singleDay = false;
-            expect(HandlebarsHelpers.DayMoonPhase(options)).toBeDefined();
-        }
+        expect(HandlebarsHelpers.Clock(options)).toEqual({"v": ""});
+
+        options.hash = {
+            id: '',
+            calendarId: ''
+        };
+        expect(HandlebarsHelpers.Clock(options)).toEqual({"v": ""});
+    });
+
+    test('Icon', () => {
+        jest.spyOn(VUtils, 'GetIcon').mockImplementation(() => {return '';});
+        const options: any = {hash:{}};
+        expect(HandlebarsHelpers.Icon(options)).toEqual('');
+
+        options.hash = {
+            name: ''
+        };
+        expect(HandlebarsHelpers.Icon(options)).toEqual({"v": ""});
+
+        options.hash = {
+            name: '',
+            stroke: '',
+            fill: ''
+        };
+        expect(HandlebarsHelpers.Icon(options)).toEqual({"v": ""});
     });
 });

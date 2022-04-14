@@ -30,7 +30,7 @@ export default class Calendar extends ConfigurationItemBase{
      */
     gameSystem: GameSystems;
     /**
-     * All of the general settings for a calendar
+     * All the general settings for a calendar
      * @type {GeneralSettings}
      */
     generalSettings: GeneralSettings = new GeneralSettings();
@@ -179,6 +179,9 @@ export default class Calendar extends ConfigurationItemBase{
         };
     }
 
+    /**
+     * Converts the calendar class to the configuration item to be saved
+     */
     toConfig(): SimpleCalendar.CalendarData {
         return <SimpleCalendar.CalendarData>{
             id: this.id,
@@ -196,6 +199,10 @@ export default class Calendar extends ConfigurationItemBase{
         };
     }
 
+    /**
+     * Configures the calendar from a configuration file
+     * @param config
+     */
     loadFromSettings(config: SimpleCalendar.CalendarData) {
         if(config.id){
             this.id = config.id;
@@ -214,19 +221,18 @@ export default class Calendar extends ConfigurationItemBase{
             this.year = new Year(0);
         }
 
-        if(config.months || config.monthSettings){
+        const configMonths: SimpleCalendar.MonthData[] | undefined = config.months || config.monthSettings;
+        if(Array.isArray(configMonths)){
             this.months = [];
-            const configMonths: SimpleCalendar.MonthData[] = config.months || config.monthSettings || [];
             for(let i = 0; i < configMonths.length; i++){
                 const newMonth = new Month();
                 newMonth.loadFromSettings(configMonths[i]);
                 this.months.push(newMonth);
             }
         }
-
-        if(config.weekdays || config.weekdaySettings){
+        const configWeekdays: SimpleCalendar.WeekdayData[] | undefined = config.weekdays || config.weekdaySettings;
+        if(Array.isArray(configWeekdays)){
             this.weekdays = [];
-            const configWeekdays: SimpleCalendar.WeekdayData[] = config.weekdays || config.weekdaySettings || [];
             for(let i = 0; i < configWeekdays.length; i++){
                 const newW = new Weekday();
                 newW.loadFromSettings(configWeekdays[i]);
@@ -248,19 +254,18 @@ export default class Calendar extends ConfigurationItemBase{
             this.timeKeeper.updateFrequency = this.time.updateFrequency;
         }
 
-        if(config.seasons || config.seasonSettings){
+        const configSeasons: SimpleCalendar.SeasonData[] | undefined = config.seasons || config.seasonSettings;
+        if(Array.isArray(configSeasons)){
             this.seasons = [];
-            const configSeasons: SimpleCalendar.SeasonData[] = config.seasons || config.seasonSettings || [];
             for(let i = 0; i < configSeasons.length; i++){
                 const newW = new Season();
                 newW.loadFromSettings(configSeasons[i]);
                 this.seasons.push(newW);
             }
         }
-
-        if(config.moons || config.moonSettings){
+        const configMoons: SimpleCalendar.MoonData[] | undefined = config.moons || config.moonSettings;
+        if(Array.isArray(configMoons)){
             this.moons = [];
-            const configMoons: SimpleCalendar.MoonData[] = config.moons || config.moonSettings || [];
             for(let i = 0; i < configMoons.length; i++){
                 const newW = new Moon();
                 newW.loadFromSettings(configMoons[i]);
@@ -385,19 +390,27 @@ export default class Calendar extends ConfigurationItemBase{
     }
 
     /**
-     * Returns the month where the passed in setting is tru
-     * @param {string} [setting='current'] The setting to look for. Can be visible, current or selected
+     * Returns the month, where the passed in setting is true
+     * @param [setting='current'] The setting to look for. Can be visible, current or selected
      */
     getMonth(setting: string = 'current'){
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
         return this.months.find(m => m[verifiedSetting]);
     }
 
+    /**
+     * Returns the index of the month, where the passed in setting is true
+     * @param [setting='current'] The setting to look for. Can be visible, current or selected
+     */
     getMonthIndex(setting: string = 'current'){
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
         return this.months.findIndex(m => m[verifiedSetting]);
     }
 
+    /**
+     * Returns the index of the month and index of the day in that month, where the passed in setting is true
+     * @param [setting='current'] The setting to look for. Can be visible, current or selected
+     */
     getMonthAndDayIndex(setting: string = 'current'){
         const verifiedSetting = setting.toLowerCase() as 'visible' | 'current' | 'selected';
         const result: Partial<SimpleCalendar.Date> = {
@@ -419,8 +432,8 @@ export default class Calendar extends ConfigurationItemBase{
 
     /**
      * Gets the season for the passed in month and day
-     * @param {number} monthIndex The index of the month
-     * @param {number} dayIndex The day number
+     * @param monthIndex The index of the month
+     * @param dayIndex The day number
      */
     getSeason(monthIndex: number, dayIndex: number) {
         let season = new Season('', 0, 0);
@@ -449,12 +462,12 @@ export default class Calendar extends ConfigurationItemBase{
     }
 
     /**
-     * Calculates the sunrise or sunset time for the passed in date, based on the the season setup
-     * @param {number} year The year of the date
-     * @param {Month} monthIndex The month object of the date
-     * @param {Day} dayIndex The day object of the date
-     * @param {boolean} [sunrise=true] If to calculate the sunrise or sunset
-     * @param {boolean} [calculateTimestamp=true] If to add the date timestamp to the sunrise/sunset time
+     * Calculates the sunrise or sunset time for the passed in date, based on the season setup
+     * @param year The year of the date
+     * @param monthIndex The month object of the date
+     * @param dayIndex The day object of the date
+     * @param [sunrise=true] If to calculate the sunrise or sunset
+     * @param [calculateTimestamp=true] If to add the date timestamp to the sunrise/sunset time
      */
     getSunriseSunsetTime(year: number, monthIndex: number, dayIndex: number, sunrise: boolean = true, calculateTimestamp: boolean = true){
         const activeCalendar = CalManager.getActiveCalendar();
@@ -606,6 +619,9 @@ export default class Calendar extends ConfigurationItemBase{
         this.months.forEach(m => {if(setting!=='visible'){m.resetDays(setting);} m[verifiedSetting] = false;});
     }
 
+    /**
+     * Set the current date to also be the visible date
+     */
     setCurrentToVisible(){
         this.year.visibleYear = this.year.numericRepresentation;
         this.resetMonths('visible');
@@ -725,10 +741,10 @@ export default class Calendar extends ConfigurationItemBase{
         const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
         const yearToUse = verifiedSetting === 'current' ? this.year.numericRepresentation : this.year.selectedYear;
         const isLeapYear = this.year.leapYearRule.isLeapYear(yearToUse);
-        const currentMonth = this.getMonth();
+        const currentMonth = this.getMonth(verifiedSetting);
         if (currentMonth) {
             const next = amount > 0;
-            let currentDayIndex = currentMonth.getDayIndex();
+            let currentDayIndex = currentMonth.getDayIndex(verifiedSetting);
             const lastDayOfCurrentMonth = isLeapYear? currentMonth.numberOfLeapYearDays : currentMonth.numberOfDays;
             if(next && currentDayIndex + amount >= lastDayOfCurrentMonth){
                 this.changeMonth(1, verifiedSetting, 0);

@@ -3,15 +3,14 @@
  */
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
-import "../../__mocks__/application";
-import "../../__mocks__/handlebars";
-import "../../__mocks__/event";
+import "../../../__mocks__/application";
+import "../../../__mocks__/handlebars";
+import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";
-import "../../__mocks__/dialog";
-import "../../__mocks__/hooks";
-import "../../__mocks__/chat-message";
+import "../../../__mocks__/dialog";
+import "../../../__mocks__/hooks";
+import "../../../__mocks__/chat-message";
 
-import MainApp from "../applications/main-app";
 import GeneralSettings from "./general-settings";
 import {GameWorldTimeIntegrations} from "../../constants";
 import UserPermissions from "./user-permissions";
@@ -19,13 +18,12 @@ import UserPermissions from "./user-permissions";
 describe('General Settings Class Tests', () => {
 
     beforeEach(() => {
-        MainApp.instance = new MainApp();
     });
 
     test('Properties', () => {
         const gs = new GeneralSettings();
 
-        expect(Object.keys(gs).length).toBe(8); //Make sure no new properties have been added
+        expect(Object.keys(gs).length).toBe(9); //Make sure no new properties have been added
     });
 
     test('Clone', () => {
@@ -36,6 +34,13 @@ describe('General Settings Class Tests', () => {
     test('To Template', () => {
         const gs = new GeneralSettings();
         const gst = gs.toTemplate();
+        expect(gst.id).toBeDefined();
+        expect(gst.gameWorldTimeIntegration).toBe(GameWorldTimeIntegrations.Mixed);
+    });
+
+    test('To Config', () => {
+        const gs = new GeneralSettings();
+        const gst = gs.toConfig();
         expect(gst.id).toBeDefined();
         expect(gst.gameWorldTimeIntegration).toBe(GameWorldTimeIntegrations.Mixed);
     });
@@ -54,9 +59,8 @@ describe('General Settings Class Tests', () => {
         //@ts-ignore
         gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, playersAddNotes: true });
         expect(gs.id).toBe('a');
-        expect(gs.permissions.addNotes.player).toBe(true);
 
-        gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, dateFormat:{date: '', time: '', monthYear: ''}, permissions: new UserPermissions(), playersAddNotes: true });
+        gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, dateFormat:{date: '', time: '', monthYear: ''}, playersAddNotes: true, noteDefaultVisibility: true, postNoteRemindersOnFoundryLoad: true });
         expect(gs.id).toBe('a');
         expect(gs.showClock).toBe(true);
         expect(gs.pf2eSync).toBe(true);

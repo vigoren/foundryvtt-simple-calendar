@@ -31,7 +31,7 @@ export default class Day extends ConfigurationItemBase {
     toConfig(): SimpleCalendar.DayData {
         return {
             ... super.toTemplate(),
-            name: this.numericRepresentation.toString(),
+            name: this.name,
             numericRepresentation: this.numericRepresentation
         }
     }

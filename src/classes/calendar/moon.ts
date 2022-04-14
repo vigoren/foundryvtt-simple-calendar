@@ -1,4 +1,3 @@
-import Year from "./year";
 import {Icons, MoonYearResetOptions} from "../../constants";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import ConfigurationItemBase from "../configuration/configuration-item-base";

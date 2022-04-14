@@ -3,23 +3,27 @@
  */
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
-import "../../__mocks__/application";
-import "../../__mocks__/handlebars";
-import "../../__mocks__/event";
+import "../../../__mocks__/application";
+import "../../../__mocks__/handlebars";
+import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";
 
-import MainApp from "../applications/main-app";
 import LeapYear from "./leap-year";
-import {LeapYearRules} from "../../constants";
-import Mock = jest.Mock;
-import {GameSettings} from "../foundry-interfacing/game-settings";
+import {GameSystems, LeapYearRules} from "../../constants";
+import {SimpleCalendar} from "../../../types";
+import Calendar from "./index";
+import {CalManager, updateCalManager} from "../index";
+import CalendarManager from "./calendar-manager";
 
 describe('Leap Year Tests', () => {
     let lr: LeapYear;
-    MainApp.instance = new MainApp();
+    let tCal: Calendar;
 
     beforeEach(() => {
         lr = new LeapYear();
+        updateCalManager(new CalendarManager());
+        tCal = new Calendar('','');
+        jest.spyOn(CalManager, 'getActiveCalendar').mockImplementation(() => {return tCal;});
     });
 
     test('Properties', () => {
@@ -46,20 +50,24 @@ describe('Leap Year Tests', () => {
     });
 
     test('Load From Settings', () => {
-        (<Mock>(<Game>game).settings.get).mockReturnValueOnce({id: '', rule: 'custom', customMod: 4});
-        lr.loadFromSettings(GameSettings.LoadLeapYearRules());
-        expect(lr.rule).toBe(LeapYearRules.Custom);
-        expect(lr.customMod).toBe(4);
+        const config: SimpleCalendar.LeapYearData = {
+            id: '',
+            rule: LeapYearRules.Custom,
+            customMod: 10
+        };
 
-        (<Mock>(<Game>game).settings.get).mockReturnValueOnce(false);
-        lr.loadFromSettings(GameSettings.LoadLeapYearRules());
-        expect(lr.rule).toBe(LeapYearRules.Custom);
-        expect(lr.customMod).toBe(4);
+        //@ts-ignore
+        lr.loadFromSettings();
+        expect(lr.rule).toBe(LeapYearRules.None);
+        expect(lr.customMod).toBe(0);
+        //@ts-ignore
+        lr.loadFromSettings({});
+        expect(lr.rule).toBe(LeapYearRules.None);
+        expect(lr.customMod).toBe(0);
 
-        (<Mock>(<Game>game).settings.get).mockReturnValueOnce({asd: ''});
-        lr.loadFromSettings(GameSettings.LoadLeapYearRules());
+        lr.loadFromSettings(config);
         expect(lr.rule).toBe(LeapYearRules.Custom);
-        expect(lr.customMod).toBe(4);
+        expect(lr.customMod).toBe(10);
     });
 
     test('Is Leap Year', () => {
@@ -81,6 +89,12 @@ describe('Leap Year Tests', () => {
         expect(lr.isLeapYear(0)).toBe(true);
         expect(lr.isLeapYear(5)).toBe(true);
         expect(lr.isLeapYear(8)).toBe(false);
+
+        tCal.gameSystem = GameSystems.PF2E;
+        tCal.generalSettings.pf2eSync = true;
+        //@ts-ignore
+        game.pf2e = {worldClock: {dateTheme: "AD", worldCreatedOn: 10000}};
+        expect(lr.isLeapYear(2020)).toBe(true);
     });
 
     test('How Many Leap Years', () => {

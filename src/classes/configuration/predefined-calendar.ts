@@ -11,7 +11,7 @@ export default class PredefinedCalendar{
     public static async setToPredefined(calendar: Calendar, calendarType: PredefinedCalendars, addNotes: boolean = true){
         let updated = false;
         //Attempt to load the predefined calendar settings from the server
-        let res = await fetch(`modules/${ModuleName}/predefined-calendars/${calendarType}.json`);
+        let res = await fetch(getRoute(`modules/${ModuleName}/predefined-calendars/${calendarType}.json`));
         const data = await res.json();
         if(data && data.calendar){
             const calendarId = calendar.id.replace('_temp', '');

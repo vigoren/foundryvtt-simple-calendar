@@ -3,25 +3,30 @@
  */
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
-import "../../__mocks__/application";
-import "../../__mocks__/handlebars";
-import "../../__mocks__/event";
+import "../../../__mocks__/application";
+import "../../../__mocks__/handlebars";
+import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";
-import "../../__mocks__/dialog";
-import "../../__mocks__/hooks";
-import "../../__mocks__/chat-message";
+import "../../../__mocks__/dialog";
+import "../../../__mocks__/hooks";
+import "../../../__mocks__/chat-message";
 
-import MainApp from "../applications/main-app";
 import Month from "./month";
+import Calendar from "./index";
+import {CalManager, updateCalManager} from "../index";
+import CalendarManager from "./calendar-manager";
 
 describe('Month Class Tests', () => {
+    let tCal: Calendar;
     let month: Month;
     let month2: Month;
     let monthLy: Month;
     let monthIc: Month;
-    MainApp.instance = new MainApp();
 
     beforeEach(() => {
+        updateCalManager(new CalendarManager());
+        tCal = new Calendar('','');
+        jest.spyOn(CalManager, 'getActiveCalendar').mockImplementation(() => {return tCal;});
         month = new Month("Test", 0, 0, 0);
         month2 = new Month("", 0, 0, 30);
         monthLy = new Month("LY", 2, 0, 30, 31);
@@ -70,11 +75,6 @@ describe('Month Class Tests', () => {
         expect(month.days[1].current).toBe(true);
     });
 
-    test('Get Display Name', () => {
-        expect(month.getDisplayName()).toBe("Test (0)");
-        expect(month2.getDisplayName()).toBe("0");
-    });
-
     test('To Config', () => {
         const t = month.toConfig();
         expect(Object.keys(t).length).toBe(10); //Make sure no new properties have been added
@@ -90,8 +90,7 @@ describe('Month Class Tests', () => {
 
     test('To Template', () => {
         const t = month.toTemplate();
-        expect(Object.keys(t).length).toBe(16); //Make sure no new properties have been added
-        expect(t.display).toBe('Test (0)');
+        expect(Object.keys(t).length).toBe(15); //Make sure no new properties have been added
         expect(t.name).toBe('Test');
         expect(t.numericRepresentation).toBe(0);
         expect(t.numericRepresentationOffset).toBe(0);
@@ -110,9 +109,8 @@ describe('Month Class Tests', () => {
         const t2 = monthIc.toTemplate();
         expect(t2.numericRepresentation).toBe(-1);
 
-        const t3 = MainApp.instance.activeCalendar.year.months[0].toTemplate(MainApp.instance.activeCalendar.year);
-        expect(t3.name).toBe('1');
-
+        const t3 = month.toTemplate(tCal);
+        expect(Object.keys(t3).length).toBe(15); //Make sure no new properties have been added
     });
 
     test('Clone', () => {
@@ -158,19 +156,23 @@ describe('Month Class Tests', () => {
         expect(month.days.length).toBe(10);
     });
 
-    test('Get Current Day', () => {
+    test('Get Day', () => {
         month2.days[0].current = true;
         expect(month.getDay()).toBeUndefined();
         expect(month2.getDay()).toStrictEqual(month2.days[0]);
-
-    });
-
-    test('Get Selected Day', () => {
         month2.days[0].selected = true;
         expect(month.getDay('selected')).toBeUndefined();
         expect(month2.getDay('selected')).toStrictEqual(month2.days[0]);
-
     });
+
+   test('Get Day Index', () => {
+       month2.days[0].current = true;
+       expect(month.getDayIndex()).toBe(-1);
+       expect(month2.getDayIndex()).toBe(0);
+       month2.days[0].selected = true;
+       expect(month.getDayIndex('selected')).toBe(-1);
+       expect(month2.getDayIndex('selected')).toBe(0);
+   });
 
     test('Get Days for Template', () => {
         expect(month.getDaysForTemplate()).toStrictEqual([]);

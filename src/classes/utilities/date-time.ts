@@ -315,7 +315,7 @@ export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: C
         }
     }
     clone.updateMonth(date.month, 'current', true, date.day);
-    clone.numericRepresentation = date.year;
+    clone.year.numericRepresentation = date.year;
     clone.time.setTime(date.hour, date.minute, date.seconds);
     ts = clone.toSeconds();
     return ts;

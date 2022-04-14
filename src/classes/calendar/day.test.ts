@@ -3,19 +3,17 @@
  */
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
-import "../../__mocks__/application";
-import "../../__mocks__/handlebars";
-import "../../__mocks__/event";
+import "../../../__mocks__/application";
+import "../../../__mocks__/handlebars";
+import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";
-import "../../__mocks__/dialog";
-import "../../__mocks__/hooks";
-import "../../__mocks__/chat-message";
+import "../../../__mocks__/dialog";
+import "../../../__mocks__/hooks";
+import "../../../__mocks__/chat-message";
 
-import MainApp from "../applications/main-app";
 import Day from "./day";
 
 describe('Day Class Tests', () => {
-    MainApp.instance = new MainApp();
     let day:Day;
     let dayS:Day;
     beforeEach(()=>{
@@ -37,6 +35,17 @@ describe('Day Class Tests', () => {
         const d = new Day(0);
         expect(d.name).toBe("");
         expect(d.numericRepresentation).toBe(0);
+    });
+
+    test('To Config', () => {
+        const c = day.toConfig();
+        const cS = dayS.toConfig();
+        expect(c.id).toEqual(expect.any(String));
+        expect(c.name).toBe("1");
+        expect(c.numericRepresentation).toBe(1);
+        expect(cS.id).toEqual(expect.any(String));
+        expect(cS.name).toBe("NaMe");
+        expect(cS.numericRepresentation).toBe(10);
     });
 
     test('To Template', () => {

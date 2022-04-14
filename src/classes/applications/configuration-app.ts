@@ -125,7 +125,7 @@ export default class ConfigurationApp extends FormApplication {
 
         if(this.predefindCalendars.length === 0){
             try{
-                const prefRes = await fetch(`modules/${ModuleName}/predefined-calendars/calendar-list.json`);
+                const prefRes = await fetch(getRoute(`modules/${ModuleName}/predefined-calendars/calendar-list.json`));
                 this.predefindCalendars = await prefRes.json();
             } catch (e: any){
                 Logger.error(e);

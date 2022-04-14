@@ -3,18 +3,16 @@
  */
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
-import "../../__mocks__/application";
-import "../../__mocks__/handlebars";
-import "../../__mocks__/event";
+import "../../../__mocks__/application";
+import "../../../__mocks__/handlebars";
+import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";
-import "../../__mocks__/hooks";
-import MainApp from "../applications/main-app";
+import "../../../__mocks__/hooks";
 import {Weekday} from "./weekday";
 
 describe('Weekday Class Tests', () => {
     let weekday: Weekday;
     let weekday2: Weekday
-    MainApp.instance = new MainApp();
 
     beforeEach(() => {
         weekday = new Weekday(0, '');

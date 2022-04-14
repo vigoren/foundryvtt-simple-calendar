@@ -11,10 +11,15 @@ import "../../../__mocks__/crypto";
 import "../../../__mocks__/hooks";
 import {SocketTypes} from "../../constants";
 import Calendar from "../calendar";
-import {MainApplication, SC, updateMainApplication, updateSC} from "../index";
+import {CalManager, MainApplication, SC, updateCalManager, updateMainApplication, updateSC} from "../index";
 import SCController from "../s-c-controller";
 import MainApp from "../applications/main-app";
 import PrimarySocket from "./primary-socket";
+import CalendarManager from "../calendar/calendar-manager";
+import GameSockets from "../foundry-interfacing/game-sockets";
+import {Hook} from "../api/hook";
+
+jest.setTimeout(6000);
 
 describe('Primary Socket Tests', () => {
 
@@ -22,37 +27,80 @@ describe('Primary Socket Tests', () => {
     let tCal: Calendar;
 
     beforeEach(() => {
+        updateCalManager(new CalendarManager());
         updateSC(new SCController());
         updateMainApplication(new MainApp());
         tCal = new Calendar('','');
-        jest.spyOn(tCal, 'changeDateTime').mockImplementation(() => {return true;});
-        jest.spyOn(MainApplication, 'setCurrentDate').mockImplementation(() => {});
+        jest.spyOn(CalManager, 'getActiveCalendar').mockImplementation(() => {return tCal;});
         //@ts-ignore
         game.user.isGM = true;
-        SC.primary = true;
         s = new PrimarySocket();
     });
 
+    test('Primary Check Timeout Call', async () => {
+        jest.spyOn(MainApplication, 'timeKeepingCheck').mockImplementation(async () => {});
+        jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true});
+        jest.spyOn(Hook, 'emit').mockImplementation(async () => {});
+        await s.primaryCheckTimeoutCall();
+        expect(MainApplication.timeKeepingCheck).toHaveBeenCalledTimes(1);
+        expect(GameSockets.emit).toHaveBeenCalledTimes(2);
+        expect(Hook.emit).toHaveBeenCalledTimes(1);
+
+        tCal.time.unifyGameAndClockPause = true;
+        jest.spyOn((<Game>game), 'togglePause').mockImplementation(() => {});
+        await s.primaryCheckTimeoutCall();
+        expect((<Game>game).togglePause).toHaveBeenCalledTimes(1);
+    });
+
     test('Initialize', async () => {
-        const r = await s.initialize();
+        const primaryCheckTimeoutSpy = jest.spyOn(s,'primaryCheckTimeoutCall').mockImplementation(async() => {});
+
+        //User is not GM
+        //@ts-ignore
+        game.user.isGM = false;
+        let r = await s.initialize();
         expect(r).toBe(true);
+        expect(MainApplication.uiElementStates.primaryCheckRunning).toBe(false);
+
+        // Undefined users
+        //@ts-ignore
+        game.user.isGM = true;
+        const users = (<Game>game).users;
+        (<Game>game).users = undefined;
+
+        r = await s.initialize();
+        expect(r).toBe(true);
+        expect(primaryCheckTimeoutSpy).toHaveBeenCalledTimes(1);
+
+        // Only 1 GM
+        (<Game>game).users = users;
+        r = await s.initialize();
+        expect(r).toBe(true);
+        expect(primaryCheckTimeoutSpy).toHaveBeenCalledTimes(2);
+
+        // Multiple GMs
+        //@ts-ignore
+        jest.spyOn(game.users, 'filter').mockReturnValueOnce([game.user, game.user])
+        r = await s.initialize();
+        expect(r).toBe(true);
+        expect(primaryCheckTimeoutSpy).toHaveBeenCalledTimes(3);
     });
 
     test('Process', async () => {
+        jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true});
         let r = await s.process({type: SocketTypes.mainAppUpdate, data: {}}, tCal);
         expect(r).toBe(false);
-        expect(tCal.changeDateTime).not.toHaveBeenCalled();
-        expect(MainApplication.setCurrentDate).not.toHaveBeenCalled();
+        expect(GameSockets.emit).not.toHaveBeenCalled()
 
-        r = await s.process({type: SocketTypes.dateTimeChange, data: {}}, tCal);
+        r = await s.process({type: SocketTypes.primary, data: {primaryCheck: true}}, tCal);
         expect(r).toBe(true);
-        expect(tCal.changeDateTime).toHaveBeenCalledTimes(1);
-        expect(MainApplication.setCurrentDate).not.toHaveBeenCalled();
+        expect(GameSockets.emit).toHaveBeenCalledTimes(1);
 
-        r = await s.process({type: SocketTypes.dateTimeChange, data: {set: true, interval: {year: 0, month: 0, day: 0}}}, tCal);
+        r = await s.process({type: SocketTypes.primary, data: {amPrimary: true}}, tCal);
         expect(r).toBe(true);
-        expect(tCal.changeDateTime).toHaveBeenCalledTimes(1);
-        expect(MainApplication.setCurrentDate).toHaveBeenCalledTimes(1);
+        //@ts-ignore
+        expect(s.otherPrimaryFound).toBe(true);
+        expect(SC.primary).toBe(false);
 
     });
 });
