@@ -4,13 +4,12 @@
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
 import "../../../__mocks__/application";
-import "../../../__mocks__/journal-sheet";
+import "../../../__mocks__/document-sheet";
 import "../../../__mocks__/handlebars";
 import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";
 import "../../../__mocks__/dialog";
 import "../../../__mocks__/hooks";
-import Year from "../calendar/year";
 import {Hook} from "./hook";
 import {PredefinedCalendars, SimpleCalendarHooks} from "../../constants";
 import Calendar from "../calendar";
@@ -23,7 +22,6 @@ import SCController from "../s-c-controller";
 
 fetchMock.enableMocks();
 describe('Hook Tests', () => {
-    let y: Year;
     let tCal: Calendar;
 
     beforeEach(async ()=>{

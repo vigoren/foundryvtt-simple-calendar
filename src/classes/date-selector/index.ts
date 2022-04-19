@@ -13,17 +13,14 @@ export class DateSelector {
     id: string;
     /**
      * If to show the calendar portion of the picker
-     * @type{boolean}
      */
     showDateSelector: boolean;
     /**
      * If to show the year for date selection
-     * @type {boolean}
      */
     showCalendarYear: boolean = true;
     /**
      * If to show the time portion of the picker
-     * @type{boolean}
      */
     showTimeSelector: boolean;
     /**
@@ -32,22 +29,18 @@ export class DateSelector {
     addTime: boolean = false;
     /**
      * The string between the start and end time inputs
-     * @type {string}
      */
     timeDelimiter: string = '-';
     /**
      * If the date selector allows users to select a range of dates or just a single date
-     * @type {boolean}
      */
     allowDateRangeSelection: boolean = false;
     /**
      * If the time selectors allow users to select a range of time or just a single time stamp
-     * @type {boolean}
      */
     allowTimeRangeSelection: boolean = true;
     /**
      * Used internally to determine if the second day of a range has been selected.
-     * @type {boolean}
      */
     secondDaySelect: boolean = false;
     /**
@@ -56,20 +49,31 @@ export class DateSelector {
     selectedDate: SimpleCalendar.DateTimeSelector.Dates;
     /**
      * A function to call when a date is selected
-     * @type{Function | null}
      */
     onDateSelect: Function | null = null;
-
+    /**
+     * The position of the date selector relative to the input box
+     */
     position: DateSelectorPositions = DateSelectorPositions.Auto;
-
+    /**
+     * The calendar associated with this date selector
+     */
     calendar: Calendar = CalManager.getActiveCalendar();
-
+    /**
+     * The HTML id used for rendering the calendar
+     */
     calendarId: string;
-
+    /**
+     * The HTML id used for rendering the time selector
+     */
     timeSelectorId: string;
-
+    /**
+     * If to allow the editing of the year in the calendar view
+     */
     editYear: boolean = false;
-
+    /**
+     * If to use and clone calendars or the real calendars
+     */
     useCloneCalendars: boolean = false;
 
 
@@ -203,7 +207,8 @@ export class DateSelector {
 
     /**
      * Builds the HTML string for the Date Select input
-     * @param {boolean} [hideCalendar=false] If we should just be rendering the calendar HTML or the full inputs HTML
+     * @param [hideCalendar=false] If we should just be rendering the calendar HTML or the full inputs HTML
+     * @param [includeWrapper=true] If to include the overall wrapping dive when building
      */
     build(hideCalendar = true, includeWrapper: boolean = true){
         let returnHtml;
@@ -293,24 +298,22 @@ export class DateSelector {
             element.classList.remove(DateSelectorPositions.RightDown);
             let positionClass: DateSelectorPositions | string = this.position;
             if(this.position === DateSelectorPositions.Auto){
-                //Look at the element and position it so it is the most visible
+                //Look at the element and position it, so it is the most visible
                 const container = element.closest('.window-app');
                 if(container){
                     let elementBoundingRect = element.getBoundingClientRect();
                     //If inside a foundry window, adjust the bounding rects to match that of the windows not the browser.
-                    if(container){
-                        const containerBoundingRect = container.getBoundingClientRect();
-                        //Align to the right
-                        if(elementBoundingRect.right > containerBoundingRect.right){
-                            positionClass = 'right-';
-                        } else {
-                            positionClass = 'left-';
-                        }
-                        if(elementBoundingRect.bottom > containerBoundingRect.bottom && (elementBoundingRect.top - elementBoundingRect.height) > containerBoundingRect.top){
-                            positionClass += 'up';
-                        } else {
-                            positionClass += 'down';
-                        }
+                    const containerBoundingRect = container.getBoundingClientRect();
+                    //Align to the right
+                    if(elementBoundingRect.right > containerBoundingRect.right){
+                        positionClass = 'right-';
+                    } else {
+                        positionClass = 'left-';
+                    }
+                    if(elementBoundingRect.bottom > containerBoundingRect.bottom && (elementBoundingRect.top - elementBoundingRect.height) > containerBoundingRect.top){
+                        positionClass += 'up';
+                    } else {
+                        positionClass += 'down';
                     }
                 }
             }
@@ -333,11 +336,11 @@ export class DateSelector {
     }
 
     /**
-     * Adds all of the click events needed to the calendars HTML for proper interaction
+     * Adds all the click events needed to the calendars HTML for proper interaction
      * @param {HTMLElement | null} html The HTML element for the calendar
-     * @param {boolean} activateCalendarListeners If we should activate the calendar listeners
-     * @param {boolean} activateTimeListeners If we should activate the time selector listeners
-     * @param {boolean} activateDomListener If we should activate the document listener
+     * @param activateCalendarListeners If we should activate the calendar listeners
+     * @param activateTimeListeners If we should activate the time selector listeners
+     * @param activateDomListener If we should activate the document listener
      */
     activateListeners(html: HTMLElement | null = null, activateCalendarListeners: boolean = true, activateTimeListeners: boolean = true, activateDomListener: boolean = true){
         if(!html){
@@ -458,7 +461,7 @@ export class DateSelector {
 
     /**
      * Processes the selecting of a day on the calendar
-     * @param {SCRenderer.CalendarOptions} options The renderer options returned from the click event
+     * @param options The renderer options returned from the click event
      */
     dayClick(options: SimpleCalendar.Renderer.CalendarOptions){
         if(options.selectedDates){

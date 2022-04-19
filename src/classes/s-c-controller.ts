@@ -165,8 +165,8 @@ export default class SCController {
             if(tokenControls && tokenControls.hasOwnProperty('tools')){
                 tokenControls.tools.push({
                     name: "calendar",
-                    title: "FSC.ButtonTitle",
-                    icon: "fas fa-calendar",
+                    title: "FSC.Title",
+                    icon: "fas fa-calendar simple-calendar-icon",
                     button: true,
                     onClick: MainApplication.showApp.bind(MainApplication)
                 });

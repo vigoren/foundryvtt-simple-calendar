@@ -120,15 +120,9 @@ export default class Moon extends ConfigurationItemBase{
             phases: this.phases,
             color: this.color,
             cycleDayAdjust: this.cycleDayAdjust,
-            dayList: []
+            firstNewMoonDateSelectorId: `sc_first_new_moon_date_${this.id}`,
+            firstNewMoonSelectedDate: {year: 0, month: this.firstNewMoon.month, day: this.firstNewMoon.day, hour: 0, minute: 0, seconds: 0}
         };
-
-        const month = calendar.months[data.firstNewMoon.month];
-
-        if(month){
-            data.dayList = month.days.map(d => d.toTemplate());
-        }
-
         return data;
     }
 

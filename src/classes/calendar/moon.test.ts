@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/game";
-import "../../../__mocks__/journal-sheet";
+import "../../../__mocks__/document-sheet";
 import "../../../__mocks__/form-application";
 import "../../../__mocks__/application";
 import "../../../__mocks__/handlebars";
@@ -56,14 +56,13 @@ describe('Moon Tests', () => {
 
     test('To Template', () => {
         let c = m.toTemplate(tCal);
-        expect(Object.keys(c).length).toBe(9); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(10); //Make sure no new properties have been added
         expect(c.name).toBe('Moon');
         expect(c.cycleLength).toBe(29.53059);
         expect(c.firstNewMoon).toStrictEqual({ "day": 5, "month": 1, "year": 2000, "yearReset": "none", "yearX": 0 });
         expect(c.phases.length).toBe(8);
         expect(c.color).toBe('#ffffff');
         expect(c.cycleDayAdjust).toBe(0.5);
-        expect(c.dayList.length).toBe(29);
     });
 
     test('Load From Settings', () => {

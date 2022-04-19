@@ -20,7 +20,7 @@ import {saveAs} from "file-saver";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {animateElement, animateFormGroup, GetContrastColor, GetIcon} from "../utilities/visual";
+import {animateElement, animateFormGroup, GetContrastColor} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import UserPermissions from "../configuration/user-permissions";
 import {deepMerge} from "../utilities/object";
@@ -327,6 +327,9 @@ export default class ConfigurationApp extends FormApplication {
         (<Calendar>this.object).seasons.forEach(s => {
             DateSelectorManager.GetSelector(`sc_season_start_date_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonStartingDate)}).activateListeners();
             DateSelectorManager.GetSelector( `sc_season_sunrise_time_${s.id}`, {onDateSelect: this.dateSelectorChange.bind(this, s.id, ConfigurationDateSelectors.seasonSunriseSunsetTime)}).activateListeners();
+        });
+        (<Calendar>this.object).moons.forEach(m => {
+            DateSelectorManager.GetSelector(`sc_first_new_moon_date_${m.id}`, {onDateSelect: this.dateSelectorChange.bind(this, m.id, ConfigurationDateSelectors.moonFirstNewMoonDate)}).activateListeners();
         });
         this.appWindow = document.getElementById(ConfigurationApp.appWindowId);
         if(this.appWindow){
@@ -710,8 +713,6 @@ export default class ConfigurationApp extends FormApplication {
                     (<Calendar>this.object).moons[index].firstNewMoon.yearReset = <MoonYearResetOptions>getTextInputValue('.fsc-moon-year-reset', 'none', e);
                     (<Calendar>this.object).moons[index].firstNewMoon.year = <number>getNumericInputValue('.fsc-moon-year', 0, false, e);
                     (<Calendar>this.object).moons[index].firstNewMoon.yearX = <number>getNumericInputValue('.fsc-moon-year-x', 0, false, e);
-                    (<Calendar>this.object).moons[index].firstNewMoon.month = <number>getNumericInputValue('.fsc-moon-month', 1, false, e);
-                    (<Calendar>this.object).moons[index].firstNewMoon.day = <number>getNumericInputValue('.fsc-moon-day', 1, false, e);
 
                     e.querySelectorAll('.fsc-phases>.fsc-row:not(.fsc-head)').forEach(p => {
                         const phaseIndex = parseInt((<HTMLElement>p).getAttribute('data-index') || '');
@@ -1066,23 +1067,32 @@ export default class ConfigurationApp extends FormApplication {
 
     /**
      * Function called when ever a date selector in the configuration dialog is changed.
-     * @param {string} seasonId The ID of the item changed
-     * @param {ConfigurationDateSelectors} dateSelectorType The type of date selector that was changed
-     * @param {SCDateSelector.SelectedDate} selectedDate The returned data from the date selector
+     * @param itemId The ID of the item changed
+     * @param dateSelectorType The type of date selector that was changed
+     * @param selectedDate The returned data from the date selector
      */
-    public dateSelectorChange(seasonId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SimpleCalendar.DateTimeSelector.SelectedDates){
-        //Season Changes
-        const season = (<Calendar>this.object).seasons.find(s => s.id === seasonId);
-        if(season){
-            if(dateSelectorType === ConfigurationDateSelectors.seasonStartingDate){
+    public dateSelectorChange(itemId: string, dateSelectorType: ConfigurationDateSelectors, selectedDate: SimpleCalendar.DateTimeSelector.SelectedDates){
+        if(dateSelectorType === ConfigurationDateSelectors.seasonStartingDate){
+            const season = (<Calendar>this.object).seasons.find(s => s.id === itemId);
+            if(season){
                 const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
                 const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
                 season.startingMonth = sMonthIndex;
                 season.startingDay = sDayIndex;
-            } else if(dateSelectorType === ConfigurationDateSelectors.seasonSunriseSunsetTime){
+            }
+
+        } else if(dateSelectorType === ConfigurationDateSelectors.seasonSunriseSunsetTime){
+            const season = (<Calendar>this.object).seasons.find(s => s.id === itemId);
+            if(season){
                 const activeCalendar = CalManager.getActiveCalendar();
                 season.sunriseTime = ((selectedDate.startDate.hour || 0) * activeCalendar.time.minutesInHour * activeCalendar.time.secondsInMinute) + ((selectedDate.startDate.minute || 0) * activeCalendar.time.secondsInMinute);
                 season.sunsetTime = ((selectedDate.endDate.hour || 0) * activeCalendar.time.minutesInHour * activeCalendar.time.secondsInMinute) + ((selectedDate.endDate.minute || 0) * activeCalendar.time.secondsInMinute);
+            }
+        } else if(dateSelectorType === ConfigurationDateSelectors.moonFirstNewMoonDate){
+            const moon = (<Calendar>this.object).moons.find(m => m.id === itemId);
+            if(moon){
+                moon.firstNewMoon.month = !selectedDate.startDate.month || selectedDate.startDate.month < 0? 0 : selectedDate.startDate.month;
+                moon.firstNewMoon.day = !selectedDate.startDate.day || selectedDate.startDate.day < 0? 0 : selectedDate.startDate.day;
             }
         }
     }

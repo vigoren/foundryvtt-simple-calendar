@@ -345,7 +345,8 @@ export enum TimeSelectorEvents{
  */
 export enum ConfigurationDateSelectors{
     seasonStartingDate = 'ssd',
-    seasonSunriseSunsetTime = 'ssst'
+    seasonSunriseSunsetTime = 'ssst',
+    moonFirstNewMoonDate = 'mfnmd'
 }
 
 /**

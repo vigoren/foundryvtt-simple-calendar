@@ -931,27 +931,12 @@
                                 </div>
                                 <p class="notes">{{localize 'FSC.Configuration.Moon.YearXHelp'}}</p>
                             </div>
-                            <div class="form-group fsc-open">
+                            <div class="form-group fsc-open" style="overflow: visible;">
                                 <label for="-fnmm{{@index}}">{{localize 'FSC.Configuration.Moon.Month'}}</label>
                                 <div class="form-fields">
-                                    <select class="fsc-moon-month" id="-fnmm{{@index}}">
-                                        {{#each ../months}}
-                                        <option value="{{numericRepresentation}}" {{#if (eq numericRepresentation ../firstNewMoon.month)}}selected="selected"{{/if}}>{{name}}</option>
-                                        {{/each}}
-                                    </select>
+                                    {{sc-date-selector id=firstNewMoonDateSelectorId calendar=../activeCalendarId showDateSelector=true showTimeSelector=false showCalendarYear=false useCloneCalendars=true selectedStartDate=firstNewMoonSelectedDate }}
                                 </div>
                                 <p class="notes">{{localize 'FSC.Configuration.Moon.MonthHelp'}}</p>
-                            </div>
-                            <div class="form-group fsc-open">
-                                <label for="-fnmd{{@index}}">{{localize 'FSC.Configuration.Moon.Day'}}</label>
-                                <div class="form-fields">
-                                    <select class="fsc-moon-day" id="-fnmd{{@index}}">
-                                        {{#each dayList}}
-                                        <option value="{{numericRepresentation}}" {{#if (eq numericRepresentation ../firstNewMoon.day)}}selected="selected"{{/if}}>{{name}}</option>
-                                        {{/each}}
-                                    </select>
-                                </div>
-                                <p class="notes">{{localize 'FSC.Configuration.Moon.DayHelp'}}</p>
                             </div>
                             <h3>{{localize 'FSC.Configuration.Moon.Phases'}}</h3>
                             <div class="fsc-f-table fsc-phases">

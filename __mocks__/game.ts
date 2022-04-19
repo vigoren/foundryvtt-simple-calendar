@@ -7,10 +7,10 @@ import {GameWorldTimeIntegrations, SettingNames} from "../src/constants";
 const local: Localization = {
     lang: '',
     translations: {},
-    initialize: jest.fn(() => {return Promise.resolve();}),
-    localize: jest.fn((stringId: string) => {return '';}),
-    format: jest.fn((stringId: string, replacements: any) => {return '';}),
-    setLanguage: jest.fn((lang: string) => {return Promise.resolve();})
+    initialize: () => {return Promise.resolve();},
+    localize: (stringId: string) => {return '';},
+    format: (stringId: string, replacements: any) => {return '';},
+    setLanguage: (lang: string) => {return Promise.resolve();}
 };
 
 // @ts-ignore
@@ -48,38 +48,10 @@ const game = {
     paused: true,
     // @ts-ignore
     settings: {
-        get: jest.fn((moduleName: string, settingName: string): any => {
-            switch (settingName){
-                case SettingNames.AllowPlayersToAddNotes:
-                case SettingNames.DefaultNoteVisibility:
-                    return false;
-                case SettingNames.YearConfiguration:
-                    return {id:'', numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: 'default', yearNamesStart: 0};
-                case SettingNames.MonthConfiguration:
-                    return [[{id:'', name: '', abbreviation: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]];
-                case SettingNames.WeekdayConfiguration:
-                    return [[{abbreviation: '', id:'', name: '', numericRepresentation: 0}]];
-                case SettingNames.LeapYearRule:
-                    return {id:'', rule: 'none', customMod: 0};
-                case SettingNames.CurrentDate:
-                    return {year: 0, month: 1, day: 2, seconds: 3};
-                case SettingNames.Notes:
-                    return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false, id: 'abc123'}]];
-                case SettingNames.NoteCategories:
-                    return [];
-                case SettingNames.GeneralConfiguration:
-                    return {id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, dateFormat: {date: 'MMMM DD, YYYY', time: 'HH:mm:ss', monthYear: 'MMMM YAYYYYYZ'}, permissions: {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}
-                case SettingNames.TimeConfiguration:
-                    return {id:'', hoursInDay:24, minutesInHour: 60, secondsInMinute: 60, secondsInCombatRound: 6, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1};
-                case SettingNames.SeasonConfiguration:
-                    return [[{id:'', name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', sunriseTime: 0, sunsetTime: 0}]];
-                case SettingNames.MoonConfiguration:
-                    return [[{id:'', "name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]];
-            }
-        }),
+        get: jest.fn(),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),
         registerMenu: jest.fn(),
-        set: jest.fn((moduleName: string, settingName: string, data: any) => {return Promise.resolve(true);})
+        set: (moduleName: string, settingName: string, data: any) => {return Promise.resolve(true);}
     },
     time: {
         worldTime: 10,
@@ -105,9 +77,9 @@ const game = {
     },
     users: {
         get: jest.fn(),
-        find: jest.fn((v)=>{
+        find: (v: any)=>{
             return v.call(undefined, {isGM: false, active: true});
-        }),
+        },
         forEach: (v: any) => {
             return v.call(undefined, {id: ''});
         },

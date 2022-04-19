@@ -1433,7 +1433,8 @@ declare global{
                 phases: MoonPhase[];
                 color: string;
                 cycleDayAdjust: number;
-                dayList: Day[];
+                firstNewMoonDateSelectorId: string;
+                firstNewMoonSelectedDate: DateTime;
             }
 
             /**

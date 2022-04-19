@@ -1,5 +1,6 @@
 import "../../../__mocks__/game";
 import GameSockets from "./game-sockets";
+import {SocketTypes} from "../../constants";
 
 describe('Game Sockets Class Tests', () => {
 
@@ -18,11 +19,11 @@ describe('Game Sockets Class Tests', () => {
         const orig = (<Game>game).socket;
         (<Game>game).socket = null;
 
-        let r = await GameSockets.emit(false);
+        let r = await GameSockets.emit({type: SocketTypes.clock, data: {}});
         expect(r).toBe(false);
 
         (<Game>game).socket = orig;
-        r = await GameSockets.emit(false);
+        r = await GameSockets.emit({type: SocketTypes.clock, data: {}});
         expect(r).toBe(true);
         expect((<Game>game).socket?.emit).toHaveBeenCalled();
     });

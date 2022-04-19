@@ -3,7 +3,7 @@
  */
 import "../../__mocks__/form-application";
 import "../../__mocks__/application";
-import "../../__mocks__/journal-sheet";
+import "../../__mocks__/document-sheet";
 import "../../__mocks__/crypto";
 import {
     CalManager, ConfigurationApplication,

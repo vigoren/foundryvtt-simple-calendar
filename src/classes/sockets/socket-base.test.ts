@@ -4,7 +4,7 @@
 import "../../../__mocks__/game";
 import "../../../__mocks__/form-application";
 import "../../../__mocks__/application";
-import "../../../__mocks__/journal-sheet";
+import "../../../__mocks__/document-sheet";
 import "../../../__mocks__/handlebars";
 import "../../../__mocks__/event";
 import "../../../__mocks__/crypto";

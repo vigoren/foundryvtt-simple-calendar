@@ -10,7 +10,7 @@ import {GetContrastColor} from "../utilities/visual";
 import {getCheckBoxGroupValues, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import GameSockets from "../foundry-interfacing/game-sockets";
 
-export class NoteSheet extends JournalSheet{
+export class NoteSheet extends DocumentSheet{
 
     private dirty: boolean = false;
 
@@ -126,14 +126,14 @@ export class NoteSheet extends JournalSheet{
         return this.close();
     }
 
-    render(force?: boolean, options?: Application.RenderOptions<JournalSheet.Options>, startInEditMode?: boolean): this {
+    render(force?: boolean, options?: Application.RenderOptions<DocumentSheetOptions>, startInEditMode?: boolean): this {
         if(startInEditMode !== undefined){
             this.editMode = startInEditMode;
         }
         return super.render(force, options);
     }
 
-    getData(options?: Partial<JournalSheet.Options>): Promise<JournalSheet.Data<JournalSheet.Options>> | JournalSheet.Data<JournalSheet.Options> {
+    getData(options?: Partial<DocumentSheetOptions>): Promise<DocumentSheet.Data> | DocumentSheet.Data {
         this.copyData();
         let newOptions = {
             ...super.getData(),
