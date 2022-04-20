@@ -3,7 +3,6 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import Calendar from "../calendar";
 import UserPermissions from "../configuration/user-permissions";
 import {CalManager, NManager, SC} from "../index";
-import {deepMerge} from "../utilities/object";
 
 /**
  * Class for handling the migration from Simple Calendar V1 to V2
@@ -115,6 +114,9 @@ export default class V1ToV2{
         return perms && settings;
     }
 
+    /**
+     * Migrate the old note data to new journal entries
+     */
     public static async runNoteMigration(): Promise<boolean> {
         const oldNotes = <any[]>GameSettings.GetObjectSettings(SettingNames.Notes);
         const calendar = CalManager.getActiveCalendar();
@@ -161,6 +163,9 @@ export default class V1ToV2{
         return true;
     }
 
+    /**
+     * Removes all the old settings from the settings database
+     */
     public static async cleanUpOldData(): Promise<boolean> {
         const gcRes = await GameSettings.SaveObjectSetting(SettingNames.GeneralConfiguration, {});
         const ycRes = await GameSettings.SaveObjectSetting(SettingNames.YearConfiguration, {});

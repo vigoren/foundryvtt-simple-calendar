@@ -38,11 +38,7 @@ export default class NoteManager{
      * Registers the Simple Calendar note sheet with foundry
      */
     public registerNoteSheets(){
-        Journal.registerSheet(ModuleName, NoteSheet, {
-            types: ['base'],
-            makeDefault: false,
-            label: "Simple Calendar: Note Sheet"
-        });
+        Journal.registerSheet(ModuleName, NoteSheet, { types: ['base'],  makeDefault: false, label: "Simple Calendar: Note Sheet" });
     }
 
     /**
@@ -69,6 +65,11 @@ export default class NoteManager{
         }
     }
 
+    /**
+     * Adds a new empty note
+     * @param calendar The calendar the note is associated with
+     * @param title The title of the note
+     */
     public async addNewNote(calendar: Calendar, title: string){
         const dateTime = calendar.getDateTime();
         const noteData: SimpleCalendar.NoteData = {

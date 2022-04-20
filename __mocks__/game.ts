@@ -105,6 +105,13 @@ const game = {
                 };
             }
             return null;
+        },
+        directory: {
+            folders: {
+                find: (v: any) => {return v.call(undefined, {
+                    getFlag: jest.fn().mockReturnValueOnce(undefined).mockReturnValue({})
+                });}
+            }
         }
     }
 };

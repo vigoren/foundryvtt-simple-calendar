@@ -1,5 +1,7 @@
+import "./form-application";
+
 // @ts-ignore
-class DocumentSheet{
+class DocumentSheet extends FormApplication{
 
 }
 
