@@ -3,15 +3,30 @@ import {DateRangeMatch, ModuleName, NoteRepeat} from "../../constants";
 import {GetDisplayDate, IsDayBetweenDates} from "../utilities/date-time";
 import {GetContrastColor} from "../utilities/visual";
 
+/**
+ * Class that containes information about notes in the calendar and references to the journal entries that make up the notes
+ */
 export default class NoteStub{
+    /**
+     * The ID of the journal entry associated with this stub
+     */
     public entryId: string;
 
+    /**
+     * If a reminder for this note has been sent all ready or not (This is not persistent and reset per page load)
+     */
     public reminderSent: boolean = false;
 
+    /**
+     * @param journalEntryId The ID of the journal entry associated with this stub
+     */
     constructor(journalEntryId: string) {
         this.entryId = journalEntryId;
     }
 
+    /**
+     * Returns the note data flag from the journal entry associated with this note stub
+     */
     public get noteData(){
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         if(journalEntry){
@@ -20,6 +35,9 @@ export default class NoteStub{
         return null;
     }
 
+    /**
+     * If this note takes place all day
+     */
     public get allDay(): boolean{
         const noteData = this.noteData;
         if(noteData){
@@ -28,16 +46,25 @@ export default class NoteStub{
         return true;
     }
 
+    /**
+     * The content of this note
+     */
     public get content(): string {
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         return journalEntry?.data.content || '';
     }
 
+    /**
+     * The title of this note
+     */
     public get title(): string{
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         return journalEntry?.name || '';
     }
 
+    /**
+     * How often this note repeats
+     */
     public get repeats(): NoteRepeat{
         const nd = this.noteData;
         if(nd){
@@ -46,6 +73,9 @@ export default class NoteStub{
         return NoteRepeat.Never;
     }
 
+    /**
+     * Gets the order of the note on the day
+     */
     public get order(): number {
         const nd = this.noteData;
         if(nd){
@@ -54,6 +84,10 @@ export default class NoteStub{
         return 0;
     }
 
+    /**
+     * Sets the order of the note on the day
+     * @param num
+     */
     public async setOrder(num: number) {
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         if(journalEntry){
@@ -65,11 +99,14 @@ export default class NoteStub{
         }
     }
 
+    /**
+     * Get the author display information for the note
+     */
     public get authorDisplay(){
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         if(journalEntry){
             const noteData = <SimpleCalendar.NoteData>journalEntry.getFlag(ModuleName, 'noteData');
-            if(noteData.fromPredefined){
+            if(noteData && noteData.fromPredefined){
                 return {
                     name: "System",
                     color: '',
@@ -93,6 +130,9 @@ export default class NoteStub{
         return null;
     }
 
+    /**
+     * Gets the categories associated with the note
+     */
     public get categories():  SimpleCalendar.NoteCategory[]{
         const noteData = this.noteData;
         if(noteData){
@@ -104,14 +144,23 @@ export default class NoteStub{
         return [];
     }
 
+    /**
+     * Gets the display date for the note
+     */
     public get displayDate(): string{
         return this.getDisplayDate(false);
     }
 
+    /**
+     * Gets the full display date for the note
+     */
     public get fullDisplayDate(): string{
         return this.getDisplayDate(true);
     }
 
+    /**
+     * Gets if the note is visible to the players or not
+     */
     public get playerVisible(){
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         if(journalEntry){
@@ -128,6 +177,9 @@ export default class NoteStub{
         return false;
     }
 
+    /**
+     * Gets if the current user has a reminder registerd for this note or not
+     */
     public get userReminderRegistered(): boolean{
         let registered = false;
         if(this.canUserView()){
@@ -140,6 +192,9 @@ export default class NoteStub{
         return registered;
     }
 
+    /**
+     * Checks if this note was added as part of the predefined calendar
+     */
     public get fromPredefined(): boolean {
         const nd = this.noteData;
         if(nd && nd.fromPredefined !== undefined){
@@ -148,6 +203,9 @@ export default class NoteStub{
         return false;
     }
 
+    /**
+     * If the current user can view this note
+     */
     public canUserView(): boolean {
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         const user = (<Game>game).user;
@@ -159,6 +217,11 @@ export default class NoteStub{
         return false;
     }
 
+    /**
+     * Calculates the display date of the note. Takes into consideration how often the note repeats.
+     * @param full
+     * @private
+     */
     private getDisplayDate(full: boolean): string{
         const noteData = this.noteData;
         if(noteData){
@@ -204,7 +267,7 @@ export default class NoteStub{
                         startDay = (visibleMonthDay.day || 0) - noteStartDiff;
                         endDay = (visibleMonthDay.day || 0) + noteEndDiff;
                         let safetyCount = 0;
-                        while(startDay < 0){
+                        while(startDay < 0 && safetyCount < calendar.months.length){
                             startMonth--;
                             if(startMonth < 0){
                                 startYear--;
@@ -213,14 +276,11 @@ export default class NoteStub{
                             const isLeapYear = calendar.year.leapYearRule.isLeapYear(startYear);
                             startDay = calendar.months[startMonth][isLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'] + startDay;
                             safetyCount++;
-                            if(safetyCount > calendar.months.length){
-                                break;
-                            }
                         }
 
                         let endIsLeapYear = calendar.year.leapYearRule.isLeapYear(endYear);
                         safetyCount = 0;
-                        while(endDay >= calendar.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays']){
+                        while(endDay >= calendar.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'] && safetyCount < calendar.months.length){
                             endDay = endDay - calendar.months[endMonth][endIsLeapYear? 'numberOfLeapYearDays' : 'numberOfDays'];
                             endMonth++;
                             if(endMonth >= calendar.months.length){
@@ -229,9 +289,6 @@ export default class NoteStub{
                                 endIsLeapYear = calendar.year.leapYearRule.isLeapYear(endYear);
                             }
                             safetyCount++;
-                            if(safetyCount > calendar.months.length){
-                                break;
-                            }
                         }
                     }
                 } else if(noteData.repeats === NoteRepeat.Monthly){
@@ -289,6 +346,13 @@ export default class NoteStub{
         return '';
     }
 
+    /**
+     * Checks if the note is visible on the passed in date. Takes into consideration how often the note repeats.
+     * @param calendarId The ID of the calendar the note is for
+     * @param year The year to check
+     * @param monthIndex The month to check
+     * @param dayIndex The day to check
+     */
     public isVisible(calendarId: string, year: number, monthIndex: number, dayIndex: number){
         const calendar = CalManager.getCalendar(calendarId);
         const noteData = this.noteData;

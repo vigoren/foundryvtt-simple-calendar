@@ -85,6 +85,15 @@ export default class NoteManager{
         await this.createNote(title, '', noteData, calendar);
     }
 
+    /**
+     * Creates a new Journal Entry in Foundry and adds a note stub to the Note Manager
+     * @param title The title of the note
+     * @param content The content of the note
+     * @param noteData The metadata associated with the note
+     * @param calendar The Calendar the note is associated with
+     * @param renderSheet If to render the note sheet after creating the note
+     * @param updateMain If to update the main application after creating the note
+     */
     public async createNote(title: string, content: string, noteData: SimpleCalendar.NoteData, calendar: Calendar, renderSheet: boolean = true, updateMain: boolean = true): Promise<StoredDocument<JournalEntry> | null>{
         const perms: Partial<Record<string, 0 | 1 | 2 | 3>> = {};
         (<Game>game).users?.forEach(u => perms[u.id] = (<Game>game).user?.id === u.id? 3 : calendar.generalSettings.noteDefaultVisibility? 2 : 0);
@@ -116,6 +125,11 @@ export default class NoteManager{
         return null;
     }
 
+    /**
+     * Adds a note stub to the Note Manager
+     * @param journalEntry The Journal Entry that represents the note
+     * @param calendarId THe ID of the calendar the note is for
+     */
     public addNoteStub(journalEntry: JournalEntry, calendarId: string){
         if(!this.notes.hasOwnProperty(calendarId)){
             this.notes[calendarId] = [];
@@ -123,6 +137,10 @@ export default class NoteManager{
         this.notes[calendarId].push(new NoteStub(journalEntry.id || ''));
     }
 
+    /**
+     * Removes a note stub from the Note Manager
+     * @param journalEntry The Journal Entry to remove the stub for
+     */
     public removeNoteStub(journalEntry: JournalEntry){
         const noteData = <SimpleCalendar.NoteData>journalEntry.getFlag(ModuleName, 'noteData');
         if(noteData && this.notes.hasOwnProperty(noteData.calendarId)){
@@ -133,6 +151,9 @@ export default class NoteManager{
         }
     }
 
+    /**
+     * Loads all notes from the journal directory and creates note stubs for them
+     */
     public loadNotes(){
         if(this.noteDirectory){
             this.notes = {};
@@ -144,6 +165,10 @@ export default class NoteManager{
         }
     }
 
+    /**
+     * Show the note sheet with the specified note data loaded
+     * @param journalId The ID of the Journal Entry to show
+     */
     public showNote(journalId: string){
         const journalEntry = (<Game>game).journal?.get(journalId);
         if(journalEntry && journalEntry.sheet){
@@ -155,6 +180,10 @@ export default class NoteManager{
         }
     }
 
+    /**
+     * Gets the note stub for the journal entry
+     * @param journalEntry The journal entry to get the note stub for
+     */
     public getNoteStub(journalEntry: JournalEntry): NoteStub | undefined{
         const noteData = <SimpleCalendar.NoteData>journalEntry.getFlag(ModuleName, 'noteData');
         if(noteData && this.notes.hasOwnProperty(noteData.calendarId)){
@@ -163,11 +192,22 @@ export default class NoteManager{
         return undefined;
     }
 
-    public getNotes(calendarId: string){
+    /**
+     * Gets all notes for the specified calendar. This is limited to the notes the current user can see
+     * @param calendarId The ID of the calendar
+     */
+    public getNotes(calendarId: string): NoteStub[] {
         const calendarNotes = this.notes[calendarId] || [];
         return calendarNotes.filter(n => n.canUserView());
     }
 
+    /**
+     * Get all notes for the specified calendar on the specified day. This is limited to the notes the current user can see
+     * @param calendarId The ID of the calendar to get notes for
+     * @param year The year to get notes for
+     * @param monthIndex The month to get notes for
+     * @param dayIndex The day of the month to get notes for
+     */
     public getNotesForDay(calendarId: string, year: number, monthIndex: number, dayIndex: number){
         const calendarNotes: NoteStub[] = this.notes[calendarId] || [];
         const rawNotes = calendarNotes.filter(n => n.isVisible(calendarId, year, monthIndex, dayIndex));
@@ -175,6 +215,13 @@ export default class NoteManager{
         return rawNotes;
     }
 
+    /**
+     * Returns the number of notes on a specified date. This is limited to the notes the current user can see
+     * @param calendarId The ID of the calendar to get notes for
+     * @param year The year to get note counts for
+     * @param monthIndex The month to get note counts for
+     * @param dayIndex The day of the month to get note counts for
+     */
     public getNoteCountsForDay(calendarId: string, year: number, monthIndex: number, dayIndex: number){
         const notesForDay = NManager.getNotesForDay(calendarId, year, monthIndex, dayIndex);
         const results = {
@@ -191,6 +238,12 @@ export default class NoteManager{
         return results;
     }
 
+    /**
+     * Orders the notes on a given day to match the passed in order or IDs
+     * @param calendarId The calendar ID the notes are located in
+     * @param newOrderedIds The order of ID's for the notes
+     * @param day The day these notes are for
+     */
     public async orderNotesOnDay(calendarId: string, newOrderedIds: string[], day: SimpleCalendar.DateTime){
         const dayNotes = this.getNotesForDay(calendarId, day.year, day.month, day.day);
         for(let i = 0; i < newOrderedIds.length; i++){
@@ -205,8 +258,8 @@ export default class NoteManager{
 
     /**
      * Sort function for the list of notes on a day. Sorts by order, then hour then minute
-     * @param {NoteStub} a The first note to compare
-     * @param {NoteStub} b The second noe to compare
+     * @param a The first note to compare
+     * @param b The second noe to compare
      * @private
      */
     private static dayNoteSort(a: NoteStub, b: NoteStub): number {
@@ -217,6 +270,11 @@ export default class NoteManager{
         return 0;
     }
 
+    /**
+     * Check the current date of a calendar for note reminders the current user registered for
+     * @param calendarId The ID of the calendar to check
+     * @param initialLoad If this is the initial load of the page
+     */
     public checkNoteReminders(calendarId: string, initialLoad: boolean = false){
         const calendar = CalManager.getCalendar(calendarId);
         if(calendar && (!initialLoad || (initialLoad && calendar.generalSettings.postNoteRemindersOnFoundryLoad)) && this.notes[calendarId]){
@@ -258,6 +316,12 @@ export default class NoteManager{
         }
     }
 
+    /**
+     * Search all notes that match or contain the term. This is limited to the notes the current user can see
+     * @param calendarId
+     * @param term
+     * @param options
+     */
     public searchNotes(calendarId: string, term: string, options: SimpleCalendar.Search.OptionsFields):  NoteStub[]{
         const noteList = this.notes[calendarId];
         let results: NoteStub[] = [];

@@ -1,10 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import "../../__mocks__/form-application";
-import "../../__mocks__/application";
-import "../../__mocks__/document-sheet";
-import "../../__mocks__/crypto";
+import "../../__mocks__/index";
 import {
     CalManager, ConfigurationApplication,
     MainApplication, MigrationApplication, NManager, SC,

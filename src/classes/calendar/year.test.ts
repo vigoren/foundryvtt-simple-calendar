@@ -1,14 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import "../../../__mocks__/game";
-import "../../../__mocks__/form-application";
-import "../../../__mocks__/application";
-import "../../../__mocks__/handlebars";
-import "../../../__mocks__/event";
-import "../../../__mocks__/crypto";
-import "../../../__mocks__/dialog";
-import "../../../__mocks__/hooks";
+import "../../../__mocks__/index";
 import {LeapYearRules, YearNamingRules} from "../../constants";
 import Calendar from "./index";
 

@@ -54,7 +54,7 @@ export default class MigrationApp extends Application{
      *
      * @param options
      */
-    public getData(options?: Partial<ApplicationOptions>): object | Promise<object> {
+    getData(options?: Partial<ApplicationOptions>): object | Promise<object> {
         return {
             ...super.getData(options),
             display: this.displayData,

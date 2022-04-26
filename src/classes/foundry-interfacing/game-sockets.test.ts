@@ -1,4 +1,7 @@
-import "../../../__mocks__/game";
+/**
+ * @jest-environment jsdom
+ */
+import "../../../__mocks__/index";
 import GameSockets from "./game-sockets";
 import {SocketTypes} from "../../constants";
 

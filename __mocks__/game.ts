@@ -26,6 +26,8 @@ const user: User = {
     isTrusted: false,
     isGM: false,
     isSelf: true,
+    //@ts-ignore
+    data: {},
     // @ts-ignore
     can: jest.fn((permission: string) => {return false;}),
     hasPermission: jest.fn((permission: string) => {return false;}),
@@ -84,6 +86,9 @@ const game = {
             return v.call(undefined, {id: ''});
         },
         filter: (v: any) => {
+            return v.call(undefined, user);
+        },
+        map: (v: any) => {
             return v.call(undefined, user);
         }
     },

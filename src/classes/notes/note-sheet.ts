@@ -89,7 +89,6 @@ export class NoteSheet extends DocumentSheet{
 
     close(options?: FormApplication.CloseOptions): Promise<void> {
         if(this.dirty){
-            console.log('Form is dirty');
             const dialog = new Dialog({
                 title: GameSettings.Localize('FSC.NoteDirty'),
                 content: GameSettings.Localize("FSC.NoteDirtyText"),
@@ -217,10 +216,7 @@ export class NoteSheet extends DocumentSheet{
             if(form && form.length){
                 let height = 46;//Header height and padding of form
                 if(this.editMode){
-                    const form = <HTMLElement>this.appWindow.querySelector('form');
-                    if(form){
-                        height += form.scrollHeight;
-                    }
+                    height += form[0].scrollHeight;
                 } else {
                     const nHeader = <HTMLElement>this.appWindow.querySelector('.fsc-note-header');
                     const nContent = <HTMLElement>this.appWindow.querySelector('.fsc-content');
@@ -262,9 +258,7 @@ export class NoteSheet extends DocumentSheet{
                 // Input Changes
                 //---------------------
                 this.appWindow.querySelectorAll("input, select").forEach(e => {
-                    e.addEventListener('change', async () => {
-                        await this.writeInputValuesToObjects();
-                    });
+                    e.addEventListener('change', this.inputChange.bind(this));
                 });
             } else {
                 //---------------------
@@ -280,6 +274,10 @@ export class NoteSheet extends DocumentSheet{
             this.appWindow.querySelector('#scNoteEdit')?.addEventListener('click', this.edit.bind(this));
             this.appWindow.querySelector('#scNoteDelete')?.addEventListener('click', this.delete.bind(this));
         }
+    }
+
+    async inputChange(){
+        await this.writeInputValuesToObjects();
     }
 
     protected _onResize(event: Event) {

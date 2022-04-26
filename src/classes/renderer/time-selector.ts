@@ -93,7 +93,7 @@ export default class TimeSelector {
         }
     }
 
-    public static ChangeEventListener(timeSelectorId: string, eventType: TimeSelectorEvents, onTimeChange: Function | null = null, event: Event){
+    public static ChangeEventListener(timeSelectorId: string, eventType: TimeSelectorEvents, onTimeChange: Function | null, event: Event){
         event.stopPropagation();
         event.preventDefault();
         const timeSelectorElement = document.getElementById(timeSelectorId);

@@ -1,8 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import "../../../__mocks__/game";
-import "../../../__mocks__/crypto";
+import "../../../__mocks__/index";
 import {compareSemanticVersions, generateUniqueId, ordinalSuffix, PadNumber, randomHash} from "./string";
 
 describe('Utilities String Tests', () => {

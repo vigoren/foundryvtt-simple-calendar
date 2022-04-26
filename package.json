@@ -37,7 +37,7 @@
     "jest-ts-webcompat-resolver": "^1.0.0",
     "mangle-css-class-webpack-plugin": "^5.0.7",
     "mini-css-extract-plugin": "^2.6.0",
-    "sass": "^1.50.0",
+    "sass": "^1.50.1",
     "sass-loader": "^12.6.0",
     "terser-webpack-plugin": "^5.3.1",
     "ts-jest": "^27.1.4",

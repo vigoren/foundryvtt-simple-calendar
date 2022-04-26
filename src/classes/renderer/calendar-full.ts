@@ -56,7 +56,7 @@ export default class CalendarFull{
         return HTML;
     }
 
-    private static Build(calendar: Calendar, options: SimpleCalendar.Renderer.CalendarOptions = {id: ''}): string{
+    private static Build(calendar: Calendar, options: SimpleCalendar.Renderer.CalendarOptions): string{
         let monthYearFormat = calendar.generalSettings.dateFormat.monthYear;
         if(!options.showYear){
             monthYearFormat = monthYearFormat.replace(/YN|YA|YZ|YY(?:YY)?/g, '');
@@ -232,7 +232,7 @@ export default class CalendarFull{
      * @param {Function|null} funcs.onYearChange Function to call when the year is an input and it changes
      * @param {Event} event The click event
      */
-    public static EventListener(calendarId: string, clickType: CalendarClickEvents, funcs:{onMonthChange: Function | null, onDayClick: Function | null, onYearChange: Function | null } = {onMonthChange: null, onDayClick: null, onYearChange: null}, event: Event){
+    public static EventListener(calendarId: string, clickType: CalendarClickEvents, funcs:{onMonthChange: Function | null, onDayClick: Function | null, onYearChange: Function | null }, event: Event){
         event.stopPropagation();
         const calendarElement = document.getElementById(calendarId);
         if(calendarElement){
@@ -256,7 +256,7 @@ export default class CalendarFull{
                                 if(clickType === CalendarClickEvents.previous || clickType === CalendarClickEvents.next){
                                     let loop = true;
                                     let loopCount = 0;
-                                    while(loop){
+                                    while(loop && loopCount < calendar.months.length){
                                         if(clickType === CalendarClickEvents.previous){
                                             if(monthIndex === 0){
                                                 monthIndex = calendar.months.length - 1;
@@ -277,9 +277,6 @@ export default class CalendarFull{
                                             loop = false;
                                         }
                                         loopCount++;
-                                        if(loopCount === calendar.months.length){
-                                            loop = false;
-                                        }
                                     }
                                 } else if(clickType === CalendarClickEvents.day){
                                     let target = <HTMLElement>event.target;

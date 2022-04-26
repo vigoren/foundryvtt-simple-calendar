@@ -1,13 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import "../../../__mocks__/game";
-import "../../../__mocks__/form-application";
-import "../../../__mocks__/application";
-import "../../../__mocks__/handlebars";
-import "../../../__mocks__/event";
-import "../../../__mocks__/crypto";
-import "../../../__mocks__/dialog";
+import "../../../__mocks__/index";
 
 import {DateSelector} from "./index";
 import {CalendarClickEvents, DateSelectorPositions} from "../../constants";
