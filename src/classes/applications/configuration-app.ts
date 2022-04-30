@@ -31,18 +31,15 @@ import {generateUniqueId} from "../utilities/string";
 export default class ConfigurationApp extends FormApplication {
     /**
      * ID used for the application window when rendered on the page
-     * @type{string}
      */
     public static appWindowId: string = 'fsc-simple-calendar-configuration-application-form';
     /**
      * The HTML element representing the application window
-     * @type {HTMLElement | null}
      * @private
      */
     private appWindow: HTMLElement | null = null;
     /**
      * A list of temporary calendars to be edited in the configuration dialog.
-     * @type {Calendar[]}
      * @private
      */
     private calendars: Calendar[] = [];
@@ -50,7 +47,6 @@ export default class ConfigurationApp extends FormApplication {
     private predefindCalendars: any[] = [];
     /**
      * A copy of the global configuration options to be edited in the configuration dialog.
-     * @type {GlobalConfigurationData}
      * @private
      */
     private globalConfiguration: SimpleCalendar.GlobalConfigurationData = {
@@ -64,7 +60,6 @@ export default class ConfigurationApp extends FormApplication {
     };
     /**
      * A copy of the client settings to be edited in the configuration dialog.
-     * @type {ClientSettings}
      * @private
      */
     private clientSettings: SimpleCalendar.ClientSettingsData = {
@@ -337,9 +332,7 @@ export default class ConfigurationApp extends FormApplication {
             DateSelectorManager.ActivateSelector('quick-setup-predefined-calendar');
 
             // Click anywhere in the app
-            this.appWindow.addEventListener('click', () => {
-                this.toggleCalendarSelector(true);
-            });
+            this.appWindow.addEventListener('click', this.toggleCalendarSelector.bind(this, true));
             //---------------------
             // Calendar Picker / Add new calendar
             //---------------------
@@ -375,10 +368,7 @@ export default class ConfigurationApp extends FormApplication {
             // Input Changes
             //---------------------
             this.appWindow.querySelectorAll("input, select").forEach(e => {
-                e.addEventListener('change', () => {
-                    this.writeInputValuesToObjects();
-                    this.updateUIFromObject();
-                });
+                e.addEventListener('change', this.inputChange.bind(this));
             });
             //---------------------
             // Date Format Table open/close
@@ -405,6 +395,20 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Processes changes to any input field
+     * @private
+     */
+    private inputChange(){
+        this.writeInputValuesToObjects();
+        this.updateUIFromObject();
+    }
+
+    /**
+     * Toggles the visibility of the calendar selector
+     * @param forceHide Force the selector to hide
+     * @private
+     */
     private toggleCalendarSelector(forceHide: boolean = false){
         if(this.appWindow){
             const cList = this.appWindow.querySelector(".tabs .fsc-calendar-selector ul");
@@ -414,6 +418,11 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Process when a calendar is clicked on the calendar list
+     * @param e The click event
+     * @private
+     */
     private calendarClick(e: Event){
         const target = <HTMLElement>e.currentTarget;
         if(target){
@@ -429,6 +438,11 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Process the remove calendar button click
+     * @param e The click event
+     * @private
+     */
     private removeCalendarClick(e: Event){
         e.preventDefault();
         e.stopPropagation();
@@ -444,6 +458,11 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Process the confirmation of removing a calendar
+     * @param args The arguments from the dialog that contain details on which calendar to remove
+     * @private
+     */
     private removeCalendarConfirm(args: any){
         if(args['id']){
             CalManager.removeCalendar(args['id']);
@@ -452,6 +471,11 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Process the adding of a new calendar
+     * @param e The click event
+     * @private
+     */
     private async addNewCalendar(e: Event){
         e.preventDefault();
         const calNameElement = <HTMLInputElement>document.getElementById('scAddCalendarName');
@@ -465,6 +489,11 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Process when a predefined calendar is clicked in the list of predefined calendars
+     * @param e The Click Event
+     * @private
+     */
     private predefinedCalendarClick(e: Event){
         const element = (<HTMLElement>e.target)?.closest('.fsc-predefined-calendar');
         if(element && this.appWindow){
@@ -493,17 +522,31 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Process when the next button is clicked in the quick setup tab
+     * @param e The Click Event
+     * @private
+     */
     private quickSetupNextClick(e: Event){
         e.preventDefault();
         this.confirmationDialog('overwrite', 'predefined', {name: (<Calendar>this.object).name});
     }
 
+    /**
+     * Process the confirm click of the next confirmation dialog
+     * @private
+     */
     private async quickSetupNextConfirm(){
         this.uiElementStates.qsNextClicked = !this.uiElementStates.qsNextClicked;
         await PredefinedCalendar.setToPredefined((<Calendar>this.object), <PredefinedCalendars>this.uiElementStates.selectedPredefinedCalendar, this.uiElementStates.qsAddNotes);
         this.updateApp();
     }
 
+    /**
+     * Process when the back button is clicked in the quick setup tab
+     * @param e The Click Event
+     * @private
+     */
     private quickSetupBackClick(e: Event){
         e.preventDefault();
         this.uiElementStates.qsNextClicked = !this.uiElementStates.qsNextClicked;
@@ -517,6 +560,11 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Process when the save button is clicked in the quick setup tab
+     * @param e The Click Event
+     * @private
+     */
     private quickSetupSaveClick(e: Event){
         e.preventDefault();
         this.uiElementStates.selectedPredefinedCalendar = ''
@@ -531,6 +579,11 @@ export default class ConfigurationApp extends FormApplication {
         this.save(false, false).catch(Logger.error);
     }
 
+    /**
+     * Toggle the display of the advanced settings for a specific month
+     * @param e The Click Event
+     * @private
+     */
     private toggleMonthShowAdvanced(e: Event){
         e.preventDefault();
         const target = <HTMLElement>e.currentTarget;
@@ -546,6 +599,10 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Write the current values from all the input fields in the configuration dialog into the calendar object.
+     * @private
+     */
     private writeInputValuesToObjects(){
         if(this.appWindow){
             //----------------------------------
@@ -754,6 +811,10 @@ export default class ConfigurationApp extends FormApplication {
         }
     }
 
+    /**
+     * Update the configuration dialog based on data in the calendar
+     * @private
+     */
     private updateUIFromObject(){
         if(this.appWindow){
             //----------------------------------
@@ -1116,7 +1177,7 @@ export default class ConfigurationApp extends FormApplication {
         let currentDay = null;
         if(monthCurrentDay){
             if(monthCurrentDay.numericRepresentation >= month.numberOfDays){
-                currentDay = 0;
+                currentDay = 1;
             } else {
                 currentDay = monthCurrentDay.numericRepresentation;
             }

@@ -111,6 +111,7 @@ const game = {
             }
             return null;
         },
+        forEach: (v: any) => {return v.call(undefined, {})},
         directory: {
             folders: {
                 find: (v: any) => {return v.call(undefined, {

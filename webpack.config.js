@@ -4,15 +4,31 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const MangleCssClassPlugin = require('mangle-css-class-webpack-plugin');
+const fs = require('fs');
 
+/**
+ * Generates all the entry points needed.
+ * @returns {{index: string, "styles/calendar": string}}
+ */
+function getEntries() {
+    //Default required entry points
+    const list = {
+        "index": './src/index.ts',
+        "styles/calendar": './src/styles/index.scss'
+    };
+
+    //Get all the additional theme files as entry points
+    fs.readdirSync('./src/styles/themes/').forEach((file) => {
+         if(file.endsWith('.scss') && file !== 'dark.scss' && file !== 'light.scss'){
+             list[`styles/themes/${file.replace('.scss', '')}`] = `./src/styles/themes/${file}`;
+         }
+    });
+    return list;
+}
 
 module.exports = {
     mode: "production",
-    entry: {
-        "index": './src/index.ts',
-        "styles/calendar": './src/styles/index.scss',
-        "styles/themes/classic": './src/styles/themes/classic.scss'
-    },
+    entry: getEntries(),
     optimization: {
         removeEmptyChunks: true,
         minimize: true,

@@ -11,7 +11,9 @@
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dvigorator%26type%3Dpatrons&style=flat)](https://patreon.com/vigorator)
 [![ko-fi](https://img.shields.io/badge/%20-Support%20me%20on%20Ko--fi-%23FF5E5B?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/A0A546HOX)
 
-# Simple Calendar ![Logo](./docs/images/logo.svg)
+![Logo](./docs/images/logo.svg)
+
+# Simple Calendar 
 
 A simple calendar module for [FoundryVTT](https://foundryvtt.com/) that is game system independent. 
 
@@ -97,16 +99,9 @@ Czech (cs)|[robertjunek](https://github.com/robertjunek)
 French (fr)|[JDR Ninja](https://github.com/JDR-Ninja) <br/> [TheBird956](https://github.com/TheBird956)
 Italian (it)|[Haloghen](https://github.com/Haloghen)
 
-If your language is missing from the list, and you would like to help translate Simple Calendar please follow these steps:
+# Contributing
 
-- Fork this repository.
-- Under the src/lang folder copy the en.json file.
-- Rename that file so that it matches your languages [2 letter ISO code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
-- Go through that file and translate all the english values to your language.
-- Open the src/module.json and add your language to the list under "languages"
-- Update the ReadMe file to add your name to the table above.
-- Create a pull request back into this repository with your additions.
-- Know that your help is appreciated to bring this module to as many users as possible!
+If you would like to contribute to the Simple Calendar module check out the [contributing](./CONTRIBUTING.md) guide!
 
 ## Credits
 

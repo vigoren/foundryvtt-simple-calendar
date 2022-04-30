@@ -13,4 +13,5 @@ import "./hooks";
 import "./journal";
 import "./journal-entry";
 import "./merge-object";
+import "./is-object-empty";
 import "./text-editor";
