@@ -56,10 +56,7 @@ module.exports = {
                 { context: './src/', from : '**/*.json', to : './' },
                 { context: './src/', from : '**/*.(hbs|html)', to : '[path][name].html' },
                 { context: './', from : 'README.md', to : './' },
-                { context: './', from : 'LICENSE', to : './' },
-                { context: './docs', from : 'Configuration.md', to : './docs' },
-                { context: './docs', from : 'Notes.md', to : './docs' },
-                { context: './docs', from : 'UpdatingDateTime.md', to : './docs' },
+                { context: './', from : 'LICENSE', to : './' }
             ]
         }),
         new MangleCssClassPlugin({

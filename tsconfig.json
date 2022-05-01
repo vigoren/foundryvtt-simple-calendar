@@ -79,26 +79,55 @@
   ],
   "typedocOptions": {
     "entryPoints": [
-      "./types"
+      "./types/index.d.ts"
     ],
+    "entryPointStrategy": "resolve",
     "media": "./docs/images",
-    "includes": "./docs",
     "exclude": "**/*.test.ts",
-    "out": "site/api",
-    "name": "Simple Calendar API",
-    "customTitle": "FoundryVTT Simple Calendar",
-    "readme": "none",
+    "out": "site",
+    "name": "FoundryVTT Simple Calendar",
+    "favicon": "./docs/images/logo.svg",
     "plugin": [
-      "./typedoc-theme/index.js",
       "typedoc-plugin-extras",
-      "typedoc-plugin-merge-modules"
+      "@knodes/typedoc-plugin-pages"
     ],
-    "theme": "logging",
-    "categorizeByGroup": false,
     "disableSources": true,
     "hideGenerator": true,
     "excludeInternal": true,
-    "entryPointStrategy": "expand",
-    "mergeModulesMergeMode": "project"
+    "pluginPages": {
+      "source": "./",
+      "enableSearch": true,
+      "pages":
+        [
+          { "title": "VIRTUAL", "childrenSourceDir":  "./", "childrenOutputDir": "./site", "children": [
+            { "title": "Changelog", "source": "CHANGELOG.md" }
+          ]},
+          { "title": "Configuring Simple Calendar", "childrenSourceDir": "./docs", "children":  [
+            { "title": "Global Configuration", "childrenSourceDir": "./global-configuration", "source": "global-configuration/index.md", "children":  [
+              { "title": "Settings", "source": "settings.md"},
+              { "title": "Permissions", "source": "permissions.md"},
+              { "title": "Import/Export", "source": "import-export.md"}
+            ]},
+            { "title": "Calendar Configuration", "childrenSourceDir": "./calendar-configuration", "source": "calendar-configuration/index.md", "children":  [
+              { "title": "Add / Remove / Switch Calendars", "source": "add-remove-switch-calendar.md"},
+              { "title": "Quick Setup", "source": "quick-setup.md"},
+              { "title": "General Settings", "source": "general-settings.md"},
+              { "title": "Display Options", "source": "display-options.md"},
+              { "title": "Year Settings", "source": "year-settings.md"},
+              { "title": "Month Settings", "source": "month-settings.md"},
+              { "title": "Weekday Settings", "source": "weekday-settings.md"},
+              { "title": "Leap Year Settings", "source": "leap-year-settings.md"},
+              { "title": "Season Settings", "source": "season-settings.md"},
+              { "title": "Moon Settings", "source": "moon-settings.md"},
+              { "title": "Time Settings", "source": "time-settings.md"},
+              { "title": "Note Settings", "source": "note-settings.md"}
+            ]}
+          ]},
+          { "title": "Using Simple Calendar", "childrenSourceDir": "./docs/using-sc", "source":"./docs/using-sc/index.md", "children":  [
+            { "title": "Changing the Date and Time", "source": "changing-date-time.md"},
+            { "title": "Notes", "source": "notes.md"}
+          ]}
+        ]
+    }
   }
 }

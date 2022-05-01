@@ -467,6 +467,7 @@ export default class ConfigurationApp extends FormApplication {
         if(args['id']){
             CalManager.removeCalendar(args['id']);
             this.calendars = CalManager.getAllCalendars(true);
+            this.object = this.calendars[0];
             this.updateApp();
         }
     }

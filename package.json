@@ -24,6 +24,7 @@
     "writedocs": "typedoc"
   },
   "devDependencies": {
+    "@knodes/typedoc-plugin-pages": "^0.22.4",
     "@league-of-foundry-developers/foundry-vtt-types": "^9.268.0",
     "@types/file-saver": "^2.0.5",
     "@types/jest": "^27.4.1",

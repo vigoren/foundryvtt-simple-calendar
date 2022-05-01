@@ -37,7 +37,7 @@
         {{/if}}
         <div class="fsc-tab-section fsc-help">
             <div class="fsc-heading">{{localize 'FSC.Help'}}</div>
-            <a class="fsc-item" href="https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md" target="_blank">{{localize 'FSC.Documentation'}}&nbsp;<span class="fa fa-external-link-alt"></span></a>
+            <a class="fsc-item" href="https://simplecalendar.info/index.html" target="_blank">{{localize 'FSC.Documentation'}}&nbsp;<span class="fa fa-external-link-alt"></span></a>
             <a class="fsc-item" data-tab="about">{{localize 'About'}}</a>
         </div>
     </nav>
@@ -45,7 +45,7 @@
         <div class="tab fsc-global-settings" data-tab="globalSettings">
             {{#if isGM}}
             <div class="fsc-section fsc-open">
-                <h2>{{localize 'FSC.Configuration.Global.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#global-configuration" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Global.Title'}} <a href="https://simplecalendar.info/pages/docs/global-configuration/settings.html#global-configuration" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <p>{{localize 'FSC.Configuration.Global.Description'}}</p>
                 <div class="form-group fsc-open">
                     <label for="scSyncCalendars">{{localize 'FSC.Configuration.Global.SyncCalendars.Title'}}</label>
@@ -80,7 +80,7 @@
             </div>
             {{/if}}
             <div class="fsc-section fsc-open">
-                <h2>{{localize 'FSC.Configuration.Client.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#client-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Client.Title'}} <a href="https://simplecalendar.info/pages/docs/global-configuration/settings.html#client-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <p>{{localize 'FSC.Configuration.Client.Description'}}</p>
                 <div class="form-group fsc-open">
                     <label for="scTheme">{{localize 'FSC.Configuration.Theme.Title'}}</label>
@@ -117,7 +117,7 @@
 
         {{#if isGM}}
         <div class="tab fsc-permissions" data-tab="permissions">
-            <h2>{{localize 'Permissions'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#permissions" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+            <h2>{{localize 'Permissions'}} <a href="https://simplecalendar.info/pages/docs/global-configuration/permissions.html" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
             <p>{{localize 'FSC.Configuration.General.Permissions.Note'}}</p>
             <header class="fsc-table-header flexrow">
                 <label class="fsc-index">{{localize 'PERMISSION.Permission'}}</label>
@@ -180,7 +180,7 @@
             </ul>
         </div>
         <div class="tab fsc-import-export" data-tab="importExport">
-            <h2>{{localize 'FSC.Configuration.General.ImportExport.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#importexport" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+            <h2>{{localize 'FSC.Configuration.General.ImportExport.Title'}} <a href="https://simplecalendar.info/pages/docs/global-configuration/import-export.html" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
             <div class="fsc-section fsc-open">
                 <div class="form-group fsc-open">
                     <label>{{localize 'FSC.Import'}}</label>
@@ -212,7 +212,7 @@
         </div>
 
         <div class="tab fsc-new-calendar" data-tab="newCalendar">
-            <h2>{{localize 'FSC.AddNewCalendar'}}</h2>
+            <h2>{{localize 'FSC.AddNewCalendar'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/add-remove-switch-calendar.html#add-a-new-calendar" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
             <div class="form-group fsc-open">
                 <label for="scAddCalendarName">{{localize 'FSC.Configuration.AddCalendar.CalendarName'}}</label>
                 <div class="form-fields">
@@ -223,7 +223,7 @@
             </div>
         </div>
         <div class="tab fsc-quick-setup" data-tab="quickSetup">
-            <h2>{{localize 'FSC.Configuration.General.QuickSetup'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#quick-setup" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+            <h2>{{localize 'FSC.Configuration.General.QuickSetup'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/quick-setup.html" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
             <p>{{localize 'FSC.Configuration.QuickSetup.Description'}}</p>
             <div class="fsc-section-wrapper">
                 <div class="fsc-section fsc-predefined {{#if uiElementStates.qsNextClicked}} fsc-closed{{else}} fsc-open{{/if}}">
@@ -285,7 +285,7 @@
         </div>
 
         <div class="tab fsc-general-settings" data-tab="generalSettings">
-            <h2>{{localize 'FSC.Configuration.General.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#general-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+            <h2>{{localize 'FSC.Configuration.General.Title'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/general-settings.html" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
             <p>{{localize 'FSC.Configuration.General.Description'}}</p>
             <div class="settings-group fsc-open">
                 <div class="form-group fsc-open">
@@ -316,7 +316,7 @@
             </div>
         </div>
         <div class="tab fsc-display-options" data-tab="displayOptions">
-            <h2>{{localize 'FSC.Configuration.General.DisplayOptions'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#display-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+            <h2>{{localize 'FSC.Configuration.General.DisplayOptions'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/display-options.html" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
             <p>{{{localize 'FSC.Configuration.Display.Description'}}}</p>
             <div class="fsc-f-table fsc-tokens" style="border-top: 1px solid #7a7971;">
                 <div class="fsc-row fsc-head fsc-date-format-token-show" style="cursor: pointer;">
@@ -589,7 +589,7 @@
         </div>
         <div class="tab fsc-year-settings" data-tab="yearSettings">
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Year.Current'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Year.Current'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/year-settings.html#current-year" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <p></p>
                 <div class="form-group fsc-open">
                     <label for="scCurrentYear">{{localize 'FSC.Configuration.Year.Current'}}</label>
@@ -621,7 +621,7 @@
                 </div>
             </div>
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Year.YearNames'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Year.YearNames'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/year-settings.html#year-names" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scYearNameBehaviour">{{localize 'FSC.Configuration.Year.YearNameBehaviour'}}</label>
                     <div class="form-fields">
@@ -663,7 +663,7 @@
         </div>
         <div class="tab fsc-month-settings" data-tab="monthSettings"  >
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Months'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#month-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Months'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/month-settings.html" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <p>{{localize 'FSC.Configuration.Month.Description'}}</p>
                 <div class="fsc-f-table fsc-months">
                     <div class="fsc-row fsc-head">
@@ -740,7 +740,7 @@
         </div>
         <div class="tab fsc-weekday-settings" data-tab="weekdaySettings" >
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Weekday.Options'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#weekday-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Weekday.Options'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/weekday-settings.html#weekday-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scShowWeekdayHeaders">{{localize 'FSC.Configuration.Weekday.ShowHeadings'}}</label>
                     <div class="form-fields">
@@ -761,7 +761,7 @@
                 </div>
             </div>
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Weekdays'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#weekday-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Weekdays'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/weekday-settings.html#weekdays" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="fsc-f-table fsc-weekdays">
                     <div class="fsc-row fsc-head">
                         <div class="fsc-col" title="{{localize 'FSC.Configuration.Weekday.NameHelp'}}">{{localize 'FSC.Configuration.Weekday.Name'}}</div>
@@ -791,7 +791,7 @@
         </div>
         <div class="tab fsc-leapyear-settings" data-tab="leapYearSettings">
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.LeapYear.Options'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#leap-year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.LeapYear.Options'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/leap-year-settings.html#options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scLeapYearRule">{{localize 'FSC.Configuration.LeapYear.Rule'}}</label>
                     <div class="form-fields">
@@ -810,7 +810,7 @@
                 </div>
             </div>
             <div class="fsc-settings-group {{#if showLeapYearMonths}} fsc-open{{else}} fsc-closed{{/if}}" id="scLeapYearMonthList">
-                <h2>{{localize 'FSC.Configuration.Months'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#leap-year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Months'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/leap-year-settings.html#months" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="fsc-f-table fsc-months">
                     <div class="fsc-row fsc-head">
                         <div class="fsc-col" title="{{localize 'FSC.Configuration.Month.NameHelp'}}">{{localize 'FSC.Configuration.Month.Name'}}</div>
@@ -831,7 +831,7 @@
         </div>
         <div class="tab fsc-season-settings" data-tab="seasonSettings">
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Season.Title'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#year-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Season.Title'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/season-settings.html" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <datalist id="scSeasonColors">
                     {{#each seasonColors}}
                         <option value="{{value}}">{{display}}</option>
@@ -880,7 +880,7 @@
         </div>
         <div class="tab fsc-moon-settings" data-tab="moonSettings">
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Moons'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#moon-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Moons'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/moon-settings.html" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="fsc-f-table fsc-moons">
                     <div class="fsc-row fsc-head">
                         <div class="fsc-col" title="{{localize 'FSC.Configuration.Moon.NameHelp'}}">{{localize 'FSC.Configuration.Moon.Name'}}</div>
@@ -985,7 +985,7 @@
         </div>
         <div class="tab fsc-time-settings" data-tab="timeSettings">
             <div class="fsc-section fsc-open">
-                <h2>{{localize 'FSC.Configuration.Time.Options'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#time-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Time.Options'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/time-settings.html#time-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scHoursInDay">{{localize 'FSC.Configuration.Time.HoursInDay'}}</label>
                     <div class="form-fields">
@@ -1009,7 +1009,7 @@
                 </div>
             </div>
             <div class="fsc-section fsc-open">
-                <h2>{{localize 'FSC.Configuration.Time.ClockSettings'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#clock-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Time.ClockSettings'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/time-settings.html#clock-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
                     <div class="form-fields">
@@ -1042,7 +1042,7 @@
         </div>
         <div class="tab fsc-note-settings" data-tab="noteSettings">
             <div class="fsc-settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.General.Notes'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#note-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.General.Notes'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/note-settings.html#note-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
                     <div class="form-fields">
@@ -1059,7 +1059,7 @@
                 </div>
             </div>
             <div class="fsc-settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Notes.NoteCategories'}} <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md#note-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Notes.NoteCategories'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/note-settings.html#note-categories" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="fsc-f-table fsc-note-categories">
                     <div class="fsc-row fsc-head">
                         <div class="fsc-col" title="{{localize 'FSC.Configuration.NoteCategories.NameHelp'}}">{{localize 'FSC.Configuration.NoteCategories.Name'}}</div>
@@ -1109,7 +1109,7 @@
                     <h2>Support</h2>
                     <p>If you run into issue with Simple Calendar there are several ways to get assistance:</p>
                     <ul>
-                        <li>Check out Simple Calendars <a href="https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs">documentation</a>!</li>
+                        <li>Check out Simple Calendars <a href="https://simplecalendar.info/index.html">documentation</a>!</li>
                         <li>Ask on the <a href="https://discord.gg/foundryvtt">FoundryVTT Discord server</a>, lots of very knowledgeable individuals who can help out there.</li>
                         <li>Check the projects GitHub <a href="https://github.com/vigoren/foundryvtt-simple-calendar/issues">issues</a> or <a href="https://github.com/vigoren/foundryvtt-simple-calendar/discussions">discussions</a> to see if anyone else has had this issue before</li>
                         <li>If none of the above work then please create a new <a href="https://github.com/vigoren/foundryvtt-simple-calendar/issues">issue</a> or <a href="https://github.com/vigoren/foundryvtt-simple-calendar/discussions">discussion</a> and I will hapily look into it!</li>

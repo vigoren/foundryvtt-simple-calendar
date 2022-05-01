@@ -524,7 +524,7 @@
         .fsc-item{
           border-color: $gray-700;
 
-          &.fsc-active, &:hover{
+          &.fsc-active, &.active, &:hover{
             background-color: $secondary;
             color: $fontColor;
           }
