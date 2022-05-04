@@ -1,3 +1,5 @@
+import {AdvanceTimeToPreset} from "./classes/utilities/date-time";
+
 /**
  * The name of this module
  * @internal
@@ -164,7 +166,18 @@ export enum SocketTypes {
     journal = 'journal',
     dateTimeChange = 'date-time-change',
     noteUpdate = 'note-update',
-    emitHook = 'emit-hook'
+    emitHook = 'emit-hook',
+    setActiveCalendar = 'set-calendar'
+}
+
+/**
+ * The types that can be associated with a date time change socket request
+ * @internal
+ */
+export enum DateTimeChangeSocketTypes {
+    setDate = 'set-date',
+    changeDateTime = 'change-date-time',
+    advanceTimeToPreset = 'advance-time-to-preset'
 }
 
 /**

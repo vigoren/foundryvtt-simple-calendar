@@ -297,6 +297,13 @@ describe('Main App Class Tests', () => {
         jest.spyOn(CalManager, 'setVisibleCalendar').mockImplementation(() => {});
 
         //@ts-ignore
+        game.user.isGM = true;
+        //@ts-ignore
+        ma.changeCalendar(false, fEvent);
+        expect(CalManager.setActiveCalendar).toHaveBeenCalledTimes(0);
+
+        SC.primary = true;
+        //@ts-ignore
         ma.changeCalendar(false, fEvent);
         expect(CalManager.setActiveCalendar).toHaveBeenCalledTimes(1);
 
@@ -382,19 +389,35 @@ describe('Main App Class Tests', () => {
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
         expect(GameSockets.emit).toHaveBeenCalledTimes(1);
 
-        SC.primary = true;
+        target.setAttribute('data-type', 'midnight');
+        target.setAttribute('data-amount', '');
         //@ts-ignore
         ma.timeUnitClick(fEvent);
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
-        expect(GameSockets.emit).toHaveBeenCalledTimes(1);
+        expect(GameSockets.emit).toHaveBeenCalledTimes(2);
+
+        //@ts-ignore
+        jest.spyOn(game.users, 'find').mockImplementation((v: any)=>{return v.call(undefined, {isGM: false, active: true})});
+        //@ts-ignore
+        ma.timeUnitClick(fEvent);
+        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
+        expect(GameSockets.emit).toHaveBeenCalledTimes(2);
+
+        target.setAttribute('data-type', 'year');
+        target.setAttribute('data-amount', '1');
+        SC.primary = true;
+        //@ts-ignore
+        ma.timeUnitClick(fEvent);
+        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
+        expect(GameSockets.emit).toHaveBeenCalledTimes(2);
         expect(tCal.changeDateTime).toHaveBeenCalledTimes(1);
 
         target.setAttribute('data-type', 'midnight');
         target.setAttribute('data-amount', '');
         //@ts-ignore
         ma.timeUnitClick(fEvent);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
-        expect(GameSockets.emit).toHaveBeenCalledTimes(1);
+        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
+        expect(GameSockets.emit).toHaveBeenCalledTimes(2);
         expect(tCal.changeDateTime).toHaveBeenCalledTimes(1);
         expect(DateUtilities.AdvanceTimeToPreset).toHaveBeenCalledTimes(1);
     });

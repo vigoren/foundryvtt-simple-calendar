@@ -95,14 +95,11 @@ describe('Note Sheet Class Tests', () => {
     });
 
     test('Close', async () => {
-        jest.spyOn(Hooks, 'off').mockImplementation(() => {});
         await ns.close();
-        expect(Hooks.off).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         ns.dirty = true;
         await ns.close();
-        expect(Hooks.off).toHaveBeenCalledTimes(1);
         //@ts-ignore
         expect(global.DialogRenderer).toHaveBeenCalledTimes(1);
     });
@@ -158,13 +155,13 @@ describe('Note Sheet Class Tests', () => {
         //@ts-ignore
         jest.spyOn(ns.appWindow, 'querySelector').mockImplementation(() => {return elm;});
 
-        ns.setHeight();
+        NoteSheet.setHeight(ns);
         //@ts-ignore
         expect(ns.setPosition).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         ns.editMode = true;
-        ns.setHeight();
+        NoteSheet.setHeight(ns);
         //@ts-ignore
         expect(ns.setPosition).toHaveBeenCalledTimes(2);
     });

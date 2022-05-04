@@ -26,15 +26,18 @@ All of this is done using a familiar calendaring view both the GM and players wi
 
 - [Features](#features)
 - [Installation](#installing-the-module)
-- [Accessing and using the calendar](./docs/UsingTheCalendar.md)
-- [Configuring your Calendar](./docs/Configuration.md)
-- [Notes](./docs/Notes.md)
-- [Hooks](./docs/Hooks.md)
-- [API (For use by other modules, systems or macros)](./docs/API.md)
+- [Using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html)
+- [Configuring your Calendar](https://simplecalendar.info/pages/docs/calendar-configuration/index/index.html)
+- [Notes](https://simplecalendar.info/pages/docs/using-sc/notes.html)
+- [Hooks](https://simplecalendar.info/modules/SimpleCalendar.Hooks.html)
+- [API (For use by other modules, systems or macros)](https://simplecalendar.info/modules/SimpleCalendar.api.html)
 - [Translations](#translations)
 
 ## Features
  Simple Calendar has a number of features that make it a great time keeping tool for your games!
+
+![](./docs/images/sc-v2-themes.gif)
+![](media://sc-v2-themes.gif)
 
 ### For GMs
 * Complete customization of the calendar to meet your worlds needs! Including the following functionality:
@@ -54,7 +57,6 @@ All of this is done using a familiar calendaring view both the GM and players wi
   * Set if the note is visible to players or just the GM.
   * Support for repeating notes! They can repeat weekly, monthly or yearly.
 
-![GM View of Calendar](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-1.png)
 
 ### For Players
 
@@ -63,10 +65,6 @@ All of this is done using a familiar calendaring view both the GM and players wi
 * Select days to view any notes/events specific to that day.
 * If the GM allows it, the ability to add their own notes to the calendar.
 * The Ability to switch between a full and compact view of the calendar.
-
-![Player View of Calendar](https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player.gif)
-
-
 
 ## Installing The Module
 
@@ -89,16 +87,16 @@ Selecting the latest release will bring you to a page where you can download the
 
 Simple Calendar is available in languages other than English thanks to the following people:
 
-Language|Translator(s)
---------|----------
-German (de)|[MasterZelgadis](https://github.com/MasterZelgadis) <br/> [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird) <br/> [Fallayn](https://github.com/Fallayn)
-Traditional Chinese (zh)|[benwater12](https://github.com/benwater12)
-Spanish (es)|[areymoreno](https://github.com/areymoreno) <br/> [lozalojo](https://github.com/lozalojo)
-Korean (ko)|[drdwing](https://github.com/drdwing)
-Portuguese Brasil (pt-BR)|[castanhocorreia](https://github.com/castanhocorreia)
-Czech (cs)|[robertjunek](https://github.com/robertjunek)
-French (fr)|[JDR Ninja](https://github.com/JDR-Ninja) <br/> [TheBird956](https://github.com/TheBird956)
-Italian (it)|[Haloghen](https://github.com/Haloghen)
+| Language                  | Translator(s)                                                                                                                                                 |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| German (de)               | [MasterZelgadis](https://github.com/MasterZelgadis) <br/> [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird) <br/> [Fallayn](https://github.com/Fallayn) |
+| Traditional Chinese (zh)  | [benwater12](https://github.com/benwater12)                                                                                                                   |
+| Spanish (es)              | [areymoreno](https://github.com/areymoreno) <br/> [lozalojo](https://github.com/lozalojo)                                                                     |
+| Korean (ko)               | [drdwing](https://github.com/drdwing)                                                                                                                         |
+| Portuguese Brasil (pt-BR) | [castanhocorreia](https://github.com/castanhocorreia)                                                                                                         |
+| Czech (cs)                | [robertjunek](https://github.com/robertjunek)                                                                                                                 |
+| French (fr)               | [JDR Ninja](https://github.com/JDR-Ninja) <br/> [TheBird956](https://github.com/TheBird956)                                                                   |
+| Italian (it)              | [Haloghen](https://github.com/Haloghen)                                                                                                                       |
 
 # Contributing
 

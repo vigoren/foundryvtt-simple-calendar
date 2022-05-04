@@ -1,6 +1,14 @@
 # Calendar Configuration
 
-The calendar configuration section is where a user is able to customize specifics about a calendar. This section is also where new calendars can be added and existing calendars removed. For specifics on the different subsections check out the links below:
+The calendar configuration section is where a user is able to customize specifics about a calendar. This section is also where new calendars can be added and existing calendars removed. 
+
+There are two ways to open up Simple Calendars configuration dialog
+
+- From within the main calendar dialog<br/>![](media://sc-open-config.png)
+- From FoundryVTTs module settings
+![](media://module-settings.png)
+
+For specifics on the different subsections check out the links below:
 
 - {@page add-remove-switch-calendar.md Add / Remove / Switch Calendars}
 - {@page quick-setup.md Quick Setup}

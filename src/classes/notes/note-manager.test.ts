@@ -78,6 +78,26 @@ describe('Note Manager Class Tests', () => {
         expect(await NManager.createNote('', '', noteData, tCal)).toEqual({});
     });
 
+    test('Journal Entry Update', () => {
+        const fEntry = {getFlag: () => {return {calendarId: 'a'}}};
+
+        jest.spyOn(NManager, 'addNoteStub').mockImplementation(() => {});
+        jest.spyOn(NManager, 'removeNoteStub').mockImplementation(() => {});
+        jest.spyOn(MainApplication, 'updateApp').mockImplementation(() => {});
+
+        //@ts-ignore
+        NManager.journalEntryUpdate(0, fEntry);
+        expect(NManager.addNoteStub).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        NManager.journalEntryUpdate(1, fEntry);
+        expect(MainApplication.updateApp).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        NManager.journalEntryUpdate(2, fEntry);
+        expect(NManager.removeNoteStub).toHaveBeenCalledTimes(1);
+    });
+
     test('Add Note Stub', () => {
         //@ts-ignore
         expect(Object.keys(NManager.notes).length).toBe(0);

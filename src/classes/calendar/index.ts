@@ -1070,8 +1070,8 @@ export default class Calendar extends ConfigurationItemBase{
     }
 
     public setDateTime(date: SimpleCalendar.DateTimeParts, options: SimpleCalendar.DateChangeOptions = {}){
-        options = deepMerge({}, {updateMonth: true, updateApp: true, save: true, sync: true, showWarning: false}, options);
-        if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
+        options = deepMerge({}, {updateMonth: true, updateApp: true, save: true, sync: true, showWarning: false, bypassPermissionCheck: false}, options);
+        if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime) || options.bypassPermissionCheck){
             let initialTimestamp = NaN;
             if(CalManager.syncWithAllCalendars){
                 initialTimestamp = this.toSeconds();
@@ -1146,11 +1146,12 @@ export default class Calendar extends ConfigurationItemBase{
         if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
             newTime += PF2E.getWorldCreateSeconds(this);
         }
+
         if(changeAmount !== 0){
             // If the tracking rules are for self or mixed and the clock is running then we make the change.
             if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.timeKeeper.getStatus() === TimeKeeperStatus.Started){
                 const parsedDate = this.secondsToDate(newTime);
-                this.setDateTime(parsedDate, {updateApp: (this.time.updateFrequency * this.time.gameTimeRatio) !== changeAmount, sync: false, save: false});
+                this.setDateTime(parsedDate, {updateApp: (this.time.updateFrequency * this.time.gameTimeRatio) !== changeAmount, sync: false, save: false, bypassPermissionCheck: true});
                 Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.timeKeeper.getStatus());
             }
             // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change

@@ -85,7 +85,7 @@
     "media": "./docs/images",
     "exclude": "**/*.test.ts",
     "out": "site",
-    "name": "FoundryVTT Simple Calendar",
+    "name": "Simple Calendar",
     "favicon": "./docs/images/logo.svg",
     "plugin": [
       "typedoc-plugin-extras",

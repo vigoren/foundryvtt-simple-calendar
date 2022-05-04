@@ -28,20 +28,15 @@ export class NoteSheet extends DocumentSheet{
         flags: <Record<string,any>>{},
         permission: <Partial<Record<string, 0 | 1 | 2 | 3>>>{}
     };
-
-    private hookID = 0;
     /**
      * The HTML element representing the application window
-     * @private
      */
-    private appWindow: HTMLElement | null = null;
+    public appWindow: HTMLElement | null = null;
 
     constructor(object: ConcreteJournalEntry, options = {}) {
         super(object, options);
 
         this.dateSelectorId = `scNoteDate_${this.object.id}`;
-
-        this.hookID = Hooks.on('renderNoteSheet', this.setHeight.bind(this));
     }
 
     static get defaultOptions(){
@@ -112,7 +107,6 @@ export class NoteSheet extends DocumentSheet{
             this.dirty = false;
             this.editMode = false;
             this.resized = false;
-            Hooks.off('renderNoteSheet', this.hookID);
             return super.close(options);
         }
     }
@@ -210,17 +204,17 @@ export class NoteSheet extends DocumentSheet{
         return newOptions;
     }
 
-    setHeight(){
-        if(this.appWindow && !this.resized){
-            const form = this.appWindow.getElementsByTagName('form');
+    static setHeight(ns: NoteSheet){
+        if(ns.appWindow && !ns.resized){
+            const form = ns.appWindow.getElementsByTagName('form');
             if(form && form.length){
                 let height = 46;//Header height and padding of form
-                if(this.editMode){
+                if(ns.editMode){
                     height += form[0].scrollHeight;
                 } else {
-                    const nHeader = <HTMLElement>this.appWindow.querySelector('.fsc-note-header');
-                    const nContent = <HTMLElement>this.appWindow.querySelector('.fsc-content');
-                    const nEditControls = <HTMLElement>this.appWindow.querySelector('.fsc-edit-controls');
+                    const nHeader = <HTMLElement>ns.appWindow.querySelector('.fsc-note-header');
+                    const nContent = <HTMLElement>ns.appWindow.querySelector('.fsc-content');
+                    const nEditControls = <HTMLElement>ns.appWindow.querySelector('.fsc-edit-controls');
                     if(nHeader){
                         const cs = window.getComputedStyle(nHeader);
                         height += nHeader.offsetHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
@@ -235,14 +229,14 @@ export class NoteSheet extends DocumentSheet{
                     }
                 }
 
-                if(this.editMode && height < 785){
+                if(ns.editMode && height < 785){
                     height = 785;
                 }
                 const maxHeight = window.outerHeight * .75;
                 if(height > maxHeight){
                     height = maxHeight;
                 }
-                this.setPosition({height: height, width: 720});
+                ns.setPosition({height: height, width: 720});
             }
         }
     }
@@ -417,6 +411,7 @@ export class NoteSheet extends DocumentSheet{
         (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).fromPredefined = false;
         await (<JournalEntry>this.object).update(this.journalData);
         MainApplication.updateApp();
+        await GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}});
         this.resized = false;
         this.editMode = false;
         this.dirty = false;
@@ -448,6 +443,7 @@ export class NoteSheet extends DocumentSheet{
         NManager.removeNoteStub((<JournalEntry>this.object));
         MainApplication.updateApp();
         await (<JournalEntry>this.object).delete();
+        await GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}});
         await this.close();
     }
 

@@ -49,7 +49,6 @@ export default class NoteManager{
         if(journalDirectory){
             this.noteDirectory = journalDirectory.folders.find(f => f.getFlag(ModuleName,'root'));
             if(!this.noteDirectory && GameSettings.IsGm()){
-                //TODO: Set the permissions on this created folder
                 await Folder.create({
                     name: NotesDirectoryName,
                     type: 'JournalEntry',
@@ -112,17 +111,31 @@ export default class NoteManager{
             permission: perms
         });
         if(newJE){
-            this.addNoteStub(newJE, calendar.id);
             if(renderSheet){
                 const sheet = new NoteSheet(newJE);
                 sheet.render(true, {}, true);
             }
             if(updateMain){
                 MainApplication.updateApp();
+                await GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}});
             }
             return newJE;
         }
         return null;
+    }
+
+    public journalEntryUpdate(type: number, entry: JournalEntry){
+        const noteData = <SimpleCalendar.NoteData>entry.getFlag(ModuleName, 'noteData');
+        //Make sure this is a journal entry change for Simple Calendar
+        if(noteData){
+            if(type === 0){
+                this.addNoteStub(entry, noteData.calendarId);
+            } else if(type === 2){
+                this.removeNoteStub(entry);
+            } else if(type == 1){
+                MainApplication.updateApp();
+            }
+        }
     }
 
     /**

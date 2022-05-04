@@ -1,7 +1,7 @@
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
-    CalendarClickEvents,
+    CalendarClickEvents, DateTimeChangeSocketTypes,
     DateTimeUnits,
     GameWorldTimeIntegrations, PresetTimeOfDay,
     SettingNames,
@@ -536,7 +536,17 @@ export default class MainApp extends Application{
                 const calendarId = wrapper.getAttribute('data-calid');
                 if(calendarId){
                     if(!visible && this.activeCalendar.id !== calendarId){
-                        CalManager.setActiveCalendar(calendarId);
+                        //If user is not the GM nor the primary GM, send over the socket
+                        if(!GameSettings.IsGm() || !SC.primary){
+                            if(!(<Game>game).users?.find(u => u.isGM && u.active)){
+                                GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
+                            } else {
+                                const socketData = {calendarId: calendarId};
+                                GameSockets.emit({type: SocketTypes.setActiveCalendar, data: socketData}).catch(Logger.error);
+                            }
+                        } else {
+                            CalManager.setActiveCalendar(calendarId);
+                        }
                     } else if(visible && this.visibleCalendar.id !== calendarId){
                         CalManager.setVisibleCalendar(calendarId);
                     }
@@ -614,6 +624,7 @@ export default class MainApp extends Application{
         const target = <HTMLElement>e.currentTarget;
         const dataType = target.getAttribute('data-type');
         const dataAmount = target.getAttribute('data-amount');
+
         if(dataType && dataAmount){
             const amount = parseInt(dataAmount);
             if(!isNaN(amount)){
@@ -628,7 +639,7 @@ export default class MainApp extends Application{
                     if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                         GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
                     } else {
-                        const socketData = {set: false, interval: interval};
+                        const socketData = {type: DateTimeChangeSocketTypes.changeDateTime, interval: interval};
                         GameSockets.emit({type: SocketTypes.dateTimeChange, data: socketData}).catch(Logger.error);
                     }
                 } else {
@@ -636,7 +647,17 @@ export default class MainApp extends Application{
                 }
             }
         } else if(dataType && (dataType === 'sunrise' || dataType === 'midday' || dataType === 'sunset' || dataType === 'midnight')){
-            AdvanceTimeToPreset(<PresetTimeOfDay>dataType, this.activeCalendar.id).catch(Logger.error);
+            //If user is not the GM nor the primary GM, send over the socket
+            if(!GameSettings.IsGm() || !SC.primary){
+                if(!(<Game>game).users?.find(u => u.isGM && u.active)){
+                    GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
+                } else {
+                    const socketData = {type: DateTimeChangeSocketTypes.advanceTimeToPreset, interval: {}, presetTimeOfDay: <PresetTimeOfDay>dataType};
+                    GameSockets.emit({type: SocketTypes.dateTimeChange, data: socketData}).catch(Logger.error);
+                }
+            } else {
+                AdvanceTimeToPreset(<PresetTimeOfDay>dataType, this.activeCalendar.id).catch(Logger.error);
+            }
         }
     }
 
@@ -689,7 +710,7 @@ export default class MainApp extends Application{
             if(!(<Game>game).users?.find(u => u.isGM && u.active)){
                 GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Calendar.NotGM'), 'warn');
             } else {
-                const socketData = {set: true, interval: {year: year, month: monthIndex, day: dayIndex}};
+                const socketData = {type: DateTimeChangeSocketTypes.setDate, interval: {year: year, month: monthIndex, day: dayIndex}};
                 GameSockets.emit({type: SocketTypes.dateTimeChange, data: socketData}).catch(Logger.error);
             }
         } else {

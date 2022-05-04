@@ -5,7 +5,7 @@ import Calendar from "../src/classes/calendar";
 import UserPermissions from "../src/classes/configuration/user-permissions";
 import {
     CalendarViews,
-    DateSelectorPositions,
+    DateSelectorPositions, DateTimeChangeSocketTypes,
     GameSystems,
     GameWorldTimeIntegrations,
     Icons,
@@ -1687,7 +1687,7 @@ declare global{
              */
             export interface Data {
                 type: SocketTypes;
-                data: Partial<MainAppUpdate> | DateTimeChange | TimeKeeperStatus | Partial<Primary> | Partial<NoteUpdate> | Partial<EmitHook>;
+                data: Partial<MainAppUpdate> | DateTimeChange | TimeKeeperStatus | Partial<Primary> | Partial<NoteUpdate> | Partial<EmitHook> | Partial<SetActiveCalendar>;
             }
 
             type MainAppUpdate = {
@@ -1695,8 +1695,9 @@ declare global{
             }
 
             type DateTimeChange = {
-                set: boolean,
-                interval: DateTimeParts
+                type: DateTimeChangeSocketTypes,
+                interval: DateTimeParts,
+                presetTimeOfDay?: PresetTimeOfDay
             };
 
             type Primary = {
@@ -1715,6 +1716,10 @@ declare global{
             type EmitHook = {
                 hook: SimpleCalendarHooks;
                 param: any;
+            }
+
+            type SetActiveCalendar = {
+                calendarId: string;
             }
         }
 
@@ -2273,6 +2278,7 @@ declare global{
             sync?: boolean;
             updateApp?: boolean;
             fromCalSync?: boolean;
+            bypassPermissionCheck?:boolean;
         };
 
     }

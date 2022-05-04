@@ -11,6 +11,7 @@ import PrimarySocket from "./primary-socket";
 import {Hook} from "../api/hook";
 import {CalManager, MainApplication} from "../index";
 import MainAppUpdateSocket from "./main-app-update";
+import SetActiveCalendar from "./set-active-calendar";
 
 export default class Sockets {
 
@@ -28,7 +29,7 @@ export default class Sockets {
         this.sockets.push(new DateTimeChangeSocket());
         this.sockets.push(new EmitHookSocket());
         this.sockets.push(new NoteUpdateSocket());
-
+        this.sockets.push(new SetActiveCalendar());
     }
 
     /**

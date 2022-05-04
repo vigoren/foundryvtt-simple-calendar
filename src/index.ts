@@ -22,6 +22,7 @@ import MainApp from "./classes/applications/main-app";
 import ConfigurationApp from "./classes/applications/configuration-app";
 import MigrationApp from "./classes/applications/migration-app";
 import NoteManager from "./classes/notes/note-manager";
+import {NoteSheet} from "./classes/notes/note-sheet";
 
 updateCalManager(new CalendarManager());
 updateSC(new SCController());
@@ -81,6 +82,11 @@ Hooks.on('createCombatant', SC.createCombatant.bind(SC));
 Hooks.on("updateCombat", SC.combatUpdate.bind(SC));
 Hooks.on("deleteCombat", SC.combatDelete.bind(SC));
 Hooks.on("pauseGame", SC.gamePaused.bind(SC));
+Hooks.on('renderNoteSheet', NoteSheet.setHeight);
+Hooks.on('createJournalEntry', NManager.journalEntryUpdate.bind(NManager, 0));
+Hooks.on('updateJournalEntry', NManager.journalEntryUpdate.bind(NManager, 1));
+Hooks.on('deleteJournalEntry', NManager.journalEntryUpdate.bind(NManager, 2));
+
 
 Logger.debugMode = false;
 
