@@ -56,8 +56,8 @@
     }
     //Scrollbar Styling
     .window-content{
-      background: $primary-50;
-      color: $fontColor;
+      background: $primary-50 !important;
+      color: $fontColor !important;
       scrollbar-color: $primary $primary-600;
 
       &::-webkit-scrollbar-thumb{
@@ -155,81 +155,99 @@
 
     // All control button colors
     .fsc-control{
-      border-color: $gray-500;
-      background-color: $gray-500;
-      color: $fontColor;
-      &:hover, &.active {
-        text-shadow: unset;
-        background-color: $gray-400;
-        border-color: $gray-700;
-      }
-      &:disabled{
-        color: $gray-700;
-        cursor: pointer;
+      &.fsc-grey{
+        border-color: $gray-500;
+        background-color: $gray-500;
+        color: $fontColor;
+        &:hover, &.active, &:focus {
+          text-shadow: unset;
+          background-color: $gray-400;
+          border-color: $gray-700;
+          color: $fontColor;
+        }
+        &:disabled{
+          color: $gray-700;
+          cursor: pointer;
+        }
       }
       &.fsc-primary {
         background-color: $primary-A200;
         border-color: $primary-A200;
+        color: $fontColor;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $primary-A100;
           border-color: $primary-A100;
+          color: $fontColor;
         }
         &:disabled{
           background-color: $primary-T200;
           border-color: $primary-T200;
+          color: $fontColor;
         }
       }
       &.fsc-secondary {
         background-color: $secondary-400;
         border-color: $secondary-400;
+        color: $fontColor;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $secondary-300;
           border-color: $secondary-300;
+          color: $fontColor;
         }
         &:disabled{
           background-color: $secondary-T400;
           border-color: $secondary-T400;
+          color: $fontColor;
         }
       }
       &.fsc-tertiary{
         background-color: $tertiary-A100;
         border-color: $tertiary-A100;
+        color: $fontColor;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $tertiary-A200;
           border-color: $tertiary-A200;
+          color: $fontColor;
         }
         &:disabled{
           background-color: $tertiary-T100;
           border-color: $tertiary-T100;
+          color: $fontColor;
         }
       }
       &.fsc-delete {
         background-color: $danger-A500;
         border-color: $danger-A500;
+        color: $fontColor;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $danger-A400;
           border-color: $danger-A400;
+          color: $fontColor;
         }
         &:disabled{
           background-color: $danger-T400;
           border-color: $danger-T400;
+          color: $fontColor;
         }
       }
       &.fsc-save {
         background-color: $success-400;
         border-color: $success-400;
+        color: $fontColor;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $success-300;
           border-color: $success-300;
+          color: $fontColor;
         }
         &:disabled{
           background-color: $success-T400;
           border-color: $success-T400;
+          color: $fontColor;
         }
       }
     }
@@ -309,8 +327,8 @@
 
     //Inputs
     input, select, option{
-      background-color: $gray-400;
-      color: $fontColor;
+      background-color: $gray-400 !important;
+      color: $fontColor !important;
       &:focus{
         box-shadow: unset;
       }
@@ -320,6 +338,7 @@
     .fsc-clock{
       background-color: $primary-100;
       border-color: $primary-950;
+      color: $fontColor;
       .fsc-animated-clock{
         svg{
           filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
@@ -496,6 +515,13 @@
           box-shadow: unset;
           background-color: $gray-400;
           border-color: #7a7971;
+          color:$fontColor;
+          &:hover, &.active, &:focus {
+            text-shadow: unset;
+            color: $fontColor;
+            background-color: $gray-400;
+            border-color: #7a7971;
+          }
         }
       }
     }
@@ -674,9 +700,6 @@
             color:$tertiary-400;
           }
         }
-      }
-      .tox.tox-tinymce .tox-edit-area__iframe{
-        background-color: $white;
       }
       .fsc-content{
         scrollbar-color: $primary $primary-600;

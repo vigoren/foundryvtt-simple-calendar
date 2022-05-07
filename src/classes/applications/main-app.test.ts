@@ -292,6 +292,8 @@ describe('Main App Class Tests', () => {
 
         wrapper.setAttribute('data-calid', '123');
 
+        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
+        jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true});
         jest.spyOn(target, 'closest').mockReturnValue(wrapper);
         jest.spyOn(CalManager, 'setActiveCalendar').mockImplementation(() => {});
         jest.spyOn(CalManager, 'setVisibleCalendar').mockImplementation(() => {});
@@ -301,6 +303,13 @@ describe('Main App Class Tests', () => {
         //@ts-ignore
         ma.changeCalendar(false, fEvent);
         expect(CalManager.setActiveCalendar).toHaveBeenCalledTimes(0);
+        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        jest.spyOn(game.users, 'find').mockImplementation((v: any)=>{return v.call(undefined, {isGM: true, active: true})});
+        //@ts-ignore
+        ma.changeCalendar(false, fEvent);
+        expect(GameSockets.emit).toHaveBeenCalledTimes(1);
 
         SC.primary = true;
         //@ts-ignore

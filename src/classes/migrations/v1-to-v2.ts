@@ -104,12 +104,14 @@ export default class V1ToV2{
         }
 
         //Parse out the seconds per combat round and save them in the new format
-        if(oldTimeConfig.hasOwnProperty('secondsInCombatRound') && oldTimeConfig['secondsInCombatRound']){
+        if(oldTimeConfig.hasOwnProperty('secondsInCombatRound') && Number.isInteger(oldTimeConfig['secondsInCombatRound'])){
             const sICR = parseInt(oldTimeConfig['secondsInCombatRound'].toString());
             if(!isNaN(sICR)){
                 SC.globalConfiguration.secondsInCombatRound = sICR;
                 settings = true;
             }
+        } else {
+            settings = true;
         }
         return perms && settings;
     }

@@ -1,6 +1,6 @@
 import Sockets from "./sockets";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {SettingNames, SocketTypes, Themes, TimeKeeperStatus} from "../constants";
+import {ModuleName, SettingNames, SocketTypes, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import {CalManager, MainApplication, NManager} from "./index";
@@ -57,7 +57,7 @@ export default class SCController {
     public static ThemeChange(){
         this.LoadThemeCSS();
         const newTheme = GameSettings.GetStringSettings(SettingNames.Theme);
-        const themes = [Themes.light, Themes.dark, Themes.classic]
+        const themes = [Themes.light, Themes.dark, Themes.classic];
         //Update the main app
         const mainApp = document.getElementById(MainApp.appWindowId);
         if(mainApp){
@@ -83,16 +83,14 @@ export default class SCController {
      */
     public static LoadThemeCSS(){
         const theme = GameSettings.GetStringSettings(SettingNames.Theme);
-        if(theme !== Themes.dark && theme !== Themes.light){
-            const cssExists = document.head.querySelector(`#theme-${theme}`);
-            if(cssExists === null){
-                const newStyle = document.createElement('link');
-                newStyle.setAttribute('id', `theme-${theme}`);
-                newStyle.setAttribute('rel', 'stylesheet');
-                newStyle.setAttribute('type', 'text/css');
-                newStyle.setAttribute('href', `modules/foundryvtt-simple-calendar/styles/themes/${theme}.css`);
-                document.head.append(newStyle);
-            }
+        const cssExists = document.head.querySelector(`#theme-${theme}`);
+        if(cssExists === null){
+            const newStyle = document.createElement('link');
+            newStyle.setAttribute('id', `theme-${theme}`);
+            newStyle.setAttribute('rel', 'stylesheet');
+            newStyle.setAttribute('type', 'text/css');
+            newStyle.setAttribute('href', getRoute(`modules/${ModuleName}/styles/themes/${theme}.css`));
+            document.head.append(newStyle);
         }
     }
 
@@ -124,6 +122,14 @@ export default class SCController {
     }
 
     /**
+     * Reloads certain portions of the client and global configuration after a change has been made.
+     */
+    public reload(){
+        SCController.LoadThemeCSS();
+        this.clientSettings.theme = <Themes>GameSettings.GetStringSettings(SettingNames.Theme);
+    }
+
+    /**
      * Save the global configuration and the calendar configuration
      */
     public save(globalConfig: SimpleCalendar.GlobalConfigurationData | null = null, clientConfig: SimpleCalendar.ClientSettingsData | null = null){
@@ -140,7 +146,7 @@ export default class SCController {
                 showNotesFolder: globalConfig.showNotesFolder
             };
             //Save the client settings
-            GameSettings.SaveStringSetting(SettingNames.Theme, clientConfig.theme, false).catch(Logger.error);
+            GameSettings.SaveStringSetting(SettingNames.Theme, clientConfig.theme, false).then(this.reload.bind(this)).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.OpenOnLoad, clientConfig.openOnLoad, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.OpenCompact, clientConfig.openCompact, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.RememberPosition, clientConfig.rememberPosition, false).catch(Logger.error);

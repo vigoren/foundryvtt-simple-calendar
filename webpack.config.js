@@ -1,6 +1,7 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const TerserPlugin = require("terser-webpack-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const MangleCssClassPlugin = require('mangle-css-class-webpack-plugin');
@@ -19,7 +20,7 @@ function getEntries() {
 
     //Get all the additional theme files as entry points
     fs.readdirSync('./src/styles/themes/').forEach((file) => {
-         if(file.endsWith('.scss') && file !== 'dark.scss' && file !== 'light.scss'){
+         if(file.endsWith('.scss')){
              list[`styles/themes/${file.replace('.scss', '')}`] = `./src/styles/themes/${file}`;
          }
     });
@@ -64,6 +65,7 @@ module.exports = {
             reserveClassName: ['fa', 'fas', 'far'],
             ignorePrefix: ['fsc-']
         }),
+        new RemoveEmptyScriptsPlugin(),
         new MiniCssExtractPlugin({
             filename: "[name].css"
         })

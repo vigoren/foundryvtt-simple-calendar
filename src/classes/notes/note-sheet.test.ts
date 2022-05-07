@@ -166,6 +166,18 @@ describe('Note Sheet Class Tests', () => {
         expect(ns.setPosition).toHaveBeenCalledTimes(2);
     });
 
+    test('Activate Editor Custom', () => {
+        ns.appWindow = document.createElement('div');
+        //@ts-ignore
+        jest.spyOn(ns, 'activateEditor').mockImplementation((s: string, o: any, c: string) => {o.save_onsavecallback(1)});
+        jest.spyOn(ns, 'saveEditor').mockImplementation(async () => {});
+        jest.spyOn(ns.appWindow, 'querySelector').mockReturnValue(document.createElement('div'));
+
+        ns.activateEditorCustom();
+        expect(ns.activateEditor).toHaveBeenCalledTimes(1);
+        expect(ns.saveEditor).toHaveBeenCalledTimes(1);
+    });
+
     test('Activate Listeners', () => {
         const appWindow = document.createElement('div');
         jest.spyOn(document, 'getElementById').mockReturnValue(appWindow);

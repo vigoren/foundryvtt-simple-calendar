@@ -70,27 +70,32 @@
 
     // All control button colors
     .fsc-control {
-      border-color: $gray-600;
-      background-color: $gray-600;
-      color: $white;
-
-      &:hover, &.active {
-        text-shadow: unset;
+      &.fsc-grey{
+        border-color: $gray-600;
+        background-color: $gray-600;
         color: $white;
-        background-color: $gray-500;
-      }
 
-      &:disabled {
-        color: $gray-300;
-        cursor: pointer;
+        &:hover, &.active, &:focus {
+          text-shadow: unset;
+          color: $white;
+          background-color: $gray-500;
+          border-color: $gray-600;
+        }
+
+        &:disabled {
+          color: $gray-300;
+          cursor: pointer;
+        }
       }
 
       &.fsc-primary {
         background-color: #384582;
         border-color: #384582;
+        color: $white;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: #cad1f3;
+          border-color: #384582;
           color: #000;
           text-shadow: 0 0 black;
         }
@@ -101,8 +106,9 @@
         border-color: #de810d;
         color: $fontColor;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $secondary-300;
+          border-color: #de810d;
           color: $fontColor;
         }
       }
@@ -110,27 +116,36 @@
       &.fsc-tertiary {
         background-color: #603382;
         border-color: #603382;
+        color: $white;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: #cd9cf3;
+          border-color: #603382;
+          color: $white;
         }
       }
 
       &.fsc-delete {
         background-color: #922121;
         border-color: #922121;
+        color: $white;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: #fbaeae;
+          border-color: #922121;
+          color: $white;
         }
       }
 
       &.fsc-save {
         background-color: #2f581d;
         border-color: #2f581d;
+        color: $white;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: #9bce85;
+          border-color: #2f581d;
+          color: $white;
         }
       }
     }
@@ -298,6 +313,7 @@
     .fsc-clock {
       background-color: #ffffff;
       border-color: #c3c3c3;
+      color: #000;
 
       .fsc-animated-clock {
         svg {
@@ -468,6 +484,12 @@
           background-color: rgba(0, 0, 0, 0.05);
           border-color: #7a7971;
           color: #000000;
+          &:hover, &.active, &:focus {
+            text-shadow: unset;
+            color: #000000;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-color: #7a7971;
+          }
         }
       }
     }

@@ -5,7 +5,7 @@ import {ModuleName, NoteRepeat, SettingNames, SocketTypes, Themes} from "../../c
 import {DateTheSame, DaysBetweenDates, FormatDateTime} from "../utilities/date-time";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {CalManager, MainApplication, NManager} from "../index";
+import {CalManager, MainApplication, NManager, SC} from "../index";
 import {GetContrastColor} from "../utilities/visual";
 import {getCheckBoxGroupValues, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import GameSockets from "../foundry-interfacing/game-sockets";
@@ -46,6 +46,7 @@ export class NoteSheet extends DocumentSheet{
         options.id = this.appWindowId;
         options.classes = ['sheet','journal-sheet','simple-calendar'];
         options.resizable = true;
+        options.closeOnSubmit = false;
         if((<Game>game).settings){
             options.classes.push(GameSettings.GetStringSettings(SettingNames.Theme));
         }
@@ -241,11 +242,44 @@ export class NoteSheet extends DocumentSheet{
         }
     }
 
+    activateEditorCustom(){
+        if(this.appWindow){
+            const target = this.appWindow.querySelector('.fsc-editor-container .editor-content');
+            if(target){
+                let height = 0;
+                const mceOptions = {
+                    target: <HTMLElement>target,
+                    body_class: 'simple-calendar',
+                    content_css: ["/css/mce.css", getRoute(`modules/${ModuleName}/styles/themes/tinymce-${SC.clientSettings.theme}.css`)],
+                    preview_styles: false,
+                    height: height,
+                    save_onsavecallback: (mce: any )=> this.saveEditor('content')
+                };
+                this.editors['content'] = {
+                    target: 'content',
+                    //@ts-ignore
+                    button: target.nextElementSibling,
+                    hasButton: false,
+                    mce: null,
+                    active: true,
+                    changed: false,
+                    options: mceOptions,
+                    initial: (<JournalEntry>this.object).data.content
+                };
+
+                this.activateEditor('content', mceOptions, (<JournalEntry>this.object).data.content);
+            }
+        }
+    }
+
     activateListeners(html: JQuery) {
-        super.activateListeners(html);
         this.appWindow = document.getElementById(`${NoteSheet.appWindowId}-${this.object.id}`);
         if(this.appWindow){
+            const themes = [Themes.light, Themes.dark, Themes.classic];
+            this.appWindow.classList.remove(...themes);
+            this.appWindow.classList.add(SC.clientSettings.theme);
             if(this.editMode){
+                this.activateEditorCustom();
                 DateSelectorManager.ActivateSelector(this.dateSelectorId);
                 this.updateNoteRepeatDropdown();
                 //---------------------

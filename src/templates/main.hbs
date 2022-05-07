@@ -41,7 +41,7 @@
             <button class="fsc-control fsc-primary fsc-calendars fa fa-calendar" title="{{localize 'FSC.Calendars'}}"></button>
             {{/if}}
             {{/unless}}
-            <button class="fsc-control {{#if (gt calendar.selectedDay.noteCount 0)}} fsc-secondary{{/if}} fsc-notes fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.selectedDay.noteCount}}</button>
+            <button class="fsc-control {{#if (gt calendar.selectedDay.noteCount 0)}} fsc-secondary{{else}} fsc-grey{{/if}} fsc-notes fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.selectedDay.noteCount}}</button>
             {{#if (gt calendar.selectedDay.noteReminderCount 0)}}
             <button class="fsc-control fsc-tertiary fsc-reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.selectedDay.noteReminderCount}}</button>
             {{/if}}
@@ -49,15 +49,15 @@
             <button class="fsc-control fsc-save fsc-add-note fa" title="{{localize 'FSC.Notes.AddNew'}}"><span class="fa-sticky-note"></span>&nbsp;<span class="fa-plus"></span></button>
             {{/if}}
             {{#unless uiElementStates.compactView}}
-            <button class="fa fa-search fsc-control fsc-search" title="{{localize 'FSC.Search.Title'}}"></button>
+            <button class="fa fa-search fsc-control fsc-grey fsc-search" title="{{localize 'FSC.Search.Title'}}"></button>
             <span class="fsc-spacer"></span>
             {{#if changeDateTime}}
             {{#if showSetCurrentDate}}
             <button class="fsc-control fsc-save fsc-btn-apply fa fa-calendar-check" title="{{localize 'FSC.SetCurrentDate'}}"></button>
             {{/if}}
             {{/if}}
-            <button class="fa fa-calendar-day fsc-control fsc-today" title="{{localize 'FSC.Today'}}"></button>
-            <button class="fa fa-cog fsc-control fsc-configure-button" title="{{localize 'FSC.Configure'}}"></button>
+            <button class="fa fa-calendar-day fsc-control fsc-grey fsc-today" title="{{localize 'FSC.Today'}}"></button>
+            <button class="fa fa-cog fsc-control fsc-grey fsc-configure-button" title="{{localize 'FSC.Configure'}}"></button>
             {{/unless}}
         </div>
         {{#if (gt mainViewDisplay.calendarList.length 1)}}
@@ -214,7 +214,7 @@
             {{#if isPrimary}}
             <div class="fsc-time-keeper-buttons">
                 <button class="fsc-control fsc-time-start fa {{#if (eq clockClass 'started')}} fsc-secondary fa-pause{{else}} fsc-save fa-play{{/if}}" title="{{localize 'FSC.Time.Start'}}"></button>
-                <button class="fsc-control fsc-time-stop {{#if (eq clockClass 'stopped')}} {{else}} fsc-delete{{/if}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></button>
+                <button class="fsc-control fsc-time-stop {{#if (eq clockClass 'stopped')}} fsc-grey{{else}} fsc-delete{{/if}} fa fa-stop" title="{{localize 'FSC.Time.Stop'}}"></button>
             </div>
 
             {{else if uiElementStates.primaryCheckRunning}}

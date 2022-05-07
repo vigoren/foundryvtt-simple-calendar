@@ -72,22 +72,22 @@ describe('SCController Tests', () => {
         gsGSSSpy.mockReturnValueOnce(Themes.dark);
         SCController.LoadThemeCSS();
         expect(gsGSSSpy).toHaveBeenCalledTimes(1);
-        expect(docHeadQS).not.toHaveBeenCalled();
-        expect(docHeadA).not.toHaveBeenCalled();
+        expect(docHeadQS).toHaveBeenCalledTimes(1);
+        expect(docHeadA).toHaveBeenCalledTimes(1);
 
         gsGSSSpy.mockReturnValueOnce(Themes.classic);
         docHeadQS.mockReturnValueOnce(document.createElement('a'));
         SCController.LoadThemeCSS();
         expect(gsGSSSpy).toHaveBeenCalledTimes(2);
-        expect(docHeadQS).toHaveBeenCalledTimes(1);
-        expect(docHeadA).not.toHaveBeenCalled();
+        expect(docHeadQS).toHaveBeenCalledTimes(2);
+        expect(docHeadA).toHaveBeenCalledTimes(1);
 
         gsGSSSpy.mockReturnValueOnce(Themes.classic);
         docHeadQS.mockReturnValueOnce(null);
         SCController.LoadThemeCSS();
         expect(gsGSSSpy).toHaveBeenCalledTimes(3);
-        expect(docHeadQS).toHaveBeenCalledTimes(2);
-        expect(docHeadA).toHaveBeenCalledTimes(1);
+        expect(docHeadQS).toHaveBeenCalledTimes(3);
+        expect(docHeadA).toHaveBeenCalledTimes(2);
     });
 
     test('initialize', () => {
@@ -120,6 +120,14 @@ describe('SCController Tests', () => {
         expect(SC.clientSettings.openOnLoad ).toBe(false);
         expect(SC.clientSettings.openCompact ).toBe(false);
         expect(SC.clientSettings.rememberPosition).toBe(false);
+    });
+
+    test('Reload', () => {
+        jest.spyOn(SCController, 'LoadThemeCSS').mockImplementation(() => {});
+        jest.spyOn(GameSettings, 'GetStringSettings').mockReturnValue('test');
+        SC.reload();
+        expect(SCController.LoadThemeCSS).toHaveBeenCalledTimes(1);
+        expect(SC.clientSettings.theme).toBe('test');
     });
 
     test('save', () => {

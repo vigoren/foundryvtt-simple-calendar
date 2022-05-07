@@ -56,8 +56,8 @@
     }
     //Scrollbar Styling
     .window-content{
-      background: $primary-1100;
-      color: $white;
+      background: $primary-1100 !important;
+      color: $white !important;
       scrollbar-color: $primary $primary-600;
 
       &::-webkit-scrollbar-thumb{
@@ -155,24 +155,30 @@
 
     // All control button colors
     .fsc-control{
-      border-color: $gray-600;
-      background-color: $gray-600;
-      color: $white;
-      &:hover, &.active {
-        text-shadow: unset;
+      &.fsc-grey{
+        border-color: $gray-600;
+        background-color: $gray-600;
         color: $white;
-        background-color: $gray-500;
-      }
-      &:disabled{
-        color: $gray-300;
-        cursor: pointer;
+        &:hover, &.active, &:focus {
+          text-shadow: unset;
+          color: $white;
+          background-color: $gray-500;
+          border-color: $gray-600;
+        }
+        &:disabled{
+          color: $gray-300;
+          cursor: pointer;
+        }
       }
       &.fsc-primary {
         background-color: $primary-800;
         border-color: $primary-800;
+        color: $white;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $primary;
+          border-color: $primary-800;
+          color: $white;
         }
       }
       &.fsc-secondary {
@@ -180,8 +186,9 @@
         border-color: $secondary;
         color: $fontColor;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $secondary-300;
+          border-color: $secondary;
           color: $fontColor;
         }
       }
@@ -190,29 +197,37 @@
         border-color: $tertiary-300;
         color: $fontColor;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $tertiary-200;
+          border-color: $tertiary-300;
           color: $fontColor;
         }
       }
       &.fsc-delete {
         background-color: $danger-900;
         border-color: $danger-900;
+        color: $white;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $danger;
+          border-color: $danger-900;
+          color: $white;
         }
       }
       &.fsc-save {
         background-color: $success-900;
         border-color: $success-900;
+        color: $white;
 
-        &:hover, &.active {
+        &:hover, &.active, &:focus {
           background-color: $success;
+          border-color: $success-900;
+          color: $white;
         }
         &:disabled{
           background-color: $success-T900;
           border-color: $success-T900;
+          color: $white;
         }
       }
     }
@@ -291,9 +306,9 @@
 
     //Inputs
     input, select, option{
-      background-color: $gray-700;
-      border-color: $gray-500;
-      color: $white;
+      background-color: $gray-700 !important;
+      border-color: $gray-500 !important;
+      color: $white !important;
       &:focus{
         box-shadow: unset;
       }
@@ -303,6 +318,7 @@
     .fsc-clock{
       background-color: $primary-950;
       border-color: $primary-200;
+      color: $white;
       .fsc-animated-clock{
         svg{
           path{
@@ -479,6 +495,13 @@
           box-shadow: unset;
           background-color: $gray-700;
           border-color: $gray-500;
+          color: $white;
+          &:hover, &.active, &:focus {
+            text-shadow: unset;
+            color: $white;
+            background-color: $gray-700;
+            border-color: $gray-500;
+          }
         }
       }
     }
@@ -655,16 +678,6 @@
           i{
             color:$secondary-800;
           }
-        }
-      }
-      .tox.tox-tinymce .tox-edit-area__iframe{
-        background-color: $white;
-      }
-      .fsc-content{
-        scrollbar-color: $primary $primary-600;
-        &::-webkit-scrollbar-thumb{
-          background: $primary;
-          border-color:$primary-600;
         }
       }
     }
