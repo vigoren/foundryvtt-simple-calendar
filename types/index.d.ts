@@ -847,6 +847,20 @@ declare global{
             export function isPrimaryGM(): boolean
 
             /**
+             * Run the migration from Simple Calendar version 1 to version 2.
+             * This will only work if the current player is the primary GM and the Clean Up button was not clicked during the initial migration, as that button removes the old settings.
+             * **Important**: Running this function will overwrite any existing settings in the calendar.
+             *
+             * @returns A promise that resolves if the migration was a success, or fails if there was an error.
+             *
+             * @example
+             * ```javascript
+             * SimpleCalendar.api.runMigration().then(() => {...}).catch(console.error);
+             * ```
+             */
+            export function runMigration(): Promise<void>
+
+            /**
              * Will attempt to parse the passed in seconds into larger time intervals.
              *
              * @param seconds The number of seconds to convert to different intervals.

@@ -23,7 +23,7 @@ import {
     NManager,
     SC,
     updateCalManager,
-    updateMainApplication,
+    updateMainApplication, updateMigrationApplication,
     updateNManager,
     updateSC
 } from "../index";
@@ -36,6 +36,7 @@ import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import NoteStub from "../notes/note-stub";
 import Mock = jest.Mock;
+import MigrationApp from "../applications/migration-app";
 
 fetchMock.enableMocks();
 describe('API Class Tests', () => {
@@ -283,9 +284,20 @@ describe('API Class Tests', () => {
         expect(API.getTimeConfiguration('')).toBeDefined();
     });
 
-    test('Is Primary GM', () => {
+    test('Is Primary GM', async () => {
+        jest.spyOn(console, 'info').mockImplementation(() => {});
+        jest.spyOn(console, 'warn').mockImplementation(() => {});
         expect(API.isPrimaryGM()).toBe(false);
+        expect(API.runMigration()).rejects.toBeUndefined();
+
+        //@ts-ignore
+        game.user.isGM = true;
+        SC.primary = true;
+        updateMigrationApplication(new MigrationApp());
+        expect(await API.runMigration()).toBeUndefined();
     });
+
+    test('Run Migration', () => {});
 
     test('Seconds To Interval', () => {
         expect(API.secondsToInterval(10)).toEqual({});

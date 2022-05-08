@@ -64,6 +64,17 @@ describe('Migration App Class Tests', () => {
         expect(ma.determineMigrationType).toHaveBeenCalledTimes(1);
     });
 
+    test('Activate Listeners', () => {
+        const app = document.createElement('div');
+
+        jest.spyOn(document, 'getElementById').mockReturnValue(app);
+        jest.spyOn(app,'querySelector').mockReturnValue(document.createElement('div'));
+
+        //@ts-ignore
+        ma.activateListeners({});
+        expect(app.querySelector).toHaveBeenCalledTimes(1);
+    });
+
     test('Determine Migration Type', () => {
         const gos = jest.spyOn(GameSettings, "GetObjectSettings").mockReturnValue({});
         //@ts-ignore
@@ -92,13 +103,9 @@ describe('Migration App Class Tests', () => {
         await ma.run();
         //@ts-ignore
         expect(ma.displayData.notesMigrationStatusIcon).toBe('fa-ban fsc-cancel');
-        //@ts-ignore
-        expect(ma.displayData.cleanUpMigrationStatusIcon).toBe('fa-ban fsc-cancel');
 
         rcm.mockReturnValue(true);
         await ma.run();
-        //@ts-ignore
-        expect(ma.displayData.cleanUpMigrationStatusIcon).toBe('fa-ban fsc-cancel');
 
         rnm.mockImplementation(async () => {return true;});
         await ma.run();
@@ -156,13 +163,14 @@ describe('Migration App Class Tests', () => {
     });
 
     test('Run Clean Data', () => {
-        jest.spyOn(V1ToV2, 'cleanUpOldData').mockImplementation(async () => {return true;});
+        const cod = jest.spyOn(V1ToV2, 'cleanUpOldData').mockImplementation(async () => {return true;});
 
         ma.MigrationType = MigrationTypes.v1To2;
         ma.runCleanData();
         expect(V1ToV2.cleanUpOldData).toHaveBeenCalledTimes(1);
-        //@ts-ignore
-        expect(ma.displayData.cleanUpMigrationStatusIcon).toBe('fa-check-circle fsc-completed');
 
+        cod.mockImplementation(async () => {return false;});
+        ma.runCleanData();
+        expect(V1ToV2.cleanUpOldData).toHaveBeenCalledTimes(2);
     });
 });

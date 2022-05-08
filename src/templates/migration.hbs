@@ -21,11 +21,7 @@
             </div>
         </li>
         <li>
-            <div class="fsc-status-indicator"><span class="fa {{display.cleanUpMigrationStatusIcon}}"></span></div>
-            <div class="fsc-migration-status">
-                <span style="text-decoration: line-through;">{{localize 'FSC.Migration.v1v2.Cleanup'}}</span>
-                <span>( This is disabled during the beta testing. )</span>
-            </div>
+            <button class="fsc-control fsc-delete fsc-clean" {{#unless display.enableCleanUp}}disabled{{/unless}}>{{localize 'FSC.Migration.v1v2.Cleanup'}}</button>
         </li>
     </ul>
     {{#if display.migrationDone}}

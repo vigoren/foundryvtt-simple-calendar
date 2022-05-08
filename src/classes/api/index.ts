@@ -16,14 +16,14 @@ import {
     PredefinedCalendars,
     PresetTimeOfDay,
     TimeKeeperStatus,
-    YearNamingRules, NoteRepeat
+    YearNamingRules, NoteRepeat, MigrationTypes
 } from "../../constants";
 import PF2E from "../systems/pf2e";
 import {AdvanceTimeToPreset, DateToTimestamp, FormatDateTime, TimestampToDate} from "../utilities/date-time";
 import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Renderer from "../renderer";
-import {MainApplication, CalManager, SC, NManager} from "../index";
+import {MainApplication, CalManager, SC, NManager, MigrationApplication} from "../index";
 import {canUser} from "../utilities/permissions";
 
 /**
@@ -1210,6 +1210,26 @@ export function getTimeConfiguration(calendarId: string = 'active'): SimpleCalen
  */
 export function isPrimaryGM(): boolean {
     return SC.primary;
+}
+
+/**
+ * Run the migration from Simple Calendar version 1 to version 2.
+ * This will only work if the current player is the primary GM and the Clean Up button was not clicked during the initial migration, as that button removes the old settings.
+ * **Important**: Running this function will overwrite any existing settings in the calendar.
+ *
+ * @returns A promise that resolves if the migration was a success, or fails if there was an error.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.runMigration().then(() => {...}).catch(console.error);
+ * ```
+ */
+export function runMigration(): Promise<void> {
+    if(GameSettings.IsGm() && SC.primary){
+        MigrationApplication.MigrationType = MigrationTypes.v1To2;
+        return MigrationApplication.run();
+    }
+    return Promise.reject();
 }
 
 /**

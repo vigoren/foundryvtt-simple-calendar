@@ -34,14 +34,7 @@ updateNManager(new NoteManager());
 //Expose the api
 (window as any).SimpleCalendar = {
     api: API,
-    Hooks: SimpleCalendarHooks,
-    Migration: {
-        run: () => {
-            Logger.warn(`This function is only available during the Version 2 Beta testing.`)
-            MigrationApplication.MigrationType = MigrationTypes.v1To2;
-            return MigrationApplication.run();
-        }
-    }
+    Hooks: SimpleCalendarHooks
 };
 
 Hooks.on('init', async () => {

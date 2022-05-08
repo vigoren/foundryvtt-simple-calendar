@@ -18,7 +18,7 @@ export default class MigrationApp extends Application{
         calendarMigrationStatusIcon: 'fa-sync fa-spin fsc-running',
         globalConfigMigrationStatusIcon: 'fa-sync fa-spin fsc-running',
         notesMigrationStatusIcon: 'fa-sync fa-spin fsc-running',
-        cleanUpMigrationStatusIcon: 'fa-sync fa-spin fsc-running',
+        enableCleanUp: false,
         migrationDone: false
     };
 
@@ -89,6 +89,13 @@ export default class MigrationApp extends Application{
         }
     }
 
+    activateListeners(html: JQuery) {
+        const appWindow = document.getElementById(MigrationApp.appWindowId);
+        if(appWindow){
+            appWindow.querySelector(".fsc-clean")?.addEventListener('click', this.runCleanData.bind(this));
+        }
+    }
+
     private determineMigrationType(){
         const genConfig = <SimpleCalendar.GlobalConfigurationData>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
         const oldYearConfig = GameSettings.GetObjectSettings(SettingNames.YearConfiguration);
@@ -116,17 +123,15 @@ export default class MigrationApp extends Application{
             const nm = await this.runNoteMigration();
             this.showApp();
             if(nm){
-                //this.runCleanData();
+                this.displayData.enableCleanUp = true;
                 this.displayData.migrationDone = true;
                 MainApplication.showApp();
                 this.showApp();
             } else {
-                this.displayData.cleanUpMigrationStatusIcon = 'fa-ban fsc-cancel';
                 this.showApp();
             }
         } else {
             this.displayData.notesMigrationStatusIcon = 'fa-ban fsc-cancel';
-            this.displayData.cleanUpMigrationStatusIcon = 'fa-ban fsc-cancel';
             this.showApp();
         }
     }
@@ -188,9 +193,12 @@ export default class MigrationApp extends Application{
     public runCleanData(){
         Logger.info('Clearing all old data...');
         if(this.MigrationType == MigrationTypes.v1To2){
-            V1ToV2.cleanUpOldData().catch(Logger.error);
+            V1ToV2.cleanUpOldData()
+                .then((result: boolean) => {
+                    GameSettings.UiNotification(GameSettings.Localize('FSC.Migration.v1v2.CleanupSuccess'), 'info');
+                })
+                .catch(Logger.error);
             Logger.info('All old data has been cleared.');
-            this.displayData.cleanUpMigrationStatusIcon = 'fa-check-circle fsc-completed';
         }
     }
 }

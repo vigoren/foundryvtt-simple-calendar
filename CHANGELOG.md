@@ -158,12 +158,9 @@ The date/time selector that is used when choosing a date for notes or specifying
 
 ### Migration
 
-All the above changes have resulted in a change in how Simple Calendar stores data within FoundryVTT. Simple Calendar version 2 will detect if you are on a version 1 install and migrate users data over to the new format. The old data is then cleaned up.
+All the above changes have resulted in a change in how Simple Calendar stores data within FoundryVTT. Simple Calendar version 2 will detect if you are on a version 1 install and migrate users data over to the new format.
 
-During the beta the cleanup operation has been disabled, so no data is permanently deleted and a new function, `SimpleCalendar.Migration.run()` has been added to re-run the migration as many times as desired. Once the full release is made this function will be removed and the cleanup code will be re-enabled.
-
-
-
+After the data has been migrated over there will be an option to clean up the old data, this just involves removing the old data from Foundry. This can be skipped if you do not want to remove it.
 
 ### Quality of Life Changes
 
@@ -198,6 +195,7 @@ The documentation for the API has also moved to [https://simplecalendar.info/api
 - Added a new property [`SimpleCalendar.api.Icons`](https://simplecalendar.info/enums/SimpleCalendar.api.Icons.html) that contains a list of all available icons within Simple Calendar.
 - **Important**: Depreciating the property `SimpleCalendar.api.MoonIcons`. This has been replaced with the Icons property and will be removed when FoundryVTT v10 Stable has been released.
 - Updated the [`SimpleCalendar.api.formateDate()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#formatDateTime) function to also take in an optional format string to format the date/time in any custom way. If no format string is provided it will return an object with the date formatted using the formats from the configuration, otherwise it will return the formatted string
+- Added a new function [`SimpleCalendar.api.runMigration()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#runMigration) function that will run the migration code again.
 
 #### Bug Fixes
 
