@@ -1,0 +1,150 @@
+@import "src/styles/variables";
+.simple-calendar{
+  &.window-app.fsc-compact-view {
+    header {
+      flex: 0 0 10px;
+
+      * {
+        display: none;
+      }
+    }
+    .fsc-main-wrapper{
+      padding: $spacer-half * 0.5;
+      button{
+        font-size: 0.625rem;
+        line-height: 0.625rem;
+        margin-bottom: 0.25rem;
+        svg{
+          height: 0.875rem;
+        }
+      }
+      .fsc-season{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+        .fsc-season-text{
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          justify-content: center;
+          align-items: center;
+          font-style: italic;
+          font-weight: 600;
+          font-size: 0.75rem;
+          flex: 1;
+          svg{
+            height: 15px;
+            margin-right: $spacer-half * 0.5;
+          }
+          span{
+            margin-right: $spacer-half * 0.5;
+          }
+        }
+      }
+      .fsc-date{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+        .fsc-date-text{
+          flex: 1;
+          text-align: center;
+        }
+      }
+      .fsc-moons{
+        flex: 0;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        position: relative;
+
+        &:hover {
+          .fsc-moon-group-wrapper {
+            .fsc-moon-group {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+              position: absolute;
+              top: -5px;
+              left: -6px;
+              z-index: 100;
+              border: 1px solid;
+              border-radius: 5px;
+              padding: 0.25rem;
+              width: 55px;
+              .fsc-moon-phase{
+                margin-bottom: 2px;
+              }
+            }
+          }
+        }
+
+        .fsc-moon-group-wrapper{
+          display: flex;
+          margin-right: -7px;
+          .fa{
+            font-size: 11px;
+            margin-left: -6px;
+            margin-top: 3px;
+            z-index: 1;
+
+          }
+          .fsc-moon-group{
+            display: none;
+          }
+        }
+
+        svg{
+          height: 15px;
+          width: 15px;
+          filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
+        }
+      }
+      .fsc-clock{
+        border: unset;
+        padding: 0;
+        margin: 0 $spacer-half $spacer-half 0;
+
+        .fsc-animated-clock{
+          svg{
+            width: 20px;
+            height: 20px;
+            margin-bottom: -4px;
+          }
+        }
+
+        .fsc-current-time{
+          font-size: 0.875rem;
+        }
+      }
+      .fsc-time-keeper-buttons{
+        .fsc-control{
+          background: unset;
+          border: unset;
+          box-shadow: unset;
+        }
+      }
+      .fsc-unit-controls{
+        .fsc-control{
+          margin-bottom: 0;
+        }
+      }
+
+      .fsc-side-drawer{
+        top: 10px;
+        height: calc(100% - 10px);
+
+        &.fsc-open{
+          height: 200px;
+        }
+      }
+    }
+    .fsc-sc-actions-list{
+      padding: 0;
+      flex-basis: 35px;
+    }
+  }
+}

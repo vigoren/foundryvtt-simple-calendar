@@ -1,0 +1,370 @@
+@import "src/styles/variables";
+.simple-calendar{
+  font-family: Roboto, sans-serif;
+  &.window-app{
+    box-shadow: 2px 2px 10px #000000ab;
+    background: unset;
+    header{
+      font-size: 1rem;
+      border-radius: 5px 5px 0 0;
+      border-bottom-width: 0;
+    }
+    .window-content{
+      padding: 0;
+      overflow-x: visible;
+      overflow-y: visible;
+      scrollbar-color: $primary $primary-600;
+      &::-webkit-scrollbar-thumb{
+        background: $primary;
+        border-color:$primary-600;
+      }
+    }
+    .fsc-main-wrapper{
+      display: flex;
+      flex-direction: column;
+      padding: $spacer-half;
+
+      .fsc-section{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+
+        .fsc-clock-display, .fsc-calendar-display{
+          flex: 1;
+        }
+
+        .fsc-year-view{
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          grid-column-gap: $spacer-half;
+        }
+
+        &:last-child{
+          .fsc-controls {
+            margin-bottom: 0;
+          }
+        }
+      }
+      .fsc-spacer{
+        margin: 0 0 $spacer-half 0;
+        flex: 1;
+      }
+      .fsc-spacer-small{
+        height: $spacer-half;
+      }
+    }
+    .fsc-controls{
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: $spacer-half;
+
+      &.fsc-unit-controls{
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        align-items: start;
+
+        .fsc-control-group{
+          position: relative;
+          margin-right: $spacer-half*0.5;
+          &:last-child{
+            margin-right: 0;
+          }
+
+          .fsc-selector{
+            &::after{
+              font-family: "Font Awesome 5 Free";
+              content: "\f0d7";
+              -moz-osx-font-smoothing: grayscale;
+              -webkit-font-smoothing: antialiased;
+              font-size: 12px;
+              font-weight: 900;
+              font-style: normal;
+              font-variant: normal;
+              text-rendering: auto;
+            }
+          }
+
+          .fsc-unit-list{
+            margin: 0;
+            list-style: none;
+            position: absolute;
+            bottom: 100%;
+            overflow: hidden;
+            max-height: 0;
+            padding: 0;
+            border: 1px solid;
+
+            li{
+              cursor: pointer;
+              padding:.15rem .5rem;
+              border-bottom: 1px solid;
+
+              &:last-child{
+                margin-bottom: 0;
+                border-bottom-width: 0;
+              }
+            }
+
+            &.fsc-open{
+              visibility: visible;
+              max-height: 250px;
+            }
+            &.fsc-closed{
+              visibility: hidden;
+            }
+          }
+        }
+        .fa-minus, .fa-plus{
+          font-size: 10px;
+        }
+      }
+
+      .fsc-control-group{
+        justify-content: center;
+        margin-bottom: $spacer-half;
+
+        &:last-child{
+          margin-bottom: 0;
+        }
+      }
+
+      button{
+        svg{
+          height: 1.125rem;
+          margin-bottom: -4px;
+        }
+      }
+    }
+
+    .fsc-actions-list{
+      flex: 0 0 62px;
+      display: flex;
+      flex-direction: column;
+      width: 62px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin-left: $spacer-half;
+      padding: 0 $spacer-half;
+
+      button{
+        margin: 0 0 $spacer-half 0;
+      }
+
+      .fsc-time-keeper-buttons{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        margin: auto 0;
+
+        .fsc-control{
+          font-size: 12px;
+          padding: 0.125rem 0;
+          margin-right: 2px;
+          margin-bottom: 0;
+
+          &:last-child{
+            margin-right: 0;
+          }
+        }
+      }
+
+      .fsc-primary-loader{
+        text-align: center;
+        margin: auto 0;
+      }
+    }
+
+    .fsc-side-drawer{
+      position: absolute;
+      top: 30px;
+      left: 25%;
+      border-top: 1px solid;
+      border-right: 1px solid;
+      border-bottom: 1px solid;
+      height: 75%;
+      min-width: 300px;
+      z-index: -1;
+      box-shadow: 2px 2px 10px #000000ab;
+      &.fsc-closed{
+        visibility: hidden;
+      }
+      &.fsc-open{
+        visibility: visible;
+        left: 100%;
+      }
+      h2{
+        padding: $spacer-half $spacer-half 0;
+      }
+      em{
+        padding: 0 $spacer-half;
+      }
+    }
+
+    .fsc-calendar-list{
+      overflow-y: auto;
+
+      .fsc-calendar-display{
+        display: flex;
+        flex-direction: row;
+        border: 1px solid;
+        border-radius: 5px;
+        margin: $spacer-half;
+        padding: $spacer-half;
+        cursor: pointer;
+
+        &.fsc-clickable{
+          cursor: pointer;
+        }
+
+        .fsc-details{
+          flex: 1;
+        }
+
+        .fsc-calendar-name{
+          font-size: 1.125rem;
+          font-weight: 600;
+          margin-bottom: $spacer-half * 0.5;
+        }
+        .fsc-calendar-date{
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          align-items: center;
+          font-size: 0.75rem;
+          margin-left: $spacer-half;
+          *{
+            margin-right: $spacer-half * 0.5;
+          }
+
+          .fsc-animated-clock{
+            svg{
+              width: 14px;
+              height: 14px;
+            }
+          }
+        }
+        .fsc-calendar-actions{
+          display: flex;
+          flex-direction: row;
+          margin: $spacer-half (-$spacer-half) (-$spacer-half) ;
+          border-top: 1px solid;
+
+          button{
+            flex: 1;
+            border-radius: 0;
+            box-shadow: unset;
+            margin: 0;
+            &:first-child{
+              border-bottom-left-radius: 3px;
+            }
+            &:last-child{
+              border-bottom-right-radius: 3px;
+            }
+          }
+        }
+      }
+    }
+
+    .fsc--note-list{
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fsc-note-search{
+      display: flex;
+      flex-direction: column;
+
+      .fsc-search-box{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        padding: $spacer-half;
+
+        input{
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          border-right-width: 0;
+        }
+        .fsc-control{
+          width: 35px;
+          border-radius: 0;
+          margin-left: 0;
+          border-left-width: 0;
+          border-right-width: 0;
+          border-top: 1px solid;
+          border-bottom: 1px solid;
+
+          &.fa-search{
+            border-right-width: 1px;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+          }
+          &.fa-times{
+            padding-top: 4px;
+          }
+        }
+      }
+
+      .fsc-search-options-header{
+        padding: 0 $spacer-half ($spacer-half * 0.25);
+        margin: 0;
+        border-bottom: 1px solid;
+        cursor: pointer;
+      }
+
+      .fsc-search-options{
+        padding: 0 $spacer-half $spacer-half;
+        overflow: hidden;
+        border-left: 1px solid;
+        border-right: 1px solid;
+        border-bottom: 1px solid;
+        max-height: 0;
+
+        &.fsc-closed{
+          visibility: hidden;
+        }
+        &.fsc-open{
+          visibility: visible;
+          max-height: 200px;
+        }
+
+        p{
+          font-size: 0.75rem;
+          strong{
+            margin-right: $spacer-half * 0.5;
+          }
+        }
+
+        .fsc-search-fields{
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          font-size: 0.75rem;
+
+          label{
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+            margin: 0 ($spacer-half * 0.5);
+            input[type="checkbox"]{
+              width: 12px;
+              height: 12px;
+              filter: unset;
+            }
+          }
+
+        }
+      }
+
+      .fsc-note-list{
+        padding-top: $spacer-half;
+      }
+    }
+  }
+
+}

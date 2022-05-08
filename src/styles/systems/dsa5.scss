@@ -1,19 +1,47 @@
+@import "../variables";
 .system-dsa5{
-  .window-app{
-    &.simple-calendar-configuration{
-
-      .window-content{
+  .simple-calendar{
+    &.window-app{
+      .window-header{
         position: unset;
-      }
+        min-height: unset;
+        height: unset;
 
-      #simpleCalendarConfiguration{
-        .config-save{
-          width: unset;
-          left: 9px;
-          right: 14px;
-          bottom: 40px;
-          height: 40px;
+        .window-title{
+          margin: 0;
+          font-family: Roboto, sans-serif;
+          text-align: left;
+          font-weight: normal;
         }
+        .header-button{
+          margin-top: 0;
+          &.close{
+            margin-right: $spacer-half * 0.5;
+          }
+        }
+      }
+      .window-resizable-handle{
+        bottom: -1px;
+        right: 0;
+      }
+      &.classic{
+        .window-title{
+          text-align: center;
+          margin-top: 3px;
+        }
+      }
+    }
+    &.fsc-simple-calendar-configuration{
+      &:after{
+        content: unset;
+      }
+    }
+    &.journal-sheet{
+      &:after{
+        content: unset;
+      }
+      h1, h2, h3, h4, h5, h6{
+        overflow: visible;
       }
     }
   }

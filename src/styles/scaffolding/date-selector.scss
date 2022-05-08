@@ -1,0 +1,38 @@
+.fsc-date-selector{
+  position: relative;
+}
+
+.fsc-date-selector-calendar-wrapper{
+  position: absolute;
+  z-index: 100;
+  border: 1px solid;
+
+  &.fsc-just-time{
+    overflow-y: visible;
+    padding: 0 0.5rem;
+  }
+
+  &.left-down{
+    left: 0;
+    top: 26px;
+  }
+  &.left-up{
+    left: 0;
+    bottom: 26px;
+  }
+  &.right-down{
+    right: 0;
+    top: 26px;
+  }
+  &.right-up{
+    right: 0;
+    bottom: 26px;
+  }
+
+
+  .fsc-date-selector-calendar{
+    border: unset;
+  }
+}
+
+

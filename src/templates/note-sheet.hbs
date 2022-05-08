@@ -1,0 +1,85 @@
+<form class="{{#unless editMode}} fsc-read-only{{/unless}}" autocomplete="off">
+    {{#if editMode}}
+        <h1><input value="{{name}}" placeholder="{{localize 'FSC.Notes.New'}}" type="text" id="scNoteTitle" /></h1>
+        <div class="fields">
+            <div class="form-group fsc-open fsc-date-selector">
+                <label for="{{edit.dateSelectorId}}">{{localize 'FSC.Notes.DateTime.Title'}}</label>
+                <div class="form-fields">
+                    {{sc-date-selector id=edit.dateSelectorId showDateSelector=true showTimeSelector=true placeholderText='' allowDateRangeSelection=true timeSelected=edit.timeSelected selectedStartDate=edit.noteData.startDate selectedEndDate=edit.noteData.endDate onDateSelect=edit.dateSelectorSelect }}
+                </div>
+                <p class="notes">{{localize 'FSC.Notes.DateTime.Help'}}</p>
+            </div>
+            <div class="form-group fsc-open">
+                <label for="scNoteRepeats">{{localize 'FSC.Notes.Repeating'}}</label>
+                <div class="form-fields">
+                    <select id="scNoteRepeats">
+                        {{selectOptions edit.repeatOptions selected=edit.repeats localize=true}}
+                    </select>
+                </div>
+                <p class="notes">{{localize 'FSC.Notes.RepeatingHelp'}}</p>
+            </div>
+            <div class="form-group fsc-open">
+                <label>{{localize 'FSC.Configuration.Notes.NoteCategories'}}</label>
+                <div class="form-fields fsc-category-list">
+                    {{#each edit.allCategories}}
+                        <label class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{name}}" type="checkbox" name="scNoteCategories" {{checked selected}} /><span>{{name}}</span></label>
+                    {{/each}}
+                </div>
+                <p class="notes">{{localize 'FSC.Configuration.Notes.NoteCategoriesHelp'}}</p>
+            </div>
+            <div class="form-group fsc-open">
+                <label>{{localize 'FSC.Notes.UserPermissionTitle'}}</label>
+                <div class="form-fields fsc-category-list">
+                    {{#each edit.users}}
+                        <label class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{id}}" type="checkbox" name="scUserPermissions" {{checked selected}} {{#if disabled}}disabled{{/if}} /><span>{{name}}</span></label>
+                    {{/each}}
+                </div>
+                <p class="notes">{{localize 'FSC.Notes.UserPermissionHelp'}}</p>
+            </div>
+        </div>
+        <h2>{{localize 'FSC.Details'}}</h2>
+        <div class="fsc-editor-container">
+            {{editor target="content" content=data.content editable=true button=false owner=owner}}
+        </div>
+        <div class="fsc-edit-controls">
+            <button id="scSubmit" class="fsc-control fsc-save" type="submit" name="submit" title="{{localize 'FSC.Notes.Save'}}">
+                <i class="far fa-save"></i> {{localize 'FSC.Notes.Save'}}
+            </button>
+            <button class="fsc-control fsc-delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</button>
+        </div>
+    {{else}}
+        <div class="fsc-note-header">
+            <h1>
+                <span class="fsc-title-text">{{name}}</span>
+                <span class="fsc-reminder fsc-note-category {{#if display.reminder}} fsc-selected{{/if}}"><label><input id="scNoteReminder" type="checkbox" /><span class="fa {{#if display.reminder}}fa-bell{{else}}fa-bell-slash{{/if}}"></span></label></span>
+            </h1>
+            <div class="fsc-date">
+                <div class="fsc-note-category" title="{{localize 'FSC.Notes.DateTime.Title'}}">
+                    <span class="fa fa-calendar"></span>  {{display.date}}
+                </div>
+                {{#if (gt display.repeats 0)}}
+                    <div class="fsc-note-category" title="{{localize 'FSC.Notes.Repeats'}}">
+                        <span class="fas fa-sync"></span>  {{display.repeatsDisplay}}
+                    </div>
+                {{/if}}
+                <div class="fsc-note-category" style="background-color: {{display.author.color}}; color:{{display.author.textColor}}" title="{{localize 'FSC.Notes.Author'}}">
+                    <span class="fa fa-pencil-alt"></span> {{display.author.name}}
+                </div>
+            </div>
+            <div class="fsc-category-list">
+                {{#each display.categories}}
+                    <div class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}">{{name}}</div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="fsc-content">
+            {{{display.enrichedContent}}}
+        </div>
+        {{#if editable}}
+            <div class="fsc-edit-controls">
+                <button class="fsc-control fsc-primary fa fa-edit" id="scNoteEdit"> {{localize 'FSC.Edit'}}</button>
+                <button class="fsc-control fsc-delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</button>
+            </div>
+        {{/if}}
+    {{/if}}
+</form>

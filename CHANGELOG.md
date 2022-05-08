@@ -1,5 +1,249 @@
 # Change Log
 
+## v2.0.0 - Visual Redesign / Themes, Multiple Calendar Support, Note Improvements and more!
+
+I am very happy to announce the release of version 2 of Simple Calendar! This update is big and covers many improvements and changes. Be sure to check out the full notes for all the details.
+
+### Visual Redesign / Themes
+
+I am happy to say that Simple Calendar has finally had a big visual update. This touches on every aspect of the calendar, configuration and notes.
+
+#### Themes
+
+There are now different themes that can be applied to Simple Calendar to change how it looks! This release includes Light and Dark themes as well as a "Classic" theme (to match the aesthetic of Simple Calendar version 1).  Additional themes or system specific themes may be added as time goes on.
+
+I have tried to make sure that the light and dark themes are still easily usable for individuals with color blindness.
+
+#### Main Calendar
+
+![Dark Theme](./docs/images/sc-v2-themes.gif)
+
+This section of the module has been 100% redesigned so that the full version is much more compact and easy to use. It features:
+
+- A refreshed calendar display.
+  - Seasons no longer change the full background color of the calendar but instead change the color of the border around the calendar.
+- A refreshed clock display.
+  - The clock icon has been updated to a better looking version.
+  - The "Current Time" text has been removed to simplify the view
+- The controls for changing the date/time have been compacted into 1 control where users can choose which time unit (year, month, day, hour, minute, round, second) they wish to change.
+- Simplified buttons for advancing to the next dawn, midday, dusk or midnight with new icons.
+- All other buttons have been moved to the right of the calendar and have been simplified with just an icon instead of an icon and text.
+- The notes list will now slide out to the right of the window when the notes button is clicked. This makes viewing notes easier and less intrusive to the calendar view.
+- Search has been changed so that it also slides out to the right of the window (rather than its own window) where a search can be preformed.
+
+#### Compact View
+
+![Dark Theme](./docs/images/sc-v2-themes-comp.gif)
+
+The compact view has also been completely redesigned to be more compact while still showing the same amount of information and functionality as before. It is now just slightly larger than the old calendar/weather widget.
+
+The button in the header to switch between compact and full views has been removed. To switch between the compact and full views simply double-click on the title bar.
+
+#### Configuration Dialog
+
+![Dark Theme](./docs/images/sc-v2-themes-config.gif)
+
+The configuration dialog has also been completely redesigned to support multiple calendars and hopefully reduce some confusion around configuring a calendar. It features:
+
+- A Refreshed display with sections.
+  - **Global Configuration Settings**: These affect Simple Calendar overall and are not specific to any one calendar.
+  - **Calendar Settings**: This section features a calendar selector, the ability to add or remove calendars and all the settings that affect the currently selected calendar.
+  - **Help**: This section provides a link to the documentation and an about section with more details about the module.
+
+#### Notes Dialog
+
+![Dark Theme](./docs/images/sc-v2-themes-notes.gif)
+
+The note dialog has been redesigned as well to match the look and feel of the other dialogs!
+
+- A refreshed display for editing notes
+- A refreshed display for viewing notes
+
+### Multiple Calendar Support
+
+Simple Calendar now support having multiple calendars within the module!
+
+In the configuration GMs can now add new and remove existing calendars, switch between calendars and customize each calendar individually. Each calendar can also be given a name to help distinguish it from the other calendars.
+
+The main Calendar interface also has a new button (that shows when more than 1 calendar has been added) that allows you to switch between which calendar you are currently viewing as well as which calendar is currently active. The listing of calendars will also show you the current date and time for each calendar.
+
+You can also choose to sync time changes across all calendars. This change is done by determining the change in seconds and adjusting the other calendars by that number of seconds. This way if another calendar has days that are different in length they will update accurately.
+
+### Configuration Changes
+
+The configuration dialog can now be opened by GMs and players. GM only options are hidden for players, but any player specific options will be shown to the players.
+
+The configuration dialog should be a little easier to understand and hopefully more intuitive to use.
+
+#### Client Settings
+
+Four new settings have been added to the Module Settings dialog of Foundry. These settings are [client settings](https://foundryvtt.com/article/settings/), which are saved in the browser and are applied on a per-browser basis. So everyone can customize these to their liking!
+
+- **Theme**: Each player can choose what visual theme to use for Simple Calendar!
+- **Open On Load**: This setting will open Simple Calendar's main interface when loading foundry. If the GM has disabled viewing the calendar for players, Simple Calendar will not show regardless of this setting. By default, this is set to true.
+- **Open In Compact View**: If checked anytime Simple Calendar is opened (On Load, Clicking the button or through a macro) it will be opened in the compact view. By default, this is set to false.
+- **Remember Position**: If checked Simple Calendar will remember where it was placed on the screen and position itself there everytime it is opened. By default, this is set to true.
+
+#### Import/Export
+
+The importing and exporting of calendar settings has been improved.
+- **Exporting**: You can now choose what to export, specific calendars, notes, permissions or the global configuration settings.
+- **Importing**: When importing the file will be parsed and show what was found inside and allow you to choose if to import it or not. For calendar configurations and notes you can also choose which calendar to import them into or to import them into a new calendar.
+
+You will be able to import configurations from version 1.x of Simple Calendar so any saved configurations will not be lost!
+
+#### Quick Setup
+
+For new and existing calendars a GM can run through the Quick Setup tab to configure a calendar in 5 easy clicks. This tab will prompt you to:
+
+- Choose a starting predefined calendar to base your calendar on.
+- Choose the current date for your calendar.
+- Choose if to show the clock for your calendar or not.
+
+Then save to apply your changes!
+
+#### Display Options
+
+A display options tab has been added where the options for specifying your date and time formats live. The inputs for these formats have been improved for an easier time creating the formats as well as a real time preview of how it will look for the selected calendar.
+
+
+### Note Improvements
+
+#### Journal Entries
+
+The main change in this update to the notes is now notes are stored as journal entries instead of in the settings. This makes way more sense as a note is closest to a journal entire within foundry.  
+
+- Simple Calendar will create its own journal entries folder where all notes will be saved. 
+- Simple Calendar notes have their own sheet associated with them, this means that opening up a journal entire for a note from th sidebar will open it up in the correct display.
+- The display and styling of the note sheet has been redone to match with the new aesthetic for Simple Calendar.
+- Players can now add notes without the GM needing to be logged in (provided they have the correct permissions to do so)
+- There are still two situations where the GM will need to be logged in for players to do certain actions with the notes:
+  - Toggling if to be reminded of a note only if the player wanting to be reminded did not create the note.
+  - Re-ordering notes on a day.
+
+#### User Permissions
+
+With the change to using journal entries for notes how permissions are done for notes has changed.
+
+- To add notes players MUST have the Create Journal Entries permission level.
+- The "Player Viewable" option has changed on notes from being a single check box to allowing you to specify which players can see the note.
+- The configuration setting "Note Default Player Visibility" will now check all players under "Player Viewable" when creating a new note.
+
+#### Note Search Updates
+
+The searching for notes has been improved since the initial quick search added. The smaller improvements are:
+
+- Search is part of the main calendar display instead of its own dialog now.
+- Hitting enter on the search text box will now trigger a search.
+- Note author is now also searched against.
+- Note categories are now also searched against.
+- Added options to choose which fields on a note to search.
+ 
+The big improvement to searching is that the algorithm has been completely rewritten. The new algorithm provides much better relevancy ranking of notes as well as fuzzy matching to offer results even when typos are entered in the search terms.
+
+For the search nerds out there it is a custom algorithm that utilizes the Okapi BM25 search method for great relevancy matching as well as a Levenshtein Distance search to provide support for fuzzy matching. 
+
+I have run some stress tests on the new algorithm and have been happy with the results. With a data set that consists of 25,000 notes that contain 3.75 million total words the average search time was under 10 seconds on my computer (Using Chrome with an AMD 5800X). I don't think anyone is storing near that many notes in Foundry so I feel safe in this is an acceptable amount of time for searching.
+
+
+### Improved Date/Time Selector
+
+The date/time selector that is used when choosing a date for notes or specifying the month of a Season or the sunrise/sunset time of a season has been improved.
+
+- The date selector will now attempt to intelligently place itself so that it doesn't disappear outside the window.
+- The time selection portion has been re-designed and improved with the following improvement:
+  - The design of the interface has been improved with better looking and easier to interact with text boxes and dropdowns for the text boxes.
+  - Added the ability to use the scroll wheel to change the number up or down in any of the text boxes.
+  - Validation and changes are more consistent, they worked fine before but just feel better now.
+
+### Migration
+
+All the above changes have resulted in a change in how Simple Calendar stores data within FoundryVTT. Simple Calendar version 2 will detect if you are on a version 1 install and migrate users data over to the new format.
+
+After the data has been migrated over there will be an option to clean up the old data, this just involves removing the old data from Foundry. This can be skipped if you do not want to remove it.
+
+### Quality of Life Changes
+
+- Added a new way to change time, you can now manually change the time by Rounds. 
+  - This option has been added to the unit type selector. 
+  - The number of seconds this changes the time by is based on "Seconds per Combat Round" setting.
+- Added a new note setting "Send Reminders On Login", if enabled when a player logs in any note reminder on the current day will be PM'd to them. This replaced to default of doing that step no matter what.
+- Adjusted how moon phase icons are displayed. If a day has more than 2 moon phases showing only the first phase will be down with a down arrow. Hovering over that moon phase/arrow will display a popup dialog that shows the phase for every moon on that day.
+- Added the ability to set an icon for each season. This will be displayed next to the season name on the calendar.
+- Moved predefined calendars configurations and the list of predefined calendars to their own json files. They are only downloaded when required, reducing the overall footprint of the module when loaded.
+
+### Bug Fixes
+
+- Fixed a bug where the display year in the calendar header would not update properly if the year being viewed was different from the current year.
+- Fixed a bug where clicking on a moon icon or note indicator would not select the day properly.
+- Fixed a bug with the Warhammer predefined calendar where the season starts were set to the wrong dates.
+- Fixed a bug where using Z or ZZ in the date/time formats would break the calendars' configuration.
+- Fixed a bug when using dates before the year zero year (negative timestamps) the real time clock would skip times near the end of an hour.
+- Fixed a bug with PF2E systems where the year in Simple Calendar would not match the year of the built-in world clock due to an update to the PF2E world clock.
+- Fixed a bug where the visible month would reset back to the month of the current date while the real time clock is running.
+
+### API Changes
+
+To go along with the large changelist to the Simple Calendar module the API has also undergone some large changes. 
+
+None of these changes should be breaking to existing implementations using the API but please read over all the changes to make sure your Systems/Modules/Macros are not impacted.
+
+The documentation for the API has also moved to [https://simplecalendar.info/api/index.html](https://simplecalendar.info/modules/SimpleCalendar.html). This site will be home to all documentation around Simple Calendar but for right now it just contains the up-to-date API documentation.
+
+#### General Changes
+
+- Added a new property [`SimpleCalendar.api.Icons`](https://simplecalendar.info/enums/SimpleCalendar.api.Icons.html) that contains a list of all available icons within Simple Calendar.
+- **Important**: Depreciating the property `SimpleCalendar.api.MoonIcons`. This has been replaced with the Icons property and will be removed when FoundryVTT v10 Stable has been released.
+- Updated the [`SimpleCalendar.api.formateDate()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#formatDateTime) function to also take in an optional format string to format the date/time in any custom way. If no format string is provided it will return an object with the date formatted using the formats from the configuration, otherwise it will return the formatted string
+- Added a new function [`SimpleCalendar.api.runMigration()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#runMigration) function that will run the migration code again.
+
+#### Bug Fixes
+
+- Fixed a bug with `SimpleCalendar.api.changeDate` where if just a year was passed in the month would update to the first month of the year.
+
+#### Multi Calendar Support
+
+- Added a function [`SimpleCalendar.api.getCurrentCalendar()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#getCurrentCalendar) that returns the configuration data for the current active calendar.
+- Added a new function [`SimpleCalendar.api.getAllCalendars()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#getAllCalendars) that returns a list of all calendars set up in Simple Calendar. (This does not include any predefined calendars)
+- Updated all API functions so that they can now take an additional optional parameter `calendarId` (where it made sense).
+  - This parameter can be used to target a specific calendar for the API function to update/get data from. If the parameter is not specified then the current active calendar will be used.
+  - This means that current systems/modules/macros that use the API will not need to update their function calls unless they want to add the ability to target calendars that are not the one currently being used.
+
+#### Note Support
+
+- Added a function [`SimpleCalendar.api.getNotes()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#getNotes) that returns all notes that the current player can see. Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
+- Added a function [`SimpleCalendar.api.getNotesForDay(year, month, day)`](https://simplecalendar.info/modules/SimpleCalendar.api.html#getNotesForDay) that returns all notes that the current player can see for the date specified. . Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
+- Added a function [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#addNote) that will add a new note of the specified content to the specified date of the specified calendar. This function will return the newly created JournalEntry that contains the notes' data.
+
+#### Handlebar Helpers
+
+- Removed 2 Handlebar helpers, day-has-note and day-moon-phase. These were used internally and are no longer required.
+- Added a new Handlebar helper [sc-full-calendar](https://simplecalendar.info/enums/HandlebarHelpers.html#sc_full_calendar) that can be used to render a full calendar view of the current date or passed in date.
+  - These calendars support basic interactivity, change which month is being viewed and selecting a day when it is clicked, with the option to pass in your own function to extend this functionality.
+  - These calendars can use the default Simple Calendar styling or be customized.
+- Added a new function [`SimpleCalendar.api.activateFullCalendarListeners()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#activateFullCalendarListeners) that is used to activate all the basic interactivity for calendars rendered with the [sc-full-calendar](https://simplecalendar.info/api/enums/HandlebarHelpers.html#sc_full_calendar) Handlebar helper.
+#### Removal of Depreciated Items
+
+- With the release of Foundry v9 depreciated properties from the [Date Object](https://simplecalendar.info/interfaces/SimpleCalendar.DateData.html) have been removed:
+  - _**dayDisplay**_: Please use display.day instead.
+  - _**monthName**_: Please use display.monthName instead.
+  - **_yearName_**: Please use display.yearName instead.
+  - **_yearPrefix_**: Please use display.yearPrefix instead.
+  - **_yearPostfix_**: Please use display.yearPostfix instead.
+- With the release of Foundry v9 depreciated functions from the SimpleCalendar class have been removed:
+    - `SimpleCalendar.show();`: Please use `SimpleCalendar.api.showCalendar();`
+    - `SimpleCalendar.setDateTime()`: Please use `SimpleCalendar.api.setDate()`
+    - `SimpleCalendar.changeDateTime()`: Please use `SimpleCalendar.api.changeDate()`
+
+### Translation Updates
+
+- Updates to the German translation thanks to [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird)!
+- Simple Calendar is now available in Italian thanks to [Haloghen](https://github.com/Haloghen)!
+
+### About Time and Calendar/Weather Importing
+
+I have removed the functionality for importing calendar data from about-time and calendar/weather. About-time has not supported custom calendars for several months now and calendar/weather has been depreciated for weather control.
+
 ## v1.3.75 - Bug Fixes
 
   - Fixed a rare issue where date formats would throw an exception and cause the calendar and the configuration to not open.
@@ -456,11 +700,11 @@ Check out the new [API documentation](./docs/API.md) for all the additions and c
 
 You can now have named years in Simple Calendar! This update adds several options for adding and configuring how named years work.
 
-Setting|Description
--------|-----------
-Year Names | This is a list of different names that can be used for the years.
-Year Name Behaviour|This drop down is used to determine how the year names are applied to years. The options are:<br/><strong>Default:</strong> The year list starts at the specified starting year and goes down the list for each subsequent year. If the year is past the number of names in the list it will continue to use the last name from the list.<br/><br/><strong>Repeat</strong>: The year list starts at the specified starting year and goes down the list for each subsequent year. When the current year is past the name list length it will start again at the top of the list and repeat it forever.<br/><br/><strong>Random</strong>: For every year a random name from the list will be chosen. The calendar will do its best to keep the same name for a year.
-Starting Year For Names | This is the year that the first name in the list of Year Names is associated with.<br/>This option only appears if the Year Name Behaviour setting is set to None or Repeat.
+| Setting                 | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Year Names              | This is a list of different names that can be used for the years.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Year Name Behaviour     | This drop down is used to determine how the year names are applied to years. The options are:<br/><strong>Default:</strong> The year list starts at the specified starting year and goes down the list for each subsequent year. If the year is past the number of names in the list it will continue to use the last name from the list.<br/><br/><strong>Repeat</strong>: The year list starts at the specified starting year and goes down the list for each subsequent year. When the current year is past the name list length it will start again at the top of the list and repeat it forever.<br/><br/><strong>Random</strong>: For every year a random name from the list will be chosen. The calendar will do its best to keep the same name for a year. |
+| Starting Year For Names | This is the year that the first name in the list of Year Names is associated with.<br/>This option only appears if the Year Name Behaviour setting is set to None or Repeat.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 The Dark Sun predefined calendar has been updated to include named years that match the Merchant Calendar for that game system.
 
@@ -496,11 +740,11 @@ This update changes how permissions work within Simple Calendar. There is now a 
 
 These are the current available permissions:
 
-Permission|Description
-----------|------------
-View Calendar | If users in this role can view the calendar interface or not.
-Add Notes | If users in these roles are able to add notes to the calendar.
-Change Date and Time| If users in these roles are able to change the calendars date and time.
+| Permission           | Description                                                             |
+|----------------------|-------------------------------------------------------------------------|
+| View Calendar        | If users in this role can view the calendar interface or not.           |
+| Add Notes            | If users in these roles are able to add notes to the calendar.          |
+| Change Date and Time | If users in these roles are able to change the calendars date and time. |
 
 ### Quality of Life Improvements
 
@@ -649,12 +893,12 @@ Simple Calendar now supports time of day! What this means is that Simple Calenda
 
 There are 4 different options on how to tie into the game world time to achieve the exact level of interaction you want for your world. They are:
 
-Option|Description|Update Game World Time|When Game World Time is Updated
---------|--------------------|-------------------------------------------------|----------------------------------------------------------
-None (default)|Simple Calendar does not interact with the game world time at all. This setting is ideal if you want to keep Simple Calendar isolated from other modules.|Does not update the game world time|Simple Calendar is not updated when the game world time is updated by something else.
-Self|Treats Simple Calendar as the authority source for the game world time. This setting is ideal when you want Simple Calendar to be in control of the games time and don't want other modules updating Simple Calendar|Updates the game world time to match what is in Simple Calendar.|Combat round changes will update Simple Calendars time. Simple Calendar will ignore updates from all others modules.
-Third Party Module|This will instruct Simple Calendar to just display the Time in the game world time. All date changing controls are disabled and the changing of time relies 100% on another module. This setting is ideal if you are just want to use Simple Calenar to display the date in calendar form and/or take advantage of the notes.|Does not update the game world time.|Updates it's display everytime the game world time is changed, following what the other modules say the time is.
-Mixed|This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.|Will update the game world time|Will update it's own time based on changes to the game world time, following what other modules say the time is.
+| Option             | Description                                                                                                                                                                                                                                                                                                                   | Update Game World Time                                           | When Game World Time is Updated                                                                                      |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| None (default)     | Simple Calendar does not interact with the game world time at all. This setting is ideal if you want to keep Simple Calendar isolated from other modules.                                                                                                                                                                     | Does not update the game world time                              | Simple Calendar is not updated when the game world time is updated by something else.                                |
+| Self               | Treats Simple Calendar as the authority source for the game world time. This setting is ideal when you want Simple Calendar to be in control of the games time and don't want other modules updating Simple Calendar                                                                                                          | Updates the game world time to match what is in Simple Calendar. | Combat round changes will update Simple Calendars time. Simple Calendar will ignore updates from all others modules. |
+| Third Party Module | This will instruct Simple Calendar to just display the Time in the game world time. All date changing controls are disabled and the changing of time relies 100% on another module. This setting is ideal if you are just want to use Simple Calenar to display the date in calendar form and/or take advantage of the notes. | Does not update the game world time.                             | Updates it's display everytime the game world time is changed, following what the other modules say the time is.     |
+| Mixed              | This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.                                       | Will update the game world time                                  | Will update it's own time based on changes to the game world time, following what other modules say the time is.     |
 
 You can check out the [configuration](./docs/Configuration.md#game-world-time-integration) section for more details.
 
@@ -682,13 +926,13 @@ For two of the more common modules Simple Calendar can also import their setting
 
 Simple Calendar now supports seasons. Any number of seasons can be added to a calendar, and you are able to specify the following options for each season:
 
-Setting | Description
---------|------------
-Season Name | Specify a custom name of the season.
-Starting Month | From a drop down choose which month this season starts in. This drop down is populated based on the custom months that have been set up.
-Starting Day | From a drop down choose which day of the the starting month this season begins on. This drop down is populated with a list of days based on the staring month selected.
-Color | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color.
-Custom Color | If the color option is set to Custom Color an option will appear where you can enter a custom Hex representation of a color to use for the seasons color.
+| Setting        | Description                                                                                                                                                                                                                                         |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Season Name    | Specify a custom name of the season.                                                                                                                                                                                                                |
+| Starting Month | From a drop down choose which month this season starts in. This drop down is populated based on the custom months that have been set up.                                                                                                            |
+| Starting Day   | From a drop down choose which day of the the starting month this season begins on. This drop down is populated with a list of days based on the staring month selected.                                                                             |
+| Color          | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color. |
+| Custom Color   | If the color option is set to Custom Color an option will appear where you can enter a custom Hex representation of a color to use for the seasons color.                                                                                           |
 
 The calendar display has also been updated so that right below the month and year the name of the current season will be displayed.
 
@@ -740,29 +984,31 @@ A function has been added to allow users to make macros that open the calendar.
 This function can be accessed by using a script macro and running this command:
 
 ```javascript
-SimpleCalendar.show();
+MainApp.show();
 ```
 **Important**: If this macro is intended to be useable by players don't forget to configure the Macros permissions for all players. It will need to be set to at least the "Limited", permission level.
 
 The show function can take 3 parameters to set the year, month and day that the calendar opens up to.
 
-Parameter|Type|Default|Details
----------|----|-------|-------
-Year | number or null | null | The year to open the calendar too. If null is passed in it will open the calendar to the year the user last viewed
-Month | number or null | null | The month to open the calendar too.<br/>This month is expected to start at 0, or be the index of the month to show. This way intercalary months can be easily chosen by using their index as they don't have a month number.<br/>-1 can be passed in to view the last month of the year.<br/>If null is passed in the calendar will open to the month the user last viewed.
-Day | number or null | null | The day of the month to select.<br/>The day is expected to start at 1.<br/>-1 can be passed in to select the last day of the month.<br/>If null is passed in the selected day will be the last day the user selected, if any.
+| Parameter | Type           | Default | Details                                                                                                                                                                                                                                                                                                                                                                     |
+|-----------|----------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Year      | number or null | null    | The year to open the calendar too. If null is passed in it will open the calendar to the year the user last viewed                                                                                                                                                                                                                                                          |
+| Month     | number or null | null    | The month to open the calendar too.<br/>This month is expected to start at 0, or be the index of the month to show. This way intercalary months can be easily chosen by using their index as they don't have a month number.<br/>-1 can be passed in to view the last month of the year.<br/>If null is passed in the calendar will open to the month the user last viewed. |
+| Day       | number or null | null    | The day of the month to select.<br/>The day is expected to start at 1.<br/>-1 can be passed in to select the last day of the month.<br/>If null is passed in the selected day will be the last day the user selected, if any.                                                                                                                                               |
 
 ##### Examples
 All these examples assume we are using a standard Gregorian calendar.
 
 Open the calendar to August 2003
+
 ```javascript
-SimpleCalendar.show(2003, 7);
+MainApp.show(2003, 7);
 ```
 
 Open the calendar to December 1999 and select the 25th day
+
 ```javascript
-SimpleCalendar.show(1999, 11, 25);
+MainApp.show(1999, 11, 25);
 ```
 
 ## v1.1.0 - Reoccurring Notes, Leap Years, Intercalary Months and Bug Fixes

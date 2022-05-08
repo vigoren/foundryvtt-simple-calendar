@@ -1,0 +1,232 @@
+@import "../variables";
+.fsc-calendar {
+  border: 1px solid;
+  padding: 0 5px 5px;
+  margin: 0 0 $spacer-half;
+  max-height: 500px;
+  overflow-y: auto;
+  position: relative;
+
+  &.fsc-display-only{
+    .fsc-calendar-header{
+      .fsc-current-date{
+        a:first-child, a:last-child{
+          cursor: default;
+          &:hover{
+            text-shadow: unset;
+          }
+        }
+      }
+    }
+    .fsc-days{
+      .fsc-week{
+        .fsc-day{
+          cursor: default;
+          &:hover{
+            background-color: unset;
+          }
+        }
+      }
+    }
+  }
+
+  .fsc-calendar-header{
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 5px 0;
+    margin-bottom: 5px;
+
+    .fsc-current-date{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      font-size: 1.25rem;
+      margin-bottom: 10px;
+
+      a:first-child{
+        margin: 2px 5px 0;
+      }
+
+      a:last-child{
+        margin: 2px 5px 0;
+      }
+
+      .fsc-month-year{
+        text-align: center;
+        input[type="number"] {
+          width: 6ch;
+        }
+      }
+
+    }
+
+    .fsc-season{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      margin: -8px auto 10px;
+      font-size: 12px;
+      font-style: italic;
+      font-weight: 600;
+
+      svg{
+        height: 15px;
+        margin-right: $spacer-half * 0.5;
+      }
+      span{
+        margin-right: $spacer-half * 0.5;
+      }
+    }
+
+    .fsc-weekdays{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+
+      .fsc-weekday{
+        width: 40px;
+        margin: 0 2px;
+        text-align: center;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .fsc-days{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: nowrap;
+
+    .fsc-week{
+      display: flex;
+      flex-direction: row;
+      margin: 2px 0;
+
+      .fsc-empty-day{
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        padding-top: 12px;
+        margin: 0 2px;
+      }
+
+      .fsc-day{
+        position: relative;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        padding-top: 12px;
+        margin: 0 2px;
+        border: 1px solid;
+        border-radius: 20px;
+        cursor: pointer;
+
+        &.fsc-selected-range-start{
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        &.fsc-selected-range-mid{
+          border-radius: 0;
+        }
+        &.fsc-selected-range-end{
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+
+        .fsc-day-notes{
+          position: absolute;
+          top: -3px;
+          right: 0;
+          display: flex;
+          .fsc-note-count{
+            width: 16px;
+            height: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 2px;
+            padding: 1px 1px 1px 2px;
+            border-radius: 8px;
+            box-shadow: 1px 1px 5px;
+
+            &.fsc-reminders{
+              margin-right: 0;
+            }
+          }
+        }
+
+
+
+        .fsc-moons{
+          position: absolute;
+          right: 2px;
+          display: flex;
+          flex-direction: row;
+
+          &:hover {
+            .fsc-moon-group-wrapper {
+              .fsc-moon-group {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                position: absolute;
+                z-index: 100;
+                border: 1px solid;
+                border-radius: 5px;
+                padding: 0.25rem;
+                width: 50px;
+                &.fsc-top{
+                  top: -5px;
+                }
+                &.fsc-bottom{
+                  bottom: 0;
+                }
+                &.fsc-right{
+                  left: -6px;
+                }
+                &.fsc-left{
+                  right: -5px;
+                }
+                .fsc-moon-phase{
+                  margin-bottom: 2px;
+                }
+              }
+            }
+          }
+
+          .fsc-moon-group-wrapper{
+            display: flex;
+            margin-right: -7px;
+            .fa{
+              margin-left: -6px;
+              margin-top: 3px;
+              z-index: 1;
+
+            }
+            .fsc-moon-group{
+              display: none;
+            }
+          }
+
+          .fsc-moon-phase{
+            svg{
+              width: 20px;
+              height: 20px;
+              margin-top: -5px;
+              margin-left: -3px;
+            }
+            width: 11px;
+            height: 11px;
+            margin-right: 2px;
+            font-size: 11px;
+          }
+        }
+
+      }
+    }
+  }
+}

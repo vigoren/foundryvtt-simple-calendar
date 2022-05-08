@@ -1,7 +1,7 @@
-import SimpleCalendar from "../simple-calendar";
-import LeapYear from "../leap-year";
-import {GameSystems, LeapYearRules} from "../../constants";
-import Utilities from "../utilities";
+import LeapYear from "../calendar/leap-year";
+import {LeapYearRules} from "../../constants";
+import Calendar from "../calendar";
+import{compareSemanticVersions} from "../utilities/string";
 
 /**
  * System specific functionality for Pathfinder 2E
@@ -14,10 +14,15 @@ export default class PF2E {
      */
     private static worldClockCodeChangeVersion = "2.14.4.8167";
     /**
+     * The version of PF2E where a fix was applied that change the value of the year zero that should be used
+     * @private
+     */
+    private static worldClockCodeChangeBackVersion = "3.0.1";
+    /**
      * Gets the world creation time in seconds
      * @return {number}
      */
-    public static getWorldCreateSeconds(adjustByDay: boolean = true): number{
+    public static getWorldCreateSeconds(calendar: Calendar, adjustByDay: boolean = true): number{
         let seconds = 0;
         // If this is a Pathfinder 2E game, when setting Simple Calendar from the world time we need to add:
         //  - The World Create Time Stamp Offset (Used by PF2E to calculate the current world time) - This is a timestamp in Real world time
@@ -34,12 +39,10 @@ export default class PF2E {
 
             // the PF2E System all calendars are based off of the gregorian calendar.
             // Now with update 2.15.0 all calendars are no longer adding arbitrary numbers to the display of the year but instead using the correct year
-            if(SimpleCalendar.instance){
-                if(!adjustByDay && Utilities.compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0){
-                    seconds += SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay;
-                } else if( adjustByDay && Utilities.compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) <= 0){
-                    seconds -= SimpleCalendar.instance.activeCalendar.year.time.secondsPerDay;
-                }
+            if(!adjustByDay && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) <= 0){
+                seconds += calendar.time.secondsPerDay;
+            } else if( adjustByDay && (compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) <= 0 || compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) >= 0)){
+                seconds -= calendar.time.secondsPerDay;
             }
         }
         return seconds;
@@ -55,7 +58,11 @@ export default class PF2E {
             //If we are using the Gregorian Calendar that ties into the pathfinder world we need to set the year zero to 1875
             // @ts-ignore
             if(game.pf2e.worldClock.dateTheme === 'AD'){
-                yearZero = Utilities.compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0? 1970 : 1875;
+                if(compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) <= 0){
+                    yearZero = 1970;
+                } else {
+                    yearZero = 1875;
+                }
             }
             // @ts-ignore
             else if(game.pf2e.worldClock.dateTheme === 'CE'){
@@ -63,7 +70,11 @@ export default class PF2E {
             }
             // @ts-ignore
             else if(game.pf2e.worldClock.dateTheme === 'AR'){
-                yearZero = Utilities.compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 ? 0 : 2700;
+                if(compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) <= 0){
+                    yearZero = 0;
+                } else {
+                    yearZero = 2700;
+                }
             }
         }
         return yearZero;
@@ -74,12 +85,10 @@ export default class PF2E {
      * @param {LeapYear} leapYear the leap year class to update
      */
     public static checkLeapYearRules(leapYear: LeapYear){
-        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
-            //The Golarian and Gregorian based calendars need to use the gregorian rule
-            // @ts-ignore
-            if(game.pf2e.worldClock.dateTheme === 'AD' || game.pf2e.worldClock.dateTheme === 'CE' || game.pf2e.worldClock.dateTheme === 'AR'){
-                leapYear.rule = LeapYearRules.Gregorian;
-            }
+        //The Golarian and Gregorian based calendars need to use the gregorian rule
+        // @ts-ignore
+        if(game.pf2e.worldClock.dateTheme === 'AD' || game.pf2e.worldClock.dateTheme === 'CE' || game.pf2e.worldClock.dateTheme === 'AR'){
+            leapYear.rule = LeapYearRules.Gregorian;
         }
     }
 
@@ -88,13 +97,15 @@ export default class PF2E {
      */
     public static weekdayAdjust(){
         let adjust: number | undefined;
-        if(SimpleCalendar.instance.activeCalendar.gameSystem === GameSystems.PF2E && SimpleCalendar.instance.activeCalendar.generalSettings.pf2eSync){
-            // @ts-ignore
-            if(game.pf2e.worldClock.dateTheme === 'CE' || game.pf2e.worldClock.dateTheme === 'AD'){
-                adjust = 4;
-            }
-            // @ts-ignore
-            else if(game.pf2e.worldClock.dateTheme === 'AR'){
+        // @ts-ignore
+        if(game.pf2e.worldClock.dateTheme === 'CE' || game.pf2e.worldClock.dateTheme === 'AD'){
+            adjust = 4;
+        }
+        // @ts-ignore
+        else if(game.pf2e.worldClock.dateTheme === 'AR'){
+            if(compareSemanticVersions((<Game>game).system.data.version, PF2E.worldClockCodeChangeBackVersion) > 0){
+                adjust = 6;
+            } else {
                 adjust = 5;
             }
         }

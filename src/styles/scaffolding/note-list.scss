@@ -1,0 +1,53 @@
+@import "../variables";
+
+.fsc-note-list {
+  overflow-x: hidden;
+  overflow-y: auto;
+  .fsc-note{
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    border-bottom: 1px solid;
+
+    .fsc-note-details-wrapper{
+      display: block;
+      .fsc-note-title{
+        margin: 0 0 0.5rem;
+        font-size: 1.25rem;
+        word-break: break-word;
+      }
+
+      .fsc-note-details{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .fsc-note-icon{
+          span{
+            margin-right: 0;
+          }
+        }
+      }
+    }
+
+    .fsc-sorting-dragger{
+      padding: 0.5rem;
+      margin: auto 0;
+      border: 1px solid;
+      border-radius: 3px;
+      cursor: move;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.fsc-drag-active{
+      .fsc-note-details-wrapper{
+        visibility: hidden;
+      }
+    }
+  }
+}

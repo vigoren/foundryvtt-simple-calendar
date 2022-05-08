@@ -1,0 +1,34 @@
+.simple-calendar{
+  .form-group{
+    margin: $spacer-half 0;
+    padding: $spacer-half;
+    border: 1px solid;
+    max-height: 0;
+    overflow: hidden;
+
+    &.fsc-border-none{
+      border-width: 0;
+    }
+    &.fsc-open{
+      visibility: visible;
+      max-height: 150px;
+    }
+    &.fsc-closed{
+      visibility: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    &.fsc-date-selector{
+      overflow: visible;
+    }
+    label{
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .fsc-example{
+      flex: 0 0 100%;
+      text-align: right;
+      padding: $spacer-half 0 0 0;
+    }
+  }
+}

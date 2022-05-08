@@ -1,0 +1,20 @@
+@import "../variables";
+
+.simple-calendar{
+  background: $primary-100;
+  color: $fontColor;
+  scrollbar-color: $primary $primary-600;
+
+  &::-webkit-scrollbar-thumb{
+    background: $primary;
+    border-color:$primary-600;
+  }
+
+  a{
+    color: $tertiary;
+    &:hover, &:active, &:focus{
+      color: $tertiary-400;
+      text-shadow: unset;
+    }
+  }
+}

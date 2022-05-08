@@ -1,0 +1,41 @@
+@import "../variables";
+.simple-calendar{
+  .fsc-configuration-wrapper{
+    .fsc-progress{
+      .fsc-progress-bar{
+        transition: width 100ms;
+      }
+    }
+    .fsc-tab-section{
+      &.fsc-calendar-selector{
+        ul {
+          &.fsc-animate {
+            transition: max-height 500ms;
+          }
+        }
+      }
+    }
+    .fsc-tab-wrapper{
+      .fsc-settings-group{
+        &.fsc-animate {
+          transition: opacity 400ms;
+        }
+      }
+      .form-group{
+        &.fsc-animate {
+          transition: max-height 200ms;
+        }
+      }
+      .fsc-options{
+        &.fsc-animate {
+          transition: max-height 400ms;
+        }
+      }
+      .fsc-section{
+        &.fsc-animate {
+          transition: opacity 500ms;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+@import "src/styles/variables";
+.simple-calendar{
+  .fsc-control {
+    font-family: Roboto, sans-serif;
+    border: 1px solid;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    line-height: 1rem;
+    box-shadow: 1px 1px 5px $boxShadowColor;
+    cursor: pointer;
+
+    &.fa, .far, .fas {
+      font-family: "Font Awesome 5 Free";
+    }
+  }
+  .fsc-control-group{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    .fsc-control{
+      border-left: 0 solid;
+      border-radius: 0;
+      margin:0;
+      flex: 0;
+    }
+    button:first-of-type{
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+      border-left: 1px solid;
+    }
+    button:last-of-type{
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+  }
+}
+
