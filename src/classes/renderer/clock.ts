@@ -2,12 +2,13 @@ import Calendar from "../calendar";
 import {deepMerge} from "../utilities/object";
 import {GetIcon} from "../utilities/visual";
 import {Icons, TimeKeeperStatus} from "../../constants";
-import {CalManager} from "../index";
+import {CalManager, SC} from "../index";
 
 export default class Clock {
     private static defaultOptions: SimpleCalendar.Renderer.ClockOptions = {
         id: '',
-        cssClasses: ''
+        cssClasses: '',
+        theme: 'auto'
     };
 
     /**
@@ -26,6 +27,11 @@ export default class Clock {
         html += `<div class="fsc-animated-clock">${GetIcon(Icons.Clock)}</div>`;
         html += this.RenderTime(calendar, options);
         html += `</div>`;
+
+        if(options.theme !== 'none'){
+            const theme = options.theme === 'auto'? SC.clientSettings.theme : options.theme;
+            html = `<div class="simple-calendar ${theme}">${html}</div>`;
+        }
         return html;
     }
 

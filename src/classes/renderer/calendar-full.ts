@@ -5,7 +5,7 @@ import {GetIcon} from "../utilities/visual";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {CalendarClickEvents, CalendarViews, DateRangeMatch} from "../../constants";
 import RendererUtilities from "./utilities";
-import {CalManager, NManager} from "../index";
+import {CalManager, NManager, SC} from "../index";
 
 export default class CalendarFull{
 
@@ -25,6 +25,7 @@ export default class CalendarFull{
         showNoteCount: true,
         showMoonPhases: true,
         showYear: true,
+        theme: 'auto',
         view: CalendarViews.Month
     };
 
@@ -52,6 +53,10 @@ export default class CalendarFull{
                 HTML += this.Build(calendar, options);
             }
             HTML += '</div>';
+        }
+        if(options.theme !== 'none'){
+            const theme = options.theme === 'auto'? SC.clientSettings.theme : options.theme;
+            HTML = `<div class="simple-calendar ${theme}">${HTML}</div>`;
         }
         return HTML;
     }

@@ -88,6 +88,11 @@ describe('SCController Tests', () => {
         expect(gsGSSSpy).toHaveBeenCalledTimes(3);
         expect(docHeadQS).toHaveBeenCalledTimes(3);
         expect(docHeadA).toHaveBeenCalledTimes(2);
+
+        SCController.LoadThemeCSS('light');
+        expect(gsGSSSpy).toHaveBeenCalledTimes(3);
+        expect(docHeadQS).toHaveBeenCalledTimes(4);
+        expect(docHeadA).toHaveBeenCalledTimes(3);
     });
 
     test('initialize', () => {

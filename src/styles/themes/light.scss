@@ -167,7 +167,7 @@
         }
         &:disabled{
           color: $gray-700;
-          cursor: pointer;
+          cursor: not-allowed;
         }
       }
       &.fsc-primary {
@@ -184,6 +184,7 @@
           background-color: $primary-T200;
           border-color: $primary-T200;
           color: $fontColor;
+          cursor: not-allowed;
         }
       }
       &.fsc-secondary {
@@ -200,6 +201,7 @@
           background-color: $secondary-T400;
           border-color: $secondary-T400;
           color: $fontColor;
+          cursor: not-allowed;
         }
       }
       &.fsc-tertiary{
@@ -216,6 +218,7 @@
           background-color: $tertiary-T100;
           border-color: $tertiary-T100;
           color: $fontColor;
+          cursor: not-allowed;
         }
       }
       &.fsc-delete {
@@ -232,6 +235,7 @@
           background-color: $danger-T400;
           border-color: $danger-T400;
           color: $fontColor;
+          cursor: not-allowed;
         }
       }
       &.fsc-save {
@@ -248,6 +252,7 @@
           background-color: $success-T400;
           border-color: $success-T400;
           color: $fontColor;
+          cursor: not-allowed;
         }
       }
     }

@@ -10,6 +10,7 @@ import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import Renderer from "../renderer";
 import * as VUtils from "../utilities/visual";
+import SCController from "../s-c-controller";
 
 
 describe('Handlebars Helpers Tests', () => {
@@ -58,6 +59,7 @@ describe('Handlebars Helpers Tests', () => {
 
     test('Full Calendar', () => {
         jest.spyOn(Renderer.CalendarFull, 'Render').mockImplementation(() => {return '';});
+        jest.spyOn(SCController, 'LoadThemeCSS').mockImplementation(() => {});
         const options: any = {hash:{}};
         expect(HandlebarsHelpers.FullCalendar(options)).toEqual({"v": ""});
 
@@ -73,21 +75,26 @@ describe('Handlebars Helpers Tests', () => {
             showSeasonName: true,
             showNoteCount: true,
             showMoonPhases: true,
-            showYear: true
+            showYear: true,
+            theme: 'light'
         };
-        expect(HandlebarsHelpers.FullCalendar(options)).toBeDefined()
+        expect(HandlebarsHelpers.FullCalendar(options)).toBeDefined();
+        expect(SCController.LoadThemeCSS).toHaveBeenCalledTimes(1);
     });
 
     test('Clock', () => {
         jest.spyOn(Renderer.Clock, 'Render').mockImplementation(() => {return '';});
+        jest.spyOn(SCController, 'LoadThemeCSS').mockImplementation(() => {});
         const options: any = {hash:{}};
         expect(HandlebarsHelpers.Clock(options)).toEqual({"v": ""});
 
         options.hash = {
             id: '',
-            calendarId: ''
+            calendarId: '',
+            theme: 'light'
         };
         expect(HandlebarsHelpers.Clock(options)).toEqual({"v": ""});
+        expect(SCController.LoadThemeCSS).toHaveBeenCalledTimes(1);
     });
 
     test('Icon', () => {

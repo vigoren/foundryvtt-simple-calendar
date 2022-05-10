@@ -1,7 +1,8 @@
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import Renderer from "../renderer";
 import {GetIcon} from "../utilities/visual";
-import {CalManager} from "../index";
+import {CalManager, SC} from "../index";
+import SCController from "../s-c-controller";
 
 /**
  * Class that contains all of the Handlebars helper functions
@@ -120,6 +121,12 @@ export class HandlebarsHelpers{
         if(options.hash.hasOwnProperty('showYear')){
             renderOptions.showYear = options.hash['showYear'];
         }
+        if(options.hash.hasOwnProperty('theme')){
+            renderOptions.theme = options.hash['theme'];
+            if(renderOptions.theme !== 'none' && renderOptions.theme !== 'auto'){
+                SCController.LoadThemeCSS(renderOptions.theme);
+            }
+        }
         let cal = CalManager.getCalendar(calendarId);
         if(!cal){
             cal = CalManager.getActiveCalendar();
@@ -139,6 +146,12 @@ export class HandlebarsHelpers{
         }
         if(options.hash.hasOwnProperty('calendarId')){
             calendarId = options.hash['calendarId'];
+        }
+        if(options.hash.hasOwnProperty('theme')){
+            renderOptions.theme = options.hash['theme'];
+            if(renderOptions.theme !== 'none' && renderOptions.theme !== 'auto'){
+                SCController.LoadThemeCSS(renderOptions.theme);
+            }
         }
         let cal = CalManager.getCalendar(calendarId);
         if(!cal){

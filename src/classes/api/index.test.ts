@@ -19,7 +19,7 @@ import {
 import Calendar from "../calendar";
 import {
     CalManager,
-    MainApplication,
+    MainApplication, MigrationApplication,
     NManager,
     SC,
     updateCalManager,
@@ -284,20 +284,22 @@ describe('API Class Tests', () => {
         expect(API.getTimeConfiguration('')).toBeDefined();
     });
 
-    test('Is Primary GM', async () => {
+    test('Is Primary GM', () => {
+        expect(API.isPrimaryGM()).toBe(false);
+    });
+
+    test('Run Migration', async () => {
         jest.spyOn(console, 'info').mockImplementation(() => {});
         jest.spyOn(console, 'warn').mockImplementation(() => {});
-        expect(API.isPrimaryGM()).toBe(false);
+        updateMigrationApplication(new MigrationApp());
+        jest.spyOn(MigrationApplication, 'run').mockImplementation(async () => {});
         expect(API.runMigration()).rejects.toBeUndefined();
 
         //@ts-ignore
         game.user.isGM = true;
         SC.primary = true;
-        updateMigrationApplication(new MigrationApp());
         expect(await API.runMigration()).toBeUndefined();
     });
-
-    test('Run Migration', () => {});
 
     test('Seconds To Interval', () => {
         expect(API.secondsToInterval(10)).toEqual({});

@@ -31,7 +31,7 @@ export default class V1ToV2{
 
         //Month and Day storage changed from actual number to index so need to adjust the current date, seasons and moons
         if(legacySettings.months){
-            if(legacySettings.currentDate){
+            if(legacySettings.currentDate && !isObjectEmpty(legacySettings.currentDate)){
                 legacySettings.currentDate.month = legacySettings.months.findIndex(m => m.numericRepresentation === legacySettings.currentDate?.month);
                 if(legacySettings.currentDate.month < 0){
                     legacySettings.currentDate.month = 0;
@@ -124,30 +124,36 @@ export default class V1ToV2{
         const calendar = CalManager.getActiveCalendar();
         for(let i = 0; i < oldNotes.length; i++){
             const oldNote = oldNotes[i];
-            const newNoteData: SimpleCalendar.NoteData = {
-                allDay: oldNote.allDay,
-                calendarId: calendar.id,
-                repeats: oldNote.repeats,
-                order: oldNote.order,
-                categories: oldNote.categories,
-                remindUsers: oldNote.remindUsers,
-                startDate: {
-                    year: oldNote.year,
-                    month: calendar.months.findIndex(m => m.numericRepresentation === oldNote.month),
-                    day: oldNote.day - 1,
-                    hour: oldNote.hour,
-                    minute: oldNote.minute,
-                    seconds: 0
-                },
-                endDate: {
-                    year: oldNote.endDate.year,
-                    month: calendar.months.findIndex(m => m.numericRepresentation === oldNote.endDate.month),
-                    day: oldNote.endDate.day - 1,
-                    hour: oldNote.endDate.hour,
-                    minute: oldNote.endDate.minute,
-                    seconds: 0
-                }
+
+            const startDate: SimpleCalendar.DateTime = {
+                year: oldNote.year || calendar.year.numericRepresentation,
+                month: calendar.months.findIndex(m => m.numericRepresentation === oldNote.month),
+                day: (oldNote.day || 1) - 1,
+                hour: oldNote.hour || 0,
+                minute: oldNote.minute || 0,
+                seconds: 0
             };
+            const newNoteData: SimpleCalendar.NoteData = {
+                allDay: oldNote.allDay === undefined? true : oldNote.allDay,
+                calendarId: calendar.id,
+                repeats: oldNote.repeats || 0,
+                order: oldNote.order || 0,
+                categories: oldNote.categories || [],
+                remindUsers: oldNote.remindUsers || [],
+                startDate: startDate,
+                endDate: startDate
+            };
+            if(oldNote.hasOwnProperty('endDate')){
+                newNoteData.endDate = {
+                    year: oldNote.endDate.year || startDate.year,
+                    month: calendar.months.findIndex(m => m.numericRepresentation === oldNote.endDate.month),
+                    day: (oldNote.endDate.day || 1) - 1,
+                    hour: oldNote.endDate.hour || 0,
+                    minute: oldNote.endDate.minute || 0,
+                    seconds: 0
+                };
+            }
+
             if(newNoteData.startDate.month < 0){
                 newNoteData.startDate.month = 0;
             }

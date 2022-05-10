@@ -119,19 +119,12 @@ export default class MigrationApp extends Application{
         this.showApp();
         const cm = this.runCalendarMigration();
         this.showApp();
-        if(cm){
-            const nm = await this.runNoteMigration();
-            this.showApp();
-            if(nm){
-                this.displayData.enableCleanUp = true;
-                this.displayData.migrationDone = true;
-                MainApplication.showApp();
-                this.showApp();
-            } else {
-                this.showApp();
-            }
-        } else {
-            this.displayData.notesMigrationStatusIcon = 'fa-ban fsc-cancel';
+        const nm = await this.runNoteMigration();
+        this.showApp();
+        if(cm && nm){
+            this.displayData.enableCleanUp = true;
+            this.displayData.migrationDone = true;
+            MainApplication.showApp();
             this.showApp();
         }
     }
@@ -139,26 +132,29 @@ export default class MigrationApp extends Application{
     public runCalendarMigration(){
         Logger.info('Migrating Calendar Configuration...');
         if(this.MigrationType == MigrationTypes.v1To2){
+            let calSuccess = false, globConfigSuccess = false;
             const newCalendar = V1ToV2.runCalendarMigration();
             if(newCalendar !== null){
                 CalManager.setCalendars([newCalendar]);
                 this.displayData.calendarMigrationStatusIcon = 'fa-check-circle fsc-completed';
                 Logger.info('Calendar Configuration successfully migrated!');
                 Logger.info('Migrating Permissions and General Settings...');
-                if(V1ToV2.runGlobalConfigurationMigration()){
-                    Logger.info('Permissions and General Settings successfully migrated!');
-                    this.displayData.globalConfigMigrationStatusIcon = 'fa-check-circle fsc-completed';
-                    this.saveMigratedData();
-                    return true;
-                } else {
-                    Logger.error('There was an error converting the existing permissions and general settings to the new permissions and general settings data model.');
-                    this.displayData.globalConfigMigrationStatusIcon = 'fa-times-circle fsc-error';
-                }
+                calSuccess = true;
             } else {
                 Logger.error('There was an error converting the existing calendar configuration to the new calendar data model.');
                 this.displayData.calendarMigrationStatusIcon = 'fa-times-circle fsc-error';
                 this.displayData.globalConfigMigrationStatusIcon = 'fa-ban fsc-cancel';
             }
+            if(V1ToV2.runGlobalConfigurationMigration()){
+                Logger.info('Permissions and General Settings successfully migrated!');
+                this.displayData.globalConfigMigrationStatusIcon = 'fa-check-circle fsc-completed';
+                this.saveMigratedData();
+                globConfigSuccess = true;
+            } else {
+                Logger.error('There was an error converting the existing permissions and general settings to the new permissions and general settings data model.');
+                this.displayData.globalConfigMigrationStatusIcon = 'fa-times-circle fsc-error';
+            }
+            return calSuccess && globConfigSuccess;
         }
         return false;
     }

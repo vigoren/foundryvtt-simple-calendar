@@ -81,8 +81,8 @@ export default class SCController {
      * Loads any extra css files required for the specified theme
      * This is required for all themes other than Light and Dark
      */
-    public static LoadThemeCSS(){
-        const theme = GameSettings.GetStringSettings(SettingNames.Theme);
+    public static LoadThemeCSS(setTheme: string = ''){
+        const theme = setTheme? setTheme : GameSettings.GetStringSettings(SettingNames.Theme);
         const cssExists = document.head.querySelector(`#theme-${theme}`);
         if(cssExists === null){
             const newStyle = document.createElement('link');

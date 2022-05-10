@@ -167,7 +167,7 @@
         }
         &:disabled{
           color: $gray-300;
-          cursor: pointer;
+          cursor: not-allowed;
         }
       }
       &.fsc-primary {
@@ -180,6 +180,12 @@
           border-color: $primary-800;
           color: $white;
         }
+        &:disabled{
+          background-color: $primary-T900;
+          border-color: $primary-T900;
+          color: $white;
+          cursor: not-allowed;
+        }
       }
       &.fsc-secondary {
         background-color: $secondary;
@@ -190,6 +196,12 @@
           background-color: $secondary-300;
           border-color: $secondary;
           color: $fontColor;
+        }
+        &:disabled{
+          background-color: $secondary-T900;
+          border-color: $secondary-T900;
+          color: $white;
+          cursor: not-allowed;
         }
       }
       &.fsc-tertiary{
@@ -202,6 +214,12 @@
           border-color: $tertiary-300;
           color: $fontColor;
         }
+        &:disabled{
+          background-color: $tertiary-T900;
+          border-color: $tertiary-T900;
+          color: $white;
+          cursor: not-allowed;
+        }
       }
       &.fsc-delete {
         background-color: $danger-900;
@@ -212,6 +230,12 @@
           background-color: $danger;
           border-color: $danger-900;
           color: $white;
+        }
+        &:disabled{
+          background-color: $danger-T900;
+          border-color: $danger-T900;
+          color: $white;
+          cursor: not-allowed;
         }
       }
       &.fsc-save {
@@ -228,6 +252,7 @@
           background-color: $success-T900;
           border-color: $success-T900;
           color: $white;
+          cursor: not-allowed;
         }
       }
     }

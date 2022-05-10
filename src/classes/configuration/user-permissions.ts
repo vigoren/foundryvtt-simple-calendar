@@ -89,15 +89,23 @@ export default class UserPermissions extends ConfigurationItemBase{
     }
 
     /**
-     * Sets the properties for this class to options set in the passed in configuration object
+     * Sets the properties for this class to options set from the passed in configuration object
      * @param {UserPermissionsData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.UserPermissionsData) {
         if(config && Object.keys(config).length){
-            this.viewCalendar = config.viewCalendar;
-            this.addNotes = config.addNotes;
-            this.changeDateTime = config.changeDateTime;
-            this.reorderNotes = config.reorderNotes;
+            if(config.hasOwnProperty('viewCalendar')){
+                this.viewCalendar = config.viewCalendar
+            }
+            if(config.hasOwnProperty('addNotes')){
+                this.addNotes = config.addNotes
+            }
+            if(config.hasOwnProperty('changeDateTime')){
+                this.changeDateTime = config.changeDateTime
+            }
+            if(config.hasOwnProperty('reorderNotes')){
+                this.reorderNotes = config.reorderNotes
+            }
             if(config.hasOwnProperty('changeActiveCalendar')){
                 this.changeActiveCalendar = config.changeActiveCalendar
             }
