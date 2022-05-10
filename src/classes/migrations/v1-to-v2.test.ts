@@ -96,6 +96,12 @@ describe('V1 to V2 Class Tests', () => {
         expect(await V1ToV2.runNoteMigration()).toBe(true);
         expect(NManager.createNote).toHaveBeenCalledTimes(3);
         expect(je.update).toHaveBeenCalledTimes(3);
+
+        //@ts-ignore
+        (<Mock>(<Game>game).settings.get).mockReturnValueOnce([{author: 'aasd', playerVisible: true, calendarId: '', startDate: {year: 0, month: 1, day: 1, hour: 0, minute: 0, seconds: 0}, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}}]); //Notes
+        expect(await V1ToV2.runNoteMigration()).toBe(true);
+        expect(NManager.createNote).toHaveBeenCalledTimes(4);
+        expect(je.update).toHaveBeenCalledTimes(4);
     });
 
     test('Clean Up Old Data', async () => {

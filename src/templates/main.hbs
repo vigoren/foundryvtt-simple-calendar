@@ -32,7 +32,7 @@
                 <div class="fsc-date-text">{{calendar.selectedDay.dateDisplay}}</div>
             </div>
             {{else}}
-            {{sc-full-calendar id=calendar.calendarDisplayId calendarId=calendar.id date=calendar.visibleDate}}
+            {{sc-full-calendar id=calendar.calendarDisplayId calendarId=calendar.id theme='none' date=calendar.visibleDate}}
             {{/if}}
         </div>
         <div class="fsc-actions-list">
@@ -206,7 +206,7 @@
     {{#if showClock}}
     <div class="fsc-section">
         <div class="fsc-clock-display">
-            {{sc-clock id=calendar.clockDisplayId calendarId=calendar.id}}
+            {{sc-clock id=calendar.clockDisplayId calendarId=calendar.id theme='none'}}
         </div>
         <div class="fsc-actions-list">
             {{#if changeDateTime}}

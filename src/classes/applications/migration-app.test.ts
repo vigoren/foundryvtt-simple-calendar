@@ -101,8 +101,7 @@ describe('Migration App Class Tests', () => {
         jest.spyOn(MainApplication, 'showApp').mockImplementation(() => {});
 
         await ma.run();
-        //@ts-ignore
-        expect(ma.displayData.notesMigrationStatusIcon).toBe('fa-ban fsc-cancel');
+        expect(MainApplication.showApp).toHaveBeenCalledTimes(0);
 
         rcm.mockReturnValue(true);
         await ma.run();
@@ -123,19 +122,19 @@ describe('Migration App Class Tests', () => {
         ma.MigrationType = MigrationTypes.v1To2;
         expect(ma.runCalendarMigration()).toBe(false);
         expect(V1ToV2.runCalendarMigration).toHaveBeenCalledTimes(1);
-        expect(console.error).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(2);
 
         rcm.mockReturnValue(tCal);
         expect(ma.runCalendarMigration()).toBe(false);
         expect(V1ToV2.runCalendarMigration).toHaveBeenCalledTimes(2);
-        expect(V1ToV2.runGlobalConfigurationMigration).toHaveBeenCalledTimes(1);
+        expect(V1ToV2.runGlobalConfigurationMigration).toHaveBeenCalledTimes(2);
         expect(CalManager.setCalendars).toHaveBeenCalledTimes(1);
         expect(ma.saveMigratedData).toHaveBeenCalledTimes(0);
 
         rgcm.mockReturnValue(true);
         expect(ma.runCalendarMigration()).toBe(true);
         expect(V1ToV2.runCalendarMigration).toHaveBeenCalledTimes(3);
-        expect(V1ToV2.runGlobalConfigurationMigration).toHaveBeenCalledTimes(2);
+        expect(V1ToV2.runGlobalConfigurationMigration).toHaveBeenCalledTimes(3);
         expect(CalManager.setCalendars).toHaveBeenCalledTimes(2);
         expect(ma.saveMigratedData).toHaveBeenCalledTimes(1);
     });

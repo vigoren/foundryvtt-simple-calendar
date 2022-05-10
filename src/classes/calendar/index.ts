@@ -300,7 +300,7 @@ export default class Calendar extends ConfigurationItemBase{
                     Logger.warn('Saved current day could not be found in this month, perhaps number of days has changed. Setting current day to first day of month');
                     this.months[config.currentDate.month].days[0].current = true;
                 }
-            } else {
+            } else if(this.months.length){
                 Logger.warn('Saved current month could not be found, perhaps months have changed. Setting current month to the first month');
                 this.months[0].current = true;
                 this.months[0].visible = true;

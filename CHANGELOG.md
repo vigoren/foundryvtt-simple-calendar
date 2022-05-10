@@ -1,5 +1,11 @@
 # Change Log
 
+## v2.0.1 - Bug Fixing
+
+- Changes to the migration process from v1.x to v2 to account for updates from Simple Calendar versions previous to 1.3.x
+  - **Important**: If you ran into migration errors please run this command in the browser console after updating `SimpleCalendar.api.runMigration()`
+- Documentation Updates.
+
 ## v2.0.0 - Visual Redesign / Themes, Multiple Calendar Support, Note Improvements and more!
 
 I am very happy to announce the release of version 2 of Simple Calendar! This update is big and covers many improvements and changes. Be sure to check out the full notes for all the details.
@@ -16,7 +22,8 @@ I have tried to make sure that the light and dark themes are still easily usable
 
 #### Main Calendar
 
-![Dark Theme](./docs/images/sc-v2-themes.gif)
+![](./docs/images/sc-v2-themes.gif)
+![](media://sc-v2-themes.gif)
 
 This section of the module has been 100% redesigned so that the full version is much more compact and easy to use. It features:
 
@@ -33,7 +40,8 @@ This section of the module has been 100% redesigned so that the full version is 
 
 #### Compact View
 
-![Dark Theme](./docs/images/sc-v2-themes-comp.gif)
+![](./docs/images/sc-v2-themes-comp.gif)
+![](media://sc-v2-themes-comp.gif)
 
 The compact view has also been completely redesigned to be more compact while still showing the same amount of information and functionality as before. It is now just slightly larger than the old calendar/weather widget.
 
@@ -41,7 +49,8 @@ The button in the header to switch between compact and full views has been remov
 
 #### Configuration Dialog
 
-![Dark Theme](./docs/images/sc-v2-themes-config.gif)
+![](./docs/images/sc-v2-themes-config.gif)
+![](media://sc-v2-themes-config.gif)
 
 The configuration dialog has also been completely redesigned to support multiple calendars and hopefully reduce some confusion around configuring a calendar. It features:
 
@@ -52,7 +61,8 @@ The configuration dialog has also been completely redesigned to support multiple
 
 #### Notes Dialog
 
-![Dark Theme](./docs/images/sc-v2-themes-notes.gif)
+![](./docs/images/sc-v2-themes-notes.gif)
+![](media://sc-v2-themes-notes.gif)
 
 The note dialog has been redesigned as well to match the look and feel of the other dialogs!
 

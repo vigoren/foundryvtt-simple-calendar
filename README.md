@@ -1,4 +1,5 @@
 [![Supported Foundry Versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json)](https://foundryvtt.com/releases/)
+![](https://img.shields.io/endpoint?url=https%3A%2F%2Ffoundryshields.com%2Fsystem%3FnameType%3Dfull%26showVersion%3D1%26url%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Fvigoren%2Ffoundryvtt-simple-calendar%2Fmain%2Fsrc%2Fmodule.json)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/vigoren/foundryvtt-simple-calendar)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vigoren/foundryvtt-simple-calendar/Node.js%20CI)
@@ -16,55 +17,67 @@
 
 # Simple Calendar 
 
-A simple calendar module for [FoundryVTT](https://foundryvtt.com/) that is game system independent. 
+Simple Calendar is the ultimate timekeeping module for [FoundryVTT](https://foundryvtt.com/) that works with all game systems!
 
-This module allows you to create a completely customizable calendar that ties in with the Game Masters world exactly how they want it to. Notes and events can be added to the calendar to help keep track of what and when things are happening in your world.
+It comes prepackaged with many [preset calendars](https://simplecalendar.info/pages/docs/calendar-configuration/quick-setup.html) to get your world up and running quickly. Or if you have a completely custom-built calendering system for your world, Simple Calendar can handle that as well!
 
-All of this is done using a familiar calendaring view both the GM and players will enjoy!
+![](./docs/images/sc-v2-themes.gif)
+![](media://sc-v2-themes.gif)
 
-## Contents
+## Creating The Perfect Calendar
 
-- [Features](#features)
-- [Installation](#installing-the-module)
+Simple Calendar gives Game Masters to power to create calendars to enrich their worlds for their players.
+
+### Define months that make sense for your world. 
+
+* Your world can have as many months as it needs!.
+* [Customize](https://simplecalendar.info/pages/docs/calendar-configuration/month-settings.html) each month to specify everything from how many days it has, its name to if the month is considered intercalary (falls outside normal months) or not.
+
+### Custom Years
+
+* Set the current year or add a prefix/postfix.
+* You can also [name each year](https://simplecalendar.info/pages/docs/calendar-configuration/year-settings.html#year-names) to give your world a unique touch!
+
+### Unique Weekdays
+
+* You set how many days are in a week and customize the name of each weekday!
+
+### Set Your Own Leap Year Rules
+
+* Customize if your world has [leap years](https://simplecalendar.info/pages/docs/calendar-configuration/leap-year-settings.html) and if so how often they occur.
+* Set how many days a month has during a leap year. You can even have months only appear or disappear during leap years!
+
+### Seasons
+
+* Determine how many [seasons](https://simplecalendar.info/pages/docs/calendar-configuration/season-settings.html) there are in your world.
+* [Customize](https://simplecalendar.info/pages/docs/calendar-configuration/season-settings.html) their names, when the season starts, and assign an icon and color to make each season unique.
+* You can also specify Sunrise and Sunset times for each season and Simple Calendar will do the math to gradually shift those times between season!
+
+### Create Custom Moons
+
+* [Set up](https://simplecalendar.info/pages/docs/calendar-configuration/moon-settings.html) as many moons as your world needs and give it a unique name, cycle length and color.
+* Go deeper into the settings and [customize each phase](https://simplecalendar.info/pages/docs/calendar-configuration/moon-settings.html#phases) of the moon!
+
+### Unique Time? No Problem
+
+* [Customize](https://simplecalendar.info/pages/docs/calendar-configuration/time-settings.html) the number hours in a day, minutes in an hour and seconds in a minute.
+* Configure how the real time clock interacts with your world, so as seconds pass in the real world time passes in your world!
+
+### Notes and Events 
+
+* Add [notes](https://simplecalendar.info/pages/docs/using-sc/notes.html) and events to your calendar so that you never forget an event again.
+* Specify how often notes can repeat, categorize your notes for easy identification and select who can view each note.
+
+## Documentation
+
+Simple Calendar has a dedicated site for everything from how to use the module as a player, to configure the module as a game master to how to interact with the API for use with other modules / systems. Check out the links below!
+
+- [Documentation](https://simplecalendar.info/index.html)
 - [Using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html)
 - [Configuring your Calendar](https://simplecalendar.info/pages/docs/calendar-configuration/index/index.html)
 - [Notes](https://simplecalendar.info/pages/docs/using-sc/notes.html)
 - [Hooks](https://simplecalendar.info/modules/SimpleCalendar.Hooks.html)
 - [API (For use by other modules, systems or macros)](https://simplecalendar.info/modules/SimpleCalendar.api.html)
-- [Translations](#translations)
-
-## Features
- Simple Calendar has a number of features that make it a great time keeping tool for your games!
-
-![](./docs/images/sc-v2-themes.gif)
-![](media://sc-v2-themes.gif)
-
-### For GMs
-* Complete customization of the calendar to meet your worlds needs! Including the following functionality:
-  * Set the year as well as add any prefix or postfix or a custom name for the year.
-  * Define how many months in a year.
-  * Set a custom name, the number of days for each month.
-  * Choose if months are considered intercalary (fall outside normal months).
-  * Define how many days in a week and the name of each weekday.
-  * Set the number hours in a day, minutes in an hour and seconds in a minute.  
-  * Set up your own Leap Year rules.
-  * Set up different seasons for your calendar and how they are displayed to the users.
-  * Set up your own custom moons.
-  * Or choose from a selection of [preset calendars](./docs/Configuration.md#predefined-calendars).
-* Set and change the current day and time as your game story progresses or have it automatically advance based on real world time and passing combat rounds.
-* Add notes to specific days on the calendar to remind yourself of events or other world related things.
-  * Add custom labels to notes to help distinguish the type of note.
-  * Set if the note is visible to players or just the GM.
-  * Support for repeating notes! They can repeat weekly, monthly or yearly.
-
-
-### For Players
-
-* Browse a calendar interface to see the years, months and day of the game world.
-* See the current day and time of the game world.
-* Select days to view any notes/events specific to that day.
-* If the GM allows it, the ability to add their own notes to the calendar.
-* The Ability to switch between a full and compact view of the calendar.
 
 ## Installing The Module
 
@@ -98,7 +111,7 @@ Simple Calendar is available in languages other than English thanks to the follo
 | French (fr)               | [JDR Ninja](https://github.com/JDR-Ninja) <br/> [TheBird956](https://github.com/TheBird956)                                                                   |
 | Italian (it)              | [Haloghen](https://github.com/Haloghen)                                                                                                                       |
 
-# Contributing
+## Contributing
 
 If you would like to contribute to the Simple Calendar module check out the [contributing](./CONTRIBUTING.md) guide!
 

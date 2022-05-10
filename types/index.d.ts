@@ -1619,6 +1619,8 @@ declare global{
                 showSeasonName?: boolean;
                  /** If to show the year */
                 showYear?: boolean;
+                /** The theme to use for rendering the calendar */
+                theme?: string;
                 /** The view of the calendar */
                 view?: CalendarViews;
             }
@@ -1631,6 +1633,8 @@ declare global{
                 id: string;
                  /** Any custom css classes to add to the containing div */
                 cssClasses?: string;
+                /** The theme to use for rendering this clock */
+                theme?: string;
             }
 
             /**
@@ -2321,7 +2325,13 @@ declare global{
          * - **showSeasonName:** *boolean* = true<br/>If to show the season name in the calendar view.<br/><br/>
          * - **showNoteCount:** *boolean* = true<br/>If to show the indicator for notes on the days being displayed.<br/><br/>
          * - **showMoonPhases:** *boolean* = true<br/>If to show the moon phases for the days being displayed.<br/><br/>
-         * - **showYear:** *boolean* = true<br/>If to show the year in the header text of the full calendar.
+         * - **showYear:** *boolean* = true<br/>If to show the year in the header text of the full calendar.<br/><br/>
+         * - **theme:** *string* = "auto"<br/>The theme you want the calendar to have. 'auto' means the theme will match what ever theme the current user has selected, 'none' means no theme will be applied, 'dark', 'light', 'classic' will apply that specific theme to the calendar.
+         *
+         * You can customize the calendars theme, how it looks, to be anything you like if you follow these steps:
+         * - Set the theme parameter to 'none'.
+         * - wrap them handlebar helper in a div with the 'simple-calendar' class (if you wish to keep the same structure for the calendar) `<div class="simple-calendar"></div>`
+         * - Create your custom CSS
          *
          * **Examples**:
          *
@@ -2352,6 +2362,14 @@ declare global{
          * {{sc-full-calendar id='custom_id' date=newDate }}
          * ```
          * ![Specific Date Example](media://sc-full-calendar-example-set-date.png)
+         *
+         * @example Specified Theme
+         *
+         * This forces the theme to be the light theme for this calendar, regardless of what the current users preferred Simple Calendar theme is set too.
+         * ```html
+         * {{sc-full-calendar id='custom_id' theme='light' }}
+         * ```
+         * ![Set Theme Example](media://sc-full-calendar-example-set-theme.png)
          */
         "sc-full-calendar",
         /**
@@ -2381,16 +2399,34 @@ declare global{
         /**
          * This handlebar helper is used to generate the HTML for displaying a clock view for the current time of the specified calendar.
          *
+         * @remarks The clock does not automatically update. Listening to the {@link SimpleCalendar.Hooks.DateTimeChange} hook would allow you to refresh the clock display.
+         *
          * **Parameters**
          *
          * - **id:** *string* = ""<br/>The unique ID to set in the clock HTML.<br/><br/>
          * - **calendarId:** *string* = ""<br/>The ID of the calendar to get the time from. If no ID is provided the current active calendar will be used.<br/><br/>
+         * - **theme:** *string* = "auto"<br/>The theme you want the clock to have. 'auto' means the theme will match what ever theme the current user has selected, 'none' means no theme will be applied, 'dark', 'light', 'classic' will apply that specific theme to the clock.
+         *
+         * You can customize the clocks theme, how it looks, to be anything you like if you follow these steps:
+         * - Set the theme parameter to 'none'.
+         * - wrap them handlebar helper in a div with the 'simple-calendar' class (if you wish to keep the same structure for the calendar) `<div class="simple-calendar"></div>`
+         * - Create your custom CSS
+         *
+         * **Examples**:
          *
          * @example Default Display
          * ```html
          * {{sc-clock id='unique_id' }}
          * ```
          * ![Clock](media://sc-clock-example.png)
+         *
+         * @example Specified Theme
+         *
+         * This forces the theme to be the light theme for the clock, regardless of what the current users preferred Simple Calendar theme is set too.
+         * ```html
+         * {{sc-clock id='unique_id' theme='light'}}
+         * ```
+         * ![Clock Set Theme](media://sc-clock-example-set-theme.png)
          *
          * @example Specific Calendar
          * ```html
