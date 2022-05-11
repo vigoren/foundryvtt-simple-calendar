@@ -1,5 +1,28 @@
 # Change Log
 
+## v2.0.4 - Update Issue Fix and More Bugs Squished
+
+### Update Issue Fix
+
+Right now Foundry says that version 1.3.75 is newer than version 2.0.1 and won't update the module. I will explain why below.
+
+**TL;DR**: I made a mistake, the quick fix is to uninstall and reinstall Simple Calendar. There will be no data loss and the issue will be solved going forward.
+
+**Longer Version**: When I first release Simple Calendar I did a silly thing and put a "v" in front of the version that Foundry reads. Foundry uses this version to determine if an update is a newer version or not. 
+
+This version is also stored in the module's details so not something that can be fixed without updating the module.
+
+When Foundry compares a version that starts with a v to one that does not start with a v, the one that starts with a v is considered newer. As well the first portion of two versions that both start with a v, example 'v1' and 'v2', are considered to be the same. Until version 2 of Simple Calendar this didn't matter as it was always comparing 'v1' to 'v1'. FoundryVTT won't change how they check version so I need to make the change on my side.
+
+Unfortunately the easiest way to fix this is to uninstall the previous version of Simple Calendar and reinstall it. After doing this, it will update properly going forward. When uninstalling a module that modules' data is not removed so there is no data loss in doing this. That said if you are concerned about data loss please make a backup of your world(s) before doing this exercise.
+
+I apologize about this mistake and the extra work/confusion that may have come because of it.
+
+### Bug Fixes
+- Fixed a bug where after doing a quick setup with a predefined calendar with notes, the notes would be listed twice on days until the page was refreshed.
+- Fixed a bug where the Display Options Time Formats previews were no longer updating as changes were made to the format.
+- Toned down the Token Control button coloring, so it is not as vivid and distracting.
+
 ## v2.0.1 - Bug Fixing
 
 - Changes to the migration process from v1.x to v2 to account for updates from Simple Calendar versions previous to 1.3.x
