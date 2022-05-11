@@ -66,10 +66,10 @@ export class NoteSheet extends DocumentSheet{
     }
 
     copyData(){
-        this.journalData.name = this.object.data.name;
-        this.journalData.content = this.object.data.content;
-        this.journalData.flags = mergeObject({}, this.object.data.flags);
-        this.journalData.permission = mergeObject({}, this.object.data.permission);
+        this.journalData.name = this.object.name;
+        this.journalData.content = this.object.data.content;//TODO: Stuff is stored as a page so need to figure that out.
+        this.journalData.flags = mergeObject({}, this.object.flags);
+        this.journalData.permission = mergeObject({}, this.object.ownership);
     }
 
     protected _getHeaderButtons(): Application.HeaderButton[] {
