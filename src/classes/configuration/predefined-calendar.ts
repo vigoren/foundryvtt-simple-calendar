@@ -51,10 +51,7 @@ export default class PredefinedCalendar{
                     note.flags[ModuleName].noteData.fromPredefined = true;
                     note.folder = NManager.noteDirectory?.id;
                     note.permission = perms;
-                    const je = await JournalEntry.create(note, {keepId: false});
-                    if(je){
-                        NManager.addNoteStub(je, calendarId);
-                    }
+                    await JournalEntry.create(note, {keepId: false});
                 }
             }
             updated = true;

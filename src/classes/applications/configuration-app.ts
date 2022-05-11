@@ -369,6 +369,7 @@ export default class ConfigurationApp extends FormApplication {
             //---------------------
             this.appWindow.querySelectorAll("input, select").forEach(e => {
                 e.addEventListener('change', this.inputChange.bind(this));
+                e.addEventListener('keyup', this.inputChange.bind(this));
             });
             //---------------------
             // Date Format Table open/close
@@ -826,15 +827,15 @@ export default class ConfigurationApp extends FormApplication {
             this.uiElementStates.timeFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.time, <Calendar>this.object);
             this.uiElementStates.monthYearFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.monthYear, <Calendar>this.object);
 
-            let df = this.appWindow.querySelector(`#scDateFormatsDate`)?.closest('.form-group')?.querySelector('.example');
+            let df = this.appWindow.querySelector(`#scDateFormatsDate`)?.closest('.form-group')?.querySelector('.fsc-example');
             if(df){
                 (<HTMLElement>df).innerHTML = `<strong>${GameSettings.Localize('FSC.Example')}</strong>: ${this.uiElementStates.dateFormatExample}`;
             }
-            df = this.appWindow.querySelector(`#scDateFormatsTime`)?.closest('.form-group')?.querySelector('.example');
+            df = this.appWindow.querySelector(`#scDateFormatsTime`)?.closest('.form-group')?.querySelector('.fsc-example');
             if(df){
                 (<HTMLElement>df).innerHTML = `<strong>${GameSettings.Localize('FSC.Example')}</strong>: ${this.uiElementStates.timeFormatExample}`;
             }
-            df = this.appWindow.querySelector(`#scDateFormatsMonthYear`)?.closest('.form-group')?.querySelector('.example');
+            df = this.appWindow.querySelector(`#scDateFormatsMonthYear`)?.closest('.form-group')?.querySelector('.fsc-example');
             if(df){
                 (<HTMLElement>df).innerHTML = `<strong>${GameSettings.Localize('FSC.Example')}</strong>: ${this.uiElementStates.monthYearFormatExample}`;
             }
