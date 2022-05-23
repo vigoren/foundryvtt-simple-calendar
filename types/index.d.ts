@@ -70,6 +70,7 @@ declare global{
              * @param allDay If the note lasts all day or if it has a specific time duration. Whether to ignore the time portion of the start and end dates.
              * @param repeats If the note repeats and how often it does
              * @param categories A list of note categories to assign to this note
+             * @param macro The ID of the macro that this note should execute when the in game time meets or exceeds the note time. Or null if no macro should be executed.
              * @param calendarId Optional parameter to specify the ID of the calendar to add the note too. If not provided the current active calendar will be used.
              *
              * @returns The newly created JournalEntry that contains the note data, or null if there was an error encountered.
@@ -80,7 +81,7 @@ declare global{
              * // Will create a new note on Christmas day of 2022 that lasts all day and repeats yearly.
              * ```
              */
-            export async function addNote(title: string, content: string, starDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime, allDay: boolean, repeats: NoteRepeat, categories: string[], calendarId: string = 'active'): Promise<StoredDocument<JournalEntry> | null>
+            export async function addNote(title: string, content: string, starDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime, allDay: boolean, repeats: NoteRepeat, categories: string[], calendarId: string = 'active', macro: string | null = null): Promise<StoredDocument<JournalEntry> | null>
 
             /**
              * Advance the date and time to match the next preset time.
@@ -848,17 +849,16 @@ declare global{
 
             /**
              * Run the migration from Simple Calendar version 1 to version 2.
-             * This will only work if the current player is the primary GM and the Clean Up button was not clicked during the initial migration, as that button removes the old settings.
-             * **Important**: Running this function will overwrite any existing settings in the calendar.
+             * This will only work if the current player is the primary GM.
              *
-             * @returns A promise that resolves if the migration was a success, or fails if there was an error.
+             * A dialog will be shown to confirm if the GM wants to run the migration. This will prevent accidental running of the migration.
              *
              * @example
              * ```javascript
-             * SimpleCalendar.api.runMigration().then(() => {...}).catch(console.error);
+             * SimpleCalendar.api.runMigration();
              * ```
              */
-            export function runMigration(): Promise<void>
+            export function runMigration(): void
 
             /**
              * Will attempt to parse the passed in seconds into larger time intervals.
@@ -1050,7 +1050,7 @@ declare global{
              *
              * @example How to listen for the hook:
              *   ```javascript
-             * Hooks.on(MainApp.Hooks.DateTimeChange, (data) => {
+             * Hooks.on(SimpleCalendar.Hooks.DateTimeChange, (data) => {
              *      console.log(data);
              *  });
              * ```
@@ -1162,7 +1162,7 @@ declare global{
              *
              * @example How to listen for the hook:
              *   ```javascript
-             * Hooks.on(MainApp.Hooks.ClockStartStop, (data) => {
+             * Hooks.on(SimpleCalendar.Hooks.ClockStartStop, (data) => {
              *      console.log(data);
              *  });
              * ```
@@ -1188,7 +1188,7 @@ declare global{
              *
              * @example How to listen for the hook:
              *   ```javascript
-             * Hooks.on(MainApp.Hooks.PrimaryGM, (data) => {
+             * Hooks.on(SimpleCalendar.Hooks.PrimaryGM, (data) => {
              *      console.log(data);
              *  });
              * ```
@@ -1212,7 +1212,7 @@ declare global{
              *
              * @example How to listen for the hook:
              *   ```javascript
-             * Hooks.on(MainApp.Hooks.Ready, () => {
+             * Hooks.on(SimpleCalendar.Hooks.Ready, () => {
              *      console.log(`Simple Calendar is ready!`);
              *  });
              * ```
@@ -2110,6 +2110,7 @@ declare global{
             categories: string[];
             remindUsers: string[];
             fromPredefined?: boolean;
+            macro?: string;
         }
 
         /**

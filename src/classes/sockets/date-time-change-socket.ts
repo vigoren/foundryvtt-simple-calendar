@@ -26,7 +26,7 @@ export default class DateTimeChangeSocket extends SocketBase{
             } else if(d.type === DateTimeChangeSocketTypes.changeDateTime) {
                 calendar.changeDateTime(d.interval, {updateMonth: false});
             } else if(d.type === DateTimeChangeSocketTypes.advanceTimeToPreset && d.presetTimeOfDay){
-                await AdvanceTimeToPreset(d.presetTimeOfDay, calendar.id);
+                await AdvanceTimeToPreset(d.presetTimeOfDay, calendar);
             }
             return true;
         }

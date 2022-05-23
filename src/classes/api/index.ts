@@ -95,6 +95,7 @@ export function activateFullCalendarListeners(calendarId: string, onMonthChange:
  * @param allDay If the note lasts all day or if it has a specific time duration. Whether to ignore the time portion of the start and end dates.
  * @param repeats If the note repeats and how often it does
  * @param categories A list of note categories to assign to this note
+ * @param macro The ID of the macro that this note should execute when the in game time meets or exceeds the note time. Or null if no macro should be executed.
  * @param calendarId Optional parameter to specify the ID of the calendar to add the note too. If not provided the current active calendar will be used.
  *
  * @returns The newly created JournalEntry that contains the note data, or null if there was an error encountered.
@@ -105,7 +106,7 @@ export function activateFullCalendarListeners(calendarId: string, onMonthChange:
  * // Will create a new note on Christmas day of 2022 that lasts all day and repeats yearly.
  * ```
  */
-export async function addNote(title: string, content: string, starDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime, allDay: boolean, repeats: NoteRepeat, categories: string[], calendarId: string = 'active'): Promise<StoredDocument<JournalEntry> | null>{
+export async function addNote(title: string, content: string, starDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime, allDay: boolean, repeats: NoteRepeat, categories: string[], calendarId: string = 'active', macro: string | null = null): Promise<StoredDocument<JournalEntry> | null>{
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(activeCalendar){
         return await NManager.createNote( title, content, {
@@ -116,7 +117,8 @@ export async function addNote(title: string, content: string, starDate: SimpleCa
                 order: 0,
                 categories: categories,
                 repeats: repeats,
-                remindUsers: []
+                remindUsers: [],
+                macro: macro? macro : 'none'
             }, activeCalendar, false );
     }
     return null;
@@ -146,7 +148,7 @@ export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string 
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(activeCalendar){
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)) {
-            AdvanceTimeToPreset(preset, activeCalendar.id).catch(Logger.error);
+            AdvanceTimeToPreset(preset, activeCalendar).catch(Logger.error);
             return true;
         }
     }
@@ -1214,22 +1216,35 @@ export function isPrimaryGM(): boolean {
 
 /**
  * Run the migration from Simple Calendar version 1 to version 2.
- * This will only work if the current player is the primary GM and the Clean Up button was not clicked during the initial migration, as that button removes the old settings.
- * **Important**: Running this function will overwrite any existing settings in the calendar.
+ * This will only work if the current player is the primary GM.
  *
- * @returns A promise that resolves if the migration was a success, or fails if there was an error.
+ * A dialog will be shown to confirm if the GM wants to run the migration. This will prevent accidental running of the migration.
  *
  * @example
  * ```javascript
- * SimpleCalendar.api.runMigration().then(() => {...}).catch(console.error);
+ * SimpleCalendar.api.runMigration();
  * ```
  */
-export function runMigration(): Promise<void> {
+export function runMigration(): void {
     if(GameSettings.IsGm() && SC.primary){
-        MigrationApplication.MigrationType = MigrationTypes.v1To2;
-        return MigrationApplication.run();
+        const d = new Dialog({
+            title: GameSettings.Localize('FSC.Migration.APIDialog.Title'),
+            content: GameSettings.Localize('FSC.Migration.APIDialog.Content'),
+            buttons: {
+                yes: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: GameSettings.Localize('FSC.Confirm'),
+                    callback: MigrationApplication.run.bind(MigrationApplication, true)
+                },
+                no: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: GameSettings.Localize('FSC.Cancel')
+                }
+            },
+            default: 'no'
+        });
+        d.render(true);
     }
-    return Promise.reject();
 }
 
 /**
@@ -1350,7 +1365,11 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
     }
 
     MainApplication.uiElementStates.compactView = compact;
-    MainApplication.showApp();
+    if(MainApplication.rendered){
+        MainApplication.updateApp();
+    } else {
+        MainApplication.showApp();
+    }
 }
 
 /**

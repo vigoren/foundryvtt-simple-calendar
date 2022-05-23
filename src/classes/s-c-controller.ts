@@ -2,13 +2,13 @@ import Sockets from "./sockets";
 import {GameSettings} from "./foundry-interfacing/game-settings";
 import {ModuleName, SettingNames, SocketTypes, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
-import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocuments/combat";
 import {CalManager, MainApplication, NManager} from "./index";
 import ConfigurationApp from "./applications/configuration-app";
 import MainApp from "./applications/main-app";
 import UserPermissions from "./configuration/user-permissions";
 import {canUser} from "./utilities/permissions";
 import GameSockets from "./foundry-interfacing/game-sockets";
+import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/combat";
 
 /**
  * The global Simple Calendar Controller class
@@ -100,7 +100,7 @@ export default class SCController {
      */
     public initialize(){
         this.sockets.initialize();
-        NManager.checkNoteReminders(this.activeCalendar.id, true);
+        NManager.checkNoteTriggers(this.activeCalendar.id, true);
     }
 
     /**
@@ -282,4 +282,30 @@ export default class SCController {
             this.activeCalendar.time.combatRunning = false;
         }
     }
+
+    /**
+     * Triggered when a chat message is sent
+     * @param chatLog
+     * @param message
+     * @param chatData
+     */
+    /*public onChatMessage(chatLog: ChatLog, message: string, chatData: ChatMessageData){
+        return ParseChatCommand(message.trim());
+    }*/
+
+    /*public onRenderChatMessage(chatMessage: ChatMessage, html: JQuery, messageData: ChatMessageData){
+        const element = html[0];
+        if(element){
+            const btn = element.querySelector('.fsc-control[data-date]');
+            if(btn){
+                let dateParts = null;
+                try{
+                    dateParts = JSON.parse(btn.getAttribute('data-date') || '');
+                } catch (e: any){
+                    Logger.error(e);
+                }
+                btn.addEventListener('click', showCalendar.bind(null , dateParts, false, 'active'));
+            }
+        }
+    }*/
 }

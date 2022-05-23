@@ -391,3 +391,11 @@ export enum DateTimeUnits{
     Round = "round",
     Second = "seconds"
 }
+
+export enum TriggerConditions{
+    CurrentDate,
+}
+
+export enum TriggerParameters{
+    AddSubtract,
+}

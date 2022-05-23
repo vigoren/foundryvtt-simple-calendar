@@ -119,6 +119,10 @@ const game = {
                 });}
             }
         }
+    },
+    macros: {
+        forEach: (v: any) => {return v.call(undefined, {canExecute: true, name: 'asd', id: '123'})},
+        get: () => {return {canExecute: true, execute: jest.fn()}}
     }
 };
 

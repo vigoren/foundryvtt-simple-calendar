@@ -5,10 +5,12 @@ import "../../../__mocks__/index";
 import Calendar from "../calendar";
 import {
     AdvanceTimeToPreset,
-    DateTheSame, DateToTimestamp,
+    DateTheSame,
+    DateToTimestamp,
     DaysBetweenDates,
     FormatDateTime,
     GetDisplayDate,
+    GetPresetTimeOfDay,
     IsDayBetweenDates,
     TimestampToDate,
     ToSeconds
@@ -23,7 +25,6 @@ import {Logger} from "../logging";
 import {SimpleCalendar} from "../../../types";
 import SCController from "../s-c-controller";
 import NoteManager from "../notes/note-manager";
-
 
 
 //jest.mock('NoteManager');
@@ -259,26 +260,33 @@ describe('Utilities Date/Time Tests', () => {
         expect(DateToTimestamp({year: 1999, hour: 15, minute: 54, seconds: 29}, tCal)).toBe(915206069);
     });
 
+    test('Get Preset Time of Day', () => {
+        expect(GetPresetTimeOfDay(PresetTimeOfDay.Midnight, tCal, {year: 2022, month: 4, day: 18})).toEqual({hour: 0, minute: 0, seconds: 0});
+        expect(GetPresetTimeOfDay(PresetTimeOfDay.Sunrise, tCal, {year: 2022, month: 4, day: 18})).toEqual({hour: 6, minute: 0, seconds: 0});
+        expect(GetPresetTimeOfDay(PresetTimeOfDay.Midday, tCal, {year: 2022, month: 4, day: 18})).toEqual({hour: 12, minute: 0, seconds: 0});
+        expect(GetPresetTimeOfDay(PresetTimeOfDay.Sunset, tCal, {year: 2022, month: 4, day: 18})).toEqual({hour: 18, minute: 0, seconds: 0});
+    });
+
     test('Advance Time to Preset', async () => {
         //@ts-ignore
         game.user.isGM = true;
         jest.spyOn(CalManager, 'saveCalendars').mockImplementation(async () => {});
-        await AdvanceTimeToPreset(PresetTimeOfDay.Midday, tCal.id);
+        await AdvanceTimeToPreset(PresetTimeOfDay.Midday, tCal);
         expect(tCal.time.seconds).toBe(43200);
 
         let currentMD = tCal.getMonthAndDayIndex();
-        await AdvanceTimeToPreset(PresetTimeOfDay.Midnight, tCal.id);
+        await AdvanceTimeToPreset(PresetTimeOfDay.Midnight, tCal);
         expect(tCal.time.seconds).toBe(0);
         expect(tCal.getMonthAndDayIndex()).not.toEqual(currentMD);
 
-        await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal.id);
+        await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal);
         expect(tCal.time.seconds).toBe(21600);
 
-        await AdvanceTimeToPreset(PresetTimeOfDay.Sunset, tCal.id);
+        await AdvanceTimeToPreset(PresetTimeOfDay.Sunset, tCal);
         expect(tCal.time.seconds).toBe(64800);
 
         currentMD = tCal.getMonthAndDayIndex();
-        await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal.id);
+        await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal);
         expect(tCal.time.seconds).toBe(21600);
         expect(tCal.getMonthAndDayIndex()).not.toEqual(currentMD);
 
@@ -287,76 +295,15 @@ describe('Utilities Date/Time Tests', () => {
         tCal.seasons[1].sunriseTime = 20000;
         tCal.seasons[2].sunriseTime = 30000;
         tCal.seasons[3].sunriseTime = 40000;
-        await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal.id);
+        await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal);
         expect(tCal.time.seconds).toBeGreaterThan(10000);
 
         tCal.resetMonths();
-        await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal.id);
+        await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal);
         expect(tCal.time.seconds).toBeGreaterThan(10000);
 
 
         //@ts-ignore
         game.user.isGM = false;
-
-
-        /*MainApp.instance.activeCalendar.year = year;
-        year.seasons.push(new Season('Spring', 3, 20));
-        year.seasons[0].sunriseTime = 21600;
-        year.seasons[0].sunsetTime = 64800;
-
-        API.advanceTimeToPreset(PresetTimeOfDay.Midday);
-        expect(year.time.seconds).toBe(0);
-
-        //@ts-ignore
-        game.user.isGM = true;
-        API.advanceTimeToPreset(PresetTimeOfDay.Midday);
-        expect(year.time.seconds).toBe(43200);
-        expect(year.months[0].current).toBe(true);
-        expect(year.months[0].days[0].current).toBe(true);
-
-        API.advanceTimeToPreset(PresetTimeOfDay.Sunrise);
-        expect(year.time.seconds).toBe(21600);
-        expect(year.months[0].current).toBe(true);
-        expect(year.months[0].days[1].current).toBe(true);
-
-        API.advanceTimeToPreset(PresetTimeOfDay.Sunset);
-        expect(year.time.seconds).toBe(64800);
-        expect(year.months[0].current).toBe(true);
-        expect(year.months[0].days[1].current).toBe(true);
-
-        API.advanceTimeToPreset(PresetTimeOfDay.Midday);
-        expect(year.time.seconds).toBe(43200);
-        expect(year.months[0].current).toBe(true);
-        expect(year.months[0].days[2].current).toBe(true);
-
-        API.advanceTimeToPreset(PresetTimeOfDay.Midnight);
-        expect(year.time.seconds).toBe(0);
-        expect(year.months[0].current).toBe(true);
-        expect(year.months[0].days[3].current).toBe(true);
-
-        year.time.seconds = 21600;
-        year.months[0].resetDays();
-        year.months[0].days[29].current = true;
-        year.months[1].days = [];
-        API.advanceTimeToPreset(PresetTimeOfDay.Sunrise);
-        expect(year.time.seconds).toBe(21600);
-        expect(year.months[1].current).toBe(true);
-
-        year.months[0].current = true;
-        year.months[0].days = [];
-        API.advanceTimeToPreset(PresetTimeOfDay.Sunrise);
-        expect(year.time.seconds).toBe(0);
-
-        year.months = [];
-        API.advanceTimeToPreset(PresetTimeOfDay.Sunrise);
-        expect(year.time.seconds).toBe(0);
-
-        //@ts-ignore
-        API.advanceTimeToPreset('asd');
-        expect(year.time.seconds).toBe(0);
-
-
-        //@ts-ignore
-        game.user.isGM = false;*/
     });
 });

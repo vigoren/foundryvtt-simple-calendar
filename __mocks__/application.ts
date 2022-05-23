@@ -22,7 +22,7 @@ class Application {
     // @ts-ignore
     options = {};
 
-    rendered = true;
+    get rendered(){return true};
 
     // @ts-ignore
     element: any;

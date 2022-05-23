@@ -114,7 +114,10 @@ export default class MigrationApp extends Application{
         return this.MigrationType !== MigrationTypes.none;
     }
 
-    public async run(){
+    public async run(force: boolean = false){
+        if(force){
+            this.MigrationType = MigrationTypes.v1To2;
+        }
         Logger.info(`Running Migration!`);
         this.showApp();
         const cm = this.runCalendarMigration();
