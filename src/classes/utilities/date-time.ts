@@ -1,9 +1,8 @@
 import Calendar from "../calendar";
 import {DateRangeMatch, GameSystems, Icons, PresetTimeOfDay} from "../../constants";
 import PF2E from "../systems/pf2e";
-import {PadNumber, ordinalSuffix} from "./string";
+import {ordinalSuffix, PadNumber} from "./string";
 import {deepMerge} from "./object";
-import {CalManager} from "../index";
 import {Logger} from "../logging";
 
 /**
@@ -322,12 +321,35 @@ export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: C
 }
 
 /**
+ * Returns the time for the specified date that the specified preset occurs at.
+ * @param preset The preset time of day to get the value for
+ * @param calendar The calendar the date is for
+ * @param date The date to check
+ */
+export function GetPresetTimeOfDay(preset: PresetTimeOfDay, calendar: Calendar, date: SimpleCalendar.Date): SimpleCalendar.Time{
+    const time: SimpleCalendar.Time = {hour: 0, minute: 0, seconds: 0};
+    let seconds = 0;
+
+    if(preset === PresetTimeOfDay.Midday){
+        seconds = calendar.time.secondsPerDay / 2;
+    } else if(preset === PresetTimeOfDay.Sunrise || preset === PresetTimeOfDay.Sunset){
+        seconds = calendar.getSunriseSunsetTime(date.year, date.month, date.day, preset === PresetTimeOfDay.Sunrise, false);
+    }
+
+    const dt = calendar.secondsToDate(seconds);
+
+    time.hour = dt.hour;
+    time.minute = dt.minute;
+    time.seconds = dt.seconds;
+    return time;
+}
+
+/**
  * Advance the current date/time for the passed in calendar ID to the passed in preset
  * @param preset The time of day preset to change to
- * @param calendarId The ID of the calendar to adjust
+ * @param calendar The calendar to adjust
  */
-export async function AdvanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string){
-    const calendar = CalManager.getCalendar(calendarId);
+export async function AdvanceTimeToPreset(preset: PresetTimeOfDay, calendar: Calendar){
     if(calendar){
         let targetTimeOfDay = 0;
         let changeAmount = 0;

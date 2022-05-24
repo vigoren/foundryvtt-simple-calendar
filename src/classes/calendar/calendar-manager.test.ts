@@ -81,7 +81,7 @@ describe('Calendar Manager Class Tests', () => {
 
     test('Load Calendars', () => {
         const mLoad = jest.spyOn(GameSettings, 'GetObjectSettings').mockReturnValue([]);
-        jest.spyOn(NManager, 'checkNoteReminders').mockImplementation(() => {});
+        jest.spyOn(NManager, 'checkNoteTriggers').mockImplementation(() => {});
         expect(CalManager.loadCalendars()).toBe(0);
 
         mLoad.mockReturnValueOnce(['']);

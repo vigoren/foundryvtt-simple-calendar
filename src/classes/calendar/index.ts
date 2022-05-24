@@ -1,6 +1,8 @@
 import {
     GameSystems,
-    GameWorldTimeIntegrations, LeapYearRules,
+    GameWorldTimeIntegrations,
+    LeapYearRules,
+    SimpleCalendarHooks,
     TimeKeeperStatus
 } from "../../constants";
 import Year from "./year";
@@ -16,12 +18,13 @@ import PF2E from "../systems/pf2e";
 import Renderer from "../renderer";
 import {generateUniqueId} from "../utilities/string";
 import {DateToTimestamp, DaysBetweenDates, FormatDateTime, ToSeconds} from "../utilities/date-time";
-import{canUser} from "../utilities/permissions";
+import {canUser} from "../utilities/permissions";
 import {CalManager, MainApplication, NManager, SC} from "../index";
 import TimeKeeper from "../time/time-keeper";
 import NoteStub from "../notes/note-stub";
 import Time from "../time";
 import {deepMerge} from "../utilities/object";
+import {Hook} from "../api/hook";
 
 export default class Calendar extends ConfigurationItemBase{
     /**
@@ -1022,10 +1025,7 @@ export default class Calendar extends ConfigurationItemBase{
     public changeDateTime(interval: SimpleCalendar.DateTimeParts, options: SimpleCalendar.DateChangeOptions = {}){
         options = deepMerge({}, {updateMonth: true, updateApp: true, save: true, sync: true, showWarning: false}, options);
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
-            let initialTimestamp = NaN;
-            if(CalManager.syncWithAllCalendars){
-                initialTimestamp = this.toSeconds();
-            }
+            let initialTimestamp = this.toSeconds();
             let change = false;
             if(interval.year){
                 this.changeYear(interval.year, options.updateMonth, 'current');
@@ -1048,8 +1048,10 @@ export default class Calendar extends ConfigurationItemBase{
             }
 
             if(change){
+                let changeInSeconds = this.toSeconds() - initialTimestamp;
+                Hook.emit(SimpleCalendarHooks.DateTimeChange, this, changeInSeconds);
+
                 if(!options.fromCalSync && CalManager.syncWithAllCalendars && !isNaN(initialTimestamp)){
-                    let changeInSeconds = this.toSeconds() - initialTimestamp;
                     CalManager.syncWithCalendars({seconds: changeInSeconds});
                 }
                 if(options.save){
@@ -1072,10 +1074,8 @@ export default class Calendar extends ConfigurationItemBase{
     public setDateTime(date: SimpleCalendar.DateTimeParts, options: SimpleCalendar.DateChangeOptions = {}){
         options = deepMerge({}, {updateMonth: true, updateApp: true, save: true, sync: true, showWarning: false, bypassPermissionCheck: false}, options);
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime) || options.bypassPermissionCheck){
-            let initialTimestamp = NaN;
-            if(CalManager.syncWithAllCalendars){
-                initialTimestamp = this.toSeconds();
-            }
+            let initialTimestamp = this.toSeconds();
+
             const processedDate: SimpleCalendar.DateTime = { year: date.year || 0, month: date.month || 0, day: date.day || 0, hour: date.hour || 0, minute: date.minute || 0, seconds: date.seconds || 0 };
             const monthDayIndex = this.getMonthAndDayIndex();
             const currentTime = this.time.getCurrentTime();
@@ -1098,8 +1098,11 @@ export default class Calendar extends ConfigurationItemBase{
                 processedDate.day = monthDayIndex.day || 0;
             }
             this.updateTime(processedDate);
+
+            let changeInSeconds = this.toSeconds() - initialTimestamp;
+            Hook.emit(SimpleCalendarHooks.DateTimeChange, this, changeInSeconds);
+
             if(!options.fromCalSync && CalManager.syncWithAllCalendars && !isNaN(initialTimestamp)){
-                let changeInSeconds = this.toSeconds() - initialTimestamp;
                 CalManager.syncWithCalendars({seconds: changeInSeconds});
             }
             if(options.save){

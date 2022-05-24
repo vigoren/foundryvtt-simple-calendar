@@ -3,6 +3,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import Calendar from "../calendar";
 import UserPermissions from "../configuration/user-permissions";
 import {CalManager, NManager, SC} from "../index";
+import {Logger} from "../logging";
 
 /**
  * Class for handling the migration from Simple Calendar V1 to V2
@@ -91,7 +92,6 @@ export default class V1ToV2{
         const oldGeneralConfig = <any>GameSettings.GetObjectSettings(SettingNames.GeneralConfiguration);
         const oldTimeConfig = <any>GameSettings.GetObjectSettings(SettingNames.TimeConfiguration);
 
-        let perms = false, settings = false;
 
         //Parse the old permissions and save them in the new format
         if(oldGeneralConfig.hasOwnProperty('permissions') && oldGeneralConfig['permissions']){
@@ -100,7 +100,8 @@ export default class V1ToV2{
             permissions.changeActiveCalendar = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
 
             SC.globalConfiguration.permissions = permissions;
-            perms = true;
+        } else {
+            Logger.info(`No old permissions found, using default permission values!`);
         }
 
         //Parse out the seconds per combat round and save them in the new format
@@ -108,12 +109,11 @@ export default class V1ToV2{
             const sICR = parseInt(oldTimeConfig['secondsInCombatRound'].toString());
             if(!isNaN(sICR)){
                 SC.globalConfiguration.secondsInCombatRound = sICR;
-                settings = true;
             }
         } else {
-            settings = true;
+            Logger.info(`No old seconds in combat round setting found, using default value!`);
         }
-        return perms && settings;
+        return true;
     }
 
     /**

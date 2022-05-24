@@ -22,6 +22,7 @@ import {ModuleName, NoteRepeat, PredefinedCalendars} from "../../constants";
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import * as Utilities from "../utilities/inputs";
+import * as VisualUtils from "../utilities/visual";
 import GameSockets from "../foundry-interfacing/game-sockets";
 
 fetchMock.enableMocks();
@@ -135,6 +136,7 @@ describe('Note Sheet Class Tests', () => {
         jest.spyOn(NManager, 'getNoteStub').mockReturnValueOnce({title: 'Journal', noteData: null}).mockReturnValue({title: 'Journal', noteData: nd});
         //@ts-ignore
         ns.editMode = true;
+        jest.spyOn(ns, 'isEditable', 'get').mockReturnValue(true);
         expect(ns.getData()).toBeDefined();
         expect(ns.getData()).toBeDefined();
 
@@ -192,6 +194,23 @@ describe('Note Sheet Class Tests', () => {
         //@ts-ignore
         ns.activateListeners({});
         expect(ns.updateNoteRepeatDropdown).toHaveBeenCalledTimes(1);
+    });
+
+    test('Toggle Advanced', () => {
+        ns.appWindow = document.createElement('div');
+        const ho = document.createElement('div');
+        jest.spyOn(VisualUtils, 'animateElement').mockImplementation(() => {return true;});
+        jest.spyOn(ns.appWindow, 'querySelector').mockReturnValue(ho);
+
+        ns.toggleAdvanced();
+        //@ts-ignore
+        expect(ns.advancedOpen).toBe(true);
+        expect(ho.innerHTML).toContain('fa-chevron-up');
+
+        ns.toggleAdvanced();
+        //@ts-ignore
+        expect(ns.advancedOpen).toBe(false);
+        expect(ho.innerHTML).toContain('fa-chevron-down');
     });
 
     test('Input Change', async () => {

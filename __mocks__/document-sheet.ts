@@ -8,6 +8,8 @@ class DocumentSheet extends FormApplication{
 
     // @ts-ignore
     _getHeaderButtons(){return [{class: 'configure-sheet'}];}
+
+    get isEditable(){return false;}
 }
 
 // @ts-ignore

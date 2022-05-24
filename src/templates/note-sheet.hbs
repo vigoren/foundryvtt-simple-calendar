@@ -36,6 +36,20 @@
                 </div>
                 <p class="notes">{{localize 'FSC.Notes.UserPermissionHelp'}}</p>
             </div>
+            <div>
+                <a class="fsc-note-advance">{{#if edit.advancedOpen}}{{localize 'FSC.HideAdvanced'}}<span class="fa fa-chevron-up"></span>{{else}}{{localize 'FSC.ShowAdvanced'}}<span class="fa fa-chevron-down"></span>{{/if}} </a>
+                <div class="fsc-options {{#if edit.advancedOpen}} fsc-open{{else}} fsc-closed{{/if}}">
+                    <div class="form-group fsc-open">
+                        <label for="scNoteMacro">{{localize 'FSC.Notes.Macro'}}</label>
+                        <div class="form-fields">
+                            <select id="scNoteMacro">
+                                {{selectOptions edit.macroList selected=edit.selectedMacro localize=false}}
+                            </select>
+                        </div>
+                        <p class="notes">{{localize 'FSC.Notes.MacroHelp'}}</p>
+                    </div>
+                </div>
+            </div>
         </div>
         <h2>{{localize 'FSC.Details'}}</h2>
         <div class="fsc-editor-container">
@@ -65,6 +79,11 @@
                 <div class="fsc-note-category" style="background-color: {{display.author.color}}; color:{{display.author.textColor}}" title="{{localize 'FSC.Notes.Author'}}">
                     <span class="fa fa-pencil-alt"></span> {{display.author.name}}
                 </div>
+                {{#if display.macro}}
+                    <div class="fsc-note-category" title="{{localize 'DOCUMENT.Macro'}}">
+                        <span class="fas fa-scroll"></span> {{display.macro}}
+                    </div>
+                {{/if}}
             </div>
             <div class="fsc-category-list">
                 {{#each display.categories}}

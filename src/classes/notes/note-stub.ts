@@ -1,7 +1,10 @@
 import {CalManager} from "../index";
-import {DateRangeMatch, ModuleName, NoteRepeat} from "../../constants";
+import {DateRangeMatch, ModuleName, NoteRepeat, SettingNames} from "../../constants";
 import {GetDisplayDate, IsDayBetweenDates} from "../utilities/date-time";
 import {GetContrastColor} from "../utilities/visual";
+import {NoteTrigger} from "./note-trigger";
+import {GameSettings} from "../foundry-interfacing/game-settings";
+import {Logger} from "../logging";
 
 /**
  * Class that containes information about notes in the calendar and references to the journal entries that make up the notes
@@ -13,15 +16,57 @@ export default class NoteStub{
     public entryId: string;
 
     /**
-     * If a reminder for this note has been sent all ready or not (This is not persistent and reset per page load)
+     * A list of triggers that a note can cause to fire.
      */
-    public reminderSent: boolean = false;
+    public triggers : NoteTrigger[] = [];
+
+    /**
+     * Processes the note reminder trigger that happens when a note is triggered and the current user wants to be reminded of the note
+     * This will send a whisper to the player with the note details.
+     *
+     * @param note The note stub for the note
+     * @param initialLoad If this is the initial load of foundry or not
+     */
+    public static reminderNoteTrigger(note: NoteStub, initialLoad: boolean): boolean{
+        const noteData = note.noteData;
+        if(noteData && note.userReminderRegistered){
+            const calendar = CalManager.getCalendar(noteData.calendarId);
+            if(calendar && (!initialLoad || (initialLoad && calendar.generalSettings.postNoteRemindersOnFoundryLoad))){
+                ChatMessage.create({
+                    speaker: {alias: "Simple Calendar Reminder"},
+                    whisper: [GameSettings.UserID()],
+                    content: `<div class='simple-calendar ${GameSettings.GetStringSettings(SettingNames.Theme)}'><h2>${note.title}</h2><div style="display: flex;"><div class="note-category"><span class="fa fa-calendar"></span> ${note.fullDisplayDate}</div></div>${note.content}</div>`
+                }).catch(Logger.error);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Processes the note macro trigger that happens when a note is triggered and there is a macro assigned to the note.
+     * @param note The note stub for the note
+     * @param initialLoad If this is the initial load of foundry or not
+     */
+    public static macroNoteTrigger(note: NoteStub, initialLoad: boolean): boolean{
+        const macroId = note.macro;
+        if(!initialLoad && macroId && macroId !== 'none'){
+            const macro = (<Game>game).macros?.get(macroId);
+            if(macro && macro.canExecute){
+                macro.execute();
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * @param journalEntryId The ID of the journal entry associated with this stub
      */
     constructor(journalEntryId: string) {
         this.entryId = journalEntryId;
+        this.triggers.push(new NoteTrigger(NoteStub.reminderNoteTrigger, true));
+        this.triggers.push(new NoteTrigger(NoteStub.macroNoteTrigger, true));
     }
 
     /**
@@ -131,6 +176,26 @@ export default class NoteStub{
     }
 
     /**
+     * If the current user can edit this note or not.
+     * GMs can always edit otherwise needs to be the author of the note.
+     */
+    public get canEdit(){
+        let res = GameSettings.IsGm();
+        if(!res){
+            const journalEntry = (<Game>game).journal?.get(this.entryId);
+            if(journalEntry){
+                for(let k in journalEntry.data.permission){
+                    if(journalEntry.data.permission[k] === 3 && k === GameSettings.UserID()){
+                        res = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
      * Gets the categories associated with the note
      */
     public get categories():  SimpleCalendar.NoteCategory[]{
@@ -178,7 +243,7 @@ export default class NoteStub{
     }
 
     /**
-     * Gets if the current user has a reminder registerd for this note or not
+     * Gets if the current user has a reminder registered for this note or not
      */
     public get userReminderRegistered(): boolean{
         let registered = false;
@@ -201,6 +266,17 @@ export default class NoteStub{
             return  nd.fromPredefined;
         }
         return false;
+    }
+
+    /**
+     * Gets the macro to trigger when this note is triggered
+     */
+    public get macro(): string {
+        const nd = this.noteData;
+        if(nd && nd.macro !== undefined){
+            return nd.macro;
+        }
+        return 'none';
     }
 
     /**

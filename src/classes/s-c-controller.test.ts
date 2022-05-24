@@ -97,11 +97,11 @@ describe('SCController Tests', () => {
 
     test('initialize', () => {
         jest.spyOn(SC.sockets, 'initialize').mockImplementation(() => {});
-        jest.spyOn(NManager, 'checkNoteReminders').mockImplementation(() => {});
+        jest.spyOn(NManager, 'checkNoteTriggers').mockImplementation(() => {});
         jest.spyOn(CalManager, 'getActiveCalendar').mockReturnValueOnce(new Calendar('', ''));
         SC.initialize();
         expect(SC.sockets.initialize).toHaveBeenCalledTimes(1);
-        expect(NManager.checkNoteReminders).toHaveBeenCalledTimes(1);
+        expect(NManager.checkNoteTriggers).toHaveBeenCalledTimes(1);
     });
 
     test('load', () => {

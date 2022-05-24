@@ -1,9 +1,11 @@
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
-    CalendarClickEvents, DateTimeChangeSocketTypes,
+    CalendarClickEvents,
+    DateTimeChangeSocketTypes,
     DateTimeUnits,
-    GameWorldTimeIntegrations, PresetTimeOfDay,
+    GameWorldTimeIntegrations,
+    PresetTimeOfDay,
     SettingNames,
     SocketTypes,
     TimeKeeperStatus
@@ -11,9 +13,9 @@ import {
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
 import {animateElement, GetIcon} from "../utilities/visual";
-import {CalManager, ConfigurationApplication, SC, NManager} from "../index";
-import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
-import{canUser} from "../utilities/permissions";
+import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
+import {AdvanceTimeToPreset, FormatDateTime, GetPresetTimeOfDay} from "../utilities/date-time";
+import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
 
 
@@ -116,13 +118,15 @@ export default class MainApp extends Application{
             showDateControls = this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
             showTimeControls = this.activeCalendar.generalSettings.showClock && this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
 
-            const selectedMonth = this.visibleCalendar.getMonth('selected');
-            if(selectedMonth){
-                const selectedDay = selectedMonth.getDay('selected');
-                if(selectedDay && !selectedDay.current){
-                    showSetCurrentDate = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime);
+            const selectedMonthDayIndex = this.visibleCalendar.getMonthAndDayIndex('selected');
+            if(selectedMonthDayIndex.month !== undefined){
+                if(selectedMonthDayIndex.day !== undefined){
+                    if(!this.visibleCalendar.months[selectedMonthDayIndex.month].days[selectedMonthDayIndex.day].current){
+                        showSetCurrentDate = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime);
+                    }
                 }
             }
+
         } else if(changeDateTime){
             message = GameSettings.Localize('FSC.ViewingDifferentCalendar');
         }
@@ -183,7 +187,7 @@ export default class MainApp extends Application{
     public showApp(){
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)){
             if(this.visibleCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
-                this.visibleCalendar.setCurrentToVisible();
+                //this.visibleCalendar.setCurrentToVisible();
             }
             this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
 
@@ -238,7 +242,7 @@ export default class MainApp extends Application{
             const wrapper = <HTMLElement>main.querySelector('.fsc-main-wrapper');
             if(wrapper) {
                 if (this.uiElementStates.compactView) {
-                    height += 24; //Height of top bar
+                    height += 28; //Height of top bar
                     height += 8; // Window Padding
                     width = 300;
                 } else {
@@ -656,7 +660,7 @@ export default class MainApp extends Application{
                     GameSockets.emit({type: SocketTypes.dateTimeChange, data: socketData}).catch(Logger.error);
                 }
             } else {
-                AdvanceTimeToPreset(<PresetTimeOfDay>dataType, this.activeCalendar.id).catch(Logger.error);
+                AdvanceTimeToPreset(<PresetTimeOfDay>dataType, this.activeCalendar).catch(Logger.error);
             }
         }
     }
@@ -793,11 +797,7 @@ export default class MainApp extends Application{
      */
     public addNote(e: Event) {
         e.stopPropagation();
-        if(!(<Game>game).users?.find(u => u.isGM && u.active)){
-            GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Notes.NotGM'), 'warn');
-        } else {
-            NManager.addNewNote(this.visibleCalendar, 'New Note').catch(Logger.error);
-        }
+        NManager.addNewNote(this.visibleCalendar, 'New Note').catch(Logger.error);
     }
 
     /**
@@ -815,12 +815,12 @@ export default class MainApp extends Application{
     }
 
     /**
-     * Re renders the application window
+     * Re-renders the application window
      * @private
      */
     public updateApp(){
         if(this.rendered){
-            this.render(false, {});
+            this.render(true, {});
         }
     }
 
@@ -829,7 +829,7 @@ export default class MainApp extends Application{
     //---------------------------
 
     /**
-     * Starts the built in time keeper
+     * Starts the built-in timekeeper
      */
     startTime(){
         const scenes = (<Game>game).scenes;
