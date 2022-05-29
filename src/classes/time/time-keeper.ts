@@ -56,7 +56,7 @@ export default class TimeKeeper{
     }
 
     /**
-     * Starts the time keeper interval and save interval
+     * Starts the timekeeper interval and save interval
      */
     public start(fromPause: boolean = false){
         this.pauseClicked = false;

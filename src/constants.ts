@@ -393,9 +393,17 @@ export enum DateTimeUnits{
 }
 
 export enum TriggerConditions{
-    CurrentDate,
+    Date,
+    Time,
+    DateTime,
+    Year,
+    Month,
+    Day
 }
 
 export enum TriggerParameters{
-    AddSubtract,
+    Equal,
+    Before,
+    After,
+    Nth,
 }

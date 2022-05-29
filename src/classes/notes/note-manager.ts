@@ -322,9 +322,6 @@ export default class NoteManager{
      * @param initialLoad If this is the initial load of the page
      */
     public checkNoteTriggers(calendarId: string, initialLoad: boolean = false){
-        let d = new Date();
-        const s = d.getTime();
-
         const calendar = CalManager.getCalendar(calendarId);
         if(calendar && this.notes[calendarId]){
             const noteList = this.notes[calendarId];
@@ -334,8 +331,6 @@ export default class NoteManager{
                 }
             }
         }
-        d = new Date();
-        console.log(`Check Note Duration: ${d.getTime() - s}ms`);
     }
 
     /**

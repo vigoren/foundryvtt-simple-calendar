@@ -10,21 +10,23 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
     DateSelectorPositions,
     GameSystems,
-    LeapYearRules,
     Icons,
+    LeapYearRules,
     MoonYearResetOptions,
+    NoteRepeat,
     PredefinedCalendars,
-    PresetTimeOfDay,
+    PresetTimeOfDay, SocketTypes,
     TimeKeeperStatus,
-    YearNamingRules, NoteRepeat, MigrationTypes
+    YearNamingRules
 } from "../../constants";
 import PF2E from "../systems/pf2e";
 import {AdvanceTimeToPreset, DateToTimestamp, FormatDateTime, TimestampToDate} from "../utilities/date-time";
 import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Renderer from "../renderer";
-import {MainApplication, CalManager, SC, NManager, MigrationApplication} from "../index";
+import {CalManager, MainApplication, MigrationApplication, NManager, SC} from "../index";
 import {canUser} from "../utilities/permissions";
+import GameSockets from "../foundry-interfacing/game-sockets";
 
 /**
  * The Date selector class used to create date selector inputs based on the calendar
@@ -1206,12 +1208,71 @@ export function getTimeConfiguration(calendarId: string = 'active'): SimpleCalen
  * @example
  * ```javascript
  *
- * SimpleCalendar.api.isPrimaryGM(); //True or Flase depending on if the current user is primary gm
+ * SimpleCalendar.api.isPrimaryGM(); //True or False depending on if the current user is primary gm
  *
  * ```
  */
 export function isPrimaryGM(): boolean {
     return SC.primary;
+}
+
+/**
+ * Pauses the real time clock for the specified calendar. Only the primary GM can pause a clock.
+ *
+ * @param calendarId Optional parameter to specify the ID of the calendar to pause the real time clock for. If not provided the current active calendar will be used.
+ *
+ * @returns True if the clock was paused, false otherwise
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.pauseClock();
+ * ```
+ */
+export function pauseClock(calendarId: string = 'active'): boolean {
+    if(SC.primary){
+        const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);3
+        if(cal){
+            const status = cal.timeKeeper.getStatus();
+            if(status === TimeKeeperStatus.Started){
+                cal.timeKeeper.start();
+                return cal.timeKeeper.getStatus() === TimeKeeperStatus.Paused;
+            } else if(status === TimeKeeperStatus.Paused){
+                return true;
+            }
+        } else {
+            Logger.error(`SimpleCalendar.api.pauseClock - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        }
+    }
+    return false;
+}
+
+/**
+ * This function removes the specified note from Simple Calendar.
+ *
+ * @param journalEntryId The ID of the journal entry associated with the note that is to be removed.
+ *
+ * @returns True if the note was removed or false if it was not.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.removeNote("asd123").then(...).catch(console.error);
+ * ```
+ */
+export async function removeNote(journalEntryId: string): Promise<boolean> {
+    const je = (<Game>game).journal?.get(journalEntryId);
+    if(je){
+        const ns = NManager.getNoteStub(je);
+        if(ns?.isVisible){
+            NManager.removeNoteStub(je);
+            MainApplication.updateApp();
+            await je.delete();
+            await GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}});
+            return true;
+        }
+    } else {
+        Logger.error(`SimpleCalendar.api.removeNote - Unable to find a journal entry with the passed in ID of "${journalEntryId}"`);
+    }
+    return false;
 }
 
 /**
@@ -1245,6 +1306,35 @@ export function runMigration(): void {
         });
         d.render(true);
     }
+}
+
+/**
+ * Search the notes in Simple Calendar for a specific term. Only notes that the user can see are returned.
+ *
+ * @param term The text that is being searched for
+ * @param options Options parameter to specify which fields of the note to use when searching, If not provided all fields are searched against.
+ * @param calendarId Optional parameter to specify the ID of the calendar whose notes to search against. If not provided the current active calendar will be used.
+ *
+ * @returns A list of [JournalEntry](https://foundryvtt.com/api/JournalEntry.html) that matched the term being searched.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.searchNotes("Note"); //Will return a list of notes that contained the word note somewhere in its content.
+ *
+ * SimpleCalendar.api.searchNotes("Note", {title: true}); // Will return a list of notes that contain the world note in the title.
+ *
+ * SimpleCalendar.api.searchNotes("Gamemaster", {author: true}); // Will return a list of notes that were written by the gamemaster.
+ * ```
+ */
+export function searchNotes(term: string, options = {date: true, title: true, details: true, categories: true, author: true}, calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[] {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    let results: (StoredDocument<JournalEntry> | undefined)[] = [];
+    if(cal){
+        results = NManager.searchNotes(cal.id, term, options).map(n => (<Game>game).journal?.get(n.entryId));
+    } else {
+        Logger.error(`SimpleCalendar.api.searchNotes - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+    return results;
 }
 
 /**

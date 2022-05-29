@@ -13,7 +13,7 @@ import {
     MoonYearResetOptions,
     NoteRepeat,
     PredefinedCalendars,
-    PresetTimeOfDay,
+    PresetTimeOfDay, TimeKeeperStatus,
     YearNamingRules
 } from "../../constants";
 import Calendar from "../calendar";
@@ -291,6 +291,32 @@ describe('API Class Tests', () => {
         expect(API.isPrimaryGM()).toBe(false);
     });
 
+    test('Pause Clock', () => {
+        expect(API.pauseClock()).toBe(false);
+        SC.primary = true;
+        expect(API.pauseClock()).toBe(false);
+        expect(console.error).toHaveBeenCalledTimes(1);
+        //@ts-ignore
+        tCal.timeKeeper.status = TimeKeeperStatus.Started;
+        expect(API.pauseClock('')).toBe(true);
+        expect(API.pauseClock('')).toBe(true);
+    });
+
+    test('Remove Note', async () => {
+        const ns = new NoteStub('asd');
+        jest.spyOn(NManager, 'getNoteStub').mockReturnValue(ns);
+        jest.spyOn(ns, "isVisible").mockReturnValue(true);
+        expect(await API.removeNote('asd')).toBe(true);
+
+        //@ts-ignore
+        const t = game.journal;
+        //@ts-ignore
+        game.journal = {get: () => {return false;}};
+        expect(await API.removeNote('asd')).toBe(false);
+        //@ts-ignore
+        game.journal = t;
+    });
+
     test('Run Migration', async () => {
         jest.spyOn(console, 'info').mockImplementation(() => {});
         jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -302,6 +328,15 @@ describe('API Class Tests', () => {
         game.user.isGM = true;
         SC.primary = true;
         expect(API.runMigration()).toBeUndefined();
+    });
+
+    test('Search Notes', () => {
+        jest.spyOn(NManager, "searchNotes").mockImplementation(() => { return [new NoteStub('asd')]});
+        API.searchNotes('asd');
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        API.searchNotes('asd', {date: true, title: true, details: true, categories: true, author: true}, 'asd');
+        expect(NManager.searchNotes).toHaveBeenCalledTimes(1);
     });
 
     test('Seconds To Interval', () => {

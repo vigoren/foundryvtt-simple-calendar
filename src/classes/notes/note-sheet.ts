@@ -247,10 +247,10 @@ export class NoteSheet extends DocumentSheet{
                     }
                 }
 
-                if(ns.editMode && height < 785){
-                    height = 785;
+                if(ns.editMode && height < 845){
+                    height = 845;
                 }
-                const maxHeight = window.outerHeight * .75;
+                const maxHeight = window.outerHeight * .95;
                 if(height > maxHeight){
                     height = maxHeight;
                 }
@@ -267,7 +267,7 @@ export class NoteSheet extends DocumentSheet{
                 const mceOptions = {
                     target: <HTMLElement>target,
                     body_class: 'simple-calendar',
-                    content_css: ["/css/mce.css", getRoute(`modules/${ModuleName}/styles/themes/tinymce-${SC.clientSettings.theme}.css`)],
+                    content_css: ["/css/mce.css", `modules/${ModuleName}/styles/themes/tinymce-${SC.clientSettings.theme}.css`],
                     preview_styles: false,
                     height: height,
                     save_onsavecallback: (mce: any )=> this.saveEditor('content')
