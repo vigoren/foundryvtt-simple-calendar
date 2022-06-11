@@ -1,4 +1,5 @@
 import ConfigurationItemBase from "./configuration-item-base";
+import {isObject} from "../utilities/object";
 
 export default class UserPermissions extends ConfigurationItemBase{
     /**
@@ -89,26 +90,34 @@ export default class UserPermissions extends ConfigurationItemBase{
     }
 
     /**
-     * Sets the properties for this class to options set from the passed in configuration object
+     * Sets the properties for this class to option set from the passed in configuration object
      * @param {UserPermissionsData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.UserPermissionsData) {
         if(config && Object.keys(config).length){
-            if(config.hasOwnProperty('viewCalendar')){
+            if(config.hasOwnProperty('viewCalendar') && this.validateUserPermissionMatrix(config.viewCalendar)){
                 this.viewCalendar = config.viewCalendar
             }
-            if(config.hasOwnProperty('addNotes')){
+            if(config.hasOwnProperty('addNotes') && this.validateUserPermissionMatrix(config.addNotes)){
                 this.addNotes = config.addNotes
             }
-            if(config.hasOwnProperty('changeDateTime')){
+            if(config.hasOwnProperty('changeDateTime') && this.validateUserPermissionMatrix(config.changeDateTime)){
                 this.changeDateTime = config.changeDateTime
             }
-            if(config.hasOwnProperty('reorderNotes')){
+            if(config.hasOwnProperty('reorderNotes') && this.validateUserPermissionMatrix(config.reorderNotes)){
                 this.reorderNotes = config.reorderNotes
             }
-            if(config.hasOwnProperty('changeActiveCalendar')){
+            if(config.hasOwnProperty('changeActiveCalendar') && this.validateUserPermissionMatrix(config.changeActiveCalendar)){
                 this.changeActiveCalendar = config.changeActiveCalendar
             }
         }
+    }
+
+    /**
+     * Checks to make sure the Permission Matrix object contains all the required properties
+     * @param obj The item to check if is a valid permission matrix
+     */
+    validateUserPermissionMatrix(obj: any){
+        return !!(obj && isObject(obj) && obj.hasOwnProperty('player') && obj.hasOwnProperty('trustedPlayer') && obj.hasOwnProperty('assistantGameMaster'));
     }
 }

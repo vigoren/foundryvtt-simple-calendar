@@ -71,7 +71,7 @@
                     <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInCombatRoundHelp'}}</p>
                 </div>
                 <div class="form-group fsc-open">
-                    <label for="scSyncCalendars">{{localize 'FSC.Configuration.Global.ShowNoteFolder.Title'}}</label>
+                    <label for="scShowNoteFolder">{{localize 'FSC.Configuration.Global.ShowNoteFolder.Title'}}</label>
                     <div class="form-fields">
                         <input value="{{globalConfiguration.showNotesFolder}}" type="checkbox" id="scShowNoteFolder" {{checked globalConfiguration.showNotesFolder}} />
                     </div>
@@ -130,50 +130,50 @@
                 <li class="fsc-permission form-group fsc-open">
                     <label class="fsc-index">{{localize 'FSC.Configuration.General.CalendarPlayerVisible'}}</label>
                     <div class="form-fields">
-                        <input type="checkbox" name="CalendarVisible.P" id="scCalendarVisibleP" {{checked globalConfiguration.permissions.viewCalendar.player}} />
-                        <input type="checkbox" name="CalendarVisible.TP" id="scCalendarVisibleTP" {{checked globalConfiguration.permissions.viewCalendar.trustedPlayer}} />
-                        <input type="checkbox" name="CalendarVisible.AGM" id="scCalendarVisibleAGM" {{checked globalConfiguration.permissions.viewCalendar.assistantGameMaster}} />
-                        <input type="checkbox" name="CalendarVisible.GM" checked disabled />
+                        <input type="checkbox" name="CalendarVisible.P" id="scCalendarVisibleP" title="{{localize 'FSC.Configuration.General.CalendarPlayerVisible'}}: {{localize 'USER.RolePlayer'}}" {{checked globalConfiguration.permissions.viewCalendar.player}} />
+                        <input type="checkbox" name="CalendarVisible.TP" id="scCalendarVisibleTP" title="{{localize 'FSC.Configuration.General.CalendarPlayerVisible'}}: {{localize 'USER.RoleTrusted'}}" {{checked globalConfiguration.permissions.viewCalendar.trustedPlayer}} />
+                        <input type="checkbox" name="CalendarVisible.AGM" id="scCalendarVisibleAGM" title="{{localize 'FSC.Configuration.General.CalendarPlayerVisible'}}: {{localize 'USER.RoleAssistant'}}" {{checked globalConfiguration.permissions.viewCalendar.assistantGameMaster}} />
+                        <input type="checkbox" name="CalendarVisible.GM" title="{{localize 'FSC.Configuration.General.CalendarPlayerVisible'}}: {{localize 'USER.RoleGamemaster'}}" checked disabled />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.CalendarPlayerVisibleHelp'}}</p>
                 </li>
                 <li class="fsc-permission form-group fsc-open">
                     <label class="fsc-index">{{localize 'FSC.Configuration.General.PlayerAddNotes'}}</label>
                     <div class="form-fields">
-                        <input type="checkbox" name="AddNotes.P" id="scAddNotesP" {{checked globalConfiguration.permissions.addNotes.player}} />
-                        <input type="checkbox" name="AddNotes.TP" id="scAddNotesTP" {{checked globalConfiguration.permissions.addNotes.trustedPlayer}} />
-                        <input type="checkbox" name="AddNotes.AGM" id="scAddNotesAGM" {{checked globalConfiguration.permissions.addNotes.assistantGameMaster}} />
-                        <input type="checkbox" name="AddNotes.GM" checked disabled />
+                        <input type="checkbox" name="AddNotes.P" id="scAddNotesP" title="{{localize 'FSC.Configuration.General.PlayerAddNotes'}}: {{localize 'USER.RolePlayer'}}" {{checked globalConfiguration.permissions.addNotes.player}} />
+                        <input type="checkbox" name="AddNotes.TP" id="scAddNotesTP" title="{{localize 'FSC.Configuration.General.PlayerAddNotes'}}: {{localize 'USER.RoleTrusted'}}" {{checked globalConfiguration.permissions.addNotes.trustedPlayer}} />
+                        <input type="checkbox" name="AddNotes.AGM" id="scAddNotesAGM" title="{{localize 'FSC.Configuration.General.PlayerAddNotes'}}: {{localize 'USER.RoleAssistant'}}" {{checked globalConfiguration.permissions.addNotes.assistantGameMaster}} />
+                        <input type="checkbox" name="AddNotes.GM" title="{{localize 'FSC.Configuration.General.PlayerAddNotes'}}: {{localize 'USER.RoleGamemaster'}}" checked disabled />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.PlayerAddNotesHelp'}}</p>
                 </li>
                 <li class="fsc-permission form-group fsc-open">
                     <label class="fsc-index">{{localize 'FSC.Configuration.General.PlayerReorderNotes'}}</label>
                     <div class="form-fields">
-                        <input type="checkbox" name="AddNotes.P" id="scReorderNotesP" {{checked globalConfiguration.permissions.reorderNotes.player}} />
-                        <input type="checkbox" name="AddNotes.TP" id="scReorderNotesTP" {{checked globalConfiguration.permissions.reorderNotes.trustedPlayer}} />
-                        <input type="checkbox" name="AddNotes.AGM" id="scReorderNotesAGM" {{checked globalConfiguration.permissions.reorderNotes.assistantGameMaster}} />
-                        <input type="checkbox" name="AddNotes.GM" checked disabled />
+                        <input type="checkbox" name="AddNotes.P" id="scReorderNotesP" title="{{localize 'FSC.Configuration.General.PlayerReorderNotes'}}: {{localize 'USER.RolePlayer'}}" {{checked globalConfiguration.permissions.reorderNotes.player}} />
+                        <input type="checkbox" name="AddNotes.TP" id="scReorderNotesTP" title="{{localize 'FSC.Configuration.General.PlayerReorderNotes'}}: {{localize 'USER.RoleTrusted'}}" {{checked globalConfiguration.permissions.reorderNotes.trustedPlayer}} />
+                        <input type="checkbox" name="AddNotes.AGM" id="scReorderNotesAGM" title="{{localize 'FSC.Configuration.General.PlayerReorderNotes'}}: {{localize 'USER.RoleAssistant'}}" {{checked globalConfiguration.permissions.reorderNotes.assistantGameMaster}} />
+                        <input type="checkbox" name="AddNotes.GM" title="{{localize 'FSC.Configuration.General.PlayerReorderNotes'}}: {{localize 'USER.RoleGamemaster'}}" checked disabled />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.PlayerReorderNotesHelp'}}</p>
                 </li>
                 <li class="fsc-permission form-group fsc-open">
                     <label class="fsc-index">{{localize 'FSC.Configuration.General.PlayersChangeDateTime'}}</label>
                     <div class="form-fields">
-                        <input type="checkbox" name="AddNotes.P" id="scChangeDateTimeP" {{checked globalConfiguration.permissions.changeDateTime.player}} />
-                        <input type="checkbox" name="AddNotes.TP" id="scChangeDateTimeTP" {{checked globalConfiguration.permissions.changeDateTime.trustedPlayer}} />
-                        <input type="checkbox" name="AddNotes.AGM" id="scChangeDateTimeAGM" {{checked globalConfiguration.permissions.changeDateTime.assistantGameMaster}} />
-                        <input type="checkbox" name="AddNotes.GM" checked disabled />
+                        <input type="checkbox" name="AddNotes.P" id="scChangeDateTimeP" title="{{localize 'FSC.Configuration.General.PlayersChangeDateTime'}}: {{localize 'USER.RolePlayer'}}" {{checked globalConfiguration.permissions.changeDateTime.player}} />
+                        <input type="checkbox" name="AddNotes.TP" id="scChangeDateTimeTP" title="{{localize 'FSC.Configuration.General.PlayersChangeDateTime'}}: {{localize 'USER.RoleTrusted'}}" {{checked globalConfiguration.permissions.changeDateTime.trustedPlayer}} />
+                        <input type="checkbox" name="AddNotes.AGM" id="scChangeDateTimeAGM" title="{{localize 'FSC.Configuration.General.PlayersChangeDateTime'}}: {{localize 'USER.RoleAssistant'}}" {{checked globalConfiguration.permissions.changeDateTime.assistantGameMaster}} />
+                        <input type="checkbox" name="AddNotes.GM" title="{{localize 'FSC.Configuration.General.PlayersChangeDateTime'}}: {{localize 'USER.RoleGamemaster'}}" checked disabled />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.PlayersChangeDateTimeHelp'}}</p>
                 </li>
                 <li class="fsc-permission form-group fsc-open">
                     <label class="fsc-index">{{localize 'FSC.Configuration.General.PlayersChangeActiveCalendar'}}</label>
                     <div class="form-fields">
-                        <input type="checkbox" name="AddNotes.P" id="scChangeActiveCalP" {{checked globalConfiguration.permissions.changeActiveCalendar.player}} />
-                        <input type="checkbox" name="AddNotes.TP" id="scChangeActiveCalTP" {{checked globalConfiguration.permissions.changeActiveCalendar.trustedPlayer}} />
-                        <input type="checkbox" name="AddNotes.AGM" id="scChangeActiveCalAGM" {{checked globalConfiguration.permissions.changeActiveCalendar.assistantGameMaster}} />
-                        <input type="checkbox" name="AddNotes.GM" checked disabled />
+                        <input type="checkbox" name="AddNotes.P" id="scChangeActiveCalP" title="{{localize 'FSC.Configuration.General.PlayersChangeActiveCalendar'}}: {{localize 'USER.RolePlayer'}}" {{checked globalConfiguration.permissions.changeActiveCalendar.player}} />
+                        <input type="checkbox" name="AddNotes.TP" id="scChangeActiveCalTP" title="{{localize 'FSC.Configuration.General.PlayersChangeActiveCalendar'}}: {{localize 'USER.RoleTrusted'}}" {{checked globalConfiguration.permissions.changeActiveCalendar.trustedPlayer}} />
+                        <input type="checkbox" name="AddNotes.AGM" id="scChangeActiveCalAGM" title="{{localize 'FSC.Configuration.General.PlayersChangeActiveCalendar'}}: {{localize 'USER.RoleAssistant'}}" {{checked globalConfiguration.permissions.changeActiveCalendar.assistantGameMaster}} />
+                        <input type="checkbox" name="AddNotes.GM" title="{{localize 'FSC.Configuration.General.PlayersChangeActiveCalendar'}}: {{localize 'USER.RoleGamemaster'}}" checked disabled />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.PlayersChangeActiveCalendarHelp'}}</p>
                 </li>
@@ -1051,7 +1051,7 @@
                     <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
                 </div>
                 <div class="form-group fsc-open">
-                    <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.Notes.PostNoteRemindersOnFoundryLoadTitle'}}</label>
+                    <label for="scPostNoteRemindersOnFoundryLoad">{{localize 'FSC.Configuration.Notes.PostNoteRemindersOnFoundryLoadTitle'}}</label>
                     <div class="form-fields">
                         <input value="{{generalSettings.postNoteRemindersOnFoundryLoad}}" type="checkbox" id="scPostNoteRemindersOnFoundryLoad" {{checked generalSettings.postNoteRemindersOnFoundryLoad}} />
                     </div>
