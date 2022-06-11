@@ -1,5 +1,18 @@
 # Change Log
 
+## v2.0.25 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-June%2010%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.0.25/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where the module would fail to open if the number of months was changed and a note exists that now falls outside the months.
+- Fixed a bug where players with permission to change the date and time would see an error message while the clock was running.
+- Fixed a bug where clicking on the configuration setting title "Show Notes Folder" would cause the "Sync Date/Time" setting checkbox to change its state.
+- Fixed a bug where clicking on the note settings title "Send Reminders On Login" would cause the "Note Default Player Visibility" setting checkbox to change its state.
+- Fixed a rare bug where invalid permissions could be loaded and cause the configuration dialog to fail to open properly.
+
 ## v2.0.20 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-May%2029%2C%202022-blue)
