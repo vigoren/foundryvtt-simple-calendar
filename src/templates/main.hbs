@@ -112,6 +112,11 @@
                                 <span class="fa fa-bell"></span>
                             </div>
                             {{/if}}
+                            {{#if (and canEdit (ne 'none' macro))}}
+                                <div class="fsc-note-category fsc-note-icon" title="{{localize 'DOCUMENT.Macro'}}">
+                                    <span class="fas fa-scroll"></span>
+                                </div>
+                            {{/if}}
                             <div class="fsc-note-time fsc-note-category" title="{{localize 'FSC.Notes.Time'}}">
                                 <span class="fa fa-clock"></span>  {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}
                             </div>
@@ -179,6 +184,11 @@
                             <div class="fsc-note-category fsc-note-icon fsc-reminder" title="{{localize 'FSC.Notes.ReminderHelp'}}">
                                 <span class="fa fa-bell"></span>
                             </div>
+                            {{/if}}
+                            {{#if (and canEdit (ne 'none' macro))}}
+                                <div class="fsc-note-category fsc-note-icon" title="{{localize 'DOCUMENT.Macro'}}">
+                                    <span class="fas fa-scroll"></span>
+                                </div>
                             {{/if}}
                             <div class="fsc-note-time fsc-note-category" title="{{localize 'FSC.Notes.Time'}}">
                                 <span class="fa fa-clock"></span>  {{#if allDay}}{{localize 'FSC.AllDay'}}{{else}}{{displayDate}}{{/if}}

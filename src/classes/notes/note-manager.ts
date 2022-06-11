@@ -1,12 +1,12 @@
-import {ModuleName, NoteRepeat, NotesDirectoryName, SettingNames, SocketTypes} from "../../constants";
+import {DateRangeMatch, ModuleName, NoteRepeat, NotesDirectoryName, SocketTypes} from "../../constants";
 import {NoteSheet} from "./note-sheet";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import Calendar from "../calendar";
 import NoteStub from "./note-stub";
 import {CalManager, MainApplication, NManager} from "../index";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import {Logger} from "../logging";
 import {BM25Levenshtein} from "../utilities/search";
+import {IsDayBetweenDates} from "../utilities/date-time";
 
 
 /**
@@ -284,47 +284,51 @@ export default class NoteManager{
     }
 
     /**
-     * Check the current date of a calendar for note reminders the current user registered for
-     * @param calendarId The ID of the calendar to check
-     * @param initialLoad If this is the initial load of the page
+     * Checks to see if the current time is in such a way that the note is considered to be "triggered" or active
+     * @param note The note to check
+     * @param calendar The calendar associated with the note
      */
-    public checkNoteReminders(calendarId: string, initialLoad: boolean = false){
-        const calendar = CalManager.getCalendar(calendarId);
-        if(calendar && (!initialLoad || (initialLoad && calendar.generalSettings.postNoteRemindersOnFoundryLoad)) && this.notes[calendarId]){
-            const noteList = this.notes[calendarId];
-            const currentDate = calendar.getCurrentDate();
-            for(let i = 0; i < noteList.length; i++){
-                const note = noteList[i];
-                //Current user wants to be reminded of this note and the note is visible on this day
-                if(!note.reminderSent && note.userReminderRegistered && note.isVisible(calendarId, currentDate.year, currentDate.month, currentDate.day)){
-                    const nd = note.noteData;
-                    if(nd){
-                        let sendReminder = nd.allDay;
-                        //If this is an all day event
-                        if(!nd.allDay){
-                            const nSeconds = (nd.startDate.hour * calendar.time.minutesInHour * calendar.time.secondsInMinute) + (nd.startDate.minute * calendar.time.secondsInMinute) + nd.startDate.seconds;
-                            sendReminder = currentDate.seconds >= nSeconds;
-                        }
-                        if(sendReminder){
-                            note.reminderSent = true;
-                            ChatMessage.create({
-                                speaker: {alias: "Simple Calendar Reminder"},
-                                whisper: [GameSettings.UserID()],
-                                content: `<div class='simple-calendar ${GameSettings.GetStringSettings(SettingNames.Theme)}'><h2>${note.title}</h2><div style="display: flex;"><div class="note-category"><span class="fa fa-calendar"></span> ${note.fullDisplayDate}</div></div>${note.content}</div>`
-                            }).catch(Logger.error);
-                        }
-                    }
+    public noteTriggered(note: NoteStub, calendar: Calendar): boolean{
+        let triggered = false;
+        const noteData = note.noteData;
+        const currentDate = calendar.getCurrentDate();
+        //Make sure we can get the notes data and that the note is visible on the current date (meaning it could be triggered)
+        if(noteData && note.isVisible(calendar.id, currentDate.year, currentDate.month, currentDate.day)){
+            if(noteData.allDay){
+                triggered = true;
+            } else {
+                const between = IsDayBetweenDates(calendar, {year: currentDate.year, month: currentDate.month, day: currentDate.day, hour: 0, minute: 0, seconds: 0}, noteData.startDate, noteData.endDate);
+                if(between === DateRangeMatch.Start){
+                    const startSeconds = (noteData.startDate.hour * calendar.time.minutesInHour * calendar.time.secondsInMinute) + (noteData.startDate.minute * calendar.time.secondsInMinute) + noteData.startDate.seconds;
+                    triggered = currentDate.seconds >= startSeconds;
+                } else if(between === DateRangeMatch.Middle){
+                    triggered = true;
+                } else if(between === DateRangeMatch.End){
+                    const endSeconds = (noteData.endDate.hour * calendar.time.minutesInHour * calendar.time.secondsInMinute) + (noteData.endDate.minute * calendar.time.secondsInMinute) + noteData.endDate.seconds;
+                    triggered = currentDate.seconds <= endSeconds;
+                } else if(between === DateRangeMatch.Exact){
+                    const startSeconds = (noteData.startDate.hour * calendar.time.minutesInHour * calendar.time.secondsInMinute) + (noteData.startDate.minute * calendar.time.secondsInMinute) + noteData.startDate.seconds;
+                    const endSeconds = (noteData.endDate.hour * calendar.time.minutesInHour * calendar.time.secondsInMinute) + (noteData.endDate.minute * calendar.time.secondsInMinute) + noteData.endDate.seconds;
+                    triggered = currentDate.seconds >= startSeconds && currentDate.seconds <= endSeconds;
                 }
             }
         }
+        return triggered;
     }
 
-    public resetNoteReminderSent(calendarId: string){
-        //TODO: Look into calling this so repeating notes can be called again
-        const noteList = this.notes[calendarId];
-        if(noteList){
+    /**
+     * Check the current date of a calendar for note triggers (reminders, macros)
+     * @param calendarId The ID of the calendar to check
+     * @param initialLoad If this is the initial load of the page
+     */
+    public checkNoteTriggers(calendarId: string, initialLoad: boolean = false){
+        const calendar = CalManager.getCalendar(calendarId);
+        if(calendar && this.notes[calendarId]){
+            const noteList = this.notes[calendarId];
             for(let i = 0; i < noteList.length; i++){
-                noteList[i].reminderSent = false;
+                if(this.noteTriggered(noteList[i], calendar)){
+                    noteList[i].triggers.forEach(t => t.fire(noteList[i], initialLoad));
+                }
             }
         }
     }

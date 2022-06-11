@@ -549,16 +549,8 @@ describe('Main App Class Tests', () => {
     });
 
     test('Add Note', () => {
-        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
         jest.spyOn(NManager, 'addNewNote').mockImplementation(async () => {});
         const fEvent = {stopPropagation: jest.fn()};
-
-        //@ts-ignore
-        ma.addNote(fEvent);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
-
-        //@ts-ignore
-        jest.spyOn(game.users, 'find').mockImplementation((v: any)=>{return v.call(undefined, {isGM: true, active: true})});
         //@ts-ignore
         ma.addNote(fEvent);
         expect(NManager.addNewNote).toHaveBeenCalledTimes(1);

@@ -13,7 +13,7 @@ import {
     MoonYearResetOptions,
     NoteRepeat,
     PredefinedCalendars,
-    PresetTimeOfDay,
+    PresetTimeOfDay, TimeKeeperStatus,
     YearNamingRules
 } from "../../constants";
 import Calendar from "../calendar";
@@ -86,8 +86,11 @@ describe('API Class Tests', () => {
         expect(await API.addNote('', '', {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, true, 0, [])).toBe(null);
         expect(NManager.createNote).not.toHaveBeenCalled();
 
-        expect(await API.addNote('', '', {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, true, 0, [], '')).toBe(null);
+        expect(await API.addNote('', '', {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, true, 0, [], '', 'asd')).toBe(null);
         expect(NManager.createNote).toHaveBeenCalledTimes(1);
+
+        expect(await API.addNote('', '', {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, true, 0, [], '')).toBe(null);
+        expect(NManager.createNote).toHaveBeenCalledTimes(2);
     });
 
     test('Advance Time to Preset', () => {
@@ -288,17 +291,52 @@ describe('API Class Tests', () => {
         expect(API.isPrimaryGM()).toBe(false);
     });
 
+    test('Pause Clock', () => {
+        expect(API.pauseClock()).toBe(false);
+        SC.primary = true;
+        expect(API.pauseClock()).toBe(false);
+        expect(console.error).toHaveBeenCalledTimes(1);
+        //@ts-ignore
+        tCal.timeKeeper.status = TimeKeeperStatus.Started;
+        expect(API.pauseClock('')).toBe(true);
+        expect(API.pauseClock('')).toBe(true);
+    });
+
+    test('Remove Note', async () => {
+        const ns = new NoteStub('asd');
+        jest.spyOn(NManager, 'getNoteStub').mockReturnValue(ns);
+        jest.spyOn(ns, "isVisible").mockReturnValue(true);
+        expect(await API.removeNote('asd')).toBe(true);
+
+        //@ts-ignore
+        const t = game.journal;
+        //@ts-ignore
+        game.journal = {get: () => {return false;}};
+        expect(await API.removeNote('asd')).toBe(false);
+        //@ts-ignore
+        game.journal = t;
+    });
+
     test('Run Migration', async () => {
         jest.spyOn(console, 'info').mockImplementation(() => {});
         jest.spyOn(console, 'warn').mockImplementation(() => {});
         updateMigrationApplication(new MigrationApp());
         jest.spyOn(MigrationApplication, 'run').mockImplementation(async () => {});
-        expect(API.runMigration()).rejects.toBeUndefined();
+        expect(API.runMigration()).toBeUndefined();
 
         //@ts-ignore
         game.user.isGM = true;
         SC.primary = true;
-        expect(await API.runMigration()).toBeUndefined();
+        expect(API.runMigration()).toBeUndefined();
+    });
+
+    test('Search Notes', () => {
+        jest.spyOn(NManager, "searchNotes").mockImplementation(() => { return [new NoteStub('asd')]});
+        API.searchNotes('asd');
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        API.searchNotes('asd', {date: true, title: true, details: true, categories: true, author: true}, 'asd');
+        expect(NManager.searchNotes).toHaveBeenCalledTimes(1);
     });
 
     test('Seconds To Interval', () => {
@@ -321,6 +359,8 @@ describe('API Class Tests', () => {
 
     test('Show Calendar', () => {
         jest.spyOn(MainApplication, 'showApp').mockImplementation(() => {});
+        jest.spyOn(MainApplication, 'updateApp').mockImplementation(() => {});
+        jest.spyOn(MainApplication, 'rendered', 'get').mockReturnValueOnce(false).mockReturnValue(true)
         API.showCalendar();
         expect(console.error).toHaveBeenCalledTimes(1);
         expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
@@ -329,15 +369,18 @@ describe('API Class Tests', () => {
         //@ts-ignore
         API.showCalendar({year: 'asd'}, false, '');
         expect(console.error).toHaveBeenCalledTimes(2);
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(2);
+        expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.updateApp).toHaveBeenCalledTimes(2);
 
         tCal.months[0].current = true;
         tCal.months[0].days[0].current = true;
         API.showCalendar({month: 1});
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(3);
+        expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.updateApp).toHaveBeenCalledTimes(4);
 
         API.showCalendar({year: 2020, month: -1, day: -1});
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(4);
+        expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.updateApp).toHaveBeenCalledTimes(6);
     });
 
     test('Start Clock', () => {

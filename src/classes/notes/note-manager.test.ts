@@ -9,6 +9,9 @@ import CalendarManager from "../calendar/calendar-manager";
 import MainApp from "../applications/main-app";
 import NoteManager from "./note-manager";
 import GameSockets from "../foundry-interfacing/game-sockets";
+import {NoteTrigger} from "./note-trigger";
+import * as DateUtil from "../utilities/date-time";
+import {DateRangeMatch} from "../../constants";
 
 describe('Note Manager Class Tests', () => {
     let tCal: Calendar;
@@ -225,28 +228,52 @@ describe('Note Manager Class Tests', () => {
         expect(NoteManager.dayNoteSort(n1, n2)).toBe(-1);
     });
 
-    test('Check Note Reminders', () => {
-        jest.spyOn(CalManager, 'getCalendar').mockImplementation(() => {return tCal});
-        jest.spyOn(ChatMessage, 'create').mockImplementation(async () => {return undefined});
+    test('Note Triggered', () => {
+        jest.spyOn(tCal, 'getCurrentDate').mockReturnValue({year: 2022, month: 4, day: 19, seconds: 3600});
+        const ns = {
+            noteData: {
+                allDay: true,
+                startDate: {hour: 2, minute: 0, seconds: 0},
+                endDate: {hour: 4, minute: 0, seconds: 0},
+            },
+            isVisible: () => {return true;}
+        };
 
         //@ts-ignore
-        NManager.notes['asd'] = [{userReminderRegistered: false, isVisible: () => {return true;}, noteData: {allDay: true}}, {userReminderRegistered: true, isVisible: () => {return true;}, noteData: {allDay: false, startDate:{hour: 0, minute: 0, seconds: 0}}}];
+        expect(NManager.noteTriggered(ns, tCal)).toBe(true);
 
+        ns.noteData.allDay = false;
+        jest.spyOn(DateUtil, 'IsDayBetweenDates').mockReturnValueOnce(DateRangeMatch.Start).mockReturnValueOnce(DateRangeMatch.Middle).mockReturnValueOnce(DateRangeMatch.End).mockReturnValueOnce(DateRangeMatch.Exact);
 
-        NManager.checkNoteReminders('asd');
-        expect(ChatMessage.create).toHaveBeenCalledTimes(1);
+        //@ts-ignore
+        expect(NManager.noteTriggered(ns, tCal)).toBe(false);
 
-        NManager.checkNoteReminders('asd', true);
-        expect(ChatMessage.create).toHaveBeenCalledTimes(1);
+        //@ts-ignore
+        expect(NManager.noteTriggered(ns, tCal)).toBe(true);
+
+        //@ts-ignore
+        expect(NManager.noteTriggered(ns, tCal)).toBe(true);
+
+        ns.noteData.startDate.hour = 1;
+        //@ts-ignore
+        expect(NManager.noteTriggered(ns, tCal)).toBe(true);
     });
 
-    test('Reset Note Reminder Sent', () => {
-        //@ts-ignore
-        NManager.notes['asd'] = [{reminderSent: true}];
+    test('Check Note Triggers', () => {
+        jest.spyOn(CalManager, 'getCalendar').mockImplementation(() => {return tCal});
+        jest.spyOn(NManager, 'noteTriggered').mockReturnValue(true);
 
-        NManager.resetNoteReminderSent('asd');
+        const triggerFunction = jest.fn();
+        const nt = new NoteTrigger(triggerFunction, true);
         //@ts-ignore
-        expect(NManager.notes['asd'][0].reminderSent).toBe(false);
+        NManager.notes['asd'] = [{userReminderRegistered: false, isVisible: () => {return true;}, triggers: [nt], noteData: {allDay: true}}, {userReminderRegistered: true, isVisible: () => {return true;}, triggers: [nt], noteData: {allDay: false, startDate:{hour: 0, minute: 0, seconds: 0}}}];
+
+
+        NManager.checkNoteTriggers('asd');
+        expect(triggerFunction).toHaveBeenCalledTimes(2);
+
+        NManager.checkNoteTriggers('asd', true);
+        expect(triggerFunction).toHaveBeenCalledTimes(4);
     });
 
     test('Search Notes', () => {

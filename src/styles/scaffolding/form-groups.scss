@@ -12,6 +12,9 @@
     &.fsc-open{
       visibility: visible;
       max-height: 150px;
+      &.fsc-no-max-height{
+        max-height: unset;
+      }
     }
     &.fsc-closed{
       visibility: hidden;

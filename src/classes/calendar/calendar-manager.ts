@@ -85,7 +85,7 @@ export default class CalendarManager {
                 }
             }
         }
-        NManager.checkNoteReminders(this.activeId);
+        NManager.checkNoteTriggers(this.activeId);
         const cal = this.getVisibleCalendar();
         if(cal && cal.timeKeeper.getStatus() !== TimeKeeperStatus.Started){
             MainApplication.updateApp();
@@ -211,7 +211,7 @@ export default class CalendarManager {
                     delete this.calendars[key];
                 }
             }
-            //Go through each calendar in the list and if the calendar exists, update its settings. Otherwise add the new calendar
+            //Go through each calendar in the list and if the calendar exists, update its settings. Otherwise, add the new calendar
             for(let i = 0; i < calendars.length; i++){
                 if(this.calendars[calendars[i].id]){
                     this.calendars[calendars[i].id].loadFromSettings(calendars[i].toConfig());

@@ -32,7 +32,7 @@ describe('Note Stub Class Tests', () => {
         nStub = new NoteStub('je1');
         tCal.noteCategories.push({name: 'qwe', id: '', color: '', textColor: ''});
 
-        nd = {calendarId: 'test', startDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, allDay: false, repeats: NoteRepeat.Yearly, order: 1, fromPredefined: true, categories: [], remindUsers: ['qwe']};
+        nd = {calendarId: 'test', startDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, allDay: false, repeats: NoteRepeat.Yearly, order: 1, fromPredefined: true, categories: [], remindUsers: ['qwe'], macro: '123abc'};
 
         je = {
             data:{
@@ -49,6 +49,18 @@ describe('Note Stub Class Tests', () => {
         jest.spyOn(game.journal, 'get').mockReturnValue(je);
         //@ts-ignore
         game.user.isGM = false;
+    });
+
+    test('Reminder Note Trigger', () => {
+        jest.spyOn(ChatMessage, 'create').mockImplementation(async () => {return undefined});
+        jest.spyOn(nStub, 'userReminderRegistered', 'get').mockReturnValue(true);
+        expect(NoteStub.reminderNoteTrigger(nStub, false)).toBe(false);
+        expect(NoteStub.reminderNoteTrigger(nStub, true)).toBe(true);
+    });
+
+    test('Macro Note Trigger', () => {
+        expect(NoteStub.macroNoteTrigger(nStub, false)).toBe(false);
+        expect(NoteStub.macroNoteTrigger(nStub, false)).toBe(true);
     });
 
     test('Note Data', () => {
@@ -103,6 +115,10 @@ describe('Note Stub Class Tests', () => {
         expect(nStub.authorDisplay).toEqual({"color": "", "colorText": "", "name": "System"});
     });
 
+    test('Can Edit', () => {
+        expect(nStub.canEdit).toBe(true);
+    });
+
     test('Categories', () => {
         expect(nStub.categories).toEqual([]);
         expect(nStub.categories).toEqual([]);
@@ -139,6 +155,11 @@ describe('Note Stub Class Tests', () => {
     test('From Predefined', () => {
         expect(nStub.fromPredefined).toEqual(false);
         expect(nStub.fromPredefined).toEqual(true);
+    });
+
+    test('Macro', () => {
+        expect(nStub.macro).toBe('none');
+        expect(nStub.macro).toBe('123abc');
     });
 
     test('Can User View', () => {

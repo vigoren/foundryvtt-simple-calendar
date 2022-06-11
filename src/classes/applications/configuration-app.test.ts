@@ -96,8 +96,10 @@ describe('Configuration App Class Tests', () => {
         jest.spyOn(console, 'error').mockImplementation(() => {});
         //@ts-ignore
         ca.predefindCalendars = [];
+
         //@ts-ignore
-        ca.rendered = false;
+        jest.spyOn(ca, 'rendered', 'get').mockReturnValue(false);
+
         await ca.initializeAndShowDialog();
         expect(console.error).toHaveBeenCalledTimes(1);
     });

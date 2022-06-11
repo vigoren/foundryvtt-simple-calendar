@@ -10,21 +10,23 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
     DateSelectorPositions,
     GameSystems,
-    LeapYearRules,
     Icons,
+    LeapYearRules,
     MoonYearResetOptions,
+    NoteRepeat,
     PredefinedCalendars,
-    PresetTimeOfDay,
+    PresetTimeOfDay, SocketTypes,
     TimeKeeperStatus,
-    YearNamingRules, NoteRepeat, MigrationTypes
+    YearNamingRules
 } from "../../constants";
 import PF2E from "../systems/pf2e";
 import {AdvanceTimeToPreset, DateToTimestamp, FormatDateTime, TimestampToDate} from "../utilities/date-time";
 import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Renderer from "../renderer";
-import {MainApplication, CalManager, SC, NManager, MigrationApplication} from "../index";
+import {CalManager, MainApplication, MigrationApplication, NManager, SC} from "../index";
 import {canUser} from "../utilities/permissions";
+import GameSockets from "../foundry-interfacing/game-sockets";
 
 /**
  * The Date selector class used to create date selector inputs based on the calendar
@@ -95,6 +97,7 @@ export function activateFullCalendarListeners(calendarId: string, onMonthChange:
  * @param allDay If the note lasts all day or if it has a specific time duration. Whether to ignore the time portion of the start and end dates.
  * @param repeats If the note repeats and how often it does
  * @param categories A list of note categories to assign to this note
+ * @param macro The ID of the macro that this note should execute when the in game time meets or exceeds the note time. Or null if no macro should be executed.
  * @param calendarId Optional parameter to specify the ID of the calendar to add the note too. If not provided the current active calendar will be used.
  *
  * @returns The newly created JournalEntry that contains the note data, or null if there was an error encountered.
@@ -105,7 +108,7 @@ export function activateFullCalendarListeners(calendarId: string, onMonthChange:
  * // Will create a new note on Christmas day of 2022 that lasts all day and repeats yearly.
  * ```
  */
-export async function addNote(title: string, content: string, starDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime, allDay: boolean, repeats: NoteRepeat, categories: string[], calendarId: string = 'active'): Promise<StoredDocument<JournalEntry> | null>{
+export async function addNote(title: string, content: string, starDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime, allDay: boolean, repeats: NoteRepeat, categories: string[], calendarId: string = 'active', macro: string | null = null): Promise<StoredDocument<JournalEntry> | null>{
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(activeCalendar){
         return await NManager.createNote( title, content, {
@@ -116,7 +119,8 @@ export async function addNote(title: string, content: string, starDate: SimpleCa
                 order: 0,
                 categories: categories,
                 repeats: repeats,
-                remindUsers: []
+                remindUsers: [],
+                macro: macro? macro : 'none'
             }, activeCalendar, false );
     }
     return null;
@@ -146,7 +150,7 @@ export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string 
     const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(activeCalendar){
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)) {
-            AdvanceTimeToPreset(preset, activeCalendar.id).catch(Logger.error);
+            AdvanceTimeToPreset(preset, activeCalendar).catch(Logger.error);
             return true;
         }
     }
@@ -1204,7 +1208,7 @@ export function getTimeConfiguration(calendarId: string = 'active'): SimpleCalen
  * @example
  * ```javascript
  *
- * SimpleCalendar.api.isPrimaryGM(); //True or Flase depending on if the current user is primary gm
+ * SimpleCalendar.api.isPrimaryGM(); //True or False depending on if the current user is primary gm
  *
  * ```
  */
@@ -1213,23 +1217,124 @@ export function isPrimaryGM(): boolean {
 }
 
 /**
- * Run the migration from Simple Calendar version 1 to version 2.
- * This will only work if the current player is the primary GM and the Clean Up button was not clicked during the initial migration, as that button removes the old settings.
- * **Important**: Running this function will overwrite any existing settings in the calendar.
+ * Pauses the real time clock for the specified calendar. Only the primary GM can pause a clock.
  *
- * @returns A promise that resolves if the migration was a success, or fails if there was an error.
+ * @param calendarId Optional parameter to specify the ID of the calendar to pause the real time clock for. If not provided the current active calendar will be used.
+ *
+ * @returns True if the clock was paused, false otherwise
  *
  * @example
  * ```javascript
- * SimpleCalendar.api.runMigration().then(() => {...}).catch(console.error);
+ * SimpleCalendar.api.pauseClock();
  * ```
  */
-export function runMigration(): Promise<void> {
-    if(GameSettings.IsGm() && SC.primary){
-        MigrationApplication.MigrationType = MigrationTypes.v1To2;
-        return MigrationApplication.run();
+export function pauseClock(calendarId: string = 'active'): boolean {
+    if(SC.primary){
+        const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);3
+        if(cal){
+            const status = cal.timeKeeper.getStatus();
+            if(status === TimeKeeperStatus.Started){
+                cal.timeKeeper.start();
+                return cal.timeKeeper.getStatus() === TimeKeeperStatus.Paused;
+            } else if(status === TimeKeeperStatus.Paused){
+                return true;
+            }
+        } else {
+            Logger.error(`SimpleCalendar.api.pauseClock - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        }
     }
-    return Promise.reject();
+    return false;
+}
+
+/**
+ * This function removes the specified note from Simple Calendar.
+ *
+ * @param journalEntryId The ID of the journal entry associated with the note that is to be removed.
+ *
+ * @returns True if the note was removed or false if it was not.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.removeNote("asd123").then(...).catch(console.error);
+ * ```
+ */
+export async function removeNote(journalEntryId: string): Promise<boolean> {
+    const je = (<Game>game).journal?.get(journalEntryId);
+    if(je){
+        const ns = NManager.getNoteStub(je);
+        if(ns?.isVisible){
+            NManager.removeNoteStub(je);
+            MainApplication.updateApp();
+            await je.delete();
+            await GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}});
+            return true;
+        }
+    } else {
+        Logger.error(`SimpleCalendar.api.removeNote - Unable to find a journal entry with the passed in ID of "${journalEntryId}"`);
+    }
+    return false;
+}
+
+/**
+ * Run the migration from Simple Calendar version 1 to version 2.
+ * This will only work if the current player is the primary GM.
+ *
+ * A dialog will be shown to confirm if the GM wants to run the migration. This will prevent accidental running of the migration.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.runMigration();
+ * ```
+ */
+export function runMigration(): void {
+    if(GameSettings.IsGm() && SC.primary){
+        const d = new Dialog({
+            title: GameSettings.Localize('FSC.Migration.APIDialog.Title'),
+            content: GameSettings.Localize('FSC.Migration.APIDialog.Content'),
+            buttons: {
+                yes: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: GameSettings.Localize('FSC.Confirm'),
+                    callback: MigrationApplication.run.bind(MigrationApplication, true)
+                },
+                no: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: GameSettings.Localize('FSC.Cancel')
+                }
+            },
+            default: 'no'
+        });
+        d.render(true);
+    }
+}
+
+/**
+ * Search the notes in Simple Calendar for a specific term. Only notes that the user can see are returned.
+ *
+ * @param term The text that is being searched for
+ * @param options Options parameter to specify which fields of the note to use when searching, If not provided all fields are searched against.
+ * @param calendarId Optional parameter to specify the ID of the calendar whose notes to search against. If not provided the current active calendar will be used.
+ *
+ * @returns A list of [JournalEntry](https://foundryvtt.com/api/JournalEntry.html) that matched the term being searched.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.searchNotes("Note"); //Will return a list of notes that contained the word note somewhere in its content.
+ *
+ * SimpleCalendar.api.searchNotes("Note", {title: true}); // Will return a list of notes that contain the world note in the title.
+ *
+ * SimpleCalendar.api.searchNotes("Gamemaster", {author: true}); // Will return a list of notes that were written by the gamemaster.
+ * ```
+ */
+export function searchNotes(term: string, options = {date: true, title: true, details: true, categories: true, author: true}, calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[] {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    let results: (StoredDocument<JournalEntry> | undefined)[] = [];
+    if(cal){
+        results = NManager.searchNotes(cal.id, term, options).map(n => (<Game>game).journal?.get(n.entryId));
+    } else {
+        Logger.error(`SimpleCalendar.api.searchNotes - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+    return results;
 }
 
 /**
@@ -1350,7 +1455,11 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
     }
 
     MainApplication.uiElementStates.compactView = compact;
-    MainApplication.showApp();
+    if(MainApplication.rendered){
+        MainApplication.updateApp();
+    } else {
+        MainApplication.showApp();
+    }
 }
 
 /**

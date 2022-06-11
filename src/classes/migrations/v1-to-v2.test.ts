@@ -61,7 +61,7 @@ describe('V1 to V2 Class Tests', () => {
             .mockReturnValueOnce({}) //General Configuration
             .mockReturnValueOnce({}) //Time Configuration
         ;
-        expect(V1ToV2.runGlobalConfigurationMigration()).toBe(false);
+        expect(V1ToV2.runGlobalConfigurationMigration()).toBe(true);
 
         (<Mock>(<Game>game).settings.get)
             .mockReturnValueOnce({permissions: {viewCalendar:{player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},addNotes:{player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},changeDateTime:{player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined},reorderNotes:{player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}) //General Configuration

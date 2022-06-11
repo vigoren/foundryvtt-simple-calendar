@@ -50,6 +50,28 @@
         }
       }
 
+      .fsc-note-advance{
+        display: inline-block;
+        margin: $spacer-half 0;
+        font-size: 1.075rem;
+        span{
+          margin-left: $spacer-half;
+          font-size: 0.875rem;
+        }
+      }
+
+      .fsc-options{
+        max-height: 0;
+        overflow: hidden;
+        &.fsc-closed{
+          visibility: hidden;
+        }
+        &.fsc-open{
+          visibility: visible;
+          max-height: 150px;
+        }
+      }
+
       &.fsc-read-only{
         .fsc-note-header{
           display: flex;

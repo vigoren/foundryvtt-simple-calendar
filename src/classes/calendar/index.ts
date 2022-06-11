@@ -1,6 +1,8 @@
 import {
     GameSystems,
-    GameWorldTimeIntegrations, LeapYearRules,
+    GameWorldTimeIntegrations,
+    LeapYearRules,
+    SimpleCalendarHooks,
     TimeKeeperStatus
 } from "../../constants";
 import Year from "./year";
@@ -16,12 +18,13 @@ import PF2E from "../systems/pf2e";
 import Renderer from "../renderer";
 import {generateUniqueId} from "../utilities/string";
 import {DateToTimestamp, DaysBetweenDates, FormatDateTime, ToSeconds} from "../utilities/date-time";
-import{canUser} from "../utilities/permissions";
+import {canUser} from "../utilities/permissions";
 import {CalManager, MainApplication, NManager, SC} from "../index";
 import TimeKeeper from "../time/time-keeper";
 import NoteStub from "../notes/note-stub";
 import Time from "../time";
 import {deepMerge} from "../utilities/object";
+import {Hook} from "../api/hook";
 
 export default class Calendar extends ConfigurationItemBase{
     /**
@@ -646,7 +649,7 @@ export default class Calendar extends ConfigurationItemBase{
             month = this.months.length - 1;
         }
         //Get the current months current day
-        let currentDay = next? 0 : -1;
+        let currentDay: number;
 
         if(setDay !== null){
             currentDay = setDay;
@@ -777,8 +780,8 @@ export default class Calendar extends ConfigurationItemBase{
 
     /**
      * Generates the total number of days in a year
-     * @param {boolean} [leapYear=false] If to count the total number of days in a leap year
-     * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
+     * @param leapYear If to count the total number of days in a leap year
+     * @param ignoreIntercalaryRules If to ignore the intercalary rules and include the months days (used to match closer to about-time)
      * @return {number}
      */
     totalNumberOfDays(leapYear: boolean = false, ignoreIntercalaryRules: boolean = false): number {
@@ -793,11 +796,11 @@ export default class Calendar extends ConfigurationItemBase{
 
     /**
      * Converts the passed in date to the number of days that make up that date
-     * @param {number} year The year to convert
-     * @param {number} monthIndex The index of the month to convert
-     * @param {number} dayIndex The day to convert
-     * @param {boolean} addLeapYearDiff If to add the leap year difference to the end result. Year 0 is not counted in the number of leap years so the total days will be off by that amount.
-     * @param {boolean} [ignoreIntercalaryRules=false] If to ignore the intercalary rules and include the months days (used to match closer to about-time)
+     * @param year The year to convert
+     * @param monthIndex The index of the month to convert
+     * @param dayIndex The day to convert
+     * @param addLeapYearDiff If to add the leap year difference to the end result. Year 0 is not counted in the number of leap years so the total days will be off by that amount.
+     * @param ignoreIntercalaryRules If to ignore the intercalary rules and include the months days (used to match closer to about-time)
      */
     dateToDays(year: number, monthIndex: number, dayIndex: number, addLeapYearDiff: boolean = false, ignoreIntercalaryRules: boolean = false){
         const beforeYearZero = year < this.year.yearZero;
@@ -812,13 +815,14 @@ export default class Calendar extends ConfigurationItemBase{
 
         if(monthIndex < 0){
             monthIndex = 0;
-        } else if(monthIndex > this.months.length){
+        } else if(monthIndex >= this.months.length){
             monthIndex = this.months.length - 1;
         }
 
         if(beforeYearZero) {
             procYear = procYear - 1;
         }
+
         //If the month has a day offset set we need to remove that from the days numeric representation or too many days are calculated.
         let daysIntoMonth = dayIndex - this.months[monthIndex].numericRepresentationOffset + 1;
 
@@ -884,7 +888,7 @@ export default class Calendar extends ConfigurationItemBase{
     secondsToDate(seconds: number): SimpleCalendar.DateTime{
         const beforeYearZero = seconds < 0;
         seconds = Math.abs(seconds);
-        let sec, min, hour, day = 0, dayCount, month = 0, year = 0;
+        let sec, min, hour, day: number, dayCount, month: number, year: number;
 
         dayCount = Math.floor(seconds / this.time.secondsPerDay);
         seconds -= dayCount * this.time.secondsPerDay;
@@ -977,7 +981,7 @@ export default class Calendar extends ConfigurationItemBase{
      * @param seconds
      */
     secondsToInterval(seconds: number): SimpleCalendar.DateTimeParts {
-        let sec = seconds, min = 0, hour = 0, day = 0, month = 0, year = 0;
+        let sec = seconds, min = 0, hour = 0, day: number, month: number, year: number;
         if(sec >= this.time.secondsInMinute){
             min = Math.floor(sec / this.time.secondsInMinute);
             sec = sec - (min * this.time.secondsInMinute);
@@ -1022,10 +1026,7 @@ export default class Calendar extends ConfigurationItemBase{
     public changeDateTime(interval: SimpleCalendar.DateTimeParts, options: SimpleCalendar.DateChangeOptions = {}){
         options = deepMerge({}, {updateMonth: true, updateApp: true, save: true, sync: true, showWarning: false}, options);
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
-            let initialTimestamp = NaN;
-            if(CalManager.syncWithAllCalendars){
-                initialTimestamp = this.toSeconds();
-            }
+            let initialTimestamp = this.toSeconds();
             let change = false;
             if(interval.year){
                 this.changeYear(interval.year, options.updateMonth, 'current');
@@ -1048,8 +1049,10 @@ export default class Calendar extends ConfigurationItemBase{
             }
 
             if(change){
+                let changeInSeconds = this.toSeconds() - initialTimestamp;
+                Hook.emit(SimpleCalendarHooks.DateTimeChange, this, changeInSeconds);
+
                 if(!options.fromCalSync && CalManager.syncWithAllCalendars && !isNaN(initialTimestamp)){
-                    let changeInSeconds = this.toSeconds() - initialTimestamp;
                     CalManager.syncWithCalendars({seconds: changeInSeconds});
                 }
                 if(options.save){
@@ -1072,10 +1075,8 @@ export default class Calendar extends ConfigurationItemBase{
     public setDateTime(date: SimpleCalendar.DateTimeParts, options: SimpleCalendar.DateChangeOptions = {}){
         options = deepMerge({}, {updateMonth: true, updateApp: true, save: true, sync: true, showWarning: false, bypassPermissionCheck: false}, options);
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime) || options.bypassPermissionCheck){
-            let initialTimestamp = NaN;
-            if(CalManager.syncWithAllCalendars){
-                initialTimestamp = this.toSeconds();
-            }
+            let initialTimestamp = this.toSeconds();
+
             const processedDate: SimpleCalendar.DateTime = { year: date.year || 0, month: date.month || 0, day: date.day || 0, hour: date.hour || 0, minute: date.minute || 0, seconds: date.seconds || 0 };
             const monthDayIndex = this.getMonthAndDayIndex();
             const currentTime = this.time.getCurrentTime();
@@ -1098,8 +1099,11 @@ export default class Calendar extends ConfigurationItemBase{
                 processedDate.day = monthDayIndex.day || 0;
             }
             this.updateTime(processedDate);
+
+            let changeInSeconds = this.toSeconds() - initialTimestamp;
+            Hook.emit(SimpleCalendarHooks.DateTimeChange, this, changeInSeconds);
+
             if(!options.fromCalSync && CalManager.syncWithAllCalendars && !isNaN(initialTimestamp)){
-                let changeInSeconds = this.toSeconds() - initialTimestamp;
                 CalManager.syncWithCalendars({seconds: changeInSeconds});
             }
             if(options.save){
@@ -1131,7 +1135,10 @@ export default class Calendar extends ConfigurationItemBase{
                 //Let the local functions know that we already updated this time
                 this.timeChangeTriggered = true;
                 //Set the world time, this will trigger the setFromTime function on all connected players when the updateWorldTime hook is triggered
-                await this.time.setWorldTime(totalSeconds);
+                if(GameSettings.IsGm()){
+                    await this.time.setWorldTime(totalSeconds);
+                }
+
             }
         }
     }

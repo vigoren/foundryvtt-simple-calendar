@@ -1,14 +1,14 @@
-import {
-    ConcreteJournalEntry
-} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/applications/formApplications/documentSheets/journalSheet";
 import {ModuleName, NoteRepeat, SettingNames, SocketTypes, Themes} from "../../constants";
 import {DateTheSame, DaysBetweenDates, FormatDateTime} from "../utilities/date-time";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import {CalManager, MainApplication, NManager, SC} from "../index";
-import {GetContrastColor} from "../utilities/visual";
+import {animateElement, GetContrastColor} from "../utilities/visual";
 import {getCheckBoxGroupValues, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import GameSockets from "../foundry-interfacing/game-sockets";
+import {
+    ConcreteJournalEntry
+} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/apps/forms/journal-sheet";
 
 export class NoteSheet extends DocumentSheet{
 
@@ -17,6 +17,8 @@ export class NoteSheet extends DocumentSheet{
     private resized: boolean = false;
 
     private editMode: boolean = false;
+
+    private advancedOpen: boolean = false;
 
     private readonly dateSelectorId: string;
 
@@ -108,6 +110,7 @@ export class NoteSheet extends DocumentSheet{
             this.dirty = false;
             this.editMode = false;
             this.resized = false;
+            this.advancedOpen = false;
             return super.close(options);
         }
     }
@@ -141,7 +144,8 @@ export class NoteSheet extends DocumentSheet{
                 repeatsDisplay: '',
                 author: {colorText: '', color: '', name: ''},
                 categories: <any>[],
-                enrichedContent: ''
+                enrichedContent: '',
+                macro: ''
             },
             edit: {
                 dateDisplay: '',
@@ -152,7 +156,10 @@ export class NoteSheet extends DocumentSheet{
                 dateSelectorId: this.dateSelectorId,
                 dateSelectorSelect: this.dateSelectorSelect.bind(this),
                 repeatOptions: <SimpleCalendar.NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
-                allCategories: <any>[]
+                allCategories: <any>[],
+                advancedOpen: this.advancedOpen,
+                macroList: <Record<string,string>>{'none': 'No Macro'},
+                selectedMacro: ''
             }
         };
 
@@ -192,6 +199,13 @@ export class NoteSheet extends DocumentSheet{
                         });
                     }
                 }
+                //Macros
+                (<Game>game).macros?.forEach(m => {
+                    if(m.canExecute && m.name){
+                        newOptions.edit.macroList[m.id] = m.name;
+                    }
+                });
+                newOptions.edit.selectedMacro = noteStub.macro;
             } else {
                 newOptions.display.date = noteStub.fullDisplayDate;
                 newOptions.display.reminder = noteStub.userReminderRegistered;
@@ -200,6 +214,9 @@ export class NoteSheet extends DocumentSheet{
                 newOptions.display.author = noteStub.authorDisplay || {colorText: '', color: '', name: ''};
                 newOptions.display.categories = noteStub.categories;
                 newOptions.display.enrichedContent = TextEditor.enrichHTML(noteStub.content);
+                if(this.isEditable){
+                    newOptions.display.macro = (<Game>game).macros?.get(noteStub.macro)?.name || '';
+                }
             }
         }
         return newOptions;
@@ -230,10 +247,10 @@ export class NoteSheet extends DocumentSheet{
                     }
                 }
 
-                if(ns.editMode && height < 785){
-                    height = 785;
+                if(ns.editMode && height < 845){
+                    height = 845;
                 }
-                const maxHeight = window.outerHeight * .75;
+                const maxHeight = window.outerHeight * .95;
                 if(height > maxHeight){
                     height = maxHeight;
                 }
@@ -250,7 +267,7 @@ export class NoteSheet extends DocumentSheet{
                 const mceOptions = {
                     target: <HTMLElement>target,
                     body_class: 'simple-calendar',
-                    content_css: ["/css/mce.css", getRoute(`modules/${ModuleName}/styles/themes/tinymce-${SC.clientSettings.theme}.css`)],
+                    content_css: ["/css/mce.css", `modules/${ModuleName}/styles/themes/tinymce-${SC.clientSettings.theme}.css`],
                     preview_styles: false,
                     height: height,
                     save_onsavecallback: (mce: any )=> this.saveEditor('content')
@@ -282,6 +299,7 @@ export class NoteSheet extends DocumentSheet{
                 this.activateEditorCustom();
                 DateSelectorManager.ActivateSelector(this.dateSelectorId);
                 this.updateNoteRepeatDropdown();
+                this.appWindow.querySelector('.fsc-note-advance')?.addEventListener('click', this.toggleAdvanced.bind(this));
                 //---------------------
                 // Input Changes
                 //---------------------
@@ -301,6 +319,18 @@ export class NoteSheet extends DocumentSheet{
             this.appWindow.querySelector('#scSubmit')?.addEventListener('click', this.save.bind(this));
             this.appWindow.querySelector('#scNoteEdit')?.addEventListener('click', this.edit.bind(this));
             this.appWindow.querySelector('#scNoteDelete')?.addEventListener('click', this.delete.bind(this));
+        }
+    }
+
+    toggleAdvanced(){
+        this.advancedOpen = !this.advancedOpen;
+        if(this.appWindow){
+            const header = this.appWindow.querySelector(".fsc-note-advance");
+            const options = this.appWindow.querySelector(".fsc-options");
+            if(header && options){
+                header.innerHTML = this.advancedOpen ? `${GameSettings.Localize('FSC.HideAdvanced')}<span class='fa fa-chevron-up'></span>` : `${GameSettings.Localize('FSC.ShowAdvanced')}<span class='fa fa-chevron-down'></span>`;
+                animateElement(options, 500);
+            }
         }
     }
 
@@ -379,6 +409,7 @@ export class NoteSheet extends DocumentSheet{
             this.journalData.name = getTextInputValue('#scNoteTitle', <string>Themes.dark, this.appWindow);
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats = <NoteRepeat>getNumericInputValue('#scNoteRepeats', NoteRepeat.Never, false, this.appWindow);
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).categories = getCheckBoxGroupValues('scNoteCategories', this.appWindow);
+            (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).macro = getTextInputValue('#scNoteMacro', 'none', this.appWindow);
 
             const usersWithView = getCheckBoxGroupValues('scUserPermissions', this.appWindow);
             for(let k in this.journalData.permission){

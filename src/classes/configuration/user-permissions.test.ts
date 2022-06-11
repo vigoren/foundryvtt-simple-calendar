@@ -57,7 +57,14 @@ describe('User Permissions Class Tests', () => {
         up.loadFromSettings({viewCalendar: {}, addNotes: {}, changeDateTime: {}, changeActiveCalendar: {}});
         expect(up.id).toBeDefined();
         //@ts-ignore
-        up.loadFromSettings({reorderNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}});
+        up.loadFromSettings({viewCalendar: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, addNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeDateTime: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, changeActiveCalendar: {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined}});
         expect(up.reorderNotes).toStrictEqual({player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined});
+    });
+
+    test('Validate User Permission Matrix', () => {
+        expect(up.validateUserPermissionMatrix(undefined)).toBe(false);
+        expect(up.validateUserPermissionMatrix('asd')).toBe(false);
+        expect(up.validateUserPermissionMatrix({})).toBe(false);
+        expect(up.validateUserPermissionMatrix({player: 1, trustedPlayer: 2, assistantGameMaster: 3})).toBe(true);
     });
 });

@@ -36,6 +36,7 @@ This list shows all notes that are visible to the current player for the specifi
 | Author                      | This will show who authored the note. If the author says "System" then the note was included as part of a predefined calendar.<br/>![](media://note-list-author.png)                                                                                                                                                                 |
 | Categories                  | All of the note categories associated with the note will also be displayed.<br/>![](media://note-list-category.png)                                                                                                                                                                                                                  |
 | Player Visible<br>(GM Only) | This icon will show only for GMs but indicate if a note is visible to one or more players or if only the GM(s) can see the note.<br/>![](media://note-list-not-player-visible.png)<br/>![](media://note-list-player-visible.png)                                                                                                     |
+| Macro Icon                  | This icon will show only for GMs and authors of the note. It indicates if a macro has been set to trigger when the calendars date and time reach the notes date and time.<br/>![](media://note-list-macro.png)                                                                                                                       |
 | Sorting Icon                | If you are the GM or the GM has given a user role permission to change the order of notes on a day, there will be a sort icon displayed. Clicking this icon and dragging the note up or down will change the order the notes are displayed on that day.<br/>![](media://note-list-reorder.png)                                       |
 
 ### Opening A Note
@@ -57,6 +58,7 @@ The note details dialog is a customized journal sheet that displays all the info
 | Date and Time   | This shows the date and time of the note.                                                                                                                                                                        |
 | Note Repeats    | If this note is set up to repeat (such as a yearly holiday) this will show how often the note is repeated.                                                                                                       |
 | Note Author     | This shows who authored the note.                                                                                                                                                                                |
+| Note Macro      | This will show only for GMs and authors of the note. It indicates if a macro, and shows the name of that macro, has been set to trigger when the calendars date and time reach the notes date and time.          |
 | Note Categories | Any categories assigned to the note will be shown here.                                                                                                                                                          |
 | Note Content    | This is all the contents of the note as defined in the rich text editor.                                                                                                                                         |
 
@@ -129,6 +131,19 @@ Clicking the edit button will change the note details view into the note edit de
 | Note Categories | The list of {@page ../calendar-configuration/note-settings.md custom note categories} will appear here, each one that is checked will be applied to the note.                                                                                                                                                                                                                                                                                        |
 | Player Viewable | This shows a list of all players in the game and allows the user to choose who can see the note. The current player is always checked in this list.                                                                                                                                                                                                                                                                                                  |
 | Details         | This is the details of the note, a rich text editor that allows complete customization of the notes contents.                                                                                                                                                                                                                                                                                                                                        |
+
+### Advanced Options
+
+Clicking the "Show Advanced" title will reveal even more options that can be configured for the note. These options are considered advanced or special use case options that won't be used most of the time.
+
+![](media://note-advanced.png)
+
+| Field              | Description                                                                                                    |
+|--------------------|----------------------------------------------------------------------------------------------------------------|
+| Auto Execute Macro | Choose a macro that will be automatically executed when the in game time meets or passes the time of the note. |
+
+
+### Saving and Closing
 
 At the bottom of the note sheet there is a button to save the changes or to delete the note. If the delete note button is clicked, a confirmation dialog will show to confirm that you wish to delete the note before removing it.
 

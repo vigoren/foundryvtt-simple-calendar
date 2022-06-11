@@ -109,6 +109,9 @@ describe('Migration App Class Tests', () => {
         rnm.mockImplementation(async () => {return true;});
         await ma.run();
         expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
+
+        await ma.run(true);
+        expect(MainApplication.showApp).toHaveBeenCalledTimes(2);
     });
 
     test('Run Calendar Migration', () => {
