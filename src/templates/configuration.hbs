@@ -71,6 +71,15 @@
                     <p class="notes">{{localize 'FSC.Configuration.Time.SecondsInCombatRoundHelp'}}</p>
                 </div>
                 <div class="form-group fsc-open">
+                    <label for="scCombatPauseClockRule">{{localize 'FSC.Configuration.CombatPauseRule.Title'}}</label>
+                    <div class="form-fields">
+                        <select id="scCombatPauseClockRule">
+                            {{selectOptions combatPauseRules selected=globalConfiguration.combatPauseRule localize=true}}
+                        </select>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.CombatPauseRule.Description'}}</p>
+                </div>
+                <div class="form-group fsc-open">
                     <label for="scShowNoteFolder">{{localize 'FSC.Configuration.Global.ShowNoteFolder.Title'}}</label>
                     <div class="form-fields">
                         <input value="{{globalConfiguration.showNotesFolder}}" type="checkbox" id="scShowNoteFolder" {{checked globalConfiguration.showNotesFolder}} />
@@ -696,7 +705,7 @@
                         <div class="fsc-col">
                             <button class="fsc-control fsc-delete" data-type="month"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                         </div>
-                        <div class="fsc-options {{#unless showAdvanced }} fsc-closed{{/unless}}">
+                        <div class="fsc-options {{#if showAdvanced }} fsc-open{{else}} fsc-closed{{/if}}">
                             <div class="form-group fsc-open">
                                 <label for="-ma{{@index}}">{{localize 'FSC.Configuration.Month.Abbreviation'}}</label>
                                 <div class="form-fields">

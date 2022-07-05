@@ -3,6 +3,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
 import {
+    CombatPauseRules,
     ConfigurationDateSelectors,
     GameWorldTimeIntegrations,
     Icons,
@@ -53,6 +54,7 @@ export default class ConfigurationApp extends FormApplication {
         id: '',
         version: '',
         calendarsSameTimestamp: false,
+        combatPauseRule: CombatPauseRules.Active,
         permissions: new UserPermissions(),
         secondsInCombatRound: 6,
         syncCalendars: false,
@@ -115,6 +117,7 @@ export default class ConfigurationApp extends FormApplication {
         this.globalConfiguration.calendarsSameTimestamp = SC.globalConfiguration.calendarsSameTimestamp;
         this.globalConfiguration.syncCalendars = SC.globalConfiguration.syncCalendars;
         this.globalConfiguration.showNotesFolder = SC.globalConfiguration.showNotesFolder;
+        this.globalConfiguration.combatPauseRule = SC.globalConfiguration.combatPauseRule;
         this.clientSettings = deepMerge({}, SC.clientSettings);
         this._tabs[0].active = "globalSettings";
 
@@ -148,6 +151,7 @@ export default class ConfigurationApp extends FormApplication {
         options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
         options.height = 700;
         options.width = 1005;
+        options.scrollY = ['.fsc-tab-wrapper', '.fsc-sheet-tabs'];
         return options;
     }
 
@@ -210,6 +214,10 @@ export default class ConfigurationApp extends FormApplication {
                     'light': 'FSC.Configuration.Theme.Light',
                     'classic': 'FSC.Configuration.Theme.Classic'
                 }
+            },
+            combatPauseRules: {
+                'active': 'FSC.Configuration.CombatPauseRule.Active',
+                'current': 'FSC.Configuration.CombatPauseRule.Current'
             },
             currentYear: (<Calendar>this.object).year,
             gameSystem: (<Calendar>this.object).gameSystem,
@@ -611,6 +619,7 @@ export default class ConfigurationApp extends FormApplication {
             // Global Config: Settings
             //----------------------------------
             this.globalConfiguration.secondsInCombatRound = <number>getNumericInputValue('#scSecondsInCombatRound', 6, false, this.appWindow);
+            this.globalConfiguration.combatPauseRule = <CombatPauseRules>getTextInputValue('#scCombatPauseClockRule', <string>CombatPauseRules.Active, this.appWindow);
             this.globalConfiguration.calendarsSameTimestamp = getCheckBoxInputValue('#scCalendarsSameTimestamp', false, this.appWindow);
             this.globalConfiguration.syncCalendars = getCheckBoxInputValue('#scSyncCalendars', false, this.appWindow);
             this.globalConfiguration.showNotesFolder = getCheckBoxInputValue('#scShowNoteFolder', false, this.appWindow);
