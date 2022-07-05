@@ -67,7 +67,10 @@ const game = {
         size: 0,
         find: jest.fn((v)=>{
             return v.call(undefined, {started: true});
-        })
+        }),
+        filter: (v: any) => {
+            return v.call(undefined, {started: true});
+        }
     },
     modules: {
         get: jest.fn()

@@ -1,6 +1,6 @@
 import Sockets from "./sockets";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {ModuleName, SettingNames, SocketTypes, Themes, TimeKeeperStatus} from "../constants";
+import {CombatPauseRules, ModuleName, SettingNames, SocketTypes, Themes, TimeKeeperStatus} from "../constants";
 import {Logger} from "./logging";
 import {CalManager, MainApplication, NManager} from "./index";
 import ConfigurationApp from "./applications/configuration-app";
@@ -44,6 +44,7 @@ export default class SCController {
             id: '',
             version: '',
             calendarsSameTimestamp: false,
+            combatPauseRule: CombatPauseRules.Active,
             permissions: new UserPermissions(),
             secondsInCombatRound: 6,
             syncCalendars: false,
@@ -114,6 +115,9 @@ export default class SCController {
         this.globalConfiguration.calendarsSameTimestamp = globalConfiguration.calendarsSameTimestamp;
         this.globalConfiguration.syncCalendars = globalConfiguration.syncCalendars;
         this.globalConfiguration.showNotesFolder = globalConfiguration.showNotesFolder;
+        if(globalConfiguration.hasOwnProperty('combatPauseRule')){
+            this.globalConfiguration.combatPauseRule = globalConfiguration.combatPauseRule;
+        }
         this.clientSettings.theme = <Themes>GameSettings.GetStringSettings(SettingNames.Theme);
         this.clientSettings.openOnLoad = GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad);
         this.clientSettings.openCompact = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
@@ -143,7 +147,8 @@ export default class SCController {
                 secondsInCombatRound: globalConfig.secondsInCombatRound,
                 calendarsSameTimestamp: globalConfig.calendarsSameTimestamp,
                 syncCalendars: globalConfig.syncCalendars,
-                showNotesFolder: globalConfig.showNotesFolder
+                showNotesFolder: globalConfig.showNotesFolder,
+                combatPauseRule: globalConfig.combatPauseRule
             };
             //Save the client settings
             GameSettings.SaveStringSetting(SettingNames.Theme, clientConfig.theme, false).then(this.reload.bind(this)).catch(Logger.error);
@@ -230,34 +235,32 @@ export default class SCController {
 
     /**
      * Triggered when a combatant is added to a combat.
-     * @param {Combatant} combatant The combatant details
-     * @param {object} options Options associated with creating the combatant
-     * @param {string} id The ID of the creation
+     * @param combatant The combatant details
+     * @param options Options associated with creating the combatant
+     * @param id The ID of the creation
      */
     public createCombatant(combatant: Combatant, options: any, id: string){
         const combatList = (<Game>game).combats;
         //If combat is running or if the combat list is undefined, skip this check
         if(!this.activeCalendar.time.combatRunning && combatList){
             const combat = combatList.find(c => c.id === combatant.parent?.id);
-            const scenes = (<Game>game).scenes;
-            const activeScene = scenes? scenes.active? scenes.active.id : null : null;
+            const activeScene = GameSettings.GetSceneForCombatCheck();
             //If the combat has started and the current active scene is the scene for the combat then set that there is a combat running.
-            if(combat && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
+            if(combat && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene.id) || activeScene === null)){
                 this.activeCalendar.time.combatRunning = true;
             }
         }
     }
 
     /**
-     * Triggered when a combat is create/started/turn advanced
-     * @param {Combat} combat The specific combat data
-     * @param {RoundData} round The current turns data
-     * @param {Object} time The amount of time that has advanced
+     * Triggered when a combat is creat/started/turn advanced
+     * @param combat The specific combat data
+     * @param round The current turns data
+     * @param time The amount of time that has advanced
      */
     public combatUpdate(combat: Combat, round: RoundData, time: any){
-        const scenes = (<Game>game).scenes;
-        const activeScene = scenes? scenes.active? scenes.active.id : null : null;
-        if(combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene) || activeScene === null)){
+        const activeScene = GameSettings.GetSceneForCombatCheck();
+        if(combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene.id) || activeScene === null)){
             this.activeCalendar.time.combatRunning = true;
 
             //If time does not have the advanceTime property the combat was just started
@@ -274,12 +277,25 @@ export default class SCController {
 
     /**
      * Triggered when a combat is finished and removed
+     * @param combat The specific combat data
      */
     public combatDelete(combat: Combat){
-        const scenes = (<Game>game).scenes;
-        const activeScene = scenes? scenes.active? scenes.active.id : null : null;
-        if(activeScene !== null && combat.scene && combat.scene.id === activeScene){
+        const activeScene = GameSettings.GetSceneForCombatCheck();
+        if(activeScene !== null && combat.scene && combat.scene.id === activeScene.id){
             this.activeCalendar.time.combatRunning = false;
+        }
+    }
+
+    /**
+     * Triggered when the canvas is initialized.
+     * Using this to check if the user has changed Scenes.
+     * @param canvas The canvas data
+     */
+    public canvasInit(canvas: Canvas){
+        if(GameSettings.IsGm() && this.primary && this.globalConfiguration.combatPauseRule === CombatPauseRules.Current){
+            const activeScene = canvas.scene? canvas.scene.id : null;
+            const combatsInCurrent = (<Game>game).combats?.filter(combat => combat.started && combat.scene?.id === activeScene);
+            this.activeCalendar.time.combatRunning = !!(combatsInCurrent && combatsInCurrent.length);
         }
     }
 

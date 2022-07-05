@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Manifest and Download Links
       id: manifest_link_version
       uses: microsoft/variable-substitution@v1
@@ -21,19 +21,19 @@ jobs:
         manifest: https://github.com/${{github.repository}}/releases/latest/download/module.json
         download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
     - name: Archive dist folder
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: module-download
         path: dist/
     - name: Archive module json
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: module
         path: dist/module.json
@@ -42,12 +42,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download module download file
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: module-download
           path: module-download
       - name: Download module.json
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: module
       # Create a zip file with all files required by the module to add to the release
@@ -64,3 +64,16 @@ jobs:
           artifacts: './module.json, ./module.zip'
           tag: ${{ github.event.release.tag_name }}
           body: ${{ github.event.release.body }}
+  publish:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,5 +1,3 @@
-import {AdvanceTimeToPreset} from "./classes/utilities/date-time";
-
 /**
  * The name of this module
  * @internal
@@ -53,6 +51,11 @@ export enum Themes {
     dark = 'dark',
     /** A theme based on how SC v1 looked */
     classic = 'classic'
+}
+
+export enum CombatPauseRules {
+    Active = 'active',
+    Current = 'current'
 }
 
 /**

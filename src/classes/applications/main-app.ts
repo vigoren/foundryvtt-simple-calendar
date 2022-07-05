@@ -832,10 +832,9 @@ export default class MainApp extends Application{
      * Starts the built-in timekeeper
      */
     startTime(){
-        const scenes = (<Game>game).scenes;
+        const activeScene = GameSettings.GetSceneForCombatCheck();
         const combats = (<Game>game).combats;
-        const activeScene = scenes? scenes.active? scenes.active.id : null : null;
-        if(combats && combats.size > 0 && combats.find(g => g.started && ((activeScene !== null && g.scene && g.scene.id === activeScene) || activeScene === null))){
+        if(combats && combats.size > 0 && combats.find(g => g.started && ((activeScene !== null && g.scene && g.scene.id === activeScene.id) || activeScene === null))){
             GameSettings.UiNotification((<Game>game).i18n.localize('FSC.Warn.Time.ActiveCombats'), 'warn');
         } else if(this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed){
             this.activeCalendar.timeKeeper.start();
@@ -845,7 +844,7 @@ export default class MainApp extends Application{
     }
 
     /**
-     * Stops the built in time keeper
+     * Stops the built-in timekeeper
      */
     stopTime(){
         this.activeCalendar.timeKeeper.stop();

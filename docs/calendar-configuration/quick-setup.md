@@ -15,7 +15,7 @@ The following calendars can be selected to configure current calendar:
 | Calendar                                   | Description                                                             | Contains Preset Notes | Initial Date                  |
 |--------------------------------------------|-------------------------------------------------------------------------|-----------------------|-------------------------------|
 | Gregorian                                  | This the standard real life calendar                                    | No                    | The current date will be used |
-| Dark Sun                                   | This is the calendar from the Sark Sun setting for Dungeons and Dragons | No                    | Scorch 1,1                    |
+| Dark Sun                                   | This is the calendar from the Dark Sun setting for Dungeons and Dragons | No                    | Scorch 1,1                    |
 | Das Schwarze Auge/The Dark Eye 5th Edition | This is the calendar from the Das Schwarze Auge/The Dark Eye world      | Yes (Holidays)        | Efferd 2, 1040BF              |
 | Eberron                                    | This is the calendar from the Eberron setting for Dungeons and Dragons  | Yes (Holidays)        | Zarantyr 1, 998 YK            |
 | Exandrian                                  | This is the calendar from the Exandria setting for Dungeons and Dragons | Yes (Holidays)        | Horisal 1, 812 P.D.           |

@@ -1,5 +1,37 @@
 # Change Log
 
+## v2.0.30 - Combat Detection Changes & Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-July%204%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.0.30/module.zip)
+
+### Combat Detection Changes
+
+I have added a new setting to help GMs better choose when the real time clock of Simple Calendar will pause when a combat has been started.
+The setting is called "Pause Real Time Clock on Combat Rule" and is under the Global Configuration Settings. It currently has 2 options:
+
+- **Pause Only on the Active Scene**: This behaves exactly as the current implementation does, only pausing the real time clock is a combat is running on the current active scene.
+- **Pause on the Scene the GM is Currently Viewing**: This new option will pause the clock only if the current scene the primary GM is viewing has a combat running.
+
+The new option can be handy in instances of pulling a single character to a new scene to do a solo fight without the clock starting to run again and without having to make that scene the active one.
+
+### Bug Fixes
+
+- Fixed a bug where Simple Calendar would fail to load properly if a non calendar note Journal Entry was added to Simple Calendars notes directory folder.
+- Fixed a bug where Simple Calendar notes would not load if they were in sub folders under the Simple Calendar notes directory folder.
+- Fixed a bug in the configuration dialog that would scroll back to the top when adding to the bottom of long lists. 
+- Fixed a bug in the configuration dialog where if the advanced options for a month were open and a new month was added, the advanced options for the month that had them open would no longer be visible.
+
+### Documentation Changes
+
+- Fixed a typo in the predefined calendar list (Thanks Dan-Q!).
+- Added documentation for the new Combat Pause Real Time Clock Rule setting.
+- Improved the documentation around how to switch between calendars in the configuration dialog and in the calendar.
+
+### API Changes
+
+- Added Simple Calendar as an [NPM package](https://www.npmjs.com/package/foundryvtt-simple-calendar) so that other projects can reference the built-in type definitions. See the [documentation](https://simplecalendar.info/pages/docs/developing-with-sc/index.html) for more details.
+
 ## v2.0.25 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-June%2010%2C%202022-blue)

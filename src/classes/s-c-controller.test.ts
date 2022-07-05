@@ -18,14 +18,14 @@ import CalendarManager from "./calendar/calendar-manager";
 import MainApp from "./applications/main-app";
 import ConfigurationApp from "./applications/configuration-app";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {Themes} from "../constants";
+import {CombatPauseRules, Themes} from "../constants";
 import MigrationApp from "./applications/migration-app";
 import NoteManager from "./notes/note-manager";
 import Calendar from "./calendar";
 import * as PermUtils from "./utilities/permissions";
-import spyOn = jest.spyOn;
 import GameSockets from "./foundry-interfacing/game-sockets";
 import UserPermissions from "./configuration/user-permissions";
+import spyOn = jest.spyOn;
 
 describe('SCController Tests', () => {
 
@@ -111,7 +111,8 @@ describe('SCController Tests', () => {
             secondsInCombatRound: 2,
             calendarsSameTimestamp: false,
             syncCalendars: true,
-            showNotesFolder: true
+            showNotesFolder: true,
+            combatPauseRule: 'active'
         });
         jest.spyOn(GameSettings, 'GetStringSettings').mockReturnValue('test');
         jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(false);
@@ -152,7 +153,8 @@ describe('SCController Tests', () => {
             secondsInCombatRound: 1,
             calendarsSameTimestamp: false,
             syncCalendars: false,
-            showNotesFolder: false
+            showNotesFolder: false,
+            combatPauseRule: CombatPauseRules.Active
         }, {
             id: '',
             theme: Themes.dark,
@@ -362,5 +364,31 @@ describe('SCController Tests', () => {
 
         //@ts-ignore
         game.scenes = null;
+    });
+
+    test('Canvas Init', () => {
+        const orig = (<Game>game).combats;
+        //@ts-ignore
+        game.user.isGM = true;
+        SC.primary = true;
+        SC.globalConfiguration.combatPauseRule = CombatPauseRules.Current;
+
+        const tCal = new Calendar('', '');
+        jest.spyOn(CalManager, 'getActiveCalendar').mockReturnValue(tCal);
+
+        //@ts-ignore
+        SC.canvasInit({});
+        expect(tCal.time.combatRunning).toBe(false);
+
+        //@ts-ignore
+        (<Game>game).combats = {size: 1, filter: jest.fn((v)=>{return v.call(undefined, {id: 'cid', started: true, scene: {id:"sid"}})? [{id: 'cid', started: true, scene: {id:"sid"}}] : []; }) };
+        //@ts-ignore
+        SC.canvasInit({scene:{id:'sid'}});
+        expect(tCal.time.combatRunning).toBe(true);
+
+        (<Game>game).combats = orig;
+        //@ts-ignore
+        game.user.isGM = false;
+        SC.primary = false;
     });
 });
