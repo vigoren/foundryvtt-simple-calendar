@@ -8,7 +8,7 @@
 ### Combat Detection Changes
 
 I have added a new setting to help GMs better choose when the real time clock of Simple Calendar will pause when a combat has been started.
-The setting is called "Combat Pause Real Time Clock Rule" and is under the Global Configuration Settings. It currently has 2 options:
+The setting is called "Pause Real Time Clock on Combat Rule" and is under the Global Configuration Settings. It currently has 2 options:
 
 - **Pause Only on the Active Scene**: This behaves exactly as the current implementation does, only pausing the real time clock is a combat is running on the current active scene.
 - **Pause on the Scene the GM is Currently Viewing**: This new option will pause the clock only if the current scene the primary GM is viewing has a combat running.
@@ -27,6 +27,10 @@ The new option can be handy in instances of pulling a single character to a new 
 - Fixed a typo in the predefined calendar list (Thanks Dan-Q!).
 - Added documentation for the new Combat Pause Real Time Clock Rule setting.
 - Improved the documentation around how to switch between calendars in the configuration dialog and in the calendar.
+
+### API Changes
+
+- Added Simple Calendar as an [NPM package](https://www.npmjs.com/package/foundryvtt-simple-calendar) so that other projects can reference the built-in type definitions. See the [documentation](https://simplecalendar.info/pages/docs/developing-with-sc/index.html) for more details.
 
 ## v2.0.25 - Bug Fixes
 
