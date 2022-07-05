@@ -291,6 +291,7 @@ describe('Utilities Date/Time Tests', () => {
         expect(tCal.getMonthAndDayIndex()).not.toEqual(currentMD);
 
 
+        tCal.time.seconds = 41000;
         tCal.seasons[0].sunriseTime = 10000;
         tCal.seasons[1].sunriseTime = 20000;
         tCal.seasons[2].sunriseTime = 30000;
@@ -298,6 +299,7 @@ describe('Utilities Date/Time Tests', () => {
         await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal);
         expect(tCal.time.seconds).toBeGreaterThan(10000);
 
+        //Undefined month and day
         tCal.resetMonths();
         await AdvanceTimeToPreset(PresetTimeOfDay.Sunrise, tCal);
         expect(tCal.time.seconds).toBeGreaterThan(10000);

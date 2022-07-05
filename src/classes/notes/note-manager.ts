@@ -170,9 +170,30 @@ export default class NoteManager{
     public loadNotes(){
         if(this.noteDirectory){
             this.notes = {};
-            for(let i = 0; i < this.noteDirectory.contents.length; i++){
-                const je = <JournalEntry>this.noteDirectory.contents[i];
-                const noteData = <SimpleCalendar.NoteData>je.getFlag(ModuleName, 'noteData');
+            this.loadNotesFromFolder(this.noteDirectory);
+
+            const journalDirectory = (<Game>game).journal?.directory;
+            if(journalDirectory){
+                for(let i = 0; i < journalDirectory.folders.length; i++){
+                    const f = journalDirectory.folders[i];
+                    if(f.parentFolder && f.parentFolder.id === this.noteDirectory.id){
+                        this.loadNotesFromFolder(f);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks the contents of a folder to see if it contains any calendar notes
+     * @param folder The folder to check
+     * @private
+     */
+    private loadNotesFromFolder(folder: Folder){
+        for(let i = 0; i < folder.contents.length; i++){
+            const je = <JournalEntry>folder.contents[i];
+            const noteData = <SimpleCalendar.NoteData>je.getFlag(ModuleName, 'noteData');
+            if(noteData){
                 this.addNoteStub(je, noteData.calendarId);
             }
         }

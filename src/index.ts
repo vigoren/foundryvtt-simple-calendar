@@ -1,7 +1,7 @@
 import SCController from "./classes/s-c-controller";
 import * as API from "./classes/api";
 import {Logger} from "./classes/logging";
-import {MigrationTypes, SimpleCalendarHooks} from "./constants";
+import {SimpleCalendarHooks} from "./constants";
 import {
     CalManager,
     MainApplication,
@@ -67,6 +67,7 @@ Hooks.on('ready',async () => {
         }
     }
 });
+Hooks.on('canvasInit', SC.canvasInit.bind(SC));
 Hooks.on('getSceneControlButtons', SC.getSceneControlButtons.bind(SC));
 Hooks.on('renderJournalDirectory', SC.renderJournalDirectory.bind(SC));
 Hooks.on('renderJournalSheet', SC.renderJournalSheet.bind(SC));

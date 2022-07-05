@@ -21,7 +21,7 @@ Removing a calendar from Simple Calendar is easy, just follow these steps:
 
 # Switch Calendars
 
-Switching between calendar configuration in Simple Calendar is easy, just follow these steps:
+Switching between calendar configurations in the Simple Calendar configuration dialog is easy, just follow these steps:
 
 - Click on the calendar configuration header, this will show a list of configured calendar and options. 
 - Click on the name of the calendar you want to view the configuration for.

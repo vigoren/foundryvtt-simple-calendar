@@ -124,6 +124,7 @@
             ]}
           ]},
           { "title": "Using Simple Calendar", "childrenSourceDir": "./docs/using-sc", "source":"./docs/using-sc/index.md", "children":  [
+            { "title": "Switching Between Calendars", "source": "switching-calendars.md"},
             { "title": "Changing the Date and Time", "source": "changing-date-time.md"},
             { "title": "Notes", "source": "notes.md"}
           ]}

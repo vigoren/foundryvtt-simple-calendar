@@ -128,7 +128,7 @@ describe('Note Manager Class Tests', () => {
         expect(NManager.notes['asd'].length).toBe(0);
     });
 
-    test('Load Notes', () => {
+    test('Load Notes / Load Notes From Folder', () => {
         const je = {
             id: 'ns1',
             getFlag: () => {
@@ -136,11 +136,22 @@ describe('Note Manager Class Tests', () => {
             }
         };
         //@ts-ignore
-        NManager.noteDirectory = {contents: [je]};
+        NManager.noteDirectory = {id: 'nd', contents: [je]};
 
         jest.spyOn(NManager,'addNoteStub').mockImplementation(() => {});
         NManager.loadNotes();
         expect(NManager.addNoteStub).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        const oldF = game.journal.directory.folders;
+        //@ts-ignore
+        game.journal.directory.folders = [{parentFolder: {id:'nd'}, contents: []}];
+
+        NManager.loadNotes();
+        expect(NManager.addNoteStub).toHaveBeenCalledTimes(2);
+
+        //@ts-ignore
+        game.journal.directory.folders = oldF;
     });
 
     test('Show Note', () => {

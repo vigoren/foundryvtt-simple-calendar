@@ -4,7 +4,9 @@
 import "../../../__mocks__/index";
 
 import {GameSettings} from "./game-settings";
-import {SettingNames} from "../../constants";
+import {CombatPauseRules, SettingNames} from "../../constants";
+import {SC, updateSC} from "../index";
+import SCController from "../s-c-controller";
 import Mock = jest.Mock;
 
 describe('Game Settings Class Tests', () => {
@@ -143,5 +145,23 @@ describe('Game Settings Class Tests', () => {
         GameSettings.UiNotification('');
         expect(console.error).toHaveBeenCalled();
         ui.notifications = origUi;
+    });
+
+    test('Get Scene For Combat Check', () => {
+        updateSC(new SCController());
+        expect(GameSettings.GetSceneForCombatCheck()).toBeNull();
+        const origScenes = (<Game>game).scenes;
+        //@ts-ignore
+        game.scenes = {active: {}, current: {}};
+        expect(GameSettings.GetSceneForCombatCheck()).toBeDefined();
+        SC.globalConfiguration.combatPauseRule = CombatPauseRules.Current;
+        expect(GameSettings.GetSceneForCombatCheck()).toBeDefined();
+        //@ts-ignore
+        game.scenes = {active: null, current: null};
+        expect(GameSettings.GetSceneForCombatCheck()).toBeNull();
+        SC.globalConfiguration.combatPauseRule = CombatPauseRules.Active;
+        expect(GameSettings.GetSceneForCombatCheck()).toBeNull();
+
+        (<Game>game).scenes = origScenes;
     });
 });

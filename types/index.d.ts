@@ -4,7 +4,7 @@ import {DateSelector} from "../src/classes/date-selector";
 import Calendar from "../src/classes/calendar";
 import UserPermissions from "../src/classes/configuration/user-permissions";
 import {
-    CalendarViews,
+    CalendarViews, CombatPauseRules,
     DateSelectorPositions, DateTimeChangeSocketTypes,
     GameSystems,
     GameWorldTimeIntegrations,
@@ -2047,6 +2047,8 @@ declare global{
             version: string;
             /** If calendars should use the same timestamp. */
             calendarsSameTimestamp: boolean;
+            /** The rules around how the realtime clock is paused when a combat is started.  */
+            combatPauseRule: CombatPauseRules;
             /** All the set permissions for users. */
             permissions: UserPermissions;
             /** How many seconds are in a combat round. */

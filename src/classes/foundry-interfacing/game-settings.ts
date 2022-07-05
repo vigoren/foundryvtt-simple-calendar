@@ -1,5 +1,6 @@
 import {Logger} from "../logging";
-import {ModuleName, SettingNames} from "../../constants";
+import {CombatPauseRules, ModuleName, SettingNames} from "../../constants";
+import {SC} from "../index";
 
 export class GameSettings {
     /**
@@ -157,5 +158,21 @@ export class GameSettings {
         } else {
             Logger.error('The UI class is not initialized.');
         }
+    }
+
+    /**
+     * Gets the scene to check for active combats
+     */
+    static GetSceneForCombatCheck(){
+        let scene: Scene | null = null;
+        const scenes = (<Game>game).scenes;
+        if(scenes){
+            if(SC.globalConfiguration.combatPauseRule === CombatPauseRules.Active){
+                scene = scenes.active || null;
+            } else if(SC.globalConfiguration.combatPauseRule === CombatPauseRules.Current){
+                scene = scenes.current || null;
+            }
+        }
+        return scene;
     }
 }
