@@ -41,9 +41,9 @@
             <button class="fsc-control fsc-primary fsc-calendars fa fa-calendar" title="{{localize 'FSC.Calendars'}}"></button>
             {{/if}}
             {{/unless}}
-            <button class="fsc-control {{#if (gt calendar.selectedDay.noteCount 0)}} fsc-secondary{{else}} fsc-grey{{/if}} fsc-notes fa fa-sticky-note" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.selectedDay.noteCount}}</button>
+            <button class="fsc-control {{#if (gt calendar.selectedDay.noteCount 0)}} fsc-secondary{{else}} fsc-grey{{/if}} fsc-notes" title="{{localize 'FSC.Configuration.General.Notes'}}"><i class="fa fa-sticky-note"></i>&nbsp;{{calendar.selectedDay.noteCount}}</button>
             {{#if (gt calendar.selectedDay.noteReminderCount 0)}}
-            <button class="fsc-control fsc-tertiary fsc-reminder-notes fa fa-bell" title="{{localize 'FSC.Configuration.General.Notes'}}">&nbsp;{{calendar.selectedDay.noteReminderCount}}</button>
+                <button class="fsc-control fsc-tertiary fsc-reminder-notes" title="{{localize 'FSC.Configuration.General.Notes'}}"><i class="fa fa-bell"></i>&nbsp;{{calendar.selectedDay.noteReminderCount}}</button>
             {{/if}}
             {{#if addNotes}}
             <button class="fsc-control fsc-save fsc-add-note fa" title="{{localize 'FSC.Notes.AddNew'}}"><span class="fa-sticky-note"></span>&nbsp;<span class="fa-plus"></span></button>

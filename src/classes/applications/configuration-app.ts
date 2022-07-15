@@ -867,13 +867,9 @@ export default class ConfigurationApp extends FormApplication {
                             animateElement(options, 400);
                         }
                         if((<Calendar>this.object).months[i].showAdvanced){
-                            button.classList.remove('fa-chevron-down');
-                            button.classList.add('fa-chevron-up');
-                            (<HTMLElement>button).innerHTML = `<span>${GameSettings.Localize('FSC.HideAdvanced')}</span>`;
+                            (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-up"></i><span>${GameSettings.Localize('FSC.HideAdvanced')}</span>`;
                         } else {
-                            button.classList.add('fa-chevron-down');
-                            button.classList.remove('fa-chevron-up');
-                            (<HTMLElement>button).innerHTML = `<span>${GameSettings.Localize('FSC.ShowAdvanced')}</span>`;
+                            (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-down"></i><span>${GameSettings.Localize('FSC.ShowAdvanced')}</span>`;
                         }
                     }
                     //Intercalary Stuff
