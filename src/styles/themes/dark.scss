@@ -779,9 +779,21 @@
           }
         }
       }
+      .fsc-content{
+        scrollbar-color: $primary $primary-600;
+        &::-webkit-scrollbar-thumb{
+          background: $primary;
+          border-color:$primary-600;
+        }
+      }
       .fsc-page-list{
         border-color: $primary-A200;
         .fsc-list-of-pages{
+          scrollbar-color: $primary $primary-600;
+          &::-webkit-scrollbar-thumb{
+            background: $primary;
+            border-color:$primary-600;
+          }
           li{
             &:hover, &.fsc-current{
               background-color: $primary-800;

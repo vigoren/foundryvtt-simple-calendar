@@ -686,6 +686,78 @@
         }
       }
     }
+    .fsc-compact-form-group{
+      border-color:$gray-600;
+      background-color: $primary-150;
+
+      > input, > select, > button {
+        background-color: unset !important;
+      }
+      input[type=checkbox]{
+        border-color: $gray-900 !important;
+        background-image: url($checkboxSVGDark);
+
+        &:checked{
+          border-color: $tertiary-A500 !important;
+          background-color: $tertiary-A500 !important;
+          background-image: url($checkboxSVGWhite);
+          -webkit-filter: unset;
+        }
+      }
+      > .fsc-date-selector{
+        > input{
+          background-color: unset !important;
+        }
+      }
+      > .fsc-multiselect{
+        > button{
+          background-color: unset !important;
+        }
+      }
+      option{
+        background-color: $primary-100 !important;
+      }
+      button{
+        color: $fontColor;
+      }
+      label{
+        color: $tertiary-700;
+      }
+      .file-picker{
+        cursor: pointer;
+        background-color: $primary-A200 !important;
+        border-color: $primary-A200;
+        color: $fontColor;
+
+        &:hover, &.active, &:focus {
+          box-shadow: unset;
+          background-color: $primary-A100 !important;
+          border-color: $primary-A100;
+          color: $fontColor;
+        }
+      }
+      .fsc-form-group-help{
+        color: $success-900;
+      }
+    }
+
+    //Multi Select
+    .fsc-multiselect{
+      .fsc-multi-select-options{
+        border-color: $gray-600;
+        li{
+          background-color: $primary-100;
+          &:hover{
+            background-color: $primary-50;
+          }
+          &.fsc-disabled{
+            color: $gray-700;
+            background-color: $gray-400;
+          }
+        }
+      }
+    }
+
 
     //Journal Sheet
     &.journal-sheet{
@@ -709,6 +781,27 @@
         &::-webkit-scrollbar-thumb{
           background: $primary;
           border-color:$primary-600;
+        }
+      }
+      .fsc-page-list{
+        border-color: $primary-A500;
+        .fsc-list-of-pages{
+          scrollbar-color: $primary $primary-600;
+          &::-webkit-scrollbar-thumb{
+            background: $primary;
+            border-color:$primary-600;
+          }
+          li{
+            &:hover, &.fsc-current{
+              background-color: $primary-200;
+            }
+          }
+        }
+      }
+      .fsc-image-placeholder{
+        background-color: $gray-400;
+        i{
+          opacity: 0.5;
         }
       }
     }

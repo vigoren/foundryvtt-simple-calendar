@@ -662,5 +662,95 @@
         color: $gray-800;
       }
     }
+
+    .fsc-compact-form-group{
+      background-color: rgba(0, 0, 0, 0.05);
+
+      > input, > select, > button {
+        background-color: unset !important;
+      }
+      input[type=checkbox]{
+        border-color: $gray-900 !important;
+        background-image: url($checkboxSVGDark);
+
+        &:checked{
+          background-color: #c85019 !important;
+          background-image: url($checkboxSVGWhite);
+          -webkit-filter: unset;
+        }
+      }
+      > .fsc-date-selector{
+        > input{
+          background-color: unset !important;
+        }
+      }
+      > .fsc-multiselect{
+        > button{
+          background-color: unset !important;
+        }
+      }
+      option{
+        background-color: var(--color-bg-option) !important;
+      }
+      button{
+        color: $fontColor;
+      }
+      label{
+        color: #384582;
+      }
+      .file-picker{
+        cursor: pointer;
+        background-color: #384582 !important;
+        border-color: #384582;
+        color: $white;
+
+        &:hover, &.active, &:focus {
+          box-shadow: unset;
+          background-color: #cad1f3 !important;
+          border-color: #384582;
+          color: #000;
+          text-shadow: 0 0 black;
+        }
+      }
+      .fsc-form-group-help{
+        color: #de810d;
+      }
+    }
+
+    //Multi Select
+    .fsc-multiselect{
+      .fsc-multi-select-options{
+        border-color: $gray-600;
+        li{
+          background-color: var(--color-bg-option);
+          &:hover{
+            background-color: $primary-50;
+          }
+          &.fsc-disabled{
+            color: $gray-700;
+            background-color: $gray-400;
+          }
+        }
+      }
+    }
+
+    //Journal Sheet
+    &.journal-sheet{
+      .fsc-page-list{
+        .fsc-list-of-pages{
+          li{
+            &:hover, &.fsc-current{
+              background-color: $gray-400;
+            }
+          }
+        }
+      }
+      .fsc-image-placeholder{
+        background-color: $gray-200;
+        i{
+          opacity: 0.5;
+        }
+      }
+    }
   }
 }
