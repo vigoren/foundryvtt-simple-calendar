@@ -157,13 +157,13 @@ describe('Note Sheet Class Tests', () => {
         //@ts-ignore
         jest.spyOn(ns.appWindow, 'querySelector').mockImplementation(() => {return elm;});
 
-        NoteSheet.setHeight(ns);
+        NoteSheet.SetHeight(ns);
         //@ts-ignore
         expect(ns.setPosition).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         ns.editMode = true;
-        NoteSheet.setHeight(ns);
+        NoteSheet.SetHeight(ns);
         //@ts-ignore
         expect(ns.setPosition).toHaveBeenCalledTimes(2);
     });

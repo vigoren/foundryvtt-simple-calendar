@@ -3,26 +3,49 @@
 .simple-calendar{
   &.journal-sheet{
 
+    min-height: unset;
+    min-width: unset;
+
     .window-content{
       overflow-y: auto;
     }
 
     form{
+      background: unset;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
       padding: $spacer-half;
 
       > h1{
+        margin: 0;
         input{
           height: unset;
           margin-bottom: $spacer-half*0.5;
         }
       }
 
-      > h2{
-        border-bottom: 0;
-        margin-bottom: 0;
+      .fsc-page-details{
+        position: relative;
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+
+        h2{
+          margin: 0;
+          display: flex;
+          flex-wrap: nowrap;
+          flex-direction: row;
+          align-items: center;
+        }
+      }
+
+      .fsc-pages{
+        width: unset;
+        margin-bottom: $spacer * 0.125;
+        margin-right: $spacer-half;
+        font-size: 14px;
+        line-height: 16px;
       }
 
       .fsc-editor-container{
@@ -34,6 +57,10 @@
           .tox.tox-tinymce{
             min-height: 300px;
           }
+        }
+
+        .fsc-image-preview{
+          padding: $spacer 0;
         }
       }
 
@@ -71,65 +98,173 @@
           max-height: 150px;
         }
       }
+    }
 
-      &.fsc-read-only{
-        .fsc-note-header{
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-          justify-content: space-between;
+    .fsc-note-header{
+      flex: 0;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
 
-          h1{
-            flex: 1 0 100%;
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            justify-content: space-between;
-            align-items: center;
+      h1{
+        flex: 1 0 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
 
-            .fsc-title-text{
-              flex: 1;
-              word-break: break-word;
-            }
-            .fsc-reminder{
-              flex: 0;
-              cursor: pointer;
-
-              &.fsc-selected{
-                color: #ffffff;
-                background-color: #2f581d;
-              }
-              label{
-                cursor: pointer;
-              }
-              span{
-                margin-right: 0;
-              }
-              input{
-                display: none;
-              }
-            }
-          }
-
-          .fsc-date{
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            justify-content: space-evenly;
-          }
-        }
-        .fsc-category-list{
-          display: flex;
-          flex-direction: row;
-          justify-content: flex-end;
-        }
-        .fsc-content{
-          margin: $spacer-half;
-          overflow-y: auto;
+        .fsc-title-text{
+          flex: 1;
           word-break: break-word;
+        }
+        .fsc-reminder{
+          flex: 0;
+          cursor: pointer;
+
+          &.fsc-selected{
+            color: #ffffff;
+            background-color: #2f581d;
+          }
+          label{
+            cursor: pointer;
+          }
+          span{
+            margin-right: 0;
+          }
+          input{
+            display: none;
+          }
+        }
+      }
+
+      .fsc-date{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-evenly;
+      }
+    }
+    .fsc-category-list{
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+    .fsc-content{
+      margin: $spacer-half 0;
+      overflow-y: auto;
+      word-break: break-word;
+
+      .load-pdf{
+        button{
+          width: unset;
+          margin: 0 auto;
+          display: block;
         }
       }
     }
+    figure, .fsc-image-placeholder{
+      margin: 0;
+      border: 0;
 
+      &.flex-ratio{
+        position: relative;
+        min-height: 400px;
+
+        &:before{
+          content: "";
+          display: block;
+          padding-bottom: calc(9 / 16 * 100%);
+        }
+        iframe, video{
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+        i{
+          position: absolute;
+          top: calc(50% - (8.75rem / 2));
+          left: calc(50% - (8.75rem / 2));
+          font-size: 8.75rem;
+        }
+      }
+      img{
+        height: auto;
+        max-width: 100%;
+        border: 0;
+      }
+    }
+
+    .fsc-pdf-viewer{
+      flex-grow: 1;
+      width: 100%;
+      min-height: 620px;
+      flex-basis: 620px;
+      border: none;
+    }
+
+    .fsc-page-list{
+      top: unset;
+      bottom: 40px;
+      height: 350px;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid;
+      border-right: 0;
+
+      &.fsc-read-only{
+        bottom: 0;
+        height: 75%;
+      }
+
+      &.fsc-open{
+        left: -300px;
+      }
+
+      &.fsc-closed{
+        left: 0;
+        visibility: visible;
+        min-width: 0;
+        width:0;
+
+        .fsc-page-list-controls{
+          visibility: hidden;
+        }
+      }
+
+      .fsc-page-list-controls{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: space-around;
+        align-items: center;
+
+        .fsc-save{
+          flex: 0 0 45px;
+        }
+      }
+
+      .fsc-list-of-pages{
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        overflow-y: auto;
+
+        li{
+          cursor: pointer;
+          padding: ($spacer-half * 0.5) $spacer-half;
+          border-bottom: 1px solid;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          flex-wrap: nowrap;
+        }
+      }
+    }
   }
 }

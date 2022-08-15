@@ -51,7 +51,6 @@ export {LeapYearRules};
 /**
  * The Moon Icons
  */
-export {Icons as MoonIcons};
 export {Icons};
 /**
  * The moon year reset options

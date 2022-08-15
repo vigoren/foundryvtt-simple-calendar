@@ -508,19 +508,17 @@
     }
 
     //Note Search Styling
-    .fsc-note-search {
-      .fsc-search-box {
-        .fsc-control {
-          box-shadow: unset;
+    .fsc-search-box {
+      .fsc-control {
+        box-shadow: unset;
+        background-color: rgba(0, 0, 0, 0.05);
+        border-color: #7a7971;
+        color: #000000;
+        &:hover, &.active, &:focus {
+          text-shadow: unset;
+          color: #000000;
           background-color: rgba(0, 0, 0, 0.05);
           border-color: #7a7971;
-          color: #000000;
-          &:hover, &.active, &:focus {
-            text-shadow: unset;
-            color: #000000;
-            background-color: rgba(0, 0, 0, 0.05);
-            border-color: #7a7971;
-          }
         }
       }
     }

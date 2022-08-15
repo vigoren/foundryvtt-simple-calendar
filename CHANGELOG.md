@@ -1,5 +1,50 @@
 # Change Log
 
+## v2.1.0 - FoundryVTT V10 Support, Note Pages, Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-August%2012%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.0/module.zip)
+
+### FoundryVTT Version 10 Support
+
+Updated Simple Calendar so that it supports these changes in version 10 of FoundryVTT:
+
+- Updated manifest to work with the new manifest options.
+- Ensured the styles work with the new Font Awesome update.
+- Updated the journal interactions to be compatible with FoundryVTTs Journals V2.
+
+### Note Pages
+
+With the new Journals in FoundryVTT version 10 Simple calendar has been updated so notes can take advantage of these changes. Notes in Simple Calendar can now:
+
+- Have multiple pages with a collapsible panel when switching between pages being viewed.
+- Supports the different page types (Text, Images, PDFs and Videos).
+- The interface has been updated so the fields are more condensed for an easier editing experience.
+
+Existing notes will be automatically migrated by Foundry over to Journals with a single text page.
+
+
+### Quality of Life Improvements
+
+- The date selector for notes now allows you to enter the year instead of having to scroll through months to change the year the note takes place.
+
+### Bug Fixes
+
+- Fixed several bugs on the note edit view where buttons wouldn't always respond to the first click.
+
+### Documentation Changes
+
+### API Changes
+
+To go along with the release of FoundryVTT version 10 some depreciated options within simple calendar have been removed.
+
+- `SimpleCalendar.api.MoonIcons` has been removed. Please use `SimpleCalendar.api.Icons` instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `day` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `month` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `season` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `time` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `year` property has been removed. Please use the options under the `date` property instead.
+
 ## v2.0.30 - Combat Detection Changes & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%204%2C%202022-blue)

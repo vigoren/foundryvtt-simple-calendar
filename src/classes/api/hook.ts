@@ -20,35 +20,6 @@ export class Hook{
             data['diff'] = param;
             data['moons'] = [];
 
-            data['season'] = {};
-            data['month'] = {};
-            data['day'] = {};
-            data['time'] = {};
-            data['year'] = {
-                number: calendar.year.numericRepresentation,
-                prefix: calendar.year.prefix,
-                postfix: calendar.year.postfix,
-                isLeapYear: calendar.year.leapYearRule.isLeapYear(calendar.year.numericRepresentation)
-            };
-            const currentMonth = calendar.getMonth();
-            if(currentMonth){
-                data.month = {
-                    name: currentMonth.name,
-                    number: currentMonth.numericRepresentation,
-                    intercalary: currentMonth.intercalary,
-                    numberOfDays: currentMonth.numberOfDays,
-                    numberOfLeapYearDays: currentMonth.numberOfLeapYearDays
-                };
-                const currentDay = currentMonth.getDay();
-                if(currentDay){
-                    data.day = {
-                        number: currentDay.numericRepresentation
-                    };
-                }
-            }
-            data.time = calendar.time.getCurrentTime();
-            data.season = calendar.getCurrentSeason();
-
             for(let i = 0; i < calendar.moons.length; i++){
                 const phase = calendar.moons[i].getMoonPhase(calendar);
                 data.moons.push({

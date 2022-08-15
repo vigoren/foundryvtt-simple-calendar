@@ -9,6 +9,7 @@ import UserPermissions from "./configuration/user-permissions";
 import {canUser} from "./utilities/permissions";
 import GameSockets from "./foundry-interfacing/game-sockets";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/combat";
+import MultiSelect from "./renderer/multi-select";
 
 /**
  * The global Simple Calendar Controller class
@@ -102,6 +103,8 @@ export default class SCController {
     public initialize(){
         this.sockets.initialize();
         NManager.checkNoteTriggers(this.activeCalendar.id, true);
+        //Close all open multi selects except the one being interacted with
+        document.body.addEventListener('click', MultiSelect.BodyEventListener);
     }
 
     /**

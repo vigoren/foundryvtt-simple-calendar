@@ -3,7 +3,7 @@
   "name": "foundryvtt-simple-calendar",
   "title": "Simple Calendar",
   "description": "A simple calendar module for keeping track of game days and events.",
-  "version": "2.0.31",
+  "version": "2.1.0",
   "authors": [
     {
       "name": "Dean Vigoren (Vigorator)",
@@ -13,10 +13,10 @@
       "ko-fi": "vigorator"
     }
   ],
-  "minimumCoreVersion": "9.231",
+  "minimumCoreVersion": "10",
   "compatibleCoreVersion": "10",
   "compatibility": {
-    "minimum": "9.231",
+    "minimum": "10",
     "verified": "10"
   },
   "url": "https://github.com/vigoren/foundryvtt-simple-calendar",

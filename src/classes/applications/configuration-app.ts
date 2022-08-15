@@ -28,6 +28,7 @@ import {deepMerge} from "../utilities/object";
 import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import {FormatDateTime} from "../utilities/date-time";
 import {generateUniqueId} from "../utilities/string";
+import {isObjectEmpty} from "../utilities/object";
 
 export default class ConfigurationApp extends FormApplication {
     /**
