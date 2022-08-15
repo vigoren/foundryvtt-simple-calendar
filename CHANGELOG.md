@@ -31,6 +31,7 @@ Existing notes will be automatically migrated by Foundry over to Journals with a
 ### Bug Fixes
 
 - Fixed several bugs on the note edit view where buttons wouldn't always respond to the first click.
+- Fixed a bug where positioning the calendar, with the remember position setting turned on, in the very top or very left of the screen would fail to place it back in that location on reloads.
 
 ### Documentation Changes
 

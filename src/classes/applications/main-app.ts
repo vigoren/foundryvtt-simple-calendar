@@ -194,10 +194,10 @@ export default class MainApp extends Application{
             const options:  Application.RenderOptions = {}
             if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
                 const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
-                if(pos.top){
+                if(pos.top !== undefined && pos.top >= 0){
                     options.top = pos.top;
                 }
-                if(pos.left){
+                if(pos.left !== undefined && pos.left >= 0){
                     options.left = pos.left;
                 }
             }
