@@ -693,17 +693,6 @@
       > input, > select, > button {
         background-color: unset !important;
       }
-      input[type=checkbox]{
-        border-color: $gray-900 !important;
-        background-image: url($checkboxSVGDark);
-
-        &:checked{
-          border-color: $tertiary-A500 !important;
-          background-color: $tertiary-A500 !important;
-          background-image: url($checkboxSVGWhite);
-          -webkit-filter: unset;
-        }
-      }
       > .fsc-date-selector{
         > input{
           background-color: unset !important;
@@ -738,6 +727,18 @@
       }
       .fsc-form-group-help{
         color: $success-900;
+      }
+    }
+
+    //Toggle
+    input[type=checkbox].fsc-toggle{
+      border-color: $gray-900 !important;
+      background-image: url($checkboxSVGDark);
+
+      &:checked{
+        background-color: $tertiary-A500 !important;
+        background-image: url($checkboxSVGWhite);
+        -webkit-filter: unset;
       }
     }
 

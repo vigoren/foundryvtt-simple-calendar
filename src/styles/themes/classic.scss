@@ -669,16 +669,6 @@
       > input, > select, > button {
         background-color: unset !important;
       }
-      input[type=checkbox]{
-        border-color: $gray-900 !important;
-        background-image: url($checkboxSVGDark);
-
-        &:checked{
-          background-color: #c85019 !important;
-          background-image: url($checkboxSVGWhite);
-          -webkit-filter: unset;
-        }
-      }
       > .fsc-date-selector{
         > input{
           background-color: unset !important;
@@ -717,6 +707,18 @@
       }
     }
 
+    //Toggle
+    input[type=checkbox].fsc-toggle{
+      border-color: $gray-900 !important;
+      background-image: url($checkboxSVGDark);
+
+      &:checked{
+        background-color: #c85019 !important;
+        background-image: url($checkboxSVGWhite);
+        -webkit-filter: unset;
+      }
+    }
+
     //Multi Select
     .fsc-multiselect{
       .fsc-multi-select-options{
@@ -737,10 +739,11 @@
     //Journal Sheet
     &.journal-sheet{
       .fsc-page-list{
+        background-color: #dbdbdb;
         .fsc-list-of-pages{
           li{
             &:hover, &.fsc-current{
-              background-color: $gray-400;
+              background-color: #ff000020;
             }
           }
         }

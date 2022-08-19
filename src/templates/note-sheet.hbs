@@ -44,7 +44,7 @@
             </div>
         </div>
         <div class="fsc-page-details">
-            <h2><a class="fsc-control fsc-secondary fsc-pages" title="{{localize 'DOCUMENT.JournalEntryPages'}}"><i class="fa-solid {{#if uiElementStates.fsc-page-list}} fa-chevron-right{{else}} fa-chevron-left{{/if}}"></i> <i class="fa-solid fa-page"></i></a> {{localize 'DOCUMENT.JournalEntryPages'}}</h2>
+            <h2>{{localize 'DOCUMENT.JournalEntryPages'}}</h2>
             <div class="fsc-inline-form-group-wrapper">
                 <div class="fsc-compact-form-group">
                     <input value="{{edit.page.name}}" placeholder="{{localize 'JOURNALENTRYPAGE.PageTitle'}}" type="text" id="scPageName_{{data._id}}" />
@@ -102,15 +102,15 @@
                     </div>
                     <div class="fsc-inline-form-group-wrapper">
                         <div class="fsc-compact-form-group fsc-check-group fsc-third">
-                            <input type="checkbox" id="scPageVideoControls_{{data._id}}" {{checked edit.page.video.controls}}>
+                            <input type="checkbox" class="fsc-toggle" id="scPageVideoControls_{{data._id}}" {{checked edit.page.video.controls}}>
                             <label for="scPageVideoControls_{{data._id}}">{{localize 'JOURNALENTRYPAGE.VideoControls'}}</label>
                         </div>
                         <div class="fsc-compact-form-group fsc-check-group fsc-third">
-                            <input type="checkbox" id="scPageVideoAutoplay_{{data._id}}" {{checked edit.page.video.autoplay}}>
+                            <input type="checkbox" class="fsc-toggle" id="scPageVideoAutoplay_{{data._id}}" {{checked edit.page.video.autoplay}}>
                             <label for="scPageVideoAutoplay_{{data._id}}">{{localize 'TILE.VideoAutoplay'}}</label>
                         </div>
                         <div class="fsc-compact-form-group fsc-check-group">
-                            <input type="checkbox" id="scPageVideoLoop_{{data._id}}" {{checked edit.page.video.loop}}>
+                            <input type="checkbox" class="fsc-toggle" id="scPageVideoLoop_{{data._id}}" {{checked edit.page.video.loop}}>
                             <label for="scPageVideoLoop_{{data._id}}">{{localize 'TILE.VideoLoop'}}</label>
                         </div>
                     </div>
@@ -155,11 +155,8 @@
     {{else}}
         <div class="fsc-note-header">
             <h1>
-                {{#if (or editMode (gt pages.length 1))}}
-                <a class="fsc-control fsc-secondary fsc-pages" title="{{localize 'DOCUMENT.JournalEntryPages'}}"><i class="fa-solid {{#if uiElementStates.fsc-page-list}} fa-chevron-right{{else}} fa-chevron-left{{/if}}"></i> <i class="fa-solid fa-page"></i></a>
-                {{/if}}
                 <span class="fsc-title-text">{{name}}</span>
-                <span class="fsc-reminder fsc-note-category {{#if display.reminder}} fsc-selected{{/if}}"><label><input type="checkbox" /><span class="fa {{#if display.reminder}}fa-bell{{else}}fa-bell-slash{{/if}}"></span></label></span>
+                <span class="fsc-reminder fsc-note-category {{#if display.reminder}} fsc-selected{{/if}}"><label><input class="fsc-toggle" type="checkbox" /><span class="fa {{#if display.reminder}}fa-bell{{else}}fa-bell-slash{{/if}}"></span></label></span>
             </h1>
             <div class="fsc-date">
                 <div class="fsc-note-category" title="{{localize 'FSC.Notes.DateTime.Title'}}">
@@ -199,6 +196,7 @@
 {{#if (or editMode (gt pages.length 1))}}
 <div class="fsc-side-drawer fsc-page-list {{#unless editMode}} fsc-read-only{{/unless}} {{#if uiElementStates.fsc-page-list}} fsc-open{{else}} fsc-closed{{/if}}">
     <div class="fsc-page-list-controls">
+        <a class="fsc-pages" title="{{#if uiElementStates.fsc-page-list}}{{localize 'JOURNAL.ViewCollapse'}}{{else}}{{localize 'JOURNAL.ViewExpand'}}{{/if}}"><i class="fa-solid {{#if uiElementStates.fsc-page-list}} fa-caret-right{{else}} fa-caret-left{{/if}}"></i></a>
         <div class="fsc-search-box">
             <input id="simpleCalendarSearchBox" placeholder="{{localize 'FSC.Notes.SearchPages'}}" type="text" value="{{uiElementStates.search.term}}" title="{{localize 'FSC.Notes.SearchPages'}}" />
             {{#if uiElementStates.search.results.length}}

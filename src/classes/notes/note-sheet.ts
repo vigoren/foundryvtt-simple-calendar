@@ -89,7 +89,7 @@ export class NoteSheet extends JournalSheet{
                 }
             }
             const cList = ns.appWindow.querySelector(`.fsc-page-list`);
-            const wrapper = ns.appWindow.querySelector('.fsc-page-details, .fsc-read-only');
+            const wrapper = ns.appWindow.querySelector('.fsc-page-details, .fsc-note-header');
             if(cList && wrapper){
                 (<HTMLElement>cList).style.top = (<HTMLElement>wrapper).offsetTop + 'px';
                 (<HTMLElement>cList).style.height = `calc(100% - ${(<HTMLElement>wrapper).offsetTop}px)`;
@@ -503,11 +503,16 @@ export class NoteSheet extends JournalSheet{
             if(cList){
                 const member = selector.toLowerCase() as 'fsc-page-list';
                 this.uiElementStates[member] = animateElement(cList, 500, false);
-                const chev = this.appWindow.querySelector('.fsc-pages .fa-solid');
-                if(chev){
-                    chev.classList.remove('fa-chevron-left', 'fa-chevron-right');
-                    chev.classList.add(this.uiElementStates[member]? 'fa-chevron-right' : 'fa-chevron-left');
+                const link = this.appWindow.querySelector('.fsc-page-list .fsc-pages');
+                if(link){
+                    (<HTMLElement>link).title = this.uiElementStates[member]? GameSettings.Localize('JOURNAL.ViewCollapse') : GameSettings.Localize('JOURNAL.ViewExpand');
+                    const chev = link.querySelector('.fa-solid');
+                    if(chev){
+                        chev.classList.remove('fa-caret-left', 'fa-caret-right');
+                        chev.classList.add(this.uiElementStates[member]? 'fa-caret-right' : 'fa-caret-left');
+                    }
                 }
+
             }
         }
     }
@@ -553,7 +558,7 @@ export class NoteSheet extends JournalSheet{
         const source = src || this.journalPages[this.uiElementStates.selectedPageIndex].src;
         let html = '';
         if(source){
-            html = `<figure><img src="${this.journalPages[this.uiElementStates.selectedPageIndex].src || ''}" alt="${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}" /><figcaption>${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}</figcaption></figure>`;
+            html = `<figure><img src="${this.journalPages[this.uiElementStates.selectedPageIndex].src || ''}" alt="${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}" /><figcaption>${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}</figcaption></figure><div class="fsc-spacer"></div>`;
         } else {
             html = '<div class="fsc-image-placeholder flex-ratio"><i class="fa-solid fa-image"></i></div>';
         }

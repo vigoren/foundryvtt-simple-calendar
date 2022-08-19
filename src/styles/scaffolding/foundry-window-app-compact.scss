@@ -3,10 +3,21 @@
   &.window-app.fsc-compact-view {
     header {
       flex: 0 0 10px;
+      justify-content: flex-end;
+      align-content: center;
 
-      * {
+      .close {
+        i{
+          font-size: 10px;
+        }
+        font-size: 0;
+        line-height: 0;
+      }
+
+      > *:not(.close) {
         display: none;
       }
+
     }
     .fsc-main-wrapper{
       padding: $spacer-half * 0.5;

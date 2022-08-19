@@ -27,6 +27,8 @@ Existing notes will be automatically migrated by Foundry over to Journals with a
 ### Quality of Life Improvements
 
 - The date selector for notes now allows you to enter the year instead of having to scroll through months to change the year the note takes place.
+- Changed some setting checkboxes in the configuration dialog to use a switch where it made sense.
+- Added a close button to the header of the compact view.
 
 ### Bug Fixes
 

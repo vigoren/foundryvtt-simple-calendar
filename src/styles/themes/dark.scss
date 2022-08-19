@@ -698,15 +698,6 @@
       > input, > select, > button {
         background-color: unset !important;
       }
-      input[type=checkbox]{
-        border-color: $white !important;
-
-        &:checked{
-          border-color: $primary-A500 !important;
-          background-color: $primary-A500 !important;
-          -webkit-filter: unset;
-        }
-      }
       > .fsc-date-selector{
         > input{
           background-color: unset !important;
@@ -741,6 +732,16 @@
       }
       .fsc-form-group-help{
         color: $secondary;
+      }
+    }
+
+    //Toggle
+    input[type=checkbox].fsc-toggle{
+      border-color: $white !important;
+
+      &:checked{
+        background-color: $primary-A500 !important;
+        -webkit-filter: unset;
       }
     }
 

@@ -88,30 +88,6 @@
         transform: scale(.85) translateY(-0.6rem) translateX(-0.2rem);
       }
     }
-    > input[type=checkbox]{
-      flex: 0 ($spacer * 2);
-      height: $spacer;
-      margin: 0.063rem ($spacer-half * .5) 0;
-      background-repeat: no-repeat;
-      background-position: left center;
-      background-size: contain;
-      border: 1px solid;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      -webkit-print-color-adjust: exact;
-      color-adjust: exact;
-      print-color-adjust: exact;
-      float: left;
-      background-image: url($checkboxSVGLight);
-      border-radius: 2em;
-      transition: background-position .15s ease-in-out;
-
-      &:checked{
-        background-position: right center;
-        background-image: url($checkboxSVGWhite);
-      }
-    }
     > input[type=range]{
       height: unset;
       padding-top: $spacer * 1.25;

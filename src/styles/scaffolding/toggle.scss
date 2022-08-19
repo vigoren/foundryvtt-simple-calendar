@@ -1,0 +1,30 @@
+@import "../variables";
+
+input[type=checkbox]{
+  &.fsc-toggle{
+    flex: 0 ($spacer * 2);
+    min-width: ($spacer * 2);
+    height: $spacer;
+    margin: 0.063rem ($spacer-half * .5) 0;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: contain;
+    border: 1px solid;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+    print-color-adjust: exact;
+    float: left;
+    background-image: url($checkboxSVGLight);
+    border-radius: 2em;
+    transition: background-position .15s ease-in-out;
+
+    &:checked{
+      background-position: right center;
+      background-image: url($checkboxSVGWhite);
+    }
+  }
+}

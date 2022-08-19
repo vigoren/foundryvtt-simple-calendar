@@ -44,7 +44,8 @@ export class GameSettings {
     static GetModuleVersion(): string {
         const mData = (<Game>game).modules.get(ModuleName);
         if(mData){
-            return mData.data.version;
+            //@ts-ignore
+            return mData.version;
         }
         return '';
     }
