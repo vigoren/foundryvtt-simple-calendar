@@ -59,7 +59,7 @@
             </div>
             <div class="fsc-editor-container">
                 {{#if (eq edit.page.type 'text')}}
-                    {{editor enrichedContent target="content" editable=true button=false owner=owner}}
+                    {{editor enrichedContent target="content" editable=true button=false owner=owner engine="prosemirror"}}
                 {{else if (eq edit.page.type 'image')}}
                     <div class="fsc-image-preview">
                         {{{enrichedContent}}}
@@ -116,8 +116,8 @@
                     </div>
                     <div class="fsc-inline-form-group-wrapper">
                         <div class="fsc-compact-form-group fsc-half">
-                            <input id="scPageVideoVolume_{{data._id}}" type="range" name="video.volume" value="{{edit.page.video.volume}}" min="0" max="1" step="0.1" />
-                            <label for="scPageVideoVolume_{{data._id}}">{{localize 'TILE.VideoVolume'}}: <span>{{edit.page.video.volume}}</span></label>
+                            <input id="scPageVideoVolume_{{data._id}}" type="range" name="video.volume" value="{{edit.page.video.volume}}" min="0" max="1" step="0.05" />
+                            <label for="scPageVideoVolume_{{data._id}}">{{localize 'TILE.VideoVolume'}}: <span>{{edit.page.video.volumeDisplay}}</span></label>
                         </div>
                         <div class="fsc-compact-form-group fsc-quarter">
                             <input id="scPageVideoWidth_{{data._id}}" type="number" name="video.width" min="0" step="1" placeholder="{{localize 'Width'}}" value="{{edit.page.video.width}}" />
@@ -198,11 +198,8 @@
     <div class="fsc-page-list-controls">
         <a class="fsc-pages" title="{{#if uiElementStates.fsc-page-list}}{{localize 'JOURNAL.ViewCollapse'}}{{else}}{{localize 'JOURNAL.ViewExpand'}}{{/if}}"><i class="fa-solid {{#if uiElementStates.fsc-page-list}} fa-caret-right{{else}} fa-caret-left{{/if}}"></i></a>
         <div class="fsc-search-box">
-            <input id="simpleCalendarSearchBox" placeholder="{{localize 'FSC.Notes.SearchPages'}}" type="text" value="{{uiElementStates.search.term}}" title="{{localize 'FSC.Notes.SearchPages'}}" />
-            {{#if uiElementStates.search.results.length}}
-                <buton class="fsc-control fa fa-times"></buton>
-            {{/if}}
-            <button class="fsc-control fa fa-search"></button>
+            <input placeholder="{{localize 'FSC.Notes.SearchPages'}}" type="text" value="{{uiElementStates.search.term}}" title="{{localize 'FSC.Notes.SearchPages'}}" />
+            <button class="fsc-control fsc-hide fa fa-times"></button>
         </div>
         {{#if editMode}}
             <button class="fsc-add-new-page fsc-control fsc-save fa fa-file-circle-plus" title="{{localize 'JOURNAL.AddPage'}}"></button>
@@ -210,7 +207,7 @@
     </div>
     <ul class="fsc-list-of-pages">
         {{#each pages}}
-            <li data-index="{{_id}}" class="{{#if (eq @index ../uiElementStates.selectedPageIndex)}} fsc-current{{/if}}">
+            <li data-index="{{_id}}" class="{{#if (eq @index ../uiElementStates.selectedPageIndex)}} fsc-current{{/if}}{{#unless show}} fsc-hide{{/unless}}">
                 <span>{{name}}</span>
             {{#if ../editMode}}
                 <div class="fsc-actions">

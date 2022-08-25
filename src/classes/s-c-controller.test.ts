@@ -18,7 +18,7 @@ import CalendarManager from "./calendar/calendar-manager";
 import MainApp from "./applications/main-app";
 import ConfigurationApp from "./applications/configuration-app";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {CombatPauseRules, Themes} from "../constants";
+import {CombatPauseRules, NoteReminderNotificationType, Themes} from "../constants";
 import MigrationApp from "./applications/migration-app";
 import NoteManager from "./notes/note-manager";
 import Calendar from "./calendar";
@@ -161,10 +161,11 @@ describe('SCController Tests', () => {
             openOnLoad: true,
             openCompact: false,
             rememberPosition: false,
-            appPosition: {}
+            appPosition: {},
+            noteReminderNotification: NoteReminderNotificationType.whisper
         });
         expect(CalManager.saveCalendars).toHaveBeenCalledTimes(2);
-        expect(GameSettings.SaveStringSetting).toHaveBeenCalledTimes(1);
+        expect(GameSettings.SaveStringSetting).toHaveBeenCalledTimes(2);
         expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(3);
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
     });
@@ -178,7 +179,7 @@ describe('SCController Tests', () => {
         SC.getSceneControlButtons(controls);
         expect(controls.length).toBe(1);
         expect(controls[0].tools.length).toBe(0);
-        controls.push({name:'token'});
+        controls.push({name:'notes'});
         SC.getSceneControlButtons(controls);
         expect(controls.length).toBe(2);
         expect(controls[0].tools.length).toBe(0);
@@ -237,6 +238,17 @@ describe('SCController Tests', () => {
         SC.renderJournalSheet(null, mockQuery);
         expect(mockQuery.find).toHaveBeenCalledTimes(2);
         expect(mockFindResult.remove).toHaveBeenCalledTimes(1);
+    });
+
+    test('Render Scene Config', () => {
+        const mockQuery = {
+            find: jest.fn()
+        };
+        const mockFindResult = {remove: jest.fn()};
+        mockQuery.find.mockReturnValue(mockFindResult);
+
+        //@ts-ignore
+        SC.renderSceneConfig({}, mockQuery, {journals: [{id:'asd', name:'asd'}]});
     });
 
     test('Game Paused', () => {

@@ -3,6 +3,7 @@ import ConfigurationApp from "../applications/configuration-app";
 import {CalManager, SC} from "../index"
 import {GameSettings} from "./game-settings";
 import SCController from "../s-c-controller";
+import MainApp from "../applications/main-app";
 
 export default class GameSettingsRegistration{
     /**
@@ -59,16 +60,35 @@ export default class GameSettingsRegistration{
             type: Object,
             default: {}
         });
+        (<Game>game).settings.register(ModuleName, SettingNames.NoteReminderNotification, {
+            name: "FSC.Configuration.Client.NoteReminderNotification.Title",
+            hint: "FSC.Configuration.Client.NoteReminderNotification.Description",
+            scope: "client",
+            config: true,
+            type: String,
+            // @ts-ignore
+            choices: {
+                'whisper': GameSettings.Localize("FSC.Configuration.Client.NoteReminderNotification.Whisper"),
+                'render': GameSettings.Localize("FSC.Configuration.Client.NoteReminderNotification.Render")
+            },
+            default: 'whisper'
+        });
         // -------------------
         // Configuration Button
         // -------------------
+        (<Game>game).settings.registerMenu(ModuleName, SettingNames.CalendarMainApp, {
+            name: "",
+            label: "FSC.Title",
+            hint: "",
+            icon: "fa fa-calendar",
+            type: MainApp
+        });
         (<Game>game).settings.registerMenu(ModuleName, SettingNames.CalendarConfigurationMenu, {
             name: "",
             label: "FSC.Configuration.Title",
             hint: "",
             icon: "fa fa-cog",
-            type: ConfigurationApp,
-            restricted: true
+            type: ConfigurationApp
         });
         // -------------------
         // Core Settings

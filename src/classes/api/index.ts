@@ -1457,7 +1457,7 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
     if(MainApplication.rendered){
         MainApplication.updateApp();
     } else {
-        MainApplication.showApp();
+        MainApplication.render();
     }
 }
 

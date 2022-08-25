@@ -1,5 +1,5 @@
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {MigrationTypes, SettingNames, Themes} from "../../constants";
+import {MigrationTypes, NoteReminderNotificationType, SettingNames, Themes} from "../../constants";
 import {Logger} from "../logging";
 import V1ToV2 from "../migrations/v1-to-v2";
 import {CalManager, MainApplication, SC} from "../index";
@@ -127,7 +127,7 @@ export default class MigrationApp extends Application{
         if(cm && nm){
             this.displayData.enableCleanUp = true;
             this.displayData.migrationDone = true;
-            MainApplication.showApp();
+            MainApplication.render();
             this.showApp();
         }
     }
@@ -169,7 +169,8 @@ export default class MigrationApp extends Application{
             openOnLoad: true,
             openCompact: false,
             rememberPosition: true,
-            appPosition: {}
+            appPosition: {},
+            noteReminderNotification: NoteReminderNotificationType.whisper
         });
     }
 

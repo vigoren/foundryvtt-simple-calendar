@@ -1,0 +1,19 @@
+@import "../variables";
+
+.fsc-editor-container{
+  .prosemirror{
+    --color-control-bg: #{$primary-A100};
+    --color-hover-bg: #{$primary-A200};
+
+    menu{
+      background-color: $primary-150;
+    }
+    .editor-content{
+      scrollbar-color: $primary $primary-600;
+      &::-webkit-scrollbar-thumb{
+        background: $primary;
+        border-color:$primary-600;
+      }
+    }
+  }
+}

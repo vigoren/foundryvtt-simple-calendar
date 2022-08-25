@@ -17,9 +17,11 @@ These are settings that only affect how Simple Calendar works or is displayed fo
 
 ![](media://client-settings.png)
 
-| Setting Name         | Description                                                                                 |
-|----------------------|---------------------------------------------------------------------------------------------|
-| Theme                | Choose the visual theme to apply to the Simple Calendar module to change how it looks.      |
-| Open On Load         | Will open up the Simple Calendar application when foundry is loaded.                        |
-| Open In Compact View | When the Simple Calendar application is opened it will open in the compact view by default. |
-| Remember Position    | Simple Calendar will remember where it was last positioned and place itself there.          |
+| Setting Name               | Description                                                                                                                                                                                                                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Theme                      | Choose the visual theme to apply to the Simple Calendar module to change how it looks.                                                                                                                                                                                                                                                           |
+| Open On Load               | Will open up the Simple Calendar application when foundry is loaded.                                                                                                                                                                                                                                                                             |
+| Open In Compact View       | When the Simple Calendar application is opened it will open in the compact view by default.                                                                                                                                                                                                                                                      |
+| Remember Position          | Simple Calendar will remember where it was last positioned and place itself there.                                                                                                                                                                                                                                                               |
+| Note Reminder Notification | Choose how note reminders are sent to you. The options are:<br/><ul><li>**Send a chat whisper with details about the note**: A whisper is sent to the player with details about the note and a link to open the note.</li><li>**Automatically open the note**: The note dialog will automatically open when the reminder is triggered.</li></ul> |
+

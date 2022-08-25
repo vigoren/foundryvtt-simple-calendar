@@ -10,7 +10,7 @@ import {
     GameWorldTimeIntegrations,
     Icons,
     LeapYearRules,
-    MoonYearResetOptions,
+    MoonYearResetOptions, NoteReminderNotificationType,
     NoteRepeat,
     PredefinedCalendars,
     PresetTimeOfDay,
@@ -1749,6 +1749,7 @@ declare global{
          * @internal
          */
         interface JournalPageData{
+            show: boolean;
             _id: string;
             name: string;
             type: string;
@@ -1841,6 +1842,8 @@ declare global{
             rememberPosition: boolean;
             /** The current position of the Simple Calendar module. */
             appPosition: AppPosition;
+            /** How the user wants note reminder notifications to be displayed. */
+            noteReminderNotification: NoteReminderNotificationType;
         }
 
         /**

@@ -69,7 +69,7 @@ describe('Game Settings Class Tests', () => {
 
     test('Get Module Version', () => {
         expect(GameSettings.GetModuleVersion()).toBe('');
-        (<Mock>(<Game>game).modules.get).mockReturnValueOnce({data: {version:'1'}});
+        (<Mock>(<Game>game).modules.get).mockReturnValueOnce({version:'1'});
         expect(GameSettings.GetModuleVersion()).toBe('1');
     });
 

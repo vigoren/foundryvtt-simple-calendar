@@ -20,6 +20,8 @@ export enum SettingNames {
     OpenCompact = 'open-compact',
     RememberPosition = 'remember-position',
     AppPosition = 'app-position',
+    NoteReminderNotification = 'note-reminder-notification',
+    CalendarMainApp = 'calendar-main-app',
     CalendarConfigurationMenu= 'calendar-configuration-menu',
     CalendarConfiguration = 'calendar-configuration',
     ActiveCalendar= 'active-calendar',
@@ -393,6 +395,17 @@ export enum DateTimeUnits{
     Minute = "minute",
     Round = "round",
     Second = "seconds"
+}
+
+/**
+ * When a note reminder is triggered how to let the user know about the reminder.
+ * @internal
+ */
+export enum NoteReminderNotificationType {
+    /** Have the reminder whispered to the player in chat with details and link to the note */
+    whisper = 'whisper',
+    /** Display the note's sheet */
+    render = 'render'
 }
 
 export enum TriggerConditions{

@@ -1,5 +1,5 @@
-import {CalManager} from "../index";
-import {DateRangeMatch, ModuleName, NoteRepeat, SettingNames} from "../../constants";
+import {CalManager, NManager, SC} from "../index";
+import {DateRangeMatch, ModuleName, NoteReminderNotificationType, NoteRepeat} from "../../constants";
 import {GetDisplayDate, IsDayBetweenDates} from "../utilities/date-time";
 import {GetContrastColor} from "../utilities/visual";
 import {NoteTrigger} from "./note-trigger";
@@ -32,11 +32,15 @@ export default class NoteStub{
         if(noteData && note.userReminderRegistered){
             const calendar = CalManager.getCalendar(noteData.calendarId);
             if(calendar && (!initialLoad || (initialLoad && calendar.generalSettings.postNoteRemindersOnFoundryLoad))){
-                ChatMessage.create({
-                    speaker: {alias: "Simple Calendar Reminder"},
-                    whisper: [GameSettings.UserID()],
-                    content: `<div class='simple-calendar ${GameSettings.GetStringSettings(SettingNames.Theme)}'><h2>${note.title}</h2><div style="display: flex;"><div class="note-category"><span class="fa fa-calendar"></span> ${note.fullDisplayDate}</div></div>${note.content}</div>`
-                }).catch(Logger.error);
+                if(SC.clientSettings.noteReminderNotification === NoteReminderNotificationType.whisper){
+                    ChatMessage.create({
+                        speaker: {alias: "Simple Calendar Reminder"},
+                        whisper: [GameSettings.UserID()],
+                        content: `<h2>${note.title}</h2><div style="display: flex;margin-bottom: 0.5rem;"><div class="note-category"><span class="fa fa-calendar"></span> ${note.fullDisplayDate}</div></div>${note.link}`
+                    }).catch(Logger.error);
+                } else if(SC.clientSettings.noteReminderNotification === NoteReminderNotificationType.render){
+                    note.render();
+                }
                 return true;
             }
         }
@@ -104,16 +108,12 @@ export default class NoteStub{
     }
 
     /**
-     * The content of this note
+     * The link to this journal entry
      */
-    public get content(): string {
+    public get link(): string{
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         if(journalEntry){
-            //@ts-ignore
-            const jePage = journalEntry.pages.contents[0];
-            if(jePage){
-                return jePage.text.content;
-            }
+            return journalEntry.link;
         }
         return '';
     }
@@ -313,6 +313,12 @@ export default class NoteStub{
         return 'none';
     }
 
+    /**
+     * Rendered this note's sheet
+     */
+    public render(){
+        NManager.showNote(this.entryId);
+    }
     /**
      * If the current user can view this note
      */

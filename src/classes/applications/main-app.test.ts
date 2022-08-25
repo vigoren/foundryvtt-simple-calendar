@@ -87,17 +87,13 @@ describe('Main App Class Tests', () => {
         expect(ma.getData()).toBeDefined();
     });
 
-    test('Show App', () => {
-        jest.spyOn(ma, 'render').mockImplementation(() => {});
-
-        ma.showApp();
-        expect(ma.render).toHaveBeenCalledTimes(0);
+    test('Render', () => {
+        ma.render();
 
         jest.spyOn(PermUtilities, 'canUser').mockReturnValue(true);
         jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
         jest.spyOn(GameSettings, 'GetObjectSettings').mockReturnValue({top:1, left: 1});
-        ma.showApp();
-        expect(ma.render).toHaveBeenCalledTimes(1);
+        ma.render();
     });
 
     test('minimize', async () => {
@@ -665,5 +661,10 @@ describe('Main App Class Tests', () => {
         //@ts-ignore
         ma.noteDragEnd(fEvent);
         expect(NManager.orderNotesOnDay).toHaveBeenCalledTimes(1);
+    });
+
+    test('Update Object', () => {
+        //@ts-ignore
+        ma._updateObject();
     });
 });

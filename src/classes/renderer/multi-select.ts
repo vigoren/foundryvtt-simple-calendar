@@ -75,7 +75,7 @@ export default class MultiSelect {
         }
     }
 
-    public static BodyEventListener(event: Event){
+    public static BodyEventListener(){
         document.querySelectorAll('.fsc-multiselect').forEach(ms => {
             const msId = ms.querySelector('.fsc-multiselect-id')?.id;
             if(msId){

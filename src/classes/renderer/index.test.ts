@@ -5,5 +5,6 @@ describe('Renderer Class Tests', () => {
         expect(Renderer.CalendarFull).toBeDefined();
         expect(Renderer.Clock).toBeDefined();
         expect(Renderer.TimeSelector).toBeDefined();
+        expect(Renderer.MultiSelect).toBeDefined();
     });
 });

@@ -10,6 +10,7 @@ import {
     LeapYearRules,
     ModuleName,
     MoonYearResetOptions,
+    NoteReminderNotificationType,
     PredefinedCalendars,
     SettingNames,
     Themes,
@@ -24,11 +25,10 @@ import DateSelectorManager from "../date-selector/date-selector-manager";
 import {animateElement, animateFormGroup, GetContrastColor} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import UserPermissions from "../configuration/user-permissions";
-import {deepMerge} from "../utilities/object";
+import {deepMerge, isObjectEmpty} from "../utilities/object";
 import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import {FormatDateTime} from "../utilities/date-time";
 import {generateUniqueId} from "../utilities/string";
-import {isObjectEmpty} from "../utilities/object";
 
 export default class ConfigurationApp extends FormApplication {
     /**
@@ -71,7 +71,8 @@ export default class ConfigurationApp extends FormApplication {
         openOnLoad: true,
         openCompact: false,
         rememberPosition: true,
-        appPosition: {}
+        appPosition: {},
+        noteReminderNotification: NoteReminderNotificationType.whisper
     };
     /**
      * A list of different states for the UI
@@ -214,6 +215,11 @@ export default class ConfigurationApp extends FormApplication {
                     'dark': 'FSC.Configuration.Theme.Dark',
                     'light': 'FSC.Configuration.Theme.Light',
                     'classic': 'FSC.Configuration.Theme.Classic'
+                },
+                noteReminderNotification: this.clientSettings.noteReminderNotification,
+                noteReminderNotifications: {
+                    'whisper': 'FSC.Configuration.Client.NoteReminderNotification.Whisper',
+                    'render': 'FSC.Configuration.Client.NoteReminderNotification.Render'
                 }
             },
             combatPauseRules: {
@@ -632,6 +638,7 @@ export default class ConfigurationApp extends FormApplication {
             this.clientSettings.openOnLoad = getCheckBoxInputValue('#scOpenOnLoad', true, this.appWindow);
             this.clientSettings.openCompact = getCheckBoxInputValue('#scOpenInCompact', false, this.appWindow);
             this.clientSettings.rememberPosition = getCheckBoxInputValue('#scRememberPos', true, this.appWindow);
+            this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>getTextInputValue('#scNoteReminderNotification', <string>NoteReminderNotificationType.whisper, this.appWindow);
 
             //----------------------------------
             // Global Config: Permissions

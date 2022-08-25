@@ -121,6 +121,15 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Client.RememberPosition.Description'}}</p>
                 </div>
+                <div class="form-group fsc-open">
+                    <label for="scNoteReminderNotification">{{localize 'FSC.Configuration.Client.NoteReminderNotification.Title'}}</label>
+                    <div class="form-fields">
+                        <select id="scNoteReminderNotification">
+                            {{selectOptions clientSettings.noteReminderNotifications selected=clientSettings.noteReminderNotification localize=true}}
+                        </select>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Client.NoteReminderNotification.Description'}}</p>
+                </div>
             </div>
         </div>
 

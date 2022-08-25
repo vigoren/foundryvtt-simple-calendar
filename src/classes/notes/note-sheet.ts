@@ -45,8 +45,7 @@ export class NoteSheet extends JournalSheet{
         "fsc-page-list": false,
         selectedPageIndex: 0,
          search:{
-             term: '',
-             results: []
+             term: ''
          }
     }
 
@@ -142,6 +141,7 @@ export class NoteSheet extends JournalSheet{
         //@ts-ignore
         for(let i = 0; i < this.object.pages.contents.length; i++){
             this.journalPages.push({
+                show: true,
                 //@ts-ignore
                 _id: this.object.pages.contents[i]._id,
                 //@ts-ignore
@@ -201,9 +201,15 @@ export class NoteSheet extends JournalSheet{
             this.editMode = false;
             this.resized = false;
             this.uiElementStates["fsc-page-list"] = false;
-            this.uiElementStates.selectedPageIndex = 0;
+            this.uiElementStates.selectedPageIndex = 0
+            this.cleanUpProsemirror();
             return super.close({submit:false});
         }
+    }
+
+    cleanUpProsemirror(){
+        //@ts-ignore
+        Object.values(this.editors).forEach(ed => {if ( ed.instance ) ed.instance.destroy(); });
     }
 
     async isDirtyDialogClose(save: boolean){
@@ -268,6 +274,7 @@ export class NoteSheet extends JournalSheet{
                         autoplay: false,
                         loop: false,
                         volume: 0.5,
+                        volumeDisplay: '50%',
                         timestamp: 0,
                         timestampParts: {}
                     }
@@ -300,6 +307,7 @@ export class NoteSheet extends JournalSheet{
                 newOptions.edit.page.video.autoplay = this.journalPages[this.uiElementStates.selectedPageIndex].video?.autoplay || false;
                 newOptions.edit.page.video.loop = this.journalPages[this.uiElementStates.selectedPageIndex].video?.loop || false;
                 newOptions.edit.page.video.volume = this.journalPages[this.uiElementStates.selectedPageIndex].video?.volume || 0.5;
+                newOptions.edit.page.video.volumeDisplay = `${Math.round(newOptions.edit.page.video.volume * 100)}%`;
                 newOptions.edit.page.video.timestamp = this.journalPages[this.uiElementStates.selectedPageIndex].video?.timestamp || 0;
                 let h = 0, m = 0, s = 0;
                 if(newOptions.edit.page.video.timestamp){
@@ -381,7 +389,7 @@ export class NoteSheet extends JournalSheet{
                 (<Game>game).video.getYouTubePlayer(iframe.id, {
                     events: {
                         //@ts-ignore
-                        onStateChange: (e: Event) => {if ( e.data === YT.PlayerState.PLAYING ) e.target?.setVolume(videoVolume * 100);}
+                        onStateChange: this.youtubeOnStateChange.bind(this, videoVolume)
                     }
                 }).then((player: any) => {
                     if ( videoTimestamp ) player.seekTo(videoTimestamp, true);
@@ -390,40 +398,19 @@ export class NoteSheet extends JournalSheet{
             const video = this.appWindow.querySelector('video');
             if(video){
                 video.addEventListener("loadeddata", NoteSheet.SetHeight.bind(null, this));
-                video.addEventListener("loadedmetadata", () => {
-                    video.volume = videoVolume;
-                    if ( videoTimestamp ) video.currentTime = videoTimestamp;
-                });
+                video.addEventListener("loadedmetadata", this.videoLoadMetadata.bind(this, video, videoVolume, videoTimestamp));
             }
         }
     }
 
-    activateEditorCustom(){
-        if(this.appWindow){
-            const target = this.appWindow.querySelector('.fsc-editor-container .editor-content');
-            if(target){
-                let height = 0;
-                const mceOptions = {
-                    target: <HTMLElement>target,
-                    body_class: 'simple-calendar',
-                    content_css: ["/css/mce.css", `modules/${ModuleName}/styles/themes/tinymce-${SC.clientSettings.theme}.css`],
-                    preview_styles: false,
-                    height: height,
-                    save_onsavecallback: ()=> this.saveEditor('content', {remove: false})
-                };
-                this.editors['content'] = {
-                    target: 'content',
-                    //@ts-ignore
-                    button: target.nextElementSibling,
-                    hasButton: false,
-                    mce: null,
-                    active: true,
-                    changed: false,
-                    options: mceOptions
-                };
-                this.activateEditor('content', mceOptions, this.journalPages[this.uiElementStates.selectedPageIndex].text?.content || '');
-            }
-        }
+    youtubeOnStateChange(volume: number, e: Event){
+        //@ts-ignore
+        if ( e.data === YT.PlayerState.PLAYING ) e.target?.setVolume(volume * 100);
+    }
+
+    videoLoadMetadata(video: HTMLVideoElement, volume: number, timeStamp: number){
+        video.volume = volume;
+        if ( timeStamp ) video.currentTime = timeStamp;
     }
 
     activateListeners(html: JQuery) {
@@ -433,7 +420,16 @@ export class NoteSheet extends JournalSheet{
             this.appWindow.classList.remove(...themes);
             this.appWindow.classList.add(SC.clientSettings.theme);
             if(this.editMode){
-                this.activateEditorCustom();
+                if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'text'){
+                    const editorDiv = <HTMLElement>this.appWindow.querySelector('.editor-content[data-edit]');
+                    if(editorDiv){
+                        this.cleanUpProsemirror();
+                        (<any>this.object).content = this.journalPages[this.uiElementStates.selectedPageIndex].text?.content || '';
+                        this._activateEditor(editorDiv);
+                    }
+                } else {
+                    (<any>this.object).content = '';
+                }
                 this.appWindow.querySelectorAll("button.file-picker").forEach(e => {
                     // @ts-ignore
                     (<HTMLElement>e).onclick = this._activateFilePicker.bind(this);
@@ -480,6 +476,12 @@ export class NoteSheet extends JournalSheet{
             this.appWindow.querySelectorAll(".fsc-list-of-pages li").forEach(e => {
                 e.addEventListener('click', this.changePage.bind(this));
             });
+
+            //---------------------
+            // Page List Search
+            //---------------------
+            this.appWindow.querySelector(".fsc-page-list .fsc-search-box input")?.addEventListener('input', this.searchUpdate.bind(this));
+            this.appWindow.querySelector(".fsc-page-list .fsc-search-box .fa-times")?.addEventListener('click', this.clearSearch.bind(this));
         }
     }
 
@@ -503,7 +505,7 @@ export class NoteSheet extends JournalSheet{
             if(cList){
                 const member = selector.toLowerCase() as 'fsc-page-list';
                 this.uiElementStates[member] = animateElement(cList, 500, false);
-                const link = this.appWindow.querySelector('.fsc-page-list .fsc-pages');
+                const link = cList.querySelector('.fsc-pages');
                 if(link){
                     (<HTMLElement>link).title = this.uiElementStates[member]? GameSettings.Localize('JOURNAL.ViewCollapse') : GameSettings.Localize('JOURNAL.ViewExpand');
                     const chev = link.querySelector('.fa-solid');
@@ -534,11 +536,15 @@ export class NoteSheet extends JournalSheet{
             if(temp.innerHTML){
                 (<HTMLElement>element).replaceWith(temp.childNodes[0]);
             }
+        } else if(target && target.name === 'video.volume'){
+            const volDisplay = this.appWindow?.querySelector(`label[for="scPageVideoVolume_${this.object.id}"] span`);
+            if(volDisplay){
+                volDisplay.innerHTML = `${Math.round(parseFloat(target.value) * 100)}%`;
+            }
         }
     }
 
     _loadPDF(event: Event){
-        console.log('load pdf');
         const target = (<HTMLElement>event.currentTarget)?.parentElement;
         if(target){
             const frame = document.createElement("iframe");
@@ -556,9 +562,9 @@ export class NoteSheet extends JournalSheet{
 
     private generateImageHTML(src?: string){
         const source = src || this.journalPages[this.uiElementStates.selectedPageIndex].src;
-        let html = '';
+        let html: string;
         if(source){
-            html = `<figure><img src="${this.journalPages[this.uiElementStates.selectedPageIndex].src || ''}" alt="${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}" /><figcaption>${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}</figcaption></figure><div class="fsc-spacer"></div>`;
+            html = `<figure><img src="${source}" alt="${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}" /><figcaption>${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}</figcaption></figure><div class="fsc-spacer"></div>`;
         } else {
             html = '<div class="fsc-image-placeholder flex-ratio"><i class="fa-solid fa-image"></i></div>';
         }
@@ -567,12 +573,12 @@ export class NoteSheet extends JournalSheet{
 
     private async generatePDFHTML(src?: string, edit: boolean = false){
         const source = src || this.journalPages[this.uiElementStates.selectedPageIndex].src;
-        let html = '';
+        let html: string;
         if(source){
             if(edit){
                 html = `<iframe class="fsc-pdf-viewer" src="scripts/pdfjs/web/viewer.html?file=${foundry.utils.getRoute(source)}"></iframe>`;
             } else {
-                const res = await fetch(source, {method: "HEAD"}).catch(() => {});
+                const res = await fetch(source, {method: "HEAD"});
                 const size = Number(res?.headers.get("content-length"));
                 let sizeText = '';
                 if(!isNaN(size)){
@@ -588,13 +594,13 @@ export class NoteSheet extends JournalSheet{
 
     private generateVideoHTML(src?: string){
         const source = src || this.journalPages[this.uiElementStates.selectedPageIndex].src;
-        let html = '';
+        let html: string;
         if(source){
             html = `<figure class="${!this.journalPages[this.uiElementStates.selectedPageIndex].video?.width && !this.journalPages[this.uiElementStates.selectedPageIndex].video?.height? 'flex-ratio' : ''}">`;
             //@ts-ignore
             if((<Game>game).video.isYouTubeURL(source)){
                 //@ts-ignore
-                html += `<iframe id="youtube-${foundry.utils.randomID()}" src="${ (<Game>game).video.getYouTubeEmbedURL(source, this._getYouTubeVars())}" frameborder="0" ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width? `width="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width}"` : ''} ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height? `height="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height}"` : ''}></iframe>`;
+                html += `<iframe id="youtube-${foundry.utils.randomID()}" src="${ (<Game>game).video.getYouTubeEmbedURL(source, this._getYouTubeVars())}" ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width? `width="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width}"` : ''} ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height? `height="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height}"` : ''}></iframe>`;
             } else {
                 html += `<video src="${source}" controls ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width? `width="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width}"` : ''} ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height? `height="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height}"` : ''}></video>`;
             }
@@ -638,11 +644,10 @@ export class NoteSheet extends JournalSheet{
     multiSelectOptionChange(multiSelectId: string, value: string, selected: boolean){
         if(multiSelectId === this.categoryMultiSelectId){
             const index = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).categories.indexOf(value);
-            if(index > -1){
-                (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).categories.splice(index, 1);
-            }
             if(selected){
                 (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).categories.push(value);
+            } else if(index > -1){
+                (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).categories.splice(index, 1);
             }
             this.dirty = true;
         } else if(multiSelectId === this.playerMultiSelectId){
@@ -694,7 +699,7 @@ export class NoteSheet extends JournalSheet{
     async writeInputValuesToObjects(){
         let render = false;
         if(this.appWindow){
-            this.journalData.name = getTextInputValue('.fsc-note-title', <string>Themes.dark, this.appWindow);
+            this.journalData.name = getTextInputValue('.fsc-note-title', 'New Note', this.appWindow);
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats = <NoteRepeat>getNumericInputValue(`#scNoteRepeats_${this.object.id}`, NoteRepeat.Never, false, this.appWindow);
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).macro = getTextInputValue(`#scNoteMacro_${this.object.id}`, 'none', this.appWindow);
 
@@ -707,7 +712,7 @@ export class NoteSheet extends JournalSheet{
             switch (nType){
                 case "text":
                     if(this.editors['content']){
-                        this.journalPages[this.uiElementStates.selectedPageIndex].text = {content: this.editors['content'].mce?.getContent() || ''};
+                        await this.saveEditor('content');
                     }
                     break;
                 case "image":
@@ -775,6 +780,40 @@ export class NoteSheet extends JournalSheet{
         }
     }
 
+    searchUpdate(e: Event){
+        const target = e.target;
+        if(target){
+            this.uiElementStates.search.term = (<HTMLInputElement>target).value;
+            this.searchPages();
+        }
+    }
+
+    clearSearch(){
+        this.uiElementStates.search.term = '';
+        if(this.appWindow){
+            const searchBox = (<HTMLInputElement>this.appWindow.querySelector(".fsc-page-list .fsc-search-box input"));
+            if(searchBox){
+                searchBox.value = '';
+            }
+        }
+        this.searchPages();
+    }
+
+    searchPages(){
+        const pageToHide = this.journalPages.filter(p => p.name.indexOf(this.uiElementStates.search.term) === -1);
+        this.journalPages.forEach(p => {p.show = true;});
+        this.appWindow?.querySelectorAll(`.fsc-list-of-pages li`).forEach(e => e.classList.remove('fsc-hide'));
+        if(pageToHide.length){
+            for(let i = 0; i < pageToHide.length; i++){
+                pageToHide[i].show = false;
+                this.appWindow?.querySelector(`.fsc-list-of-pages li[data-index="${pageToHide[i]._id}"]`)?.classList.add('fsc-hide');
+            }
+            this.appWindow?.querySelector('.fsc-page-list-controls .fa-times')?.classList.remove('fsc-hide');
+        } else {
+            this.appWindow?.querySelector('.fsc-page-list-controls .fa-times')?.classList.add('fsc-hide');
+        }
+    }
+
     async edit(e: Event){
         e.preventDefault();
         this.resized = false;
@@ -799,7 +838,7 @@ export class NoteSheet extends JournalSheet{
     }
 
     async addPage(){
-        this.journalPages.push({_id: randomID(), name: 'New Page', type: 'text', text: {content: ''}});
+        this.journalPages.push({_id: foundry.utils.randomID(), show: true, name: 'New Page', type: 'text', text: {content: ''}});
         this.uiElementStates.selectedPageIndex = this.journalPages.length - 1;
         this.dirty = true;
         this.render(true);

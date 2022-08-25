@@ -1,8 +1,8 @@
 # Change Log
 
-## v2.1.0 - FoundryVTT V10 Support, Note Pages, Bug Fixes
+## v2.1.0 - FoundryVTT V10 Support, Note Pages, QoL Improvements, Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-August%2012%2C%202022-blue)
+![](https://img.shields.io/badge/release%20date-August%2027%2C%202022-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.0/module.zip)
 
 ### FoundryVTT Version 10 Support
@@ -20,22 +20,37 @@ With the new Journals in FoundryVTT version 10 Simple calendar has been updated 
 - Have multiple pages with a collapsible panel when switching between pages being viewed.
 - Supports the different page types (Text, Images, PDFs and Videos).
 - The interface has been updated so the fields are more condensed for an easier editing experience.
+- Switched to using the new Prosemirror editor for notes over TinyMCE.
 
 Existing notes will be automatically migrated by Foundry over to Journals with a single text page.
 
 
 ### Quality of Life Improvements
 
+- Moved the icon for opening Simple Calendar from the `Token Controls` tab to the `Journal Notes` tab as this makes way more sense for Simple Calendar to live.
+- Added a button to open Simple Calendar from the "Configure Settings" dialog.
 - The date selector for notes now allows you to enter the year instead of having to scroll through months to change the year the note takes place.
 - Changed some setting checkboxes in the configuration dialog to use a switch where it made sense.
 - Added a close button to the header of the compact view.
+- Changed the Reminder chat whisper to show a link to the note instead of the notes content.
+- Added a new client setting for each player to choose how note reminders notify them. The options are:
+  - Have a whisper sent in the chat to the player with some details about the note and a link to open the note. This is the default option.
+  - Have the note automatically open.
+- When editing a Scenes configuration, if the setting `Show Notes Folder` is set to off then all Calendar notes are removed from the Journal Entry field under the Ambience tab. 
 
 ### Bug Fixes
 
 - Fixed several bugs on the note edit view where buttons wouldn't always respond to the first click.
 - Fixed a bug where positioning the calendar, with the remember position setting turned on, in the very top or very left of the screen would fail to place it back in that location on reloads.
+- Fixed a bug where when stopping the real time clock would cause the resulting time that is saved to be a few seconds (< 5) behind what it should be.
 
 ### Documentation Changes
+
+- Updated the [Client Settings](https://simplecalendar.info/pages/docs/global-configuration/settings.html#client-settings) docs to include details about the new note reminder setting.
+- Updated the [Using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) docs to reflect the change in location of the buttons to open Simple Calendar.
+- Updated the [Notes](https://simplecalendar.info/pages/docs/using-sc/notes/index.html) docs to reflect all the changes to the notes interface.
+- Added a new page [Notes: Adding / Editing / Removing](https://simplecalendar.info/pages/docs/using-sc/notes/adding-editing-removing.html) for detailing how to add, edit and remove notes with a section specific to the new pages functionality.
+- Updated several images to properly reflect the changes in this update.
 
 ### API Changes
 

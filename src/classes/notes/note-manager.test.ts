@@ -30,7 +30,7 @@ describe('Note Manager Class Tests', () => {
     test('Initialize', async () => {
         jest.spyOn(NManager, 'registerNoteSheets').mockImplementation(() => {});
         jest.spyOn(NManager, 'createJournalDirectory').mockImplementation(async () => {});
-        jest.spyOn(NManager, 'loadNotes').mockImplementation(() => {});
+        jest.spyOn(NManager, 'loadNotes').mockImplementation(async () => {});
 
         await NManager.initialize();
 
@@ -72,13 +72,13 @@ describe('Note Manager Class Tests', () => {
         expect(MainApplication.updateApp).not.toHaveBeenCalled();
 
         //@ts-ignore
-        jec.mockReturnValue({});
+        jec.mockReturnValue({ createEmbeddedDocuments: async () => {}, pages: {contents: []} });
         //@ts-ignore
         game.user.id = 'asd';
-        expect(await NManager.createNote('', '', noteData, tCal)).toEqual({});
+        expect(await NManager.createNote('', '', noteData, tCal)).toBeDefined();
 
         tCal.generalSettings.noteDefaultVisibility = false;
-        expect(await NManager.createNote('', '', noteData, tCal)).toEqual({});
+        expect(await NManager.createNote('', '', noteData, tCal)).toBeDefined();
     });
 
     test('Journal Entry Update', () => {
@@ -128,26 +128,30 @@ describe('Note Manager Class Tests', () => {
         expect(NManager.notes['asd'].length).toBe(0);
     });
 
-    test('Load Notes / Load Notes From Folder', () => {
+    test('Load Notes / Load Notes From Folder', async () => {
         const je = {
             id: 'ns1',
             getFlag: () => {
                 return {calendarId: 'asd'};
-            }
+            },
+            pages: {
+                contents: []
+            },
+            createEmbeddedDocuments: async () => {}
         };
         //@ts-ignore
         NManager.noteDirectory = {id: 'nd', contents: [je]};
 
         jest.spyOn(NManager,'addNoteStub').mockImplementation(() => {});
-        NManager.loadNotes();
+        await NManager.loadNotes();
         expect(NManager.addNoteStub).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         const oldF = game.journal.directory.folders;
         //@ts-ignore
-        game.journal.directory.folders = [{parentFolder: {id:'nd'}, contents: []}];
+        game.journal.directory.folders = [{folder: {id:'nd'}, contents: []}];
 
-        NManager.loadNotes();
+        await NManager.loadNotes();
         expect(NManager.addNoteStub).toHaveBeenCalledTimes(2);
 
         //@ts-ignore
@@ -289,7 +293,7 @@ describe('Note Manager Class Tests', () => {
 
     test('Search Notes', () => {
         //@ts-ignore
-        NManager.notes['asd'] = [{canUserView: () => {return true;}, title: 'test', content: '', fullDisplayDate: '', categories: [{name: 'c1'}]}];
+        NManager.notes['asd'] = [{canUserView: () => {return true;}, title: 'test', fullDisplayDate: '', categories: [{name: 'c1'}], pages: [{name: '', type: 'text', text: {content: ''}}]}];
 
         expect(NManager.searchNotes('asd', 'test', {title: true, details: true, date: true, author: true, categories: true}).length).toBe(1);
     });

@@ -81,6 +81,7 @@ class FormApplication extends Application{
     saveEditor(a: string){}
     bringToTop(){}
     maximize(){return Promise.resolve();}
+    setPosition(){}
 }
 
 // @ts-ignore

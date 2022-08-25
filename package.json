@@ -15,7 +15,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">14.0.0 <17.0.0"
+    "node": ">16.0.0 <19.0.0"
   },
   "types": "types/index.d.ts",
   "scripts": {
@@ -25,10 +25,10 @@
   },
   "devDependencies": {
     "@knodes/typedoc-plugin-pages": "^0.22.7",
-    "@league-of-foundry-developers/foundry-vtt-types": "^9.269.0",
+    "@league-of-foundry-developers/foundry-vtt-types": "^9.269.1",
     "@types/file-saver": "^2.0.5",
-    "@types/jest": "^28.1.7",
-    "@types/node": "^18.7.6",
+    "@types/jest": "^28.1.8",
+    "@types/node": "^18.7.13",
     "circular-dependency-plugin": "^5.2.2",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
@@ -39,7 +39,7 @@
     "jest-ts-webcompat-resolver": "^1.0.0",
     "mangle-css-class-webpack-plugin": "^5.0.8",
     "mini-css-extract-plugin": "^2.6.1",
-    "sass": "^1.54.4",
+    "sass": "^1.54.5",
     "sass-loader": "^13.0.2",
     "terser-webpack-plugin": "^5.3.5",
     "ts-jest": "^28.0.8",

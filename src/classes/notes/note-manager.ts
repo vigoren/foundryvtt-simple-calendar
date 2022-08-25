@@ -384,9 +384,16 @@ export default class NoteManager{
                         docCont.push(noteList[i].title);
                     }
                     if(options.details){
-                        let tmp = document.createElement("DIV");
-                        tmp.innerHTML = noteList[i].content;
-                        docCont.push((tmp.textContent || tmp.innerText || "").replace(/\r?\n|\r/g, ' '));
+                        const pages = noteList[i].pages;
+                        for(let p = 0; p < pages.length; p++){
+                            let content = pages[p].name || '';
+                            if(pages[p].type === 'text'){
+                                let tmp = document.createElement("DIV");
+                                tmp.innerHTML = pages[p].text.content;
+                                content += ` ${(tmp.textContent || tmp.innerText || "").replace(/\r?\n|\r/g, ' ')}`;
+                            }
+                            docCont.push(content);
+                        }
                     }
                     if(options.date){
                         docCont.push(noteList[i].fullDisplayDate);

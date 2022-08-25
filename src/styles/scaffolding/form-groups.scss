@@ -99,7 +99,7 @@
         margin-top: -($spacer-half * 0.5);
       }
       .fsc-date-selector-calendar-wrapper{
-        width: 100%;
+        min-width: 100%;
         &.left-down, &.right-down{
           top: 42px;
         }
