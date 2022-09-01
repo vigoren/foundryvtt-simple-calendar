@@ -359,6 +359,7 @@ describe('API Class Tests', () => {
     test('Show Calendar', () => {
         jest.spyOn(MainApplication, 'render').mockImplementation(() => {});
         jest.spyOn(MainApplication, 'updateApp').mockImplementation(() => {});
+        //@ts-ignore
         jest.spyOn(MainApplication, 'rendered', 'get').mockReturnValueOnce(false).mockReturnValue(true)
         API.showCalendar();
         expect(console.error).toHaveBeenCalledTimes(1);

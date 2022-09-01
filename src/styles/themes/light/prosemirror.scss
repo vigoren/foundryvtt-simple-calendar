@@ -1,4 +1,4 @@
-@import "../variables";
+@import "../../variables";
 
 .fsc-editor-container{
   .prosemirror{
@@ -9,11 +9,7 @@
       background-color: $primary-150;
     }
     .editor-content{
-      scrollbar-color: $primary $primary-600;
-      &::-webkit-scrollbar-thumb{
-        background: $primary;
-        border-color:$primary-600;
-      }
+      @include scrollbar($primary, $primary-600);
     }
   }
 }

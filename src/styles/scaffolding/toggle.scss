@@ -6,7 +6,7 @@ input[type=checkbox]{
     min-width: ($spacer * 2);
     height: $spacer;
     margin: 0.063rem ($spacer-half * .5) 0;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat !important;
     background-position: left center;
     background-size: contain;
     border: 1px solid;

@@ -4,6 +4,7 @@ import {Logger} from "../logging";
 import V1ToV2 from "../migrations/v1-to-v2";
 import {CalManager, MainApplication, SC} from "../index";
 import {isObjectEmpty} from "../utilities/object";
+import {GetThemeName} from "../utilities/visual";
 
 export default class MigrationApp extends Application{
     /**
@@ -47,7 +48,7 @@ export default class MigrationApp extends Application{
      * Shows the application window
      */
     public showApp(){
-        this.render(true, {classes: ["simple-calendar", GameSettings.GetStringSettings(SettingNames.Theme)]});
+        this.render(true, {classes: ["simple-calendar", GetThemeName()]});
     }
 
     /**
@@ -165,7 +166,7 @@ export default class MigrationApp extends Application{
     public saveMigratedData(){
         SC.save(SC.globalConfiguration, {
             id: '',
-            theme: Themes.dark,
+            theme: Themes[0].key,
             openOnLoad: true,
             openCompact: false,
             rememberPosition: true,

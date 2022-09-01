@@ -69,20 +69,20 @@ describe('SCController Tests', () => {
         const gsGSSSpy = jest.spyOn(GameSettings, 'GetStringSettings');
         const docHeadQS = jest.spyOn(document.head, 'querySelector');
         const docHeadA = jest.spyOn(document.head, 'append');
-        gsGSSSpy.mockReturnValueOnce(Themes.dark);
+        gsGSSSpy.mockReturnValueOnce(`dark`);
         SCController.LoadThemeCSS();
         expect(gsGSSSpy).toHaveBeenCalledTimes(1);
         expect(docHeadQS).toHaveBeenCalledTimes(1);
         expect(docHeadA).toHaveBeenCalledTimes(1);
 
-        gsGSSSpy.mockReturnValueOnce(Themes.classic);
+        gsGSSSpy.mockReturnValueOnce(`classic`);
         docHeadQS.mockReturnValueOnce(document.createElement('a'));
         SCController.LoadThemeCSS();
         expect(gsGSSSpy).toHaveBeenCalledTimes(2);
         expect(docHeadQS).toHaveBeenCalledTimes(2);
         expect(docHeadA).toHaveBeenCalledTimes(1);
 
-        gsGSSSpy.mockReturnValueOnce(Themes.classic);
+        gsGSSSpy.mockReturnValueOnce(`classic`);
         docHeadQS.mockReturnValueOnce(null);
         SCController.LoadThemeCSS();
         expect(gsGSSSpy).toHaveBeenCalledTimes(3);
@@ -157,7 +157,7 @@ describe('SCController Tests', () => {
             combatPauseRule: CombatPauseRules.Active
         }, {
             id: '',
-            theme: Themes.dark,
+            theme: `dark`,
             openOnLoad: true,
             openCompact: false,
             rememberPosition: false,

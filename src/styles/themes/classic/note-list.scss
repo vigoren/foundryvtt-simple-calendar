@@ -1,0 +1,47 @@
+@import "../../variables";
+
+.fsc-note-list {
+  .fsc-note {
+    border-color: $gray-500;
+    background-color: $gray-200;
+    color: #000000;
+
+    &:hover {
+      background-color: $gray-400;
+    }
+
+    &.fsc-drag-active {
+      background-color: $gray-400;
+    }
+
+    .fsc-note-details-wrapper {
+      .fsc-note-details {
+        .fsc-note-category {
+          box-shadow: 1px 1px 5px $gray-600;
+          color: $white;
+
+          &.fsc-player-visible {
+            background-color: $classicSuccess;
+            border-color: $classicSuccess;
+          }
+
+          &.fsc-not-player-visible {
+            background-color: $classicDanger;
+            border-color: $classicDanger;
+          }
+
+          &.fsc-reminder {
+            background-color: $classicTertiary;
+            border-color: $classicTertiary;
+          }
+        }
+      }
+    }
+
+    .fsc-sorting-dragger {
+      border-color: #a5a5a5;
+      background-color: #c3c3c37a;
+      box-shadow: 1px 1px 5px #a5a5a5;
+    }
+  }
+}

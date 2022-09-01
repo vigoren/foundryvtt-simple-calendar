@@ -22,7 +22,7 @@ import {saveAs} from "file-saver";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {animateElement, animateFormGroup, GetContrastColor} from "../utilities/visual";
+import {animateElement, animateFormGroup, GetContrastColor, GetThemeList, GetThemeName} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import UserPermissions from "../configuration/user-permissions";
 import {deepMerge, isObjectEmpty} from "../utilities/object";
@@ -67,7 +67,7 @@ export default class ConfigurationApp extends FormApplication {
      */
     private clientSettings: SimpleCalendar.ClientSettingsData = {
         id: '',
-        theme: Themes.dark,
+        theme: Themes[0].key,
         openOnLoad: true,
         openCompact: false,
         rememberPosition: true,
@@ -102,7 +102,7 @@ export default class ConfigurationApp extends FormApplication {
             return;
         } else {
             options = options? options : {};
-            options.classes = ["simple-calendar", "fsc-simple-calendar-configuration", GameSettings.GetStringSettings(SettingNames.Theme)];
+            options.classes = ["simple-calendar", "fsc-simple-calendar-configuration", GetThemeName()];
             return super.render(force, options);
         }
     }
@@ -211,11 +211,7 @@ export default class ConfigurationApp extends FormApplication {
                 openInCompact: this.clientSettings.openCompact,
                 rememberPos: this.clientSettings.rememberPosition,
                 theme: this.clientSettings.theme,
-                themes: {
-                    'dark': 'FSC.Configuration.Theme.Dark',
-                    'light': 'FSC.Configuration.Theme.Light',
-                    'classic': 'FSC.Configuration.Theme.Classic'
-                },
+                themes:  GetThemeList(),
                 noteReminderNotification: this.clientSettings.noteReminderNotification,
                 noteReminderNotifications: {
                     'whisper': 'FSC.Configuration.Client.NoteReminderNotification.Whisper',
@@ -634,7 +630,7 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             // Global Config: Client Settings
             //----------------------------------
-            this.clientSettings.theme = <Themes>getTextInputValue('#scTheme', <string>Themes.dark, this.appWindow);
+            this.clientSettings.theme = getTextInputValue('#scTheme', Themes[0].key, this.appWindow);
             this.clientSettings.openOnLoad = getCheckBoxInputValue('#scOpenOnLoad', true, this.appWindow);
             this.clientSettings.openCompact = getCheckBoxInputValue('#scOpenInCompact', false, this.appWindow);
             this.clientSettings.rememberPosition = getCheckBoxInputValue('#scRememberPos', true, this.appWindow);

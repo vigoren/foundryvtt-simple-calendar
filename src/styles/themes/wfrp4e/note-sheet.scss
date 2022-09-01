@@ -1,0 +1,39 @@
+@import "../../variables";
+
+&.journal-sheet {
+  .fsc-page-list{
+    .fsc-page-list-controls{
+      .fsc-search-box{
+        input{
+          border-image-width: 4px !important;
+        }
+        .fsc-control{
+          border: 1px solid;
+        }
+      }
+    }
+    .fsc-list-of-pages{
+      li{
+        &:hover, &.fsc-current{
+          box-shadow: inset 0 0 10px var(--color-shadow-highlight);
+          background-color: #ffffff82;
+        }
+      }
+    }
+  }
+  .fsc-content, .editor{
+    background: url($wfrpParchmentTexture);
+    padding: 20px;
+    border: 10px solid transparent;
+    border-image: url($wfrpJopurnalSheetContent) 25 / 25px / 0 repeat;
+  }
+  .fsc-image-placeholder{
+    background-color: $gray-800;
+    i{
+      opacity: 0.5;
+    }
+  }
+  .fsc-note-header, .fsc-page-details{
+    color: $wfrpTextColor;
+  }
+}

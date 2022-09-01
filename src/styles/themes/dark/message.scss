@@ -1,0 +1,21 @@
+@import "../../variables";
+
+//Top message Styling
+.fsc-message{
+  &.fsc-warn{
+    background-color: $secondary-950;
+    border-color: $secondary-900 !important;
+  }
+  &.fsc-success{
+    background-color: $success-950;
+    border-color: $success-900 !important;
+  }
+  &.fsc-info{
+    background-color: $primary-950;
+    border-color: $primary-900 !important;
+  }
+  &.fsc-danger{
+    background-color: $danger-1000;
+    border-color: $danger-950 !important;
+  }
+}

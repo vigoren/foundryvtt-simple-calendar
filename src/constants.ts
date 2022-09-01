@@ -46,14 +46,12 @@ export enum SettingNames {
  * The different Themes that are available for Simple Calendar
  * @internal
  */
-export enum Themes {
-    /** The light theme */
-    light = 'light',
-    /** The Dark theme */
-    dark = 'dark',
-    /** A theme based on how SC v1 looked */
-    classic = 'classic'
-}
+export const Themes: SimpleCalendar.Theme[] = [
+    {key: 'dark', name: 'Dark', system: false},
+    {key: 'light', name: 'Light', system: false},
+    {key: 'classic', name: 'Classic', system: false},
+    {key: 'wfrp4e', name: 'Warhammer Fantasy Roleplay 4th Edition', system: true}
+];
 
 export enum CombatPauseRules {
     Active = 'active',

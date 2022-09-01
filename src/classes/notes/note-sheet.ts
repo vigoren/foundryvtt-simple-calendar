@@ -3,7 +3,7 @@ import {DateTheSame, DaysBetweenDates, FormatDateTime} from "../utilities/date-t
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import {CalManager, MainApplication, NManager, SC} from "../index";
-import {animateElement} from "../utilities/visual";
+import {animateElement, GetThemeName} from "../utilities/visual";
 import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import {
@@ -113,7 +113,7 @@ export class NoteSheet extends JournalSheet{
         options.resizable = true;
         options.closeOnSubmit = false;
         if((<Game>game).settings){
-            options.classes.push(GameSettings.GetStringSettings(SettingNames.Theme));
+            options.classes.push(GetThemeName());
         }
         return options;
     }
@@ -416,7 +416,7 @@ export class NoteSheet extends JournalSheet{
     activateListeners(html: JQuery) {
         this.appWindow = document.getElementById(`${this.id}`);
         if(this.appWindow){
-            const themes = [Themes.light, Themes.dark, Themes.classic];
+            const themes = Themes.map(t => t.key);
             this.appWindow.classList.remove(...themes);
             this.appWindow.classList.add(SC.clientSettings.theme);
             if(this.editMode){
@@ -481,7 +481,7 @@ export class NoteSheet extends JournalSheet{
             // Page List Search
             //---------------------
             this.appWindow.querySelector(".fsc-page-list .fsc-search-box input")?.addEventListener('input', this.searchUpdate.bind(this));
-            this.appWindow.querySelector(".fsc-page-list .fsc-search-box .fa-times")?.addEventListener('click', this.clearSearch.bind(this));
+            this.appWindow.querySelector(".fsc-page-list .fsc-search-box .fsc-control")?.addEventListener('click', this.clearSearch.bind(this));
         }
     }
 
@@ -808,9 +808,9 @@ export class NoteSheet extends JournalSheet{
                 pageToHide[i].show = false;
                 this.appWindow?.querySelector(`.fsc-list-of-pages li[data-index="${pageToHide[i]._id}"]`)?.classList.add('fsc-hide');
             }
-            this.appWindow?.querySelector('.fsc-page-list-controls .fa-times')?.classList.remove('fsc-hide');
+            this.appWindow?.querySelector('.fsc-page-list-controls .fsc-search-box .fsc-control')?.classList.remove('fsc-hide');
         } else {
-            this.appWindow?.querySelector('.fsc-page-list-controls .fa-times')?.classList.add('fsc-hide');
+            this.appWindow?.querySelector('.fsc-page-list-controls .fsc-search-box .fsc-control')?.classList.add('fsc-hide');
         }
     }
 

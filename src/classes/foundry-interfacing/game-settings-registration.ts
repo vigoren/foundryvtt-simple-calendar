@@ -1,9 +1,10 @@
-import {ModuleName, SettingNames} from "../../constants";
+import {ModuleName, SettingNames, Themes} from "../../constants";
 import ConfigurationApp from "../applications/configuration-app";
 import {CalManager, SC} from "../index"
 import {GameSettings} from "./game-settings";
 import SCController from "../s-c-controller";
 import MainApp from "../applications/main-app";
+import {GetThemeList} from "../utilities/visual";
 
 export default class GameSettingsRegistration{
     /**
@@ -13,20 +14,24 @@ export default class GameSettingsRegistration{
         // -------------------
         // Client Settings
         // -------------------
-        (<Game>game).settings.register(ModuleName, SettingNames.Theme, {
+        (<Game>game).settings.register(ModuleName, `${(<Game>game).world.id}.${SettingNames.Theme}`, {
             name: "FSC.Configuration.Theme.Title",
             hint: "FSC.Configuration.Theme.Description",
             scope: "client",
             config: true,
             type: String,
             // @ts-ignore
-            choices: {
-                'dark': GameSettings.Localize("FSC.Configuration.Theme.Dark"),
-                'light': GameSettings.Localize("FSC.Configuration.Theme.Light"),
-                'classic': GameSettings.Localize("FSC.Configuration.Theme.Classic")
-            },
-            default: 'dark',
+            choices: GetThemeList(),
+            default: '',
             onChange: SCController.ThemeChange.bind(SCController)
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.Theme, {
+            name: "FSC.Configuration.Theme.Title",
+            hint: "FSC.Configuration.Theme.Description",
+            scope: "client",
+            config: false,
+            type: String,
+            default: 'dark'
         });
         (<Game>game).settings.register(ModuleName, SettingNames.OpenOnLoad, {
             name: "FSC.Configuration.Client.OpenOnLoad.Title",

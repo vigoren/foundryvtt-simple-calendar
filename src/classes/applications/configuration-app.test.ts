@@ -78,10 +78,10 @@ describe('Configuration App Class Tests', () => {
         expect(ca.initializeAndShowDialog).toHaveBeenCalledTimes(1);
 
         ca.render();
-        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(1);
+        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(2);
 
         ca.render(false, {});
-        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(2);
+        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(4);
     });
 
     test('Initialize And Show Dialog', async () => {

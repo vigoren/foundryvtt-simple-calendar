@@ -1,8 +1,8 @@
 # Change Log
 
-## v2.1.0 - FoundryVTT V10 Support, Note Pages, QoL Improvements, Bug Fixes
+## v2.1.0 - FoundryVTT V10 Support, Note Pages, System Specific Themes, QoL Improvements, Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-August%2027%2C%202022-blue)
+![](https://img.shields.io/badge/release%20date-August%2031%2C%202022-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.0/module.zip)
 
 ### FoundryVTT Version 10 Support
@@ -24,6 +24,17 @@ With the new Journals in FoundryVTT version 10 Simple calendar has been updated 
 
 Existing notes will be automatically migrated by Foundry over to Journals with a single text page.
 
+### System Specific Themes
+
+Simple Calendar can now have themes specific to the system the module is being used in. 
+These themes will only appear in the Theme selector as an option for players when playing a game in the system they are built for and are intended to keep the experience of the module more cohesive with the systems.
+
+The first system to get a dedicated theme is Warhammer Fantasy Roleplay 4th Edition! (Thanks to [ZwS](https://github.com/ZwS) for getting this started with updates to the classic theme)
+
+![](./docs/images/sc-v2-theme-wfrp.png)
+![](media://sc-v2-theme-wfrp.png)
+
+Other systems will get their own specific themes as time goes on
 
 ### Quality of Life Improvements
 
@@ -36,7 +47,9 @@ Existing notes will be automatically migrated by Foundry over to Journals with a
 - Added a new client setting for each player to choose how note reminders notify them. The options are:
   - Have a whisper sent in the chat to the player with some details about the note and a link to open the note. This is the default option.
   - Have the note automatically open.
-- When editing a Scenes configuration, if the setting `Show Notes Folder` is set to off then all Calendar notes are removed from the Journal Entry field under the Ambience tab. 
+- When editing a Scenes configuration, if the setting `Show Notes Folder` is set to off then all Calendar notes are removed from the Journal Entry field under the Ambience tab.
+- Themes are now saved as client settings specific to worlds, so if you have more than one world on your server having different themes for the calendar will work.
+- Improved the strictness of the CSS for themes to have a more consistent look across systems.
 
 ### Bug Fixes
 

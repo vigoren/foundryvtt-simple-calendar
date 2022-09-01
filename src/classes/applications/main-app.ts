@@ -12,7 +12,7 @@ import {
 } from "../../constants";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
-import {animateElement, GetIcon} from "../utilities/visual";
+import {animateElement, GetIcon, GetThemeName} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
@@ -44,6 +44,8 @@ export default class MainApp extends FormApplication{
      * The CSS class associated with the animated clock
      */
     clockClass = 'stopped';
+
+    opening = true;
 
 
     uiElementStates = {
@@ -186,22 +188,30 @@ export default class MainApp extends FormApplication{
             if(this.visibleCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
                 //this.visibleCalendar.setCurrentToVisible();
             }
-            this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
-
             const options:  Application.RenderOptions = {}
-            if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
-                const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
-                if(pos.top !== undefined && pos.top >= 0){
-                    options.top = pos.top;
+            if(this.opening){
+                this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
+
+                if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
+                    const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
+                    if(pos.top !== undefined && pos.top >= 0){
+                        options.top = pos.top;
+                    }
+                    if(pos.left !== undefined && pos.left >= 0){
+                        options.left = pos.left;
+                    }
                 }
-                if(pos.left !== undefined && pos.left >= 0){
-                    options.left = pos.left;
-                }
+                options.classes = ["simple-calendar", GetThemeName()];
+                this.opening = false;
             }
-            options.classes = ["simple-calendar", GameSettings.GetStringSettings(SettingNames.Theme)];
             return super.render(true, options);
         }
         return;
+    }
+
+    override close(options?: FormApplication.CloseOptions): Promise<void> {
+        this.opening = true;
+        return super.close(options);
     }
 
     /**

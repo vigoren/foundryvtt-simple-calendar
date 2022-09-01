@@ -1,3 +1,5 @@
+@import "mixin/scrollbar";
+
 $spacer: 1rem;
 $spacer-half: $spacer*0.5;
 
@@ -113,3 +115,32 @@ $font-size-compact-form-group: 14px;
 $checkboxSVGWhite: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e";
 $checkboxSVGLight: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28255, 255, 255, 0.5%29'/%3e%3c/svg%3e";
 $checkboxSVGDark: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.5%29'/%3e%3c/svg%3e";
+
+$classicPrimary: #384582;
+$classicPrimaryHover: #cad1f3;
+$classicSecondary: #de810d;
+$classicSecondaryHover: #eacb74;
+$classicTertiary: #603382;
+$classicTertiaryHover: #cd9cf3;
+$classicSuccess: #2f581d;
+$classicSuccessHover: #9bce85;
+$classicDanger: #922121;
+$classicDangerHover: #fbaeae;
+
+$classicDenim: '/ui/denim075.png';
+$classicParchment: '/ui/parchment.jpg';
+
+$wfrpBlackBackground: #000000e8;
+$wfrpInputBackground: #352516;
+$wfrpBorderColor: #736953a6;
+$wfrpTextColor: #efefef;
+$wfrpInputTextColor: #d6d6d6;
+
+$wfrpParchmentTexture: '/systems/wfrp4e/ui/frames/parchment-texture.webp';
+$wfrpJopurnalSheetContent: '/systems/wfrp4e/ui/frames/window-app-journal-sheet-content.webp';
+$wfrpChatMessageBorderPrivate: '/systems/wfrp4e/ui/frames/chat-message-border-private.webp';
+$wfrpPlayerBorder: '/systems/wfrp4e/ui/players-border.webp';
+$wfrpFooterButton: '/systems/wfrp4e/ui/footer-button.webp';
+$wfrpButtonCyan: '/systems/wfrp4e/ui/sidebar_button-background_cyan.webp';
+$wfrpButtonGrey: '/systems/wfrp4e/ui/sidebar_button-background_grey.webp';
+$wfrpButtonRed: '/systems/wfrp4e/ui/sidebar_button-background_red.webp';

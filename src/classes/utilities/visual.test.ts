@@ -1,8 +1,18 @@
 /**
  * @jest-environment jsdom
  */
+import "../../../__mocks__/index";
 import {Icons} from "../../constants";
-import {animateElement, animateFormGroup, GetContrastColor, GetIcon, timeoutCall} from "./visual";
+import {
+    animateElement,
+    animateFormGroup,
+    GetContrastColor,
+    GetIcon,
+    GetThemeList,
+    GetThemeName,
+    timeoutCall
+} from "./visual";
+import {GameSettings} from "../foundry-interfacing/game-settings";
 
 describe('Utilities Visual Tests', () => {
     test('Get Contrast Color', () => {
@@ -34,6 +44,24 @@ describe('Utilities Visual Tests', () => {
         expect(GetIcon(Icons.Summer)).toBeDefined();
         expect(GetIcon(Icons.Fall)).toBeDefined();
         expect(GetIcon(Icons.Winter)).toBeDefined();
+    });
+
+    test('Get Theme Name', () => {
+        jest.spyOn(GameSettings, 'GetStringSettings').mockReturnValueOnce('').mockReturnValue('dark');
+        expect(GetThemeName()).toBe('dark');
+
+        jest.spyOn(GameSettings, 'GetStringSettings').mockReturnValueOnce('').mockReturnValue('wfrp4e');
+        expect(GetThemeName()).toBe('dark');
+    });
+
+    test('Get Theme List', () => {
+        let obj = GetThemeList();
+        expect(Object.keys(obj).length).toBe(3);
+
+        //@ts-ignore
+        game.system.id = 'wfrp4e';
+        obj = GetThemeList();
+        expect(Object.keys(obj).length).toBe(4);
     });
 
     test('Animate Element', () => {

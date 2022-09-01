@@ -96,6 +96,11 @@ describe('Main App Class Tests', () => {
         ma.render();
     });
 
+    test('close', () => {
+        ma.close();
+        expect(ma.opening).toBe(true);
+    });
+
     test('minimize', async () => {
         await ma.minimize();
         expect(ma.uiElementStates.compactView).toBe(true);

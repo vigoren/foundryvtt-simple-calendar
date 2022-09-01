@@ -26,8 +26,20 @@
       overflow: visible;
     }
     label{
-      font-size: 1rem;
-      font-weight: 600;
+      text-align: left !important;
+      background: unset !important;
+      border: 0 !important;
+      font-family: 'Roboto', sans-serif !important;
+      font-size: 1rem !important;
+      font-weight: 600 !important;
+    }
+    input, select{
+      font-family: 'Roboto', sans-serif !important;
+      border: 1px solid !important;
+      box-shadow: unset !important;
+    }
+    .notes{
+      font-family: 'Roboto', sans-serif !important;
     }
     .fsc-example{
       flex: 0 0 100%;

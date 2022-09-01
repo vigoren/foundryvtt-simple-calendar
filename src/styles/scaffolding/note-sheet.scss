@@ -7,6 +7,7 @@
     min-width: unset;
 
     .window-content{
+      position: unset;
       overflow-y: auto;
     }
 
@@ -257,16 +258,13 @@
           display: block;
 
           input{
-            border-top-right-radius: 3px;
-            border-bottom-right-radius: 3px;
             border-right-width: 1px;
           }
-          .fa-times{
+          .fsc-control{
             position: absolute;
             right: 5px;
             top: 50%;
             transform: translateY(-50%);
-            background-color: unset;
             border: 0;
           }
           .fsc-hide{

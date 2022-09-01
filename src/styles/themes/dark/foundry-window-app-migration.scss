@@ -1,0 +1,21 @@
+@import "../../variables";
+
+//Migration Dialog
+.fsc-migration-wrapper{
+  .fsc-migration-actions{
+    .fsc-status-indicator{
+      .fsc-running{
+        color: $secondary;
+      }
+      .fsc-completed{
+        color: $success;
+      }
+      .fsc-error{
+        color: $danger;
+      }
+      .fsc-cancel{
+        color: $gray-400;
+      }
+    }
+  }
+}

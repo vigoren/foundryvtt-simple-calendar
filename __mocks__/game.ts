@@ -131,6 +131,9 @@ const game = {
         getYouTubePlayer: async () => {return {seekTo: () => {}}},
         isYouTubeURL: (s: string) => {return s.indexOf('youtube') > -1},
         getYouTubeEmbedURL: () => {return ''}
+    },
+    world: {
+        id: 'worldId'
     }
 };
 

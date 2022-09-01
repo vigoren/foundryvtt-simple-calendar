@@ -15,7 +15,7 @@
                 <ul class="fsc-closed">
                     {{#each calendars}}
                         <li class="{{#if (eq ../object.id id)}} fsc-active{{/if}}" data-calendar="{{id}}">
-                            {{name}} {{#unless (eq id 'default_temp')}}<button class="fsc-control fsc-delete fa fa-trash" title="{{localize 'FSC.RemoveCalendar'}}" data-calendar="{{id}}"></button>{{/unless}}
+                            {{name}} {{#unless (eq id 'default_temp')}}<button class="fsc-control fsc-delete" title="{{localize 'FSC.RemoveCalendar'}}" data-calendar="{{id}}"><span class="fa fa-trash"></span></button>{{/unless}}
                         </li>
                     {{/each}}
                     <li class="fsc-item fsc-new-calendar" data-tab="newCalendar">{{localize 'FSC.AddNewCalendar'}}<span class="fa fa-plus-circle"></span></li>

@@ -1,0 +1,39 @@
+@import "../../variables";
+
+//Clock Styling
+.fsc-clock {
+  background-color: $wfrpBlackBackground;
+  border-color: $wfrpBorderColor;
+  color: $wfrpTextColor;
+
+  .fsc-animated-clock {
+    svg {
+      path {
+        fill: #c12121;
+        stroke: #c12121;
+      }
+    }
+  }
+
+  &.started {
+    .fsc-animated-clock {
+      svg {
+        path {
+          fill: #25ad7f;
+          stroke: #25ad7f;
+        }
+      }
+    }
+  }
+
+  &.paused {
+    .fsc-animated-clock {
+      svg {
+        path {
+          fill: #daa32a;
+          stroke: #daa32a;
+        }
+      }
+    }
+  }
+}

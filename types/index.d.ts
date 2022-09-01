@@ -1744,6 +1744,12 @@ declare global{
             left?: number;
         }
 
+        interface Theme {
+            key: string;
+            name: string;
+            system: boolean;
+        }
+
         /**
          * Interface for Journal page data
          * @internal
@@ -1833,7 +1839,7 @@ declare global{
          */
         interface ClientSettingsData extends IDataItemBase {
             /** The current visual theme of the Simple Calendar module. */
-            theme: Themes;
+            theme: string;
             /** If the Simple Calendar module should open its window when the foundry is loaded. */
             openOnLoad: boolean;
             /** If the Simple Calendar module should open in compact mode */

@@ -147,7 +147,7 @@
             </div>
         </div>
         <div class="fsc-edit-controls">
-            <button class="fsc-control fsc-save" type="submit" name="submit" title="{{localize 'FSC.Notes.Save'}}">
+            <button class="fsc-control fsc-save" name="submit" title="{{localize 'FSC.Notes.Save'}}">
                 <i class="far fa-save"></i> {{localize 'FSC.Notes.Save'}}
             </button>
             <button class="fsc-control fsc-delete fsc-note-delete"><i class="fa fa-trash"></i> {{localize 'FSC.Delete'}}</button>
@@ -199,10 +199,10 @@
         <a class="fsc-pages" title="{{#if uiElementStates.fsc-page-list}}{{localize 'JOURNAL.ViewCollapse'}}{{else}}{{localize 'JOURNAL.ViewExpand'}}{{/if}}"><i class="fa-solid {{#if uiElementStates.fsc-page-list}} fa-caret-right{{else}} fa-caret-left{{/if}}"></i></a>
         <div class="fsc-search-box">
             <input placeholder="{{localize 'FSC.Notes.SearchPages'}}" type="text" value="{{uiElementStates.search.term}}" title="{{localize 'FSC.Notes.SearchPages'}}" />
-            <button class="fsc-control fsc-hide fa fa-times"></button>
+            <button class="fsc-control fsc-hide"><span class="fa fa-times"></span></button>
         </div>
         {{#if editMode}}
-            <button class="fsc-add-new-page fsc-control fsc-save fa fa-file-circle-plus" title="{{localize 'JOURNAL.AddPage'}}"></button>
+            <button class="fsc-add-new-page fsc-control fsc-save" title="{{localize 'JOURNAL.AddPage'}}"><span class="fa fa-file-circle-plus"></span></button>
         {{/if}}
     </div>
     <ul class="fsc-list-of-pages">
@@ -212,7 +212,7 @@
             {{#if ../editMode}}
                 <div class="fsc-actions">
                     {{#unless (eq ../pages.length 1)}}
-                    <button class="fsc-control fsc-delete fa fa-trash" title="{{localize 'FSC.Delete'}}"></button>
+                    <button class="fsc-control fsc-delete" title="{{localize 'FSC.Delete'}}"><span class="fa fa-trash"></span></button>
                     {{/unless}}
                 </div>
             {{/if}}
