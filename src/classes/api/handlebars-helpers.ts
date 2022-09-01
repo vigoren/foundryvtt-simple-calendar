@@ -17,6 +17,7 @@ export class HandlebarsHelpers{
         Handlebars.registerHelper("sc-full-calendar", HandlebarsHelpers.FullCalendar);
         Handlebars.registerHelper("sc-clock", HandlebarsHelpers.Clock);
         Handlebars.registerHelper("sc-icon", HandlebarsHelpers.Icon);
+        Handlebars.registerHelper("sc-multi-select", HandlebarsHelpers.MultiSelect);
     }
 
     /**
@@ -178,5 +179,21 @@ export class HandlebarsHelpers{
             return new Handlebars.SafeString(GetIcon(options.hash['name'], stroke, fill));
         }
         return '';
+    }
+
+    /**
+     * Renders a multi select input to allow users to choose more than one option from a select
+     * @param options
+     */
+    static MultiSelect(options: any){
+        const renderOptions: SimpleCalendar.Renderer.MultiSelectOptions = {id:'', options: []};
+        if(options.hash.hasOwnProperty('id')){
+            renderOptions.id = options.hash['id'];
+        }
+        if(options.hash.hasOwnProperty('options')){
+            renderOptions.options = options.hash['options'];
+        }
+
+        return new Handlebars.SafeString(Renderer.MultiSelect.Render(renderOptions));
     }
 }

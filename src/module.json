@@ -1,8 +1,9 @@
 {
+  "id": "foundryvtt-simple-calendar",
   "name": "foundryvtt-simple-calendar",
   "title": "Simple Calendar",
   "description": "A simple calendar module for keeping track of game days and events.",
-  "version": "2.0.30",
+  "version": "2.1.0",
   "authors": [
     {
       "name": "Dean Vigoren (Vigorator)",
@@ -12,11 +13,14 @@
       "ko-fi": "vigorator"
     }
   ],
-  "minimumCoreVersion": "9.231",
-  "compatibleCoreVersion": "9",
+  "minimumCoreVersion": "10",
+  "compatibleCoreVersion": "10",
+  "compatibility": {
+    "minimum": "10",
+    "verified": "10"
+  },
   "url": "https://github.com/vigoren/foundryvtt-simple-calendar",
   "bugs": "https://github.com/vigoren/foundryvtt-simple-calendar/issues",
-  "allowBugReporter": true,
   "readme": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/README.md",
   "license": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE",
   "manifest": "",
@@ -76,6 +80,7 @@
     }
   ],
   "socket": true,
+  "manifestPlusVersion": "1.2.0",
   "media": [
     {
       "type": "cover",
@@ -97,5 +102,8 @@
       "type": "screenshot",
       "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-theme-dark-note.png"
     }
-  ]
+  ],
+  "flags": {
+    "allowBugReporter": true
+  }
 }

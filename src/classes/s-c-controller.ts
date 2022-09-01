@@ -1,6 +1,14 @@
 import Sockets from "./sockets";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {CombatPauseRules, ModuleName, SettingNames, SocketTypes, Themes, TimeKeeperStatus} from "../constants";
+import {
+    CombatPauseRules,
+    ModuleName,
+    NoteReminderNotificationType,
+    SettingNames,
+    SocketTypes,
+    Themes,
+    TimeKeeperStatus
+} from "../constants";
 import {Logger} from "./logging";
 import {CalManager, MainApplication, NManager} from "./index";
 import ConfigurationApp from "./applications/configuration-app";
@@ -9,6 +17,8 @@ import UserPermissions from "./configuration/user-permissions";
 import {canUser} from "./utilities/permissions";
 import GameSockets from "./foundry-interfacing/game-sockets";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/combat";
+import MultiSelect from "./renderer/multi-select";
+import {GetThemeName} from "./utilities/visual";
 
 /**
  * The global Simple Calendar Controller class
@@ -39,7 +49,7 @@ export default class SCController {
 
     constructor() {
         this.sockets = new Sockets();
-        this.clientSettings = {id: '', theme: Themes.dark, openOnLoad: true, openCompact: false, rememberPosition: true, appPosition: {}};
+        this.clientSettings = {id: '', theme: Themes[0].key, openOnLoad: true, openCompact: false, rememberPosition: true, appPosition: {}, noteReminderNotification: NoteReminderNotificationType.whisper};
         this.globalConfiguration = {
             id: '',
             version: '',
@@ -57,8 +67,8 @@ export default class SCController {
      */
     public static ThemeChange(){
         this.LoadThemeCSS();
-        const newTheme = GameSettings.GetStringSettings(SettingNames.Theme);
-        const themes = [Themes.light, Themes.dark, Themes.classic];
+        const newTheme = GetThemeName();
+        const themes = Themes.map(t => t.key);
         //Update the main app
         const mainApp = document.getElementById(MainApp.appWindowId);
         if(mainApp){
@@ -83,7 +93,7 @@ export default class SCController {
      * This is required for all themes other than Light and Dark
      */
     public static LoadThemeCSS(setTheme: string = ''){
-        const theme = setTheme? setTheme : GameSettings.GetStringSettings(SettingNames.Theme);
+        const theme = setTheme? setTheme : GetThemeName();
         const cssExists = document.head.querySelector(`#theme-${theme}`);
         if(cssExists === null){
             const newStyle = document.createElement('link');
@@ -102,6 +112,8 @@ export default class SCController {
     public initialize(){
         this.sockets.initialize();
         NManager.checkNoteTriggers(this.activeCalendar.id, true);
+        //Close all open multi selects except the one being interacted with
+        document.body.addEventListener('click', MultiSelect.BodyEventListener);
     }
 
     /**
@@ -118,11 +130,12 @@ export default class SCController {
         if(globalConfiguration.hasOwnProperty('combatPauseRule')){
             this.globalConfiguration.combatPauseRule = globalConfiguration.combatPauseRule;
         }
-        this.clientSettings.theme = <Themes>GameSettings.GetStringSettings(SettingNames.Theme);
+        this.clientSettings.theme = GetThemeName();
         this.clientSettings.openOnLoad = GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad);
         this.clientSettings.openCompact = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
         this.clientSettings.rememberPosition = GameSettings.GetBooleanSettings(SettingNames.RememberPosition);
         this.clientSettings.appPosition = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
+        this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>GameSettings.GetStringSettings(SettingNames.NoteReminderNotification);
     }
 
     /**
@@ -130,7 +143,7 @@ export default class SCController {
      */
     public reload(){
         SCController.LoadThemeCSS();
-        this.clientSettings.theme = <Themes>GameSettings.GetStringSettings(SettingNames.Theme);
+        this.clientSettings.theme = GetThemeName();
     }
 
     /**
@@ -151,11 +164,12 @@ export default class SCController {
                 combatPauseRule: globalConfig.combatPauseRule
             };
             //Save the client settings
-            GameSettings.SaveStringSetting(SettingNames.Theme, clientConfig.theme, false).then(this.reload.bind(this)).catch(Logger.error);
+            GameSettings.SaveStringSetting(`${(<Game>game).world.id}.${SettingNames.Theme}`, clientConfig.theme, false).then(this.reload.bind(this)).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.OpenOnLoad, clientConfig.openOnLoad, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.OpenCompact, clientConfig.openCompact, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.RememberPosition, clientConfig.rememberPosition, false).catch(Logger.error);
             GameSettings.SaveObjectSetting(SettingNames.AppPosition, clientConfig.appPosition, false).catch(Logger.error);
+            GameSettings.SaveStringSetting(SettingNames.NoteReminderNotification, clientConfig.noteReminderNotification, false).catch(Logger.error);
             //Save the global configuration (triggers the load function)
             GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc)
                 .then(() => GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}}))
@@ -172,14 +186,14 @@ export default class SCController {
      */
     public getSceneControlButtons(controls: any[]){
         if(canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)){
-            let tokenControls = controls.find(c => c.name === "token" );
+            let tokenControls = controls.find(c => c.name === "notes" );
             if(tokenControls && tokenControls.hasOwnProperty('tools')){
                 tokenControls.tools.push({
                     name: "calendar",
                     title: "FSC.Title",
                     icon: "fas fa-calendar simple-calendar-icon",
                     button: true,
-                    onClick: MainApplication.showApp.bind(MainApplication)
+                    onClick: MainApplication.render.bind(MainApplication)
                 });
             }
         }
@@ -209,6 +223,32 @@ export default class SCController {
             }
         }
     }
+
+    /**
+     * Checks to see if the Simple Calendar not directory should be shown and if not removes all Simple Calendar notes from the list of available journal entries.
+     * @param config
+     * @param jquery
+     * @param data
+     */
+    public renderSceneConfig(config: SceneConfig, jquery: JQuery, data: SceneConfig.Data){
+        if(!this.globalConfiguration.showNotesFolder && data.journals){
+            for(let i = 0; i < data.journals.length; i++){
+                //@ts-ignore
+                const je = (<Game>game).journal?.get(data.journals[i].id);
+                if(je){
+                    const nd = <SimpleCalendar.NoteData>je.getFlag(ModuleName, "noteData");
+                    if(nd){
+                        //@ts-ignore
+                        const option = jquery.find(`option[value='${data.journals[i].id}']`);
+                        if(option){
+                            option.remove();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * Triggered when the games pause state is changed.

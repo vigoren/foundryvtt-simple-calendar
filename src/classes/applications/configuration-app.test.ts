@@ -24,6 +24,7 @@ import {ConfigurationDateSelectors, LeapYearRules, PredefinedCalendars} from "..
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import * as VisualUtilities from "../utilities/visual";
 import * as InputUtilities from "../utilities/inputs";
+import * as ObjectUtilities from "../utilities/object";
 import Mock = jest.Mock;
 import Month from "../calendar/month";
 import {saveAs} from "file-saver";
@@ -71,17 +72,16 @@ describe('Configuration App Class Tests', () => {
     test('Render', () => {
         jest.spyOn(ca, 'initializeAndShowDialog').mockImplementation(async () => {});
         jest.spyOn(GameSettings, 'GetStringSettings').mockImplementation(() => {return '';});
+        jest.spyOn(ObjectUtilities, 'isObjectEmpty').mockReturnValueOnce(true).mockReturnValue(false);
 
-        (<Mock>isObjectEmpty).mockReturnValue(true);
         ca.render();
         expect(ca.initializeAndShowDialog).toHaveBeenCalledTimes(1);
 
-        (<Mock>isObjectEmpty).mockReturnValue(false);
         ca.render();
-        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(1);
+        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(2);
 
         ca.render(false, {});
-        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(2);
+        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(4);
     });
 
     test('Initialize And Show Dialog', async () => {
@@ -440,7 +440,6 @@ describe('Configuration App Class Tests', () => {
 
         //@ts-ignore
         ca.updateUIFromObject();
-        expect(elm.classList.contains('fa-chevron-down')).toBe(true);
 
         elm.classList.remove('fsc-closed');
         tCal.months[0].showAdvanced = true;

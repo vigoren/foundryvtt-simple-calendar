@@ -12,9 +12,9 @@ import {
 } from "../../constants";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
-import {animateElement, GetIcon} from "../utilities/visual";
+import {animateElement, GetIcon, GetThemeName} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
-import {AdvanceTimeToPreset, FormatDateTime, GetPresetTimeOfDay} from "../utilities/date-time";
+import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
 
@@ -22,7 +22,7 @@ import NoteStub from "../notes/note-stub";
 /**
  * Contains all functionality for displaying/updating the simple calendar
  */
-export default class MainApp extends Application{
+export default class MainApp extends FormApplication{
     /**
      * The ID used for the application window within foundry
      * @type {string}
@@ -44,6 +44,8 @@ export default class MainApp extends Application{
      * The CSS class associated with the animated clock
      */
     clockClass = 'stopped';
+
+    opening = true;
 
 
     uiElementStates = {
@@ -76,7 +78,7 @@ export default class MainApp extends Application{
      * Simple Calendar constructor
      */
     constructor() {
-        super();
+        super({});
     }
 
     /**
@@ -96,49 +98,61 @@ export default class MainApp extends Application{
      * Gets the data object to be used by Handlebars when rending the HTML template
      * @param {Application.RenderOptions | undefined} options The data options
      */
-    getData(options?: Application.RenderOptions): SimpleCalendar.HandlebarTemplateData.MainAppData | Promise<SimpleCalendar.HandlebarTemplateData.MainAppData> {
-        let showSetCurrentDate = false,
-            showDateControls = false,
-            showTimeControls = false,
-            changeDateTime = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime),
-            message = '',
-            compactViewDisplay= {
-                dateDisplay: '',
-                currentSeasonName: '',
-                currentSeasonIcon: '',
-                selectedDayMoons: <any>[]
-            },
-            mainViewDisplay = {
-                calendarList: <any>[],
-                search: this.search,
-                showChangeCalendarControls: false
+    getData(options?: Application.RenderOptions): Promise<FormApplication.Data<{}>> | FormApplication.Data<{}> {
+        let data = {
+                ...super.getData(),
+                compactViewDisplay: {
+                    dateDisplay: '',
+                    currentSeasonName: '',
+                    currentSeasonIcon: '',
+                    selectedDayMoons: <any>[]
+                },
+                mainViewDisplay: {
+                    calendarList: <any>[],
+                    search: this.search,
+                    showChangeCalendarControls: false
+                },
+                addNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes),
+                activeCalendarId: this.activeCalendar.id,
+                calendar: this.visibleCalendar.toTemplate(),
+                changeDateTime: canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime),
+                clockClass: this.clockClass,
+                isGM: GameSettings.IsGm(),
+                isPrimary: SC.primary,
+                message: '',
+                uiElementStates: this.uiElementStates,
+                reorderNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.reorderNotes),
+                showClock: this.visibleCalendar.generalSettings.showClock,
+                showDateControls: false,
+                showSetCurrentDate: false,
+                showTimeControls: false
             };
         //If the active and visible calendar are the same then show the controls as per the usual rules. Other wise do not show any controls
         if(this.activeCalendar.id === this.visibleCalendar.id){
-            showDateControls = this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
-            showTimeControls = this.activeCalendar.generalSettings.showClock && this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
+            data.showDateControls = this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
+            data.showTimeControls = this.activeCalendar.generalSettings.showClock && this.activeCalendar.generalSettings.gameWorldTimeIntegration !== GameWorldTimeIntegrations.ThirdParty;
 
             const selectedMonthDayIndex = this.visibleCalendar.getMonthAndDayIndex('selected');
             if(selectedMonthDayIndex.month !== undefined){
                 if(selectedMonthDayIndex.day !== undefined){
                     if(!this.visibleCalendar.months[selectedMonthDayIndex.month].days[selectedMonthDayIndex.day].current){
-                        showSetCurrentDate = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime);
+                        data.showSetCurrentDate = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime);
                     }
                 }
             }
 
-        } else if(changeDateTime){
-            message = GameSettings.Localize('FSC.ViewingDifferentCalendar');
+        } else if(data.changeDateTime){
+            data.message = GameSettings.Localize('FSC.ViewingDifferentCalendar');
         }
         if(this.uiElementStates.compactView){
             const season = this.visibleCalendar.getCurrentSeason();
-            compactViewDisplay.currentSeasonName = season.name;
-            compactViewDisplay.currentSeasonIcon = GetIcon(season.icon, season.color, season.color);
+            data.compactViewDisplay.currentSeasonName = season.name;
+            data.compactViewDisplay.currentSeasonIcon = GetIcon(season.icon, season.color, season.color);
 
             if(this.visibleCalendar.moons.length){
                 for(let i = 0; i < this.visibleCalendar.moons.length; i++){
                     const phase = this.visibleCalendar.moons[i].getMoonPhase(this.visibleCalendar, 'current');
-                    compactViewDisplay.selectedDayMoons.push({
+                    data.compactViewDisplay.selectedDayMoons.push({
                         name: this.visibleCalendar.moons[i].name,
                         color: this.visibleCalendar.moons[i].color,
                         phase: phase,
@@ -147,8 +161,8 @@ export default class MainApp extends Application{
                 }
             }
         } else {
-            mainViewDisplay.showChangeCalendarControls = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeActiveCalendar);
-            mainViewDisplay.calendarList = CalManager.getAllCalendars().map(c => {
+            data.mainViewDisplay.showChangeCalendarControls = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeActiveCalendar);
+            data.mainViewDisplay.calendarList = CalManager.getAllCalendars().map(c => {
                 const cd = c.getCurrentDate();
                 const ct = c.time.getCurrentTime();
                 return {
@@ -161,49 +175,43 @@ export default class MainApp extends Application{
             });
         }
 
-        return {
-            compactViewDisplay: compactViewDisplay,
-            mainViewDisplay: mainViewDisplay,
-            addNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes),
-            activeCalendarId: this.activeCalendar.id,
-            calendar: this.visibleCalendar.toTemplate(),
-            changeDateTime: changeDateTime,
-            clockClass: this.clockClass,
-            isGM: GameSettings.IsGm(),
-            isPrimary: SC.primary,
-            message: message,
-            uiElementStates: this.uiElementStates,
-            reorderNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.reorderNotes),
-            showClock: this.visibleCalendar.generalSettings.showClock,
-            showDateControls: showDateControls,
-            showSetCurrentDate: showSetCurrentDate,
-            showTimeControls: showTimeControls
-        };
+        return data;
     }
 
     /**
-     * Shows the application window
+     * Render the main application. Will open the module in compact mode, where it was last positioned and using the correct theme
+     * @param force
+     * @param options
      */
-    public showApp(){
+    render(force?: boolean, options?: Application.RenderOptions<FormApplicationOptions>): unknown {
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)){
             if(this.visibleCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
                 //this.visibleCalendar.setCurrentToVisible();
             }
-            this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
-
             const options:  Application.RenderOptions = {}
-            if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
-                const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
-                if(pos.top){
-                    options.top = pos.top;
+            if(this.opening){
+                this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
+
+                if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
+                    const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
+                    if(pos.top !== undefined && pos.top >= 0){
+                        options.top = pos.top;
+                    }
+                    if(pos.left !== undefined && pos.left >= 0){
+                        options.left = pos.left;
+                    }
                 }
-                if(pos.left){
-                    options.left = pos.left;
-                }
+                options.classes = ["simple-calendar", GetThemeName()];
+                this.opening = false;
             }
-            options.classes = ["simple-calendar", GameSettings.GetStringSettings(SettingNames.Theme)];
-            this.render(true, options);
+            return super.render(true, options);
         }
+        return;
+    }
+
+    override close(options?: FormApplication.CloseOptions): Promise<void> {
+        this.opening = true;
+        return super.close(options);
     }
 
     /**
@@ -908,6 +916,10 @@ export default class MainApp extends Application{
                 NManager.orderNotesOnDay(this.visibleCalendar.id, noteIDOrder, this.visibleCalendar.getDateTime()).catch(Logger.error);
             }
         }
+    }
+
+    protected _updateObject(event: Event, formData: object | undefined): Promise<unknown> {
+        return Promise.resolve(undefined);
     }
 
 }

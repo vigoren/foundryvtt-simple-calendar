@@ -3,14 +3,16 @@ import {DateTheSame, DaysBetweenDates, FormatDateTime} from "../utilities/date-t
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import {CalManager, MainApplication, NManager, SC} from "../index";
-import {animateElement, GetContrastColor} from "../utilities/visual";
-import {getCheckBoxGroupValues, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
+import {animateElement, GetThemeName} from "../utilities/visual";
+import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import {
     ConcreteJournalEntry
 } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/apps/forms/journal-sheet";
+import MultiSelect from "../renderer/multi-select";
 
-export class NoteSheet extends DocumentSheet{
+
+export class NoteSheet extends JournalSheet{
 
     private dirty: boolean = false;
 
@@ -18,27 +20,88 @@ export class NoteSheet extends DocumentSheet{
 
     private editMode: boolean = false;
 
-    private advancedOpen: boolean = false;
-
     private readonly dateSelectorId: string;
+
+    private readonly categoryMultiSelectId: string;
+
+    private readonly playerMultiSelectId: string;
 
     private static appWindowId: string = 'fsc-simple-calendar-note-journal-form';
 
     private journalData = {
+        _id: '',
         name: '',
-        content: '',
         flags: <Record<string,any>>{},
         permission: <Partial<Record<string, 0 | 1 | 2 | 3>>>{}
     };
+
+    private journalPages: SimpleCalendar.JournalPageData[] = [];
     /**
      * The HTML element representing the application window
      */
     public appWindow: HTMLElement | null = null;
 
+    uiElementStates = {
+        "fsc-page-list": false,
+        selectedPageIndex: 0,
+         search:{
+             term: ''
+         }
+    }
+
+    private inputChangeRedrawNames = ['src', 'image.caption', 'video.width', 'video.height'];
+
+    public static SetHeight(ns: NoteSheet){
+        if(ns.appWindow){
+            if(!ns.resized){
+                const form = ns.appWindow.getElementsByTagName('form');
+                if(form && form.length){
+                    let height = 46;//Header height and padding of form
+                    if(ns.editMode){
+                        height += form[0].scrollHeight - 16;//minus the padding as we account for this above
+                    } else {
+                        const nHeader = <HTMLElement>ns.appWindow.querySelector('.fsc-note-header');
+                        const nContent = <HTMLElement>ns.appWindow.querySelector('.fsc-content');
+                        const nEditControls = <HTMLElement>ns.appWindow.querySelector('.fsc-edit-controls');
+                        if(nHeader){
+                            const cs = window.getComputedStyle(nHeader);
+                            height += nHeader.offsetHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
+                        }
+                        if(nContent){
+                            const cs = window.getComputedStyle(nContent);
+                            height +=  nContent.scrollHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
+                        }
+                        if(nEditControls){
+                            const cs = window.getComputedStyle(nEditControls);
+                            height += nEditControls.offsetHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
+                        }
+                    }
+
+                    if(ns.editMode && height < 740){
+                        height = 740;
+                    }
+                    const maxHeight = window.outerHeight * .95;
+                    if(height > maxHeight){
+                        height = maxHeight;
+                    }
+                    ns.setPosition({height: height, width: 720});
+                }
+            }
+            const cList = ns.appWindow.querySelector(`.fsc-page-list`);
+            const wrapper = ns.appWindow.querySelector('.fsc-page-details, .fsc-note-header');
+            if(cList && wrapper){
+                (<HTMLElement>cList).style.top = (<HTMLElement>wrapper).offsetTop + 'px';
+                (<HTMLElement>cList).style.height = `calc(100% - ${(<HTMLElement>wrapper).offsetTop}px)`;
+            }
+        }
+    }
+
     constructor(object: ConcreteJournalEntry, options = {}) {
         super(object, options);
-
         this.dateSelectorId = `scNoteDate_${this.object.id}`;
+        this.categoryMultiSelectId = `scNoteCategories_${this.object.id}`;
+        this.playerMultiSelectId = `scUserPermissions_${this.object.id}`;
+        this.copyData();
     }
 
     static get defaultOptions(){
@@ -50,7 +113,7 @@ export class NoteSheet extends DocumentSheet{
         options.resizable = true;
         options.closeOnSubmit = false;
         if((<Game>game).settings){
-            options.classes.push(GameSettings.GetStringSettings(SettingNames.Theme));
+            options.classes.push(GetThemeName());
         }
         return options;
     }
@@ -68,10 +131,33 @@ export class NoteSheet extends DocumentSheet{
     }
 
     copyData(){
-        this.journalData.name = this.object.data.name;
-        this.journalData.content = this.object.data.content;
-        this.journalData.flags = mergeObject({}, this.object.data.flags);
-        this.journalData.permission = mergeObject({}, this.object.data.permission);
+        this.journalData._id = this.object.id || '';
+        this.journalData.name = this.object.name || '';
+        //@ts-ignore
+        this.journalData.flags = mergeObject({}, this.object.flags);
+        //@ts-ignore
+        this.journalData.permission = mergeObject({}, this.object.ownership);
+        this.journalPages = [];
+        //@ts-ignore
+        for(let i = 0; i < this.object.pages.contents.length; i++){
+            this.journalPages.push({
+                show: true,
+                //@ts-ignore
+                _id: this.object.pages.contents[i]._id,
+                //@ts-ignore
+                name: this.object.pages.contents[i].name,
+                //@ts-ignore
+                type: this.object.pages.contents[i].type,
+                //@ts-ignore
+                text: {content: this.object.pages.contents[i].text.content},
+                //@ts-ignore
+                src: this.object.pages.contents[i].src,
+                //@ts-ignore
+                image: {caption: this.object.pages.contents[i].image.caption},
+                //@ts-ignore
+                video: this.object.pages.contents[i].video
+            });
+        }
     }
 
     protected _getHeaderButtons(): Application.HeaderButton[] {
@@ -83,6 +169,10 @@ export class NoteSheet extends DocumentSheet{
             }
         }
         return reducedButtons;
+    }
+
+    override get title(): string {
+        return this.object.name || "Note";
     }
 
     close(options?: FormApplication.CloseOptions): Promise<void> {
@@ -110,15 +200,24 @@ export class NoteSheet extends DocumentSheet{
             this.dirty = false;
             this.editMode = false;
             this.resized = false;
-            this.advancedOpen = false;
-            return super.close(options);
+            this.uiElementStates["fsc-page-list"] = false;
+            this.uiElementStates.selectedPageIndex = 0
+            this.cleanUpProsemirror();
+            return super.close({submit:false});
         }
+    }
+
+    cleanUpProsemirror(){
+        //@ts-ignore
+        Object.values(this.editors).forEach(ed => {if ( ed.instance ) ed.instance.destroy(); });
     }
 
     async isDirtyDialogClose(save: boolean){
         this.dirty = false;
         if(save){
             await this.save(new Event('click'));
+        } else {
+            this.copyData();
         }
         return this.close();
     }
@@ -130,13 +229,15 @@ export class NoteSheet extends DocumentSheet{
         return super.render(force, options);
     }
 
-    getData(options?: Partial<DocumentSheetOptions>): Promise<DocumentSheet.Data> | DocumentSheet.Data {
-        this.copyData();
+    async getData(options?: Partial<DocumentSheetOptions>): Promise<JournalSheet.Data> {
+
         let newOptions = {
             ...super.getData(),
-            editable: this.isEditable,
+            pages: this.journalPages,
             editMode: this.editMode,
+            uiElementStates: this.uiElementStates,
             name: '',
+            enrichedContent: '',
             display: {
                 date: '',
                 reminder: false,
@@ -144,7 +245,6 @@ export class NoteSheet extends DocumentSheet{
                 repeatsDisplay: '',
                 author: {colorText: '', color: '', name: ''},
                 categories: <any>[],
-                enrichedContent: '',
                 macro: ''
             },
             edit: {
@@ -157,27 +257,75 @@ export class NoteSheet extends DocumentSheet{
                 dateSelectorSelect: this.dateSelectorSelect.bind(this),
                 repeatOptions: <SimpleCalendar.NoteRepeats>{0: 'FSC.Notes.Repeat.Never', 1: 'FSC.Notes.Repeat.Weekly', 2: 'FSC.Notes.Repeat.Monthly', 3: 'FSC.Notes.Repeat.Yearly'},
                 allCategories: <any>[],
-                advancedOpen: this.advancedOpen,
                 macroList: <Record<string,string>>{'none': 'No Macro'},
-                selectedMacro: ''
+                selectedMacro: '',
+                categoryMultiSelectId: this.categoryMultiSelectId,
+                playerMultiSelectId: this.playerMultiSelectId,
+                pageTypes: {'text': 'JOURNALENTRYPAGE.TypeText', 'image': 'JOURNALENTRYPAGE.TypeImage', 'pdf': 'JOURNALENTRYPAGE.TypePDF', 'video': 'JOURNALENTRYPAGE.TypeVideo'},
+                page: {
+                    name: '',
+                    type: '',
+                    src: '',
+                    image: {caption: '' },
+                    video: {
+                        width: <number | null | undefined>undefined,
+                        height: <number | null | undefined>undefined,
+                        controls: false,
+                        autoplay: false,
+                        loop: false,
+                        volume: 0.5,
+                        volumeDisplay: '50%',
+                        timestamp: 0,
+                        timestampParts: {}
+                    }
+                }
             }
         };
 
         const noteStub = NManager.getNoteStub(<JournalEntry>this.object);
         if(noteStub){
             newOptions.name = noteStub.title;
+            if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'text'){
+                //@ts-ignore
+                newOptions.enrichedContent = await TextEditor.enrichHTML(this.journalPages[this.uiElementStates.selectedPageIndex].text?.content || '', {async: true});
+            } else if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'image'){
+                newOptions.enrichedContent = this.generateImageHTML();
+            } else if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'pdf'){
+                newOptions.enrichedContent = await this.generatePDFHTML(undefined, this.editMode);
+            } else if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'video'){
+                newOptions.enrichedContent = this.generateVideoHTML();
+            }
+
             if(this.editMode){
+                newOptions.edit.page.name = this.journalPages[this.uiElementStates.selectedPageIndex].name;
+                newOptions.edit.page.type = this.journalPages[this.uiElementStates.selectedPageIndex].type;
+                newOptions.edit.page.src = this.journalPages[this.uiElementStates.selectedPageIndex].src || '';
+                newOptions.edit.page.image.caption = this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || '';
+                newOptions.edit.page.video.width = this.journalPages[this.uiElementStates.selectedPageIndex].video?.width;
+                newOptions.edit.page.video.height = this.journalPages[this.uiElementStates.selectedPageIndex].video?.height;
+                newOptions.edit.page.video.controls = this.journalPages[this.uiElementStates.selectedPageIndex].video?.controls || false;
+                newOptions.edit.page.video.autoplay = this.journalPages[this.uiElementStates.selectedPageIndex].video?.autoplay || false;
+                newOptions.edit.page.video.loop = this.journalPages[this.uiElementStates.selectedPageIndex].video?.loop || false;
+                newOptions.edit.page.video.volume = this.journalPages[this.uiElementStates.selectedPageIndex].video?.volume || 0.5;
+                newOptions.edit.page.video.volumeDisplay = `${Math.round(newOptions.edit.page.video.volume * 100)}%`;
+                newOptions.edit.page.video.timestamp = this.journalPages[this.uiElementStates.selectedPageIndex].video?.timestamp || 0;
+                let h = 0, m = 0, s = 0;
+                if(newOptions.edit.page.video.timestamp){
+                    h = Math.floor(newOptions.edit.page.video.timestamp / 3600);
+                    m = Math.floor((newOptions.edit.page.video.timestamp % 3600) / 60);
+                    s = newOptions.edit.page.video.timestamp  - (h * 3600) - (m * 60);
+                }
+                newOptions.edit.page.video.timestampParts = { h: h, m: m, s: s };
+
                 newOptions.edit.noteData = noteStub.noteData || {};
                 newOptions.edit.timeSelected = !noteStub.allDay;
                 newOptions.edit.repeats = noteStub.repeats;
                 const users = (<Game>game).users;
                 if(users){
                     newOptions.edit.users = users.map(u => {return {
-                        name: u.name,
-                        id: u.id,
-                        color: u.data.color,
-                        textColor: GetContrastColor(u.color || ''),
-                        selected: !!(this.object.data.permission[u.id] !== 0 && this.object.testUserPermission(u, 2)),
+                        text: u.name,
+                        value: u.id,
+                        selected: (noteStub.ownership[u.id] !== 0 && this.object.testUserPermission(u, 2)),
                         disabled: u.id === (<Game>game).user?.id
                     }});
                 }
@@ -191,9 +339,8 @@ export class NoteSheet extends DocumentSheet{
                         }
                         newOptions.edit.allCategories = calendar.noteCategories.map(nc => {
                             return {
-                                name: nc.name,
-                                color : nc.color,
-                                textColor: nc.textColor,
+                                text: nc.name,
+                                value: nc.name,
                                 selected: noteData.categories.find(c => c === nc.name) !== undefined
                             }
                         });
@@ -213,7 +360,6 @@ export class NoteSheet extends DocumentSheet{
                 newOptions.display.repeatsDisplay = GameSettings.Localize(newOptions.edit.repeatOptions[noteStub.repeats] || '');
                 newOptions.display.author = noteStub.authorDisplay || {colorText: '', color: '', name: ''};
                 newOptions.display.categories = noteStub.categories;
-                newOptions.display.enrichedContent = TextEditor.enrichHTML(noteStub.content);
                 if(this.isEditable){
                     newOptions.display.macro = (<Game>game).macros?.get(noteStub.macro)?.name || '';
                 }
@@ -222,125 +368,247 @@ export class NoteSheet extends DocumentSheet{
         return newOptions;
     }
 
-    static setHeight(ns: NoteSheet){
-        if(ns.appWindow && !ns.resized){
-            const form = ns.appWindow.getElementsByTagName('form');
-            if(form && form.length){
-                let height = 46;//Header height and padding of form
-                if(ns.editMode){
-                    height += form[0].scrollHeight;
-                } else {
-                    const nHeader = <HTMLElement>ns.appWindow.querySelector('.fsc-note-header');
-                    const nContent = <HTMLElement>ns.appWindow.querySelector('.fsc-content');
-                    const nEditControls = <HTMLElement>ns.appWindow.querySelector('.fsc-edit-controls');
-                    if(nHeader){
-                        const cs = window.getComputedStyle(nHeader);
-                        height += nHeader.offsetHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
-                    }
-                    if(nContent){
-                        const cs = window.getComputedStyle(nContent);
-                        height += nContent.scrollHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
-                    }
-                    if(nEditControls){
-                        const cs = window.getComputedStyle(nEditControls);
-                        height += nEditControls.offsetHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
-                    }
-                }
+    _getYouTubeVars() {
+        const vars: any = {playsinline: 1, modestbranding: 1};
+        if ( !this.editMode ) {
+            vars.controls = this.journalPages[this.uiElementStates.selectedPageIndex].video?.controls ? 1 : 0;
+            vars.autoplay = this.journalPages[this.uiElementStates.selectedPageIndex].video?.autoplay ? 1 : 0;
+            vars.loop = this.journalPages[this.uiElementStates.selectedPageIndex].video?.loop ? 1 : 0;
+            if ( this.journalPages[this.uiElementStates.selectedPageIndex].video?.timestamp ) vars.start = this.journalPages[this.uiElementStates.selectedPageIndex].video?.timestamp;
+        }
+        return vars;
+    }
 
-                if(ns.editMode && height < 845){
-                    height = 845;
-                }
-                const maxHeight = window.outerHeight * .95;
-                if(height > maxHeight){
-                    height = maxHeight;
-                }
-                ns.setPosition({height: height, width: 720});
+    _activateVideo(){
+        if(this.appWindow){
+            const videoVolume = this.journalPages[this.uiElementStates.selectedPageIndex].video?.volume || 0;
+            const videoTimestamp = this.journalPages[this.uiElementStates.selectedPageIndex].video?.timestamp || 0;
+            const iframe = this.appWindow.querySelector('iframe');
+            if(iframe){
+                //@ts-ignore
+                (<Game>game).video.getYouTubePlayer(iframe.id, {
+                    events: {
+                        //@ts-ignore
+                        onStateChange: this.youtubeOnStateChange.bind(this, videoVolume)
+                    }
+                }).then((player: any) => {
+                    if ( videoTimestamp ) player.seekTo(videoTimestamp, true);
+                });
+            }
+            const video = this.appWindow.querySelector('video');
+            if(video){
+                video.addEventListener("loadeddata", NoteSheet.SetHeight.bind(null, this));
+                video.addEventListener("loadedmetadata", this.videoLoadMetadata.bind(this, video, videoVolume, videoTimestamp));
             }
         }
     }
 
-    activateEditorCustom(){
-        if(this.appWindow){
-            const target = this.appWindow.querySelector('.fsc-editor-container .editor-content');
-            if(target){
-                let height = 0;
-                const mceOptions = {
-                    target: <HTMLElement>target,
-                    body_class: 'simple-calendar',
-                    content_css: ["/css/mce.css", `modules/${ModuleName}/styles/themes/tinymce-${SC.clientSettings.theme}.css`],
-                    preview_styles: false,
-                    height: height,
-                    save_onsavecallback: (mce: any )=> this.saveEditor('content')
-                };
-                this.editors['content'] = {
-                    target: 'content',
-                    //@ts-ignore
-                    button: target.nextElementSibling,
-                    hasButton: false,
-                    mce: null,
-                    active: true,
-                    changed: false,
-                    options: mceOptions,
-                    initial: (<JournalEntry>this.object).data.content
-                };
+    youtubeOnStateChange(volume: number, e: Event){
+        //@ts-ignore
+        if ( e.data === YT.PlayerState.PLAYING ) e.target?.setVolume(volume * 100);
+    }
 
-                this.activateEditor('content', mceOptions, (<JournalEntry>this.object).data.content);
-            }
-        }
+    videoLoadMetadata(video: HTMLVideoElement, volume: number, timeStamp: number){
+        video.volume = volume;
+        if ( timeStamp ) video.currentTime = timeStamp;
     }
 
     activateListeners(html: JQuery) {
-        this.appWindow = document.getElementById(`${NoteSheet.appWindowId}-${this.object.id}`);
+        this.appWindow = document.getElementById(`${this.id}`);
         if(this.appWindow){
-            const themes = [Themes.light, Themes.dark, Themes.classic];
+            const themes = Themes.map(t => t.key);
             this.appWindow.classList.remove(...themes);
             this.appWindow.classList.add(SC.clientSettings.theme);
             if(this.editMode){
-                this.activateEditorCustom();
+                if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'text'){
+                    const editorDiv = <HTMLElement>this.appWindow.querySelector('.editor-content[data-edit]');
+                    if(editorDiv){
+                        this.cleanUpProsemirror();
+                        (<any>this.object).content = this.journalPages[this.uiElementStates.selectedPageIndex].text?.content || '';
+                        this._activateEditor(editorDiv);
+                    }
+                } else {
+                    (<any>this.object).content = '';
+                }
+                this.appWindow.querySelectorAll("button.file-picker").forEach(e => {
+                    // @ts-ignore
+                    (<HTMLElement>e).onclick = this._activateFilePicker.bind(this);
+                });
                 DateSelectorManager.ActivateSelector(this.dateSelectorId);
+                MultiSelect.ActivateListeners(this.categoryMultiSelectId, this.multiSelectOptionChange.bind(this));
+                MultiSelect.ActivateListeners(this.playerMultiSelectId, this.multiSelectOptionChange.bind(this));
                 this.updateNoteRepeatDropdown();
-                this.appWindow.querySelector('.fsc-note-advance')?.addEventListener('click', this.toggleAdvanced.bind(this));
                 //---------------------
                 // Input Changes
                 //---------------------
                 this.appWindow.querySelectorAll("input, select").forEach(e => {
                     e.addEventListener('change', this.inputChange.bind(this));
                 });
+                //---------------------
+                //Pages
+                //---------------------
+                this.appWindow.querySelector('.fsc-add-new-page')?.addEventListener('click', this.addPage.bind(this));
+                this.appWindow.querySelectorAll(".fsc-list-of-pages .fsc-delete").forEach(e => {
+                    e.addEventListener('click', this.removePage.bind(this));
+                });
             } else {
+                this._activateVideo();
+                this.appWindow.querySelector('img')?.addEventListener('load', NoteSheet.SetHeight.bind(null, this));
                 //---------------------
                 // Reminder Button Click
                 //---------------------
-                this.appWindow.querySelector('#scNoteReminder')?.removeAttribute('disabled');
-                this.appWindow.querySelector('#scNoteReminder')?.addEventListener('click', this.reminderChange.bind(this));
+                this.appWindow.querySelector('.fsc-reminder')?.removeAttribute('disabled');
+                this.appWindow.querySelector('.fsc-reminder')?.addEventListener('click', this.reminderChange.bind(this));
+                this.appWindow.querySelector('.load-pdf button')?.removeAttribute('disabled');
+                this.appWindow.querySelector('.load-pdf button')?.addEventListener('click', this._loadPDF.bind(this));
             }
             //---------------------
             // Save/Edit/Delete Buttons
             //---------------------
-            this.appWindow.querySelector('#scSubmit')?.addEventListener('click', this.save.bind(this));
-            this.appWindow.querySelector('#scNoteEdit')?.addEventListener('click', this.edit.bind(this));
-            this.appWindow.querySelector('#scNoteDelete')?.addEventListener('click', this.delete.bind(this));
+            this.appWindow.querySelector('.fsc-save')?.addEventListener('click', this.save.bind(this));
+            this.appWindow.querySelector('.fsc-note-edit')?.addEventListener('click', this.edit.bind(this));
+            this.appWindow.querySelector('.fsc-note-delete')?.addEventListener('click', this.delete.bind(this));
+
+            //---------------------
+            // Page List Toggle
+            //---------------------
+            this.appWindow.querySelector(".fsc-pages")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-page-list'));
+            this.appWindow.querySelectorAll(".fsc-list-of-pages li").forEach(e => {
+                e.addEventListener('click', this.changePage.bind(this));
+            });
+
+            //---------------------
+            // Page List Search
+            //---------------------
+            this.appWindow.querySelector(".fsc-page-list .fsc-search-box input")?.addEventListener('input', this.searchUpdate.bind(this));
+            this.appWindow.querySelector(".fsc-page-list .fsc-search-box .fsc-control")?.addEventListener('click', this.clearSearch.bind(this));
         }
     }
 
-    toggleAdvanced(){
-        this.advancedOpen = !this.advancedOpen;
+    protected override _updateObject(event: Event, formData: JournalSheet.FormData): Promise<unknown> {
+        if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'text'){
+            this.journalPages[this.uiElementStates.selectedPageIndex].text = {content: formData.content};
+            this.dirty = true;
+        }
+        return Promise.resolve();
+    }
+
+    /**
+     * Toggles the passed in side drawer to show or hide
+     * @param selector The unique class name of the drawer we want to toggle
+     * @param event
+     */
+    public toggleDrawer(selector: string, event: Event){
+        event.preventDefault();
         if(this.appWindow){
-            const header = this.appWindow.querySelector(".fsc-note-advance");
-            const options = this.appWindow.querySelector(".fsc-options");
-            if(header && options){
-                header.innerHTML = this.advancedOpen ? `${GameSettings.Localize('FSC.HideAdvanced')}<span class='fa fa-chevron-up'></span>` : `${GameSettings.Localize('FSC.ShowAdvanced')}<span class='fa fa-chevron-down'></span>`;
-                animateElement(options, 500);
+            const cList = this.appWindow.querySelector(`.${selector}`);
+            if(cList){
+                const member = selector.toLowerCase() as 'fsc-page-list';
+                this.uiElementStates[member] = animateElement(cList, 500, false);
+                const link = cList.querySelector('.fsc-pages');
+                if(link){
+                    (<HTMLElement>link).title = this.uiElementStates[member]? GameSettings.Localize('JOURNAL.ViewCollapse') : GameSettings.Localize('JOURNAL.ViewExpand');
+                    const chev = link.querySelector('.fa-solid');
+                    if(chev){
+                        chev.classList.remove('fa-caret-left', 'fa-caret-right');
+                        chev.classList.add(this.uiElementStates[member]? 'fa-caret-right' : 'fa-caret-left');
+                    }
+                }
+
             }
         }
     }
 
-    async inputChange(){
+    async inputChange(event: Event){
         await this.writeInputValuesToObjects();
+        const target = <HTMLInputElement>event.target;
+        const element = target?.closest('.fsc-editor-container')?.querySelector('figure, .fsc-image-placeholder');
+        if(target && element && this.inputChangeRedrawNames.indexOf(target.name) > -1){
+            const temp = document.createElement('div');
+            const newSource = target.name === 'src'? target.value : undefined;
+            if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'image'){
+                temp.innerHTML = this.generateImageHTML(newSource);
+            } else if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'pdf'){
+                temp.innerHTML = await this.generatePDFHTML(newSource, this.editMode);
+            } else if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'video'){
+                temp.innerHTML = this.generateVideoHTML(newSource);
+            }
+            if(temp.innerHTML){
+                (<HTMLElement>element).replaceWith(temp.childNodes[0]);
+            }
+        } else if(target && target.name === 'video.volume'){
+            const volDisplay = this.appWindow?.querySelector(`label[for="scPageVideoVolume_${this.object.id}"] span`);
+            if(volDisplay){
+                volDisplay.innerHTML = `${Math.round(parseFloat(target.value) * 100)}%`;
+            }
+        }
+    }
+
+    _loadPDF(event: Event){
+        const target = (<HTMLElement>event.currentTarget)?.parentElement;
+        if(target){
+            const frame = document.createElement("iframe");
+            frame.src = `scripts/pdfjs/web/viewer.html?file=${foundry.utils.getRoute(this.journalPages[this.uiElementStates.selectedPageIndex].src || '')}`;
+            frame.classList.add('fsc-pdf-viewer');
+            target.replaceWith(frame);
+            NoteSheet.SetHeight(this);
+        }
     }
 
     protected _onResize(event: Event) {
         this.resized = true;
         super._onResize(event);
+    }
+
+    private generateImageHTML(src?: string){
+        const source = src || this.journalPages[this.uiElementStates.selectedPageIndex].src;
+        let html: string;
+        if(source){
+            html = `<figure><img src="${source}" alt="${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}" /><figcaption>${this.journalPages[this.uiElementStates.selectedPageIndex].image?.caption || ''}</figcaption></figure><div class="fsc-spacer"></div>`;
+        } else {
+            html = '<div class="fsc-image-placeholder flex-ratio"><i class="fa-solid fa-image"></i></div>';
+        }
+        return html;
+    }
+
+    private async generatePDFHTML(src?: string, edit: boolean = false){
+        const source = src || this.journalPages[this.uiElementStates.selectedPageIndex].src;
+        let html: string;
+        if(source){
+            if(edit){
+                html = `<iframe class="fsc-pdf-viewer" src="scripts/pdfjs/web/viewer.html?file=${foundry.utils.getRoute(source)}"></iframe>`;
+            } else {
+                const res = await fetch(source, {method: "HEAD"});
+                const size = Number(res?.headers.get("content-length"));
+                let sizeText = '';
+                if(!isNaN(size)){
+                    sizeText = ` (${(size / 1024 / 1024).toFixed(2)} MB)`;
+                }
+                html = `<div class="load-pdf"><button type="button" class="fsc-control fsc-secondary">${GameSettings.Localize("JOURNALENTRYPAGE.PDFLoad")}${sizeText}</button></div>`;
+            }
+        }  else {
+            html = '<div class="fsc-image-placeholder flex-ratio"><i class="fa-solid fa-file-pdf"></i></div>';
+        }
+        return html;
+    }
+
+    private generateVideoHTML(src?: string){
+        const source = src || this.journalPages[this.uiElementStates.selectedPageIndex].src;
+        let html: string;
+        if(source){
+            html = `<figure class="${!this.journalPages[this.uiElementStates.selectedPageIndex].video?.width && !this.journalPages[this.uiElementStates.selectedPageIndex].video?.height? 'flex-ratio' : ''}">`;
+            //@ts-ignore
+            if((<Game>game).video.isYouTubeURL(source)){
+                //@ts-ignore
+                html += `<iframe id="youtube-${foundry.utils.randomID()}" src="${ (<Game>game).video.getYouTubeEmbedURL(source, this._getYouTubeVars())}" ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width? `width="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width}"` : ''} ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height? `height="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height}"` : ''}></iframe>`;
+            } else {
+                html += `<video src="${source}" controls ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width? `width="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.width}"` : ''} ${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height? `height="${this.journalPages[this.uiElementStates.selectedPageIndex].video?.height}"` : ''}></video>`;
+            }
+            html += `</figure>`;
+        } else {
+            html = '<div class="fsc-image-placeholder flex-ratio"><i class="fa-solid fa-video"></i></div>';
+        }
+        return html;
     }
 
     async dateSelectorSelect(selectedDate: SimpleCalendar.DateTimeSelector.SelectedDates){
@@ -373,9 +641,33 @@ export class NoteSheet extends DocumentSheet{
         }
     }
 
+    multiSelectOptionChange(multiSelectId: string, value: string, selected: boolean){
+        if(multiSelectId === this.categoryMultiSelectId){
+            const index = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).categories.indexOf(value);
+            if(selected){
+                (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).categories.push(value);
+            } else if(index > -1){
+                (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).categories.splice(index, 1);
+            }
+            this.dirty = true;
+        } else if(multiSelectId === this.playerMultiSelectId){
+            if(selected){
+                const permissionValue = this.journalData.permission[value];
+                if(permissionValue === undefined || permissionValue < 2){
+                    this.journalData.permission[value] = 2;
+                } else if(permissionValue === 3){
+                    this.journalData.permission[value] = 3;
+                }
+            } else {
+                this.journalData.permission[value] = 0;
+            }
+            this.dirty = true;
+        }
+    }
+
     updateNoteRepeatDropdown(){
         if(this.appWindow){
-            const selector = this.appWindow.querySelector('#scNoteRepeats');
+            const selector = this.appWindow.querySelector(`#scNoteRepeats_${this.object.id}`);
             const noteData = <SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData;
             if(selector && noteData){
                 const calendar = CalManager.getCalendar(noteData.calendarId);
@@ -405,30 +697,55 @@ export class NoteSheet extends DocumentSheet{
     }
 
     async writeInputValuesToObjects(){
+        let render = false;
         if(this.appWindow){
-            this.journalData.name = getTextInputValue('#scNoteTitle', <string>Themes.dark, this.appWindow);
-            (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats = <NoteRepeat>getNumericInputValue('#scNoteRepeats', NoteRepeat.Never, false, this.appWindow);
-            (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).categories = getCheckBoxGroupValues('scNoteCategories', this.appWindow);
-            (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).macro = getTextInputValue('#scNoteMacro', 'none', this.appWindow);
+            this.journalData.name = getTextInputValue('.fsc-note-title', 'New Note', this.appWindow);
+            (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats = <NoteRepeat>getNumericInputValue(`#scNoteRepeats_${this.object.id}`, NoteRepeat.Never, false, this.appWindow);
+            (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).macro = getTextInputValue(`#scNoteMacro_${this.object.id}`, 'none', this.appWindow);
 
-            const usersWithView = getCheckBoxGroupValues('scUserPermissions', this.appWindow);
-            for(let k in this.journalData.permission){
-                if(this.journalData.permission[k] !== 3){
-                    this.journalData.permission[k] = 0;
-                }
+            this.journalPages[this.uiElementStates.selectedPageIndex].name = getTextInputValue(`#scPageName_${this.object.id}`, 'New Page', this.appWindow);
+            const nType = getTextInputValue(`#scPageType_${this.object.id}`, 'text', this.appWindow);
+            if(this.journalPages[this.uiElementStates.selectedPageIndex].type !== nType){
+                this.journalPages[this.uiElementStates.selectedPageIndex].type = nType;
+                render = true;
             }
-            for(let i = 0; i < usersWithView.length; i++){
-                const permissionValue = this.journalData.permission[usersWithView[i]];
-                if(permissionValue === undefined || permissionValue < 2){
-                    this.journalData.permission [usersWithView[i]] = 2;
-                } else if(permissionValue === 3){
-                    this.journalData.permission [usersWithView[i]] = 3;
-                }
+            switch (nType){
+                case "text":
+                    if(this.editors['content']){
+                        await this.saveEditor('content');
+                    }
+                    break;
+                case "image":
+                    this.journalPages[this.uiElementStates.selectedPageIndex].src = getTextInputValue(`#scPageImageSrc_${this.object.id}`, '', this.appWindow);
+                    this.journalPages[this.uiElementStates.selectedPageIndex].image = {caption: getTextInputValue(`#scPageImageCaption_${this.object.id}`, '', this.appWindow)} ;
+                    break;
+                case "pdf":
+                    this.journalPages[this.uiElementStates.selectedPageIndex].src = getTextInputValue(`#scPagePDFSrc_${this.object.id}`, '', this.appWindow);
+                    break;
+                case "video":
+                    const h = getNumericInputValue(`#scPageVideoHours_${this.object.id}`, null, false, this.appWindow) || null;
+                    const m = getNumericInputValue(`#scPageVideoMinutes_${this.object.id}`, null, false, this.appWindow) || null;
+                    const s = getNumericInputValue(`#scPageVideoSeconds_${this.object.id}`, null, false, this.appWindow) || null;
+                    let ts = ((h || 0) * 3600) + ((m || 0) * 60) + (s || 0);
+
+
+                    this.journalPages[this.uiElementStates.selectedPageIndex].src = getTextInputValue(`#scPageVideoSrc_${this.object.id}`, '', this.appWindow);
+                    this.journalPages[this.uiElementStates.selectedPageIndex].video = {
+                        controls: getCheckBoxInputValue(`#scPageVideoControls_${this.object.id}`, false, this.appWindow),
+                        autoplay: getCheckBoxInputValue(`#scPageVideoAutoplay_${this.object.id}`, false, this.appWindow),
+                        loop: getCheckBoxInputValue(`#scPageVideoLoop_${this.object.id}`, false, this.appWindow),
+                        volume: getNumericInputValue(`#scPageVideoVolume_${this.object.id}`, 0.5, true, this.appWindow) || 0,
+                        height: getNumericInputValue(`#scPageVideoHeight_${this.object.id}`, null, false, this.appWindow),
+                        width: getNumericInputValue(`#scPageVideoWidth_${this.object.id}`, null, false, this.appWindow),
+                        timestamp: ts
+                    };
+                    break;
             }
-            if(this.editors['content']){
-                this.journalData.content = this.editors['content'].mce?.getContent() || '';
-            }
+
             this.dirty = true;
+            if(render){
+                this.render(true);
+            }
         }
     }
 
@@ -463,18 +780,139 @@ export class NoteSheet extends DocumentSheet{
         }
     }
 
+    searchUpdate(e: Event){
+        const target = e.target;
+        if(target){
+            this.uiElementStates.search.term = (<HTMLInputElement>target).value;
+            this.searchPages();
+        }
+    }
+
+    clearSearch(){
+        this.uiElementStates.search.term = '';
+        if(this.appWindow){
+            const searchBox = (<HTMLInputElement>this.appWindow.querySelector(".fsc-page-list .fsc-search-box input"));
+            if(searchBox){
+                searchBox.value = '';
+            }
+        }
+        this.searchPages();
+    }
+
+    searchPages(){
+        const pageToHide = this.journalPages.filter(p => p.name.indexOf(this.uiElementStates.search.term) === -1);
+        this.journalPages.forEach(p => {p.show = true;});
+        this.appWindow?.querySelectorAll(`.fsc-list-of-pages li`).forEach(e => e.classList.remove('fsc-hide'));
+        if(pageToHide.length){
+            for(let i = 0; i < pageToHide.length; i++){
+                pageToHide[i].show = false;
+                this.appWindow?.querySelector(`.fsc-list-of-pages li[data-index="${pageToHide[i]._id}"]`)?.classList.add('fsc-hide');
+            }
+            this.appWindow?.querySelector('.fsc-page-list-controls .fsc-search-box .fsc-control')?.classList.remove('fsc-hide');
+        } else {
+            this.appWindow?.querySelector('.fsc-page-list-controls .fsc-search-box .fsc-control')?.classList.add('fsc-hide');
+        }
+    }
+
     async edit(e: Event){
         e.preventDefault();
         this.resized = false;
         this.editMode = true;
+        this.uiElementStates["fsc-page-list"] = true;
         this.render(true);
+    }
+
+    changePage(e: Event){
+        e.stopPropagation();
+        const target = (<HTMLElement>e.target)?.closest('li');
+        if(target){
+            const id = target.getAttribute('data-index');
+            if(id){
+                const jpIndex = this.journalPages.findIndex(j => j._id === id);
+                if(jpIndex > -1){
+                    this.uiElementStates.selectedPageIndex = jpIndex;
+                    this.render(true);
+                }
+            }
+        }
+    }
+
+    async addPage(){
+        this.journalPages.push({_id: foundry.utils.randomID(), show: true, name: 'New Page', type: 'text', text: {content: ''}});
+        this.uiElementStates.selectedPageIndex = this.journalPages.length - 1;
+        this.dirty = true;
+        this.render(true);
+    }
+
+    async removePage(e: Event){
+        e.stopPropagation();
+        const target = (<HTMLElement>e.target)?.closest('li');
+        if(target){
+            const id = target.getAttribute('data-index');
+            if(id){
+                const jpIndex = this.journalPages.findIndex(j => j._id === id);
+                if(jpIndex > -1){
+                    this.journalPages.splice(jpIndex, 1);
+                    if(this.uiElementStates.selectedPageIndex >= this.journalPages.length){
+                        this.uiElementStates.selectedPageIndex = this.journalPages.length - 1;
+                    }
+                }
+                this.dirty = true;
+                this.render(true);
+            }
+        }
     }
 
     async save(e: Event){
         e.preventDefault();
         await this.writeInputValuesToObjects();
         (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).fromPredefined = false;
-        await (<JournalEntry>this.object).update(this.journalData);
+        await (<JournalEntry>this.object).update(this.journalData, {render:false, renderSheet: false});
+
+        //Get all pages currently saved in the journal entry
+        const pages = (<JournalEntry>this.object).getEmbeddedCollection('JournalEntryPage').contents;
+
+        //Remove any pages that do not exist in our journal pages list (these were removed)
+        for(let i = 0; i < pages.length; i++){
+            const index = this.journalPages.findIndex(jp => jp._id === pages[i].id);
+            if(index === -1){
+                await pages[i].delete({render:false, renderSheet: false});
+            }
+        }
+
+        //Add and update any pages that remain in our journal page list
+        for(let i = 0; i < this.journalPages.length; i++){
+            const p = pages.find(p => p.id === this.journalPages[i]._id);
+            if(p){
+                await (<JournalEntry>this.object).updateEmbeddedDocuments("JournalEntryPage", [{
+                    _id:  this.journalPages[i]._id,
+                    name: this.journalPages[i].name,
+                    type: this.journalPages[i].type,
+                    text:{content: this.journalPages[i].text?.content || '', format: 1, markdown: undefined},
+                    src: this.journalPages[i].src || '',
+                    image: {caption: this.journalPages[i].image?.caption || ''},
+                    video: this.journalPages[i].video
+                }], {render:false, renderSheet: false});
+            } else {
+                await this.object.createEmbeddedDocuments("JournalEntryPage", [{
+                    text: {content: this.journalPages[i].text?.content || '', format: 1, markdown: undefined},
+                    name: this.journalPages[i].name,
+                    type: this.journalPages[i].type,
+                    src: this.journalPages[i].src || '',
+                    image: {caption: this.journalPages[i].image?.caption || ''},
+                    video: {
+                        autoplay: this.journalPages[i].video?.autoplay || false,
+                        controls: this.journalPages[i].video?.controls || false,
+                        height: this.journalPages[i].video?.height || null,
+                        loop: this.journalPages[i].video?.loop || false,
+                        timestamp: this.journalPages[i].video?.timestamp || 0,
+                        volume: this.journalPages[i].video?.volume || 0.5,
+                        width: this.journalPages[i].video?.width || null
+                    }
+                }],{render:false, renderSheet: false});
+            }
+
+        }
         MainApplication.updateApp();
         await GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}});
         this.resized = false;

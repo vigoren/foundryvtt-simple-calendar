@@ -1,16 +1,17 @@
 @import "src/styles/variables";
 .simple-calendar{
   .fsc-control {
-    font-family: Roboto, sans-serif;
+    font-family: Roboto, sans-serif !important;
+    font-size: 14px !important;
     border: 1px solid;
-    padding: 0.15rem 0.5rem;
+    padding: 0.15rem 0.48rem;
     border-radius: 3px;
     line-height: 1rem;
     box-shadow: 1px 1px 5px $boxShadowColor;
     cursor: pointer;
 
-    &.fa, .far, .fas {
-      font-family: "Font Awesome 5 Free";
+    i, span{
+      font-size: 14px !important;
     }
   }
   .fsc-control-group{

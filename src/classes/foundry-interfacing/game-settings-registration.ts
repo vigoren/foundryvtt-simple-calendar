@@ -1,8 +1,10 @@
-import {ModuleName, SettingNames} from "../../constants";
+import {ModuleName, SettingNames, Themes} from "../../constants";
 import ConfigurationApp from "../applications/configuration-app";
 import {CalManager, SC} from "../index"
 import {GameSettings} from "./game-settings";
 import SCController from "../s-c-controller";
+import MainApp from "../applications/main-app";
+import {GetThemeList} from "../utilities/visual";
 
 export default class GameSettingsRegistration{
     /**
@@ -12,20 +14,24 @@ export default class GameSettingsRegistration{
         // -------------------
         // Client Settings
         // -------------------
-        (<Game>game).settings.register(ModuleName, SettingNames.Theme, {
+        (<Game>game).settings.register(ModuleName, `${(<Game>game).world.id}.${SettingNames.Theme}`, {
             name: "FSC.Configuration.Theme.Title",
             hint: "FSC.Configuration.Theme.Description",
             scope: "client",
             config: true,
             type: String,
             // @ts-ignore
-            choices: {
-                'dark': GameSettings.Localize("FSC.Configuration.Theme.Dark"),
-                'light': GameSettings.Localize("FSC.Configuration.Theme.Light"),
-                'classic': GameSettings.Localize("FSC.Configuration.Theme.Classic")
-            },
-            default: 'dark',
+            choices: GetThemeList(),
+            default: '',
             onChange: SCController.ThemeChange.bind(SCController)
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.Theme, {
+            name: "FSC.Configuration.Theme.Title",
+            hint: "FSC.Configuration.Theme.Description",
+            scope: "client",
+            config: false,
+            type: String,
+            default: 'dark'
         });
         (<Game>game).settings.register(ModuleName, SettingNames.OpenOnLoad, {
             name: "FSC.Configuration.Client.OpenOnLoad.Title",
@@ -59,16 +65,35 @@ export default class GameSettingsRegistration{
             type: Object,
             default: {}
         });
+        (<Game>game).settings.register(ModuleName, SettingNames.NoteReminderNotification, {
+            name: "FSC.Configuration.Client.NoteReminderNotification.Title",
+            hint: "FSC.Configuration.Client.NoteReminderNotification.Description",
+            scope: "client",
+            config: true,
+            type: String,
+            // @ts-ignore
+            choices: {
+                'whisper': GameSettings.Localize("FSC.Configuration.Client.NoteReminderNotification.Whisper"),
+                'render': GameSettings.Localize("FSC.Configuration.Client.NoteReminderNotification.Render")
+            },
+            default: 'whisper'
+        });
         // -------------------
         // Configuration Button
         // -------------------
+        (<Game>game).settings.registerMenu(ModuleName, SettingNames.CalendarMainApp, {
+            name: "",
+            label: "FSC.Title",
+            hint: "",
+            icon: "fa fa-calendar",
+            type: MainApp
+        });
         (<Game>game).settings.registerMenu(ModuleName, SettingNames.CalendarConfigurationMenu, {
             name: "",
             label: "FSC.Configuration.Title",
             hint: "",
             icon: "fa fa-cog",
-            type: ConfigurationApp,
-            restricted: true
+            type: ConfigurationApp
         });
         // -------------------
         // Core Settings

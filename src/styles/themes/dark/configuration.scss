@@ -1,0 +1,121 @@
+@import "../../variables";
+
+//Configuration Styling
+.fsc-configuration-wrapper{
+  .tabs{
+    @include scrollbar($primary, $primary-600);
+    .fsc-heading{
+      color: $primary-A400;
+      border-top-color: $primary-A200;
+      border-bottom-color: $gray-700;
+    }
+    .fsc-tab-section{
+      &.fsc-stripe{
+        background-color: $primary-1000;
+      }
+      .fsc-calendar-selector{
+        ul{
+          box-shadow: 1px 1px 5px #000000;
+          li{
+            background-color: $primary-900;
+            border-color: $primary-400;
+
+            &.fsc-active,&:hover{
+              background-color: $primary-A400;
+              color: $fontColor;
+            }
+            &.fsc-new-calendar{
+              color: $success-200;
+              &.fsc-active,&:hover{
+                color: $fontColor;
+              }
+            }
+          }
+        }
+      }
+    }
+    .fsc-item{
+      border-color: $gray-700;
+
+      &.fsc-active, &.active, &:hover{
+        background-color: $secondary;
+        color: $fontColor;
+      }
+    }
+  }
+  .fsc-tab-wrapper{
+    @include scrollbar($primary, $primary-600);
+    h2{
+      border-color: $secondary;
+    }
+
+    .fsc-warning{
+      background-color: $secondary-A500;
+      border-color: $secondary;
+      color: $fontColor;
+    }
+    .fsc-section{
+      h3{
+        color: $primary-A200;
+      }
+    }
+    .fsc-f-table{
+      background-color: $primary-1000;
+      border-color: $gray-600;
+      .fsc-row{
+        &.fsc-head{
+          border-color: $gray-600;
+        }
+        &:nth-child(even) {
+          background-color: rgba($primary-200,0.1);
+        }
+        .fsc-options{
+          h3{
+            border-color: $secondary;
+          }
+        }
+      }
+    }
+    .fsc-import-export{
+      .fsc-importing{
+        .fsc-progress{
+          background-color: $gray-700;
+          border-color: $gray-500;
+          .fsc-progress-bar{
+            background-color: $tertiary-300;
+          }
+        }
+      }
+    }
+    .fsc-quick-setup{
+      .fsc-predefined-list{
+        .fsc-predefined-calendar{
+          color: $tertiary-A100;
+          border-color: $tertiary-400;
+          box-shadow: inset 0 0 5px $tertiary-A100;
+          &.fsc-selected, &:hover{
+            border-color: $tertiary-600;
+            background-color: $tertiary-600;
+            color: $white;
+          }
+        }
+      }
+    }
+    .fsc-permissions{
+      .fsc-table-header{
+        border-color: $gray-600;
+      }
+    }
+    .fsc-about{
+      h1{
+        border-color: $primary;
+      }
+      .fsc-row{
+        .fsc-card{
+          border-color: $primary-400;
+          background-color: $primary-1000;
+        }
+      }
+    }
+  }
+}

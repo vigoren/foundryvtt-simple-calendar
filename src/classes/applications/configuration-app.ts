@@ -10,6 +10,7 @@ import {
     LeapYearRules,
     ModuleName,
     MoonYearResetOptions,
+    NoteReminderNotificationType,
     PredefinedCalendars,
     SettingNames,
     Themes,
@@ -21,10 +22,10 @@ import {saveAs} from "file-saver";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {animateElement, animateFormGroup, GetContrastColor} from "../utilities/visual";
+import {animateElement, animateFormGroup, GetContrastColor, GetThemeList, GetThemeName} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import UserPermissions from "../configuration/user-permissions";
-import {deepMerge} from "../utilities/object";
+import {deepMerge, isObjectEmpty} from "../utilities/object";
 import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import {FormatDateTime} from "../utilities/date-time";
 import {generateUniqueId} from "../utilities/string";
@@ -66,11 +67,12 @@ export default class ConfigurationApp extends FormApplication {
      */
     private clientSettings: SimpleCalendar.ClientSettingsData = {
         id: '',
-        theme: Themes.dark,
+        theme: Themes[0].key,
         openOnLoad: true,
         openCompact: false,
         rememberPosition: true,
-        appPosition: {}
+        appPosition: {},
+        noteReminderNotification: NoteReminderNotificationType.whisper
     };
     /**
      * A list of different states for the UI
@@ -100,7 +102,7 @@ export default class ConfigurationApp extends FormApplication {
             return;
         } else {
             options = options? options : {};
-            options.classes = ["simple-calendar", "fsc-simple-calendar-configuration", GameSettings.GetStringSettings(SettingNames.Theme)];
+            options.classes = ["simple-calendar", "fsc-simple-calendar-configuration", GetThemeName()];
             return super.render(force, options);
         }
     }
@@ -209,10 +211,11 @@ export default class ConfigurationApp extends FormApplication {
                 openInCompact: this.clientSettings.openCompact,
                 rememberPos: this.clientSettings.rememberPosition,
                 theme: this.clientSettings.theme,
-                themes: {
-                    'dark': 'FSC.Configuration.Theme.Dark',
-                    'light': 'FSC.Configuration.Theme.Light',
-                    'classic': 'FSC.Configuration.Theme.Classic'
+                themes:  GetThemeList(),
+                noteReminderNotification: this.clientSettings.noteReminderNotification,
+                noteReminderNotifications: {
+                    'whisper': 'FSC.Configuration.Client.NoteReminderNotification.Whisper',
+                    'render': 'FSC.Configuration.Client.NoteReminderNotification.Render'
                 }
             },
             combatPauseRules: {
@@ -627,10 +630,11 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             // Global Config: Client Settings
             //----------------------------------
-            this.clientSettings.theme = <Themes>getTextInputValue('#scTheme', <string>Themes.dark, this.appWindow);
+            this.clientSettings.theme = getTextInputValue('#scTheme', Themes[0].key, this.appWindow);
             this.clientSettings.openOnLoad = getCheckBoxInputValue('#scOpenOnLoad', true, this.appWindow);
             this.clientSettings.openCompact = getCheckBoxInputValue('#scOpenInCompact', false, this.appWindow);
             this.clientSettings.rememberPosition = getCheckBoxInputValue('#scRememberPos', true, this.appWindow);
+            this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>getTextInputValue('#scNoteReminderNotification', <string>NoteReminderNotificationType.whisper, this.appWindow);
 
             //----------------------------------
             // Global Config: Permissions
@@ -867,13 +871,9 @@ export default class ConfigurationApp extends FormApplication {
                             animateElement(options, 400);
                         }
                         if((<Calendar>this.object).months[i].showAdvanced){
-                            button.classList.remove('fa-chevron-down');
-                            button.classList.add('fa-chevron-up');
-                            (<HTMLElement>button).innerHTML = `<span>${GameSettings.Localize('FSC.HideAdvanced')}</span>`;
+                            (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-up"></i><span>${GameSettings.Localize('FSC.HideAdvanced')}</span>`;
                         } else {
-                            button.classList.add('fa-chevron-down');
-                            button.classList.remove('fa-chevron-up');
-                            (<HTMLElement>button).innerHTML = `<span>${GameSettings.Localize('FSC.ShowAdvanced')}</span>`;
+                            (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-down"></i><span>${GameSettings.Localize('FSC.ShowAdvanced')}</span>`;
                         }
                     }
                     //Intercalary Stuff

@@ -4,14 +4,15 @@
 import "../../../__mocks__/index";
 
 import Calendar from "../calendar";
-import {CalManager, updateCalManager, updateNManager} from "../index";
+import {CalManager, SC, updateCalManager, updateNManager, updateSC} from "../index";
 import CalendarManager from "../calendar/calendar-manager";
 import NoteStub from "./note-stub";
-import Mock = jest.Mock;
-import {NoteRepeat, PredefinedCalendars} from "../../constants";
+import {NoteReminderNotificationType, NoteRepeat, PredefinedCalendars} from "../../constants";
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import NoteManager from "./note-manager";
+import SCController from "../s-c-controller";
+import Mock = jest.Mock;
 
 fetchMock.enableMocks();
 describe('Note Stub Class Tests', () => {
@@ -19,8 +20,10 @@ describe('Note Stub Class Tests', () => {
     let nStub: NoteStub;
     let je: any;
     let nd: any;
+    let jp: any;
 
     beforeEach(async () => {
+        updateSC(new SCController());
         updateCalManager(new CalendarManager());
         updateNManager(new NoteManager());
         tCal = new Calendar('test','');
@@ -34,6 +37,8 @@ describe('Note Stub Class Tests', () => {
 
         nd = {calendarId: 'test', startDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, allDay: false, repeats: NoteRepeat.Yearly, order: 1, fromPredefined: true, categories: [], remindUsers: ['qwe'], macro: '123abc'};
 
+        jp = {}
+
         je = {
             data:{
                 content: 'test',
@@ -42,7 +47,12 @@ describe('Note Stub Class Tests', () => {
             name: 'Journal',
             getFlag: jest.fn().mockReturnValueOnce(null).mockReturnValue(nd),
             setFlag: jest.fn(),
-            testUserPermission: () => {return true;}
+            testUserPermission: () => {return true;},
+            ownership: {'': 3, 'a': 0},
+            link: 'asd',
+            pages: {
+                contents: [jp]
+            }
         };
 
         //@ts-ignore
@@ -55,6 +65,8 @@ describe('Note Stub Class Tests', () => {
         jest.spyOn(ChatMessage, 'create').mockImplementation(async () => {return undefined});
         jest.spyOn(nStub, 'userReminderRegistered', 'get').mockReturnValue(true);
         expect(NoteStub.reminderNoteTrigger(nStub, false)).toBe(false);
+        expect(NoteStub.reminderNoteTrigger(nStub, true)).toBe(true);
+        SC.clientSettings.noteReminderNotification = NoteReminderNotificationType.render;
         expect(NoteStub.reminderNoteTrigger(nStub, true)).toBe(true);
     });
 
@@ -70,16 +82,23 @@ describe('Note Stub Class Tests', () => {
         expect(nStub.noteData).toBeDefined();
     });
 
+    test('Ownership', () => {
+        //@ts-ignore
+        (<Mock>game.journal.get).mockReturnValueOnce(null);
+        expect(nStub.ownership).toStrictEqual({});
+        expect(nStub.ownership).toBeDefined();
+    });
+
     test('All Day', () => {
         expect(nStub.allDay).toBe(true);
         expect(nStub.allDay).toBe(false);
     });
 
-    test('Content', () => {
+    test('Link', () => {
         //@ts-ignore
         (<Mock>game.journal.get).mockReturnValueOnce(null);
-        expect(nStub.content).toBe('');
-        expect(nStub.content).toBe('test');
+        expect(nStub.link).toBe('');
+        expect(nStub.link).toBeDefined();
     });
 
     test('Title', () => {
@@ -87,6 +106,13 @@ describe('Note Stub Class Tests', () => {
         (<Mock>game.journal.get).mockReturnValueOnce(null);
         expect(nStub.title).toBe('');
         expect(nStub.title).toBe('Journal');
+    });
+
+    test('Pages', () => {
+        //@ts-ignore
+        (<Mock>game.journal.get).mockReturnValueOnce(null);
+        expect(nStub.pages.length).toBe(0);
+        expect(nStub.pages.length).toBe(1);
     });
 
     test('Repeats', () => {

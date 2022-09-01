@@ -20,6 +20,8 @@ export enum SettingNames {
     OpenCompact = 'open-compact',
     RememberPosition = 'remember-position',
     AppPosition = 'app-position',
+    NoteReminderNotification = 'note-reminder-notification',
+    CalendarMainApp = 'calendar-main-app',
     CalendarConfigurationMenu= 'calendar-configuration-menu',
     CalendarConfiguration = 'calendar-configuration',
     ActiveCalendar= 'active-calendar',
@@ -44,14 +46,12 @@ export enum SettingNames {
  * The different Themes that are available for Simple Calendar
  * @internal
  */
-export enum Themes {
-    /** The light theme */
-    light = 'light',
-    /** The Dark theme */
-    dark = 'dark',
-    /** A theme based on how SC v1 looked */
-    classic = 'classic'
-}
+export const Themes: SimpleCalendar.Theme[] = [
+    {key: 'dark', name: 'Dark', system: false},
+    {key: 'light', name: 'Light', system: false},
+    {key: 'classic', name: 'Classic', system: false},
+    {key: 'wfrp4e', name: 'Warhammer Fantasy Roleplay 4th Edition', system: true}
+];
 
 export enum CombatPauseRules {
     Active = 'active',
@@ -393,6 +393,17 @@ export enum DateTimeUnits{
     Minute = "minute",
     Round = "round",
     Second = "seconds"
+}
+
+/**
+ * When a note reminder is triggered how to let the user know about the reminder.
+ * @internal
+ */
+export enum NoteReminderNotificationType {
+    /** Have the reminder whispered to the player in chat with details and link to the note */
+    whisper = 'whisper',
+    /** Display the note's sheet */
+    render = 'render'
 }
 
 export enum TriggerConditions{

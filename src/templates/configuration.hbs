@@ -15,7 +15,7 @@
                 <ul class="fsc-closed">
                     {{#each calendars}}
                         <li class="{{#if (eq ../object.id id)}} fsc-active{{/if}}" data-calendar="{{id}}">
-                            {{name}} {{#unless (eq id 'default_temp')}}<button class="fsc-control fsc-delete fa fa-trash" title="{{localize 'FSC.RemoveCalendar'}}" data-calendar="{{id}}"></button>{{/unless}}
+                            {{name}} {{#unless (eq id 'default_temp')}}<button class="fsc-control fsc-delete" title="{{localize 'FSC.RemoveCalendar'}}" data-calendar="{{id}}"><span class="fa fa-trash"></span></button>{{/unless}}
                         </li>
                     {{/each}}
                     <li class="fsc-item fsc-new-calendar" data-tab="newCalendar">{{localize 'FSC.AddNewCalendar'}}<span class="fa fa-plus-circle"></span></li>
@@ -50,7 +50,7 @@
                 <div class="form-group fsc-open">
                     <label for="scSyncCalendars">{{localize 'FSC.Configuration.Global.SyncCalendars.Title'}}</label>
                     <div class="form-fields">
-                        <input value="{{globalConfiguration.syncCalendars}}" type="checkbox" id="scSyncCalendars" {{checked globalConfiguration.syncCalendars}} />
+                        <input class="fsc-toggle" value="{{globalConfiguration.syncCalendars}}" type="checkbox" id="scSyncCalendars" {{checked globalConfiguration.syncCalendars}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Global.SyncCalendars.Description'}}</p>
                 </div>
@@ -82,7 +82,7 @@
                 <div class="form-group fsc-open">
                     <label for="scShowNoteFolder">{{localize 'FSC.Configuration.Global.ShowNoteFolder.Title'}}</label>
                     <div class="form-fields">
-                        <input value="{{globalConfiguration.showNotesFolder}}" type="checkbox" id="scShowNoteFolder" {{checked globalConfiguration.showNotesFolder}} />
+                        <input class="fsc-toggle" value="{{globalConfiguration.showNotesFolder}}" type="checkbox" id="scShowNoteFolder" {{checked globalConfiguration.showNotesFolder}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Global.ShowNoteFolder.Description'}}</p>
                 </div>
@@ -103,23 +103,32 @@
                 <div class="form-group fsc-open">
                     <label for="scOpenOnLoad">{{localize 'FSC.Configuration.Client.OpenOnLoad.Title'}}</label>
                     <div class="form-fields">
-                        <input value="{{clientSettings.openOnLoad}}" type="checkbox" id="scOpenOnLoad" {{checked clientSettings.openOnLoad}} />
+                        <input class="fsc-toggle" value="{{clientSettings.openOnLoad}}" type="checkbox" id="scOpenOnLoad" {{checked clientSettings.openOnLoad}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Client.OpenOnLoad.Description'}}</p>
                 </div>
                 <div class="form-group fsc-open">
                     <label for="scOpenInCompact">{{localize 'FSC.Configuration.Client.OpenCompact.Title'}}</label>
                     <div class="form-fields">
-                        <input value="{{clientSettings.openInCompact}}" type="checkbox" id="scOpenInCompact" {{checked clientSettings.openInCompact}} />
+                        <input class="fsc-toggle" value="{{clientSettings.openInCompact}}" type="checkbox" id="scOpenInCompact" {{checked clientSettings.openInCompact}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Client.OpenCompact.Description'}}</p>
                 </div>
                 <div class="form-group fsc-open">
                     <label for="scRememberPos">{{localize 'FSC.Configuration.Client.RememberPosition.Title'}}</label>
                     <div class="form-fields">
-                        <input value="{{clientSettings.rememberPos}}" type="checkbox" id="scRememberPos" {{checked clientSettings.rememberPos}} />
+                        <input class="fsc-toggle" value="{{clientSettings.rememberPos}}" type="checkbox" id="scRememberPos" {{checked clientSettings.rememberPos}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Client.RememberPosition.Description'}}</p>
+                </div>
+                <div class="form-group fsc-open">
+                    <label for="scNoteReminderNotification">{{localize 'FSC.Configuration.Client.NoteReminderNotification.Title'}}</label>
+                    <div class="form-fields">
+                        <select id="scNoteReminderNotification">
+                            {{selectOptions clientSettings.noteReminderNotifications selected=clientSettings.noteReminderNotification localize=true}}
+                        </select>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Client.NoteReminderNotification.Description'}}</p>
                 </div>
             </div>
         </div>
@@ -281,13 +290,13 @@
                     <div class="form-group fsc-open">
                         <label for="scQSShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
                         <div class="form-fields">
-                            <input value="{{generalSettings.showClock}}" type="checkbox" id="scQSShowClock" {{checked generalSettings.showClock}} />
+                            <input class="fsc-toggle" value="{{generalSettings.showClock}}" type="checkbox" id="scQSShowClock" {{checked generalSettings.showClock}} />
                         </div>
                         <p class="notes">{{localize 'FSC.Configuration.General.ShowClockHelp'}}</p>
                     </div>
                     <div class="fsc-control-section">
-                        <button class="fsc-control fsc-primary fsc-qs-back fa fa-arrow-left">&nbsp;{{localize 'FSC.Back'}}</button>
-                        <button class="fsc-control fsc-save fsc-qs-save fa fa-save">&nbsp;{{localize 'FSC.Save'}}</button>
+                        <button class="fsc-control fsc-primary fsc-qs-back"><span class="fa fa-arrow-left"></span>&nbsp;{{localize 'FSC.Back'}}</button>
+                        <button class="fsc-control fsc-save fsc-qs-save"><span class="fa fa-save"></span>&nbsp;{{localize 'FSC.Save'}}</button>
                     </div>
                 </div>
             </div>
@@ -697,9 +706,9 @@
                         <div class="fsc-col fsc-month-number">{{#if (gt numericRepresentation 0)}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
                         <div class="fsc-col">
                             {{#if showAdvanced}}
-                            <a class="fsc-month-show-advanced fa fa-chevron-up"><span>{{localize 'FSC.HideAdvanced'}}</span></a>
+                            <a class="fsc-month-show-advanced"><i class="fa fa-chevron-up"></i><span>{{localize 'FSC.HideAdvanced'}}</span></a>
                             {{else}}
-                            <a class="fsc-month-show-advanced fa fa-chevron-down"><span>{{localize 'FSC.ShowAdvanced'}}</span></a>
+                            <a class="fsc-month-show-advanced"><i class="fa fa-chevron-down"></i><span>{{localize 'FSC.ShowAdvanced'}}</span></a>
                             {{/if}}
                         </div>
                         <div class="fsc-col">
@@ -753,7 +762,7 @@
                 <div class="form-group fsc-open">
                     <label for="scShowWeekdayHeaders">{{localize 'FSC.Configuration.Weekday.ShowHeadings'}}</label>
                     <div class="form-fields">
-                        <input value="{{currentYear.showWeekdayHeadings}}" type="checkbox" id="scShowWeekdayHeaders" {{checked currentYear.showWeekdayHeadings}} />
+                        <input class="fsc-toggle" value="{{currentYear.showWeekdayHeadings}}" type="checkbox" id="scShowWeekdayHeaders" {{checked currentYear.showWeekdayHeadings}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Weekday.ShowHeadingsHelp'}}</p>
                 </div>
@@ -1022,7 +1031,7 @@
                 <div class="form-group fsc-open">
                     <label for="scShowClock">{{localize 'FSC.Configuration.General.ShowClock'}}</label>
                     <div class="form-fields">
-                        <input value="{{generalSettings.showClock}}" type="checkbox" id="scShowClock" {{checked generalSettings.showClock}} />
+                        <input class="fsc-toggle" value="{{generalSettings.showClock}}" type="checkbox" id="scShowClock" {{checked generalSettings.showClock}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.ShowClockHelp'}}</p>
                 </div>
@@ -1043,7 +1052,7 @@
                 <div class="form-group fsc-open">
                     <label for="scUnifyClockWithFoundryPause">{{localize 'FSC.Configuration.Time.UnifyGameAndClock'}}</label>
                     <div class="form-fields">
-                        <input value="{{time.unifyGameAndClockPause}}" type="checkbox" id="scUnifyClockWithFoundryPause" {{checked time.unifyGameAndClockPause}} />
+                        <input class="fsc-toggle" value="{{time.unifyGameAndClockPause}}" type="checkbox" id="scUnifyClockWithFoundryPause" {{checked time.unifyGameAndClockPause}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Time.UnifyGameAndClockHelp'}}</p>
                 </div>
@@ -1055,14 +1064,14 @@
                 <div class="form-group fsc-open">
                     <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
                     <div class="form-fields">
-                        <input value="{{generalSettings.noteDefaultVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{checked generalSettings.noteDefaultVisibility}} />
+                        <input class="fsc-toggle" value="{{generalSettings.noteDefaultVisibility}}" type="checkbox" id="scDefaultPlayerVisibility" {{checked generalSettings.noteDefaultVisibility}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.DefaultNoteVisibilityHint'}}</p>
                 </div>
                 <div class="form-group fsc-open">
                     <label for="scPostNoteRemindersOnFoundryLoad">{{localize 'FSC.Configuration.Notes.PostNoteRemindersOnFoundryLoadTitle'}}</label>
                     <div class="form-fields">
-                        <input value="{{generalSettings.postNoteRemindersOnFoundryLoad}}" type="checkbox" id="scPostNoteRemindersOnFoundryLoad" {{checked generalSettings.postNoteRemindersOnFoundryLoad}} />
+                        <input class="fsc-toggle" value="{{generalSettings.postNoteRemindersOnFoundryLoad}}" type="checkbox" id="scPostNoteRemindersOnFoundryLoad" {{checked generalSettings.postNoteRemindersOnFoundryLoad}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Notes.PostNoteRemindersOnFoundryLoadHelp'}}</p>
                 </div>

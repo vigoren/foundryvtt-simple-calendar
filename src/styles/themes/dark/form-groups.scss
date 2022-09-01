@@ -1,0 +1,66 @@
+@import "../../variables";
+//Form Groups
+.form-group{
+  border-color:$gray-600;
+  background-color: $primary-1000;
+  &:hover{
+    background-color: $primary-950;
+  }
+  label{
+    color: $primary-A200;
+  }
+  .notes{
+    color: $primary-50;
+  }
+  input, select{
+    background-color: $gray-700;
+    border-color: $gray-500;
+    color: $white;
+    &:focus{
+      box-shadow: unset;
+    }
+  }
+}
+.fsc-compact-form-group{
+  border-color:$gray-300;
+  background-color: $primary-1000;
+
+  > input, > select, > button {
+    background-color: unset !important;
+  }
+  > .fsc-date-selector{
+    > input{
+      background-color: unset !important;
+    }
+  }
+  > .fsc-multiselect{
+    > button{
+      background-color: unset !important;
+    }
+  }
+  option{
+    background-color: $primary-900 !important;
+  }
+  button{
+    color: $white;
+  }
+  label{
+    color: $primary-A200;
+  }
+  .file-picker{
+    cursor: pointer;
+    background-color: $primary-800 !important;
+    border-color: $primary-800;
+    color: $white;
+
+    &:hover, &.active, &:focus {
+      box-shadow: unset;
+      background-color: $primary !important;
+      border-color: $primary-800;
+      color: $white;
+    }
+  }
+  .fsc-form-group-help{
+    color: $secondary;
+  }
+}

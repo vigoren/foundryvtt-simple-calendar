@@ -1,3 +1,4 @@
+@import "../variables";
 .simple-calendar{
   .form-group{
     margin: $spacer-half 0;
@@ -25,13 +26,173 @@
       overflow: visible;
     }
     label{
-      font-size: 1rem;
-      font-weight: 600;
+      text-align: left !important;
+      background: unset !important;
+      border: 0 !important;
+      font-family: 'Roboto', sans-serif !important;
+      font-size: 1rem !important;
+      font-weight: 600 !important;
+    }
+    input, select{
+      font-family: 'Roboto', sans-serif !important;
+      border: 1px solid !important;
+      box-shadow: unset !important;
+    }
+    .notes{
+      font-family: 'Roboto', sans-serif !important;
     }
     .fsc-example{
       flex: 0 0 100%;
       text-align: right;
       padding: $spacer-half 0 0 0;
+    }
+  }
+
+  .fsc-compact-form-group{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    position: relative;
+    border: 1px solid;
+    border-radius: 3px;
+    margin-bottom: $spacer-half;
+
+    &.fsc-check-group{
+      padding-top: $spacer-half;
+      padding-bottom: $spacer-half;
+      label{
+        display: inline-block;
+        position: relative;
+        padding: 0 ($spacer-half * 0.5) 0 0;
+      }
+    }
+
+    label{
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      padding: ($spacer * .75) $spacer-half;
+      pointer-events: none;
+      border: 1px solid transparent;
+      transform-origin: 0 0;
+      transition: opacity .1s ease-in-out,transform .1s ease-in-out;
+      font-size: $font-size-compact-form-group;
+    }
+    > input[type=text], > input[type=number], > input[type=range], > select, > .fsc-date-selector, > .fsc-multiselect{
+      border: 0;
+      border-radius: 0;
+      padding: ($spacer * .75) $spacer-half;
+      width: 100%;
+      height: calc(($spacer * 2.5) + 2px);
+
+      &::placeholder{
+        visibility: hidden;
+      }
+
+      &:focus, &:not(:placeholder-shown){
+        padding-top: $spacer * 1.125;
+        padding-bottom:  $spacer-half;
+      }
+
+      &:focus~label, &:not(:placeholder-shown)~label{
+        transform: scale(.85) translateY(-0.6rem) translateX(-0.2rem);
+      }
+    }
+    > input[type=range]{
+      height: unset;
+      padding-top: $spacer * 1.25;
+      margin-top: $spacer * 0.25;
+    }
+    > .fsc-date-selector{
+      > input{
+        border: 0;
+        margin-top: -($spacer-half * 0.5);
+      }
+      .fsc-date-selector-calendar-wrapper{
+        min-width: 100%;
+        &.left-down, &.right-down{
+          top: 42px;
+        }
+        &.left-up, &.right-up{
+          bottom: 42px;
+        }
+      }
+    }
+
+    .fsc-form-group-help{
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      cursor: help;
+      font-size: $spacer;
+      opacity: 0;
+    }
+    .fsc-form-group-actions{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      justify-content: flex-start;
+      border-left: 1px solid;
+      height: 100%;
+      button{
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+      }
+    }
+    &:hover{
+      .fsc-form-group-help{
+        opacity: 1;
+      }
+    }
+  }
+
+  .fsc-inline-form-group-wrapper{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin: $spacer 0;
+
+    .fsc-compact-form-group{
+      margin-bottom: 0;
+    }
+
+    >*{
+      flex: 1 1 100%;
+      margin-right: $spacer-half;
+
+      &:last-child{
+        margin-right: 0;
+      }
+    }
+
+    .fsc-full{
+      flex: 0 0 100%;
+    }
+
+    .fsc-threeQuarters{
+      flex: 0 0 75%;
+    }
+
+    .fsc-twoThirds{
+      flex: 0 0 66%;
+    }
+
+    .fsc-half{
+      flex: 0 0 50%;
+    }
+
+    .fsc-third{
+      flex: 0 0 33%;
+    }
+
+    .fsc-quarter{
+      flex: 0 0 25%;
     }
   }
 }

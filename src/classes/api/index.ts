@@ -51,7 +51,6 @@ export {LeapYearRules};
 /**
  * The Moon Icons
  */
-export {Icons as MoonIcons};
 export {Icons};
 /**
  * The moon year reset options
@@ -1458,7 +1457,7 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
     if(MainApplication.rendered){
         MainApplication.updateApp();
     } else {
-        MainApplication.showApp();
+        MainApplication.render();
     }
 }
 

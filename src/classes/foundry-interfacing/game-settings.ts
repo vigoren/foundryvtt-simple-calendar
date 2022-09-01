@@ -44,7 +44,8 @@ export class GameSettings {
     static GetModuleVersion(): string {
         const mData = (<Game>game).modules.get(ModuleName);
         if(mData){
-            return mData.data.version;
+            //@ts-ignore
+            return mData.version;
         }
         return '';
     }
@@ -83,7 +84,7 @@ export class GameSettings {
      * Will return the value for the passed in string setting
      * @param {SettingNames} setting The name of the setting to get
      */
-    static GetStringSettings(setting: SettingNames): string{
+    static GetStringSettings(setting: SettingNames | string): string{
         return <string>(<Game>game).settings.get(ModuleName, setting);
     }
 
@@ -102,7 +103,7 @@ export class GameSettings {
         return false;
     }
 
-    static async SaveStringSetting(setting: SettingNames, data: string, checkIfGM: boolean = true): Promise<boolean> {
+    static async SaveStringSetting(setting: SettingNames | string, data: string, checkIfGM: boolean = true): Promise<boolean> {
         let save = false;
         if(checkIfGM){
             if(this.IsGm()){

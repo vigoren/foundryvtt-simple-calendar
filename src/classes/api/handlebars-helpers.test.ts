@@ -24,7 +24,7 @@ describe('Handlebars Helpers Tests', () => {
 
     test('Register', () => {
         HandlebarsHelpers.Register();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(4);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(5);
     });
 
     test('Date Selector', () => {
@@ -113,5 +113,17 @@ describe('Handlebars Helpers Tests', () => {
             fill: ''
         };
         expect(HandlebarsHelpers.Icon(options)).toEqual({"v": ""});
+    });
+
+    test('MultiSelect', () => {
+        jest.spyOn(Renderer.MultiSelect, 'Render').mockImplementation(() => {return '';});
+        const options: any = {hash:{}};
+        expect(HandlebarsHelpers.MultiSelect(options)).toEqual({"v": ""});
+
+        options.hash = {
+            id: '',
+            options:''
+        };
+        expect(HandlebarsHelpers.MultiSelect(options)).toEqual({"v": ""});
     });
 });

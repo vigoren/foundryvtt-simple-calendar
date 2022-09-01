@@ -67,7 +67,6 @@ describe('API Class Tests', () => {
         expect(API.DateSelectorPositions).toStrictEqual(DateSelectorPositions);
         expect(API.Calendars).toStrictEqual(PredefinedCalendars);
         expect(API.LeapYearRules).toStrictEqual(LeapYearRules);
-        expect(API.MoonIcons).toStrictEqual(Icons);
         expect(API.Icons).toStrictEqual(Icons);
         expect(API.MoonYearResetOptions).toStrictEqual(MoonYearResetOptions);
         expect(API.YearNamingRules).toStrictEqual(YearNamingRules);
@@ -358,28 +357,29 @@ describe('API Class Tests', () => {
     });
 
     test('Show Calendar', () => {
-        jest.spyOn(MainApplication, 'showApp').mockImplementation(() => {});
+        jest.spyOn(MainApplication, 'render').mockImplementation(() => {});
         jest.spyOn(MainApplication, 'updateApp').mockImplementation(() => {});
+        //@ts-ignore
         jest.spyOn(MainApplication, 'rendered', 'get').mockReturnValueOnce(false).mockReturnValue(true)
         API.showCalendar();
         expect(console.error).toHaveBeenCalledTimes(1);
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.render).toHaveBeenCalledTimes(1);
 
         tCal.resetMonths();
         //@ts-ignore
         API.showCalendar({year: 'asd'}, false, '');
         expect(console.error).toHaveBeenCalledTimes(2);
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.render).toHaveBeenCalledTimes(1);
         expect(MainApplication.updateApp).toHaveBeenCalledTimes(2);
 
         tCal.months[0].current = true;
         tCal.months[0].days[0].current = true;
         API.showCalendar({month: 1});
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.render).toHaveBeenCalledTimes(1);
         expect(MainApplication.updateApp).toHaveBeenCalledTimes(4);
 
         API.showCalendar({year: 2020, month: -1, day: -1});
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.render).toHaveBeenCalledTimes(1);
         expect(MainApplication.updateApp).toHaveBeenCalledTimes(6);
     });
 

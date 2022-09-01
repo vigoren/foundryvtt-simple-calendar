@@ -98,20 +98,20 @@ describe('Migration App Class Tests', () => {
         const rcm = jest.spyOn(ma, "runCalendarMigration").mockImplementation(() => {return false;});
         const rnm = jest.spyOn(ma, "runNoteMigration").mockImplementation(async () => {return false;});
         jest.spyOn(ma, "runCleanData").mockImplementation(async () => {return true;});
-        jest.spyOn(MainApplication, 'showApp').mockImplementation(() => {});
+        jest.spyOn(MainApplication, 'render').mockImplementation(() => {});
 
         await ma.run();
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(0);
+        expect(MainApplication.render).toHaveBeenCalledTimes(0);
 
         rcm.mockReturnValue(true);
         await ma.run();
 
         rnm.mockImplementation(async () => {return true;});
         await ma.run();
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.render).toHaveBeenCalledTimes(1);
 
         await ma.run(true);
-        expect(MainApplication.showApp).toHaveBeenCalledTimes(2);
+        expect(MainApplication.render).toHaveBeenCalledTimes(2);
     });
 
     test('Run Calendar Migration', () => {

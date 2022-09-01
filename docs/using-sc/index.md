@@ -9,9 +9,13 @@
 
 ## Opening Simple Calendar
 
-The main way to open up Simple Calendar is through the button under token controls.
+The main way to open up Simple Calendar is through the button under Journal Notes.
 
 ![](media://calendar-button.png)
+
+Simple Calendar can also be opened through the Configure Settings dialog of Foundry.
+
+![](media://module-settings-open-calendar.png)
 
 Each player can also {@page ../global-configuration/settings.md choose if Simple Calendar opens by default} when FoundryVTT is loaded
 
@@ -56,7 +60,7 @@ The calendar view is the main way of interacting with Simple Calendar. The image
 |---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Calendars     | This button will open up the calendar panel that will show all calendars currently configured in Simple Calendar. This button will only display if there are 2 or more calendars configured. More details on this panel under the {@page switching-calendars.md switching calendars documentation}.<br/> ![](media://calendar-calendar-list.png) |
 | Note Buttons  | These buttons will open up a panel that will show the notes on the selected date. The yellow button indicates notes that the current player can see on the date while the purple button indicates note reminders for the current player on that date.<br/> ![](media://calendar-note-list.png)                                                   |
-| Search Notes  | This button will open up the note searching panel. More details on this panel under the {@page notes.md notes documentation}.  <br/> ![](media://calendar-search-notes.png)                                                                                                                                                                      |
+| Search Notes  | This button will open up the note searching panel. More details on this panel under the {@page notes/index.md notes documentation}.  <br/> ![](media://calendar-search-notes.png)                                                                                                                                                                |
 | Today         | This button will select the current date of the calendar and refresh the display to make sure it is visible.                                                                                                                                                                                                                                     |
 | Configuration | This opens up the configuration options. Players will see a limited selection of options that pertain to them while GMs will see all of the options.                                                                                                                                                                                             |
 

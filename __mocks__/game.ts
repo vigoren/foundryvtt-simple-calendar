@@ -126,6 +126,14 @@ const game = {
     macros: {
         forEach: (v: any) => {return v.call(undefined, {canExecute: true, name: 'asd', id: '123'})},
         get: () => {return {canExecute: true, execute: jest.fn()}}
+    },
+    video: {
+        getYouTubePlayer: async () => {return {seekTo: () => {}}},
+        isYouTubeURL: (s: string) => {return s.indexOf('youtube') > -1},
+        getYouTubeEmbedURL: () => {return ''}
+    },
+    world: {
+        id: 'worldId'
     }
 };
 

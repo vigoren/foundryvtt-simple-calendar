@@ -1,0 +1,41 @@
+@import "../../variables";
+
+.fsc-note-list{
+  @include scrollbar($primary, $primary-600);
+  .fsc-note{
+    border-color: $primary-200;
+    &:hover {
+      background-color: $primary-300;
+    }
+    &.fsc-drag-active{
+      background-color: $primary-300;
+    }
+
+    .fsc-note-details-wrapper{
+      .fsc-note-details{
+        .fsc-note-category{
+          box-shadow: 1px 1px 5px $fontColor;
+
+          &.fsc-player-visible{
+            background-color: $success-400;
+            border-color: $success-400;
+          }
+          &.fsc-not-player-visible{
+            background-color: $danger-400;
+            border-color: $danger-400;
+          }
+          &.fsc-reminder{
+            background-color: $tertiary-200;
+            border-color: $tertiary-200;
+          }
+        }
+      }
+    }
+
+    .fsc-sorting-dragger{
+      border-color: $gray-500;
+      background-color: $gray-500;
+      box-shadow: 1px 1px 5px $fontColor;
+    }
+  }
+}

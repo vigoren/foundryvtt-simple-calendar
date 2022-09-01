@@ -31,7 +31,7 @@ export default class NoteManager{
     public async initialize(){
         this.registerNoteSheets();
         await this.createJournalDirectory();
-        this.loadNotes();
+        await this.loadNotes();
     }
 
     /**
@@ -99,7 +99,6 @@ export default class NoteManager{
         const newJE = await JournalEntry.create({
             name: title,
             folder: this.noteDirectory?.id,
-            content: content,
             flags: {
                 core: {
                     sheetClass: `${ModuleName}.${NoteSheet.name}`
@@ -108,9 +107,13 @@ export default class NoteManager{
                     noteData: noteData
                 }
             },
-            permission: perms
+            ownership: perms
         });
         if(newJE){
+           await newJE.createEmbeddedDocuments("JournalEntryPage", [{
+                text: {content: content},
+                name: 'Details'
+            }]);
             if(renderSheet){
                 const sheet = new NoteSheet(newJE);
                 sheet.render(true, {}, true);
@@ -167,17 +170,17 @@ export default class NoteManager{
     /**
      * Loads all notes from the journal directory and creates note stubs for them
      */
-    public loadNotes(){
+    public async loadNotes(){
         if(this.noteDirectory){
             this.notes = {};
-            this.loadNotesFromFolder(this.noteDirectory);
+            await this.loadNotesFromFolder(this.noteDirectory);
 
             const journalDirectory = (<Game>game).journal?.directory;
             if(journalDirectory){
                 for(let i = 0; i < journalDirectory.folders.length; i++){
                     const f = journalDirectory.folders[i];
-                    if(f.parentFolder && f.parentFolder.id === this.noteDirectory.id){
-                        this.loadNotesFromFolder(f);
+                    if(f.folder && f.folder.id === this.noteDirectory.id){
+                        await this.loadNotesFromFolder(f);
                     }
                 }
             }
@@ -189,9 +192,17 @@ export default class NoteManager{
      * @param folder The folder to check
      * @private
      */
-    private loadNotesFromFolder(folder: Folder){
+    private async loadNotesFromFolder(folder: Folder){
         for(let i = 0; i < folder.contents.length; i++){
             const je = <JournalEntry>folder.contents[i];
+            //Check to see if this journal entry has no pages (migration of an empty journal entry has no page) and add a page with no content
+            //@ts-ignore
+            if(je.pages.contents.length === 0){
+                await je.createEmbeddedDocuments("JournalEntryPage", [{
+                    text: {content: ''},
+                    name: 'Details'
+                }]);
+            }
             const noteData = <SimpleCalendar.NoteData>je.getFlag(ModuleName, 'noteData');
             if(noteData){
                 this.addNoteStub(je, noteData.calendarId);
@@ -373,9 +384,16 @@ export default class NoteManager{
                         docCont.push(noteList[i].title);
                     }
                     if(options.details){
-                        let tmp = document.createElement("DIV");
-                        tmp.innerHTML = noteList[i].content;
-                        docCont.push((tmp.textContent || tmp.innerText || "").replace(/\r?\n|\r/g, ' '));
+                        const pages = noteList[i].pages;
+                        for(let p = 0; p < pages.length; p++){
+                            let content = pages[p].name || '';
+                            if(pages[p].type === 'text'){
+                                let tmp = document.createElement("DIV");
+                                tmp.innerHTML = pages[p].text.content;
+                                content += ` ${(tmp.textContent || tmp.innerText || "").replace(/\r?\n|\r/g, ' ')}`;
+                            }
+                            docCont.push(content);
+                        }
                     }
                     if(options.date){
                         docCont.push(noteList[i].fullDisplayDate);

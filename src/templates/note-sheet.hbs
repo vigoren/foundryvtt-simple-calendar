@@ -1,71 +1,162 @@
-<form class="{{#unless editMode}} fsc-read-only{{/unless}}" autocomplete="off">
+<form autocomplete="off">
     {{#if editMode}}
-        <h1><input value="{{name}}" placeholder="{{localize 'FSC.Notes.New'}}" type="text" id="scNoteTitle" /></h1>
-        <div class="fields">
-            <div class="form-group fsc-open fsc-date-selector">
-                <label for="{{edit.dateSelectorId}}">{{localize 'FSC.Notes.DateTime.Title'}}</label>
-                <div class="form-fields">
-                    {{sc-date-selector id=edit.dateSelectorId showDateSelector=true showTimeSelector=true placeholderText='' allowDateRangeSelection=true timeSelected=edit.timeSelected selectedStartDate=edit.noteData.startDate selectedEndDate=edit.noteData.endDate onDateSelect=edit.dateSelectorSelect }}
-                </div>
-                <p class="notes">{{localize 'FSC.Notes.DateTime.Help'}}</p>
+        <h1>
+            <div class="fsc-compact-form-group">
+                <input value="{{name}}" placeholder="{{localize 'FSC.Notes.New'}}" type="text" class="fsc-note-title" />
+                <label for="scNoteTitle">{{localize 'FSC.Search.Options.Fields.Title'}}</label>
             </div>
-            <div class="form-group fsc-open">
-                <label for="scNoteRepeats">{{localize 'FSC.Notes.Repeating'}}</label>
-                <div class="form-fields">
-                    <select id="scNoteRepeats">
+        </h1>
+        <div class="fields">
+            <div class="fsc-inline-form-group-wrapper">
+                <div class="fsc-compact-form-group">
+                    {{sc-date-selector id=edit.dateSelectorId showDateSelector=true showTimeSelector=true placeholderText='' allowDateRangeSelection=true editYear=true timeSelected=edit.timeSelected selectedStartDate=edit.noteData.startDate selectedEndDate=edit.noteData.endDate onDateSelect=edit.dateSelectorSelect }}
+                    <label for="{{edit.dateSelectorId}}">{{localize 'FSC.Notes.DateTime.Title'}}</label>
+                    <div class="fsc-form-group-help" data-tooltip="{{localize 'FSC.Notes.DateTime.Help'}}"><span class="fa-solid fa-circle-question"></span></div>
+                </div>
+                <div class="fsc-compact-form-group">
+                    <select id="scNoteRepeats_{{data._id}}">
                         {{selectOptions edit.repeatOptions selected=edit.repeats localize=true}}
                     </select>
+                    <label for="scNoteRepeats_{{data._id}}">{{localize 'FSC.Notes.Repeating'}}</label>
+                    <div class="fsc-form-group-help" data-tooltip="{{localize 'FSC.Notes.RepeatingHelp'}}"><span class="fa-solid fa-circle-question"></span></div>
                 </div>
-                <p class="notes">{{localize 'FSC.Notes.RepeatingHelp'}}</p>
             </div>
-            <div class="form-group fsc-open fsc-no-max-height">
-                <label>{{localize 'FSC.Configuration.Notes.NoteCategories'}}</label>
-                <div class="form-fields fsc-category-list">
-                    {{#each edit.allCategories}}
-                        <label class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{name}}" type="checkbox" name="scNoteCategories" {{checked selected}} /><span>{{name}}</span></label>
-                    {{/each}}
+            <div class="fsc-inline-form-group-wrapper">
+                <div class="fsc-compact-form-group">
+                    {{sc-multi-select id=edit.categoryMultiSelectId options=edit.allCategories }}
+                    <label>{{localize 'FSC.Configuration.Notes.NoteCategories'}}</label>
+                    <div class="fsc-form-group-help" data-tooltip="{{localize 'FSC.Configuration.Notes.NoteCategoriesHelp'}}"><span class="fa-solid fa-circle-question"></span></div>
                 </div>
-                <p class="notes">{{localize 'FSC.Configuration.Notes.NoteCategoriesHelp'}}</p>
-            </div>
-            <div class="form-group fsc-open fsc-no-max-height">
-                <label>{{localize 'FSC.Notes.UserPermissionTitle'}}</label>
-                <div class="form-fields fsc-category-list">
-                    {{#each edit.users}}
-                        <label class="fsc-note-category" style="background-color: {{color}}; color:{{textColor}}"><input value="{{id}}" type="checkbox" name="scUserPermissions" {{checked selected}} {{#if disabled}}disabled{{/if}} /><span>{{name}}</span></label>
-                    {{/each}}
+                <div class="fsc-compact-form-group">
+                    {{sc-multi-select id=edit.playerMultiSelectId options=edit.users }}
+                    <label>{{localize 'FSC.Notes.UserPermissionTitle'}}</label>
+                    <div class="fsc-form-group-help" data-tooltip="{{localize 'FSC.Notes.UserPermissionHelp'}}"><span class="fa-solid fa-circle-question"></span></div>
                 </div>
-                <p class="notes">{{localize 'FSC.Notes.UserPermissionHelp'}}</p>
             </div>
-            <div>
-                <a class="fsc-note-advance">{{#if edit.advancedOpen}}{{localize 'FSC.HideAdvanced'}}<span class="fa fa-chevron-up"></span>{{else}}{{localize 'FSC.ShowAdvanced'}}<span class="fa fa-chevron-down"></span>{{/if}} </a>
-                <div class="fsc-options {{#if edit.advancedOpen}} fsc-open{{else}} fsc-closed{{/if}}">
-                    <div class="form-group fsc-open">
-                        <label for="scNoteMacro">{{localize 'FSC.Notes.Macro'}}</label>
-                        <div class="form-fields">
-                            <select id="scNoteMacro">
-                                {{selectOptions edit.macroList selected=edit.selectedMacro localize=false}}
-                            </select>
-                        </div>
-                        <p class="notes">{{localize 'FSC.Notes.MacroHelp'}}</p>
-                    </div>
+            <div class="fsc-inline-form-group-wrapper">
+                <div class="fsc-compact-form-group fsc-half">
+                    <select id="scNoteMacro_{{data._id}}">
+                        {{selectOptions edit.macroList selected=edit.selectedMacro localize=false}}
+                    </select>
+                    <label for="scNoteMacro_{{data._id}}">{{localize 'FSC.Notes.Macro'}}</label>
+                    <div class="fsc-form-group-help" data-tooltip="{{localize 'FSC.Notes.MacroHelp'}}"><span class="fa-solid fa-circle-question"></span></div>
                 </div>
             </div>
         </div>
-        <h2>{{localize 'FSC.Details'}}</h2>
-        <div class="fsc-editor-container">
-            {{editor target="content" content=data.content editable=true button=false owner=owner}}
+        <div class="fsc-page-details">
+            <h2>{{localize 'DOCUMENT.JournalEntryPages'}}</h2>
+            <div class="fsc-inline-form-group-wrapper">
+                <div class="fsc-compact-form-group">
+                    <input value="{{edit.page.name}}" placeholder="{{localize 'JOURNALENTRYPAGE.PageTitle'}}" type="text" id="scPageName_{{data._id}}" />
+                    <label for="scPageName_{{data._id}}">{{localize 'JOURNALENTRYPAGE.PageTitle'}}</label>
+                </div>
+                <div class="fsc-compact-form-group fsc-quarter">
+                    <select id="scPageType_{{data._id}}">
+                        {{selectOptions edit.pageTypes selected=edit.page.type localize=true}}
+                    </select>
+                    <label for="scPageType_{{data._id}}">{{localize 'JOURNALENTRYPAGE.Type'}}</label>
+                </div>
+            </div>
+            <div class="fsc-editor-container">
+                {{#if (eq edit.page.type 'text')}}
+                    {{editor enrichedContent target="content" editable=true button=false owner=owner engine="prosemirror"}}
+                {{else if (eq edit.page.type 'image')}}
+                    <div class="fsc-image-preview">
+                        {{{enrichedContent}}}
+                    </div>
+                    <div class="fsc-inline-form-group-wrapper">
+                        <div class="fsc-compact-form-group fsc-threeQuarters">
+                            <input id="scPageImageSrc_{{data._id}}" type="text" name="src" placeholder="{{localize 'JOURNALENTRYPAGE.ImageSource'}}" value="{{edit.page.src}}" />
+                            <label for="scPageImageSrc_{{data._id}}">{{localize 'JOURNALENTRYPAGE.ImageSource'}}</label>
+                            <div class="fsc-form-group-actions">{{filePicker type='image' target="src"}}</div>
+                        </div>
+                    </div>
+                    <div class="fsc-inline-form-group-wrapper">
+                        <div class="fsc-compact-form-group">
+                            <input id="scPageImageCaption_{{data._id}}" type="text" name="image.caption" placeholder="{{localize 'JOURNALENTRYPAGE.ImageCaption'}}" value="{{edit.page.image.caption}}" />
+                            <label for="scPageImageCaption_{{data._id}}">{{localize 'JOURNALENTRYPAGE.ImageCaption'}}</label>
+                        </div>
+                    </div>
+                {{else if (eq edit.page.type 'pdf')}}
+                    {{{enrichedContent}}}
+                    <div class="fsc-inline-form-group-wrapper">
+                        <div class="fsc-compact-form-group fsc-threeQuarters">
+                            <input id="scPagePDFSrc_{{data._id}}" type="text" name="src" placeholder="{{localize 'JOURNALENTRYPAGE.PDFSource'}}" value="{{edit.page.src}}" />
+                            <label for="scPagePDFSrc_{{data._id}}">{{localize 'JOURNALENTRYPAGE.PDFSource'}}</label>
+                            <div class="fsc-form-group-actions">
+                                {{filePicker type='text' target="src"}}
+                            </div>
+                        </div>
+                    </div>
+                {{else if (eq edit.page.type 'video')}}
+                    {{{enrichedContent}}}
+                    <div class="fsc-inline-form-group-wrapper">
+                        <div class="fsc-compact-form-group fsc-threeQuarters">
+                            <input id="scPageVideoSrc_{{data._id}}" type="text" name="src" placeholder="{{localize 'JOURNALENTRYPAGE.VideoSource'}}" value="{{edit.page.src}}" />
+                            <label for="scPageVideoSrc_{{data._id}}">{{localize 'JOURNALENTRYPAGE.VideoSource'}}</label>
+                            <div class="fsc-form-group-help" data-tooltip="{{localize 'JOURNALENTRYPAGE.VideoSourceHint'}}"><span class="fa-solid fa-circle-question"></span></div>
+                            <div class="fsc-form-group-actions">
+                                {{filePicker type='video' target="src"}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fsc-inline-form-group-wrapper">
+                        <div class="fsc-compact-form-group fsc-check-group fsc-third">
+                            <input type="checkbox" class="fsc-toggle" id="scPageVideoControls_{{data._id}}" {{checked edit.page.video.controls}}>
+                            <label for="scPageVideoControls_{{data._id}}">{{localize 'JOURNALENTRYPAGE.VideoControls'}}</label>
+                        </div>
+                        <div class="fsc-compact-form-group fsc-check-group fsc-third">
+                            <input type="checkbox" class="fsc-toggle" id="scPageVideoAutoplay_{{data._id}}" {{checked edit.page.video.autoplay}}>
+                            <label for="scPageVideoAutoplay_{{data._id}}">{{localize 'TILE.VideoAutoplay'}}</label>
+                        </div>
+                        <div class="fsc-compact-form-group fsc-check-group">
+                            <input type="checkbox" class="fsc-toggle" id="scPageVideoLoop_{{data._id}}" {{checked edit.page.video.loop}}>
+                            <label for="scPageVideoLoop_{{data._id}}">{{localize 'TILE.VideoLoop'}}</label>
+                        </div>
+                    </div>
+                    <div class="fsc-inline-form-group-wrapper">
+                        <div class="fsc-compact-form-group fsc-half">
+                            <input id="scPageVideoVolume_{{data._id}}" type="range" name="video.volume" value="{{edit.page.video.volume}}" min="0" max="1" step="0.05" />
+                            <label for="scPageVideoVolume_{{data._id}}">{{localize 'TILE.VideoVolume'}}: <span>{{edit.page.video.volumeDisplay}}</span></label>
+                        </div>
+                        <div class="fsc-compact-form-group fsc-quarter">
+                            <input id="scPageVideoWidth_{{data._id}}" type="number" name="video.width" min="0" step="1" placeholder="{{localize 'Width'}}" value="{{edit.page.video.width}}" />
+                            <label for="scPageVideoWidth_{{data._id}}">{{localize 'Width'}}</label>
+                        </div>
+                        <div class="fsc-compact-form-group">
+                            <input id="scPageVideoHeight_{{data._id}}" type="number" name="video.height" min="0" step="1" placeholder="{{localize 'Height'}}" value="{{edit.page.video.height}}" />
+                            <label for="scPageVideoHeight_{{data._id}}">{{localize 'Height'}}</label>
+                        </div>
+                    </div>
+                    <div class="">{{localize 'JOURNALENTRYPAGE.VideoStartTime'}}</div>
+                    <div class="fsc-inline-form-group-wrapper">
+                        <div class="fsc-compact-form-group fsc-quarter">
+                            <input id="scPageVideoHours_{{data._id}}" type="number" placeholder="{{localize 'TIME.Hours'}}" value="{{edit.page.video.timestampParts.h}}" />
+                            <label for="scPageVideoHours_{{data._id}}">{{localize 'TIME.Hours'}}</label>
+                        </div>
+                        <div class="fsc-compact-form-group fsc-quarter">
+                            <input id="scPageVideoMinutes_{{data._id}}" type="number" placeholder="{{localize 'TIME.Minutes'}}" value="{{edit.page.video.timestampParts.m}}" />
+                            <label for="scPageVideoMinutes_{{data._id}}">{{localize 'TIME.Minutes'}}</label>
+                        </div>
+                        <div class="fsc-compact-form-group fsc-quarter">
+                            <input id="scPageVideoSeconds_{{data._id}}" type="number" placeholder="{{localize 'TIME.Seconds'}}" value="{{edit.page.video.timestampParts.s}}" />
+                            <label for="scPageVideoSeconds_{{data._id}}">{{localize 'TIME.Seconds'}}</label>
+                        </div>
+                    </div>
+                {{/if}}
+            </div>
         </div>
         <div class="fsc-edit-controls">
-            <button id="scSubmit" class="fsc-control fsc-save" type="submit" name="submit" title="{{localize 'FSC.Notes.Save'}}">
+            <button class="fsc-control fsc-save" name="submit" title="{{localize 'FSC.Notes.Save'}}">
                 <i class="far fa-save"></i> {{localize 'FSC.Notes.Save'}}
             </button>
-            <button class="fsc-control fsc-delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</button>
+            <button class="fsc-control fsc-delete fsc-note-delete"><i class="fa fa-trash"></i> {{localize 'FSC.Delete'}}</button>
         </div>
     {{else}}
         <div class="fsc-note-header">
             <h1>
                 <span class="fsc-title-text">{{name}}</span>
-                <span class="fsc-reminder fsc-note-category {{#if display.reminder}} fsc-selected{{/if}}"><label><input id="scNoteReminder" type="checkbox" /><span class="fa {{#if display.reminder}}fa-bell{{else}}fa-bell-slash{{/if}}"></span></label></span>
+                <span class="fsc-reminder fsc-note-category {{#if display.reminder}} fsc-selected{{/if}}"><label><input class="fsc-toggle" type="checkbox" /><span class="fa {{#if display.reminder}}fa-bell{{else}}fa-bell-slash{{/if}}"></span></label></span>
             </h1>
             <div class="fsc-date">
                 <div class="fsc-note-category" title="{{localize 'FSC.Notes.DateTime.Title'}}">
@@ -92,13 +183,41 @@
             </div>
         </div>
         <div class="fsc-content">
-            {{{display.enrichedContent}}}
+            {{{enrichedContent}}}
         </div>
         {{#if editable}}
             <div class="fsc-edit-controls">
-                <button class="fsc-control fsc-primary fa fa-edit" id="scNoteEdit"> {{localize 'FSC.Edit'}}</button>
-                <button class="fsc-control fsc-delete fa fa-trash" id="scNoteDelete"> {{localize 'FSC.Delete'}}</button>
+                <button class="fsc-control fsc-primary fsc-note-edit"><i class="fa fa-edit"></i> {{localize 'FSC.Edit'}}</button>
+                <button class="fsc-control fsc-delete fsc-note-delete"><i class="fa fa-trash"></i> {{localize 'FSC.Delete'}}</button>
             </div>
         {{/if}}
     {{/if}}
 </form>
+{{#if (or editMode (gt pages.length 1))}}
+<div class="fsc-side-drawer fsc-page-list {{#unless editMode}} fsc-read-only{{/unless}} {{#if uiElementStates.fsc-page-list}} fsc-open{{else}} fsc-closed{{/if}}">
+    <div class="fsc-page-list-controls">
+        <a class="fsc-pages" title="{{#if uiElementStates.fsc-page-list}}{{localize 'JOURNAL.ViewCollapse'}}{{else}}{{localize 'JOURNAL.ViewExpand'}}{{/if}}"><i class="fa-solid {{#if uiElementStates.fsc-page-list}} fa-caret-right{{else}} fa-caret-left{{/if}}"></i></a>
+        <div class="fsc-search-box">
+            <input placeholder="{{localize 'FSC.Notes.SearchPages'}}" type="text" value="{{uiElementStates.search.term}}" title="{{localize 'FSC.Notes.SearchPages'}}" />
+            <button class="fsc-control fsc-hide"><span class="fa fa-times"></span></button>
+        </div>
+        {{#if editMode}}
+            <button class="fsc-add-new-page fsc-control fsc-save" title="{{localize 'JOURNAL.AddPage'}}"><span class="fa fa-file-circle-plus"></span></button>
+        {{/if}}
+    </div>
+    <ul class="fsc-list-of-pages">
+        {{#each pages}}
+            <li data-index="{{_id}}" class="{{#if (eq @index ../uiElementStates.selectedPageIndex)}} fsc-current{{/if}}{{#unless show}} fsc-hide{{/unless}}">
+                <span>{{name}}</span>
+            {{#if ../editMode}}
+                <div class="fsc-actions">
+                    {{#unless (eq ../pages.length 1)}}
+                    <button class="fsc-control fsc-delete" title="{{localize 'FSC.Delete'}}"><span class="fa fa-trash"></span></button>
+                    {{/unless}}
+                </div>
+            {{/if}}
+            </li>
+        {{/each}}
+    </ul>
+</div>
+{{/if}}

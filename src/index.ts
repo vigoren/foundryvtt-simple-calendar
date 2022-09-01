@@ -63,7 +63,7 @@ Hooks.on('ready',async () => {
         SC.initialize();
         //If we are to open the main app on foundry load, open it
         if(SC.clientSettings.openOnLoad){
-            MainApplication.showApp();
+            MainApplication.render();
         }
     }
 });
@@ -78,10 +78,11 @@ Hooks.on("deleteCombat", SC.combatDelete.bind(SC));
 Hooks.on("pauseGame", SC.gamePaused.bind(SC));
 //Hooks.on('chatMessage', SC.onChatMessage.bind(SC));
 //Hooks.on('renderChatMessage', SC.onRenderChatMessage.bind(SC));
-Hooks.on('renderNoteSheet', NoteSheet.setHeight);
+Hooks.on('renderNoteSheet', NoteSheet.SetHeight);
 Hooks.on('createJournalEntry', NManager.journalEntryUpdate.bind(NManager, 0));
 Hooks.on('updateJournalEntry', NManager.journalEntryUpdate.bind(NManager, 1));
 Hooks.on('deleteJournalEntry', NManager.journalEntryUpdate.bind(NManager, 2));
+Hooks.on('renderSceneConfig', SC.renderSceneConfig.bind(SC));
 
 
 Logger.debugMode = false;

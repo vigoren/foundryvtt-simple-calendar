@@ -99,12 +99,13 @@ export default class TimeKeeper{
             if(activeCalendar && activeCalendar.time.unifyGameAndClockPause){
                 (<Game>game).togglePause(true, true);
             }
+            if(GameSettings.IsGm() && SC.primary){
+                console.log('Saving Time on Stop');
+                this.saveInterval(true);
+            }
             this.intervalNumber = undefined;
             this.saveIntervalNumber = undefined;
             this.updateStatus();
-            if(GameSettings.IsGm() && SC.primary){
-                this.saveInterval(true);
-            }
         }
     }
 

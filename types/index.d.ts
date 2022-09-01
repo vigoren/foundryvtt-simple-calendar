@@ -10,7 +10,7 @@ import {
     GameWorldTimeIntegrations,
     Icons,
     LeapYearRules,
-    MoonYearResetOptions,
+    MoonYearResetOptions, NoteReminderNotificationType,
     NoteRepeat,
     PredefinedCalendars,
     PresetTimeOfDay,
@@ -35,10 +35,6 @@ declare global{
             export {LeapYearRules};
             export {PredefinedCalendars as Calendars};
             export {Icons}
-            /**
-             * @deprecated This has been replaced with the Icons property. This will be removed when FoundryVTT v10 Stable is released.
-             */
-            export import MoonIcons = Icons;
             export {MoonYearResetOptions};
             export {YearNamingRules};
             export {PresetTimeOfDay};
@@ -1277,86 +1273,6 @@ declare global{
                 /** This contains the difference in seconds from the previous date and time to this new date and time. */
                 diff: number;
                 moons: MoonData[];
-                /**
-                 * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-                 */
-                year: SimpleCalendar.Hooks.Year;
-                /**
-                 * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-                 */
-                month: SimpleCalendar.Hooks.Month;
-                /**
-                 * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-                 */
-                day: SimpleCalendar.Hooks.Day;
-                /**
-                 * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-                 */
-                time: SimpleCalendar.Hooks.Time;
-                /**
-                 * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-                 */
-                season: SimpleCalendar.Hooks.Season;
-            }
-
-            /**
-             * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-             */
-            interface Year{
-                /** This is the current years numerical representation. */
-                number: number;
-                /** This is the text that appears before the years numerical representation. */
-                prefix: string;
-                /** This is the test that appears after the years numerical representation. */
-                postfix: string;
-                /** If this year is a leap year. */
-                isLeapYear: boolean;
-            }
-
-            /**
-             * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-             */
-            interface Month{
-                /** The months numerical representation. */
-                number: number;
-                /** The name of the month. */
-                name: string;
-                /** How many days are in this month. */
-                numberOfDays: number;
-                /** How many days are in this month during a leap year. */
-                numberOfLeapYearDays: number;
-                /** If this month is considered an intercalary month or not. */
-                intercalary: boolean;
-            }
-
-            /**
-             * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-             */
-            interface Day{
-                /** The days numerical representation. */
-                number: number;
-            }
-
-            /**
-             * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-             */
-            interface Time{
-                /** The number of hours into the day it currently is. This result is 0 padded. */
-                hour: string;
-                /** The number of minutes into the day it currently is. This result is 0 padded. */
-                minute: string;
-                /** The number of seconds into the day it currently is. This result is 0 padded. */
-                second: string;
-            }
-
-            /**
-             * @deprecated Please use the {@link DateChangeResponse.date} property. This will be removed when Foundry v10 stable is released.
-             */
-            interface Season{
-                /** The name of the season. */
-                name: string;
-                /** The hex color representation of the season. */
-                color: string;
             }
 
             /**
@@ -1707,6 +1623,20 @@ declare global{
                 /** If to use clones of the calendars to pull data for the time selector, used in the configuration dialog */
                 useCalendarClones?: boolean
             }
+
+            export interface MultiSelectOptions {
+                /** The ID of the HTML element being added */
+                id: string;
+                /** The options of the select that can be chosen by a user */
+                options: MultiSelectOption[];
+            }
+
+            export interface MultiSelectOption{
+                value: string;
+                text: string;
+                selected: boolean;
+                disabled?: boolean
+            }
         }
 
         /**
@@ -1814,6 +1744,35 @@ declare global{
             left?: number;
         }
 
+        interface Theme {
+            key: string;
+            name: string;
+            system: boolean;
+        }
+
+        /**
+         * Interface for Journal page data
+         * @internal
+         */
+        interface JournalPageData{
+            show: boolean;
+            _id: string;
+            name: string;
+            type: string;
+            text?: {content: string};
+            src?: string;
+            image?: {caption:string};
+            video?: {
+                autoplay: boolean;
+                controls: boolean;
+                height: null | number;
+                loop: boolean;
+                timestamp: number;
+                volume: number;
+                width: null | number;
+            };
+        }
+
         /**
          * Interface for all information about a calendar
          */
@@ -1840,36 +1799,36 @@ declare global{
             year?: YearData;
 
             /**
-             * @deprecated Please use {@link CalendarData.general} instead. This will be removed when Foundry v10 Stable is released.
+             * @deprecated Please use {@link CalendarData.general} instead. This is to support importing loading of configurations created before version 2 of Simple Calendar.
              */
             generalSettings?: GeneralSettingsData;
             /**
-             * @deprecated Please use {@link CalendarData.leapYear} instead. This will be removed when Foundry v10 Stable is released.
+             * @deprecated Please use {@link CalendarData.leapYear} instead. This is to support importing loading of configurations created before version 2 of Simple Calendar.
              */
             leapYearSettings?: LeapYearData;
             /**
-             * @deprecated Please use {@link CalendarData.months} instead. This will be removed when Foundry v10 Stable is released.
+             * @deprecated Please use {@link CalendarData.months} instead. This is to support importing loading of configurations created before version 2 of Simple Calendar.
              */
             monthSettings?: MonthData[];
             /**
              *
-             * @deprecated Please use {@link CalendarData.moons} instead. This will be removed when Foundry v10 Stable is released.
+             * @deprecated Please use {@link CalendarData.moons} instead. This is to support importing loading of configurations created before version 2 of Simple Calendar.
              */
             moonSettings?: MoonData[];
             /**
-             * @deprecated Please use {@link CalendarData.seasons} instead. This will be removed when Foundry v10 Stable is released.
+             * @deprecated Please use {@link CalendarData.seasons} instead. This is to support importing loading of configurations created before version 2 of Simple Calendar.
              */
             seasonSettings?: SeasonData[];
             /**
-             * @deprecated Please use {@link CalendarData.time} instead. This will be removed when Foundry v10 Stable is released.
+             * @deprecated Please use {@link CalendarData.time} instead. This is to support importing loading of configurations created before version 2 of Simple Calendar.
              */
             timeSettings?: TimeData;
             /**
-             * @deprecated Please use {@link CalendarData.weekdays} instead. This will be removed when Foundry v10 Stable is released.
+             * @deprecated Please use {@link CalendarData.weekdays} instead. This is to support importing loading of configurations created before version 2 of Simple Calendar.
              */
             weekdaySettings?: WeekdayData[];
             /**
-             * @deprecated Please use {@link CalendarData.year} instead. This will be removed when Foundry v10 Stable is released.
+             * @deprecated Please use {@link CalendarData.year} instead. This is to support importing loading of configurations created before version 2 of Simple Calendar.
              */
             yearSettings?: YearData;
         }
@@ -1880,7 +1839,7 @@ declare global{
          */
         interface ClientSettingsData extends IDataItemBase {
             /** The current visual theme of the Simple Calendar module. */
-            theme: Themes;
+            theme: string;
             /** If the Simple Calendar module should open its window when the foundry is loaded. */
             openOnLoad: boolean;
             /** If the Simple Calendar module should open in compact mode */
@@ -1889,6 +1848,8 @@ declare global{
             rememberPosition: boolean;
             /** The current position of the Simple Calendar module. */
             appPosition: AppPosition;
+            /** How the user wants note reminder notifications to be displayed. */
+            noteReminderNotification: NoteReminderNotificationType;
         }
 
         /**

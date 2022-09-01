@@ -20,7 +20,7 @@ function getEntries() {
 
     //Get all the additional theme files as entry points
     fs.readdirSync('./src/styles/themes/').forEach((file) => {
-         if(file.endsWith('.scss')){
+         if(file.endsWith('.scss') && !file.startsWith('_')){
              list[`styles/themes/${file.replace('.scss', '')}`] = `./src/styles/themes/${file}`;
          }
     });
@@ -85,7 +85,7 @@ module.exports = {
                     {
                         loader: 'css-loader',
                         options: {
-                            url: { filter: (url, resourcePath) => {return url.indexOf('/systems') !== 0;}}
+                            url: { filter: (url, resourcePath) => {return url.indexOf('/systems') !== 0 && !url.startsWith('/ui');}}
                         }
                     },
                     // Compiles Sass to CSS

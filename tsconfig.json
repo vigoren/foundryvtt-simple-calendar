@@ -126,7 +126,9 @@
           { "title": "Using Simple Calendar", "childrenSourceDir": "./docs/using-sc", "source":"./docs/using-sc/index.md", "children":  [
             { "title": "Switching Between Calendars", "source": "switching-calendars.md"},
             { "title": "Changing the Date and Time", "source": "changing-date-time.md"},
-            { "title": "Notes", "source": "notes.md"}
+            { "title": "Notes", "childrenSourceDir": "/notes", "source":"/notes/index.md", "children":  [
+              {"title": "Add / Edit / Remove Notes", "source": "adding-editing-removing.md"}
+            ]}
           ]},
           {"title": "Developing With Simple Calendar", "childrenSourceDir":  "./docs/developing-with-sc", "source": "./docs/developing-with-sc/index.md"}
         ]

@@ -1,4 +1,7 @@
 //@ts-ignore
 global.JournalEntry = {
-    create: async () => {return true;}
+    //getEmbeddedCollection
+    create: async () => {return {
+        createEmbeddedDocuments: async () => {}
+    };}
 };

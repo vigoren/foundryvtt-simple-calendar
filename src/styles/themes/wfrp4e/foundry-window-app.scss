@@ -1,0 +1,62 @@
+@import "../../variables";
+
+//Calendar List Styling
+.fsc-calendar-list {
+  .fsc-calendar-display {
+    color: #000000;
+    border: 3px double #00000078;
+    border-radius: 0;
+
+    &.fsc-active {
+      border-color: #00165878;
+      background-color: rgba(46, 79, 102, 0.9);
+      color: #ffffff;
+
+      &.fsc-visible {
+        background-color: rgba(46, 79, 102, 0.9);
+
+        &:hover {
+          background-color: #2E4F66;
+        }
+      }
+    }
+
+    &.fsc-visible {
+      color: #ffffff;
+      background-color: rgba(95, 49, 121, 0.9);
+
+      &:hover {
+        color: #ffffff;
+        background-color: #5f3179;
+      }
+    }
+
+    &:hover {
+      color: #ffffff;
+      background-color: #5f3179BE;
+    }
+
+    .fsc-calendar-actions {
+      border-color: #cad1f3;
+    }
+
+    .fsc-animated-clock {
+      svg {
+        path {
+          fill: green;
+          stroke: green;
+        }
+      }
+    }
+  }
+}
+
+//Note List Styling
+.fsc-side-drawer {
+  color: #000000;
+  background: #fff url($wfrpParchmentTexture) repeat;
+  border-image: url($wfrpChatMessageBorderPrivate) 21 / 10px / 8px repeat;
+  border-radius: 0;
+
+
+}

@@ -2,20 +2,34 @@
 .simple-calendar{
   &.window-app.fsc-compact-view {
     header {
-      flex: 0 0 10px;
+      flex: 0 0 10px !important;
+      justify-content: flex-end;
+      align-content: center;
 
-      * {
+      .close {
+        i{
+          font-size: 10px;
+        }
+        font-size: 0;
+        line-height: 0;
+      }
+
+      > *:not(.close) {
         display: none;
       }
+
     }
     .fsc-main-wrapper{
       padding: $spacer-half * 0.5;
-      button{
-        font-size: 0.625rem;
-        line-height: 0.625rem;
+      .fsc-control{
+        font-size: 0.625rem !important;
+        line-height: 0.625rem !important;
         margin-bottom: 0.25rem;
         svg{
           height: 0.875rem;
+        }
+        span{
+          font-size: 0.625rem !important;
         }
       }
       .fsc-season{

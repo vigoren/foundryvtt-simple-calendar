@@ -218,7 +218,7 @@ export default class CalendarFull{
             }
             const yearInput = <HTMLElement>calendarElement.querySelector('.fsc-calendar-header .fsc-current-date .fsc-month-year input[type=number]');
             if(yearInput){
-                yearInput.addEventListener('click', (e)=> e.preventDefault());
+                yearInput.addEventListener('click', (e)=> e.stopPropagation());
                 yearInput.addEventListener('change', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.year, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             }
             calendarElement.querySelectorAll('.fsc-days .fsc-day').forEach(el => {

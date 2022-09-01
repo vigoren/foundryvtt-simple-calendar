@@ -1,5 +1,5 @@
-import {CalManager} from "../index";
-import {DateRangeMatch, ModuleName, NoteRepeat, SettingNames} from "../../constants";
+import {CalManager, NManager, SC} from "../index";
+import {DateRangeMatch, ModuleName, NoteReminderNotificationType, NoteRepeat} from "../../constants";
 import {GetDisplayDate, IsDayBetweenDates} from "../utilities/date-time";
 import {GetContrastColor} from "../utilities/visual";
 import {NoteTrigger} from "./note-trigger";
@@ -7,7 +7,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {Logger} from "../logging";
 
 /**
- * Class that containes information about notes in the calendar and references to the journal entries that make up the notes
+ * Class that contains information about notes in the calendar and references to the journal entries that make up the notes
  */
 export default class NoteStub{
     /**
@@ -32,11 +32,15 @@ export default class NoteStub{
         if(noteData && note.userReminderRegistered){
             const calendar = CalManager.getCalendar(noteData.calendarId);
             if(calendar && (!initialLoad || (initialLoad && calendar.generalSettings.postNoteRemindersOnFoundryLoad))){
-                ChatMessage.create({
-                    speaker: {alias: "Simple Calendar Reminder"},
-                    whisper: [GameSettings.UserID()],
-                    content: `<div class='simple-calendar ${GameSettings.GetStringSettings(SettingNames.Theme)}'><h2>${note.title}</h2><div style="display: flex;"><div class="note-category"><span class="fa fa-calendar"></span> ${note.fullDisplayDate}</div></div>${note.content}</div>`
-                }).catch(Logger.error);
+                if(SC.clientSettings.noteReminderNotification === NoteReminderNotificationType.whisper){
+                    ChatMessage.create({
+                        speaker: {alias: "Simple Calendar Reminder"},
+                        whisper: [GameSettings.UserID()],
+                        content: `<h2>${note.title}</h2><div style="display: flex;margin-bottom: 0.5rem;"><div class="note-category"><span class="fa fa-calendar"></span> ${note.fullDisplayDate}</div></div>${note.link}`
+                    }).catch(Logger.error);
+                } else if(SC.clientSettings.noteReminderNotification === NoteReminderNotificationType.render){
+                    note.render();
+                }
                 return true;
             }
         }
@@ -81,6 +85,18 @@ export default class NoteStub{
     }
 
     /**
+     * Returns the ownership object for the journal entry
+     */
+    public get ownership(): Record<string, number>{
+        const journalEntry = (<Game>game).journal?.get(this.entryId);
+        if(journalEntry){
+            //@ts-ignore
+            return journalEntry.ownership;
+        }
+        return {};
+    }
+
+    /**
      * If this note takes place all day
      */
     public get allDay(): boolean{
@@ -92,11 +108,14 @@ export default class NoteStub{
     }
 
     /**
-     * The content of this note
+     * The link to this journal entry
      */
-    public get content(): string {
+    public get link(): string{
         const journalEntry = (<Game>game).journal?.get(this.entryId);
-        return journalEntry?.data.content || '';
+        if(journalEntry){
+            return journalEntry.link;
+        }
+        return '';
     }
 
     /**
@@ -105,6 +124,18 @@ export default class NoteStub{
     public get title(): string{
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         return journalEntry?.name || '';
+    }
+
+    /**
+     * The list of pages for this journal entry
+     */
+    public get pages() {
+        const journalEntry = (<Game>game).journal?.get(this.entryId);
+        if(journalEntry){
+            //@ts-ignore
+            return journalEntry.pages.contents;
+        }
+        return [];
     }
 
     /**
@@ -158,14 +189,15 @@ export default class NoteStub{
                     colorText: ''
                 };
             } else {
-                for(let k in journalEntry.data.permission){
-                    if(journalEntry.data.permission[k] === 3){
+                const own = this.ownership;
+                for(let k in own){
+                    if(own[k] === 3){
                         const author = (<Game>game).users?.get(k);
                         if(author){
                             return {
                                 name: author.name || '',
-                                color: author.data.color || '',
-                                colorText: GetContrastColor(author.data.color || '')
+                                color: author.color || '',
+                                colorText: GetContrastColor(author.color || '')
                             };
                         }
                     }
@@ -184,8 +216,9 @@ export default class NoteStub{
         if(!res){
             const journalEntry = (<Game>game).journal?.get(this.entryId);
             if(journalEntry){
-                for(let k in journalEntry.data.permission){
-                    if(journalEntry.data.permission[k] === 3 && k === GameSettings.UserID()){
+                const own = this.ownership;
+                for(let k in own){
+                    if(own[k] === 3 && k === GameSettings.UserID()){
                         res = true;
                         break;
                     }
@@ -229,8 +262,9 @@ export default class NoteStub{
     public get playerVisible(){
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         if(journalEntry){
-            for(let k in journalEntry.data.permission){
-                const permissionLevel = journalEntry.data.permission[k] || 0;
+            const own = this.ownership;
+            for(let k in own){
+                const permissionLevel = own[k] || 0;
                 if(permissionLevel >= 2){
                     const user = (<Game>game).users?.get(k);
                     if(user && !user.isGM){
@@ -280,6 +314,12 @@ export default class NoteStub{
     }
 
     /**
+     * Rendered this note's sheet
+     */
+    public render(){
+        NManager.showNote(this.entryId);
+    }
+    /**
      * If the current user can view this note
      */
     public canUserView(): boolean {
@@ -288,7 +328,7 @@ export default class NoteStub{
         if(journalEntry && user){
             // GM's always are considered to have ownership of a journal entry,
             // so we need to test if the permission is actually set to 0 before using the built-in test
-            return !!(journalEntry.data.permission[user.id] !== 0 && journalEntry.testUserPermission(user, 2));
+            return !!(this.ownership[user.id] !== 0 && journalEntry.testUserPermission(user, 2));
         }
         return false;
     }
@@ -303,7 +343,7 @@ export default class NoteStub{
         if(noteData){
             const calendar = CalManager.getCalendar(noteData.calendarId);
             if(calendar){
-                let display: string = '';
+                let display: string;
                 let currentVisibleYear = calendar.year.selectedYear || calendar.year.visibleYear;
                 let visibleMonthDay = calendar.getMonthAndDayIndex('selected');
                 if(visibleMonthDay.month === undefined){
@@ -436,7 +476,7 @@ export default class NoteStub{
         if(noteData && calendar && this.canUserView()){
             let inBetween = DateRangeMatch.None;
             if(noteData.repeats === NoteRepeat.Weekly){
-                let noteStartDayOfWeek = 0, noteEndDayOfWeek = 0, targetDayOfWeek = 1;
+                let noteStartDayOfWeek: number, noteEndDayOfWeek: number, targetDayOfWeek: number;
                 noteStartDayOfWeek = calendar.dayOfTheWeek(noteData.startDate.year, noteData.startDate.month, noteData.startDate.day);
                 targetDayOfWeek = calendar.dayOfTheWeek(year, monthIndex, dayIndex);
                 noteEndDayOfWeek = calendar.dayOfTheWeek(noteData.endDate.year, noteData.endDate.month, noteData.endDate.day);

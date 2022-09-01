@@ -1,0 +1,204 @@
+@import "../../variables";
+
+// All control button colors
+.fsc-control {
+  &.fsc-grey{
+    border-color: $gray-600;
+    background-color: $gray-600;
+    color: $white;
+
+    &:hover, &.active, &:focus {
+      text-shadow: unset;
+      color: $white;
+      background-color: $gray-500;
+      border-color: $gray-600;
+    }
+
+    &:disabled {
+      color: $gray-300;
+      cursor: not-allowed;
+    }
+  }
+
+  &.fsc-primary {
+    background-color: #384582;
+    border-color: #384582;
+    color: $white;
+
+    &:hover, &.active, &:focus {
+      background-color: #cad1f3;
+      border-color: #384582;
+      color: #000;
+      text-shadow: 0 0 black;
+    }
+    &:disabled{
+      background-color: $primary-T900;
+      border-color: $primary-T900;
+      color: $white;
+      cursor: not-allowed;
+    }
+  }
+
+  &.fsc-secondary {
+    background-color: #de810d;
+    border-color: #de810d;
+    color: $fontColor;
+
+    &:hover, &.active, &:focus {
+      background-color: $secondary-300;
+      border-color: #de810d;
+      color: $fontColor;
+    }
+    &:disabled{
+      background-color: $secondary-T900;
+      border-color: $secondary-T900;
+      color: $white;
+      cursor: not-allowed;
+    }
+  }
+
+  &.fsc-tertiary {
+    background-color: #603382;
+    border-color: #603382;
+    color: $white;
+
+    &:hover, &.active, &:focus {
+      background-color: #cd9cf3;
+      border-color: #603382;
+      color: $white;
+    }
+    &:disabled{
+      background-color: $tertiary-T900;
+      border-color: $tertiary-T900;
+      color: $white;
+      cursor: not-allowed;
+    }
+  }
+
+  &.fsc-delete {
+    background-color: #922121;
+    border-color: #922121;
+    color: $white;
+
+    &:hover, &.active, &:focus {
+      background-color: #fbaeae;
+      border-color: #922121;
+      color: $white;
+    }
+    &:disabled{
+      background-color: $danger-T900;
+      border-color: $danger-T900;
+      color: $white;
+      cursor: not-allowed;
+    }
+  }
+
+  &.fsc-save {
+    background-color: #2f581d;
+    border-color: #2f581d;
+    color: $white;
+
+    &:hover, &.active, &:focus {
+      background-color: #9bce85;
+      border-color: #2f581d;
+      color: $white;
+    }
+    &:disabled{
+      background-color: $success-T900;
+      border-color: $success-T900;
+      color: $white;
+      cursor: not-allowed;
+    }
+  }
+}
+.fsc-control-group {
+  .fsc-control {
+    border-right-color: $gray-500;
+
+    &:first-child {
+      border-left-color: $gray-600;
+    }
+
+    &:last-child {
+      border-right-color: $gray-600;
+    }
+
+    &.fsc-primary {
+      border-right-color: #cad1f3;
+
+      &:first-child {
+        border-left-color: #384582;
+      }
+
+      &:last-child {
+        border-right-color: #384582;
+      }
+    }
+
+    &.fsc-secondary {
+      border-right-color: $secondary-200;
+
+      &:first-child {
+        border-left-color: #de810d;
+      }
+
+      &:last-child {
+        border-right-color: #de810d;
+      }
+    }
+
+    &.fsc-tertiary {
+      border-right-color: #cd9cf3;
+
+      &:first-child {
+        border-left-color: #603382;
+      }
+
+      &:last-child {
+        border-right-color: #603382;
+      }
+    }
+
+    &.fsc-delete {
+      border-right-color: #fbaeae;
+
+      &:first-child {
+        border-left-color: #922121;
+      }
+
+      &:last-child {
+        border-right-color: #922121;
+      }
+    }
+
+    &.fsc-save {
+      border-right-color: #9bce85;
+
+      &:first-child {
+        border-left-color: #2f581d;
+      }
+
+      &:last-child {
+        border-right-color: #2f581d;
+      }
+    }
+  }
+}
+.fsc-controls.fsc-unit-controls {
+  .fsc-control-group {
+    .fsc-unit-list {
+      background-color: #384582;
+      border-color: #cad1f3;
+      color: $white;
+
+      li {
+        border-color: #cad1f3;
+
+        &.fsc-selected, &:hover {
+          background-color: #cad1f3;
+          color: #000000;
+        }
+      }
+    }
+  }
+}
