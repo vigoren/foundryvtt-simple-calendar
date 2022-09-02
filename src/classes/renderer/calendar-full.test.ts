@@ -71,7 +71,7 @@ describe('Renderer Calendar Full Class Tests', () => {
         jest.spyOn(cal, 'querySelector').mockReturnValue(elm);
         //@ts-ignore
         jest.spyOn(cal, 'querySelectorAll').mockReturnValue([elm]);
-        jest.spyOn(CalendarFull, 'EventListener').mockImplementation(() => {});
+        jest.spyOn(CalendarFull, 'EventListener').mockImplementation(() => {return false;});
 
         CalendarFull.ActivateListeners('');
         expect(document.getElementById).toHaveBeenCalledTimes(1);
@@ -124,6 +124,7 @@ describe('Renderer Calendar Full Class Tests', () => {
         const day = document.createElement('div');
         const fEvent = {
             stopPropagation: () => {},
+            preventDefault: () => {},
             target: {closest: () => {return day;}}
         };
         elmqs.mockReturnValueOnce(optionsElm).mockReturnValueOnce(monthYearElm);

@@ -50,6 +50,7 @@
             {{/if}}
             {{#unless uiElementStates.compactView}}
             <button class="fsc-control fsc-grey fsc-search" title="{{localize 'FSC.Search.Title'}}"><span class="fa fa-search "></span></button>
+            <!--<button class="fsc-control fsc-grey fsc-details-button" title="{{localize 'FSC.DateInformation'}}"><span class="fa fa-circle-info "></span></button>-->
             <span class="fsc-spacer"></span>
             {{#if changeDateTime}}
             {{#if showSetCurrentDate}}
@@ -210,6 +211,20 @@
                 {{else}}
                 <em>{{localize 'FSC.SearchEmpty'}}</em>
                 {{/if}}
+            </div>
+        </div>
+        <div class="fsc-side-drawer fsc-day-details {{#if uiElementStates.fsc-day-details}} fsc-open{{else}} fsc-closed{{/if}}">
+            <h2>{{calendar.selectedDay.dateDisplay}}</h2>
+
+            <div class="fsc-dawn-dusk">
+                <div>
+                    <div class="fsc-dd-title">{{localize 'FSC.Dawn'}}</div>
+                    <div class="fsc-dd-time">{{mainViewDisplay.dayDetails.dawn}}</div>
+                </div>
+                <div>
+                    <div class="fsc-dd-title">{{localize 'FSC.Dusk'}}</div>
+                    <div class="fsc-dd-time">{{mainViewDisplay.dayDetails.dusk}}</div>
+                </div>
             </div>
         </div>
     </div>

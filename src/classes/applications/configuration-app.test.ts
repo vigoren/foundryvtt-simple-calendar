@@ -5,7 +5,8 @@ import "../../../__mocks__/index";
 import Calendar from "../calendar";
 import ConfigurationApp from "./configuration-app";
 import {
-    CalManager, NManager,
+    CalManager,
+    NManager,
     SC,
     updateCalManager,
     updateConfigurationApplication,
@@ -20,12 +21,11 @@ import NoteManager from "../notes/note-manager";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
-import {ConfigurationDateSelectors, LeapYearRules, PredefinedCalendars} from "../../constants";
+import {ConfigurationDateSelectors, GameSystems, LeapYearRules, PredefinedCalendars} from "../../constants";
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import * as VisualUtilities from "../utilities/visual";
 import * as InputUtilities from "../utilities/inputs";
 import * as ObjectUtilities from "../utilities/object";
-import Mock = jest.Mock;
 import Month from "../calendar/month";
 import {saveAs} from "file-saver";
 
@@ -138,6 +138,7 @@ describe('Configuration App Class Tests', () => {
     });
 
     test('Get Data', () => {
+        tCal.gameSystem = GameSystems.PF2E;
         expect(ca.getData()).toBeDefined();
     });
 
@@ -421,6 +422,15 @@ describe('Configuration App Class Tests', () => {
 
         //@ts-ignore
         ca.writeInputValuesToObjects();
+
+        jest.spyOn(InputUtilities, 'getNumericInputValue').mockReturnValue(-1);
+
+        //@ts-ignore
+        ca.writeInputValuesToObjects();
+        expect(tCal.time.hoursInDay).toBe(1);
+        expect(tCal.time.minutesInHour).toBe(1);
+        expect(tCal.time.secondsInMinute).toBe(1);
+        expect(tCal.time.updateFrequency).toBe(1);
     });
 
     test('Update UI From Object', () => {

@@ -25,6 +25,19 @@
     &.fsc-date-selector{
       overflow: visible;
     }
+    &.fsc-disabled{
+      filter: grayscale(1);
+      cursor: not-allowed;
+      *{
+        cursor: not-allowed;
+      }
+      label{
+        .fa-solid{
+          visibility: visible;
+          cursor: help;
+        }
+      }
+    }
     label{
       text-align: left !important;
       background: unset !important;
@@ -32,6 +45,9 @@
       font-family: 'Roboto', sans-serif !important;
       font-size: 1rem !important;
       font-weight: 600 !important;
+      .fa-solid{
+        visibility: hidden;
+      }
     }
     input, select{
       font-family: 'Roboto', sans-serif !important;

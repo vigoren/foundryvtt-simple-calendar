@@ -339,9 +339,11 @@ export enum CalendarViews {
  * @internal
  */
 export enum CalendarClickEvents{
+    calendar = 'calendar',
     previous = 'previous',
     next = 'next',
     day = 'day',
+    dayContext = 'datContext',
     year = 'year'
 }
 

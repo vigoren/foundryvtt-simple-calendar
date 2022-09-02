@@ -284,7 +284,7 @@ export class NoteSheet extends JournalSheet{
 
         const noteStub = NManager.getNoteStub(<JournalEntry>this.object);
         if(noteStub){
-            newOptions.name = noteStub.title;
+            newOptions.name = this.journalData.name;
             if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'text'){
                 //@ts-ignore
                 newOptions.enrichedContent = await TextEditor.enrichHTML(this.journalPages[this.uiElementStates.selectedPageIndex].text?.content || '', {async: true});
@@ -741,7 +741,7 @@ export class NoteSheet extends JournalSheet{
                     };
                     break;
             }
-
+console.log(this.journalPages);
             this.dirty = true;
             if(render){
                 this.render(true);

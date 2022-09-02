@@ -4,7 +4,11 @@
 .form-group {
   border-color: #9e9c9c;
   background-color: $gray-200;
-
+  &.fsc-disabled{
+    &:hover{
+      background-color: $gray-200;
+    }
+  }
   label{
     text-shadow: unset;
     color: #000000;

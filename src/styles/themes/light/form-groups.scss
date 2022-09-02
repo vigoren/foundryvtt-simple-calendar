@@ -7,6 +7,11 @@
   &:hover{
     background-color: $primary-150;
   }
+  &.fsc-disabled{
+    &:hover{
+      background-color: $primary-100;
+    }
+  }
   label{
     color: $tertiary-A500;
   }

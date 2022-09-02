@@ -14,7 +14,7 @@ import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
 import {animateElement, GetIcon, GetThemeName} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
-import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
+import {AdvanceTimeToPreset, FormatDateTime, GetPresetTimeOfDay} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
 
@@ -52,6 +52,7 @@ export default class MainApp extends FormApplication{
         "fsc-calendar-list": false,
         "fsc-note-list": false,
         "fsc-note-search": false,
+        "fsc-day-details": false,
         compactView: false,
         dateTimeUnitOpen: false,
         dateTimeUnit: DateTimeUnits.Day,
@@ -102,7 +103,6 @@ export default class MainApp extends FormApplication{
         let data = {
                 ...super.getData(),
                 compactViewDisplay: {
-                    dateDisplay: '',
                     currentSeasonName: '',
                     currentSeasonIcon: '',
                     selectedDayMoons: <any>[]
@@ -110,7 +110,11 @@ export default class MainApp extends FormApplication{
                 mainViewDisplay: {
                     calendarList: <any>[],
                     search: this.search,
-                    showChangeCalendarControls: false
+                    showChangeCalendarControls: false,
+                    dayDetails: {
+                        dawn: '',
+                        dusk: ''
+                    }
                 },
                 addNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes),
                 activeCalendarId: this.activeCalendar.id,
@@ -173,6 +177,16 @@ export default class MainApp extends FormApplication{
                     clockRunning: c.timeKeeper.getStatus() === TimeKeeperStatus.Started
                 };
             });
+
+            let selectedMonthDayIndex = this.visibleCalendar.getMonthAndDayIndex('selected');
+            if(selectedMonthDayIndex.month === undefined){
+                selectedMonthDayIndex = this.visibleCalendar.getMonthAndDayIndex();
+            }
+            const currentDate = {day: selectedMonthDayIndex.day || 0, month: selectedMonthDayIndex.month || 0, year: this.visibleCalendar.year.selectedYear};
+            const dawnTime = GetPresetTimeOfDay(PresetTimeOfDay.Sunrise, this.activeCalendar, currentDate);
+            const duskTime = GetPresetTimeOfDay(PresetTimeOfDay.Sunset, this.activeCalendar, currentDate);
+            data.mainViewDisplay.dayDetails.dawn = FormatDateTime({...currentDate, ...dawnTime}, this.activeCalendar.generalSettings.dateFormat.time, this.activeCalendar);
+            data.mainViewDisplay.dayDetails.dusk = FormatDateTime({...currentDate, ...duskTime}, this.activeCalendar.generalSettings.dateFormat.time, this.activeCalendar);
         }
 
         return data;
@@ -400,6 +414,8 @@ export default class MainApp extends FormApplication{
             // Real Time Clock
             appWindow.querySelector(".fsc-time-start")?.addEventListener('click', this.startTime.bind(this));
             appWindow.querySelector(".fsc-time-stop")?.addEventListener('click', this.stopTime.bind(this));
+            //Details button click
+            appWindow.querySelector(".fsc-actions-list .fsc-details-button")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-day-details'));
 
             //-----------------------
             // Calendar Drawer
@@ -466,7 +482,7 @@ export default class MainApp extends FormApplication{
         this.searchOptionsToggle(true);
         const cList = document.querySelector(`.${selector}`);
         if(cList){
-            const member = selector.toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search';
+            const member = selector.toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search' | 'fsc-day-details';
             this.uiElementStates[member] = animateElement(cList, 500, false);
         }
     }
@@ -479,7 +495,7 @@ export default class MainApp extends FormApplication{
         document.querySelectorAll('.fsc-side-drawer').forEach(e => {
             if(!e.classList.contains(exclude)){
                 animateElement(e, 500, true);
-                const member = e.classList[1].toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search';
+                const member = e.classList[1].toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search' | 'fsc-day-details';
                 this.uiElementStates[member] = false;
             }
         });
