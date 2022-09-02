@@ -58,7 +58,7 @@
                 <div class="form-group fsc-open">
                     <label for="scCalendarsSameTimestamp">{{localize 'FSC.Configuration.Global.SameTimestamp.Title'}}</label>
                     <div class="form-fields">
-                        <input value="{{globalConfiguration.calendarsSameTimestamp}}" type="checkbox" id="scCalendarsSameTimestamp" {{checked globalConfiguration.calendarsSameTimestamp}} />
+                        <input class="fsc-toggle" value="{{globalConfiguration.calendarsSameTimestamp}}" type="checkbox" id="scCalendarsSameTimestamp" {{checked globalConfiguration.calendarsSameTimestamp}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Global.SameTimestamp.Description'}}</p>
                 </div>
@@ -630,10 +630,10 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Year.PostfixHelp'}}</p>
                 </div>
-                <div class="form-group fsc-open">
-                    <label for="scYearZero">{{localize 'FSC.Configuration.Year.YearZero'}}</label>
+                <div class="form-group fsc-open {{#if uiElementStates.disabledControls.pf2e}} fsc-disabled{{/if}}">
+                    <label for="scYearZero">{{localize 'FSC.Configuration.Year.YearZero'}} <span class="fa-solid fa-triangle-exclamation" data-tooltip="{{localize 'FSC.Configuration.General.PF2ESyncDisabledSettings'}}"></span></label>
                     <div class="form-fields">
-                        <input value="{{currentYear.yearZero}}" type="number" id="scYearZero" />
+                        <input value="{{currentYear.yearZero}}" type="number" id="scYearZero" {{#if uiElementStates.disabledControls.pf2e}} disabled{{/if}} />
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Year.YearZeroHelp'}}</p>
                 </div>
@@ -766,10 +766,10 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Weekday.ShowHeadingsHelp'}}</p>
                 </div>
-                <div class="form-group fsc-open">
-                    <label for="scWeekdayFirstDay">{{localize 'FSC.Configuration.Weekday.FirstWeekDay'}}</label>
+                <div class="form-group fsc-open {{#if uiElementStates.disabledControls.pf2e}} fsc-disabled{{/if}}">
+                    <label for="scWeekdayFirstDay">{{localize 'FSC.Configuration.Weekday.FirstWeekDay'}} <span class="fa-solid fa-triangle-exclamation" data-tooltip="{{localize 'FSC.Configuration.General.PF2ESyncDisabledSettings'}}"></span></label>
                     <div class="form-fields">
-                        <select class="fsc-moon-year-reset" id="scWeekdayFirstDay">
+                        <select class="fsc-moon-year-reset" id="scWeekdayFirstDay" {{#if uiElementStates.disabledControls.pf2e}} disabled{{/if}}>
                             {{#each weekdays}}
                             <option value="{{@index}}" {{#if (eq @index ../currentYear.firstWeekday)}}selected="selected"{{/if}}>{{name}}</option>
                             {{/each}}
@@ -810,10 +810,10 @@
         <div class="tab fsc-leapyear-settings" data-tab="leapYearSettings">
             <div class="settings-group fsc-open">
                 <h2>{{localize 'FSC.Configuration.LeapYear.Options'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/leap-year-settings.html#options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
-                <div class="form-group fsc-open">
-                    <label for="scLeapYearRule">{{localize 'FSC.Configuration.LeapYear.Rule'}}</label>
+                <div class="form-group fsc-open {{#if uiElementStates.disabledControls.pf2e}} fsc-disabled{{/if}}">
+                    <label for="scLeapYearRule">{{localize 'FSC.Configuration.LeapYear.Rule'}} <span class="fa-solid fa-triangle-exclamation" data-tooltip="{{localize 'FSC.Configuration.General.PF2ESyncDisabledSettings'}}"></span></label>
                     <div class="form-fields">
-                        <select id="scLeapYearRule">
+                        <select id="scLeapYearRule" {{#if uiElementStates.disabledControls.pf2e}} disabled{{/if}}>
                             {{selectOptions leapYearRules selected=leapYearRule.rule localize=true}}
                         </select>
                     </div>

@@ -1,5 +1,20 @@
 # Change Log
 
+## v2.1.4 - QoL Updates and Bug Fixes 
+
+![](https://img.shields.io/badge/release%20date-September%202%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.4/module.zip)
+
+### Quality of Life Updates
+
+- When the [Pathfinder 2E: World Clock Sync](https://simplecalendar.info/pages/docs/calendar-configuration/general-settings.html#pathfinder-2e-world-clock-sync) is enabled the settings that it disables will now appear disabled in the configuration dialog with a message letting users know why.
+
+### Bug Fixes
+
+- Fixed a bug that was making it not possible to update a notes title.
+- Added validation for the time settings ("Hours in a Day", "Minutes in an Hour", "Seconds in a Minute" and "Update Frequency") to ensure that they can not be set to 0 or a negative value.
+- Fixed a holiday for the Das Schwarze Auge/The Dark Eye 5th Edition Predefined Calendar that was on the wrong day.
+
 ## v2.1.0 - FoundryVTT V10 Support, Note Pages, System Specific Themes, QoL Improvements, Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-August%2031%2C%202022-blue)

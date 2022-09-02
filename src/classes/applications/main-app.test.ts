@@ -73,6 +73,7 @@ describe('Main App Class Tests', () => {
     });
 
     test('Get Data', () => {
+        expect(ma.getData()).toBeDefined();
 
         tCal.months[0].selected = true;
         tCal.months[0].days[0].selected = true;

@@ -6,6 +6,11 @@
   &:hover{
     background-color: $primary-950;
   }
+  &.fsc-disabled{
+    &:hover{
+      background-color: $primary-1000;
+    }
+  }
   label{
     color: $primary-A200;
   }

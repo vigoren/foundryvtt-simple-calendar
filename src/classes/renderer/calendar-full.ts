@@ -1,9 +1,9 @@
 import Calendar from "../calendar";
 import {deepMerge} from "../utilities/object";
-import {FormatDateTime, IsDayBetweenDates} from "../utilities/date-time";
+import {FormatDateTime, GetPresetTimeOfDay, IsDayBetweenDates} from "../utilities/date-time";
 import {GetIcon} from "../utilities/visual";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {CalendarClickEvents, CalendarViews, DateRangeMatch} from "../../constants";
+import {CalendarClickEvents, CalendarViews, DateRangeMatch, PresetTimeOfDay} from "../../constants";
 import RendererUtilities from "./utilities";
 import {CalManager, NManager, SC} from "../index";
 
@@ -200,10 +200,10 @@ export default class CalendarFull{
 
     /**
      * Activates listeners for month change and day clicks on the specified rendered calendar
-     * @param {string} calendarId The ID of the HTML element representing the calendar to activate listeners for
-     * @param {Function|null} onMonthChange Function to call when the month is changed
-     * @param {Function|null} onDayClick Function to call when a day is clicked
-     * @param {Function|null} onYearChange Function to call when the year is an input and it changes
+     * @param calendarId The ID of the HTML element representing the calendar to activate listeners for
+     * @param onMonthChange Function to call when the month is changed
+     * @param onDayClick Function to call when a day is clicked
+     * @param onYearChange Function to call when the year is an input, and it changes
      */
     public static ActivateListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null, onYearChange: Function | null = null){
         const calendarElement = document.getElementById(calendarId);
@@ -223,22 +223,25 @@ export default class CalendarFull{
             }
             calendarElement.querySelectorAll('.fsc-days .fsc-day').forEach(el => {
                 el.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.day, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
+                //el.addEventListener('contextmenu', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.dayContext, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             });
+            calendarElement.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.calendar, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
         }
     }
 
     /**
      * Updates the rendered calendars view to change to the next or previous month
-     * @param {string} calendarId The ID of the HTML element making up the calendar
-     * @param {CalendarClickEvents} clickType If true the previous button was clicked, otherwise next was clicked
-     * @param {{}} funcs The functions that can be called
-     * @param {Function|null} funcs.onMonthChange The custom function to call when the month is changed.
-     * @param {Function|null} funcs.onDayClick The custom function to call when a day is clicked.
-     * @param {Function|null} funcs.onYearChange Function to call when the year is an input and it changes
-     * @param {Event} event The click event
+     * @param calendarId The ID of the HTML element making up the calendar
+     * @param clickType If true the previous button was clicked, otherwise next was clicked
+     * @param funcs The functions that can be called
+     * @param funcs.onMonthChange The custom function to call when the month is changed.
+     * @param funcs.onDayClick The custom function to call when a day is clicked.
+     * @param funcs.onYearChange Function to call when the year is an input and it changes
+     * @param event The click event
      */
     public static EventListener(calendarId: string, clickType: CalendarClickEvents, funcs:{onMonthChange: Function | null, onDayClick: Function | null, onYearChange: Function | null }, event: Event){
         event.stopPropagation();
+        event.preventDefault();
         const calendarElement = document.getElementById(calendarId);
         if(calendarElement){
             const calendarIndex = calendarElement.getAttribute('data-calendar') || '';
@@ -283,7 +286,7 @@ export default class CalendarFull{
                                         }
                                         loopCount++;
                                     }
-                                } else if(clickType === CalendarClickEvents.day){
+                                } else if(clickType === CalendarClickEvents.day || clickType === CalendarClickEvents.dayContext){
                                     let target = <HTMLElement>event.target;
                                     //If a child of the day div is clicked get the closest day
                                     const closestDay = target.closest('.fsc-day');
@@ -371,6 +374,7 @@ export default class CalendarFull{
                 }
             }
         }
+        return false;
     }
 
     /**

@@ -4,7 +4,7 @@ import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
 import {
     CombatPauseRules,
-    ConfigurationDateSelectors,
+    ConfigurationDateSelectors, GameSystems,
     GameWorldTimeIntegrations,
     Icons,
     LeapYearRules,
@@ -12,7 +12,6 @@ import {
     MoonYearResetOptions,
     NoteReminderNotificationType,
     PredefinedCalendars,
-    SettingNames,
     Themes,
     YearNamingRules
 } from "../../constants";
@@ -85,7 +84,10 @@ export default class ConfigurationApp extends FormApplication {
         qsNextClicked: false,
         qsAddNotes: true,
         selectedPredefinedCalendar: '',
-        timeFormatExample: ''
+        timeFormatExample: '',
+        disabledControls: {
+            pf2e: false
+        }
     };
     /**
      * The Calendar configuration constructor
@@ -186,7 +188,7 @@ export default class ConfigurationApp extends FormApplication {
     }
 
     /**
-     * Re renders the application window
+     * Re-renders the application window
      * @private
      */
     private updateApp(){
@@ -201,6 +203,8 @@ export default class ConfigurationApp extends FormApplication {
         this.uiElementStates.dateFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.date, <Calendar>this.object);
         this.uiElementStates.timeFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.time, <Calendar>this.object);
         this.uiElementStates.monthYearFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.monthYear, <Calendar>this.object);
+
+        this.uiElementStates.disabledControls.pf2e = (<Calendar>this.object).gameSystem === GameSystems.PF2E && (<Calendar>this.object).generalSettings.pf2eSync;
 
         let data = {
             ...super.getData(options),
@@ -809,6 +813,11 @@ export default class ConfigurationApp extends FormApplication {
             (<Calendar>this.object).time.gameTimeRatio = <number>getNumericInputValue('#scGameTimeRatio', 1, true, this.appWindow);
             (<Calendar>this.object).time.updateFrequency = <number>getNumericInputValue('#scTimeUpdateFrequency', 1, false, this.appWindow);
             (<Calendar>this.object).time.unifyGameAndClockPause = getCheckBoxInputValue('#scUnifyClockWithFoundryPause', false, this.appWindow);
+
+            if((<Calendar>this.object).time.hoursInDay <= 0){(<Calendar>this.object).time.hoursInDay = 1;}
+            if((<Calendar>this.object).time.minutesInHour <= 0){(<Calendar>this.object).time.minutesInHour = 1;}
+            if((<Calendar>this.object).time.secondsInMinute <= 0){(<Calendar>this.object).time.secondsInMinute = 1;}
+            if((<Calendar>this.object).time.updateFrequency <= 0){(<Calendar>this.object).time.updateFrequency = 1;}
 
             //----------------------------------
             // Calendar: Note Settings
