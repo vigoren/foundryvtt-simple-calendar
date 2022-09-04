@@ -429,5 +429,6 @@
 	"FSC.Configuration.General.PlayersChangeActiveCalendarHelp": "Los roles seleccionados podrán cambiar el calendario activo.",
 	"FSC.Configuration.Global.Title": "Configuración global",
 	"FSC.Configuration.Global.SameTimestamp.Title": "Los calendarios usan el mismo timestamp",
-	"FSC.Configuration.Global.SyncCalendars.Title": "Sincronizar los cambios de Fecha/Hora en todos los calendarios"
+	"FSC.Configuration.Global.SyncCalendars.Title": "Sincronizar los cambios de Fecha/Hora en todos los calendarios",
+	"FSC.Configuration.Global.ShowNoteFolder.Title": "Ensenar carpeta de notas"
 }
