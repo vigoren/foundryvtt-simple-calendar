@@ -129,7 +129,7 @@
 	"FSC.Configuration.General.Self": "Própria: controla o tempo do mundo de jogo, ignorando atualizações de outros módulos.",
 	"FSC.Configuration.General.ThirdParty": "Modular: apenas segue atualizações dadas por outros módulos.",
 	"FSC.Configuration.General.Mixed": "Mista: atualiza o tempo do mundo de jogo e segue atualizações feitas por outros módulos.",
-	"FSC.Configuration.General.PF2ESync": "Pathfinder 2E: World Time Sync",
+	"FSC.Configuration.General.PF2ESync": "Pathfinder 2E: Sincronizar Tempo do Mundo",
 	"FSC.Configuration.General.PF2ESyncHelp": "Irá forçar o Simple Calendar a sincronizar com o tempo do mundo de jogo do Pathfinder 2E.",
 	"FSC.Configuration.General.ShowClock": "Mostrar Relógio",
 	"FSC.Configuration.General.ShowClockHelp": "Mostra o tempo do mundo de jogo, bem como os controles de tempo, abaixo do calendário.",
