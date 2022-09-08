@@ -382,7 +382,6 @@
 	"FSC.Configuration.Time.SecondsInCombatRoundHelp": "Die Anzahl an Sekunden in einer Kampfrunde.Dies wird nur angewendet, wenn das System die Kampfrunden nicht erhöht!",
 	"FSC.Configuration.Time.GameTimeRatio": "Spielsekunden pro Realsekunde",
 	"FSC.Configuration.Time.GameTimeRatioHelp": "Wie viele Sekunden im Spiel pro Sekunde realer Zeit vergehen.",
-	"FSC.Configuration.Time.Options": "Zeitoptionen",
 	"FSC.Configuration.Time.ClockSettings": "Uhr-Einstellung",
 	"FSC.Configuration.Time.UpdateFrequency": "Aktualisierungshäufigkeit",
 	"FSC.Configuration.Time.UpdateFrequencyHelp": "Beschreibt, wie oft die Uhr aktualisiert wird.",
