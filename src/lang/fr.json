@@ -240,7 +240,6 @@
 	"FSC.Configuration.Time.SecondsInMinuteHelp": "Combien de secondes composent une minute.",
 	"FSC.Configuration.Time.GameTimeRatio": "Secondes de jeu par secondes de vie réelle",
 	"FSC.Configuration.Time.GameTimeRatioHelp": "Combien de secondes s'écoulent dans le jeu pour chaque seconde qui passe en temps réel.",
-	"FSC.Configuration.Time.Options": "Options de temps",
 	"FSC.Configuration.Time.ClockSettings": "Paramètres de l'horloge",
 	"FSC.Configuration.Time.UpdateFrequency": "Fréquence de mise à jour",
 	"FSC.Configuration.Time.UpdateFrequencyHelp": "Ceci détermine la fréquence à laquelle l'horloge se met à jour.",
