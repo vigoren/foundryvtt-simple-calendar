@@ -229,7 +229,6 @@
 	"FSC.Configuration.LeapYear.Rules.Custom": "Customizada",
 	"FSC.Configuration.LeapYear.Days": "Número de Dias num Ano Bissexto",
 	"FSC.Configuration.LeapYear.DaysHelp": "O número de dias deste mês durante um ano bissexto.",
-	"FSC.Configuration.LeapYear.Options": "Opções de Ano Bissexto",
 	"FSC.Configuration.Time.Title": "Configurações de Horário",
 	"FSC.Configuration.Time.HoursInDay": "Horas num Dia",
 	"FSC.Configuration.Time.HoursInDayHelp": "Quantas horas existem num único dia.",
