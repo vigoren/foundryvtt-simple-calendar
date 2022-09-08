@@ -323,7 +323,6 @@
 	"FSC.Configuration.LeapYear.Rules.Custom": "Personalizzato",
 	"FSC.Configuration.LeapYear.Days": "Numero di Giorni in un Anno Bisestile",
 	"FSC.Configuration.LeapYear.DaysHelp": "Il numero di giorni che che compongono questo mese durante un anno bisestile.",
-	"FSC.Configuration.LeapYear.Options": "Opzioni Anno Bisestile",
 	"FSC.Configuration.Time.Title": "Impostazioni Ora",
 	"FSC.Configuration.Time.HoursInDay": "Ore in un Giorno",
 	"FSC.Configuration.Time.HoursInDayHelp": "Quante ore ci sono in un singolo giorno.",
