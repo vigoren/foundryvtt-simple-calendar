@@ -400,7 +400,6 @@
 	"FSC.Configuration.Time.SecondsInCombatRoundHelp": "How many seconds pass during 1 round of combat. This is only applied if the current system does not increment time during combat rounds!",
 	"FSC.Configuration.Time.GameTimeRatio": "Game Seconds Per Real Life Seconds",
 	"FSC.Configuration.Time.GameTimeRatioHelp": "How many seconds pass in game for every second that passes in real time.",
-	"FSC.Configuration.Time.Options": "Time Options",
 	"FSC.Configuration.Time.ClockSettings": "Clock Settings",
 	"FSC.Configuration.Time.UpdateFrequency": "Update Frequency",
 	"FSC.Configuration.Time.UpdateFrequencyHelp": "This determines how often the clock updates.",
