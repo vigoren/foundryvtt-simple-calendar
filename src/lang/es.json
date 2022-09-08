@@ -324,7 +324,6 @@
 	"FSC.Configuration.LeapYear.Rules.Custom": "Personalizado",
 	"FSC.Configuration.LeapYear.Days": "Número de días de un año bisiesto",
 	"FSC.Configuration.LeapYear.DaysHelp": "El número de días que conforman el mes en un año bisiesto",
-	"FSC.Configuration.LeapYear.Options": "Opciones de año bisiesto",
 	"FSC.Configuration.Time.Title": "Ajustes de fecha",
 	"FSC.Configuration.Time.HoursInDay": "Horas en un día",
 	"FSC.Configuration.Time.HoursInDayHelp": "Cuantas horas conforman un día",
