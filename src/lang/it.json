@@ -334,7 +334,6 @@
 	"FSC.Configuration.Time.SecondsInCombatRoundHelp": "Quanti secondi passano durante 1 round di combattimento. Viene applicato solo se il sistema corrente non incrementa il tempo durante i round di combattimento!",
 	"FSC.Configuration.Time.GameTimeRatio": "Secondi di Gioco per Secondi Reali",
 	"FSC.Configuration.Time.GameTimeRatioHelp": "Quanti secondi passano in gioco per ogni secondo che passa in tempo reale.",
-	"FSC.Configuration.Time.Options": "Opzioni Tempo",
 	"FSC.Configuration.Time.ClockSettings": "Impostazioni Orologio",
 	"FSC.Configuration.Time.UpdateFrequency": "Frequenza di Aggiornamento",
 	"FSC.Configuration.Time.UpdateFrequencyHelp": "Determina quanto frequentemente viene aggiornato l'orologio.",
