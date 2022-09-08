@@ -210,7 +210,6 @@
 	"FSC.Configuration.Time.SecondsInMinuteHelp": "幾秒鐘構成一分鐘",
 	"FSC.Configuration.Time.GameTimeRatio": "遊戲時間秒數對上現實時間的一秒",
 	"FSC.Configuration.Time.GameTimeRatioHelp": "實時每秒經過遊戲時間多少秒。",
-	"FSC.Configuration.Time.Options": "時間選相",
 	"FSC.Configuration.Time.ClockSettings": "Clock Settings",
 	"FSC.Configuration.Moon.Title": "月亮設定",
 	"FSC.Configuration.Moon.Name": "月亮名稱",
