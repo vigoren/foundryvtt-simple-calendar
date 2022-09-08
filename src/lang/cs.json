@@ -322,7 +322,6 @@
 	"FSC.Configuration.LeapYear.Rules.Custom": "Vlastní",
 	"FSC.Configuration.LeapYear.Days": "Počet dnů v přestupném roce",
 	"FSC.Configuration.LeapYear.DaysHelp": "Počet dní, které tvoří měsíc v přestupném roce.",
-	"FSC.Configuration.LeapYear.Options": "Nastavení přestupného roku",
 	"FSC.Configuration.Time.Title": "Nastavení času",
 	"FSC.Configuration.Time.HoursInDay": "Hodin za den",
 	"FSC.Configuration.Time.HoursInDayHelp": "Kolik hodin tvoří jeden den.",
