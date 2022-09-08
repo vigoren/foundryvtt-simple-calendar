@@ -333,7 +333,6 @@
 	"FSC.Configuration.Time.SecondsInCombatRoundHelp": "전투에서 한 라운드 당 경과되는 시간(초). 현재 시스템이 전투 라운드에서 시간을 증가시키지 않는 경우에만 적용된다.",
 	"FSC.Configuration.Time.GameTimeRatio": "실시간 초당 게임 시간 초",
 	"FSC.Configuration.Time.GameTimeRatioHelp": "실시간으로 1초가 지날 때 게임에서 몇 초가 지나는지 설정합니다.",
-	"FSC.Configuration.Time.Options": "시간 옵션",
 	"FSC.Configuration.Time.ClockSettings": "시계 설정",
 	"FSC.Configuration.Time.UpdateFrequency": "빈도 업데이트",
 	"FSC.Configuration.Time.UpdateFrequencyHelp": "시계가 업데이트 되는 빈도를 정한다.",
