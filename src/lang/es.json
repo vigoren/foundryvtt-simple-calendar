@@ -335,7 +335,6 @@
 	"FSC.Configuration.Time.SecondsInCombatRoundHelp": "Cuantos segundos pasan durante un asalto de combate. Solo se usará si el sistema actual no incrementa automáticamente el tiempo durante los asaltos de combate",
 	"FSC.Configuration.Time.GameTimeRatio": "Segundos en juego por cada segundo en la vida real",
 	"FSC.Configuration.Time.GameTimeRatioHelp": "Cuantos segundos pasan en el juego por cada segundo que pasa en la vida real",
-	"FSC.Configuration.Time.Options": "Opciones de hora",
 	"FSC.Configuration.Time.ClockSettings": "Ajustes del reloj",
 	"FSC.Configuration.Time.UpdateFrequency": "Actualizar frecuencia",
 	"FSC.Configuration.Time.UpdateFrequencyHelp": "Esto determina como de a menudo se actualiza este reloj",
