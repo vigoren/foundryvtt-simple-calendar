@@ -1,0 +1,112 @@
+@import "../../variables";
+
+&:after{
+  content: unset;
+}
+
+//Dialog Header
+header.window-header{
+  background: $primary-A100;
+  color: $fontColor;
+  font-size: 1rem;
+  border: 0;
+  border-image: unset;
+  flex: 0 0 30px;
+  padding: 0 8px;
+  margin: 0;
+  position: unset;
+  min-height: unset;
+  height: unset;
+
+  .window-title{
+    margin: 0;
+    border: 0;
+    text-align: left;
+    box-shadow: unset;
+    text-shadow: unset;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: $fontColor;
+  }
+  a{
+    margin-top: 0!important;
+    margin-right: 0;
+    color: $fontColor;
+    &:hover, &:active, &:focus{
+      color: $secondary-700;
+      text-shadow: unset;
+    }
+  }
+  .close{
+    background: unset;
+    color: $fontColor;
+    height: unset;
+    width: unset;
+  }
+}
+//Scrollbar Styling
+.window-content{
+  background: $primary-50 !important;
+  color: $fontColor !important;
+  border: 0;
+  border-image: unset;
+  box-shadow: unset;
+  @include scrollbar($primary, $primary-600);
+}
+
+//Calendar List Styling
+.fsc-calendar-list{
+  @include scrollbar($primary, $primary-600);
+
+  .fsc-calendar-display{
+    color: $fontColor;
+    border-color: $primary-800;
+    &.fsc-active{
+      background-color: $primary;
+      color: $white;
+      &.fsc-visible{
+        background-color: $primary-800;
+        &:hover{
+          background-color: $primary-800;
+        }
+      }
+    }
+    &.fsc-visible{
+      background-color: $tertiary-200;
+      &:hover{
+        background-color: $tertiary-200;
+      }
+    }
+    &:hover{
+      background-color: $tertiary-300;
+    }
+    .fsc-calendar-actions{
+      border-color: $primary-800;
+    }
+    .fsc-animated-clock{
+      svg{
+        path{
+          fill: $success-400;
+          stroke: $success-400;
+        }
+      }
+    }
+  }
+}
+
+//Note List Styling
+.fsc-side-drawer{
+  background-color: $primary-100;
+  border-color: $primary-900;
+
+  h2{
+    border-bottom-color: $secondary;
+  }
+
+}
+
+.window-resizable-handle{
+  bottom: -1px;
+  right: 0;
+}

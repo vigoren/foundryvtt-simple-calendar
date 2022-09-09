@@ -1,12 +1,490 @@
 # Change Log
 
+## v2.1.4 - QoL Updates and Bug Fixes 
+
+![](https://img.shields.io/badge/release%20date-September%202%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.4/module.zip)
+
+### Quality of Life Updates
+
+- When the [Pathfinder 2E: World Clock Sync](https://simplecalendar.info/pages/docs/calendar-configuration/general-settings.html#pathfinder-2e-world-clock-sync) is enabled the settings that it disables will now appear disabled in the configuration dialog with a message letting users know why.
+
+### Bug Fixes
+
+- Fixed a bug that was making it not possible to update a notes title.
+- Added validation for the time settings ("Hours in a Day", "Minutes in an Hour", "Seconds in a Minute" and "Update Frequency") to ensure that they can not be set to 0 or a negative value.
+- Fixed a holiday for the Das Schwarze Auge/The Dark Eye 5th Edition Predefined Calendar that was on the wrong day.
+
+## v2.1.0 - FoundryVTT V10 Support, Note Pages, System Specific Themes, QoL Improvements, Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-August%2031%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.0/module.zip)
+
+### FoundryVTT Version 10 Support
+
+Updated Simple Calendar so that it supports these changes in version 10 of FoundryVTT:
+
+- Updated manifest to work with the new manifest options.
+- Ensured the styles work with the new Font Awesome update.
+- Updated the journal interactions to be compatible with FoundryVTTs Journals V2.
+
+### Note Pages
+
+With the new Journals in FoundryVTT version 10 Simple calendar has been updated so notes can take advantage of these changes. Notes in Simple Calendar can now:
+
+- Have multiple pages with a collapsible panel when switching between pages being viewed.
+- Supports the different page types (Text, Images, PDFs and Videos).
+- The interface has been updated so the fields are more condensed for an easier editing experience.
+- Switched to using the new Prosemirror editor for notes over TinyMCE.
+
+Existing notes will be automatically migrated by Foundry over to Journals with a single text page.
+
+### System Specific Themes
+
+Simple Calendar can now have themes specific to the system the module is being used in. 
+These themes will only appear in the Theme selector as an option for players when playing a game in the system they are built for and are intended to keep the experience of the module more cohesive with the systems.
+
+The first system to get a dedicated theme is Warhammer Fantasy Roleplay 4th Edition! (Thanks to [ZwS](https://github.com/ZwS) for getting this started with updates to the classic theme)
+
+![](./docs/images/sc-v2-theme-wfrp.png)
+![](media://sc-v2-theme-wfrp.png)
+
+Other systems will get their own specific themes as time goes on
+
+### Quality of Life Improvements
+
+- Moved the icon for opening Simple Calendar from the `Token Controls` tab to the `Journal Notes` tab as this makes way more sense for Simple Calendar to live.
+- Added a button to open Simple Calendar from the "Configure Settings" dialog.
+- The date selector for notes now allows you to enter the year instead of having to scroll through months to change the year the note takes place.
+- Changed some setting checkboxes in the configuration dialog to use a switch where it made sense.
+- Added a close button to the header of the compact view.
+- Changed the Reminder chat whisper to show a link to the note instead of the notes content.
+- Added a new client setting for each player to choose how note reminders notify them. The options are:
+  - Have a whisper sent in the chat to the player with some details about the note and a link to open the note. This is the default option.
+  - Have the note automatically open.
+- When editing a Scenes configuration, if the setting `Show Notes Folder` is set to off then all Calendar notes are removed from the Journal Entry field under the Ambience tab.
+- Themes are now saved as client settings specific to worlds, so if you have more than one world on your server having different themes for the calendar will work.
+- Improved the strictness of the CSS for themes to have a more consistent look across systems.
+
+### Bug Fixes
+
+- Fixed several bugs on the note edit view where buttons wouldn't always respond to the first click.
+- Fixed a bug where positioning the calendar, with the remember position setting turned on, in the very top or very left of the screen would fail to place it back in that location on reloads.
+- Fixed a bug where when stopping the real time clock would cause the resulting time that is saved to be a few seconds (< 5) behind what it should be.
+
+### Documentation Changes
+
+- Updated the [Client Settings](https://simplecalendar.info/pages/docs/global-configuration/settings.html#client-settings) docs to include details about the new note reminder setting.
+- Updated the [Using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) docs to reflect the change in location of the buttons to open Simple Calendar.
+- Updated the [Notes](https://simplecalendar.info/pages/docs/using-sc/notes/index.html) docs to reflect all the changes to the notes interface.
+- Added a new page [Notes: Adding / Editing / Removing](https://simplecalendar.info/pages/docs/using-sc/notes/adding-editing-removing.html) for detailing how to add, edit and remove notes with a section specific to the new pages functionality.
+- Updated several images to properly reflect the changes in this update.
+
+### API Changes
+
+To go along with the release of FoundryVTT version 10 some depreciated options within simple calendar have been removed.
+
+- `SimpleCalendar.api.MoonIcons` has been removed. Please use `SimpleCalendar.api.Icons` instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `day` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `month` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `season` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `time` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `year` property has been removed. Please use the options under the `date` property instead.
+
+## v2.0.30 - Combat Detection Changes & Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-July%204%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.0.30/module.zip)
+
+### Combat Detection Changes
+
+I have added a new setting to help GMs better choose when the real time clock of Simple Calendar will pause when a combat has been started.
+The setting is called "Pause Real Time Clock on Combat Rule" and is under the Global Configuration Settings. It currently has 2 options:
+
+- **Pause Only on the Active Scene**: This behaves exactly as the current implementation does, only pausing the real time clock is a combat is running on the current active scene.
+- **Pause on the Scene the GM is Currently Viewing**: This new option will pause the clock only if the current scene the primary GM is viewing has a combat running.
+
+The new option can be handy in instances of pulling a single character to a new scene to do a solo fight without the clock starting to run again and without having to make that scene the active one.
+
+### Bug Fixes
+
+- Fixed a bug where Simple Calendar would fail to load properly if a non calendar note Journal Entry was added to Simple Calendars notes directory folder.
+- Fixed a bug where Simple Calendar notes would not load if they were in sub folders under the Simple Calendar notes directory folder.
+- Fixed a bug in the configuration dialog that would scroll back to the top when adding to the bottom of long lists. 
+- Fixed a bug in the configuration dialog where if the advanced options for a month were open and a new month was added, the advanced options for the month that had them open would no longer be visible.
+
+### Documentation Changes
+
+- Fixed a typo in the predefined calendar list (Thanks Dan-Q!).
+- Added documentation for the new Combat Pause Real Time Clock Rule setting.
+- Improved the documentation around how to switch between calendars in the configuration dialog and in the calendar.
+
+### API Changes
+
+- Added Simple Calendar as an [NPM package](https://www.npmjs.com/package/foundryvtt-simple-calendar) so that other projects can reference the built-in type definitions. See the [documentation](https://simplecalendar.info/pages/docs/developing-with-sc/index.html) for more details.
+
+## v2.0.25 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-June%2010%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.0.25/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where the module would fail to open if the number of months was changed and a note exists that now falls outside the months.
+- Fixed a bug where players with permission to change the date and time would see an error message while the clock was running.
+- Fixed a bug where clicking on the configuration setting title "Show Notes Folder" would cause the "Sync Date/Time" setting checkbox to change its state.
+- Fixed a bug where clicking on the note settings title "Send Reminders On Login" would cause the "Note Default Player Visibility" setting checkbox to change its state.
+- Fixed a rare bug where invalid permissions could be loaded and cause the configuration dialog to fail to open properly.
+
+## v2.0.20 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-May%2029%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.0.20/module.zip)
+
+### Bug Fixes
+
+- Adjusted the maximum height of the note dialog when editing to be 95% of the height of the browser window up from 75%.
+- Fixed a bug where the configuration save button was not being styled correctly.
+- Fixed an issue where Note Category and Player lists that were very long would get cut off without showing all options.
+- Fixed an issue with loading the note rich text editor styles when hosting foundry on the Forge.
+
+### API Changes
+
+- Added a new function `SimpleCalendar.api.pauseClock()` that will pause the clock if it is started.
+- Added a new function `SimpleCalendar.api.removeNote()` that will remove the note and journal entry with the passed in ID.
+- Added a new function `SimpleCalendar.api.searchNotes()` that will search notes for the passed in term. Only the notes that the current player can see are searched.
+
+## v2.0.13 - Notes Auto Execute Macros and Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-May%2023%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.0.13/module.zip)
+
+### Notes Auto Execute Macros
+
+Notes now have the option to choose a single macro to be automatically executed when the current date and time meet the notes starting date and time. This behaves in a very similar way to note reminders but instead of a reminder a macro is executed.
+
+Notes that have a macro that will be triggered will have an icon appear. This icon will only appear for GMs and the author of the note.
+
+### Bug Fixes
+
+- Fixed an issue where players couldn't add notes if the GM wasn't logged in (oops)
+- Adjusted the Token Control icon so that it scales better with the button size.
+- Fixed some styling issues (spacing)
+- Fixed the unit selector text color for the classic theme.
+- Fixed an issue with the migration tool that would cause it to run everytime the world was loaded.
+
+### API Changes
+
+- Updated the `SimpleCalendar.api.addNote` function to accept an optional macro to be executed when the in game time meets or exceeds the notes time.
+- Fixed a bug where the hook `SimpleCalendar.Hooks.DateTimeChange` would not fire correctly.
+- Changed the API function `SimpleCalendar.api.runMigration` so that it no longer returns a promise but instead will show a dialog to confirm that the GM wants to run the migration. This will help prevent accidental re-running of migrations when not intended.
+
+### Translations
+
+- The German translation has been updated thanks to מר כוס!
+
+## v2.0.4 - Update Issue Fix and More Bugs Squished
+
+![](https://img.shields.io/badge/release%20date-May%2010%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.0.4/module.zip)
+
+
+### Update Issue Fix
+
+Right now Foundry says that version 1.3.75 is newer than version 2.0.1 and won't update the module. I will explain why below.
+
+**TL;DR**: I made a mistake, the quick fix is to uninstall and reinstall Simple Calendar. There will be no data loss and the issue will be solved going forward.
+
+**Longer Version**: When I first release Simple Calendar I did a silly thing and put a "v" in front of the version that Foundry reads. Foundry uses this version to determine if an update is a newer version or not. 
+
+This version is also stored in the module's details so not something that can be fixed without updating the module.
+
+When Foundry compares a version that starts with a v to one that does not start with a v, the one that starts with a v is considered newer. As well the first portion of two versions that both start with a v, example 'v1' and 'v2', are considered to be the same. Until version 2 of Simple Calendar this didn't matter as it was always comparing 'v1' to 'v1'. FoundryVTT won't change how they check version so I need to make the change on my side.
+
+Unfortunately the easiest way to fix this is to uninstall the previous version of Simple Calendar and reinstall it. After doing this, it will update properly going forward. When uninstalling a module that modules' data is not removed so there is no data loss in doing this. That said if you are concerned about data loss please make a backup of your world(s) before doing this exercise.
+
+I apologize about this mistake and the extra work/confusion that may have come because of it.
+
+### Bug Fixes
+- Fixed a bug where after doing a quick setup with a predefined calendar with notes, the notes would be listed twice on days until the page was refreshed.
+- Fixed a bug where the Display Options Time Formats previews were no longer updating as changes were made to the format.
+- Toned down the Token Control button coloring, so it is not as vivid and distracting.
+
+## v2.0.1 - Bug Fixing
+
+![](https://img.shields.io/badge/release%20date-May%209%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.0.1/module.zip)
+
+
+- Changes to the migration process from v1.x to v2 to account for updates from Simple Calendar versions previous to 1.3.x
+  - **Important**: If you ran into migration errors please run this command in the browser console after updating `SimpleCalendar.api.runMigration()`
+- Documentation Updates.
+
+## v2.0.0 - Visual Redesign / Themes, Multiple Calendar Support, Note Improvements and more!
+
+![](https://img.shields.io/badge/release%20date-May%207%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.0.0/module.zip)
+
+
+I am very happy to announce the release of version 2 of Simple Calendar! This update is big and covers many improvements and changes. Be sure to check out the full notes for all the details.
+
+### Visual Redesign / Themes
+
+I am happy to say that Simple Calendar has finally had a big visual update. This touches on every aspect of the calendar, configuration and notes.
+
+#### Themes
+
+There are now different themes that can be applied to Simple Calendar to change how it looks! This release includes Light and Dark themes as well as a "Classic" theme (to match the aesthetic of Simple Calendar version 1).  Additional themes or system specific themes may be added as time goes on.
+
+I have tried to make sure that the light and dark themes are still easily usable for individuals with color blindness.
+
+#### Main Calendar
+
+![](./docs/images/sc-v2-themes.gif)
+![](media://sc-v2-themes.gif)
+
+This section of the module has been 100% redesigned so that the full version is much more compact and easy to use. It features:
+
+- A refreshed calendar display.
+  - Seasons no longer change the full background color of the calendar but instead change the color of the border around the calendar.
+- A refreshed clock display.
+  - The clock icon has been updated to a better looking version.
+  - The "Current Time" text has been removed to simplify the view
+- The controls for changing the date/time have been compacted into 1 control where users can choose which time unit (year, month, day, hour, minute, round, second) they wish to change.
+- Simplified buttons for advancing to the next dawn, midday, dusk or midnight with new icons.
+- All other buttons have been moved to the right of the calendar and have been simplified with just an icon instead of an icon and text.
+- The notes list will now slide out to the right of the window when the notes button is clicked. This makes viewing notes easier and less intrusive to the calendar view.
+- Search has been changed so that it also slides out to the right of the window (rather than its own window) where a search can be preformed.
+
+#### Compact View
+
+![](./docs/images/sc-v2-themes-comp.gif)
+![](media://sc-v2-themes-comp.gif)
+
+The compact view has also been completely redesigned to be more compact while still showing the same amount of information and functionality as before. It is now just slightly larger than the old calendar/weather widget.
+
+The button in the header to switch between compact and full views has been removed. To switch between the compact and full views simply double-click on the title bar.
+
+#### Configuration Dialog
+
+![](./docs/images/sc-v2-themes-config.gif)
+![](media://sc-v2-themes-config.gif)
+
+The configuration dialog has also been completely redesigned to support multiple calendars and hopefully reduce some confusion around configuring a calendar. It features:
+
+- A Refreshed display with sections.
+  - **Global Configuration Settings**: These affect Simple Calendar overall and are not specific to any one calendar.
+  - **Calendar Settings**: This section features a calendar selector, the ability to add or remove calendars and all the settings that affect the currently selected calendar.
+  - **Help**: This section provides a link to the documentation and an about section with more details about the module.
+
+#### Notes Dialog
+
+![](./docs/images/sc-v2-themes-notes.gif)
+![](media://sc-v2-themes-notes.gif)
+
+The note dialog has been redesigned as well to match the look and feel of the other dialogs!
+
+- A refreshed display for editing notes
+- A refreshed display for viewing notes
+
+### Multiple Calendar Support
+
+Simple Calendar now support having multiple calendars within the module!
+
+In the configuration GMs can now add new and remove existing calendars, switch between calendars and customize each calendar individually. Each calendar can also be given a name to help distinguish it from the other calendars.
+
+The main Calendar interface also has a new button (that shows when more than 1 calendar has been added) that allows you to switch between which calendar you are currently viewing as well as which calendar is currently active. The listing of calendars will also show you the current date and time for each calendar.
+
+You can also choose to sync time changes across all calendars. This change is done by determining the change in seconds and adjusting the other calendars by that number of seconds. This way if another calendar has days that are different in length they will update accurately.
+
+### Configuration Changes
+
+The configuration dialog can now be opened by GMs and players. GM only options are hidden for players, but any player specific options will be shown to the players.
+
+The configuration dialog should be a little easier to understand and hopefully more intuitive to use.
+
+#### Client Settings
+
+Four new settings have been added to the Module Settings dialog of Foundry. These settings are [client settings](https://foundryvtt.com/article/settings/), which are saved in the browser and are applied on a per-browser basis. So everyone can customize these to their liking!
+
+- **Theme**: Each player can choose what visual theme to use for Simple Calendar!
+- **Open On Load**: This setting will open Simple Calendar's main interface when loading foundry. If the GM has disabled viewing the calendar for players, Simple Calendar will not show regardless of this setting. By default, this is set to true.
+- **Open In Compact View**: If checked anytime Simple Calendar is opened (On Load, Clicking the button or through a macro) it will be opened in the compact view. By default, this is set to false.
+- **Remember Position**: If checked Simple Calendar will remember where it was placed on the screen and position itself there everytime it is opened. By default, this is set to true.
+
+#### Import/Export
+
+The importing and exporting of calendar settings has been improved.
+- **Exporting**: You can now choose what to export, specific calendars, notes, permissions or the global configuration settings.
+- **Importing**: When importing the file will be parsed and show what was found inside and allow you to choose if to import it or not. For calendar configurations and notes you can also choose which calendar to import them into or to import them into a new calendar.
+
+You will be able to import configurations from version 1.x of Simple Calendar so any saved configurations will not be lost!
+
+#### Quick Setup
+
+For new and existing calendars a GM can run through the Quick Setup tab to configure a calendar in 5 easy clicks. This tab will prompt you to:
+
+- Choose a starting predefined calendar to base your calendar on.
+- Choose the current date for your calendar.
+- Choose if to show the clock for your calendar or not.
+
+Then save to apply your changes!
+
+#### Display Options
+
+A display options tab has been added where the options for specifying your date and time formats live. The inputs for these formats have been improved for an easier time creating the formats as well as a real time preview of how it will look for the selected calendar.
+
+
+### Note Improvements
+
+#### Journal Entries
+
+The main change in this update to the notes is now notes are stored as journal entries instead of in the settings. This makes way more sense as a note is closest to a journal entire within foundry.  
+
+- Simple Calendar will create its own journal entries folder where all notes will be saved. 
+- Simple Calendar notes have their own sheet associated with them, this means that opening up a journal entire for a note from th sidebar will open it up in the correct display.
+- The display and styling of the note sheet has been redone to match with the new aesthetic for Simple Calendar.
+- Players can now add notes without the GM needing to be logged in (provided they have the correct permissions to do so)
+- There are still two situations where the GM will need to be logged in for players to do certain actions with the notes:
+  - Toggling if to be reminded of a note only if the player wanting to be reminded did not create the note.
+  - Re-ordering notes on a day.
+
+#### User Permissions
+
+With the change to using journal entries for notes how permissions are done for notes has changed.
+
+- To add notes players MUST have the Create Journal Entries permission level.
+- The "Player Viewable" option has changed on notes from being a single check box to allowing you to specify which players can see the note.
+- The configuration setting "Note Default Player Visibility" will now check all players under "Player Viewable" when creating a new note.
+
+#### Note Search Updates
+
+The searching for notes has been improved since the initial quick search added. The smaller improvements are:
+
+- Search is part of the main calendar display instead of its own dialog now.
+- Hitting enter on the search text box will now trigger a search.
+- Note author is now also searched against.
+- Note categories are now also searched against.
+- Added options to choose which fields on a note to search.
+ 
+The big improvement to searching is that the algorithm has been completely rewritten. The new algorithm provides much better relevancy ranking of notes as well as fuzzy matching to offer results even when typos are entered in the search terms.
+
+For the search nerds out there it is a custom algorithm that utilizes the Okapi BM25 search method for great relevancy matching as well as a Levenshtein Distance search to provide support for fuzzy matching. 
+
+I have run some stress tests on the new algorithm and have been happy with the results. With a data set that consists of 25,000 notes that contain 3.75 million total words the average search time was under 10 seconds on my computer (Using Chrome with an AMD 5800X). I don't think anyone is storing near that many notes in Foundry so I feel safe in this is an acceptable amount of time for searching.
+
+
+### Improved Date/Time Selector
+
+The date/time selector that is used when choosing a date for notes or specifying the month of a Season or the sunrise/sunset time of a season has been improved.
+
+- The date selector will now attempt to intelligently place itself so that it doesn't disappear outside the window.
+- The time selection portion has been re-designed and improved with the following improvement:
+  - The design of the interface has been improved with better looking and easier to interact with text boxes and dropdowns for the text boxes.
+  - Added the ability to use the scroll wheel to change the number up or down in any of the text boxes.
+  - Validation and changes are more consistent, they worked fine before but just feel better now.
+
+### Migration
+
+All the above changes have resulted in a change in how Simple Calendar stores data within FoundryVTT. Simple Calendar version 2 will detect if you are on a version 1 install and migrate users data over to the new format.
+
+After the data has been migrated over there will be an option to clean up the old data, this just involves removing the old data from Foundry. This can be skipped if you do not want to remove it.
+
+### Quality of Life Changes
+
+- Added a new way to change time, you can now manually change the time by Rounds. 
+  - This option has been added to the unit type selector. 
+  - The number of seconds this changes the time by is based on "Seconds per Combat Round" setting.
+- Added a new note setting "Send Reminders On Login", if enabled when a player logs in any note reminder on the current day will be PM'd to them. This replaced to default of doing that step no matter what.
+- Adjusted how moon phase icons are displayed. If a day has more than 2 moon phases showing only the first phase will be down with a down arrow. Hovering over that moon phase/arrow will display a popup dialog that shows the phase for every moon on that day.
+- Added the ability to set an icon for each season. This will be displayed next to the season name on the calendar.
+- Moved predefined calendars configurations and the list of predefined calendars to their own json files. They are only downloaded when required, reducing the overall footprint of the module when loaded.
+
+### Bug Fixes
+
+- Fixed a bug where the display year in the calendar header would not update properly if the year being viewed was different from the current year.
+- Fixed a bug where clicking on a moon icon or note indicator would not select the day properly.
+- Fixed a bug with the Warhammer predefined calendar where the season starts were set to the wrong dates.
+- Fixed a bug where using Z or ZZ in the date/time formats would break the calendars' configuration.
+- Fixed a bug when using dates before the year zero year (negative timestamps) the real time clock would skip times near the end of an hour.
+- Fixed a bug with PF2E systems where the year in Simple Calendar would not match the year of the built-in world clock due to an update to the PF2E world clock.
+- Fixed a bug where the visible month would reset back to the month of the current date while the real time clock is running.
+
+### API Changes
+
+To go along with the large changelist to the Simple Calendar module the API has also undergone some large changes. 
+
+None of these changes should be breaking to existing implementations using the API but please read over all the changes to make sure your Systems/Modules/Macros are not impacted.
+
+The documentation for the API has also moved to [https://simplecalendar.info/api/index.html](https://simplecalendar.info/modules/SimpleCalendar.html). This site will be home to all documentation around Simple Calendar but for right now it just contains the up-to-date API documentation.
+
+#### General Changes
+
+- Added a new property [`SimpleCalendar.api.Icons`](https://simplecalendar.info/enums/SimpleCalendar.api.Icons.html) that contains a list of all available icons within Simple Calendar.
+- **Important**: Depreciating the property `SimpleCalendar.api.MoonIcons`. This has been replaced with the Icons property and will be removed when FoundryVTT v10 Stable has been released.
+- Updated the [`SimpleCalendar.api.formateDate()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#formatDateTime) function to also take in an optional format string to format the date/time in any custom way. If no format string is provided it will return an object with the date formatted using the formats from the configuration, otherwise it will return the formatted string
+- Added a new function [`SimpleCalendar.api.runMigration()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#runMigration) function that will run the migration code again.
+
+#### Bug Fixes
+
+- Fixed a bug with `SimpleCalendar.api.changeDate` where if just a year was passed in the month would update to the first month of the year.
+
+#### Multi Calendar Support
+
+- Added a function [`SimpleCalendar.api.getCurrentCalendar()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#getCurrentCalendar) that returns the configuration data for the current active calendar.
+- Added a new function [`SimpleCalendar.api.getAllCalendars()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#getAllCalendars) that returns a list of all calendars set up in Simple Calendar. (This does not include any predefined calendars)
+- Updated all API functions so that they can now take an additional optional parameter `calendarId` (where it made sense).
+  - This parameter can be used to target a specific calendar for the API function to update/get data from. If the parameter is not specified then the current active calendar will be used.
+  - This means that current systems/modules/macros that use the API will not need to update their function calls unless they want to add the ability to target calendars that are not the one currently being used.
+
+#### Note Support
+
+- Added a function [`SimpleCalendar.api.getNotes()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#getNotes) that returns all notes that the current player can see. Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
+- Added a function [`SimpleCalendar.api.getNotesForDay(year, month, day)`](https://simplecalendar.info/modules/SimpleCalendar.api.html#getNotesForDay) that returns all notes that the current player can see for the date specified. . Optional parameter to specify the ID of the calendar to get the notes from, defaults to the active calendar.
+- Added a function [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#addNote) that will add a new note of the specified content to the specified date of the specified calendar. This function will return the newly created JournalEntry that contains the notes' data.
+
+#### Handlebar Helpers
+
+- Removed 2 Handlebar helpers, day-has-note and day-moon-phase. These were used internally and are no longer required.
+- Added a new Handlebar helper [sc-full-calendar](https://simplecalendar.info/enums/HandlebarHelpers.html#sc_full_calendar) that can be used to render a full calendar view of the current date or passed in date.
+  - These calendars support basic interactivity, change which month is being viewed and selecting a day when it is clicked, with the option to pass in your own function to extend this functionality.
+  - These calendars can use the default Simple Calendar styling or be customized.
+- Added a new function [`SimpleCalendar.api.activateFullCalendarListeners()`](https://simplecalendar.info/modules/SimpleCalendar.api.html#activateFullCalendarListeners) that is used to activate all the basic interactivity for calendars rendered with the [sc-full-calendar](https://simplecalendar.info/api/enums/HandlebarHelpers.html#sc_full_calendar) Handlebar helper.
+#### Removal of Depreciated Items
+
+- With the release of Foundry v9 depreciated properties from the [Date Object](https://simplecalendar.info/interfaces/SimpleCalendar.DateData.html) have been removed:
+  - _**dayDisplay**_: Please use display.day instead.
+  - _**monthName**_: Please use display.monthName instead.
+  - **_yearName_**: Please use display.yearName instead.
+  - **_yearPrefix_**: Please use display.yearPrefix instead.
+  - **_yearPostfix_**: Please use display.yearPostfix instead.
+- With the release of Foundry v9 depreciated functions from the SimpleCalendar class have been removed:
+    - `SimpleCalendar.show();`: Please use `SimpleCalendar.api.showCalendar();`
+    - `SimpleCalendar.setDateTime()`: Please use `SimpleCalendar.api.setDate()`
+    - `SimpleCalendar.changeDateTime()`: Please use `SimpleCalendar.api.changeDate()`
+
+### Translation Updates
+
+- Updates to the German translation thanks to [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird)!
+- Simple Calendar is now available in Italian thanks to [Haloghen](https://github.com/Haloghen)!
+
+### About Time and Calendar/Weather Importing
+
+I have removed the functionality for importing calendar data from about-time and calendar/weather. About-time has not supported custom calendars for several months now and calendar/weather has been depreciated for weather control.
+
 ## v1.3.75 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-October%2011%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.75/module.zip)
 
   - Fixed a rare issue where date formats would throw an exception and cause the calendar and the configuration to not open.
   - Updated the Pathfinder 2E World Clock Sync to work properly with the updates World Clock in Pathfinder 2E System version 2.15.0 
 
 
 ## v1.3.73 - Translation Updates, Bug Fixes, API Changes
+
+![](https://img.shields.io/badge/release%20date-October%206%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.73/module.zip)
 
 ### Bug Fixes
 
@@ -34,6 +512,9 @@
 
 ## v1.3.66 - Note Searching and Bug Fixes
 
+![](https://img.shields.io/badge/release%20date-September%2030%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.66/module.zip)
+
 ### Note Searching
 
 You can now search for notes!
@@ -54,6 +535,9 @@ You can now search for notes!
 
 ## v1.3.62 - Custom Date Formats, Quality of Life Improvements, API Changes and Bug Fixes
 
+![](https://img.shields.io/badge/release%20date-September%2028%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.62/module.zip)
+
 ### Custom Date Formats
 
 You can now customize how the date and time is displayed in Simple Calendar with custom date/time formats!
@@ -70,7 +554,7 @@ You can now customize how the date and time is displayed in Simple Calendar with
     - _**Date Selector**_: The time portion of the Date Selector text box as well as the time selection text boxes.
     - _**Notes**_: The Date/Time pill in the note list and in the note display will use this format to display the time portion.
   - **Month/Year Format**: This indicates how the month and year are displayed at the top of the calendar in the Full View and the Date Selector.
-- Above the new date format settings is a table that contains a list of all the tokens that can be used in the formats. This table is large so by default it is collapsed, but clicking the header will expand it. A detailed list of all the tokens is also available in the [configuration documentation](./docs/Configuration.md#datetime-formats).
+- Above the new date format settings is a table that contains a list of all the tokens that can be used in the formats. This table is large so by default it is collapsed, but clicking the header will expand it. A detailed list of all the tokens is also available in the [configuration documentation](https://simplecalendar.info/pages/docs/calendar-configuration/display-options.html#datetime-formats).
 
 ### Quality of Life Improvements
 
@@ -89,9 +573,9 @@ You can now customize how the date and time is displayed in Simple Calendar with
 
 ### API Changes
 
-- Added a `date` property to the [Date Display Object](./docs/API.md#date-display-object) that contains the formatted date string for the date. This object is part of the return from the `SimpleCalendar.api.timestampToDate` function.
-- Updated the `time` property of the [Date Display Object](./docs/API.md#date-display-object) so that it contains the formatted time string for the date.
-- Added a new function to the API, `SimpleCalendar.api.formatDateTime(date)`. This takes in a DateTime object and will format it to the currently configured date and time formats. Check out the [API Docs](./docs/API.md#simplecalendarapiformatdatetimedate) for more details!
+- Added a `date` property to the [Date Display Object](https://simplecalendar.info/interfaces/SimpleCalendar.DateDisplayData.html) that contains the formatted date string for the date. This object is part of the return from the `SimpleCalendar.api.timestampToDate` function.
+- Updated the `time` property of the [Date Display Object](https://simplecalendar.info/interfaces/SimpleCalendar.DateDisplayData.html) so that it contains the formatted time string for the date.
+- Added a new function to the API, `SimpleCalendar.api.formatDateTime(date)`. This takes in a DateTime object and will format it to the currently configured date and time formats. Check out the [API Docs](https://simplecalendar.info/modules/SimpleCalendar.api.html#formatDateTime) for more details!
 - Added a new function to the API, `SimpleCalendar.api.getAllMonths()`. This function will return configuration details for all months in the calendar.
 - Added a new function to the API, `SimpleCalendar.api.getAllMoons()`. This function will return configuration details for all moons of the calendar.
 - Added a new function to the API, `SimpleCalendar.api.getAllWeekdays()`. This function will return configuration details for all weekdays in the calendar.
@@ -116,6 +600,9 @@ If you are interested is becoming a patron please check out [my page here](https
 
 ## v1.3.44 - Bug Fixes
 
+![](https://img.shields.io/badge/release%20date-September%2021%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.44/module.zip)
+
 ### Bug Fixes
 
 - Fixed a bug where the Date/Time change hook would be fired multiple times while the clock was running.
@@ -139,6 +626,9 @@ If any bugs do crop up in your game I am sorry and please let me know with a bug
 
 
 ## v1.3.39 - Season Changes, QoL Improvements, API Changes and Bug Fixing
+
+![](https://img.shields.io/badge/release%20date-September%208%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.39/module.zip)
 
 ### Season Changes
 
@@ -182,18 +672,24 @@ If any bugs do crop up in your game I am sorry and please let me know with a bug
 
 ## v1.3.28 - API Changes
 
-- Updated the [DateTimeChange hook](./docs/Hooks.md#datetime-change) to have a new property in its returned value called "date". This property contains the same contents as the [API timestampToDate function](./docs/API.md#simplecalendarapitimestamptodatetimestamp) with the current timestamp passed in. This is to have the exact same data available in the hook as the API function. As a result some existing properties will be removed as stated below:
+![](https://img.shields.io/badge/release%20date-August%2011%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.28/module.zip)
+
+- Updated the [DateTimeChange hook](https://simplecalendar.info/modules/SimpleCalendar.Hooks.html#DateTimeChange) to have a new property in its returned value called "date". This property contains the same contents as the [API timestampToDate function](https://simplecalendar.info/modules/SimpleCalendar.api.html#timestampToDate) with the current timestamp passed in. This is to have the exact same data available in the hook as the API function. As a result some existing properties will be removed as stated below:
   - **Future Breaking**: The property "year" will be removed when Foundry v10 Stable is released. Please use the year information from the new "date" property.
   - **Future Breaking**: The property "month" will be removed when Foundry v10 Stable is released. Please use the month information from the new "date" property.
   - **Future Breaking**: The property "day" will be removed when Foundry v10 Stable is released. Please use the day information from the new "date" property.
   - **Future Breaking**: The property "time" will be removed when Foundry v10 Stable is released. Please use the time information from the new "date" property.
   - **Future Breaking**: The property "season" will be removed when Foundry v10 Stable is released. Please use the season information from the new "date" property.
-- Updated the [Clock Start/Stop hook](./docs/Hooks.md#clock-startstop) so that it uses the same function as the [API clockStatus function](./docs/API.md#simplecalendarapiclockstatus). No change to returned values, this is to keep consistency between those functions.
-- Updated the [PrimaryGM hook](./docs/Hooks.md#is-primary-gm) so that it uses the same function as the [API isPrimaryGM function](./docs/API.md#simplecalendarapiisprimarygm). No change to returned values, this is to keep consistency between those functions.
+- Updated the [Clock Start/Stop hook](https://simplecalendar.info/modules/SimpleCalendar.Hooks.html#ClockStartStop) so that it uses the same function as the [API clockStatus function](https://simplecalendar.info/modules/SimpleCalendar.api.html#clockStatus). No change to returned values, this is to keep consistency between those functions.
+- Updated the [PrimaryGM hook](https://simplecalendar.info/modules/SimpleCalendar.Hooks.html#PrimaryGM) so that it uses the same function as the [API isPrimaryGM function](https://simplecalendar.info/modules/SimpleCalendar.api.html#isPrimaryGM). No change to returned values, this is to keep consistency between those functions.
 - Changed when the DateTimeChange hook is fired to include every tick of the clock.
-- Added the "isLeapYear" property to the [Date Object](./docs/API.md#date-object) returned by [timeStampToDate API function](./docs/API.md#simplecalendarapitimestamptodatetimestamp) that indicates if the date falls on a leap year or not.
+- Added the "isLeapYear" property to the [Date Object](https://simplecalendar.info/interfaces/SimpleCalendar.DateData.html) returned by [timeStampToDate API function](https://simplecalendar.info/modules/SimpleCalendar.api.html#timestampToDate) that indicates if the date falls on a leap year or not.
 
 ## v1.3.23 - Note Reminders, API Changes, Bug Fixing and Translations
+
+![](https://img.shields.io/badge/release%20date-August%207%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.23/module.zip)
 
 ### Note Reminders
 
@@ -239,6 +735,9 @@ GMs and players can select notes to be reminded of when the current calendar dat
 
 ## v1.3.8 - Bug Fixes
 
+![](https://img.shields.io/badge/release%20date-July%2015%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.8/module.zip)
+
 ### Quality of Life Improvements
 
 - Changed the moon icons to a new set of SVG's. This will make the creation of Calendar themes easier in the future.
@@ -254,6 +753,9 @@ GMs and players can select notes to be reminded of when the current calendar dat
 - Fixed a bug where the moon calculation could occasionally say every day of a month was the same moon phase.
 
 ## v1.3.0 - Note Improvements
+
+![](https://img.shields.io/badge/release%20date-July%2014%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.3.0/module.zip)
 
 ### Notes
 
@@ -311,15 +813,21 @@ This update is mainly around notes and improving the experience around adding, e
 
 ## v1.2.113 - API Changes
 
+![](https://img.shields.io/badge/release%20date-July%202%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.113/module.zip)
+
 - Updated the timestampToDate function's return values. The result now contains a display object that contains all the different display strings for the passed in timestamp.
 - Fixed a bug with the timestampToDate function where months with day offsets would return the incorrect day of the week for days in that month.
 - Fixed a bug with the timestampToDate function where the "showWeekdayHeadings" property would be incorrectly set.
 - Added a function SimpleCalendar.api.getCurrentSeason() that returns details about the season for the current date.
 - Added a function SimpleCalendar.api.getAllSeasons() that returns details for every configured season in Simple Calendar.
 - Fixed a bug when importing from Calendar/weather where the hours per day would end up being undefined.
-- Added the ability to use the new Date Selector input type to other modules/systems through Simple Calendars API. [Read more here!](./docs/API.md)
+- Added the ability to use the new Date Selector input type to other modules/systems through Simple Calendars API. [Read more here!](https://simplecalendar.info/modules/SimpleCalendar.api.html)
 
 ## v1.2.107 - Calendar Configuration Import/Export, API Changes, Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-June%2026%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.107/module.zip)
 
 ### Import/Export
 
@@ -343,6 +851,9 @@ You can now export and import calendar configurations for Simple Calendar. Under
 
 ## v1.2.103 - API Changes, Module Import/Export Changes and Bug Fixes
 
+![](https://img.shields.io/badge/release%20date-June%2024%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.103/module.zip)
+
 ### API Changes
 
 - The timestampToDate function now returns additional information about the date: year prefix, year postfix, the current season and if to show the weekday headings.
@@ -361,15 +872,24 @@ You can now export and import calendar configurations for Simple Calendar. Under
 
 ## v1.2.97 - API Bug Fixes
 
+![](https://img.shields.io/badge/release%20date-June%2016%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.97/module.zip)
+
 - Fixed a bug with the API function timestampPlusInterval where adding just a year would increment to the first day of the year not by the number of years.
 - Fixed a bug with the API function timestampPlusInterval where if very large values for the different intervals were passed in an error would be thrown
 
 ## v1.2.95 - Translations & Foundry 0.8.7
 
+![](https://img.shields.io/badge/release%20date-June%2015%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.95/module.zip)
+
 - Ensured that Simple Calendar works in foundry version 0.8.7.
 - The addition of a Korean translation thanks to drdwing!
 
 ## v1.2.93 - Clock Changes & Bug Fixing
+
+![](https://img.shields.io/badge/release%20date-June%2015%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.93/module.zip)
 
 ### Clock Changes
 
@@ -387,6 +907,9 @@ You can now export and import calendar configurations for Simple Calendar. Under
 
 ## v1.2.85 - New Clock, API Changes and as always more Bug Fixing
 
+![](https://img.shields.io/badge/release%20date-June%2011%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.85/module.zip)
+
 ### New Clock
 
 The old clock in Simple Calendar was very basic and not very good. I have removed that clock and re-written the entire thing which should provide a much nicer experience.
@@ -395,7 +918,7 @@ The clock now functions as follows:
 - The time will now update every second for all players.
 - Every 10 seconds all players time will sync with the primary GM's time. This is to mitigate any time "wandering" that may happen.
 - The time can still be manually updated by those with permission while the clock is running.
-- For every second that passes, the time updates by the amount in the configuration setting [Game Seconds Per Real Life Seconds](./docs/Configuration.md#time-settings) under the time seconds.
+- For every second that passes, the time updates by the amount in the configuration setting [Game Seconds Per Real Life Seconds](https://simplecalendar.info/pages/docs/calendar-configuration/time-settings.html) under the time seconds.
 - If the GM disconnects while the clock is running, when they reconnect all the players clocks will stop running and be updated to the time when the GM disconnected.
 
 It is important to note that while the clock does its best to keep everyone on the same time if a player or GM has a high latency to the server (greater than one to two seconds) then the time may be visually off between the GM and the players. The Primary GM's time is considered correct and all other players will use that time.
@@ -419,6 +942,9 @@ It is important to note that while the clock does its best to keep everyone on t
 
 ## v1.2.73 - API Bug Fixing
 
+![](https://img.shields.io/badge/release%20date-June%2071%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.73/module.zip)
+
 ### Bug Fixes
 
 - Fixed a bug with the new API timestampPlusInterval function that would incorrectly add a day when it shouldn't.
@@ -429,9 +955,12 @@ It is important to note that while the clock does its best to keep everyone on t
 
 ### New API
 
-- Added a new API function [chooseRandomDate](./docs/API.md#simplecalendarapichooserandomdatestartdate-enddate) that will choose a random date on the calendar or between a passed in start and end date.
+- Added a new API function [chooseRandomDate](https://simplecalendar.info/modules/SimpleCalendar.api.html#chooseRandomDate) that will choose a random date on the calendar or between a passed in start and end date.
 
 ## v1.2.67 - Translations, Macro/API Changes, Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-June%206%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.67/module.zip)
 
 ### Macro/API Changes
 
@@ -439,7 +968,7 @@ An API interface to Simple Calendar has been added so that other modules can hav
 
 All the existing macro functions have been moved into this new API interface. The existing functions remain with a depreciation warning, and they will be removed in a later update.
 
-Check out the new [API documentation](./docs/API.md) for all the additions and changes.
+Check out the new [API documentation](https://simplecalendar.info/modules/SimpleCalendar.api.html) for all the additions and changes.
 
 
 ### Bug Fixes
@@ -452,15 +981,18 @@ Check out the new [API documentation](./docs/API.md) for all the additions and c
 
 ## v1.2.63 - Year Names, Bug Fixing & Foundry 0.8.6 Support
 
+![](https://img.shields.io/badge/release%20date-May%2031%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.63/module.zip)
+
 ### Year Names
 
 You can now have named years in Simple Calendar! This update adds several options for adding and configuring how named years work.
 
-Setting|Description
--------|-----------
-Year Names | This is a list of different names that can be used for the years.
-Year Name Behaviour|This drop down is used to determine how the year names are applied to years. The options are:<br/><strong>Default:</strong> The year list starts at the specified starting year and goes down the list for each subsequent year. If the year is past the number of names in the list it will continue to use the last name from the list.<br/><br/><strong>Repeat</strong>: The year list starts at the specified starting year and goes down the list for each subsequent year. When the current year is past the name list length it will start again at the top of the list and repeat it forever.<br/><br/><strong>Random</strong>: For every year a random name from the list will be chosen. The calendar will do its best to keep the same name for a year.
-Starting Year For Names | This is the year that the first name in the list of Year Names is associated with.<br/>This option only appears if the Year Name Behaviour setting is set to None or Repeat.
+| Setting                 | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Year Names              | This is a list of different names that can be used for the years.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Year Name Behaviour     | This drop down is used to determine how the year names are applied to years. The options are:<br/><strong>Default:</strong> The year list starts at the specified starting year and goes down the list for each subsequent year. If the year is past the number of names in the list it will continue to use the last name from the list.<br/><br/><strong>Repeat</strong>: The year list starts at the specified starting year and goes down the list for each subsequent year. When the current year is past the name list length it will start again at the top of the list and repeat it forever.<br/><br/><strong>Random</strong>: For every year a random name from the list will be chosen. The calendar will do its best to keep the same name for a year. |
+| Starting Year For Names | This is the year that the first name in the list of Year Names is associated with.<br/>This option only appears if the Year Name Behaviour setting is set to None or Repeat.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 The Dark Sun predefined calendar has been updated to include named years that match the Merchant Calendar for that game system.
 
@@ -475,6 +1007,9 @@ The Dark Sun predefined calendar has been updated to include named years that ma
 - Ensured that Simple Calendar works with Foundry 0.8.6 and Foundry 0.7.10
 
 ## v1.2.55 - Improved PF2E Support, Permissions, Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-May%2021%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.55/module.zip)
 
 ### Improved Pathfinder 2E Support
 
@@ -496,11 +1031,11 @@ This update changes how permissions work within Simple Calendar. There is now a 
 
 These are the current available permissions:
 
-Permission|Description
-----------|------------
-View Calendar | If users in this role can view the calendar interface or not.
-Add Notes | If users in these roles are able to add notes to the calendar.
-Change Date and Time| If users in these roles are able to change the calendars date and time.
+| Permission           | Description                                                             |
+|----------------------|-------------------------------------------------------------------------|
+| View Calendar        | If users in this role can view the calendar interface or not.           |
+| Add Notes            | If users in these roles are able to add notes to the calendar.          |
+| Change Date and Time | If users in these roles are able to change the calendars date and time. |
 
 ### Quality of Life Improvements
 
@@ -513,6 +1048,9 @@ Change Date and Time| If users in these roles are able to change the calendars d
   - If you are running about-time version 0.8.3 or later and running into this issue please re-export Simple Calendars settings into about-time.
 
 ## v1.2.47 - New Features, Translations, QoL Improvements & Bug Fixes 
+
+![](https://img.shields.io/badge/release%20date-May%2013%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.47/module.zip)
 
 ### New Features
 
@@ -537,6 +1075,9 @@ I am happy to say that Simple Calendar has been translated into Traditional Chin
 
 ## v1.2.38 - Quality of Life Improvements and Bug Fixes
 
+![](https://img.shields.io/badge/release%20date-May%209%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.38/module.zip)
+
 ### Quality of Live Improvements
 - Changed the tooltip for days with notes. If the day has 1 or 2 notes the tool tip will now show the title of the notes on that day instead of just the count. If there are 3 or more notes the tool tip will just show the number of notes on that day (like it does now).
 
@@ -550,9 +1091,15 @@ I am happy to say that Simple Calendar has been translated into Traditional Chin
 
 ## v1.2.35 - Bug Fix
 
+![](https://img.shields.io/badge/release%20date-April%2030%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.35/module.zip)
+
 - Fixed a bug where users were unable to set the custom leap year value.
 
 ## v1.2.34 - Bug Fixing
+
+![](https://img.shields.io/badge/release%20date-April%2025%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.34/module.zip)
 
 - Fixed a bug where removing all phases from a moon would cause the calendar to no longer open.
 - Fixed an issue where the compact view clock would show when the show clock setting was unchecked. 
@@ -560,6 +1107,9 @@ I am happy to say that Simple Calendar has been translated into Traditional Chin
 - Fixed an issue when time was advanced by other means (combat tracker or third party module) on maps with intercalary days. Simple Calendar would calculate the new date incorrectly.
 
 ## v1.2.30 - Compact View, Bug Fixes, QoL Improvements & Translations
+
+![](https://img.shields.io/badge/release%20date-April%2023%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.30/module.zip)
 
 ### Compact View
 
@@ -589,17 +1139,20 @@ I am happy to say that Simple Calendar has been translated into German by [Maste
 
 ## v1.2.20 - Macros, Hooks, Bug Fixes and QoL Improvements
 
+![](https://img.shields.io/badge/release%20date-April%2014%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.20/module.zip)
+
 ### Macros
 
-- Added a new macro for setting a specific date/time for the calendar, check out the [documentation](./docs/Macros.md#set-date-and-time) for how to use it.
-- Added a new macro for changing the current date/time by a passed in amount. Check out the [documentation](./docs/Macros.md#change-date-time) for how to use it.
+- Added a new macro for setting a specific date/time for the calendar, check out the [documentation](https://simplecalendar.info/modules/SimpleCalendar.api.html#setDate) for how to use it.
+- Added a new macro for changing the current date/time by a passed in amount. Check out the [documentation](https://simplecalendar.info/modules/SimpleCalendar.api.html#changeDate) for how to use it.
 
 
 ### Hooks
 
 Simple Calendar will now emit certain hooks that other modules/code can listen for.
 
-- Added a hook that is fired every time the current date is changed and contains the information for the new date. Check out the [documentation](./docs/Hooks.md#datetime-change) for more details.
+- Added a hook that is fired every time the current date is changed and contains the information for the new date. Check out the [documentation](https://simplecalendar.info/modules/SimpleCalendar.Hooks.html#DateTimeChange) for more details.
 
 ### Quality of Life Improvements
 
@@ -616,7 +1169,7 @@ Simple Calendar will now emit certain hooks that other modules/code can listen f
 ### Bug Fixes
 
 - Fixed a bug for games with multiple GMs. In some instances both GMs would get assigned as the primary GM and process changes, instead of only 1 processing the changes. This sometimes resulted in incorrect dates being set.
-- Fixed an issue with the Exandrian pre defined calendar where I missed an entire weekday, big oops.
+- Fixed an issue with the Exandrian pre-defined calendar where I missed an entire weekday, big oops.
 
 
 ### Foundry 0.8.1
@@ -627,6 +1180,9 @@ That version of Foundry is still in alpha, so I do warn against updating your ma
 
 
 ## v1.2.5 - Bug Fixes and QoL Improvements
+
+![](https://img.shields.io/badge/release%20date-April%205%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.0.3/module.zip)
 
 ### Quality of Life Improvements
 
@@ -641,6 +1197,9 @@ That version of Foundry is still in alpha, so I do warn against updating your ma
 
 ## v1.2.0 - Time, Other Modules, Seasons, Moons and Notes
 
+![](https://img.shields.io/badge/release%20date-April%204%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.0/module.zip)
+
 This update was a long time coming so apologies for making you wait for it. This update with most of the currently requested changes to Simple Calendar
 
 ### Time
@@ -649,20 +1208,20 @@ Simple Calendar now supports time of day! What this means is that Simple Calenda
 
 There are 4 different options on how to tie into the game world time to achieve the exact level of interaction you want for your world. They are:
 
-Option|Description|Update Game World Time|When Game World Time is Updated
---------|--------------------|-------------------------------------------------|----------------------------------------------------------
-None (default)|Simple Calendar does not interact with the game world time at all. This setting is ideal if you want to keep Simple Calendar isolated from other modules.|Does not update the game world time|Simple Calendar is not updated when the game world time is updated by something else.
-Self|Treats Simple Calendar as the authority source for the game world time. This setting is ideal when you want Simple Calendar to be in control of the games time and don't want other modules updating Simple Calendar|Updates the game world time to match what is in Simple Calendar.|Combat round changes will update Simple Calendars time. Simple Calendar will ignore updates from all others modules.
-Third Party Module|This will instruct Simple Calendar to just display the Time in the game world time. All date changing controls are disabled and the changing of time relies 100% on another module. This setting is ideal if you are just want to use Simple Calenar to display the date in calendar form and/or take advantage of the notes.|Does not update the game world time.|Updates it's display everytime the game world time is changed, following what the other modules say the time is.
-Mixed|This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.|Will update the game world time|Will update it's own time based on changes to the game world time, following what other modules say the time is.
+| Option             | Description                                                                                                                                                                                                                                                                                                                   | Update Game World Time                                           | When Game World Time is Updated                                                                                      |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| None (default)     | Simple Calendar does not interact with the game world time at all. This setting is ideal if you want to keep Simple Calendar isolated from other modules.                                                                                                                                                                     | Does not update the game world time                              | Simple Calendar is not updated when the game world time is updated by something else.                                |
+| Self               | Treats Simple Calendar as the authority source for the game world time. This setting is ideal when you want Simple Calendar to be in control of the games time and don't want other modules updating Simple Calendar                                                                                                          | Updates the game world time to match what is in Simple Calendar. | Combat round changes will update Simple Calendars time. Simple Calendar will ignore updates from all others modules. |
+| Third Party Module | This will instruct Simple Calendar to just display the Time in the game world time. All date changing controls are disabled and the changing of time relies 100% on another module. This setting is ideal if you are just want to use Simple Calenar to display the date in calendar form and/or take advantage of the notes. | Does not update the game world time.                             | Updates it's display everytime the game world time is changed, following what the other modules say the time is.     |
+| Mixed              | This option is a blend of the self and third party options. Simple calendar can change the game world time and and changes made by other modules are reflected in Simple Calendar. This setting is ideal if you want to use Simple Calendar and another module to change the game time.                                       | Will update the game world time                                  | Will update it's own time based on changes to the game world time, following what other modules say the time is.     |
 
-You can check out the [configuration](./docs/Configuration.md#game-world-time-integration) section for more details.
+You can check out the [configuration](https://simplecalendar.info/pages/docs/calendar-configuration/general-settings.html#game-world-time-integration) section for more details.
 
 #### Simple Calendar Clock
 
 There is now a time of day clock that displays below the calendar to show the current time of the current day.
 The GM can manually control this clock if they wish, or they can start the clock and have it update as real time passes.
-The clock does also update as combat rounds pass. For more details on the clock check out [here](./docs/UsingTheCalendar.md#simple-calendars-clock).
+The clock does also update as combat rounds pass. For more details on the clock check out [here](https://simplecalendar.info/pages/docs/using-sc/index/index.html#clock).
 
 #### Configuration
 
@@ -675,20 +1234,20 @@ A ratio of 1 would mean for every second that passes in the real world 1 second 
 
 Simple Calendar also now interfaces with other modules. These modules can be used to adjust the game world time and have those changes reflected in Simple Calendar.
 
-For two of the more common modules Simple Calendar can also import their settings into Simple Calendar or export Simple Calendars settings into those modules. The two modules that support this are about-time and Calendar/Weather. Check out this [documentation](./docs/Configuration.md#third-party-module-importexport) for more details on how it all works.
+For two of the more common modules Simple Calendar can also import their settings into Simple Calendar or export Simple Calendars settings into those modules. The two modules that support this are about-time and Calendar/Weather.
 
 
 ### Seasons
 
 Simple Calendar now supports seasons. Any number of seasons can be added to a calendar, and you are able to specify the following options for each season:
 
-Setting | Description
---------|------------
-Season Name | Specify a custom name of the season.
-Starting Month | From a drop down choose which month this season starts in. This drop down is populated based on the custom months that have been set up.
-Starting Day | From a drop down choose which day of the the starting month this season begins on. This drop down is populated with a list of days based on the staring month selected.
-Color | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color.
-Custom Color | If the color option is set to Custom Color an option will appear where you can enter a custom Hex representation of a color to use for the seasons color.
+| Setting        | Description                                                                                                                                                                                                                                         |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Season Name    | Specify a custom name of the season.                                                                                                                                                                                                                |
+| Starting Month | From a drop down choose which month this season starts in. This drop down is populated based on the custom months that have been set up.                                                                                                            |
+| Starting Day   | From a drop down choose which day of the the starting month this season begins on. This drop down is populated with a list of days based on the staring month selected.                                                                             |
+| Color          | Seasons can be assigned a color, this color is used as the background color for the calendar display when it is the current season. There is a list of predefined colors that work well for standard season and the option to enter a custom color. |
+| Custom Color   | If the color option is set to Custom Color an option will appear where you can enter a custom Hex representation of a color to use for the seasons color.                                                                                           |
 
 The calendar display has also been updated so that right below the month and year the name of the current season will be displayed.
 
@@ -699,7 +1258,7 @@ I think this gives the best approach for defining seasons and allowing customiza
 ### Moons
 
 Simple Calendar now supports the addition of moons. Any number of moons can be added to a calendar, and they can be customized to meet your needs.
-For details on how to add and customize a moon please check out the [configuration documentation](./docs/Configuration.md#moon-settings).
+For details on how to add and customize a moon please check out the [configuration documentation](https://simplecalendar.info/pages/docs/calendar-configuration/moon-settings.html).
 
 The calendar now also displays the important (single day) moon phases on the calendar as well as the moon phase for the current day and selected day.
 
@@ -718,10 +1277,16 @@ I did a complete re-organization/clean up of all the documentation around Simple
 
 ## v1.1.8 - Bug Fixes
 
+![](https://img.shields.io/badge/release%20date-March%2010%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.1.8/module.zip)
+
 - Fixed a rare bug where the day of the week a month starts on would be incorrect.
 - Fixed an issue with the Harptos calendar preset where the wrong month was getting set as intercalary (oops)
 
 ## v1.1.6 - Bug Fixes & QoL Improvements
+
+![](https://img.shields.io/badge/release%20date-March%205%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.1.6/module.zip)
 
 ### Bug Fixes
 - Fixed an issue when editing an existing note and being unable to change when it repeats.
@@ -740,32 +1305,37 @@ A function has been added to allow users to make macros that open the calendar.
 This function can be accessed by using a script macro and running this command:
 
 ```javascript
-SimpleCalendar.show();
+MainApp.show();
 ```
 **Important**: If this macro is intended to be useable by players don't forget to configure the Macros permissions for all players. It will need to be set to at least the "Limited", permission level.
 
 The show function can take 3 parameters to set the year, month and day that the calendar opens up to.
 
-Parameter|Type|Default|Details
----------|----|-------|-------
-Year | number or null | null | The year to open the calendar too. If null is passed in it will open the calendar to the year the user last viewed
-Month | number or null | null | The month to open the calendar too.<br/>This month is expected to start at 0, or be the index of the month to show. This way intercalary months can be easily chosen by using their index as they don't have a month number.<br/>-1 can be passed in to view the last month of the year.<br/>If null is passed in the calendar will open to the month the user last viewed.
-Day | number or null | null | The day of the month to select.<br/>The day is expected to start at 1.<br/>-1 can be passed in to select the last day of the month.<br/>If null is passed in the selected day will be the last day the user selected, if any.
+| Parameter | Type           | Default | Details                                                                                                                                                                                                                                                                                                                                                                     |
+|-----------|----------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Year      | number or null | null    | The year to open the calendar too. If null is passed in it will open the calendar to the year the user last viewed                                                                                                                                                                                                                                                          |
+| Month     | number or null | null    | The month to open the calendar too.<br/>This month is expected to start at 0, or be the index of the month to show. This way intercalary months can be easily chosen by using their index as they don't have a month number.<br/>-1 can be passed in to view the last month of the year.<br/>If null is passed in the calendar will open to the month the user last viewed. |
+| Day       | number or null | null    | The day of the month to select.<br/>The day is expected to start at 1.<br/>-1 can be passed in to select the last day of the month.<br/>If null is passed in the selected day will be the last day the user selected, if any.                                                                                                                                               |
 
 ##### Examples
 All these examples assume we are using a standard Gregorian calendar.
 
 Open the calendar to August 2003
+
 ```javascript
-SimpleCalendar.show(2003, 7);
+MainApp.show(2003, 7);
 ```
 
 Open the calendar to December 1999 and select the 25th day
+
 ```javascript
-SimpleCalendar.show(1999, 11, 25);
+MainApp.show(1999, 11, 25);
 ```
 
 ## v1.1.0 - Reoccurring Notes, Leap Years, Intercalary Months and Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-March%204%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.1.0/module.zip)
 
 ### Reoccurring Notes
 This update adds the ability to have notes that repeat at certain intervals. When creating or editing a note the GM will be able to pick from these options for how often the note repeats:
@@ -812,6 +1382,9 @@ This update also includes the following bug fixes and quality of life improvemen
 
 ## v1.0.3 - Bug Fixes
 
+![](https://img.shields.io/badge/release%20date-February%2025%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.0.3/module.zip)
+
 Fixed issues around viewing notes in years that were not the current year.
 
 - Fixed an issue where clicking on a day in a year that was not in the current year, and the day would not get properly selected.
@@ -819,6 +1392,9 @@ Fixed issues around viewing notes in years that were not the current year.
 - Fixed an issue where clicking the today button would not take you to the correct day if you were viewing a different year.
 
 ## v1.0.0 - Initial Release
+
+![](https://img.shields.io/badge/release%20date-February%2023%2C%202021-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.0.0/module.zip)
 
 The initial public release of the simple calendar.
 

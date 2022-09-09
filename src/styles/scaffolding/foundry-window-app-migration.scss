@@ -1,0 +1,26 @@
+@import "src/styles/variables";
+.simple-calendar{
+  .fsc-migration-wrapper{
+    padding: $spacer-half;
+
+    .fsc-migration-actions{
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li{
+        margin: $spacer;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+      }
+      .fsc-status-indicator{
+        margin-right: $spacer;
+      }
+      .fsc-migration-status{
+        flex: 1;
+      }
+    }
+  }
+}

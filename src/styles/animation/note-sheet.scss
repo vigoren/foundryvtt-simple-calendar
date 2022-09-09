@@ -1,0 +1,17 @@
+@import "../variables";
+
+.simple-calendar{
+  &.journal-sheet {
+    .fsc-options {
+      &.fsc-animate {
+        transition: max-height 400ms;
+      }
+    }
+
+    .fsc-page-list{
+      &.fsc-animate{
+        transition: left 400ms;
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+@import "../../variables";
+
+//Time Selector Styling
+.fsc-time-selector{
+  color: $fontColor;
+  .fsc-ts-inputs{
+    background-color: $gray-500;
+    input{
+      color: $fontColor;
+      background-color: $gray-500;
+      &:hover, &:focus{
+        background-color: $gray-400;
+      }
+    }
+    .fsc-dropdown{
+      background-color: $gray-500;
+      border-color: $gray-500;
+      box-shadow: 2px 2px 2px $boxShadowColor;
+      @include scrollbar($primary, $primary-600);
+
+      li{
+        &:nth-child(even){
+          background-color: $gray-400;
+        }
+        &:hover{
+          background-color: $primary-300;
+        }
+      }
+    }
+  }
+}

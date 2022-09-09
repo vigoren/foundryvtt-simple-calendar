@@ -1,0 +1,23 @@
+@import "../../variables";
+
+//Note Search Styling
+.fsc-search-box{
+  input{
+    &::placeholder{
+      color:$gray-400;
+      opacity: 1;
+    }
+  }
+  .fsc-control{
+    box-shadow: unset;
+    background-color: $gray-700;
+    border-color: $gray-500;
+    color: $white;
+    &:hover, &.active, &:focus {
+      text-shadow: unset;
+      color: $white;
+      background-color: $gray-700;
+      border-color: $gray-500;
+    }
+  }
+}

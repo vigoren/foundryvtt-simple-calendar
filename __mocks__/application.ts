@@ -19,10 +19,15 @@ class Application {
 
     static get defaultOptions() { return {title:'',template:'',resizable: false, classes: []}; }
 
-    rendered = true;
+    // @ts-ignore
+    options = {};
+
+    get rendered(){return true};
 
     // @ts-ignore
     element: any;
+
+    getData(){}
 
     render(force: boolean, options: any){}
 
@@ -35,6 +40,10 @@ class Application {
     _onResize(){}
 
     _getHeaderButtons(){return [];}
+
+    _onDragMouseUp(){};
+
+    _onDragMouseMove(){};
 }
 
 

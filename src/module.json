@@ -1,9 +1,9 @@
 {
+    "id": "foundryvtt-simple-calendar",
     "name": "foundryvtt-simple-calendar",
     "title": "Simple Calendar",
     "description": "A simple calendar module for keeping track of game days and events.",
-    "version": "v1.3.75",
-    "author": "Dean Vigoren (Vigorator)",
+    "version": "2.1.4",
     "authors": [
         {
             "name": "Dean Vigoren (Vigorator)",
@@ -13,15 +13,18 @@
             "ko-fi": "vigorator"
         }
     ],
-    "minimumCoreVersion": "0.7.9",
-    "compatibleCoreVersion": "0.8.9",
+    "minimumCoreVersion": "10",
+    "compatibleCoreVersion": "10",
+    "compatibility": {
+        "minimum": "10",
+        "verified": "10"
+    },
     "url": "https://github.com/vigoren/foundryvtt-simple-calendar",
     "bugs": "https://github.com/vigoren/foundryvtt-simple-calendar/issues",
-    "allowBugReporter": true,
     "readme": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/README.md",
     "license": "https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/LICENSE",
-    "manifest": "https://github.com/vigoren/foundryvtt-simple-calendar/releases/latest/download/module.json",
-    "download": "https://github.com/vigoren/foundryvtt-simple-calendar/releases/download/v1.3.75/module.zip",
+    "manifest": "",
+    "download": "",
     "esmodules": [
         "./index.js"
     ],
@@ -74,9 +77,25 @@
             "lang": "fr",
             "name": "Français",
             "path": "lang/fr.json"
+        },
+        {
+            "lang": "it",
+            "name": "Italiano",
+            "path": "lang/it.json"
+        },
+        {
+            "lang": "fi",
+            "name": "Suomi",
+            "path": "lang/fi.json"
+        },
+        {
+            "lang": "pl",
+            "name": "polski",
+            "path": "lang/pl.json"
         }
     ],
     "socket": true,
+    "manifestPlusVersion": "1.2.0",
     "media": [
         {
             "type": "cover",
@@ -84,39 +103,22 @@
         },
         {
             "type": "screenshot",
-            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player-screenshot-1.png"
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-themes.gif"
         },
         {
             "type": "screenshot",
-            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player-screenshot-2.png"
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-themes-comp.gif"
         },
         {
             "type": "screenshot",
-            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/player-screenshot-3.png"
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-theme-dark-config.png"
         },
         {
             "type": "screenshot",
-            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/compact-view.gif"
-        },
-        {
-            "type": "screenshot",
-            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-1.png"
-        },
-        {
-            "type": "screenshot",
-            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-2.png"
-        },
-        {
-            "type": "screenshot",
-            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-3.png"
-        },
-        {
-            "type": "screenshot",
-            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-screenshot-4.png"
-        },
-        {
-            "type": "screenshot",
-            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/gm-compact-vew.png"
+            "url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-theme-dark-note.png"
         }
-    ]
+    ],
+    "flags": {
+        "allowBugReporter": true
+    }
 }

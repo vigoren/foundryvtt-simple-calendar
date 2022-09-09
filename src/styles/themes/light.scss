@@ -1,0 +1,41 @@
+@import "../variables";
+.simple-calendar{
+  &.light{
+
+    @import "src/styles/themes/light/calendar";
+    @import "src/styles/themes/light/clock";
+    @import "src/styles/themes/light/configuration";
+    @import "src/styles/themes/light/control";
+    @import "src/styles/themes/light/date-selector";
+    @import "src/styles/themes/light/form-groups";
+    @import "src/styles/themes/light/foundry-window-app";
+    @import "src/styles/themes/light/foundry-window-app-compact";
+    @import "src/styles/themes/light/foundry-window-app-migration";
+    @import "src/styles/themes/light/message";
+    @import "src/styles/themes/light/multi-select";
+    @import "src/styles/themes/light/note-category";
+    @import "src/styles/themes/light/note-list";
+    @import "src/styles/themes/light/note-sheet";
+    @import "src/styles/themes/light/prosemirror";
+    @import "src/styles/themes/light/search-box";
+    @import "src/styles/themes/light/time-selector";
+    @import "src/styles/themes/light/toggle";
+
+    a{
+      color: $tertiary;
+      &:hover, &:active, &:focus{
+        color: $tertiary-400;
+        text-shadow: unset;
+      }
+    }
+
+    //Inputs
+    input, select, option{
+      background-color: $gray-400 !important;
+      color: $fontColor !important;
+      &:focus{
+        box-shadow: unset;
+      }
+    }
+  }
+}

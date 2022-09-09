@@ -1,0 +1,18 @@
+@import "../../variables";
+
+//Multi Select
+.fsc-multiselect{
+  .fsc-multi-select-options{
+    border-color: $gray-600;
+    li{
+      background-color:$wfrpInputBackground;
+      &:hover{
+        background-color: #4C3520;
+      }
+      &.fsc-disabled{
+        color: $wfrpInputTextColor;
+        background-color: #3C352F;
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+[
+  {"key": "gregorian", "label": "Gregorian", "config":  true, "notes":  false},
+  {"key": "darksun", "label": "Dark Sun", "config":  true, "notes":  false},
+  {"key": "dsa-tde5e", "label": "Das Schwarze Auge/The Dark Eye 5th Edition", "config":  true, "notes":  true},
+  {"key": "eberron", "label": "Eberron", "config":  true, "notes":  true},
+  {"key": "exandrian", "label": "Exandrian", "config":  true, "notes":  true},
+  {"key": "forbidden-lands", "label": "Forbidden Lands", "config":  true, "notes":  false},
+  {"key": "harptos", "label": "Forgotten Realms: Harptos", "config":  true, "notes":  true},
+  {"key": "golarianpf1e", "label": "Golarian: Pathfinder 1E", "config":  true, "notes":  false},
+  {"key": "golarianpf2e", "label": "Golarian: Pathfinder 2E", "config":  true, "notes":  false},
+  {"key": "greyhawk", "label": "Greyhawk", "config":  true, "notes":  false},
+  {"key": "traveller-ic", "label": "Traveller: Imperial Calendar", "config":  true, "notes":  false},
+  {"key": "warhammer", "label": "Warhammer: Imperial Calendar", "config":  true, "notes":  false}
+]

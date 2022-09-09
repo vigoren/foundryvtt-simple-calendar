@@ -1,0 +1,8 @@
+@import "../../variables";
+
+//Categories
+.fsc-note-category, label.fsc-note-category, .form-fields .fsc-note-category{
+  color: $white;
+  border-color: $gray-600;
+  background-color: $gray-600;
+}

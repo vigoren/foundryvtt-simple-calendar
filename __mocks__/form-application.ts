@@ -68,8 +68,7 @@ class FormApplication extends Application{
 
     static get defaultOptions() { return {title:'',template:'',resizable: false, classes: []}; }
 
-    // @ts-ignore
-    rendered = true;
+    get rendered(){return true};
 
     // @ts-ignore
     render(force: boolean, options: any){}
@@ -82,6 +81,7 @@ class FormApplication extends Application{
     saveEditor(a: string){}
     bringToTop(){}
     maximize(){return Promise.resolve();}
+    setPosition(){}
 }
 
 // @ts-ignore

@@ -1,0 +1,23 @@
+@import "../../variables";
+
+&.fsc-compact-view {
+  .window-content {
+    border: 2px solid #540e0ec2 !important;
+    border-image: url($wfrpPlayerBorder) 24 20 19 17 / 20px / 17px 14px 13px 14px repeat !important;
+  }
+  .fsc-main-wrapper{
+    .fsc-time-keeper-buttons{
+      .fsc-control{
+        border: 1px solid;
+      }
+    }
+  }
+  .fsc-sc-actions-list{
+    button{
+      i{
+        font-size: .625rem;
+        line-height: .625rem;
+      }
+    }
+  }
+}

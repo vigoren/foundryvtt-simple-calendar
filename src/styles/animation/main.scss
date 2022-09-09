@@ -1,0 +1,53 @@
+@import "../variables";
+.simple-calendar{
+  &.window-app{
+    &.fsc-compact-view{
+      .fsc-main-wrapper {
+        .fsc-side-drawer {
+          &.fsc-animate {
+            transition: left 500ms, height 500ms;
+          }
+        }
+      }
+    }
+    .fsc-main-wrapper{
+      .fsc-controls{
+        &.fsc-unit-controls{
+          .fsc-control-group{
+            .fsc-unit-list{
+              transition: max-height 500ms;
+            }
+          }
+        }
+      }
+      .fsc-side-drawer{
+        &.fsc-animate{
+          transition: left 500ms;
+        }
+      }
+      .fsc-calendar-list{
+        .fsc-animated-clock{
+          &.fsc-animate{
+            svg{
+              #c_arm_s{
+                transform-origin: center;
+                animation: 2s linear infinite sc-clock-spin;
+              }
+              #c_arm_m{
+                transform-origin: center;
+                animation: 6s linear infinite sc-clock-spin;
+              }
+            }
+          }
+        }
+      }
+      .fsc-note-search{
+        .fsc-search-options{
+          &.fsc-animate{
+            transition: max-height 500ms;
+          }
+        }
+      }
+    }
+  }
+}

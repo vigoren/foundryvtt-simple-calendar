@@ -1,37 +1,30 @@
 /**
  * @jest-environment jsdom
  */
-import "../../../__mocks__/game";
-import "../../../__mocks__/form-application";
-import "../../../__mocks__/application";
-import "../../../__mocks__/handlebars";
-import "../../../__mocks__/event";
-import "../../../__mocks__/crypto";
-import "../../../__mocks__/dialog";
-import "../../../__mocks__/hooks";
+import "../../../__mocks__/index";
 import PF2E from "./pf2e";
-import SimpleCalendar from "../simple-calendar";
-import {GameSystems, LeapYearRules} from "../../constants";
+import {LeapYearRules} from "../../constants";
+import Calendar from "../calendar";
 
 describe('Systems/PF2E Class Tests', () => {
 
     test('Get World Create Seconds', () => {
-        expect(PF2E.getWorldCreateSeconds()).toBe(0);
+        const tCal = new Calendar('', '');
+        expect(PF2E.getWorldCreateSeconds(tCal)).toBe(0);
 
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AD", worldCreatedOn: 1626101710000}};
-        expect(PF2E.getWorldCreateSeconds()).toBe(1626101710);
+        expect(PF2E.getWorldCreateSeconds(tCal)).toBe(1626015310);
 
-        SimpleCalendar.instance = new SimpleCalendar();
-        expect(PF2E.getWorldCreateSeconds()).toBe(1626015310);
+        expect(PF2E.getWorldCreateSeconds(tCal)).toBe(1626015310);
 
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AR", worldCreatedOn: 1626101710000}};
-        expect(PF2E.getWorldCreateSeconds()).toBe(63793234510);
+        expect(PF2E.getWorldCreateSeconds(tCal)).toBe(63793234510);
 
         (<Game>game).system.data.version = '2.15.0';
-        expect(PF2E.getWorldCreateSeconds()).toBe(63793320910);
-        expect(PF2E.getWorldCreateSeconds(false)).toBe(63793407310);
+        expect(PF2E.getWorldCreateSeconds(tCal)).toBe(63793320910);
+        expect(PF2E.getWorldCreateSeconds(tCal, false)).toBe(63793407310);
 
         (<Game>game).system.data.version = '1.2.3';
     });
@@ -75,31 +68,19 @@ describe('Systems/PF2E Class Tests', () => {
     });
 
     test('Check Leap Year Rules', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.DnD5E;
-        SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule = LeapYearRules.None;
-
-        PF2E.checkLeapYearRules(SimpleCalendar.instance.activeCalendar.year.leapYearRule);
-        expect(SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule).toBe(LeapYearRules.None);
-
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
+        const tCal = new Calendar('', '');
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AA", worldCreatedOn: 10000}};
-        PF2E.checkLeapYearRules(SimpleCalendar.instance.activeCalendar.year.leapYearRule);
-        expect(SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule).toBe(LeapYearRules.None);
+        PF2E.checkLeapYearRules(tCal.year.leapYearRule);
+        expect(tCal.year.leapYearRule.rule).toBe(LeapYearRules.None);
 
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AR", worldCreatedOn: 10000}};
-        PF2E.checkLeapYearRules(SimpleCalendar.instance.activeCalendar.year.leapYearRule);
-        expect(SimpleCalendar.instance.activeCalendar.year.leapYearRule.rule).toBe(LeapYearRules.Gregorian);
+        PF2E.checkLeapYearRules(tCal.year.leapYearRule);
+        expect(tCal.year.leapYearRule.rule).toBe(LeapYearRules.Gregorian);
     });
 
     test('Weekday Adjust', () => {
-        SimpleCalendar.instance = new SimpleCalendar();
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.DnD5E;
-        expect(PF2E.weekdayAdjust()).toBeUndefined();
-
-        SimpleCalendar.instance.activeCalendar.gameSystem = GameSystems.PF2E;
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AA", worldCreatedOn: 10000}};
         expect(PF2E.weekdayAdjust()).toBeUndefined();
@@ -111,5 +92,8 @@ describe('Systems/PF2E Class Tests', () => {
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AR", worldCreatedOn: 10000}};
         expect(PF2E.weekdayAdjust()).toBe(5);
+
+        (<Game>game).system.data.version = '3.1.2';
+        expect(PF2E.weekdayAdjust()).toBe(6);
     });
 });

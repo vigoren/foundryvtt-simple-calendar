@@ -1,0 +1,28 @@
+
+.simple-calendar{
+  .fsc-category-list, .form-fields.fsc-category-list{
+    flex-wrap: wrap;
+  }
+  .fsc-note-category, label.fsc-note-category, .form-fields .fsc-note-category{
+    font-size: 0.725rem;
+    border-radius: 7px;
+    padding: .2rem .4rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    input{
+      width: 15px;
+      height: 15px;
+      flex: 0 0 15px;
+      margin-left: 0;
+    }
+
+    span{
+      margin-right: 0.35rem;
+      white-space: nowrap;
+    }
+  }
+}

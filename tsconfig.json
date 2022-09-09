@@ -4,9 +4,9 @@
 
     /* Basic Options */
     // "incremental": true,                   /* Enable incremental compilation */
-    "target": "ES2019",                       /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */
-    "module": "ES2015",                       /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
-    "lib": ["DOM","ES2019", "ES2020.bigint", "ES2020.string", "ES2020.symbol.wellknown"], /* Specify library files to be included in the compilation. */
+    "target": "ES2021",                       /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */
+    "module": "ES2020",                       /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
+    "lib": ["DOM"], /* Specify library files to be included in the compilation. */
     // "allowJs": true,                       /* Allow javascript files to be compiled. */
     // "checkJs": true,                       /* Report errors in .js files. */
     // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
@@ -46,7 +46,7 @@
     // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
     // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
-    // "typeRoots": [],                       /* List of folders to include type definitions from. */
+    "typeRoots": ["node_modules/@types","./types"],                       /* List of folders to include type definitions from. */
     "types": ["@league-of-foundry-developers/foundry-vtt-types", "node", "jest"],   /* Type declaration files to be included in compilation. */
     // "allowSyntheticDefaultImports": true,  /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
     "esModuleInterop": true,                  /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
@@ -65,12 +65,73 @@
 
     /* Advanced Options */
     "skipLibCheck": true,                     /* Skip type checking of declaration files. */
-    "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
+    "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
+
+    "jsx": "react",
+    "jsxFactory": "JSX.createElement",
+    "jsxFragmentFactory": "JSX.Fragment"
   },
   "exclude": [
     "__mocks__",
     "node_modules",
     "**/*.test.ts",
     "jest.config.ts"
-  ]
+  ],
+  "typedocOptions": {
+    "entryPoints": [
+      "./types/index.d.ts"
+    ],
+    "entryPointStrategy": "resolve",
+    "media": "./docs/images",
+    "exclude": "**/*.test.ts",
+    "out": "site",
+    "name": "Simple Calendar",
+    "favicon": "./docs/images/logo.svg",
+    "plugin": [
+      "typedoc-plugin-extras",
+      "@knodes/typedoc-plugin-pages"
+    ],
+    "disableSources": true,
+    "hideGenerator": true,
+    "excludeInternal": true,
+    "pluginPages": {
+      "source": "./",
+      "enableSearch": true,
+      "pages":
+        [
+          { "title": "VIRTUAL", "childrenSourceDir":  "./", "childrenOutputDir": "./site", "children": [
+            { "title": "Changelog", "source": "CHANGELOG.md" }
+          ]},
+          { "title": "Configuring Simple Calendar", "childrenSourceDir": "./docs", "children":  [
+            { "title": "Global Configuration", "childrenSourceDir": "./global-configuration", "source": "global-configuration/index.md", "children":  [
+              { "title": "Settings", "source": "settings.md"},
+              { "title": "Permissions", "source": "permissions.md"},
+              { "title": "Import/Export", "source": "import-export.md"}
+            ]},
+            { "title": "Calendar Configuration", "childrenSourceDir": "./calendar-configuration", "source": "calendar-configuration/index.md", "children":  [
+              { "title": "Add / Remove / Switch Calendars", "source": "add-remove-switch-calendar.md"},
+              { "title": "Quick Setup", "source": "quick-setup.md"},
+              { "title": "General Settings", "source": "general-settings.md"},
+              { "title": "Display Options", "source": "display-options.md"},
+              { "title": "Year Settings", "source": "year-settings.md"},
+              { "title": "Month Settings", "source": "month-settings.md"},
+              { "title": "Weekday Settings", "source": "weekday-settings.md"},
+              { "title": "Leap Year Settings", "source": "leap-year-settings.md"},
+              { "title": "Season Settings", "source": "season-settings.md"},
+              { "title": "Moon Settings", "source": "moon-settings.md"},
+              { "title": "Time Settings", "source": "time-settings.md"},
+              { "title": "Note Settings", "source": "note-settings.md"}
+            ]}
+          ]},
+          { "title": "Using Simple Calendar", "childrenSourceDir": "./docs/using-sc", "source":"./docs/using-sc/index.md", "children":  [
+            { "title": "Switching Between Calendars", "source": "switching-calendars.md"},
+            { "title": "Changing the Date and Time", "source": "changing-date-time.md"},
+            { "title": "Notes", "childrenSourceDir": "/notes", "source":"/notes/index.md", "children":  [
+              {"title": "Add / Edit / Remove Notes", "source": "adding-editing-removing.md"}
+            ]}
+          ]},
+          {"title": "Developing With Simple Calendar", "childrenSourceDir":  "./docs/developing-with-sc", "source": "./docs/developing-with-sc/index.md"}
+        ]
+    }
+  }
 }

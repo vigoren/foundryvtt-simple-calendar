@@ -1,0 +1,324 @@
+@import "../variables";
+
+.simple-calendar{
+  &.journal-sheet{
+
+    min-height: unset;
+    min-width: unset;
+
+    .window-content{
+      position: unset;
+      overflow-y: auto;
+    }
+
+    form{
+      background: unset;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: $spacer-half;
+
+      > h1{
+        margin: 0;
+        input{
+          height: unset;
+          margin-bottom: $spacer-half*0.5;
+        }
+      }
+
+      .fsc-page-details{
+        position: relative;
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+
+        h2{
+          margin: 0;
+          display: flex;
+          flex-wrap: nowrap;
+          flex-direction: row;
+          align-items: center;
+        }
+      }
+
+      .fsc-pages{
+        width: unset;
+        margin-bottom: $spacer * 0.125;
+        margin-right: $spacer-half;
+        font-size: 14px;
+        line-height: 16px;
+      }
+
+      .fsc-editor-container{
+        flex: 1;
+        min-height: 300px;
+        .editor{
+          min-height: 300px;
+          height: 100%;
+          .tox.tox-tinymce{
+            min-height: 300px;
+          }
+        }
+
+        .fsc-image-preview{
+          padding: $spacer 0;
+        }
+      }
+
+      .fsc-edit-controls{
+        flex: 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin-top: $spacer-half;
+        *{
+          flex: 0 25%;
+          margin-top: 0;
+        }
+      }
+
+      .fsc-note-advance{
+        display: inline-block;
+        margin: $spacer-half 0;
+        font-size: 1.075rem;
+        span{
+          margin-left: $spacer-half;
+          font-size: 0.875rem;
+        }
+      }
+
+      .fsc-options{
+        max-height: 0;
+        overflow: hidden;
+        &.fsc-closed{
+          visibility: hidden;
+        }
+        &.fsc-open{
+          visibility: visible;
+          max-height: 150px;
+        }
+      }
+    }
+
+    .fsc-note-header{
+      flex: 0;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      h1{
+        flex: 1 0 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+
+        .fsc-title-text{
+          flex: 1;
+          word-break: break-word;
+        }
+        .fsc-reminder{
+          flex: 0;
+          cursor: pointer;
+
+          &.fsc-selected{
+            color: #ffffff;
+            background-color: #2f581d;
+          }
+          label{
+            cursor: pointer;
+          }
+          span{
+            margin-right: 0;
+          }
+          input{
+            display: none;
+          }
+        }
+      }
+
+      .fsc-date{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-evenly;
+      }
+    }
+    .fsc-category-list{
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+    .fsc-content{
+      margin: $spacer-half 0;
+      overflow-y: auto;
+      word-break: break-word;
+
+      .load-pdf{
+        padding: $spacer 0;
+        button{
+          width: unset;
+          margin: 0 auto;
+          display: block;
+        }
+      }
+    }
+    figure, .fsc-image-placeholder{
+      margin: 0;
+      border: 0;
+
+      &.flex-ratio{
+        position: relative;
+        min-height: 400px;
+
+        &:before{
+          content: "";
+          display: block;
+          padding-bottom: calc(9 / 16 * 100%);
+        }
+        iframe, video{
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border: 0;
+        }
+        i{
+          position: absolute;
+          top: calc(50% - (8.75rem / 2));
+          left: calc(50% - (8.75rem / 2));
+          font-size: 8.75rem;
+        }
+      }
+      img{
+        height: auto;
+        max-width: 100%;
+        border: 0;
+      }
+      figcaption{
+        padding: $spacer-half 0;
+        margin: 0;
+      }
+    }
+
+    .fsc-spacer{
+      padding:2px;
+    }
+
+    .fsc-pdf-viewer{
+      flex-grow: 1;
+      width: 100%;
+      min-height: 620px;
+      flex-basis: 620px;
+      border: none;
+    }
+
+    .fsc-page-list{
+      top: unset;
+      bottom: 40px;
+      height: 350px;
+      left: -32px;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid;
+      border-right: 0;
+      box-shadow: unset;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+
+      &.fsc-read-only{
+        bottom: 0;
+        height: 75%;
+      }
+
+      &.fsc-open{
+        left: -300px;
+      }
+
+      &.fsc-closed{
+        left: -32px;
+        visibility: visible;
+      }
+
+      .fsc-page-list-controls{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: start;
+        align-items: center;
+
+        .fsc-search-box{
+          margin: 0 auto;
+          position: relative;
+          display: block;
+
+          input{
+            border-right-width: 1px;
+          }
+          .fsc-control{
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+          }
+          .fsc-hide{
+            visibility: hidden;
+          }
+        }
+        .fsc-save{
+          flex: 0 0 45px;
+        }
+
+        .fsc-pages{
+          flex: 0 32px;
+          text-align: center;
+        }
+      }
+
+      .fsc-list-of-pages{
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        counter-reset: section;
+        overflow-y: auto;
+
+        li{
+          cursor: pointer;
+          padding: $spacer-half;
+          border-bottom: 1px solid;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: nowrap;
+
+          &:first-child{
+            border-top: 1px solid;
+          }
+
+          &:before{
+            content: counters(section, ".") ". ";
+            counter-increment: section;
+            margin-right: ($spacer-half * 0.5);
+            flex: 0 calc(32px - $spacer-half );
+            text-align: center;
+          }
+
+          &.fsc-hide{
+            display: none;
+          }
+
+          span{
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+}

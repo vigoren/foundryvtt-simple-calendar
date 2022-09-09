@@ -1,0 +1,42 @@
+@import "../../variables";
+
+&.fsc-compact-view {
+  color: $fontColor;
+  .fsc-clock {
+    background: unset;
+  }
+  .fsc-moons {
+    .fsc-moon-group-wrapper {
+      .fa {
+        text-shadow: -2px -1px 0px $white;
+      }
+
+      .fsc-moon-group {
+        background-color: $white;
+        border-color: $fontColor!important;
+        box-shadow: 1px 1px 5px $boxShadowColor;
+      }
+    }
+  }
+  .fsc-time-keeper-buttons {
+    .fsc-control {
+      color: #000000;
+    }
+
+    .fsc-save {
+      color: #2f581d;
+    }
+
+    .fsc-secondary {
+      color: #de810d;
+
+      &:hover {
+        color: #de810d;
+      }
+    }
+
+    .fsc-delete {
+      color: #922121;
+    }
+  }
+}

@@ -1,16 +1,16 @@
 /**
  * This file mocks the FoundryVTT game global so that it can be used in testing
  */
-import {GameWorldTimeIntegrations, MoonIcons, MoonYearResetOptions, SettingNames} from "../src/constants";
+import {GameWorldTimeIntegrations, SettingNames} from "../src/constants";
 
 //@ts-ignore
 const local: Localization = {
     lang: '',
     translations: {},
-    initialize: jest.fn(() => {return Promise.resolve();}),
-    localize: jest.fn((stringId: string) => {return '';}),
-    format: jest.fn((stringId: string, replacements: any) => {return '';}),
-    setLanguage: jest.fn((lang: string) => {return Promise.resolve();})
+    initialize: () => {return Promise.resolve();},
+    localize: (stringId: string) => {return '';},
+    format: (stringId: string, replacements: any) => {return '';},
+    setLanguage: (lang: string) => {return Promise.resolve();}
 };
 
 // @ts-ignore
@@ -26,6 +26,8 @@ const user: User = {
     isTrusted: false,
     isGM: false,
     isSelf: true,
+    //@ts-ignore
+    data: {},
     // @ts-ignore
     can: jest.fn((permission: string) => {return false;}),
     hasPermission: jest.fn((permission: string) => {return false;}),
@@ -48,38 +50,10 @@ const game = {
     paused: true,
     // @ts-ignore
     settings: {
-        get: jest.fn((moduleName: string, settingName: string): any => {
-            switch (settingName){
-                case SettingNames.AllowPlayersToAddNotes:
-                case SettingNames.DefaultNoteVisibility:
-                    return false;
-                case SettingNames.YearConfiguration:
-                    return {id:'', numericRepresentation: 0, prefix: '', postfix: '', showWeekdayHeadings: true, firstWeekday: 0, yearZero: 0, yearNames: [], yearNamingRule: 'default', yearNamesStart: 0};
-                case SettingNames.MonthConfiguration:
-                    return [[{id:'', name: '', abbreviation: '', numericRepresentation: 1, numericRepresentationOffset: 0, numberOfDays: 2, numberOfLeapYearDays: 2, intercalary: false, intercalaryInclude: false, startingWeekday: null}]];
-                case SettingNames.WeekdayConfiguration:
-                    return [[{abbreviation: '', id:'', name: '', numericRepresentation: 0}]];
-                case SettingNames.LeapYearRule:
-                    return {id:'', rule: 'none', customMod: 0};
-                case SettingNames.CurrentDate:
-                    return {year: 0, month: 1, day: 2, seconds: 3};
-                case SettingNames.Notes:
-                    return [[{year: 0, month: 1, day: 2, title:'', content:'', author:'', playerVisible:  false, id: 'abc123'}]];
-                case SettingNames.NoteCategories:
-                    return [];
-                case SettingNames.GeneralConfiguration:
-                    return {id:'', gameWorldTimeIntegration: GameWorldTimeIntegrations.None, showClock: false, pf2eSync: true, dateFormat: {date: 'MMMM DD, YYYY', time: 'HH:mm:ss', monthYear: 'MMMM YAYYYYYZ'}, permissions: {id:'', viewCalendar: {player:true, trustedPlayer: true, assistantGameMaster: true, users: undefined}, addNotes:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}, reorderNotes:{player:false, trustedPlayer: false, assistantGameMaster: false}, changeDateTime:{player:false, trustedPlayer: false, assistantGameMaster: false, users: undefined}}}
-                case SettingNames.TimeConfiguration:
-                    return {id:'', hoursInDay:24, minutesInHour: 60, secondsInMinute: 60, secondsInCombatRound: 6, gameTimeRatio: 3, unifyGameAndClockPause: false, updateFrequency: 1};
-                case SettingNames.SeasonConfiguration:
-                    return [[{id:'', name:'', startingMonth: 1, startingDay: 1, color: '#ffffff', sunriseTime: 0, sunsetTime: 0}]];
-                case SettingNames.MoonConfiguration:
-                    return [[{id:'', "name":"","cycleLength":0,"firstNewMoon":{"yearReset":"none","yearX":0,"year":0,"month":1,"day":1},"phases":[{"name":"","length":3.69,"icon":"new","singleDay":true}],"color":"#ffffff","cycleDayAdjust":0}]];
-            }
-        }),
+        get: jest.fn(),
         register: jest.fn((moduleName: string, settingName: string, data: any) => {}),
         registerMenu: jest.fn(),
-        set: jest.fn((moduleName: string, settingName: string, data: any) => {return Promise.resolve(true);})
+        set: (moduleName: string, settingName: string, data: any) => {return Promise.resolve(true);}
     },
     time: {
         worldTime: 10,
@@ -93,7 +67,10 @@ const game = {
         size: 0,
         find: jest.fn((v)=>{
             return v.call(undefined, {started: true});
-        })
+        }),
+        filter: (v: any) => {
+            return v.call(undefined, {started: true});
+        }
     },
     modules: {
         get: jest.fn()
@@ -105,12 +82,18 @@ const game = {
     },
     users: {
         get: jest.fn(),
-        find: jest.fn((v)=>{
+        find: (v: any)=>{
             return v.call(undefined, {isGM: false, active: true});
-        }),
-        forEach: jest.fn((v)=>{
-            return v.call(undefined, user)
-        })
+        },
+        forEach: (v: any) => {
+            return v.call(undefined, {id: ''});
+        },
+        filter: (v: any) => {
+            return v.call(undefined, user);
+        },
+        map: (v: any) => {
+            return v.call(undefined, user);
+        }
     },
     scenes: null,
     system: {
@@ -119,7 +102,39 @@ const game = {
             version: "1.2.3"
         }
     },
-    togglePause: jest.fn()
+    togglePause: jest.fn(),
+    journal: {
+        get: (id: string, obj: any) => {
+            if (id) {
+                return {
+                    getFlag: jest.fn().mockReturnValue({calendarId: 'test', startDate: {}, endDate: {}, allDay: true, repeats: 0, order: 0, categories: [], remindUsers: ['qwe']}),
+                    update: jest.fn(),
+                    delete: async () => {}
+                };
+            }
+            return null;
+        },
+        forEach: (v: any) => {return v.call(undefined, {})},
+        directory: {
+            folders: {
+                find: (v: any) => {return v.call(undefined, {
+                    getFlag: jest.fn().mockReturnValueOnce(undefined).mockReturnValue({})
+                });}
+            }
+        }
+    },
+    macros: {
+        forEach: (v: any) => {return v.call(undefined, {canExecute: true, name: 'asd', id: '123'})},
+        get: () => {return {canExecute: true, execute: jest.fn()}}
+    },
+    video: {
+        getYouTubePlayer: async () => {return {seekTo: () => {}}},
+        isYouTubeURL: (s: string) => {return s.indexOf('youtube') > -1},
+        getYouTubeEmbedURL: () => {return ''}
+    },
+    world: {
+        id: 'worldId'
+    }
 };
 
 // @ts-ignore
@@ -133,3 +148,6 @@ global.ui = {
         error: jest.fn((message: string) => {})
     }
 };
+
+// @ts-ignore
+global.getRoute = (a: string) => {return a;};

@@ -3,4 +3,5 @@ node_modules/
 docs/badges/
 docs/coverage/
 dist/
+site/
 /.vs

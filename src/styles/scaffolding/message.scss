@@ -1,0 +1,27 @@
+@import "src/styles/variables";
+.simple-calendar {
+  .fsc-message {
+    padding: $spacer-half;
+    margin-bottom: $spacer-half;
+    border: 1px solid;
+    border-radius: 5px;
+    font-size: 0.75rem;
+  }
+  &.fsc-simple-calendar-message{
+    .fsc-chat-command-input{
+      text-transform: capitalize;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid var(--color-border-light-2);
+    }
+
+    .fsc-chat-command-result{
+      margin-bottom: 0.5rem;
+    }
+
+    .fsc-control:hover{
+      background-color: #0000001f;
+    }
+  }
+}

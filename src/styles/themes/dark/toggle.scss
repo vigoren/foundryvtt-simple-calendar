@@ -1,0 +1,13 @@
+@import "../../variables";
+
+//Toggle
+input[type=checkbox].fsc-toggle{
+  background-image: url($checkboxSVGLight);
+  border-color: $white !important;
+
+  &:checked{
+    background-image: url($checkboxSVGWhite);
+    background-color: $primary-A500 !important;
+    -webkit-filter: unset;
+  }
+}
