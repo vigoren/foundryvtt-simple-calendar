@@ -438,7 +438,6 @@
 	"FSC.Configuration.Moon.MonthHelp": "The month and day of a new moon to use as a reference.",
 	"FSC.Configuration.Moons": "Moons",
 	"FSC.Warn.Time.ActiveCombats": "There is an active combat/combats running, please resolve them before starting the real time clock.",
-	"FSC.Warn.Notes.NotGM": "There is no GM present in the game, a GM needs to be logged in for players to add notes.",
 	"FSC.Warn.Macros.GMUpdate": "Only the GM can update the calendar date!",
 	"FSC.Warn.Calendar.NotGM": "There is no GM present in the game, a GM needs to be logged in for players to change the date/time.",
 	"FSC.Error.Calendar.GMCurrent": "You need to be a GM to change the current date."
