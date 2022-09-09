@@ -374,7 +374,6 @@
 	"FSC.Configuration.Moon.DayHelp": "Il giorno di una luna nuova da usare come riferimento.",
 	"FSC.Configuration.Moons": "Lune",
 	"FSC.Warn.Time.ActiveCombats": "C'è un combattimento attivo al momento, risolvilo prima di utilizzare l'orologio in tempo reale.",
-	"FSC.Warn.Notes.NotGM": "Non ci sono GM presenti in gioco, un GM deve aver effettuato l'accesso per poter aggiungere note.",
 	"FSC.Warn.Macros.GMUpdate": "Solo il GM può aggiornare la data del calendario!",
 	"FSC.Warn.Calendar.NotGM": "Non ci sono GM presenti in gioco, un GM deve aver effettuato l'accesso per poter cambiare l'ora/la data.",
 	"FSC.Error.Note.NoTitle": "Non si può salvare una nota senza titolo!",
