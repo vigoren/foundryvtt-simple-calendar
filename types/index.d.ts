@@ -6,7 +6,6 @@ import UserPermissions from "../src/classes/configuration/user-permissions";
 import {
     CalendarViews, CombatPauseRules,
     DateSelectorPositions, DateTimeChangeSocketTypes,
-    GameSystems,
     GameWorldTimeIntegrations,
     Icons,
     LeapYearRules,
@@ -16,7 +15,6 @@ import {
     PresetTimeOfDay,
     SimpleCalendarHooks,
     SocketTypes,
-    Themes,
     TimeKeeperStatus,
     YearNamingRules
 } from "../src/constants";
@@ -1302,7 +1300,6 @@ declare global{
                     notes: NoteStub[];
                 };
                 currentYear: Year;
-                gameSystem: GameSystems;
                 visibleDate: {year: number, month: number};
             }
 
@@ -1748,6 +1745,7 @@ declare global{
             key: string;
             name: string;
             system: boolean;
+            module: boolean;
         }
 
         /**

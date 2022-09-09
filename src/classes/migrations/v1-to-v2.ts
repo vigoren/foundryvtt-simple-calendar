@@ -32,7 +32,8 @@ export default class V1ToV2{
 
         //Month and Day storage changed from actual number to index so need to adjust the current date, seasons and moons
         if(legacySettings.months){
-            if(legacySettings.currentDate && !isObjectEmpty(legacySettings.currentDate)){
+            //@ts-ignore
+            if(legacySettings.currentDate && !foundry.utils.isEmpty(legacySettings.currentDate)){
                 legacySettings.currentDate.month = legacySettings.months.findIndex(m => m.numericRepresentation === legacySettings.currentDate?.month);
                 if(legacySettings.currentDate.month < 0){
                     legacySettings.currentDate.month = 0;

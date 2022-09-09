@@ -4,7 +4,7 @@ import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
 import {
     CombatPauseRules,
-    ConfigurationDateSelectors, GameSystems,
+    ConfigurationDateSelectors,
     GameWorldTimeIntegrations,
     Icons,
     LeapYearRules,
@@ -28,6 +28,8 @@ import {deepMerge, isObjectEmpty} from "../utilities/object";
 import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import {FormatDateTime} from "../utilities/date-time";
 import {generateUniqueId} from "../utilities/string";
+import PF2E from "../systems/pf2e";
+import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
 
 export default class ConfigurationApp extends FormApplication {
     /**
@@ -204,7 +206,7 @@ export default class ConfigurationApp extends FormApplication {
         this.uiElementStates.timeFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.time, <Calendar>this.object);
         this.uiElementStates.monthYearFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.monthYear, <Calendar>this.object);
 
-        this.uiElementStates.disabledControls.pf2e = (<Calendar>this.object).gameSystem === GameSystems.PF2E && (<Calendar>this.object).generalSettings.pf2eSync;
+        this.uiElementStates.disabledControls.pf2e = PF2E.isPF2E && (<Calendar>this.object).generalSettings.pf2eSync;
 
         let data = {
             ...super.getData(options),
@@ -227,7 +229,7 @@ export default class ConfigurationApp extends FormApplication {
                 'current': 'FSC.Configuration.CombatPauseRule.Current'
             },
             currentYear: (<Calendar>this.object).year,
-            gameSystem: (<Calendar>this.object).gameSystem,
+            gameSystem: FoundryVTTGameData.systemID,
             generalSettings: (<Calendar>this.object).generalSettings,
             globalConfiguration: this.globalConfiguration,
             isGM: GameSettings.IsGm(),

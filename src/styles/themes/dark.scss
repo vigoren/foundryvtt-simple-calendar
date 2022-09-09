@@ -1,45 +1,47 @@
 @import "../variables";
-.simple-calendar{
-  &.dark{
+body.game{
+  .simple-calendar{
+    &.dark{
+      &.window-app{
+        @import "src/styles/themes/dark/calendar";
+        @import "src/styles/themes/dark/clock";
+        @import "src/styles/themes/dark/configuration";
+        @import "src/styles/themes/dark/control";
+        @import "src/styles/themes/dark/date-selector";
+        @import "src/styles/themes/dark/form-groups";
+        @import "src/styles/themes/dark/foundry-window-app";
+        @import "src/styles/themes/dark/foundry-window-app-compact";
+        @import "src/styles/themes/dark/foundry-window-app-migration";
+        @import "src/styles/themes/dark/message";
+        @import "src/styles/themes/dark/multi-select";
+        @import "src/styles/themes/dark/note-category";
+        @import "src/styles/themes/dark/note-list";
+        @import "src/styles/themes/dark/note-sheet";
+        @import "src/styles/themes/dark/prosemirror";
+        @import "src/styles/themes/dark/search-box";
+        @import "src/styles/themes/dark/time-selector";
+        @import "src/styles/themes/dark/toggle";
 
-    @import "src/styles/themes/dark/calendar";
-    @import "src/styles/themes/dark/clock";
-    @import "src/styles/themes/dark/configuration";
-    @import "src/styles/themes/dark/control";
-    @import "src/styles/themes/dark/date-selector";
-    @import "src/styles/themes/dark/form-groups";
-    @import "src/styles/themes/dark/foundry-window-app";
-    @import "src/styles/themes/dark/foundry-window-app-compact";
-    @import "src/styles/themes/dark/foundry-window-app-migration";
-    @import "src/styles/themes/dark/message";
-    @import "src/styles/themes/dark/multi-select";
-    @import "src/styles/themes/dark/note-category";
-    @import "src/styles/themes/dark/note-list";
-    @import "src/styles/themes/dark/note-sheet";
-    @import "src/styles/themes/dark/prosemirror";
-    @import "src/styles/themes/dark/search-box";
-    @import "src/styles/themes/dark/time-selector";
-    @import "src/styles/themes/dark/toggle";
 
+        //Links
+        a{
+          color: $secondary;
+          &:hover, &:active, &:focus{
+            color: $secondary-800;
+            text-shadow: unset;
+          }
+        }
 
-    //Links
-    a{
-      color: $secondary;
-      &:hover, &:active, &:focus{
-        color: $secondary-800;
-        text-shadow: unset;
+        //Inputs
+        input, select, option{
+          background-color: $gray-700 !important;
+          border-color: $gray-500 !important;
+          color: $white !important;
+          &:focus{
+            box-shadow: unset;
+          }
+        }
       }
     }
-
-    //Inputs
-    input, select, option{
-      background-color: $gray-700 !important;
-      border-color: $gray-500 !important;
-      color: $white !important;
-      &:focus{
-        box-shadow: unset;
-      }
-    }
-
   }
 }

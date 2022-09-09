@@ -29,20 +29,26 @@ header.window-header{
     color: var(--color-text-light-highlight);
   }
 
-  a{
+  a.header-button{
     margin-top: 0!important;
     margin-right: 0;
     color: var(--color-text-light-highlight);
-    &:hover, &:active, &:focus{
-      text-shadow: 0 0 8px var(--color-shadow-primary);
-    }
-  }
-
-  .close{
+    font-size: 1rem;
     background: unset;
-    color:  var(--color-text-light-highlight);
     height: unset;
     width: unset;
+    &:hover, &:active, &:focus{
+      color: var(--color-text-light-highlight);
+      text-shadow: 0 0 8px var(--color-shadow-primary);
+      box-shadow: unset;
+      i[class^='fa']{
+        color: var(--color-text-light-highlight);
+      }
+    }
+    i[class^='fa']{
+      margin-right: 3px;
+      position: relative;
+    }
   }
 }
 

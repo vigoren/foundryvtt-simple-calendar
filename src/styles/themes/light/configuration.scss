@@ -1,120 +1,124 @@
 @import "../../variables";
+&.fsc-simple-calendar-configuration{
+  .window-content{
+    //Configuration Styling
+    .fsc-configuration-wrapper{
+      .tabs{
+        @include scrollbar($primary, $primary-600);
+        .fsc-heading{
+          color: $primary-600;
+          border-top-color: $primary-200;
+          border-bottom-color: $gray-500;
+        }
+        .fsc-tab-section{
+          &.fsc-stripe{
+            background-color: $primary-100;
+          }
+          .fsc-calendar-selector{
+            ul{
+              box-shadow: 1px 1px 5px #000000;
+              li{
+                background-color: $primary-200;
+                border-color: $primary-400;
 
-//Configuration Styling
-.fsc-configuration-wrapper{
-  .tabs{
-    @include scrollbar($primary, $primary-600);
-    .fsc-heading{
-      color: $primary-600;
-      border-top-color: $primary-200;
-      border-bottom-color: $gray-500;
-    }
-    .fsc-tab-section{
-      &.fsc-stripe{
-        background-color: $primary-100;
-      }
-      .fsc-calendar-selector{
-        ul{
-          box-shadow: 1px 1px 5px #000000;
-          li{
-            background-color: $primary-200;
-            border-color: $primary-400;
-
-            &.fsc-active,&:hover{
-              background-color: $primary-A400;
-              color: $fontColor;
-            }
-            &.fsc-new-calendar{
-              color: $success-900;
-              &.fsc-active,&:hover{
-                color: $fontColor;
+                &.fsc-active,&:hover{
+                  background-color: $primary-A400;
+                  color: $fontColor;
+                }
+                &.fsc-new-calendar{
+                  color: $success-900;
+                  &.fsc-active,&:hover{
+                    color: $fontColor;
+                  }
+                }
               }
             }
           }
         }
-      }
-    }
-    .fsc-item{
-      border-color: $gray-500;
-
-      &.fsc-active, &.active, &:hover{
-        background-color: $tertiary;
-        color: $white;
-      }
-    }
-  }
-  .fsc-tab-wrapper{
-    @include scrollbar($primary, $primary-600);
-    h2{
-      border-color: $tertiary;
-    }
-
-    .fsc-warning{
-      background-color: $secondary-A500;
-      border-color: $secondary;
-      color: $fontColor;
-    }
-    .fsc-section{
-      h3{
-        color: $primary-A200;
-      }
-    }
-    .fsc-f-table{
-      background-color: $primary-100;
-      border-color: $gray-500;
-      .fsc-row{
-        &.fsc-head{
+        .fsc-item{
           border-color: $gray-500;
-        }
-        &:nth-child(even) {
-          background-color: rgba($primary-1000,0.1);
-        }
-        .fsc-options{
-          h3{
-            border-color: $tertiary;
-          }
-        }
-      }
-    }
-    .fsc-import-export{
-      .fsc-importing{
-        .fsc-progress{
-          background-color: $gray-300;
-          border-color: $gray-500;
-          .fsc-progress-bar{
-            background-color: $tertiary-300;
-          }
-        }
-      }
-    }
-    .fsc-quick-setup{
-      .fsc-predefined-list{
-        .fsc-predefined-calendar{
-          color: $primary-1000;
-          border-color: $primary-950;
-          box-shadow: inset 0 0 5px $primary-400;
-          &.fsc-selected, &:hover{
-            border-color: $primary-400;
-            background-color: $primary-950;
+          color: $tertiary;
+
+          &.fsc-active, &.active, &:hover{
+            background-color: $tertiary;
             color: $white;
-            box-shadow: inset 0 0 5px $primary-400;
           }
         }
       }
-    }
-    .fsc-permissions{
-      .fsc-table-header{
-        border-color: $gray-600;
-      }
-    }
-    .fsc-about{
-      h1{
-        border-color: $primary;
-      }
-      .fsc-row{
-        .fsc-card{
-          border-color: $primary-400;
+      .fsc-tab-wrapper{
+        @include scrollbar($primary, $primary-600);
+        h2{
+          border-color: $tertiary;
+        }
+
+        .fsc-warning{
+          background-color: $secondary-A500;
+          border-color: $secondary;
+          color: $fontColor;
+        }
+        .fsc-section{
+          h3{
+            color: $primary-A200;
+          }
+        }
+        .fsc-f-table{
           background-color: $primary-100;
+          border-color: $gray-500;
+          .fsc-row{
+            &.fsc-head{
+              border-color: $gray-500;
+            }
+            &:nth-child(even) {
+              background-color: rgba($primary-1000,0.1);
+            }
+            .fsc-options{
+              h3{
+                border-color: $tertiary;
+              }
+            }
+          }
+        }
+        .fsc-import-export{
+          .fsc-importing{
+            .fsc-progress{
+              background-color: $gray-300;
+              border-color: $gray-500;
+              .fsc-progress-bar{
+                background-color: $tertiary-300;
+              }
+            }
+          }
+        }
+        .fsc-quick-setup{
+          .fsc-predefined-list{
+            .fsc-predefined-calendar{
+              color: $primary-1000;
+              border-color: $primary-950;
+              box-shadow: inset 0 0 5px $primary-400;
+              &.fsc-selected, &:hover{
+                border-color: $primary-400;
+                background-color: $primary-950;
+                color: $white;
+                box-shadow: inset 0 0 5px $primary-400;
+              }
+            }
+          }
+        }
+        .fsc-permissions{
+          .fsc-table-header{
+            border-color: $gray-600;
+          }
+        }
+        .fsc-about{
+          h1{
+            border-color: $primary;
+          }
+          .fsc-row{
+            .fsc-card{
+              border-color: $primary-400;
+              background-color: $primary-100;
+            }
+          }
         }
       }
     }

@@ -4,7 +4,7 @@
 import "../../../__mocks__/index";
 
 import Calendar from "./index";
-import {GameSystems, LeapYearRules, PredefinedCalendars, TimeKeeperStatus} from "../../constants";
+import {LeapYearRules, PredefinedCalendars, TimeKeeperStatus} from "../../constants";
 import {
     CalManager,
     MainApplication,
@@ -24,6 +24,7 @@ import Month from "./month";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import SCController from "../s-c-controller";
 import PF2E from "../systems/pf2e";
+import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
 
 fetchMock.enableMocks();
 describe('Calendar Class Tests', () => {
@@ -48,7 +49,6 @@ describe('Calendar Class Tests', () => {
     test('Constructor', () => {
         let c = new Calendar('a', 'cal');
         expect(c.id).toBe('a');
-        expect(c.gameSystem).toBe(GameSystems.Other);
 
         c = new Calendar('', 'cal');
         expect(c.id.length).toBeGreaterThan(0);
@@ -56,22 +56,6 @@ describe('Calendar Class Tests', () => {
         jest.spyOn(Calendar.prototype, 'loadFromSettings').mockImplementation(() => {});
         c = new Calendar('a', 'cal', {id: 'b',name: 'asd'});
         expect(c.loadFromSettings).toHaveBeenCalledTimes(1);
-
-        (<Game>game).system.id = GameSystems.DnD5E;
-        c = new Calendar('a', 'cal');
-        expect(c.gameSystem).toBe(GameSystems.DnD5E);
-
-        (<Game>game).system.id = GameSystems.PF1E;
-        c = new Calendar('a', 'cal');
-        expect(c.gameSystem).toBe(GameSystems.PF1E);
-
-        (<Game>game).system.id = GameSystems.PF2E;
-        c = new Calendar('a', 'cal');
-        expect(c.gameSystem).toBe(GameSystems.PF2E);
-
-        (<Game>game).system.id = GameSystems.WarhammerFantasy4E;
-        c = new Calendar('a', 'cal');
-        expect(c.gameSystem).toBe(GameSystems.WarhammerFantasy4E);
 
         const orig = (<Game>game).system;
         //@ts-ignore
@@ -360,7 +344,7 @@ describe('Calendar Class Tests', () => {
         tCal.months[0].startingWeekday = 3;
         expect(tCal.dayOfTheWeek(2022, 0, 0)).toBe(2);
 
-        tCal.gameSystem = GameSystems.PF2E;
+        jest.spyOn(FoundryVTTGameData, 'systemID', 'get').mockReturnValue('pf2e');
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AR", worldCreatedOn: 0}};
         expect(tCal.dayOfTheWeek(4697, 0, 0)).toBe(2);
@@ -551,7 +535,7 @@ describe('Calendar Class Tests', () => {
         //Month with an offset
         tCal.months[0].numericRepresentationOffset = 2;
         expect(tCal.dateToDays(1970, 0, 0)).toBe(0);
-        expect(tCal.dateToDays(1970, 0, 3)).toBe(1);
+        expect(tCal.dateToDays(1970, 0, 3)).toBe(3);
         tCal.months[0].numericRepresentationOffset = 0;
         //year Zero is 0
         tCal.year.yearZero = 0;
@@ -919,7 +903,7 @@ describe('Calendar Class Tests', () => {
         expect(tCal.secondsToDate).toHaveBeenCalledTimes(3);
 
         jest.spyOn(PF2E, 'getWorldCreateSeconds');
-        tCal.gameSystem = GameSystems.PF2E;
+        jest.spyOn(FoundryVTTGameData, 'systemID', 'get').mockReturnValue('pf2e');
         tCal.setFromTime(1, 1);
         expect(PF2E.getWorldCreateSeconds).toHaveBeenCalledTimes(1);
         expect(tCal.setDateTime).toHaveBeenCalledTimes(4);

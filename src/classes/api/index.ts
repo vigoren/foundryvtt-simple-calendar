@@ -9,7 +9,6 @@ import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
     DateSelectorPositions,
-    GameSystems,
     Icons,
     LeapYearRules,
     MoonYearResetOptions,
@@ -1557,7 +1556,7 @@ export function timestampPlusInterval(currentSeconds: number, interval: SimpleCa
     if(activeCalendar){
         const clone = activeCalendar.clone(false);
         // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
-        if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync){
+        if(PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync){
             currentSeconds += PF2E.getWorldCreateSeconds(activeCalendar);
         }
 

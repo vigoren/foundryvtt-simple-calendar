@@ -1,42 +1,45 @@
 @import "../variables.scss";
 
-.simple-calendar{
-  &.wfrp4e{
-    &.window-app {
-      .fsc-actions-list {
-        flex: 0 0 63px;
-        width: 63px;
-        margin-left: 0;
-        .fsc-time-keeper-buttons{
-          .fsc-control{
-            padding: 5px 0.4rem;
+body.game{
+  .simple-calendar{
+    &.wfrp4e{
+      &.window-app {
+        .fsc-actions-list {
+          flex: 0 0 63px;
+          width: 63px;
+          margin-left: 0;
+          .fsc-time-keeper-buttons{
+            .fsc-control{
+              padding: 5px 0.4rem;
+            }
           }
         }
-      }
 
-      @import "src/styles/themes/wfrp4e/calendar";
-      @import "src/styles/themes/wfrp4e/clock";
-      @import "src/styles/themes/wfrp4e/configuration";
-      @import "src/styles/themes/wfrp4e/control";
-      @import "src/styles/themes/wfrp4e/date-selector";
-      @import "src/styles/themes/wfrp4e/form-groups";
-      @import "src/styles/themes/wfrp4e/foundry-window-app";
-      @import "src/styles/themes/wfrp4e/foundry-window-app-compact";
-      @import "src/styles/themes/wfrp4e/foundry-window-app-migration";
-      @import "src/styles/themes/wfrp4e/menu-icon";
-      @import "src/styles/themes/wfrp4e/message";
-      @import "src/styles/themes/wfrp4e/multi-select";
-      @import "src/styles/themes/wfrp4e/note-category";
-      @import "src/styles/themes/wfrp4e/note-list";
-      @import "src/styles/themes/wfrp4e/note-sheet";
-      @import "src/styles/themes/wfrp4e/search-box";
-      @import "src/styles/themes/wfrp4e/time-selector";
-      @import "src/styles/themes/wfrp4e/toggle";
+        @import "src/styles/themes/wfrp4e/calendar";
+        @import "src/styles/themes/wfrp4e/clock";
+        @import "src/styles/themes/wfrp4e/configuration";
+        @import "src/styles/themes/wfrp4e/control";
+        @import "src/styles/themes/wfrp4e/date-selector";
+        @import "src/styles/themes/wfrp4e/form-groups";
+        @import "src/styles/themes/wfrp4e/foundry-window-app";
+        @import "src/styles/themes/wfrp4e/foundry-window-app-compact";
+        @import "src/styles/themes/wfrp4e/foundry-window-app-migration";
+        @import "src/styles/themes/wfrp4e/menu-icon";
+        @import "src/styles/themes/wfrp4e/message";
+        @import "src/styles/themes/wfrp4e/multi-select";
+        @import "src/styles/themes/wfrp4e/note-category";
+        @import "src/styles/themes/wfrp4e/note-list";
+        @import "src/styles/themes/wfrp4e/note-sheet";
+        @import "src/styles/themes/wfrp4e/search-box";
+        @import "src/styles/themes/wfrp4e/time-selector";
+        @import "src/styles/themes/wfrp4e/toggle";
 
-      input {
-        border: 1px solid;
+        input {
+          border: 1px solid;
+        }
       }
     }
   }
 }
+
 

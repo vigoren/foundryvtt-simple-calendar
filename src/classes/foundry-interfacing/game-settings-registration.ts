@@ -131,7 +131,8 @@ export default class GameSettingsRegistration{
             name: "General Configuration",
             scope: "world",
             config: false,
-            type: Object
+            type: Object,
+            default: {}
         });
         (<Game>game).settings.register(ModuleName, SettingNames.YearConfiguration, {
             name: "Year Configuration",
@@ -158,13 +159,15 @@ export default class GameSettingsRegistration{
             name: "Current Date",
             scope: "world",
             config: false,
-            type: Object
+            type: Object,
+            default: {}
         });
         (<Game>game).settings.register(ModuleName, SettingNames.LeapYearRule, {
             name: "Leap Year Rule",
             scope: "world",
             config: false,
-            type: Object
+            type: Object,
+            default: {}
         });
         (<Game>game).settings.register(ModuleName, SettingNames.DefaultNoteVisibility, {
             name: "FSC.Configuration.DefaultNoteVisibility",

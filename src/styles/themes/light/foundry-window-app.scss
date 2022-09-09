@@ -29,20 +29,27 @@ header.window-header{
     font-weight: 400;
     color: $fontColor;
   }
-  a{
+  a.header-button{
     margin-top: 0!important;
     margin-right: 0;
     color: $fontColor;
+    font-size: 1rem;
+    background: unset;
+    height: unset;
+    width: unset;
     &:hover, &:active, &:focus{
       color: $secondary-700;
       text-shadow: unset;
+      box-shadow: unset;
+      i[class^='fa']{
+        color: $secondary-700 !important;
+      }
     }
-  }
-  .close{
-    background: unset;
-    color: $fontColor;
-    height: unset;
-    width: unset;
+    i[class^='fa']{
+      color: $fontColor;
+      margin-right: 3px;
+      position: relative;
+    }
   }
 }
 //Scrollbar Styling

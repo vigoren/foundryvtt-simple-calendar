@@ -7,17 +7,9 @@ There are several ways in which you can contribute to this project!
 
 ## Translations
 
-If there is a language that Simple Calendar has not been translated into, and you would like to help translate the module please follow these steps:
+Translations for Simple Calendar are easy to update and add! No coding knowledge or need to understand GitHub required. 
 
-- Fork this repository.
-- Under the src/lang folder copy the en.json file.
-- Rename that file so that it matches your languages [2 letter ISO code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
-- Go through that file and translate all the english values to your language.
-- Open the src/module.json and add your language to the list under "languages"
-- Update the ReadMe file to add your name to the table above.
-- Create a pull request back into this repository with your additions.
-- Know that your help is appreciated to bring this module to as many users as possible!
-
+Translations are all done through a [weblate online portal](https://weblate.foundryvtt-hub.com/engage/simple-calendar/), head on over there make an account and start contributing!
 
 ## Predefined Calendars
 

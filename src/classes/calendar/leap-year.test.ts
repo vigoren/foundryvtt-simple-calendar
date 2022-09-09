@@ -4,11 +4,12 @@
 import "../../../__mocks__/index";
 
 import LeapYear from "./leap-year";
-import {GameSystems, LeapYearRules} from "../../constants";
+import {LeapYearRules} from "../../constants";
 import {SimpleCalendar} from "../../../types";
 import Calendar from "./index";
 import {CalManager, updateCalManager} from "../index";
 import CalendarManager from "./calendar-manager";
+import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
 
 describe('Leap Year Tests', () => {
     let lr: LeapYear;
@@ -85,7 +86,7 @@ describe('Leap Year Tests', () => {
         expect(lr.isLeapYear(5)).toBe(true);
         expect(lr.isLeapYear(8)).toBe(false);
 
-        tCal.gameSystem = GameSystems.PF2E;
+        jest.spyOn(FoundryVTTGameData, 'systemID', 'get').mockReturnValue('pf2e');
         tCal.generalSettings.pf2eSync = true;
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AD", worldCreatedOn: 10000}};

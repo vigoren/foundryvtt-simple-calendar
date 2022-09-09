@@ -1,61 +1,67 @@
 @import "../variables";
-.fsc-multiselect{
-  button{
-    position: absolute;
-    top: 0;
-    left: 0;
-    border: 0;
-    border-radius: 0;
-    font-family: Roboto,sans-serif;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    line-height: 16px;
-    padding: ($spacer * 1.25) ($spacer * .75) $spacer-half;
-    margin: 0;
+.simple-calendar{
+  &.window-app{
+    .window-content{
+      .fsc-multiselect{
+        button{
+          position: absolute;
+          top: 0;
+          left: 0;
+          border: 0;
+          border-radius: 0;
+          font-family: Roboto,sans-serif;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          justify-content: space-between;
+          line-height: 16px;
+          padding: ($spacer * 1.25) ($spacer * .75) $spacer-half;
+          margin: 0;
 
 
-    &:hover, &:focus{
-      box-shadow: unset;
-    }
+          &:hover, &:focus{
+            box-shadow: unset;
+          }
 
-    .fsc-selected-options{
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-    }
+          .fsc-selected-options{
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+          }
 
-    .fa-chevron-down{
-      font-size: 10px;
-      margin-right: -3px;
-    }
-  }
-  .fsc-multi-select-options{
-    padding: 0;
-    list-style: none;
-    visibility: hidden;
-    top: 42px;
-    position: absolute;
-    z-index: 100;
-    border: 1px solid;
-    width: calc(100% + 2px);
-    margin: 0 0 0 calc(-0.5rem - 1px);
+          .fa-chevron-down{
+            font-size: 10px;
+            margin-right: -3px;
+          }
+        }
+        .fsc-multi-select-options{
+          padding: 0;
+          list-style: none;
+          visibility: hidden;
+          top: 42px;
+          position: absolute;
+          z-index: 100;
+          border: 1px solid;
+          width: calc(100% + 2px);
+          margin: 0 0 0 calc(-0.5rem - 1px);
 
-    &.fsc-show{
-      visibility: visible;
-    }
+          &.fsc-show{
+            visibility: visible;
+          }
 
 
-    li{
-      padding: ($spacer-half * .5) ($spacer * .75);
+          li{
+            padding: ($spacer-half * .5) ($spacer * .75);
 
-      &.fsc-disabled{
-        cursor: not-allowed;
-      }
+            &.fsc-disabled{
+              cursor: not-allowed;
+            }
 
-      .fa-solid{
-        width: $spacer;
+            .fa-solid{
+              width: $spacer;
+            }
+          }
+        }
       }
     }
   }

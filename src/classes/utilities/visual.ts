@@ -14,6 +14,7 @@ import WaningGibbousIcon from "../../icons/moon-waning-gibbous.svg";
 import WaxingCrescentIcon from "../../icons/moon-waxing-crescent.svg";
 import WaxingGibbousIcon from "../../icons/moon-waxing-gibbous.svg";
 import {GameSettings} from "../foundry-interfacing/game-settings";
+import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
 
 /**
  * Finds the "best" contrast color for the passed in color
@@ -121,13 +122,20 @@ export function GetIcon(icon: Icons, strokeColor: string = "#000000", fillColor:
  * Gets the text name of the Theme being used. Will check the old Theme client setting if the new world specific one is not set.
  */
 export function GetThemeName(): string {
-    let theme = GameSettings.GetStringSettings(`${(<Game>game).world.id}.${SettingNames.Theme}`);
+    let theme = GameSettings.GetStringSettings(`${FoundryVTTGameData.worldId}.${SettingNames.Theme}`);
     if(!theme){
         theme = GameSettings.GetStringSettings(SettingNames.Theme);
         //Check to see if we are trying to load a system specific theme in the wrong system.
         const tObj = Themes.find(t => t.key === theme);
-        if(tObj && tObj.system && (<Game>game).system.id !== tObj.key){
-            theme = Themes[0].key;
+        if(tObj){
+            if(tObj.system && FoundryVTTGameData.systemID !== tObj.key){
+                theme = Themes[0].key;
+            } else if(tObj.module){
+                const m = (<Game>game).modules.get(tObj.key);
+                if(!m || !m.active){
+                    theme = Themes[0].key;
+                }
+            }
         }
     }
     return theme;
@@ -139,8 +147,13 @@ export function GetThemeName(): string {
 export function GetThemeList(): {[key: string]: string}{
     const choices: {[key: string]: string} = {};
     for(let i = 0; i < Themes.length; i++){
-        if(!Themes[i].system || (Themes[i].system && (<Game>game).system.id === Themes[i].key)){
+        if((!Themes[i].system && !Themes[i].module) || (Themes[i].system && FoundryVTTGameData.systemID === Themes[i].key)){
             choices[Themes[i].key] = Themes[i].name;
+        } else if(Themes[i].module){
+            const m = (<Game>game).modules.get(Themes[i].key);
+            if(m && m.active){
+                choices[Themes[i].key] = Themes[i].name;
+            }
         }
     }
     return choices

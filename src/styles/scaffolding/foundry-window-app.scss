@@ -4,15 +4,16 @@
   &.window-app{
     box-shadow: 2px 2px 10px #000000ab;
     background: unset;
+    border: 0;
     header{
       font-size: 1rem;
       border-radius: 5px 5px 0 0;
       border-bottom-width: 0;
     }
     .window-content{
-      padding: 0;
-      overflow-x: visible;
-      overflow-y: visible;
+      padding: 0 !important;
+      overflow-x: visible !important;
+      overflow-y: visible !important;
       scrollbar-color: $primary $primary-600;
       &::-webkit-scrollbar-thumb{
         background: $primary;
@@ -148,8 +149,8 @@
       margin-left: $spacer-half;
       padding: 0 $spacer-half;
 
-      button{
-        margin: 0 0 $spacer-half 0;
+      button.fsc-control{
+        margin: 0 0 $spacer-half 0!important;
         font-weight: 600;
       }
 

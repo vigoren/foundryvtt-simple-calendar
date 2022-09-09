@@ -1,70 +1,73 @@
 @import "../../variables";
+&.fsc-simple-calendar-configuration{
+  .window-content{
+    //Configuration Styling
+    .fsc-configuration-wrapper {
+      .tabs {
+        .fsc-heading {
+          border-bottom-color: $white;
+        }
+        .fsc-tab-section {
+          &.fsc-stripe {
+            background-color: $wfrpInputBackground;
+            color: $wfrpInputTextColor;
+          }
 
-//Configuration Styling
-.fsc-configuration-wrapper {
-  .tabs {
-    .fsc-heading {
-      border-bottom-color: $white;
-    }
-    .fsc-tab-section {
-      &.fsc-stripe {
-        background-color: $wfrpInputBackground;
-        color: $wfrpInputTextColor;
-      }
+          .fsc-calendar-selector {
+            ul {
+              box-shadow: 1px 1px 5px #000000;
 
-      .fsc-calendar-selector {
-        ul {
-          box-shadow: 1px 1px 5px #000000;
+              li {
+                background-color: $wfrpBlackBackground;
+                border-color: $wfrpBorderColor;
 
-          li {
-            background-color: $wfrpBlackBackground;
-            border-color: $wfrpBorderColor;
+                &.fsc-active, &:hover {
+                  background-color: #3e3e3ee8;
+                }
 
-            &.fsc-active, &:hover {
-              background-color: #3e3e3ee8;
-            }
-
-            &.fsc-new-calendar {
-              color: #68a152;
+                &.fsc-new-calendar {
+                  color: #68a152;
+                }
+              }
             }
           }
         }
+        .fsc-item{
+          border-color: $wfrpBorderColor;
+          &.fsc-active, &.active, &:hover {
+            background-color: rgba($secondary, .65);
+            color: #000000;
+          }
+        }
+        .fsc-sub-heading{
+          color: $white;
+        }
       }
-    }
-    .fsc-item{
-      border-color: $wfrpBorderColor;
-      &.fsc-active, &.active, &:hover {
-        background-color: rgba($secondary, .65);
-        color: #000000;
-      }
-    }
-    .fsc-sub-heading{
-      color: $white;
-    }
-  }
-  .fsc-tab-wrapper{
-    .fsc-f-table{
-      background-color: $wfrpBlackBackground;
-      color: $wfrpTextColor;
+      .fsc-tab-wrapper{
+        .fsc-f-table{
+          background-color: $wfrpBlackBackground;
+          color: $wfrpTextColor;
 
-      input, select{
-        font-family: var(--actor-input-font-family);
-        font-size: var(--actor-input-font-size);
-        font-weight: var(--actor-input-font-weight);
-        color: $wfrpInputTextColor;
-        border: 1px solid $wfrpBorderColor;
-        box-shadow: 0 0 10px inset black;
-        background: $wfrpInputBackground;
-      }
-    }
+          input, select{
+            font-family: var(--actor-input-font-family);
+            font-size: var(--actor-input-font-size);
+            font-weight: var(--actor-input-font-weight);
+            color: $wfrpInputTextColor;
+            border: 1px solid $wfrpBorderColor;
+            box-shadow: 0 0 10px inset black;
+            background: $wfrpInputBackground;
+          }
+        }
 
-    .fsc-quick-setup {
-      .fsc-predefined-list {
-        .fsc-predefined-calendar {
+        .fsc-quick-setup {
+          .fsc-predefined-list {
+            .fsc-predefined-calendar {
 
-          &.fsc-selected, &:hover {
-            border-color: $wfrpBorderColor;
-            background-color: $wfrpInputBackground;
+              &.fsc-selected, &:hover {
+                border-color: $wfrpBorderColor;
+                background-color: $wfrpInputBackground;
+              }
+            }
           }
         }
       }

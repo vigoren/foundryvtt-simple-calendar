@@ -2,10 +2,6 @@
 
 This section contains all the options for configuring how time works within the calendar.
 
-## Time Options
-
-This section allows the configuration of how hours, minutes and seconds work in their world.
-
 ![](media://calendar-time.png)
 
 | Setting             | Description                                            |

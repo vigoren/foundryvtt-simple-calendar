@@ -1,4 +1,4 @@
-import {GameSystems, LeapYearRules} from "../../constants";
+import {LeapYearRules} from "../../constants";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import PF2E from "../systems/pf2e";
 import {CalManager} from "../index";
@@ -78,7 +78,7 @@ export default class LeapYear extends ConfigurationItemBase{
      */
     isLeapYear(year: number): boolean {
         const activeCalendar = CalManager.getActiveCalendar();
-        if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync) {
+        if(PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync) {
             PF2E.checkLeapYearRules(this);
         }
         if(this.rule === LeapYearRules.Gregorian){

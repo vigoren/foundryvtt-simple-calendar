@@ -3,10 +3,6 @@
 This section shows all the settings for customizing details about the year.
 
 
-## Current Year
-
-This section is for information regarding the current year of the calendar.
-
 ![](media://year-settings-current.png)
 
 | Setting       | Description                                                                                                                                                                                                                                                                                                               |

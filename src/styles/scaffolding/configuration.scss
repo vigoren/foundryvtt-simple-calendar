@@ -1,508 +1,523 @@
 @import "../variables";
 .fsc-simple-calendar-configuration{
-  &.window-app{
-    .window-content{
-      overflow-x: hidden!important;
-      overflow-y: hidden!important;
-    }
-  }
-}
-.simple-calendar{
-  .fsc-configuration-wrapper{
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    max-height: 100%;
-    padding:0;
-    //List of tabs on the left
-    .tabs{
-      flex: 0 0 10rem;
-      flex-direction: column;
-      flex-wrap: nowrap;
-      justify-content: flex-start;
-      border-right: 1px solid;
-      overflow-y: auto;
-      overflow-x: visible;
-      padding-bottom: 30px;
+  &.simple-calendar{
+    &.window-app{
+      .window-content{
+        overflow-x: hidden!important;
+        overflow-y: hidden!important;
 
-      .fsc-tab-section{
-        flex: unset;
-        display: flex;
-        flex-direction: column;
-
-        &:first-child{
-          .fsc-heading{
-            border-top-width: 0;
-          }
-        }
-
-        .fsc-calendar-selector{
+        .fsc-configuration-wrapper{
           position: relative;
-          .fsc-heading{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            &::after{
-              font-family: "Font Awesome 5 Free";
-              content: "\f0d7";
-              -moz-osx-font-smoothing: grayscale;
-              -webkit-font-smoothing: antialiased;
-              font-weight: 900;
-              font-style: normal;
-              font-variant: normal;
-              text-rendering: auto;
-            }
-          }
-          ul{
-            margin: 0;
-            padding: 0;
-            position: absolute;
-            top:100%;
-            width: 100%;
-            max-height: 0;
-            overflow: hidden;
-            list-style: none;
-
-            &.fsc-closed{
-              visibility: hidden;
-            }
-            &.fsc-open{
-              visibility: visible;
-              max-height: 300px;
-            }
-
-            li{
-              flex: unset;
-              padding: $spacer-half $spacer-half $spacer-half $spacer;
-              cursor: pointer;
-              border-bottom: 1px solid;
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-
-              .fsc-control{
-                width: unset;
-                font-size: 0.75rem;
-                line-height: 0.875rem;
-              }
-            }
-          }
-        }
-
-        .fsc-item{
-          border-bottom: 1px solid;
-          &:last-child{
-            border-bottom: unset;
-          }
-        }
-      }
-      .fsc-heading{
-        flex: unset;
-        padding: $spacer-half $spacer-half $spacer-half ($spacer-half*0.5);
-        text-align: left;
-        font-size: 1.125rem;
-        font-weight: 600;
-        border-top: 1px solid;
-        border-bottom: 1px solid;
-      }
-      .fsc-sub-heading{
-        flex: unset;
-        padding: $spacer-half;
-        text-align: left;
-        font-size: 1rem;
-        font-weight: 600;
-        border-bottom: 1px solid;
-      }
-      .fsc-item{
-        flex: unset;
-        padding: $spacer-half $spacer-half $spacer-half $spacer;
-        text-align: left;
-        text-decoration: none;
-        font-weight: 600;
-
-        &.fsc-active, &:hover{
-          text-shadow: unset;
-        }
-        &.fsc-active{
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
-          justify-content: space-between;
-          align-items: center;
-          &:after{
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            content: '\f061';
-            padding-left: $spacer-half * 0.5;
-          }
-        }
-      }
-    }
-    //Actual Tabs
-    .fsc-tab-wrapper{
-      flex: 1;
-      overflow-x: hidden;
-      overflow-y: auto;
-      padding: $spacer-half $spacer-half 30px;
+          max-height: 100%;
+          padding:0;
+          //List of tabs on the left
+          .tabs.fsc-sheet-tabs {
+            flex: 0 0 10rem;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            overflow-y: auto;
+            overflow-x: visible;
+            padding-bottom: 30px;
+            border:0;
+            border-right: 1px solid;
 
-      h2{
-        a{
-          font-size: 0.875rem;
-          text-decoration: none;
-        }
-      }
+            .fsc-tab-section{
+              flex: unset;
+              display: flex;
+              flex-direction: column;
 
-      .fsc-settings-group{
-        opacity: 0;
-        &.fsc-open{
-          visibility: visible;
-          opacity: 1;
-        }
-        &.fsc-closed{
-          visibility: hidden;
-          height: 0;
-          overflow: hidden;
-        }
-      }
+              &:first-child{
+                .fsc-heading{
+                  border-top-width: 0;
+                }
+              }
 
+              .fsc-calendar-selector{
+                position: relative;
+                .fsc-heading{
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  cursor: pointer;
+                  &::after{
+                    font-family: "Font Awesome 5 Free";
+                    content: "\f0d7";
+                    -moz-osx-font-smoothing: grayscale;
+                    -webkit-font-smoothing: antialiased;
+                    font-weight: 900;
+                    font-style: normal;
+                    font-variant: normal;
+                    text-rendering: auto;
+                  }
+                }
+                ul{
+                  margin: 0;
+                  padding: 0;
+                  position: absolute;
+                  top:100%;
+                  width: 100%;
+                  max-height: 0;
+                  overflow: hidden;
+                  list-style: none;
+                  z-index: 10;
 
+                  &.fsc-closed{
+                    visibility: hidden;
+                  }
+                  &.fsc-open{
+                    visibility: visible;
+                    max-height: 300px;
+                  }
 
-      .fsc-warning{
-        padding: 16px;
-        text-align: center;
-        border: 1px solid;
-        width: fit-content;
-        margin: 0 auto;
-      }
+                  li{
+                    flex: unset;
+                    padding: $spacer-half $spacer-half $spacer-half $spacer;
+                    cursor: pointer;
+                    border-bottom: 1px solid;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
 
-      .fsc-section-wrapper{
-        position: relative;
-      }
+                    .fsc-control{
+                      width: unset;
+                      font-size: 0.75rem;
+                      line-height: 0.875rem;
+                    }
+                  }
+                }
+              }
 
-      .fsc-section{
-        margin: $spacer 0;
-        opacity: 0;
-
-        &:first-child{
-          margin-top: 0;
-        }
-
-        &.fsc-open{
-          visibility: visible;
-          opacity: 1;
-        }
-        &.fsc-closed{
-          visibility: hidden;
-          height: 0;
-          overflow: hidden;
-        }
-      }
-
-      .fsc-control-section{
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        align-items: center;
-        justify-content: space-evenly;
-
-        .fsc-control{
-          flex: 0 0 25%;
-        }
-      }
-
-      .fsc-f-table{
-        display: flex;
-        flex-direction: column;
-        border: 1px solid;
-        margin-bottom: $spacer-half;
-        .fsc-row{
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-          align-items: center;
-          padding: $spacer-half 0;
-          &.fsc-head{
-            font-weight: 600;
-            text-align: center;
-            border-bottom: 1px solid;
-          }
-          .fsc-col{
-            flex: 1;
-            text-align: center;
-            margin: 0 ($spacer-half * 0.5);
-            input{
+              .fsc-item{
+                border-bottom: 1px solid;
+                &:last-child{
+                  border-bottom: unset;
+                }
+              }
+            }
+            .fsc-heading{
+              flex: unset;
+              padding: $spacer-half $spacer-half $spacer-half ($spacer-half*0.5);
               text-align: left;
-            }
-            .fsc-month-show-advanced{
-              span{
-                font-weight: normal;
-                margin-left: ($spacer-half * 0.5);
-              }
-            }
-          }
-          .fsc-options{
-            flex: 0 0 100%;
-            padding: .25rem 2rem;
-            max-height: 0;
-            overflow: hidden;
-
-            &.fsc-open{
-              visibility: visible;
-              max-height: 500px;
-            }
-            &.fsc-closed{
-              visibility: hidden;
-            }
-
-            .form-fields{
-              flex: 1;
-            }
-
-            h3{
-              margin-top: 0.5rem;
-              border-bottom: 1px solid;
+              font-size: 1.125rem;
               font-weight: 600;
+              border-top: 1px solid;
+              border-bottom: 1px solid;
             }
-          }
-        }
+            .fsc-sub-heading{
+              flex: unset;
+              padding: $spacer-half;
+              text-align: left;
+              font-size: 1rem;
+              font-weight: 600;
+              border-bottom: 1px solid;
+            }
+            .fsc-item{
+              display: block;
+              flex: unset;
+              padding: $spacer-half $spacer-half $spacer-half $spacer;
+              text-align: left;
+              text-decoration: none;
+              font-weight: 600;
+              border-radius: 0;
+              border: 0;
 
-        &.fsc-moons{
-          .fsc-row{
-            .fsc-options{
-              &.fsc-open{
-                max-height: fit-content;
+              &.fsc-active, &:hover{
+                text-shadow: unset;
+                box-shadow: unset;
               }
-            }
-          }
-        }
-      }
-
-      .fsc-table-actions{
-        display: flex;
-        flex-direction: row;
-        margin-bottom: 1rem;
-
-        .fsc-spacer{
-          flex: 1 1;
-        }
-        button{
-          width: 200px;
-        }
-      }
-
-      //----------------
-      // Config Tabs
-      //----------------
-      .fsc-import-export{
-        .fsc-importing{
-          flex-direction: column;
-          .fsc-progress{
-            margin-top: $spacer-half;
-            border: 1px solid;
-            width: 100%;
-            &.fsc-hide{
-              display: none;
-            }
-            .fsc-progress-bar{
-              height: 1rem;
-              width: 0;
-            }
-          }
-          .fsc-file-details{
-            .fsc-calendar-list{
-              li{
+              &.fsc-active{
                 display: flex;
                 flex-direction: row;
                 flex-wrap: nowrap;
-                align-items: center;
                 justify-content: space-between;
-                margin: $spacer-half 0;
+                align-items: center;
+                &:after{
+                  font-family: "Font Awesome 5 Free";
+                  font-weight: 900;
+                  content: '\f061';
+                  padding-left: $spacer-half * 0.5;
+                }
               }
             }
-            .fsc-save{
-              width: 200px;
+          }
+          //Actual Tabs
+          .fsc-tab-wrapper{
+            flex: 1;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: $spacer-half $spacer-half 30px;
+
+            h2{
+              a{
+                font-size: 0.875rem;
+                text-decoration: none;
+              }
+            }
+
+            .fsc-settings-group{
+              opacity: 0;
+              &.fsc-open{
+                visibility: visible;
+                opacity: 1;
+              }
+              &.fsc-closed{
+                visibility: hidden;
+                height: 0;
+                overflow: hidden;
+              }
+            }
+
+
+
+            .fsc-warning{
+              padding: 16px;
+              text-align: center;
+              border: 1px solid;
+              width: fit-content;
               margin: 0 auto;
             }
-          }
-        }
-        .form-group{
-          &.fsc-open{
-            max-height: fit-content;
-            align-items: flex-start;
-          }
-          .fsc-calendar-list{
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            flex: 1 1 70%;
-            label{
-              display: flex;
-              align-items: center;
-              justify-content: flex-start;
-              align-content: center;
-              flex-wrap: nowrap;
-              flex-direction: row;
-              font-size: 0.875rem;
-              font-weight: normal;
-            }
-          }
-          #exportCalendar{
-            flex: 1 1 30%;
-          }
-        }
-      }
-      .fsc-new-calendar{
-        button{
-          max-width: 200px;
-          margin: 0.5rem auto;
-        }
-      }
-      .fsc-quick-setup{
-        .fsc-section{
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          .form-group{
-            max-height: fit-content;
-            overflow: visible;
-          }
-        }
-        .fsc-predefined-list{
-          display: grid;
-          justify-items: stretch;
-          grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-          grid-gap: $spacer;
-          align-items: center;
 
-          .fsc-predefined-calendar{
-            padding: $spacer-half;
-            border: 1px solid;
-            border-radius: 10px;
-            cursor: pointer;
-            &.fsc-selected{
+            .fsc-section-wrapper{
+              position: relative;
+            }
+
+            .fsc-section{
+              margin: $spacer 0;
+              opacity: 0;
+
+              &:first-child{
+                margin-top: 0;
+              }
+
+              &.fsc-open{
+                visibility: visible;
+                opacity: 1;
+              }
+              &.fsc-closed{
+                visibility: hidden;
+                height: 0;
+                overflow: hidden;
+              }
+            }
+
+            .fsc-control-section{
               display: flex;
               flex-direction: row;
               flex-wrap: nowrap;
-              justify-content: space-between;
               align-items: center;
-              &:after{
-                font-family: "Font Awesome 5 Free";
-                font-weight: 900;
-                content: '\f00c';
-                padding-left: $spacer-half * 0.5;
+              justify-content: space-evenly;
+
+              .fsc-control{
+                flex: 0 0 25%;
               }
             }
-            .fsc-predefined-calendar-details{
-              flex: 1;
-              font-weight: 600;
+
+            .fsc-f-table{
+              display: flex;
+              flex-direction: column;
+              border: 1px solid;
+              margin-bottom: $spacer-half;
+              .fsc-row{
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                padding: $spacer-half 0;
+                &.fsc-head{
+                  font-weight: 600;
+                  text-align: center;
+                  border-bottom: 1px solid;
+                }
+                .fsc-col{
+                  flex: 1;
+                  text-align: center;
+                  margin: 0 ($spacer-half * 0.5);
+                  input{
+                    text-align: left;
+                  }
+                  .fsc-month-show-advanced{
+                    span{
+                      font-weight: normal;
+                      margin-left: ($spacer-half * 0.5);
+                    }
+                  }
+                }
+                .fsc-options{
+                  flex: 0 0 100%;
+                  padding: .25rem 2rem;
+                  max-height: 0;
+                  overflow: hidden;
+
+                  &.fsc-open{
+                    visibility: visible;
+                    max-height: 500px;
+                  }
+                  &.fsc-closed{
+                    visibility: hidden;
+                  }
+
+                  .form-fields{
+                    flex: 1;
+                  }
+
+                  h3{
+                    margin-top: 0.5rem;
+                    border-bottom: 1px solid;
+                    font-weight: 600;
+                  }
+                }
+              }
+
+              &.fsc-moons{
+                .fsc-row{
+                  .fsc-options{
+                    &.fsc-open{
+                      max-height: fit-content;
+                    }
+                  }
+                }
+              }
             }
-            .fsc-predefined-calendar-includes{
-              font-size: 0.75rem;
-              font-weight: 500;
-              margin-top: $spacer-half * 0.5;
-              padding-left: $spacer-half;
-              padding-top: $spacer-half * 0.5;
-              border-top: 1px solid;
-              .fa{
-                margin-left: $spacer-half * 0.5;
+
+            .fsc-table-actions{
+              display: flex;
+              flex-direction: row;
+              margin-bottom: 1rem;
+
+              .fsc-spacer{
+                flex: 1 1;
+              }
+              button{
+                width: 200px;
+              }
+            }
+
+            //----------------
+            // Config Tabs
+            //----------------
+            .fsc-import-export{
+              .fsc-importing{
+                flex-direction: column;
+                .fsc-progress{
+                  margin-top: $spacer-half;
+                  border: 1px solid;
+                  width: 100%;
+                  &.fsc-hide{
+                    display: none;
+                  }
+                  .fsc-progress-bar{
+                    height: 1rem;
+                    width: 0;
+                  }
+                }
+                .fsc-file-details{
+                  .fsc-calendar-list{
+                    li{
+                      display: flex;
+                      flex-direction: row;
+                      flex-wrap: nowrap;
+                      align-items: center;
+                      justify-content: space-between;
+                      margin: $spacer-half 0;
+                    }
+                  }
+                  .fsc-save{
+                    width: 200px;
+                    margin: 0 auto;
+                  }
+                }
+              }
+              .form-group{
+                &.fsc-open{
+                  max-height: fit-content;
+                  align-items: flex-start;
+                }
+                .fsc-calendar-list{
+                  list-style: none;
+                  margin: 0;
+                  padding: 0;
+                  flex: 1 1 70%;
+                  li{
+                    margin: $spacer-half 0;
+                  }
+                  label{
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    align-content: center;
+                    flex-wrap: nowrap;
+                    flex-direction: row;
+                    font-size: 0.875rem;
+                    font-weight: normal;
+                    input{
+                      margin-right: $spacer-half;
+                    }
+                  }
+                }
+                #exportCalendar{
+                  flex: 1 1 30%;
+                }
+              }
+            }
+            .fsc-new-calendar{
+              button{
+                max-width: 200px;
+                margin: 0.5rem auto;
+              }
+            }
+            .fsc-quick-setup{
+              .fsc-section{
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                .form-group{
+                  max-height: fit-content;
+                  overflow: visible;
+                }
+              }
+              .fsc-predefined-list{
+                display: grid;
+                justify-items: stretch;
+                grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+                grid-gap: $spacer;
+                align-items: center;
+
+                .fsc-predefined-calendar{
+                  padding: $spacer-half;
+                  border: 1px solid;
+                  border-radius: 10px;
+                  cursor: pointer;
+                  &.fsc-selected{
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: nowrap;
+                    justify-content: space-between;
+                    align-items: center;
+                    &:after{
+                      font-family: "Font Awesome 5 Free";
+                      font-weight: 900;
+                      content: '\f00c';
+                      padding-left: $spacer-half * 0.5;
+                    }
+                  }
+                  .fsc-predefined-calendar-details{
+                    flex: 1;
+                    font-weight: 600;
+                  }
+                  .fsc-predefined-calendar-includes{
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    margin-top: $spacer-half * 0.5;
+                    padding-left: $spacer-half;
+                    padding-top: $spacer-half * 0.5;
+                    border-top: 1px solid;
+                    .fa{
+                      margin-left: $spacer-half * 0.5;
+                    }
+                  }
+                }
+              }
+            }
+            .fsc-permissions{
+              .fsc-table-header{
+                padding: ($spacer-half * 0.5) $spacer-half;
+                border: 1px solid;
+                border-radius: 0;
+                .fsc-index{
+                  flex: 0 0 200px;
+                  text-align: left;
+                }
+                label{
+                  text-align: center;
+                }
+              }
+              .fsc-permissions-list{
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                max-height: 400px;
+                overflow: hidden auto;
+                scrollbar-width: thin;
+                .fsc-permission{
+                  margin: -1px 0 0;
+                  label{
+                    flex: 0 0 200px;
+                  }
+                  .form-fields{
+                    justify-content: space-around;
+                  }
+                }
+              }
+            }
+
+            .fsc-about{
+              .fsc-logo{
+                width: 100px;
+                margin: 0 auto;
+              }
+              h1{
+                text-align: center;
+              }
+              .fsc-description{
+                margin-bottom: $spacer;
+              }
+
+              .fsc-row{
+                display: flex;
+                flex-direction: row;
+                margin-bottom: $spacer-half;
+
+                .fsc-card{
+                  flex: 1;
+                  border: 1px solid;
+                  border-radius: 5px;
+                  padding: 0.5rem;
+                  margin-right: 0.5rem;
+                  &:last-child{
+                    margin-right: 0;
+                  }
+                }
+
+                ul{
+                  li{
+                    margin: ($spacer-half * 0.5) 0;
+                  }
+                }
+              }
+
+              .fsc-translations{
+                table{
+                  border: 1px solid;
+                  width: 400px;
+                }
               }
             }
           }
-        }
-      }
-      .fsc-permissions{
-        .fsc-table-header{
-          padding: ($spacer-half * 0.5) $spacer-half;
-          border: 1px solid;
-          border-radius: 0;
-          .fsc-index{
-            flex: 0 0 200px;
-            text-align: left;
-          }
-          label{
+          .fsc-config-save{
+            position: absolute;
             text-align: center;
-          }
-        }
-        .fsc-permissions-list{
-          list-style: none;
-          margin: 0;
-          padding: 0;
-          max-height: 400px;
-          overflow: hidden auto;
-          scrollbar-width: thin;
-          .fsc-permission{
-            margin: -1px 0 0;
-            label{
-              flex: 0 0 200px;
-            }
-            .form-fields{
-              justify-content: space-around;
+            width: 100%;
+            backdrop-filter: blur(2px);
+            left: 0;
+            bottom: 0;
+            height: 30px;
+            border-top: 1px solid #b5b5b5;
+
+            button{
+              display: inline-block;
+              width: 30%;
+              margin-left: $spacer;
+              margin-top: $spacer-half * 0.5;
             }
           }
         }
-      }
-
-      .fsc-about{
-        .fsc-logo{
-          width: 100px;
-          margin: 0 auto;
-        }
-        h1{
-          text-align: center;
-        }
-        .fsc-description{
-          margin-bottom: $spacer;
-        }
-
-        .fsc-row{
-          display: flex;
-          flex-direction: row;
-          margin-bottom: $spacer-half;
-
-          .fsc-card{
-            flex: 1;
-            border: 1px solid;
-            border-radius: 5px;
-            padding: 0.5rem;
-            margin-right: 0.5rem;
-            &:last-child{
-              margin-right: 0;
-            }
-          }
-
-          ul{
-            li{
-              margin: ($spacer-half * 0.5) 0;
-            }
-          }
-        }
-
-        .fsc-translations{
-          table{
-            border: 1px solid;
-            width: 400px;
-          }
-        }
-      }
-    }
-    .fsc-config-save{
-      position: absolute;
-      text-align: center;
-      width: 100%;
-      backdrop-filter: blur(2px);
-      left: 0;
-      bottom: 0;
-      height: 30px;
-      border-top: 1px solid #b5b5b5;
-
-      button{
-        width: 30%;
-        margin-left: $spacer;
-        margin-top: $spacer-half * 0.5;
       }
     }
   }
+
 }

@@ -3,10 +3,10 @@ import {GameWorldTimeIntegrations, SimpleCalendarHooks, SocketTypes, TimeKeeperS
 import {Hook} from "../api/hook";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import {CalManager, MainApplication, SC} from "../index";
+import {CalManager, SC} from "../index";
 
 /**
- * The Time Keeper class used by the built in Simple Calendar Clock to keep real time
+ * The timekeeper class used by the built-in Simple Calendar Clock to keep real time
  */
 export default class TimeKeeper{
     /**
@@ -28,24 +28,23 @@ export default class TimeKeeper{
      */
     private saveIntervalNumber: number | undefined;
     /**
-     * The current status of the time keeper
+     * The current status of the timekeeper
      * @type {TimeKeeperStatus}
      * @private
      */
     private status: TimeKeeperStatus = TimeKeeperStatus.Stopped;
     /**
      * If the pause button was clicked or not
-     * @type {Boolean}
      * @private
      */
     private pauseClicked: boolean = false;
     /**
-     * How often (in seconds) to have the time keeper process an interval
+     * How often (in seconds) to have the timekeeper process an interval
      * @type {number}
      */
     public updateFrequency: number;
     /**
-     * A list of functions that listen for intervals or status changes from the time keeper and are then called.
+     * A list of functions that listen for intervals or status changes from the timekeeper and are then called.
      * @private
      */
     private updateListeners: {key: string, func: Function}[] = [];
@@ -88,7 +87,7 @@ export default class TimeKeeper{
     }
 
     /**
-     * Stops the time keeper interval and save interval
+     * Stops the timekeeper interval and save interval
      */
     public stop(){
         this.pauseClicked = false;
@@ -100,7 +99,6 @@ export default class TimeKeeper{
                 (<Game>game).togglePause(true, true);
             }
             if(GameSettings.IsGm() && SC.primary){
-                console.log('Saving Time on Stop');
                 this.saveInterval(true);
             }
             this.intervalNumber = undefined;
@@ -117,14 +115,14 @@ export default class TimeKeeper{
     }
 
     /**
-     * Returns the current status of the time keeper
+     * Returns the current status of the timekeeper
      */
     public getStatus(){
         return this.status;
     }
 
     /**
-     * Sets a new status for the time keeper and updates the clock display
+     * Sets a new status for the timekeeper and updates the clock display
      * @param {TimeKeeperStatus} newStatus
      */
     public setStatus(newStatus: TimeKeeperStatus){
@@ -171,7 +169,7 @@ export default class TimeKeeper{
     }
 
     /**
-     * Checks the current state of the world and updates the time keepers status accordingly.
+     * Checks the current state of the world and updates the timekeepers status accordingly.
      * If the status has changed, emits the socket and hook calls to update all players, modules, systems and macros
      * @private
      */

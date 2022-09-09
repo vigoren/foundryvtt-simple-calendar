@@ -326,7 +326,7 @@
                     <div class="form-group fsc-open">
                         <label for="scPF2ESync">{{localize 'FSC.Configuration.General.PF2ESync'}}</label>
                         <div class="form-fields">
-                            <input value="{{generalSettings.pf2eSync}}" type="checkbox" id="scPF2ESync" {{checked generalSettings.pf2eSync}} />
+                            <input class="fsc-toggle" value="{{generalSettings.pf2eSync}}" type="checkbox" id="scPF2ESync" {{checked generalSettings.pf2eSync}} />
                         </div>
                         <p class="notes">{{localize 'FSC.Configuration.General.PF2ESyncHelp'}}</p>
                     </div>
@@ -607,8 +607,7 @@
         </div>
         <div class="tab fsc-year-settings" data-tab="yearSettings">
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Year.Current'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/year-settings.html#current-year" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
-                <p></p>
+                <h2>{{localize 'FSC.Configuration.Year.Title'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/year-settings.html#current-year" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scCurrentYear">{{localize 'FSC.Configuration.Year.Current'}}</label>
                     <div class="form-fields">
@@ -758,7 +757,7 @@
         </div>
         <div class="tab fsc-weekday-settings" data-tab="weekdaySettings" >
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.Weekday.Options'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/weekday-settings.html#weekday-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Weekday.Title'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/weekday-settings.html#weekday-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scShowWeekdayHeaders">{{localize 'FSC.Configuration.Weekday.ShowHeadings'}}</label>
                     <div class="form-fields">
@@ -809,7 +808,7 @@
         </div>
         <div class="tab fsc-leapyear-settings" data-tab="leapYearSettings">
             <div class="settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.LeapYear.Options'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/leap-year-settings.html#options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.LeapYear.Title'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/leap-year-settings.html#options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open {{#if uiElementStates.disabledControls.pf2e}} fsc-disabled{{/if}}">
                     <label for="scLeapYearRule">{{localize 'FSC.Configuration.LeapYear.Rule'}} <span class="fa-solid fa-triangle-exclamation" data-tooltip="{{localize 'FSC.Configuration.General.PF2ESyncDisabledSettings'}}"></span></label>
                     <div class="form-fields">
@@ -1003,7 +1002,7 @@
         </div>
         <div class="tab fsc-time-settings" data-tab="timeSettings">
             <div class="fsc-section fsc-open">
-                <h2>{{localize 'FSC.Configuration.Time.Options'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/time-settings.html#time-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Time.Title'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/time-settings.html#time-options" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scHoursInDay">{{localize 'FSC.Configuration.Time.HoursInDay'}}</label>
                     <div class="form-fields">
@@ -1060,7 +1059,7 @@
         </div>
         <div class="tab fsc-note-settings" data-tab="noteSettings">
             <div class="fsc-settings-group fsc-open">
-                <h2>{{localize 'FSC.Configuration.General.Notes'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/note-settings.html#note-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <h2>{{localize 'FSC.Configuration.Notes.Title'}} <a href="https://simplecalendar.info/pages/docs/calendar-configuration/note-settings.html#note-settings" title="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
                 <div class="form-group fsc-open">
                     <label for="scDefaultPlayerVisibility">{{localize 'FSC.Configuration.DefaultNoteVisibility'}}</label>
                     <div class="form-fields">
@@ -1137,66 +1136,8 @@
             <div class="fsc-row">
                 <div class="fsc-card fsc-translations">
                     <h2>Translations</h2>
-                    <p>Simple Calendar is available in languages other than English thanks to these wonderful individuals:</p>
-                    <table>
-                        <tr>
-                            <th>Language</th>
-                            <th>Translator(s)</th>
-                        </tr>
-                        <tr>
-                            <td>Czech (cs)</td>
-                            <td>
-                                <a href="https://github.com/robertjunek" target="_blank">robertjunek</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>French (fr)</td>
-                            <td>
-                                <a href="https://github.com/JDR-Ninja" target="_blank">JDR Ninja</a><br/>
-                                <a href="https://github.com/TheBird956" target="_blank">TheBird956</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>German (de)</td>
-                            <td>
-                                <a href="https://github.com/MasterZelgadis" target="_blank">MasterZelgadis</a><br/>
-                                <a href="https://github.com/BlueSkyBlackBird" target="_blank">BlueSkyBlackBird</a><br/>
-                                <a href="https://github.com/Fallayn" target="_blank">Fallayn</a><br/>
-                                <div>Mr. Good</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Italian (it)</td>
-                            <td>
-                                <a href="https://github.com/Haloghen" target="_blank">Haloghen</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Korean (ko)</td>
-                            <td>
-                                <a href="https://github.com/drdwing" target="_blank">drdwing</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Portuguese Brasil (pt-BR)</td>
-                            <td>
-                                <a href="https://github.com/castanhocorreia" target="_blank">castanhocorreia</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Spanish (es)</td>
-                            <td>
-                                <a href="https://github.com/areymoreno" target="_blank">areymoreno</a><br/>
-                                <a href="https://github.com/lozalojo" target="_blank">lozalojo</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Traditional Chinese (zh)</td>
-                            <td>
-                                <a href="https://github.com/benwater12" target="_blank">benwater12</a>
-                            </td>
-                        </tr>
-                    </table>
+                    <p>Simple Calendar is available in languages other than English thanks to many wonderful individuals a huge thank you to everyone who has helped out!</p>
+                    <p>Please check out the list of translation contributors <a href="https://simplecalendar.info/index.html#translations">here</a>!</p>
                 </div>
             </div>
         </div>

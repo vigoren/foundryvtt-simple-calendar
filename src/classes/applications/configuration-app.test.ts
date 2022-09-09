@@ -21,13 +21,14 @@ import NoteManager from "../notes/note-manager";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
-import {ConfigurationDateSelectors, GameSystems, LeapYearRules, PredefinedCalendars} from "../../constants";
+import {ConfigurationDateSelectors, LeapYearRules, PredefinedCalendars} from "../../constants";
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import * as VisualUtilities from "../utilities/visual";
 import * as InputUtilities from "../utilities/inputs";
 import * as ObjectUtilities from "../utilities/object";
 import Month from "../calendar/month";
 import {saveAs} from "file-saver";
+import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
 
 jest.mock('file-saver');
 
@@ -138,7 +139,7 @@ describe('Configuration App Class Tests', () => {
     });
 
     test('Get Data', () => {
-        tCal.gameSystem = GameSystems.PF2E;
+        jest.spyOn(FoundryVTTGameData, 'systemID', 'get').mockReturnValue('pf2e');
         expect(ca.getData()).toBeDefined();
     });
 
