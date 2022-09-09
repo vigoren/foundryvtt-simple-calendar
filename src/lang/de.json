@@ -420,7 +420,6 @@
 	"FSC.Configuration.Moon.MonthHelp": "Der Monat, der als Neumondreferenz genutzt wird.",
 	"FSC.Configuration.Moons": "Monde",
 	"FSC.Warn.Time.ActiveCombats": "Es läuft ein aktiver Kampf. Bitte beende den Kampf vor dem Start der Echtzeituhr.",
-	"FSC.Warn.Notes.NotGM": "Es ist kein SL im Spiel. Ein SL muss eingeloggt sein, damit Spieler Notizen hinzufügen können.",
 	"FSC.Warn.Macros.GMUpdate": "Nur ein SL kann das Kalenderdatum aktualisieren!",
 	"FSC.Warn.Calendar.NotGM": "Es ist kein SL im Spiel. Mindestens ein SL muss eingeloggt sein, damit Spieler Datum/Zeit ändern können.",
 	"FSC.Error.Calendar.GMCurrent": "Du musst SL sein, um das aktuelle Datum ändern zu können."
