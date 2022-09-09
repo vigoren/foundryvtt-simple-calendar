@@ -94,7 +94,6 @@
 	"FSC.DateFormat.Second.NumberPaddedExample": "00 01 ... 58 59",
 	"FSC.DateFormat.TextDescription": "Pro jakýkoliv text, který chcete zobrazit přímo, ho obalte hranatými závorkami.",
 	"FSC.DateFormat.TextExample": "[Doplňkový text]",
-	"FSC.DateFormat.Documentation": "Pro více podrobností o nastavení formátu data navštivte <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">dokumentaci</a> nebo rozbalte tabulku výše.",
 	"FSC.Description": "Popis",
 	"FSC.ExampleResult": "Příklad výsledků",
 	"FSC.Token": "Zkratka",
