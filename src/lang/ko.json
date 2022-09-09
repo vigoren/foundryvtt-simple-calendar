@@ -373,7 +373,6 @@
 	"FSC.Configuration.Moon.DayHelp": "새 달의 기준으로 사용할 일",
 	"FSC.Configuration.Moons": "달",
 	"FSC.Warn.Time.ActiveCombats": "전투 활성화/전투 진행중입니다. 실시간 시계를 시작하기 전 해결해주십시오.",
-	"FSC.Warn.Notes.NotGM": "게임에 GM이 없습니다. 플레이어가 노트를 추가하려면 GM이 로그인해야 합니다.",
 	"FSC.Warn.Macros.GMUpdate": "GM만이 달력 날짜를 업데이트 할 수 있습니다!",
 	"FSC.Warn.Calendar.NotGM": "게임에 GM이 없습니다. 날짜/시간을 변경하려면 GM이 로그인해야 합니다.",
 	"FSC.Error.Note.NoTitle": "제목이 없는 노트는 저장할 수 없습니다!",
