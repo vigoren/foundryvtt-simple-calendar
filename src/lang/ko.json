@@ -305,7 +305,6 @@
 	"FSC.Configuration.Weekday.Add": "새 요일 추가",
 	"FSC.Configuration.Weekday.RemoveAll": "모든 요일 제거",
 	"FSC.Configuration.Weekdays": "요일",
-	"FSC.Configuration.Weekday.Options": "요일 옵션",
 	"FSC.Configuration.Weekday.FirstWeekDay": "시작 요일",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "0년의 첫번째 날이 시작되는 요일을 설정합니다.",
 	"FSC.Configuration.DefaultNoteVisibility": "기본적으로 노트를 플레이어에게 보이기",
