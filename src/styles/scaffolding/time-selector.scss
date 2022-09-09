@@ -1,72 +1,78 @@
-.fsc-time-selector{
-  display: flex;
-  justify-content: space-evenly;
-  margin: 0.5rem 0;
-  .fsc-ts-inputs{
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    margin-bottom: 5px;
-    border-radius: 5px;
-    border: 1px solid;
+.simple-calendar{
+  &.window-app{
+    .window-content{
+      .fsc-time-selector{
+        display: flex;
+        justify-content: space-evenly;
+        margin: 0.5rem 0;
+        .fsc-ts-inputs{
+          position: relative;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          margin-bottom: 5px;
+          border-radius: 5px;
+          border: 1px solid;
 
-    input{
-      width: 2rem;
-      border: unset;
-      border-radius: 5px;
-      margin: 0 2px;
-      text-align: center;
+          input{
+            width: 2rem;
+            border: unset;
+            border-radius: 5px;
+            margin: 0 2px;
+            text-align: center;
+          }
+
+          .fsc-dropdown{
+            position: absolute;
+            bottom: 23px;
+            width: 3rem;
+            max-height: 150px;
+            margin: 0;
+            padding: 0;
+            border: 1px solid;
+            z-index: 100;
+            overflow-y: scroll;
+
+            &.fsc-hide{
+              display: none;
+            }
+
+
+            &.fsc-ts-hour-list{
+              left: 2px;
+            }
+            &.fsc-ts-minute-list{
+              right: 0;
+            }
+
+            li{
+              list-style: none;
+              padding: 0.25rem 0.5rem;
+            }
+          }
+        }
+
+        .fsc-time-spacer{
+          font-size: 1.5rem;
+          margin-top: -4px;
+          padding: 0 0.25rem
+        }
+
+        .fa-clock{
+          font-size: 1.25rem;
+          margin-top: 3px;
+          margin-right: 0.25rem;
+        }
+      }
+
+      .fsc-add-time, .fsc-remove-time{
+        display: flex;
+        justify-content: space-evenly;
+        margin: 1rem 0;
+        button{
+          flex: 0 1 50% !important;
+        }
+      }
     }
-
-    .fsc-dropdown{
-      position: absolute;
-      bottom: 23px;
-      width: 3rem;
-      max-height: 150px;
-      margin: 0;
-      padding: 0;
-      border: 1px solid;
-      z-index: 100;
-      overflow-y: scroll;
-
-      &.fsc-hide{
-        display: none;
-      }
-
-
-      &.fsc-ts-hour-list{
-        left: 2px;
-      }
-      &.fsc-ts-minute-list{
-        right: 0;
-      }
-
-      li{
-        list-style: none;
-        padding: 0.25rem 0.5rem;
-      }
-    }
-  }
-
-  .fsc-time-spacer{
-    font-size: 1.5rem;
-    margin-top: -4px;
-    padding: 0 0.25rem
-  }
-
-  .fa-clock{
-    font-size: 1.25rem;
-    margin-top: 3px;
-    margin-right: 0.25rem;
-  }
-}
-
-.fsc-add-time, .fsc-remove-time{
-  display: flex;
-  justify-content: space-evenly;
-  margin: 1rem 0;
-  button{
-    flex: 0 1 50% !important;
   }
 }

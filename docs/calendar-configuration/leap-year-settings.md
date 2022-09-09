@@ -4,8 +4,6 @@ This section allows for the configuration on how leap years work for this calend
 
 ![](media://calendar-leap-year.png)
 
-## Options
-
 Setting | Description
 -------- | ----------
 Leap Year Rule | Which ruleset to follow when determining leap years. The options are <ul><li>None: The calendar contains no leap years</li><li>Gregorian: The calendars leap year rules are like the standard calendar (Every year that is exactly divisible by four is a leap year, except for years that are exactly divisible by 100, but these years are leap years if they are exactly divisible by 400)</li><li>Custom: Allows you to specify n interval in years for when a leap year happens.</li></ul>

@@ -1,5 +1,44 @@
 # Change Log
 
+## v2.1.10 - Bug Fixes, QoL Improvements and Translation Updates
+
+![](https://img.shields.io/badge/release%20date-September%208%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.10/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where months with a day offset would go back a day while the clock was running.
+- Changed the "PF2E World Clock Sync" setting so that it uses the switch styling rather than the checkbox styling.
+- Fixed an issue with the migration from Simple Calendar version 1.x to version 2.x in FoundryVTT v10.
+- Fixed some depreciation warnings on the PF2E system.
+
+### Quality of Life Improvements
+
+- Improved the strictness of the CSS for Simple Calendar themes to have a more consistent look when FoundryVTT UI/Theme modules are installed. I tested the following UI modules: Ernie's Modern UI, Minimal UI, Polished UI.
+
+### Translations
+
+Simple Calendar translations are now done on Foundry Hub Weblate, you can check it out (and help out) [here](https://weblate.foundryvtt-hub.com/engage/simple-calendar/)!
+
+Many people have contributed on Weblate all ready to update and add translations! Thank you to the following people:
+
+* [Demian Wright](https://weblate.foundryvtt-hub.com/user/Demian/) (Finnish, English)
+* [TonyTheBaloney](https://weblate.foundryvtt-hub.com/user/TonyTheBaloney/) (Spanish)
+* [Cristina Ibañez](https://weblate.foundryvtt-hub.com/user/bolsacris/) (Spanish)
+* [JDW](https://weblate.foundryvtt-hub.com/user/JDW/) (French)
+* [EldritchTranslator](https://weblate.foundryvtt-hub.com/user/EldritchTranslator/) (Italian)
+* [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+* [moinen](https://weblate.foundryvtt-hub.com/user/moinen/) (Polish)
+* [Mateusz Sałasiński](https://weblate.foundryvtt-hub.com/user/matejss/) (Polish)
+* [eduardopato41](https://weblate.foundryvtt-hub.com/user/eduardopato41/) (Portuguese (Brazil))
+* [Matheus Clemente](https://weblate.foundryvtt-hub.com/user/mclemente/) (Portuguese (Brazil))
+* [Bruno Eiras](https://weblate.foundryvtt-hub.com/user/Beur1998/) (Portuguese (Brazil))
+* [Farevell](https://github.com/Farevell) (Simplified Chinese)
+
+### Documentation Updates
+
+- Updated the configuration documentation to reflect some improvements to the English language made while being translated.
+
 ## v2.1.4 - QoL Updates and Bug Fixes 
 
 ![](https://img.shields.io/badge/release%20date-September%202%2C%202022-blue)

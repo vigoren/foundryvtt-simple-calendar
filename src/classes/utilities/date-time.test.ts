@@ -16,7 +16,7 @@ import {
     ToSeconds
 } from "./date-time";
 import PredefinedCalendar from "../configuration/predefined-calendar";
-import {DateRangeMatch, GameSystems, PredefinedCalendars, PresetTimeOfDay} from "../../constants";
+import {DateRangeMatch, PredefinedCalendars, PresetTimeOfDay} from "../../constants";
 import fetchMock from 'jest-fetch-mock'
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {CalManager, updateCalManager, updateNManager, updateSC} from "../index";
@@ -25,6 +25,7 @@ import {Logger} from "../logging";
 import {SimpleCalendar} from "../../../types";
 import SCController from "../s-c-controller";
 import NoteManager from "../notes/note-manager";
+import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
 
 
 //jest.mock('NoteManager');
@@ -78,7 +79,7 @@ describe('Utilities Date/Time Tests', () => {
     test('To Seconds', async () => {
         expect(ToSeconds(tCal,1970, 0, 0, false)).toBe(0);
 
-        tCal.gameSystem = GameSystems.PF2E;
+        jest.spyOn(FoundryVTTGameData, 'systemID', 'get').mockReturnValue('pf2e');
         //@ts-ignore
         game.pf2e = {worldClock:{dateTheme: "AA", worldCreatedOn: 0}};
         expect(ToSeconds(tCal,1970, 0, 0, false)).toBe(86400);
@@ -234,7 +235,7 @@ describe('Utilities Date/Time Tests', () => {
         expect(TimestampToDate(5184000, tCal)).toEqual({"currentSeason":{"color":"#479dff","icon":"winter","id":expect.any(String),"name":"Winter","numericRepresentation":NaN,"startingDay":20,"startingMonth":11,"sunriseTime":21600,"sunsetTime":64800},"day":1,"dayOfTheWeek":1,"dayOffset":0,"display":{"date":"March 02, 1970","day":"2", "daySuffix": "","month":"3","monthName":"March","time":"00:00:00","weekday":"Monday","year":"1970","yearName":"","yearPostfix":"","yearPrefix":""},"hour":0,"isLeapYear":false,"midday":5227200,"minute":0,"month":2,"second":0,"showWeekdayHeadings":true,"sunrise":5205600,"sunset":5248800,"weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"year":1970,"yearZero":1970});
         expect(TimestampToDate(5270400, tCal)).toEqual({"currentSeason":{"color":"#479dff","icon":"winter","id":expect.any(String),"name":"Winter","numericRepresentation":NaN,"startingDay":20,"startingMonth":11,"sunriseTime":21600,"sunsetTime":64800},"day":2,"dayOfTheWeek":2,"dayOffset":0,"display":{"date":"March 03, 1970","day":"3", "daySuffix": "","month":"3","monthName":"March","time":"00:00:00","weekday":"Tuesday","year":"1970","yearName":"","yearPostfix":"","yearPrefix":""},"hour":0,"isLeapYear":false,"midday":5313600,"minute":0,"month":2,"second":0,"showWeekdayHeadings":true,"sunrise":5292000,"sunset":5335200,"weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"year":1970,"yearZero":1970});
 
-        tCal.gameSystem = GameSystems.PF2E;
+        jest.spyOn(FoundryVTTGameData, 'systemID', 'get').mockReturnValue('pf2e');
         tCal.generalSettings.pf2eSync = true;
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AR", worldCreatedOn: 0}};

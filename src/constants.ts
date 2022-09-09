@@ -47,10 +47,11 @@ export enum SettingNames {
  * @internal
  */
 export const Themes: SimpleCalendar.Theme[] = [
-    {key: 'dark', name: 'Dark', system: false},
-    {key: 'light', name: 'Light', system: false},
-    {key: 'classic', name: 'Classic', system: false},
-    {key: 'wfrp4e', name: 'Warhammer Fantasy Roleplay 4th Edition', system: true}
+    {key: 'dark', name: 'Dark', system: false, module: false},
+    {key: 'light', name: 'Light', system: false, module: false},
+    {key: 'classic', name: 'Classic', system: false, module: false},
+    {key: 'wfrp4e', name: 'Warhammer Fantasy Roleplay 4th Edition', system: true, module: false},
+    //key: "ernies-modern-layout", name: "Ernie's Modern UI", system: false, module: true}
 ];
 
 export enum CombatPauseRules {
@@ -291,18 +292,6 @@ export enum PresetTimeOfDay {
     Midday = 'midday',
     /** The time of day when the sun sets. This time is affected by the sunset time of a season and the current date */
     Sunset = 'sunset'
-}
-
-/**
- * Common Game Systems that can be used for system specific integrations
- * @internal
- */
-export enum GameSystems {
-    DnD5E ='dnd5e',
-    PF1E = 'pf1',
-    PF2E = 'pf2e',
-    WarhammerFantasy4E = 'wfrp4e',
-    Other = 'other'
 }
 
 /**

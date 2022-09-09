@@ -30,21 +30,26 @@ header.window-header{
     color: $white;
   }
 
-  a{
+  a.header-button{
     margin-top: 0!important;
     margin-right: 0;
-    color: $white;
-    &:hover, &:active, &:focus{
-      color: $secondary;
-      text-shadow: unset;
-    }
-  }
-
-  .close{
+    color: $white !important;
+    font-size: 1rem;
     background: unset;
-    color: $white;
     height: unset;
     width: unset;
+    &:hover, &:active, &:focus{
+      color: $secondary !important;
+      text-shadow: unset;
+      box-shadow: unset;
+      i[class^='fa']{
+        color: $secondary !important;
+      }
+    }
+    i[class^='fa']{
+      margin-right: 3px;
+      position: relative;
+    }
   }
 }
 //Scrollbar Styling

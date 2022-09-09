@@ -1,9 +1,9 @@
 import Calendar from "../calendar";
 import {deepMerge} from "../utilities/object";
-import {FormatDateTime, GetPresetTimeOfDay, IsDayBetweenDates} from "../utilities/date-time";
+import {FormatDateTime, IsDayBetweenDates} from "../utilities/date-time";
 import {GetIcon} from "../utilities/visual";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {CalendarClickEvents, CalendarViews, DateRangeMatch, PresetTimeOfDay} from "../../constants";
+import {CalendarClickEvents, CalendarViews, DateRangeMatch} from "../../constants";
 import RendererUtilities from "./utilities";
 import {CalManager, NManager, SC} from "../index";
 

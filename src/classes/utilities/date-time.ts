@@ -1,5 +1,5 @@
 import Calendar from "../calendar";
-import {DateRangeMatch, GameSystems, Icons, PresetTimeOfDay} from "../../constants";
+import {DateRangeMatch, Icons, PresetTimeOfDay} from "../../constants";
 import PF2E from "../systems/pf2e";
 import {ordinalSuffix, PadNumber} from "./string";
 import {deepMerge} from "./object";
@@ -89,7 +89,7 @@ export function ToSeconds(calendar: Calendar, year: number, monthIndex: number, 
     let daysSoFar = calendar.dateToDays(year, monthIndex, dayIndex, true, true);
     let totalSeconds = calendar.time.getTotalSeconds(daysSoFar, includeToday);
     // If this is a Pathfinder 2E game, subtract the world creation seconds
-    if(calendar.gameSystem === GameSystems.PF2E && calendar.generalSettings.pf2eSync){
+    if(PF2E.isPF2E && calendar.generalSettings.pf2eSync){
         const newYZ = PF2E.newYearZero();
         if(newYZ !== undefined){
             calendar.year.yearZero = newYZ;
@@ -235,7 +235,7 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
         }
     };
     // If this is a Pathfinder 2E game, add the world creation seconds
-    if(calendar.gameSystem === GameSystems.PF2E && calendar.generalSettings.pf2eSync){
+    if(PF2E.isPF2E && calendar.generalSettings.pf2eSync){
         seconds += PF2E.getWorldCreateSeconds(calendar);
     }
 

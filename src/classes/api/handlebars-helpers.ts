@@ -5,7 +5,7 @@ import {CalManager, SC} from "../index";
 import SCController from "../s-c-controller";
 
 /**
- * Class that contains all of the Handlebars helper functions
+ * Class that contains all the Handlebars helper functions
  */
 export class HandlebarsHelpers{
 

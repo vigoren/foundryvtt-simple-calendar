@@ -7,7 +7,6 @@ import MainApp from "../applications/main-app";
 import * as API from "./index";
 import {
     DateSelectorPositions,
-    GameSystems,
     Icons,
     LeapYearRules,
     MoonYearResetOptions,
@@ -37,6 +36,7 @@ import PredefinedCalendar from "../configuration/predefined-calendar";
 import NoteStub from "../notes/note-stub";
 import Mock = jest.Mock;
 import MigrationApp from "../applications/migration-app";
+import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
 
 fetchMock.enableMocks();
 describe('API Class Tests', () => {
@@ -431,7 +431,7 @@ describe('API Class Tests', () => {
         expect(API.timestampPlusInterval(0, {seconds: 7862400})).toBe(7862400);
         expect(API.timestampPlusInterval(86399, {seconds: 1})).toBe(86400);
 
-        tCal.gameSystem = GameSystems.PF2E;
+        jest.spyOn(FoundryVTTGameData, 'systemID', 'get').mockReturnValue('pf2e');
         //@ts-ignore
         game.pf2e = {worldClock: {dateTheme: "AR", worldCreatedOn: 0}};
         expect(API.timestampPlusInterval(0, {day: 0})).toBe(-23036572800);

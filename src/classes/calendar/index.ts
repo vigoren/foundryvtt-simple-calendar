@@ -1,5 +1,4 @@
 import {
-    GameSystems,
     GameWorldTimeIntegrations,
     LeapYearRules,
     SimpleCalendarHooks,
@@ -27,11 +26,6 @@ import {deepMerge} from "../utilities/object";
 import {Hook} from "../api/hook";
 
 export default class Calendar extends ConfigurationItemBase{
-    /**
-     * The currently running game system
-     * @type {GameSystems}
-     */
-    gameSystem: GameSystems;
     /**
      * All the general settings for a calendar
      * @type {GeneralSettings}
@@ -73,7 +67,7 @@ export default class Calendar extends ConfigurationItemBase{
      */
     public noteCategories: SimpleCalendar.NoteCategory[] = [];
     /**
-     * The Time Keeper class used for the in game clock
+     * The timekeeper class used for the in game clock
      */
     timeKeeper: TimeKeeper;
     /**
@@ -100,26 +94,6 @@ export default class Calendar extends ConfigurationItemBase{
         if(Object.keys(configuration).length > 1){
             this.loadFromSettings(configuration);
         }
-
-        // Set Calendar Data
-        this.gameSystem = GameSystems.Other;
-
-        if((<Game>game).system){
-            switch ((<Game>game).system.id){
-                case GameSystems.DnD5E:
-                    this.gameSystem = GameSystems.DnD5E;
-                    break;
-                case GameSystems.PF1E:
-                    this.gameSystem = GameSystems.PF1E;
-                    break;
-                case GameSystems.PF2E:
-                    this.gameSystem = GameSystems.PF2E;
-                    break;
-                case GameSystems.WarhammerFantasy4E:
-                    this.gameSystem = GameSystems.WarhammerFantasy4E;
-                    break;
-            }
-        }
     }
 
     /**
@@ -129,7 +103,6 @@ export default class Calendar extends ConfigurationItemBase{
         const c = new Calendar(this.id, this.name);
         c.id = this.id;
         c.name = this.name;
-        c.gameSystem = this.gameSystem;
         c.generalSettings = this.generalSettings.clone();
         c.year = this.year.clone();
         c.months = this.months.map(m => m.clone());
@@ -169,7 +142,6 @@ export default class Calendar extends ConfigurationItemBase{
             calendarDisplayId: `sc_${this.id}_calendar`,
             clockDisplayId: `sc_${this.id}_clock`,
             currentYear: this.year.toTemplate(),
-            gameSystem: this.gameSystem,
             id: this.id,
             name: this.name,
             selectedDay: {
@@ -580,7 +552,7 @@ export default class Calendar extends ConfigurationItemBase{
     dayOfTheWeek(year: number, monthIndex: number, dayIndex: number): number{
         if(this.weekdays.length){
             const activeCalendar = CalManager.getActiveCalendar();
-            if(activeCalendar.gameSystem === GameSystems.PF2E && activeCalendar.generalSettings.pf2eSync){
+            if(PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync){
                 const pf2eAdjust = PF2E.weekdayAdjust();
                 if(pf2eAdjust !== undefined){
                     this.year.firstWeekday = pf2eAdjust;
@@ -823,9 +795,8 @@ export default class Calendar extends ConfigurationItemBase{
             procYear = procYear - 1;
         }
 
-        //If the month has a day offset set we need to remove that from the days numeric representation or too many days are calculated.
-        let daysIntoMonth = dayIndex - this.months[monthIndex].numericRepresentationOffset + 1;
 
+        let daysIntoMonth = dayIndex + 1;
         let daysSoFar = (daysPerYear * procYear);
         if(daysIntoMonth < 1){
             daysIntoMonth = 1;
@@ -1150,7 +1121,7 @@ export default class Calendar extends ConfigurationItemBase{
      */
     setFromTime(newTime: number, changeAmount: number){
         // If this is a Pathfinder 2E game, add the world creation seconds
-        if(this.gameSystem === GameSystems.PF2E && this.generalSettings.pf2eSync){
+        if(PF2E.isPF2E && this.generalSettings.pf2eSync){
             newTime += PF2E.getWorldCreateSeconds(this);
         }
 

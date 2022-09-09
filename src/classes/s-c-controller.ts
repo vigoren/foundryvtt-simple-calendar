@@ -19,6 +19,7 @@ import GameSockets from "./foundry-interfacing/game-sockets";
 import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/combat";
 import MultiSelect from "./renderer/multi-select";
 import {GetThemeName} from "./utilities/visual";
+import {FoundryVTTGameData} from "./foundry-interfacing/game-data";
 
 /**
  * The global Simple Calendar Controller class
@@ -164,7 +165,7 @@ export default class SCController {
                 combatPauseRule: globalConfig.combatPauseRule
             };
             //Save the client settings
-            GameSettings.SaveStringSetting(`${(<Game>game).world.id}.${SettingNames.Theme}`, clientConfig.theme, false).then(this.reload.bind(this)).catch(Logger.error);
+            GameSettings.SaveStringSetting(`${FoundryVTTGameData.worldId}.${SettingNames.Theme}`, clientConfig.theme, false).then(this.reload.bind(this)).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.OpenOnLoad, clientConfig.openOnLoad, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.OpenCompact, clientConfig.openCompact, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.RememberPosition, clientConfig.rememberPosition, false).catch(Logger.error);

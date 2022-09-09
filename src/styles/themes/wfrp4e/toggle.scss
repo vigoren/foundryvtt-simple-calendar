@@ -1,14 +1,17 @@
 @import "../../variables";
-
-//Toggle
-input[type=checkbox].fsc-toggle{
-  border-color: unset !important;
-  background-image: url($checkboxSVGLight);
-  background-repeat: no-repeat;
-  &:checked{
-    background-color: #c85019 !important;
-    background-image: url($checkboxSVGWhite);
-    filter: unset;
-    -webkit-filter: unset;
+.window-content{
+  form{
+    //Toggle
+    input[type=checkbox].fsc-toggle{
+      border-color: unset !important;
+      background-image: url($checkboxSVGLight);
+      background-repeat: no-repeat;
+      &:checked{
+        background-color: #c85019 !important;
+        background-image: url($checkboxSVGWhite);
+        filter: unset;
+        -webkit-filter: unset;
+      }
+    }
   }
 }

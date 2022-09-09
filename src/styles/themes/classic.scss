@@ -1,23 +1,26 @@
 @import "../variables";
-.simple-calendar {
-  &.classic {
-    @import "src/styles/themes/classic/calendar";
-    @import "src/styles/themes/classic/clock";
-    @import "src/styles/themes/classic/configuration";
-    @import "src/styles/themes/classic/control";
-    @import "src/styles/themes/classic/date-selector";
-    @import "src/styles/themes/classic/form-groups";
-    @import "src/styles/themes/classic/foundry-window-app";
-    @import "src/styles/themes/classic/foundry-window-app-compact";
-    @import "src/styles/themes/classic/foundry-window-app-migration";
-    @import "src/styles/themes/classic/message";
-    @import "src/styles/themes/classic/multi-select";
-    @import "src/styles/themes/classic/note-category";
-    @import "src/styles/themes/classic/note-list";
-    @import "src/styles/themes/classic/note-sheet";
-    @import "src/styles/themes/classic/search-box";
-    @import "src/styles/themes/classic/time-selector";
-    @import "src/styles/themes/classic/toggle";
-
+body.game{
+  .simple-calendar {
+    &.classic {
+      &.window-app{
+        @import "src/styles/themes/classic/calendar";
+        @import "src/styles/themes/classic/clock";
+        @import "src/styles/themes/classic/configuration";
+        @import "src/styles/themes/classic/control";
+        @import "src/styles/themes/classic/date-selector";
+        @import "src/styles/themes/classic/form-groups";
+        @import "src/styles/themes/classic/foundry-window-app";
+        @import "src/styles/themes/classic/foundry-window-app-compact";
+        @import "src/styles/themes/classic/foundry-window-app-migration";
+        @import "src/styles/themes/classic/message";
+        @import "src/styles/themes/classic/multi-select";
+        @import "src/styles/themes/classic/note-category";
+        @import "src/styles/themes/classic/note-list";
+        @import "src/styles/themes/classic/note-sheet";
+        @import "src/styles/themes/classic/search-box";
+        @import "src/styles/themes/classic/time-selector";
+        @import "src/styles/themes/classic/toggle";
+      }
+    }
   }
 }
