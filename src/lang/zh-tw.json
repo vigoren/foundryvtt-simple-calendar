@@ -334,7 +334,6 @@
 	"FSC.DateFormat.Second.NumberPaddedExample": "00 01 ... 58 59",
 	"FSC.DateFormat.TextDescription": "對於任何應該採用格式但未處理的文本，在其周圍放置方括號。",
 	"FSC.DateFormat.TextExample": "[不要處理這個文字串]",
-	"FSC.DateFormat.Documentation": "如果想要知道更多設定日期格式的細節，請閱讀 <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">文件</a> 或是展開上面的表格",
 	"FSC.Description": "描述",
 	"FSC.ExampleResult": "範例結果",
 	"FSC.Token": "表示格式",
