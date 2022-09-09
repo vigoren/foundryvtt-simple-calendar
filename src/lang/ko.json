@@ -94,7 +94,6 @@
 	"FSC.DateFormat.Second.NumberPaddedExample": "00 01 ... 58 59",
 	"FSC.DateFormat.TextDescription": "형식이지만 처리하지 않을 텍스트일 때 대괄호를 두른다.",
 	"FSC.DateFormat.TextExample": "[이 텍스트 처리 안 함]",
-	"FSC.DateFormat.Documentation": "날짜 형식 구성에 대한 자세한 내용은 <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">설명서</a>를 참고하거나 위의 표를 확장할 것.",
 	"FSC.Description": "설명",
 	"FSC.ExampleResult": "결과 예시",
 	"FSC.Token": "토큰",
