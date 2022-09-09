@@ -242,7 +242,7 @@
 	"FSC.Configuration.Time.UpdateFrequency": "Frequência de Atualização",
 	"FSC.Configuration.Time.UpdateFrequencyHelp": "Determina a frequência de atualização do relógio.",
 	"FSC.Configuration.Time.UnifyGameAndClock": "Unificar início/pausa do relógio com pausa do jogo",
-	"FSC.Configuration.Time.UnifyGameAndClockHelp": "Liga o botão de início/pausa dos relógios com a opção de pausa/despausa dos jogos",
+	"FSC.Configuration.Time.UnifyGameAndClockHelp": "Liga o botão de início/pausa dos relógios com a opção de pausa/despausa dos jogos.",
 	"FSC.Configuration.Moon.Title": "Configurações de Lua",
 	"FSC.Configuration.Moon.Name": "Nome da Lua",
 	"FSC.Configuration.Moon.NameHelp": "O nome da lua.",
