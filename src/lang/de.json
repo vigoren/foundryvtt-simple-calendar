@@ -169,7 +169,6 @@
 	"FSC.DateFormat.Second.NumberPaddedExample": "00 01 ... 58 59",
 	"FSC.DateFormat.TextDescription": "Ein Text, der unverarbeitet dargestellt werden soll, bitte in eckigen Klammern stellen.",
 	"FSC.DateFormat.TextExample": "[Diesen Text nicht verarbeiten!]",
-	"FSC.DateFormat.Documentation": "Für mehr mehr Informationen bezüglich Konfiguration der Datumsformate klappe die überstehende Tabelle aus oder siehe: <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">documentation</a>.",
 	"FSC.Description": "Beschreibung",
 	"FSC.ExampleResult": "Beispiel Ergebnisse",
 	"FSC.Token": "Token",
