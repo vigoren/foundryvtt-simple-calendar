@@ -354,7 +354,6 @@
 	"FSC.Configuration.Weekday.Add": "Neuen Wochentag hinzufügen",
 	"FSC.Configuration.Weekday.RemoveAll": "Alle Wochentage entfernen",
 	"FSC.Configuration.Weekdays": "Wochentage",
-	"FSC.Configuration.Weekday.Options": "Wochentagseinstellungen",
 	"FSC.Configuration.Weekday.FirstWeekDay": "Start der Woche",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "Diese Einstellung steuert den Tag mit dem die Woche am ersten tag des Jahres 0 beginnt.",
 	"FSC.Configuration.DefaultNoteVisibility": "Standard Notiz Spielersichtbarkeit",
