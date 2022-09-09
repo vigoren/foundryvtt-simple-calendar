@@ -362,7 +362,6 @@
 	"FSC.DateFormat.Second.NumberPaddedExample": "00 01 … 58 59",
 	"FSC.DateFormat.TextDescription": "Para qualquer texto que deveria estar no formato mas não processado, coloque colchetes ao redor dele.",
 	"FSC.DateFormat.TextExample": "[Não processe esse texto]",
-	"FSC.DateFormat.Documentation": "Para mais informações sobre formatos de data/hora, veja a <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">documentação</a> ou expanda a tabela abaixo.",
 	"FSC.Description": "Descrição",
 	"FSC.ExampleResult": "Exemplos de Resultado",
 	"FSC.Token": "Data/Hora",
