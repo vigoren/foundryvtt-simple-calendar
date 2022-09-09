@@ -386,6 +386,5 @@
 	"FSC.Cancel": "Peruuta",
 	"FSC.DeleteConfirmText": "Haluatko varmasti poistaa tämän merkinnän?",
 	"FSC.ViewingDifferentCalendar": "Jotkin ohjaimet on piilotettu, koska tämä ei ole käytössä oleva kalenteri.",
-	"FSC.ButtonTitle": "Kalenteri",
 	"FSC.MoveBackwardOne": "Siirry taaksepäin 1"
 }
