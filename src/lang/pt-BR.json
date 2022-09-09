@@ -213,7 +213,6 @@
 	"FSC.Configuration.Weekday.Add": "Adicionar Dia da Semana",
 	"FSC.Configuration.Weekday.RemoveAll": "Remover Todos Dias da Semana",
 	"FSC.Configuration.Weekdays": "Dias da Semana",
-	"FSC.Configuration.Weekday.Options": "Opções de Dia da Semana",
 	"FSC.Configuration.Weekday.FirstWeekDay": "Dia da Semana Inicial",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "Define o dia da semana do primeiro dia do ano zero.",
 	"FSC.Configuration.DefaultNoteVisibility": "Visibilidade Padrão das Notas por Jogadores",
