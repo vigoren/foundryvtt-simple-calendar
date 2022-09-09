@@ -185,7 +185,6 @@
 	"FSC.Configuration.Weekday.Add": "新增星期",
 	"FSC.Configuration.Weekday.RemoveAll": "移除所有星期",
 	"FSC.Configuration.Weekdays": "星期",
-	"FSC.Configuration.Weekday.Options": "星期選項",
 	"FSC.Configuration.Weekday.FirstWeekDay": "開始星期",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "這個設定第0年第一週的第一天的星期",
 	"FSC.Configuration.DefaultNoteVisibility": "記事PC可視性默認值",
