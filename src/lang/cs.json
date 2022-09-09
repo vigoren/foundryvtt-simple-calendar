@@ -373,7 +373,6 @@
 	"FSC.Configuration.Moon.DayHelp": "Použít novoluní jako referenční datum.",
 	"FSC.Configuration.Moons": "Měsíce",
 	"FSC.Warn.Time.ActiveCombats": "Probíhá boj. Dokončete jej před spuštěním reálného času.",
-	"FSC.Warn.Notes.NotGM": "Ve hře není přítomen žádný GM, pro přidávání poznámek je třeba, aby byl přihlášený.",
 	"FSC.Warn.Macros.GMUpdate": "Pouze GM může aktualizovat datum!",
 	"FSC.Warn.Calendar.NotGM": "Ve hře není přítomen žádný GM, pro změnu data/času hráčem je třeba, aby byl přihlášený.",
 	"FSC.Error.Note.NoTitle": "Nelze uložit poznámku bez názvu!",
