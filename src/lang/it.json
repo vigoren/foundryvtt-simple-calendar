@@ -94,7 +94,6 @@
 	"FSC.DateFormat.Second.NumberPaddedExample": "00 01 ... 58 59",
 	"FSC.DateFormat.TextDescription": "Per qualsiasi testo nel formato da inserire come tale, circondarlo da parentesi quadre.",
 	"FSC.DateFormat.TextExample": "[Non analizzare questo testo]",
-	"FSC.DateFormat.Documentation": "Per maggiori dettagli sulla configurazione del formato della data controlla la <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">documentation</a> o espandi la tabella sovrastante.",
 	"FSC.Description": "Descrizione",
 	"FSC.ExampleResult": "Esempio Risultato",
 	"FSC.Token": "Token",
