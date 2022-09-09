@@ -281,7 +281,6 @@
 	"FSC.Configuration.Moon.DayHelp": "Le jour d'une nouvelle lune à utiliser comme référence.",
 	"FSC.Configuration.Moons": "Lunes",
 	"FSC.Warn.Time.ActiveCombats": "Il y a un ou des combats actifs en cours, veuillez les résoudre avant de démarrer l'horloge en temps réel.",
-	"FSC.Warn.Notes.NotGM": "Il n'y a pas de Maître de Jeu présent dans le jeu, un Maître de Jeu doit être connecté pour que les joueurs puissent ajouter des notes.",
 	"FSC.Warn.Macros.GMUpdate": "Seul le Maître de Jeu peut mettre à jour la date du calendrier !",
 	"FSC.Warn.Calendar.NotGM": "Il n'y a pas de Maître de Jeu présent dans le jeu, un Maître de Jeu doit être connecté pour que les joueurs puissent changer la date/l'heure.",
 	"FSC.Error.Note.NoTitle": "Impossible d'enregistrer une note sans titre !",
