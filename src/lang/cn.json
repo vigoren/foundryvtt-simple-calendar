@@ -374,7 +374,6 @@
 	"FSC.Configuration.Moon.DayHelp": "用于参照新月之日。",
 	"FSC.Configuration.Moons": "月亮",
 	"FSC.Warn.Time.ActiveCombats": "正在进行战斗，请在开启真实时间时钟之前将战斗结算完毕。",
-	"FSC.Warn.Notes.NotGM": "游戏中现在没有GM，需要GM登录来为玩家添加笔记。",
 	"FSC.Warn.Macros.GMUpdate": "只有GM可以更新日历日期！",
 	"FSC.Warn.Calendar.NotGM": "游戏中现在没有GM，需要GM登录来为玩家更改日期/时间。",
 	"FSC.Error.Note.NoTitle": "无法保存没有标题的笔记！",
