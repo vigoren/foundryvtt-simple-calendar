@@ -94,7 +94,6 @@
 	"FSC.Configuration.Weekday.Add": "Dodaj nowy dzień tygodnia",
 	"FSC.Configuration.Weekday.RemoveAll": "Usuń wszystkie dni tygodnia",
 	"FSC.Configuration.Weekdays": "Dni tygodnia",
-	"FSC.Configuration.Weekday.Options": "Opcje dni tygodnia",
 	"FSC.Configuration.Weekday.FirstWeekDay": "Dzień zaczynający tydzień",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "Dzień tygodnia, który jest pierwszym dniem roku 0.",
 	"FSC.Configuration.LeapYear.Title": "Ustawienia roku przestępnego",
