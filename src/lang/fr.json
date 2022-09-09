@@ -215,7 +215,6 @@
 	"FSC.Configuration.Weekday.Add": "Ajouter un nouveau jour de la semaine",
 	"FSC.Configuration.Weekday.RemoveAll": "Supprimer tous les jours de la semaine",
 	"FSC.Configuration.Weekdays": "Jours de la semaine",
-	"FSC.Configuration.Weekday.Options": "Options des jours de la semaine",
 	"FSC.Configuration.Weekday.FirstWeekDay": "Premier jour de la semaine",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "Ceci définit le jour de la semaine où commence le premier jour de l'année 0.",
 	"FSC.Configuration.DefaultNoteVisibility": "Notez la visibilité par défaut du lecteur",
