@@ -247,7 +247,6 @@
 	"FSC.Configuration.Moon.DayHelp": "這是輸入新月第幾日來當成基準值",
 	"FSC.Configuration.Moons": "月亮",
 	"FSC.Warn.Time.ActiveCombats": "現在還有戰鬥正在進行, 請將這些戰鬥處理完成之後再啟動現實時鐘.",
-	"FSC.Warn.Notes.NotGM": "遊戲中沒有GM存在, 玩家需要等到GM登入才能加上記事",
 	"FSC.Warn.Macros.GMUpdate": "只有GM才可以跟新日曆的日期！",
 	"FSC.Warn.Calendar.NotGM": "現在沒有GM在遊戲中，遊戲中需要有一位GM在遊戲中，玩家才能變更日期和時間。",
 	"FSC.Error.Note.NoTitle": "無法儲存一個沒有標題的記事！",
