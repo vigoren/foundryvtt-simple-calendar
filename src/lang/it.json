@@ -306,7 +306,6 @@
 	"FSC.Configuration.Weekday.Add": "Aggiungi Nuovo Giorno Infrasettimanale",
 	"FSC.Configuration.Weekday.RemoveAll": "Rimuovi Tutti i Giorni Infrasettimanali",
 	"FSC.Configuration.Weekdays": "Giorni Infrasettimanali",
-	"FSC.Configuration.Weekday.Options": "Opzioni Giorni Infrasettimanali",
 	"FSC.Configuration.Weekday.FirstWeekDay": "Giorno Infrasettimanale Iniziale",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "Imposta il giorno infrasettimanale del primo giorno dell'anno 0.",
 	"FSC.Configuration.DefaultNoteVisibility": "Visibilità Note ai Player di Default",
