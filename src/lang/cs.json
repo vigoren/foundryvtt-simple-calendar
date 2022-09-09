@@ -305,7 +305,6 @@
 	"FSC.Configuration.Weekday.Add": "Přidat nový den",
 	"FSC.Configuration.Weekday.RemoveAll": "Odstranit všechny dny",
 	"FSC.Configuration.Weekdays": "Dny v týdnu",
-	"FSC.Configuration.Weekday.Options": "Nastavení dnů v týdnu",
 	"FSC.Configuration.Weekday.FirstWeekDay": "Počáteční den týdne",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "Tímto nastavíte den týdne, kdy začíná první den roku 0.",
 	"FSC.Configuration.DefaultNoteVisibility": "Výchozí viditelnost poznámek",
