@@ -279,7 +279,6 @@
 	"FSC.Configuration.Moon.DayHelp": "O dia que a lua nova usa como referência.",
 	"FSC.Configuration.Moons": "Luas",
 	"FSC.Warn.Time.ActiveCombats": "Não há uma rodada de combate ativa, resolva isto para iniciar o relógio em tempo-real.",
-	"FSC.Warn.Notes.NotGM": "Não há um MJ presente no jogo, um precisa estar conectado para que jogadores possam adicionar notas.",
 	"FSC.Warn.Macros.GMUpdate": "Apenas o MJ pode atualizar a data do calendário!",
 	"FSC.Warn.Calendar.NotGM": "Não há um MJ presente no jogo, um precisa estar conectado para que jogadores possam modificar data ou horário.",
 	"FSC.Error.Note.NoTitle": "Não é possível salvar uma nota sem título!",
