@@ -307,7 +307,6 @@
 	"FSC.Configuration.Weekday.Add": "Añadir nuevo día de la semana",
 	"FSC.Configuration.Weekday.RemoveAll": "Borrar todos los días de la semana",
 	"FSC.Configuration.Weekdays": "Días de la semana",
-	"FSC.Configuration.Weekday.Options": "Opciones de días de la semana",
 	"FSC.Configuration.Weekday.FirstWeekDay": "Día de la semana inicial",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "Esto configura el día de la semana que es el día de la semana que da comienzo el año 0",
 	"FSC.Configuration.DefaultNoteVisibility": "Visibilidad de las notas por defecto",
