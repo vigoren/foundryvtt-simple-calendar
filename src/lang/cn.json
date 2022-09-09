@@ -306,7 +306,6 @@
 	"FSC.Configuration.Weekday.Add": "添加星期天数",
 	"FSC.Configuration.Weekday.RemoveAll": "移除所有星期天数",
 	"FSC.Configuration.Weekdays": "星期天数",
-	"FSC.Configuration.Weekday.Options": "星期天数设置",
 	"FSC.Configuration.Weekday.FirstWeekDay": "起始日",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "设定元年的第一日是星期几。",
 	"FSC.Configuration.DefaultNoteVisibility": "默认玩家可见性",
