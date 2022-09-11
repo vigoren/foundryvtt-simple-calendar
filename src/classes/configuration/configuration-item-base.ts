@@ -12,14 +12,19 @@ export default class ConfigurationItemBase{
      */
     numericRepresentation: number;
     /**
-     * The name of the weekday
+     * The name of the configuration item
      */
     name: string;
+    /**
+     * A description of the configuration item for display to players
+     */
+    description: string;
 
     constructor(name: string = '', numericRepresentation: number = NaN) {
         this.id = generateUniqueId();
         this.name = name;
         this.numericRepresentation = numericRepresentation;
+        this.description = '';
     }
 
     /**
@@ -28,6 +33,7 @@ export default class ConfigurationItemBase{
     clone() {
         const cib = new ConfigurationItemBase(this.name, this.numericRepresentation);
         cib.id = this.id;
+        cib.description = this.description;
         return cib;
 
     }
@@ -39,7 +45,8 @@ export default class ConfigurationItemBase{
         return {
             id: this.id,
             name: this.name,
-            numericRepresentation: this.numericRepresentation
+            numericRepresentation: this.numericRepresentation,
+            description: this.description
         }
     }
 
@@ -51,7 +58,8 @@ export default class ConfigurationItemBase{
         return {
             id: this.id,
             name: this.name,
-            numericRepresentation: this.numericRepresentation
+            numericRepresentation: this.numericRepresentation,
+            description: this.description
         };
     }
 
@@ -66,6 +74,9 @@ export default class ConfigurationItemBase{
         }
         if(config.hasOwnProperty('numericRepresentation') && config.numericRepresentation){
             this.numericRepresentation = config.numericRepresentation;
+        }
+        if(config.hasOwnProperty('description') && config.description){
+            this.description = config.description;
         }
     }
 }

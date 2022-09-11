@@ -13,12 +13,47 @@ export default class PF2E {
      * The version that the world clock changed from having incorrect years and then adding years to the final display to using the correct years in the calculations.
      * @private
      */
-    private static worldClockCodeChangeVersion = "2.14.4.8167";
+    private static pf2eVersion214 = "2.14.4.8167";
     /**
      * The version of PF2E where a fix was applied that change the value of the year zero that should be used
      * @private
      */
-    private static worldClockCodeChangeBackVersion = "3.0.1";
+    private static pf2eVersion3 = "3.0.1";
+    /**
+     * The compare result of the current system version to version 2.14
+     * @private
+     */
+    private static pf2eVersionCompare214: number = 0;
+    /**
+     * The compare result of the current system version to version 3
+     * @private
+     */
+    private static pf2eVersionCompare3: number = 0;
+    /**
+     * When the PF2E world was created in real world seconds.
+     * @private
+     */
+    private static worldCreatedOn = 0;
+    /**
+     * The date theme being used by the PF2E world clock
+     * @private
+     */
+    private static dateTheme = 'AR';
+
+    /**
+     * Updates the pre-computed PF2E variables for easier use during checks.
+     * @param initial
+     */
+    public static updatePF2EVariables(initial: boolean = false){
+        if(initial){
+            // @ts-ignore
+            this.worldCreatedOn = Math.floor(game.pf2e.worldClock.worldCreatedOn/1000);
+            this.pf2eVersionCompare214 = compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.pf2eVersion214);
+            this.pf2eVersionCompare3 = compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.pf2eVersion3);
+        }
+        // @ts-ignore
+        this.dateTheme = game.pf2e.worldClock.dateTheme;
+    }
 
     /**
      * Is the current system pathfinder 2e?
@@ -26,6 +61,7 @@ export default class PF2E {
     public static get isPF2E(){
         return FoundryVTTGameData.systemID === 'pf2e';
     }
+
     /**
      * Gets the world creation time in seconds
      * @return {number}
@@ -36,10 +72,8 @@ export default class PF2E {
         //  - The World Create Time Stamp Offset (Used by PF2E to calculate the current world time) - This is a timestamp in Real world time
         //  - The offset from year 0 to Jan 1 1970 (This is because the World Create Time Stamp is based on a timestamp from 1970 so need to make up that difference)
         if(game.hasOwnProperty('pf2e')){
-            // @ts-ignore
-            let worldCreateTimeStamp = Math.floor(game.pf2e.worldClock.worldCreatedOn/1000);
-            // @ts-ignore
-            if(game.pf2e.worldClock.dateTheme === 'AR' || game.pf2e.worldClock.dateTheme === 'IC') {
+            let worldCreateTimeStamp = this.worldCreatedOn;
+            if(this.dateTheme === 'AR' || this.dateTheme === 'IC') {
                 worldCreateTimeStamp += 62167219200;
             }
             seconds += worldCreateTimeStamp;
@@ -47,9 +81,9 @@ export default class PF2E {
 
             // the PF2E System all calendars are based off of the gregorian calendar.
             // Now with update 2.15.0 all calendars are no longer adding arbitrary numbers to the display of the year but instead using the correct year
-            if(!adjustByDay && compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.worldClockCodeChangeBackVersion) <= 0){
+            if(!adjustByDay && this.pf2eVersionCompare214 > 0 && this.pf2eVersionCompare3 <= 0){
                 seconds += calendar.time.secondsPerDay;
-            } else if( adjustByDay && (compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.worldClockCodeChangeVersion) <= 0 || compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.worldClockCodeChangeBackVersion) >= 0)){
+            } else if( adjustByDay && (this.pf2eVersionCompare214 <= 0 || this.pf2eVersionCompare3 >= 0)){
                 seconds -= calendar.time.secondsPerDay;
             }
         }
@@ -64,21 +98,18 @@ export default class PF2E {
         let yearZero;
         if(game.hasOwnProperty('pf2e')){
             //If we are using the Gregorian Calendar that ties into the pathfinder world we need to set the year zero to 1875
-            // @ts-ignore
-            if(game.pf2e.worldClock.dateTheme === 'AD'){
-                if(compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.worldClockCodeChangeBackVersion) <= 0){
+            if(this.dateTheme === 'AD'){
+                if(this.pf2eVersionCompare214 > 0 && this.pf2eVersionCompare3 <= 0){
                     yearZero = 1970;
                 } else {
                     yearZero = 1875;
                 }
             }
-            // @ts-ignore
-            else if(game.pf2e.worldClock.dateTheme === 'CE'){
+            else if(this.dateTheme === 'CE'){
                 yearZero = 1970;
             }
-            // @ts-ignore
-            else if(game.pf2e.worldClock.dateTheme === 'AR'){
-                if(compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.worldClockCodeChangeVersion) > 0 && compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.worldClockCodeChangeBackVersion) <= 0){
+            else if(this.dateTheme === 'AR'){
+                if(this.pf2eVersionCompare214 > 0 && this.pf2eVersionCompare3 <= 0){
                     yearZero = 0;
                 } else {
                     yearZero = 2700;
@@ -94,8 +125,7 @@ export default class PF2E {
      */
     public static checkLeapYearRules(leapYear: LeapYear){
         //The Golarian and Gregorian based calendars need to use the gregorian rule
-        // @ts-ignore
-        if(game.pf2e.worldClock.dateTheme === 'AD' || game.pf2e.worldClock.dateTheme === 'CE' || game.pf2e.worldClock.dateTheme === 'AR'){
+        if(this.dateTheme === 'AD' || this.dateTheme === 'CE' || this.dateTheme === 'AR'){
             leapYear.rule = LeapYearRules.Gregorian;
         }
     }
@@ -105,13 +135,11 @@ export default class PF2E {
      */
     public static weekdayAdjust(){
         let adjust: number | undefined;
-        // @ts-ignore
-        if(game.pf2e.worldClock.dateTheme === 'CE' || game.pf2e.worldClock.dateTheme === 'AD'){
+        if(this.dateTheme === 'CE' || this.dateTheme === 'AD'){
             adjust = 4;
         }
-        // @ts-ignore
-        else if(game.pf2e.worldClock.dateTheme === 'AR'){
-            if(compareSemanticVersions(FoundryVTTGameData.systemVersion, PF2E.worldClockCodeChangeBackVersion) > 0){
+        else if(this.dateTheme === 'AR'){
+            if(this.pf2eVersionCompare3 > 0){
                 adjust = 6;
             } else {
                 adjust = 5;

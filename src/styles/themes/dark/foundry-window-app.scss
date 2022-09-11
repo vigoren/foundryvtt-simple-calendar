@@ -109,6 +109,27 @@ header.window-header{
   h2{
     border-bottom-color: $secondary;
   }
+
+  .fsc-info-box{
+    border-color: $secondary;
+    background-color: #00000040;
+    .fsc-info-box-title{
+      background-color: $primary-1000;
+      border-color: $secondary;
+      color:$primary-A200;
+    }
+    .fsc-info-box-content{
+      .fsc-sunrise, .fsc-sunset{
+        .fsc-dd-title{
+          color: $gray-300;
+        }
+      }
+    }
+  }
+}
+
+.fsc-day-details{
+  @include scrollbar($primary, $primary-600);
 }
 
 .window-resizable-handle{

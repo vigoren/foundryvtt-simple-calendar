@@ -1,5 +1,28 @@
 # Change Log
 
+## v 2.1.14 - Bug Fixes, QoL Improvements
+
+![](https://img.shields.io/badge/release%20date-September%208%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.10/module.zip)
+
+### Bug Fixes
+
+- Fixed some performance issues in the Pathfinder 2E system.
+- Fixed a styling issue with the "Search Notes" search box.
+
+### Quality of Life Improvements
+
+- Update anything that used the browser tooltip to use the new v10 Tooltips.
+- A few improvements to accessibility within the configuration dialog.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+* [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+
+### Documentation Updates
+
 ## v2.1.10 - Bug Fixes, QoL Improvements and Translation Updates
 
 ![](https://img.shields.io/badge/release%20date-September%208%2C%202022-blue)

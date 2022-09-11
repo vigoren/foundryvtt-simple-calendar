@@ -110,13 +110,13 @@ export default class CalendarFull{
         //Visible date change and current date
         html += `<div class="fsc-current-date">`;
         if(options.allowChangeMonth){
-            html += `<a class="fa fa-chevron-left" title="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
+            html += `<a class="fa fa-chevron-left" data-tooltip="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
         } else {
             html += `<span></span>`;
         }
         html += `<span class="fsc-month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonthIndex, day: 0, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar, {year: options.editYear})}</span>`;
         if(options.allowChangeMonth){
-            html += `<a class="fa fa-chevron-right" title="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
+            html += `<a class="fa fa-chevron-right" data-tooltip="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
         } else {
             html += `<span></span>`;
         }
@@ -127,7 +127,7 @@ export default class CalendarFull{
         }
         //Weekday Headings
         if(calendar.year.showWeekdayHeadings){
-            html += `<div class="fsc-weekdays">${calendar.weekdays.map(w => `<div class="fsc-weekday" title="${w.name}">${w.abbreviation}</div>`).join('')}</div>`;
+            html += `<div class="fsc-weekdays">${calendar.weekdays.map(w => `<div class="fsc-weekday" data-tooltip="${w.name}">${w.abbreviation}</div>`).join('')}</div>`;
         }
         //Close header div
         html += '</div>';
@@ -394,12 +394,12 @@ export default class CalendarFull{
             if(regularNotes.length){
                 const rCount = regularNotes.length < 100? regularNotes.length : 99;
                 let rTitle = RendererUtilities.GenerateNoteIconTitle(rCount, regularNotes);
-                r = `<span class="fsc-note-count" title="${rTitle}">${rCount}</span>`;
+                r = `<span class="fsc-note-count" data-tooltip="${rTitle}">${rCount}</span>`;
             }
             if(reminderNotes.length){
                 const remCount = reminderNotes.length < 100? reminderNotes.length : 99;
                 let remTitle = RendererUtilities.GenerateNoteIconTitle(remCount, reminderNotes);
-                r += `<span class="fsc-note-count fsc-reminders" title="${remTitle}">${remCount}</span>`;
+                r += `<span class="fsc-note-count fsc-reminders" data-tooltip="${remTitle}">${remCount}</span>`;
             }
         }
         return r;
@@ -422,7 +422,7 @@ export default class CalendarFull{
             const d = calendar.months[visibleMonthIndex].days[dayIndex];
             if(mp && (mp.singleDay || d.selected || d.current)){
                 let moon = GetIcon(mp.icon, "#000000", calendar.moons[i].color);
-                moonHtml.push(`<span class="fsc-moon-phase ${mp.icon}" title="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`)
+                moonHtml.push(`<span class="fsc-moon-phase ${mp.icon}" data-tooltip="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`)
             }
         }
         if(moonHtml.length < 3){

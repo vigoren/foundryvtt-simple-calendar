@@ -1450,6 +1450,7 @@ declare global{
                 abbreviation: string;
                 name: string;
                 numericRepresentation: number;
+                showAdvanced: boolean;
             }
 
             /**
@@ -1728,6 +1729,8 @@ declare global{
             name?: string;
             /** The optional numeric representation of the data item */
             numericRepresentation?: number;
+            /** The optional description of the data item */
+            description?: string;
         }
 
         /**
@@ -2059,6 +2062,8 @@ declare global{
             abbreviation: string;
             /** The name of the month. */
             name: string;
+            /** The description of the month. */
+            description: string;
             /** The number associated with the display of this month. */
             numericRepresentation: number;
             /** The amount to offset day numbers by for this month. */
@@ -2217,6 +2222,8 @@ declare global{
             abbreviation: string;
             /** The name of the weekday. */
             name: string;
+            /** The description of the weekday. */
+            description: string;
             /** The number representing the weekday. */
             numericRepresentation: number;
         }

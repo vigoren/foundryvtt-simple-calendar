@@ -23,6 +23,7 @@ import ConfigurationApp from "./classes/applications/configuration-app";
 import MigrationApp from "./classes/applications/migration-app";
 import NoteManager from "./classes/notes/note-manager";
 import {NoteSheet} from "./classes/notes/note-sheet";
+import PF2E from "./classes/systems/pf2e";
 
 updateCalManager(new CalendarManager());
 updateSC(new SCController());
@@ -45,9 +46,11 @@ Hooks.on('init', async () => {
     await CalManager.initialize();
     //Load the global configuration settings
     SC.load();
-
 });
 Hooks.on('ready',async () => {
+    if(PF2E.isPF2E){
+        PF2E.updatePF2EVariables(true);
+    }
     MigrationApplication.initialize();
     //Check to see if we need to run a migration, if we do show the migration dialog otherwise show the main app
     if(MigrationApplication.showMigration){
@@ -83,6 +86,7 @@ Hooks.on('createJournalEntry', NManager.journalEntryUpdate.bind(NManager, 0));
 Hooks.on('updateJournalEntry', NManager.journalEntryUpdate.bind(NManager, 1));
 Hooks.on('deleteJournalEntry', NManager.journalEntryUpdate.bind(NManager, 2));
 Hooks.on('renderSceneConfig', SC.renderSceneConfig.bind(SC));
+Hooks.on('closeWorldClockSettings', PF2E.updatePF2EVariables.bind(PF2E));
 
 
 Logger.debugMode = false;

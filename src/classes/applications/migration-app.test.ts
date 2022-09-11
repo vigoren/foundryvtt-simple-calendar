@@ -166,6 +166,7 @@ describe('Migration App Class Tests', () => {
 
     test('Run Clean Data', () => {
         const cod = jest.spyOn(V1ToV2, 'cleanUpOldData').mockImplementation(async () => {return true;});
+        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
 
         ma.MigrationType = MigrationTypes.v1To2;
         ma.runCleanData();
@@ -174,5 +175,9 @@ describe('Migration App Class Tests', () => {
         cod.mockImplementation(async () => {return false;});
         ma.runCleanData();
         expect(V1ToV2.cleanUpOldData).toHaveBeenCalledTimes(2);
+
+        cod.mockRejectedValue('asd');
+        ma.runCleanData();
+        expect(V1ToV2.cleanUpOldData).toHaveBeenCalledTimes(3);
     });
 });

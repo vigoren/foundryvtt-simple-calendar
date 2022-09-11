@@ -1,33 +1,35 @@
 @import "../variables";
+.simple-calendar{
+  &.window-app{
+    .window-content{
+      .fsc-search-box{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        padding: $spacer-half;
 
-.fsc-search-box{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  padding: $spacer-half;
+        input{
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          border-right-width: 0;
+        }
+        .fsc-control{
+          width: 35px;
+          border-radius: 0;
+          margin: 0;
+          border-left-width: 0;
+          border-right-width: 0;
+          border-top: 1px solid;
+          border-bottom: 1px solid;
 
-  input{
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right-width: 0;
-  }
-  .fsc-control{
-    width: 35px;
-    border-radius: 0;
-    margin-left: 0;
-    border-left-width: 0;
-    border-right-width: 0;
-    border-top: 1px solid;
-    border-bottom: 1px solid;
-
-    &.fa-search{
-      border-right-width: 1px;
-      border-top-right-radius: 3px;
-      border-bottom-right-radius: 3px;
-    }
-    &.fa-times{
-      padding-top: 4px;
+          &:last-child{
+            border-right-width: 1px;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+          }
+        }
+      }
     }
   }
 }

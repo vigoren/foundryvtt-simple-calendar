@@ -147,7 +147,7 @@
             </div>
         </div>
         <div class="fsc-edit-controls">
-            <button class="fsc-control fsc-save" name="submit" title="{{localize 'FSC.Notes.Save'}}">
+            <button class="fsc-control fsc-save" name="submit" data-tooltip="{{localize 'FSC.Notes.Save'}}">
                 <i class="far fa-save"></i> {{localize 'FSC.Notes.Save'}}
             </button>
             <button class="fsc-control fsc-delete fsc-note-delete"><i class="fa fa-trash"></i> {{localize 'FSC.Delete'}}</button>
@@ -159,19 +159,19 @@
                 <span class="fsc-reminder fsc-note-category {{#if display.reminder}} fsc-selected{{/if}}"><label><input class="fsc-toggle" type="checkbox" /><span class="fa {{#if display.reminder}}fa-bell{{else}}fa-bell-slash{{/if}}"></span></label></span>
             </h1>
             <div class="fsc-date">
-                <div class="fsc-note-category" title="{{localize 'FSC.Notes.DateTime.Title'}}">
+                <div class="fsc-note-category" data-tooltip="{{localize 'FSC.Notes.DateTime.Title'}}">
                     <span class="fa fa-calendar"></span>  {{display.date}}
                 </div>
                 {{#if (gt display.repeats 0)}}
-                    <div class="fsc-note-category" title="{{localize 'FSC.Notes.Repeats'}}">
+                    <div class="fsc-note-category" data-tooltip="{{localize 'FSC.Notes.Repeats'}}">
                         <span class="fas fa-sync"></span>  {{display.repeatsDisplay}}
                     </div>
                 {{/if}}
-                <div class="fsc-note-category" style="background-color: {{display.author.color}}; color:{{display.author.textColor}}" title="{{localize 'FSC.Notes.Author'}}">
+                <div class="fsc-note-category" style="background-color: {{display.author.color}}; color:{{display.author.textColor}}" data-tooltip="{{localize 'FSC.Notes.Author'}}">
                     <span class="fa fa-pencil-alt"></span> {{display.author.name}}
                 </div>
                 {{#if display.macro}}
-                    <div class="fsc-note-category" title="{{localize 'DOCUMENT.Macro'}}">
+                    <div class="fsc-note-category" data-tooltip="{{localize 'DOCUMENT.Macro'}}">
                         <span class="fas fa-scroll"></span> {{display.macro}}
                     </div>
                 {{/if}}
@@ -196,13 +196,13 @@
 {{#if (or editMode (gt pages.length 1))}}
 <div class="fsc-side-drawer fsc-page-list {{#unless editMode}} fsc-read-only{{/unless}} {{#if uiElementStates.fsc-page-list}} fsc-open{{else}} fsc-closed{{/if}}">
     <div class="fsc-page-list-controls">
-        <a class="fsc-pages" title="{{#if uiElementStates.fsc-page-list}}{{localize 'JOURNAL.ViewCollapse'}}{{else}}{{localize 'JOURNAL.ViewExpand'}}{{/if}}"><i class="fa-solid {{#if uiElementStates.fsc-page-list}} fa-caret-right{{else}} fa-caret-left{{/if}}"></i></a>
+        <a class="fsc-pages" data-tooltip="{{#if uiElementStates.fsc-page-list}}{{localize 'JOURNAL.ViewCollapse'}}{{else}}{{localize 'JOURNAL.ViewExpand'}}{{/if}}"><i class="fa-solid {{#if uiElementStates.fsc-page-list}} fa-caret-right{{else}} fa-caret-left{{/if}}"></i></a>
         <div class="fsc-search-box">
-            <input placeholder="{{localize 'FSC.Notes.SearchPages'}}" type="text" value="{{uiElementStates.search.term}}" title="{{localize 'FSC.Notes.SearchPages'}}" />
-            <button class="fsc-control fsc-hide"><span class="fa fa-times"></span></button>
+            <input placeholder="{{localize 'FSC.Notes.SearchPages'}}" type="text" value="{{uiElementStates.search.term}}" data-tooltip="{{localize 'FSC.Notes.SearchPages'}}" />
+            <button class="fsc-control fsc-hide" data-tooltip="{{localize 'FSC.Clear'}}" ><span class="fa fa-times"></span></button>
         </div>
         {{#if editMode}}
-            <button class="fsc-add-new-page fsc-control fsc-save" title="{{localize 'JOURNAL.AddPage'}}"><span class="fa fa-file-circle-plus"></span></button>
+            <button class="fsc-add-new-page fsc-control fsc-save" data-tooltip="{{localize 'JOURNAL.AddPage'}}"><span class="fa fa-file-circle-plus"></span></button>
         {{/if}}
     </div>
     <ul class="fsc-list-of-pages">
@@ -212,7 +212,7 @@
             {{#if ../editMode}}
                 <div class="fsc-actions">
                     {{#unless (eq ../pages.length 1)}}
-                    <button class="fsc-control fsc-delete" title="{{localize 'FSC.Delete'}}"><span class="fa fa-trash"></span></button>
+                    <button class="fsc-control fsc-delete" data-tooltip="{{localize 'FSC.Delete'}}"><span class="fa fa-trash"></span></button>
                     {{/unless}}
                 </div>
             {{/if}}

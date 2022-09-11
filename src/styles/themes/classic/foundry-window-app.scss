@@ -114,6 +114,25 @@ header.window-header{
   background: url($classicDenim);
   border-color: #000000;
   color: $white;
+  h2{
+    border-bottom-color: $secondary;
+  }
+  .fsc-info-box{
+    border-color: $secondary;
+    background-color: #00000040;
+    .fsc-info-box-title{
+      background-color: $primary-1000;
+      border-color: $secondary;
+      color:$primary-A400;
+    }
+    .fsc-info-box-content{
+      .fsc-sunrise, .fsc-sunset{
+        .fsc-dd-title{
+          color: $gray-300;
+        }
+      }
+    }
+  }
 }
 
 .window-resizable-handle{

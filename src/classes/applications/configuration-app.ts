@@ -382,9 +382,15 @@ export default class ConfigurationApp extends FormApplication {
                 e.addEventListener('click', this.toggleMonthShowAdvanced.bind(this));
             });
             //---------------------
+            // Weekday Show/Hide Advanced
+            //---------------------
+            this.appWindow.querySelectorAll(".fsc-weekday-show-advanced").forEach(e => {
+                e.addEventListener('click', this.toggleWeekdayShowAdvanced.bind(this));
+            });
+            //---------------------
             // Input Changes
             //---------------------
-            this.appWindow.querySelectorAll("input, select").forEach(e => {
+            this.appWindow.querySelectorAll("input, select, textarea").forEach(e => {
                 e.addEventListener('change', this.inputChange.bind(this));
                 e.addEventListener('keyup', this.inputChange.bind(this));
             });
@@ -619,6 +625,26 @@ export default class ConfigurationApp extends FormApplication {
     }
 
     /**
+     * Toggle the display of the advanced settings for a specific month
+     * @param e The Click Event
+     * @private
+     */
+    private toggleWeekdayShowAdvanced(e: Event){
+        e.preventDefault();
+        const target = <HTMLElement>e.currentTarget;
+        if(target){
+            const row = <HTMLElement>target.closest('.fsc-row');
+            if(row){
+                const index = parseInt(row.getAttribute('data-index') || '');
+                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).weekdays.length){
+                    (<Calendar>this.object).weekdays[index].showAdvanced = !(<Calendar>this.object).weekdays[index].showAdvanced;
+                    this.updateUIFromObject();
+                }
+            }
+        }
+    }
+
+    /**
      * Write the current values from all the input fields in the configuration dialog into the calendar object.
      * @private
      */
@@ -709,6 +735,7 @@ export default class ConfigurationApp extends FormApplication {
                     } else {
                         (<Calendar>this.object).months[index].abbreviation = getTextInputValue(".fsc-month-abbreviation", "New Month", e);
                     }
+                    (<Calendar>this.object).months[index].description = getTextInputValue(".fsc-month-description", "", e);
                     (<Calendar>this.object).months[index].name = name;
                     const days = <number>getNumericInputValue('.fsc-month-days', 1, false, e);
                     if(days !== (<Calendar>this.object).months[index].numberOfDays){
@@ -747,6 +774,7 @@ export default class ConfigurationApp extends FormApplication {
                     } else {
                         (<Calendar>this.object).weekdays[index].abbreviation = getTextInputValue('.fsc-weekday-abbreviation', 'New', e);
                     }
+                    (<Calendar>this.object).weekdays[index].description = getTextInputValue(".fsc-weekday-description", "", e);
                 }
             });
 
@@ -894,6 +922,27 @@ export default class ConfigurationApp extends FormApplication {
                     const mn = row.querySelector('.fsc-month-number');
                     if(mn){
                         (<HTMLElement>mn).innerText = (<Calendar>this.object).months[i].numericRepresentation < 0 ? 'IC' : (<Calendar>this.object).months[i].numericRepresentation.toString();
+                    }
+                }
+            }
+            //----------------------------------
+            // Calendar Config: Weekday
+            //----------------------------------
+            for(let i = 0; i < (<Calendar>this.object).weekdays.length; i++){
+                const row = this.appWindow.querySelector(`.fsc-weekday-settings .fsc-weekdays>.fsc-row[data-index="${i}"]`);
+                if(row){
+                    //Show Advanced Stuff
+                    const button = row.querySelector('.fsc-weekday-show-advanced');
+                    const options = row.querySelector('.fsc-options');
+                    if(button && options){
+                        if((options.classList.contains('fsc-closed') && (<Calendar>this.object).weekdays[i].showAdvanced) || (options.classList.contains('fsc-open') && !(<Calendar>this.object).weekdays[i].showAdvanced)){
+                            animateElement(options, 400);
+                        }
+                        if((<Calendar>this.object).weekdays[i].showAdvanced){
+                            (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-up"></i><span>${GameSettings.Localize('FSC.HideAdvanced')}</span>`;
+                        } else {
+                            (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-down"></i><span>${GameSettings.Localize('FSC.ShowAdvanced')}</span>`;
+                        }
                     }
                 }
             }

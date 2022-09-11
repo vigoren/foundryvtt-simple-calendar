@@ -1,4 +1,4 @@
-import {ModuleName, NoteRepeat, SettingNames, SocketTypes, Themes} from "../../constants";
+import {ModuleName, NoteRepeat, SocketTypes, Themes} from "../../constants";
 import {DateTheSame, DaysBetweenDates, FormatDateTime} from "../utilities/date-time";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import DateSelectorManager from "../date-selector/date-selector-manager";
@@ -507,7 +507,7 @@ export class NoteSheet extends JournalSheet{
                 this.uiElementStates[member] = animateElement(cList, 500, false);
                 const link = cList.querySelector('.fsc-pages');
                 if(link){
-                    (<HTMLElement>link).title = this.uiElementStates[member]? GameSettings.Localize('JOURNAL.ViewCollapse') : GameSettings.Localize('JOURNAL.ViewExpand');
+                    (<HTMLElement>link).setAttribute('data-tooltip', this.uiElementStates[member]? GameSettings.Localize('JOURNAL.ViewCollapse') : GameSettings.Localize('JOURNAL.ViewExpand'));
                     const chev = link.querySelector('.fa-solid');
                     if(chev){
                         chev.classList.remove('fa-caret-left', 'fa-caret-right');

@@ -47,10 +47,10 @@ export enum SettingNames {
  * @internal
  */
 export const Themes: SimpleCalendar.Theme[] = [
-    {key: 'dark', name: 'Dark', system: false, module: false},
-    {key: 'light', name: 'Light', system: false, module: false},
-    {key: 'classic', name: 'Classic', system: false, module: false},
-    {key: 'wfrp4e', name: 'Warhammer Fantasy Roleplay 4th Edition', system: true, module: false},
+    {key: 'dark', name: 'FSC.Configuration.Theme.Dark', system: false, module: false},
+    {key: 'light', name: 'FSC.Configuration.Theme.Light', system: false, module: false},
+    {key: 'classic', name: 'FSC.Configuration.Theme.Classic', system: false, module: false},
+    {key: 'wfrp4e', name: 'FSC.Configuration.Theme.WFRP4E', system: true, module: false},
     //key: "ernies-modern-layout", name: "Ernie's Modern UI", system: false, module: true}
 ];
 
