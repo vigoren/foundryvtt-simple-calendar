@@ -202,43 +202,6 @@
       em{
         padding: 0 $spacer-half;
       }
-
-      .fsc-info-box{
-        position: relative;
-        margin: ($spacer+$spacer-half) $spacer-half $spacer;
-        padding: $spacer $spacer-half $spacer-half;
-        border: 1px solid;
-        border-radius: 5px;
-
-        .fsc-info-box-title{
-          font-size: 1rem;
-          font-weight: 600;
-          position: absolute;
-          top: -0.75rem;
-          padding: 0.125rem;
-          border: 1px solid;
-          border-radius: 3px;
-        }
-
-        .fsc-info-box-content{
-          display: flex;
-          flex-wrap: wrap;
-          flex-direction: row;
-          font-size: 14px;
-
-          .fsc-sunrise, .fsc-sunset{
-            flex: 0 0 50%;
-            .fsc-dd-title{
-              text-align: center;
-              margin-bottom: $spacer-half * .5;
-            }
-            .fsc-dd-time{
-              text-align: center;
-              font-size: 15px;
-            }
-          }
-        }
-      }
     }
 
     .fsc-calendar-list{
@@ -370,13 +333,6 @@
 
       .fsc-note-list{
         padding-top: $spacer-half;
-      }
-    }
-
-    .fsc-day-details{
-      overflow-y: auto;
-      > p {
-        padding: 0 $spacer-half;
       }
     }
 

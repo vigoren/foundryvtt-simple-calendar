@@ -57,23 +57,4 @@
   background: #fff url($wfrpParchmentTexture) repeat;
   border-image: url($wfrpChatMessageBorderPrivate) 21 / 10px / 8px repeat;
   border-radius: 0;
-
-  .fsc-info-box{
-    border: 3px double #00000078;
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 0;
-    .fsc-info-box-title{
-      background: #fff url($wfrpParchmentTexture) repeat;
-      border: 3px double #00000078;
-      border-radius: 0;
-      color: #790000;
-    }
-    .fsc-info-box-content{
-      .fsc-sunrise, .fsc-sunset{
-        .fsc-dd-title{
-          color: $gray-700;
-        }
-      }
-    }
-  }
 }

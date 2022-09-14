@@ -701,7 +701,7 @@
                         <div class="fsc-col"></div>
                     </div>
                     {{#each months}}
-                    <div class="fsc-row" data-index="{{@index}}">
+                    <div class="fsc-row" data-index="{{@index}}" data-type="month">
                         <div class="fsc-col">
                             <label for="-monthName{{@index}}" class="fsc-hidden-label">{{localize 'FSC.Configuration.Month.Name'}}</label>
                             <input id="-monthName{{@index}}" class="fsc-month-name" value="{{name}}" type="text" aria-describedby="fsc-month-name" />
@@ -717,9 +717,9 @@
                         <div class="fsc-col fsc-month-number">{{#if (gt numericRepresentation 0)}}{{numericRepresentation}}{{else}}IC{{/if}}</div>
                         <div class="fsc-col">
                             {{#if showAdvanced}}
-                            <a class="fsc-month-show-advanced" aria-expanded="true" aria-controls="-monthAdvanced{{@index}}"><i class="fa fa-chevron-up"></i><span>{{localize 'FSC.HideAdvanced'}}</span></a>
+                            <a class="fsc-show-advanced" aria-expanded="true" aria-controls="-monthAdvanced{{@index}}"><i class="fa fa-chevron-up"></i><span>{{localize 'FSC.HideAdvanced'}}</span></a>
                             {{else}}
-                            <a class="fsc-month-show-advanced" aria-expanded="false" aria-controls="-monthAdvanced{{@index}}"><i class="fa fa-chevron-down"></i><span>{{localize 'FSC.ShowAdvanced'}}</span></a>
+                            <a class="fsc-show-advanced" aria-expanded="false" aria-controls="-monthAdvanced{{@index}}"><i class="fa fa-chevron-down"></i><span>{{localize 'FSC.ShowAdvanced'}}</span></a>
                             {{/if}}
                         </div>
                         <div class="fsc-col">
@@ -810,7 +810,7 @@
                         <div class="fsc-col"></div>
                     </div>
                     {{#each weekdays}}
-                    <div class="fsc-row" data-index="{{@index}}">
+                    <div class="fsc-row" data-index="{{@index}}" data-type="weekday">
                         <div class="fsc-col">
                             <label for="-weekdayName{{@index}}" class="fsc-hidden-label">{{localize 'FSC.Configuration.Weekday.Name'}}</label>
                             <input id="-weekdayName{{@index}}" class="fsc-weekday-name" value="{{name}}" type="text" aria-describedby="fsc-weekday-name" />
@@ -821,15 +821,22 @@
                         </div>
                         <div class="fsc-col">
                             {{#if showAdvanced}}
-                                <a class="fsc-weekday-show-advanced" aria-expanded="true" aria-controls="-weekdayAdvanced{{@index}}"><i class="fa fa-chevron-up"></i><span>{{localize 'FSC.HideAdvanced'}}</span></a>
+                                <a class="fsc-show-advanced" aria-expanded="true" aria-controls="-weekdayAdvanced{{@index}}"><i class="fa fa-chevron-up"></i><span>{{localize 'FSC.HideAdvanced'}}</span></a>
                             {{else}}
-                                <a class="fsc-weekday-show-advanced" aria-expanded="false" aria-controls="-weekdayAdvanced{{@index}}"><i class="fa fa-chevron-down"></i><span>{{localize 'FSC.ShowAdvanced'}}</span></a>
+                                <a class="fsc-show-advanced" aria-expanded="false" aria-controls="-weekdayAdvanced{{@index}}"><i class="fa fa-chevron-down"></i><span>{{localize 'FSC.ShowAdvanced'}}</span></a>
                             {{/if}}
                         </div>
                         <div class="fsc-col">
                             <button class="fsc-control fsc-delete" data-type="weekday"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
                         </div>
                         <div id="-weekdayAdvanced{{@index}}" class="fsc-options {{#if showAdvanced }} fsc-open{{else}} fsc-closed{{/if}}">
+                            <div class="form-group fsc-open">
+                                <label for="-ww{{@index}}">{{localize 'FSC.Configuration.Weekday.Weekend'}}</label>
+                                <div class="form-fields">
+                                    <input id="-ww{{@index}}" class="fsc-weekday-weekend" type="checkbox" {{checked restday}} />
+                                </div>
+                                <p class="notes">{{localize 'FSC.Configuration.Weekday.WeekendHelp'}}</p>
+                            </div>
                             <div class="form-group fsc-open">
                                 <label for="-wd{{@index}}">{{localize 'FSC.Configuration.Weekday.DescriptionField'}}</label>
                                 <div class="form-fields">
@@ -915,9 +922,10 @@
                         <div data-tooltip="{{localize 'FSC.Configuration.Season.IconHelp'}}" class="fsc-col">{{localize 'FSC.Configuration.Season.Icon'}}</div>
                         <div data-tooltip="{{localize 'FSC.Configuration.Season.ColorHelp'}}" class="fsc-col">{{localize 'FSC.Configuration.Season.Color'}}</div>
                         <div class="fsc-col"></div>
+                        <div class="fsc-col"></div>
                     </div>
                     {{#each seasons}}
-                        <div class="fsc-row" data-index="{{@index}}">
+                        <div class="fsc-row" data-index="{{@index}}" data-type="season">
                             <div class="fsc-col">
                                 <label for="-seasonName{{@index}}" class="fsc-hidden-label">{{localize 'FSC.Configuration.Season.Name'}}</label>
                                 <input id="-seasonName{{@index}}" class="fsc-season-name" value="{{name}}" type="text" aria-describedby="fsc-season-name" />
@@ -939,7 +947,23 @@
                                 <input id="-seasonColor{{@index}}" type="color" value="{{color}}" class="fsc-season-color" aria-describedby="fsc-season-color" list="scSeasonColors" />
                             </div>
                             <div class="fsc-col">
+                                {{#if showAdvanced}}
+                                    <a class="fsc-show-advanced" aria-expanded="true" aria-controls="-seasonAdvanced{{@index}}"><i class="fa fa-chevron-up"></i><span>{{localize 'FSC.HideAdvanced'}}</span></a>
+                                {{else}}
+                                    <a class="fsc-show-advanced" aria-expanded="false" aria-controls="-seasonAdvanced{{@index}}"><i class="fa fa-chevron-down"></i><span>{{localize 'FSC.ShowAdvanced'}}</span></a>
+                                {{/if}}
+                            </div>
+                            <div class="fsc-col">
                                 <button class="fsc-control fsc-delete" data-type="season"><span class="fa fa-trash"></span> {{localize 'FSC.Configuration.Month.Remove'}}</button>
+                            </div>
+                            <div id="-seasonAdvanced{{@index}}" class="fsc-options {{#if showAdvanced }} fsc-open{{else}} fsc-closed{{/if}}">
+                                <div class="form-group fsc-open">
+                                    <label for="-sd{{@index}}">{{localize 'FSC.Configuration.Season.DescriptionField'}}</label>
+                                    <div class="form-fields">
+                                        <textarea id="-sd{{@index}}" class="fsc-season-description">{{description}}</textarea>
+                                    </div>
+                                    <p class="notes">{{localize 'FSC.Configuration.Season.DescriptionHelp'}}</p>
+                                </div>
                             </div>
                         </div>
                     {{/each}}

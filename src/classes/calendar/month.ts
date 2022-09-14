@@ -43,17 +43,9 @@ export default class Month extends ConfigurationItemBase {
      */
     selected: boolean = false;
     /**
-     * Used to determine if the advanced options are should be shown or not. This is not saved.
-     */
-    showAdvanced: boolean = false;
-    /**
      * The day of the week this month starts on (ignores the day of the week calculation
      */
     startingWeekday: number | null = null;
-    /**
-     * The abbreviated version of the month name
-     */
-    abbreviation: string = '';
 
     /**
      * Month class constructor
@@ -123,6 +115,7 @@ export default class Month extends ConfigurationItemBase {
             abbreviation: this.abbreviation,
             name: this.name,
             numericRepresentation: this.numericRepresentation,
+            showAdvanced: this.showAdvanced,
             numericRepresentationOffset: this.numericRepresentationOffset,
             current: this.current,
             visible: this.visible,
@@ -132,7 +125,6 @@ export default class Month extends ConfigurationItemBase {
             numberOfLeapYearDays: this.numberOfLeapYearDays,
             intercalary: this.intercalary,
             intercalaryInclude: this.intercalaryInclude,
-            showAdvanced: this.showAdvanced,
             startingWeekday: this.startingWeekday
         };
     }
@@ -166,16 +158,8 @@ export default class Month extends ConfigurationItemBase {
      */
     loadFromSettings(config: SimpleCalendar.MonthData) {
         if(config && Object.keys(config).length){
-            if(config.hasOwnProperty('id')){
-                this.id = config.id;
-            }
-            this.name = config.name;
-            if(config.hasOwnProperty('description')){
-                this.description = config.description;
-            }
-            this.numericRepresentation = config.numericRepresentation;
+            super.loadFromSettings(config);
             this.numericRepresentationOffset = config.numericRepresentationOffset;
-
             let numDays = parseInt(config.numberOfDays.toString());
             let numLeapDays = config.numberOfLeapYearDays === undefined? 0 : parseInt(config.numberOfLeapYearDays.toString());
             if(isNaN(numDays)){

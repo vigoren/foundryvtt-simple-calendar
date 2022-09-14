@@ -5,13 +5,9 @@ import ConfigurationItemBase from "../configuration/configuration-item-base";
  */
 export class Weekday extends ConfigurationItemBase{
     /**
-     * The abbreviated name of the weekday
+     * If the weekday is part of the weekend (rest day)
      */
-    abbreviation: string = '';
-    /**
-     * Used to determine if the advanced options are should be shown or not. This is not saved.
-     */
-    showAdvanced: boolean = false;
+    restday: boolean;
     /**
      * The weekday constructor
      * @param {number} numericRepresentation he numeric representation of this weekday
@@ -20,6 +16,7 @@ export class Weekday extends ConfigurationItemBase{
     constructor(numericRepresentation: number = NaN, name: string = '') {
         super(name, numericRepresentation);
         this.abbreviation = name.substring(0, 2);
+        this.restday = false;
     }
 
     /**
@@ -31,7 +28,8 @@ export class Weekday extends ConfigurationItemBase{
             id: this.id,
             name: this.name,
             description: this.description,
-            numericRepresentation: this.numericRepresentation
+            numericRepresentation: this.numericRepresentation,
+            restday: this.restday
         }
     }
 
@@ -44,7 +42,8 @@ export class Weekday extends ConfigurationItemBase{
             abbreviation: this.abbreviation,
             name: this.name,
             numericRepresentation: this.numericRepresentation,
-            showAdvanced: this.showAdvanced
+            showAdvanced: this.showAdvanced,
+            restday: this.restday
         }
     }
 
@@ -58,6 +57,7 @@ export class Weekday extends ConfigurationItemBase{
         w.abbreviation = this.abbreviation;
         w.description = this.description;
         w.showAdvanced = this.showAdvanced;
+        w.restday = this.restday;
         return w;
     }
 
@@ -67,19 +67,14 @@ export class Weekday extends ConfigurationItemBase{
      */
     loadFromSettings(config: SimpleCalendar.WeekdayData) {
         if(config && Object.keys(config).length){
-            if(config.hasOwnProperty('id')){
-                this.id = config.id;
-            }
-            this.name = config.name;
-            this.numericRepresentation = config.numericRepresentation;
-
+            super.loadFromSettings(config);
             if(config.hasOwnProperty('abbreviation')){
                 this.abbreviation = config.abbreviation;
             } else {
                 this.abbreviation = this.name.substring(0, 2);
             }
-            if(config.hasOwnProperty('description')){
-                this.description = config.description;
+            if(config.hasOwnProperty('restday')){
+                this.restday = config.restday;
             }
         }
     }

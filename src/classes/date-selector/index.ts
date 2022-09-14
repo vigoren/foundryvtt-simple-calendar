@@ -225,6 +225,8 @@ export class DateSelector {
                 colorToMatchSeason: false,
                 editYear: this.editYear,
                 showCurrentDate: false,
+                showDayDetails: false,
+                showDescriptions: false,
                 showMoonPhases: false,
                 showNoteCount: false,
                 showSeasonName: false,

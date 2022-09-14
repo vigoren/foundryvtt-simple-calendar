@@ -110,6 +110,12 @@ export class HandlebarsHelpers{
         if(options.hash.hasOwnProperty('showCurrentDate')){
             renderOptions.showCurrentDate = options.hash['showCurrentDate'];
         }
+        if(options.hash.hasOwnProperty('showDayDetails')){
+            renderOptions.showDayDetails = options.hash['showDayDetails'];
+        }
+        if(options.hash.hasOwnProperty('showDescriptions')){
+            renderOptions.showDescriptions = options.hash['showDescriptions'];
+        }
         if(options.hash.hasOwnProperty('showSeasonName')){
             renderOptions.showSeasonName = options.hash['showSeasonName'];
         }

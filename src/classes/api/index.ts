@@ -1030,7 +1030,7 @@ export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.
     } else {
         Logger.error(`SimpleCalendar.api.getCurrentSeason - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
-    return {id:'', name: '', icon: Icons.None, color: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0};
+    return {id:'', name: '', description: '', icon: Icons.None, color: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0};
 }
 
 /**

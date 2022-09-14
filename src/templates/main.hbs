@@ -50,7 +50,6 @@
             {{/if}}
             {{#unless uiElementStates.compactView}}
             <button class="fsc-control fsc-grey fsc-search" data-tooltip="{{localize 'FSC.Search.Title'}}"><span class="fa fa-search "></span></button>
-            <button class="fsc-control fsc-grey fsc-details-button" data-tooltip="{{localize 'FSC.DateInformation'}}"><span class="fa fa-circle-info "></span></button>
             <span class="fsc-spacer"></span>
             {{#if changeDateTime}}
             {{#if showSetCurrentDate}}
@@ -212,39 +211,6 @@
                 <em>{{localize 'FSC.SearchEmpty'}}</em>
                 {{/if}}
             </div>
-        </div>
-        <div class="fsc-side-drawer fsc-day-details {{#if uiElementStates.fsc-day-details}} fsc-open{{else}} fsc-closed{{/if}}">
-            <h2>{{localize 'FSC.DateInformation'}}</h2>
-            <p>{{localize 'FSC.DateInformationDetails'}}{{calendar.selectedDay.dateDisplay}}</p>
-            <div class="fsc-info-box">
-                <div class="fsc-info-box-title">{{localize 'FSC.Configuration.Season.SunriseSunset'}}</div>
-                <div class="fsc-info-box-content">
-                    <div class="fsc-sunrise">
-                        <div class="fsc-dd-title">{{localize 'FSC.Sunrise'}}</div>
-                        <div class="fsc-dd-time">{{mainViewDisplay.dayDetails.dawn}}</div>
-                    </div>
-                    <div class="fsc-sunset">
-                        <div class="fsc-dd-title">{{localize 'FSC.Sunset'}}</div>
-                        <div class="fsc-dd-time">{{mainViewDisplay.dayDetails.dusk}}</div>
-                    </div>
-                </div>
-            </div>
-            {{#if (and mainViewDisplay.dayDetails.weekday.name mainViewDisplay.dayDetails.weekday.description)}}
-                <div class="fsc-info-box">
-                    <div class="fsc-info-box-title">{{mainViewDisplay.dayDetails.weekday.name}}</div>
-                    <div class="fsc-info-box-content">
-                        {{{mainViewDisplay.dayDetails.weekday.description}}}
-                    </div>
-                </div>
-            {{/if}}
-            {{#if (and mainViewDisplay.dayDetails.month.name mainViewDisplay.dayDetails.month.description)}}
-                <div class="fsc-info-box">
-                    <div class="fsc-info-box-title">{{mainViewDisplay.dayDetails.month.name}}</div>
-                    <div class="fsc-info-box-content">
-                        {{{mainViewDisplay.dayDetails.month.description}}}
-                    </div>
-                </div>
-            {{/if}}
         </div>
     </div>
     {{#if showClock}}
