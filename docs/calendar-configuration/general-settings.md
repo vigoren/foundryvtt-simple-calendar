@@ -1,5 +1,3 @@
-# General Settings
-
 This section contains some general settings that apply across the calendar.
 
 ![](media://calendar-general-settings.png)

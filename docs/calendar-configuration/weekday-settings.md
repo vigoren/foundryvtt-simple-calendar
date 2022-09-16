@@ -1,5 +1,3 @@
-# Weekday Settings
-
 This section displays all the weekdays that exist in the calendar. Weekdays are used to determine how wide the calendar display is.
 
 ![](media://calendar-weekday-options.png)

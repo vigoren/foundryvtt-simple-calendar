@@ -27,7 +27,7 @@ describe('Month Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(month).length).toBe(15); //Make sure no new properties have been added
+        expect(Object.keys(month).length).toBe(16); //Make sure no new properties have been added
         expect(month.days).toStrictEqual([]);
         expect(month.numberOfDays).toBe(0);
         expect(month.numberOfLeapYearDays).toBe(0);
@@ -69,7 +69,7 @@ describe('Month Class Tests', () => {
 
     test('To Config', () => {
         const t = month.toConfig();
-        expect(Object.keys(t).length).toBe(10); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(11); //Make sure no new properties have been added
         expect(t.name).toBe('Test');
         expect(t.numericRepresentation).toBe(0);
         expect(t.numericRepresentationOffset).toBe(0);
@@ -82,7 +82,7 @@ describe('Month Class Tests', () => {
 
     test('To Template', () => {
         const t = month.toTemplate();
-        expect(Object.keys(t).length).toBe(15); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(16); //Make sure no new properties have been added
         expect(t.name).toBe('Test');
         expect(t.numericRepresentation).toBe(0);
         expect(t.numericRepresentationOffset).toBe(0);
@@ -102,7 +102,7 @@ describe('Month Class Tests', () => {
         expect(t2.numericRepresentation).toBe(-1);
 
         const t3 = month.toTemplate(tCal);
-        expect(Object.keys(t3).length).toBe(15); //Make sure no new properties have been added
+        expect(Object.keys(t3).length).toBe(16); //Make sure no new properties have been added
     });
 
     test('Clone', () => {
@@ -121,6 +121,7 @@ describe('Month Class Tests', () => {
         month.loadFromSettings({
             id: '',
             name: 'Jan',
+            description: '',
             abbreviation: 'J',
             numericRepresentation: 1,
             numericRepresentationOffset: 0,

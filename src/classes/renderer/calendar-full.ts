@@ -29,7 +29,7 @@ export default class CalendarFull{
         showDescriptions: true,
         showDayDetails: true,
         theme: 'auto',
-        view: CalendarViews.Month
+        view: CalendarViews.Year
     };
 
     /**
@@ -199,13 +199,14 @@ export default class CalendarFull{
                         }
 
                         if(options.showDayDetails){
+                            const currentDate = FormatDateTime({year: vYear, month: vMonthIndex, day: dayIndex, hour: 0, minute: 0, seconds: 0}, calendar.generalSettings.dateFormat.date, calendar);
                             const sunrise = FormatDateTime({year: 0, month: 0, day: 0, ...GetPresetTimeOfDay(PresetTimeOfDay.Sunrise, calendar, { year: vYear, month: vMonthIndex, day: dayIndex})}, calendar.generalSettings.dateFormat.time, calendar);
                             const sunset = FormatDateTime({year: 0, month: 0, day: 0, ...GetPresetTimeOfDay(PresetTimeOfDay.Sunset, calendar, { year: vYear, month: vMonthIndex, day: dayIndex})}, calendar.generalSettings.dateFormat.time, calendar);
-                            let dayHtml = `<div class="fsc-day-context-list" data-date="${vYear}/${vMonthIndex}/${dayIndex}"><div class="fsc-context-list-title">${GameSettings.Localize('FSC.Details')}</div>`;
-                            dayHtml += `<div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunrise')}</strong>: ${sunrise}</div><div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunset')}</strong>: ${sunset}</div>`;
                             const canChangeTime = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime);
                             const canAddNote = canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes);
-
+                            let dayHtml = `<div class="fsc-day-context-list" data-date="${vYear}/${vMonthIndex}/${dayIndex}">`;
+                            dayHtml += `<div class="fsc-context-list-title">${currentDate}</div>`;
+                            dayHtml += `<div class="fsc-context-list-expand"><span class="fa fa-sun"></span>${GameSettings.Localize('FSC.Configuration.Season.SunriseSunset')}<span class="fa fa-caret-right"></span><div class="fsc-context-list-sub-menu"><div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunrise')}</strong>: ${sunrise}</div><div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunset')}</strong>: ${sunset}</div></div></div>`;
                             if(canChangeTime || canAddNote){
                                 dayHtml += `<div class="fsc-context-list-break"></div>`;
                                 if(canChangeTime){
@@ -263,7 +264,7 @@ export default class CalendarFull{
             if(dayDetails.length){
                 for(let i = 0; i < dayDetails.length; i++){
                     if(dayDetails[i]){
-                        html += `<div class="fsc-hide" data-type="day${i}"><div class="fsc-description-content">${dayDetails[i]}</div></div>`;
+                        html += `<div class="fsc-hide" data-type="day${i}"><div class="fsc-description-content fsc-context-menu">${dayDetails[i]}</div></div>`;
                     }
                 }
             }

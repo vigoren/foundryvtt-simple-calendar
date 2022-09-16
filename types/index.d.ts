@@ -2341,7 +2341,6 @@ declare global{
          *
          * @remarks
          * Don't forget to call the {@link SimpleCalendar.api.activateFullCalendarListeners} function for any calendars that should be interactive. Static displays do not need to call this function.
-         * @remarks
          * A unique ID is required to ensure proper functionality of a Calendar added with this Handlebar helper.
          * <br/><br/>
          *

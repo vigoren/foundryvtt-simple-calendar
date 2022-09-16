@@ -1,5 +1,3 @@
-# Season Settings
-
 This section displays all the seasons that exist in the calendar.
 
 Seasons are optional but can provide a nice thematic for your world.

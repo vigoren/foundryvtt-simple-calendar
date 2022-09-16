@@ -29,6 +29,7 @@ import * as ObjectUtilities from "../utilities/object";
 import Month from "../calendar/month";
 import {saveAs} from "file-saver";
 import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
+import {Weekday} from "../calendar/weekday";
 
 jest.mock('file-saver');
 
@@ -357,28 +358,44 @@ describe('Configuration App Class Tests', () => {
 
     });
 
-    test('Toggle Month Show Advanced', () => {
+    test('Toggle Show Advanced', () => {
         const fEvent = {
             currentTarget: document.createElement('div'),
             preventDefault: jest.fn()
         };
         const row = document.createElement('div');
 
+
         jest.spyOn(fEvent.currentTarget, 'closest').mockReturnValue(row);
         //@ts-ignore
         jest.spyOn(ca, 'updateUIFromObject').mockImplementation(() => {});
 
         //@ts-ignore
-        ca.toggleMonthShowAdvanced(fEvent);
+        ca.toggleShowAdvanced(fEvent);
         //@ts-ignore
         expect(ca.updateUIFromObject).toHaveBeenCalledTimes(0);
 
         row.setAttribute('data-index', '0');
+        row.setAttribute('data-type', 'month');
         //@ts-ignore
-        ca.toggleMonthShowAdvanced(fEvent);
+        ca.toggleShowAdvanced(fEvent);
         //@ts-ignore
         expect(ca.updateUIFromObject).toHaveBeenCalledTimes(1);
         expect(tCal.months[0].showAdvanced).toBe(true);
+
+        row.setAttribute('data-type', 'season');
+        //@ts-ignore
+        ca.toggleShowAdvanced(fEvent);
+        //@ts-ignore
+        expect(ca.updateUIFromObject).toHaveBeenCalledTimes(2);
+        expect(tCal.seasons[0].showAdvanced).toBe(true);
+
+        row.setAttribute('data-type', 'weekday');
+        //@ts-ignore
+        ca.toggleShowAdvanced(fEvent);
+        //@ts-ignore
+        expect(ca.updateUIFromObject).toHaveBeenCalledTimes(3);
+        expect(tCal.weekdays[0].showAdvanced).toBe(true);
     });
 
     test('Write Input Values To Objects', () => {

@@ -1,5 +1,3 @@
-# Switching Between Calendars
-
 If there is more than one calendar configured in Simple Calendar a button will appear on the main application to allow switching between them.
 
 Clicking the button will show a list of all configured calendars.

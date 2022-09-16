@@ -1,5 +1,3 @@
-# Month Settings
-
 This section displays all the months for the selected calendar.
 
 These settings allow you to add and remove months to the selected calendar as well as customize those months. Important to note that a calendar must always have at least 1 month.

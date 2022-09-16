@@ -1,5 +1,3 @@
-# Note Settings
-
 This section contains all the options around notes within Simple Calendar.
 
 ![](media://calendar-notes.png)

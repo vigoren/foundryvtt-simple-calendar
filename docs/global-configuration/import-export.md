@@ -1,5 +1,3 @@
-# Import / Export
-
 This section is where users can go to import calendar configurations and/or notes into Simple Calendar, or export existing calendar configurations and/or notes out of Simple Calendar.
 
 ## Importing

@@ -28,7 +28,7 @@ describe('Moon Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(m).length).toBe(8); //Make sure no new properties have been added
+        expect(Object.keys(m).length).toBe(11); //Make sure no new properties have been added
         expect(m.name).toBe('Moon');
         expect(m.cycleLength).toBe(29.53059);
         expect(m.cycleDayAdjust).toBe(0.5);
@@ -50,7 +50,7 @@ describe('Moon Tests', () => {
 
     test('To Template', () => {
         let c = m.toTemplate(tCal);
-        expect(Object.keys(c).length).toBe(10); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(13); //Make sure no new properties have been added
         expect(c.name).toBe('Moon');
         expect(c.cycleLength).toBe(29.53059);
         expect(c.firstNewMoon).toStrictEqual({ "day": 5, "month": 1, "year": 2000, "yearReset": "none", "yearX": 0 });

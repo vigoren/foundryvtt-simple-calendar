@@ -1,5 +1,3 @@
-# Global Configuration
-
 These settings will affect how Simple Calendar works for every calendar as opposed to how a specific calendar will work.
 
 ![](media://global-config.png)

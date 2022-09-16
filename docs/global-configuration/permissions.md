@@ -1,5 +1,3 @@
-# Permissions
-
 This section contains all the different permissions that can be set withing Simple Calendar.
 Permissions are role based so players in certain Foundry roles will gain the permissions.
 These settings allow a GM to customize how and what players are allowed to interact with and change.

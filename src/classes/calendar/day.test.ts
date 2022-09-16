@@ -14,7 +14,7 @@ describe('Day Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(day).length).toBe(5); //Make sure no new properties have been added
+        expect(Object.keys(day).length).toBe(8); //Make sure no new properties have been added
         expect(day.selected).toBe(false);
         expect(day.current).toBe(false);
         expect(day.name).toBe("1");
@@ -43,7 +43,7 @@ describe('Day Class Tests', () => {
     test('To Template', () => {
         const t = day.toTemplate();
         const tS = dayS.toTemplate();
-        expect(Object.keys(t).length).toBe(5); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(8); //Make sure no new properties have been added
         expect(t.selected).toBe(false);
         expect(t.current).toBe(false);
         expect(t.name).toBe("1");

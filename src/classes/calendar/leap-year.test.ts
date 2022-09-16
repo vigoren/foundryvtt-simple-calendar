@@ -23,7 +23,7 @@ describe('Leap Year Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(lr).length).toBe(5); //Make sure no new properties have been added
+        expect(Object.keys(lr).length).toBe(8); //Make sure no new properties have been added
         expect(lr.rule).toBe(LeapYearRules.None);
         expect(lr.customMod).toBe(0);
     });

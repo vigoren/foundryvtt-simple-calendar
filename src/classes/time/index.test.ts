@@ -16,7 +16,7 @@ describe('Time Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(t).length).toBe(12); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(15); //Make sure no new properties have been added
         expect(t.hoursInDay).toBe(24);
         expect(t.minutesInHour).toBe(60);
         expect(t.secondsInMinute).toBe(60);

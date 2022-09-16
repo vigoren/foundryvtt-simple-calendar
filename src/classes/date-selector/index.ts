@@ -5,6 +5,9 @@ import {CalendarClickEvents, DateSelectorPositions} from "../../constants";
 import Calendar from "../calendar";
 import {CalManager} from "../index";
 
+/**
+ * The Date Selector class
+ */
 export class DateSelector {
     /**
      * The unique ID of the date selector object

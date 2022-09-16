@@ -152,7 +152,6 @@ export enum YearNamingRules{
      * Names from the list of year names are randomly assigned to years
      * @remarks
      * Simple Calendar does attempt to keep the same name for years, so switching between years should not result in a different name every time.
-     * @remarks
      * If a name is added or removed from the list of year names, the year names are randomly assigned again to years. This can result in a different name being used for the current year.
      */
     Random = 'random'
@@ -357,10 +356,11 @@ export enum ConfigurationDateSelectors{
 }
 
 /**
- * These are the options for how a {@link DateSelector.constructor | DateSelector's} calendar will open when the input is clicked.
+ * These are the options for how a {@link DateSelector | DateSelector's} calendar will open when the input is clicked.
+ * @internal
  */
 export enum DateSelectorPositions{
-    /** The {@link DateSelector.constructor | DateSelector} will attempt to choose the best direction to open the calendar based on the input's location on the screen */
+    /** The {@link DateSelector | DateSelector} will attempt to choose the best direction to open the calendar based on the input's location on the screen */
     Auto = 'auto',
     /** Will open the calendar from the left side of and below the input */
     LeftDown = 'left-down',

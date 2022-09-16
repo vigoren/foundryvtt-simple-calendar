@@ -1,4 +1,3 @@
-
 - [Adding Notes](#adding-notes)
 - [Editing Notes](#editing-notes)
   - [Pages](#pages)

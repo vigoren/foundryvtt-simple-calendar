@@ -1,5 +1,3 @@
-# Display Options
-
 This section is used to configure how different aspects of Simple Calendar are displayed. Right now the only options are for date and time formatting.
 
 ![](media://calendar-display-options.png)

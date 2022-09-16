@@ -1,9 +1,9 @@
 # Change Log
 
-## v 2.1.17 - Rest Day Highlighting, Descriptions, Day Context Menu, Bug Fixes, QoL Improvements
+## v 2.1.18 - Rest Day Highlighting, Descriptions, Day Context Menu, Bug Fixes, QoL Improvements
 
-![](https://img.shields.io/badge/release%20date-September%208%2C%202022-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.17/module.zip)
+![](https://img.shields.io/badge/release%20date-September%2016%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.18/module.zip)
 
 ### Rest Day Highlighting
 
@@ -21,15 +21,18 @@ The descriptions do support HTML to help with formatting the text!
 ![](./docs/images/description-example.png)
 ![](media://description-example.png)
 
-### Day Content Menu (Right Click)
+### Day Context Menu (Right Click)
 
-Right-clicking on a day will now bring up a menu that show some information and potentially some actions! 
+Right-clicking on a day will now bring up a menu that shows additional information about that day and potentially some actions! 
 
-The details it shows are the sunrise and sunset time for that day.
+The sunrise and sunset times are shown for the day clicked.
 
 If you are able to change the date of the calendar you will also see an option to set this day to the current date. This functions just like the set to current date button that appears when you select a day.
 
 If you are able to add notes you will also see an option to add a new note to that day. This functions just like adding a note to a selected day.
+
+![](./docs/images/day-context-gif.gif)
+![](media://day-context-gif.gif)
 
 ### Bug Fixes
 
@@ -59,10 +62,12 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 
 ### Documentation Updates
 
+- Upgraded to the latest version of Typedoc which brings a host of usability and visual improvements.
 - Updated the [month settings](https://simplecalendar.info/pages/docs/calendar-configuration/month-settings.html) documentation to reflect the new description setting.
 - Updated the [season settings](https://simplecalendar.info/pages/docs/calendar-configuration/season-settings.html) documentation to reflect the new description setting.
 - Updated the [weekday settings](https://simplecalendar.info/pages/docs/calendar-configuration/weekday-settings.html) documentation to reflect the new rest day and description settings.
 - Updated the [using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) documentation to include information about the description popups and show example images.
+- Updated the [using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) documentation to include information about the new context menu for days.
 
 ## v2.1.10 - Bug Fixes, QoL Improvements and Translation Updates
 

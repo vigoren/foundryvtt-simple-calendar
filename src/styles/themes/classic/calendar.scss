@@ -9,10 +9,20 @@
       background-color: rgba(255,255,255,0.95);
     }
     .fsc-day-context-list{
-      .fsc-context-list-action{
+      .fsc-context-list-action, .fsc-context-list-expand{
         &:hover, &:focus, &:active{
           color: var(--color-text-hyperlink);
+          .fsc-context-list-sub-menu{
+            color: #191813;
+          }
         }
+      }
+      .fsc-context-list-break{
+        border-color: $gray-500;
+      }
+      .fsc-context-list-sub-menu{
+        border-color: $secondary;
+        background-color: rgba(255,255,255,0.95);
       }
     }
   }

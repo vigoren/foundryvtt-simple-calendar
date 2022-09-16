@@ -72,6 +72,8 @@ describe('Handlebars Helpers Tests', () => {
             id:'',
             calendarId: '',
             showCurrentDate: true,
+            showDayDetails: true,
+            showDescriptions: true,
             showSeasonName: true,
             showNoteCount: true,
             showMoonPhases: true,

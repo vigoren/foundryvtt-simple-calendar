@@ -4,7 +4,15 @@
 import "../../../__mocks__/index";
 
 import Calendar from "../calendar";
-import {CalManager, NManager, updateCalManager, updateNManager, updateSC} from "../index";
+import {
+    CalManager,
+    MainApplication,
+    NManager,
+    updateCalManager,
+    updateMainApplication,
+    updateNManager,
+    updateSC
+} from "../index";
 import CalendarManager from "../calendar/calendar-manager";
 import NoteManager from "../notes/note-manager";
 import fetchMock from "jest-fetch-mock";
@@ -14,6 +22,7 @@ import CalendarFull from "./calendar-full";
 import Moon from "../calendar/moon";
 import Month from "../calendar/month";
 import SCController from "../s-c-controller";
+import MainApp from "../applications/main-app";
 
 fetchMock.enableMocks();
 describe('Renderer Calendar Full Class Tests', () => {
@@ -23,6 +32,7 @@ describe('Renderer Calendar Full Class Tests', () => {
         updateCalManager(new CalendarManager());
         updateNManager(new NoteManager());
         updateSC(new SCController());
+        updateMainApplication(new MainApp());
         fetchMock.resetMocks();
         fetchMock.mockOnce(`{"calendar":{"currentDate":{"year":2022,"month":2,"day":28,"seconds":0},"general":{"gameWorldTimeIntegration":"mixed","showClock":true,"noteDefaultVisibility":false,"postNoteRemindersOnFoundryLoad":true,"pf2eSync":true,"dateFormat":{"date":"MMMM DD, YYYY","time":"HH:mm:ss","monthYear":"MMMM YAYYYYYZ"}},"leapYear":{"rule":"gregorian","customMod":0},"months":[{"name":"January","abbreviation":"Jan","numericRepresentation":1,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"February","abbreviation":"Feb","numericRepresentation":2,"numericRepresentationOffset":0,"numberOfDays":28,"numberOfLeapYearDays":29,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"March","abbreviation":"Mar","numericRepresentation":3,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"April","abbreviation":"Apr","numericRepresentation":4,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"May","abbreviation":"May","numericRepresentation":5,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"June","abbreviation":"Jun","numericRepresentation":6,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"July","abbreviation":"Jul","numericRepresentation":7,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"August","abbreviation":"Aug","numericRepresentation":8,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"September","abbreviation":"Sep","numericRepresentation":9,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"October","abbreviation":"Oct","numericRepresentation":10,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"November","abbreviation":"Nov","numericRepresentation":11,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"December","abbreviation":"Dec","numericRepresentation":12,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null}],"moons":[{"name":"Moon","cycleLength":29.53059,"firstNewMoon":{"yearReset":"none","yearX":0,"year":2000,"month":1,"day":5},"phases":[{"name":"New Moon","length":1,"icon":"new","singleDay":true},{"name":"Waxing Crescent","length":6.38265,"icon":"waxing-crescent","singleDay":false},{"name":"First Quarter","length":1,"icon":"first-quarter","singleDay":true},{"name":"Waxing Gibbous","length":6.38265,"icon":"waxing-gibbous","singleDay":false},{"name":"Full Moon","length":1,"icon":"full","singleDay":true},{"name":"Waning Gibbous","length":6.38265,"icon":"waning-gibbous","singleDay":false},{"name":"Last Quarter","length":1,"icon":"last-quarter","singleDay":true},{"name":"Waning Crescent","length":6.38265,"icon":"waning-crescent","singleDay":false}],"color":"#ffffff","cycleDayAdjust":0.5}],"noteCategories":[{"name":"Holiday","textColor":"#FFFFFF","color":"#148e94"}],"seasons":[{"name":"Spring","startingMonth":2,"startingDay":19,"color":"#46b946","icon":"spring","sunriseTime":21600,"sunsetTime":64800},{"name":"Summer","startingMonth":5,"startingDay":19,"color":"#e0c40b","icon":"summer","sunriseTime":21600,"sunsetTime":64800},{"name":"Fall","startingMonth":8,"startingDay":21,"color":"#ff8e47","icon":"fall","sunriseTime":21600,"sunsetTime":64800},{"name":"Winter","startingMonth":11,"startingDay":20,"color":"#479dff","icon":"winter","sunriseTime":21600,"sunsetTime":64800}],"time":{"hoursInDay":24,"minutesInHour":60,"secondsInMinute":60,"gameTimeRatio":1,"unifyGameAndClockPause":false,"updateFrequency":1},"weekdays":[{"abbreviation":"Su","name":"Sunday","numericRepresentation":1},{"abbreviation":"Mo","name":"Monday","numericRepresentation":2},{"abbreviation":"Tu","name":"Tuesday","numericRepresentation":3},{"abbreviation":"We","name":"Wednesday","numericRepresentation":4},{"abbreviation":"Th","name":"Thursday","numericRepresentation":5},{"abbreviation":"Fr","name":"Friday","numericRepresentation":6},{"abbreviation":"Sa","name":"Saturday","numericRepresentation":7}],"year":{"numericRepresentation":2022,"prefix":"","postfix":"","showWeekdayHeadings":true,"firstWeekday":4,"yearZero":1970,"yearNames":[],"yearNamingRule":"default","yearNamesStart":0}}}`);
         tCal = new Calendar('','');
@@ -33,27 +43,41 @@ describe('Renderer Calendar Full Class Tests', () => {
 
     test('Render and Build', () => {
         const d = new Date();
+
+        tCal.months[0].description = 'Month Description';
+        tCal.weekdays[0].description = 'Weekday Description';
+        tCal.weekdays[0].restday = true;
+        tCal.seasons[0].description = 'Season Description';
+
         let HTML = CalendarFull.Render(tCal);
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year" data-visible="${d.getMonth()}/${d.getFullYear()}">${tCal.months[d.getMonth()].name} ${d.getFullYear()}</span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year " data-visible="${d.getMonth()}/${d.getFullYear()}">${tCal.months[d.getMonth()].name} ${d.getFullYear()}</span>`);
 
         tCal.months[2].selected = true;
         tCal.months[2].days[3].selected = true;
         HTML = CalendarFull.Render(tCal, {id: '', showYear: false, showSeasonName: false, allowChangeMonth: false, date: {year: d.getFullYear(), month: 2, day: 3}});
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} </span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year " data-visible="2/${d.getFullYear()}">${tCal.months[2].name} </span>`);
 
         HTML = CalendarFull.Render(tCal, {id: '', colorToMatchSeason: false, date: {year: d.getFullYear(), month: 2, day: 3}});
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year " data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
 
         HTML = CalendarFull.Render(tCal, {id: '', colorToMatchSeason: false, date: {year: d.getFullYear(), month: 2, day: 3}, selectedDates:{start:{year: d.getFullYear(), month: 2, day: 4}, end:{year: d.getFullYear(), month:2, day: 6}}});
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year " data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
 
         HTML = CalendarFull.Render(tCal, {id: '', colorToMatchSeason: false, date: {year: d.getFullYear(), month: 2, day: 3}, selectedDates:{start:{year: d.getFullYear(), month: -1, day: 0}, end:{year: d.getFullYear(), month:-1, day: 0}}});
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year " data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
+
+        tCal.year.showWeekdayHeadings = false;
+        //@ts-ignore
+        game.user.isGM = true;
+        HTML = CalendarFull.Render(tCal, {id: '', showDescriptions:false});
+        expect(HTML).toContain('fsc-calendar');
+        //@ts-ignore
+        game.user.isGM = false;
 
         //Theme
         HTML = CalendarFull.Render(tCal, {id: '', theme: 'light'});
@@ -75,8 +99,8 @@ describe('Renderer Calendar Full Class Tests', () => {
 
         CalendarFull.ActivateListeners('');
         expect(document.getElementById).toHaveBeenCalledTimes(1);
-        expect(cal.querySelector).toHaveBeenCalledTimes(3);
-        expect(cal.querySelectorAll).toHaveBeenCalledTimes(1);
+        expect(cal.querySelector).toHaveBeenCalledTimes(5);
+        expect(cal.querySelectorAll).toHaveBeenCalledTimes(3);
 
         //@ts-ignore
         elm.dispatchEvent(new Event('click'));
@@ -175,6 +199,78 @@ describe('Renderer Calendar Full Class Tests', () => {
         monthYearInput.value = '2222';
         CalendarFull.EventListener('', CalendarClickEvents.year, {onMonthChange: null, onDayClick: null, onYearChange: onyearC}, new Event('click'));
         expect(onyearC).toHaveBeenCalledTimes(1);
+
+    });
+
+    test('Day Context Click', () => {
+        const t = document.createElement('div');
+        const contextList = document.createElement('div');
+        const wrapper = document.createElement('div');
+        t.setAttribute('data-action', 'current');
+        contextList.classList.add('fsc-day-context-list');
+        contextList.setAttribute('data-date', '2022/8/14');
+        contextList.append(t);
+        wrapper.classList.add('fsc-calendar-wrapper');
+        wrapper.setAttribute('data-calendar', 'default');
+        wrapper.append(contextList);
+        jest.spyOn(MainApplication, 'setCurrentDate').mockImplementation(() => {});
+        jest.spyOn(NManager, 'createNote').mockImplementation(async () => {return null});
+        const fEvent = {
+            stopPropagation: () => {},
+            preventDefault: () => {},
+            target: t
+        };
+        //@ts-ignore
+        CalendarFull.DayContextClick(fEvent);
+        expect(MainApplication.setCurrentDate).toHaveBeenCalledTimes(1);
+
+        t.setAttribute('data-action', 'note');
+        //@ts-ignore
+        CalendarFull.DayContextClick(fEvent);
+        expect(NManager.createNote).toHaveBeenCalledTimes(1);
+
+        jest.spyOn(NManager, 'createNote').mockRejectedValue('Error');
+        jest.spyOn(console, 'error').mockImplementation(() => {});
+        //@ts-ignore
+        CalendarFull.DayContextClick(fEvent);
+        expect(NManager.createNote).toHaveBeenCalledTimes(2);
+    });
+
+    test('Show Description', () => {
+        const t = document.createElement('div');
+        const wrapper = document.createElement('div');
+        const descriptions = document.createElement('div');
+        const div = document.createElement('div');
+        const div2 = document.createElement('div');
+        wrapper.classList.add('fsc-calendar-wrapper');
+        descriptions.classList.add('fsc-descriptions');
+        div.setAttribute('data-type', 'month');
+        div2.setAttribute('data-type', 'season');
+        wrapper.append(t);
+        wrapper.append(descriptions);
+        descriptions.append(div);
+        descriptions.append(div2);
+        const fEvent = {
+            stopPropagation: () => {},
+            preventDefault: () => {},
+            target: t
+        };
+        //@ts-ignore
+        CalendarFull.ShowDescription('month', fEvent);
+
+        expect(div.classList.contains('fsc-hide')).toBe(false);
+        expect(div2.classList.contains('fsc-hide')).toBe(true);
+    });
+
+    test('Hide Description', () => {
+        const descriptions = document.createElement('div')
+        jest.spyOn(document, 'querySelector').mockReturnValue(descriptions);
+        //@ts-ignore
+        jest.spyOn(descriptions,'querySelectorAll').mockReturnValue([descriptions]);
+
+        expect(descriptions.classList.contains('fsc-hide')).toBe(false);
+        CalendarFull.HideDescription();
+        expect(descriptions.classList.contains('fsc-hide')).toBe(true);
 
     });
 
