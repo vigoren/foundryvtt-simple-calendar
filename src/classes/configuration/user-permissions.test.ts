@@ -13,7 +13,7 @@ describe('User Permissions Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(up).length).toBe(8); //Make sure no new properties have been added
+        expect(Object.keys(up).length).toBe(11); //Make sure no new properties have been added
         expect(up.viewCalendar).toStrictEqual({player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined});
         expect(up.addNotes).toStrictEqual({player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined});
         expect(up.reorderNotes).toStrictEqual({player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined});

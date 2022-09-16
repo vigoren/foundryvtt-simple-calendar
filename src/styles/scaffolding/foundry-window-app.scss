@@ -336,24 +336,10 @@
       }
     }
 
-    .fsc-day-details{
-      .fsc-dawn-dusk{
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: space-around;
-
-        .fsc-dd-title{
-          text-align: center;
-          font-weight: 600;
-          border-bottom: 1px solid;
-          margin: 0 ($spacer-half * -1) ($spacer-half * 0.5);
-        }
-
-        .fsc-dd-time{
-
-        }
-      }
+    .fsc-hidden-label{
+      visibility: hidden;
+      display: block;
+      height: 0;
     }
   }
 

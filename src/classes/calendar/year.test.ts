@@ -14,7 +14,7 @@ describe('Year Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(tCal.year).length).toBe(14); //Make sure no new properties have been added
+        expect(Object.keys(tCal.year).length).toBe(17); //Make sure no new properties have been added
         expect(tCal.year.prefix).toBe("");
         expect(tCal.year.postfix).toBe("");
         expect(tCal.year.yearZero).toBe(0);
@@ -37,7 +37,7 @@ describe('Year Class Tests', () => {
 
     test('To Template', () => {
         let t = tCal.year.toTemplate();
-        expect(Object.keys(t).length).toBe(8); //Make sure no new properties have been added
+        expect(Object.keys(t).length).toBe(11); //Make sure no new properties have been added
         expect(t.numericRepresentation).toBe(0);
         expect(t.yearZero).toBe(0);
         expect(t.firstWeekday).toBe(0);

@@ -1,5 +1,3 @@
-# Changing the Date and Time
-
 If you are able to change the date and time within Simple Calendar then you will see some additional controls when viewing the interface.
 
 These controls appear in both the full and compact versions of the calendar display.

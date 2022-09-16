@@ -1,5 +1,3 @@
-# Notes
-
 Notes are great ways to add reminders or events.
 
 Notes are stored as journal entries in their own folder in the journal directory. By default, this folder is hidden from view but a GM {@page ../../global-configuration/settings.md can enable it to be visible} if they wish.
@@ -15,7 +13,7 @@ Notes are stored as journal entries in their own folder in the journal directory
   - [Searching](#searching)
   - [Search Options](#search-options)
   - [Search Results](#search-results)
-- {@page adding-editing-removing.md Adding / Editing / Removing Notes}
+- {@page ./adding-editing-removing.md Adding / Editing / Removing Notes}
 
 ## Viewing Notes
 

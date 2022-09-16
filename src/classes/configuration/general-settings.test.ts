@@ -14,7 +14,7 @@ describe('General Settings Class Tests', () => {
     test('Properties', () => {
         const gs = new GeneralSettings();
 
-        expect(Object.keys(gs).length).toBe(9); //Make sure no new properties have been added
+        expect(Object.keys(gs).length).toBe(12); //Make sure no new properties have been added
     });
 
     test('Clone', () => {

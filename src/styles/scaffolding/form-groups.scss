@@ -10,6 +10,7 @@
             border: 1px solid;
             max-height: 0;
             overflow: hidden;
+            align-items: flex-start;
 
             &.fsc-border-none{
               border-width: 0;

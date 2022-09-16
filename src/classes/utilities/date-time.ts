@@ -212,6 +212,7 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
         currentSeason: {
             id: '',
             name: '',
+            description: '',
             color: '',
             icon: Icons.None,
             sunsetTime: 0,

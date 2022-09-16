@@ -110,11 +110,7 @@ export default class MainApp extends FormApplication{
                 mainViewDisplay: {
                     calendarList: <any>[],
                     search: this.search,
-                    showChangeCalendarControls: false,
-                    dayDetails: {
-                        dawn: '',
-                        dusk: ''
-                    }
+                    showChangeCalendarControls: false
                 },
                 addNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes),
                 activeCalendarId: this.activeCalendar.id,
@@ -177,16 +173,6 @@ export default class MainApp extends FormApplication{
                     clockRunning: c.timeKeeper.getStatus() === TimeKeeperStatus.Started
                 };
             });
-
-            let selectedMonthDayIndex = this.visibleCalendar.getMonthAndDayIndex('selected');
-            if(selectedMonthDayIndex.month === undefined){
-                selectedMonthDayIndex = this.visibleCalendar.getMonthAndDayIndex();
-            }
-            const currentDate = {day: selectedMonthDayIndex.day || 0, month: selectedMonthDayIndex.month || 0, year: this.visibleCalendar.year.selectedYear};
-            const dawnTime = GetPresetTimeOfDay(PresetTimeOfDay.Sunrise, this.activeCalendar, currentDate);
-            const duskTime = GetPresetTimeOfDay(PresetTimeOfDay.Sunset, this.activeCalendar, currentDate);
-            data.mainViewDisplay.dayDetails.dawn = FormatDateTime({...currentDate, ...dawnTime}, this.activeCalendar.generalSettings.dateFormat.time, this.activeCalendar);
-            data.mainViewDisplay.dayDetails.dusk = FormatDateTime({...currentDate, ...duskTime}, this.activeCalendar.generalSettings.dateFormat.time, this.activeCalendar);
         }
 
         return data;

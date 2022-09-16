@@ -1,5 +1,35 @@
 @import "../../variables";
-
+.fsc-calendar-wrapper{
+  .fsc-descriptions{
+    > div {
+      &::before{
+        background-color: $secondary-800;
+      }
+      border-color: $secondary-800;
+      background-color: rgba(255,255,255,0.95);
+      .fsc-description-content{
+        @include scrollbar($primary, $primary-600);
+      }
+      .fsc-day-context-list{
+        .fsc-context-list-action, .fsc-context-list-expand{
+          &:hover, &:focus, &:active{
+            color: $primary-A500;
+            .fsc-context-list-sub-menu{
+              color: $fontColor;
+            }
+          }
+        }
+        .fsc-context-list-break{
+          border-color: $gray-500;
+        }
+        .fsc-context-list-sub-menu{
+          border-color: $secondary-800;
+          background-color: rgba(255,255,255,0.95);
+        }
+      }
+    }
+  }
+}
 //Calendar Styling
 .fsc-calendar{
   background-color: $primary-100;
@@ -10,7 +40,9 @@
   .fsc-calendar-header{
     background-color: $primary-100;
   }
-
+  .fsc-weekend{
+    background-color: rgba(255,255,255,0.25);
+  }
   .fsc-days{
     .fsc-week{
       .fsc-day{

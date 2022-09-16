@@ -15,7 +15,7 @@ describe('Weekday Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(weekday).length).toBe(4); //Make sure no new properties have been added
+        expect(Object.keys(weekday).length).toBe(7); //Make sure no new properties have been added
         expect(weekday.name).toBe("");
         expect(weekday.numericRepresentation).toBe(0);
     });
@@ -28,7 +28,7 @@ describe('Weekday Class Tests', () => {
     test('To Template', () => {
         const w = weekday.toTemplate();
         const w2 = weekday2.toTemplate();
-        expect(Object.keys(w).length).toBe(4); //Make sure no new properties have been adde
+        expect(Object.keys(w).length).toBe(7); //Make sure no new properties have been adde
         expect(w.name).toBe("");
         expect(w.abbreviation).toBe("");
         expect(w.numericRepresentation).toBe(0);
@@ -55,10 +55,11 @@ describe('Weekday Class Tests', () => {
         expect(weekday.numericRepresentation).toBe(2);
 
         //@ts-ignore
-        weekday.loadFromSettings({id: 'id', abbreviation: "Na", name: 'Name', numericRepresentation: 2});
+        weekday.loadFromSettings({id: 'id', abbreviation: "Na", name: 'Name', numericRepresentation: 2, restday: true});
         expect(weekday.id).toBe('id');
         expect(weekday.name).toBe('Name');
         expect(weekday.abbreviation).toBe('Na');
         expect(weekday.numericRepresentation).toBe(2);
+        expect(weekday.restday).toBe(true);
     });
 });

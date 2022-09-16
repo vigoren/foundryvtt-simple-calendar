@@ -8,68 +8,52 @@ import Calendar from "./index";
 export default class Month extends ConfigurationItemBase {
     /**
      * A list of all the days in this month
-     * @type {Array<Day>}
      */
     days: Day[] = [];
     /**
      * The number of days for this month
-     * @type {number}
      */
     numberOfDays: number = 0;
     /**
      * The number of days for this month in a leap year
-     * @type {number}
      */
     numberOfLeapYearDays: number = 0;
     /**
      * How much to offset the numeric representation of days by when generating them
-     * @type {number}
      */
     numericRepresentationOffset: number = 0;
     /**
-     * If this month should be treated an a intercalary month
-     * @type {boolean}
+     * If this month should be treated as an intercalary month
      */
     intercalary: boolean = false;
     /**
      * If to include the intercalary days as part of the total year count/weekday positioning or not
-     * @type {boolean}
      */
     intercalaryInclude: boolean = false;
     /**
      * If this month is the current month
-     * @type {boolean}
      */
     current: boolean = false;
     /**
      * If this month is the current month that is visible
-     * @type {boolean}
      */
     visible: boolean = false;
     /**
      * If this month is the selected month
-     * @type {boolean}
      */
     selected: boolean = false;
-    /**
-     * Used to determine if the advanced options are should be shown or not. This is not saved.
-     * @type {boolean}
-     */
-    showAdvanced: boolean = false;
     /**
      * The day of the week this month starts on (ignores the day of the week calculation
      */
     startingWeekday: number | null = null;
 
-    abbreviation: string = '';
-
     /**
      * Month class constructor
-     * @param {string} name The name of the month
-     * @param {number} numericRepresentation The numeric representation of the month
-     * @param {number} numericRepresentationOffset When numbering days offset them by this amount
-     * @param {number} numberOfDays The number of days in this month
-     * @param {number} numberOfLeapYearDays The number of days in this month on a leap year
+     * @param name The name of the month
+     * @param numericRepresentation The numeric representation of the month
+     * @param numericRepresentationOffset When numbering days offset them by this amount
+     * @param numberOfDays The number of days in this month
+     * @param numberOfLeapYearDays The number of days in this month on a leap year
      */
     constructor(name: string = '', numericRepresentation: number = NaN, numericRepresentationOffset: number = 0, numberOfDays: number = 0, numberOfLeapYearDays: number | null = null) {
         super(name, numericRepresentation);
@@ -84,7 +68,7 @@ export default class Month extends ConfigurationItemBase {
     }
 
     /**
-     * Adds day objects to the days list so it totals the number of days in the month
+     * Adds day objects to the days list, so it totals the number of days in the month
      * @param {number} numberOfDays The number of days to create
      * @param {number|null} currentDay The currently selected day
      */
@@ -105,6 +89,7 @@ export default class Month extends ConfigurationItemBase {
         return {
             id: this.id,
             name: this.name,
+            description: this.description,
             abbreviation: this.abbreviation,
             numericRepresentation: this.numericRepresentation,
             numericRepresentationOffset: this.numericRepresentationOffset,
@@ -130,6 +115,7 @@ export default class Month extends ConfigurationItemBase {
             abbreviation: this.abbreviation,
             name: this.name,
             numericRepresentation: this.numericRepresentation,
+            showAdvanced: this.showAdvanced,
             numericRepresentationOffset: this.numericRepresentationOffset,
             current: this.current,
             visible: this.visible,
@@ -139,7 +125,6 @@ export default class Month extends ConfigurationItemBase {
             numberOfLeapYearDays: this.numberOfLeapYearDays,
             intercalary: this.intercalary,
             intercalaryInclude: this.intercalaryInclude,
-            showAdvanced: this.showAdvanced,
             startingWeekday: this.startingWeekday
         };
     }
@@ -152,6 +137,7 @@ export default class Month extends ConfigurationItemBase {
         const m = new Month(this.name, this.numericRepresentation, this.numericRepresentationOffset);
         m.id = this.id;
         m.name = this.name;
+        m.description = this.description;
         m.abbreviation = this.abbreviation;
         m.current = this.current;
         m.selected = this.selected;
@@ -172,13 +158,8 @@ export default class Month extends ConfigurationItemBase {
      */
     loadFromSettings(config: SimpleCalendar.MonthData) {
         if(config && Object.keys(config).length){
-            if(config.hasOwnProperty('id')){
-                this.id = config.id;
-            }
-            this.name = config.name;
-            this.numericRepresentation = config.numericRepresentation;
+            super.loadFromSettings(config);
             this.numericRepresentationOffset = config.numericRepresentationOffset;
-
             let numDays = parseInt(config.numberOfDays.toString());
             let numLeapDays = config.numberOfLeapYearDays === undefined? 0 : parseInt(config.numberOfLeapYearDays.toString());
             if(isNaN(numDays)){

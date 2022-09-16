@@ -1,5 +1,74 @@
 # Change Log
 
+## v 2.1.18 - Rest Day Highlighting, Descriptions, Day Context Menu, Bug Fixes, QoL Improvements
+
+![](https://img.shields.io/badge/release%20date-September%2016%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.18/module.zip)
+
+### Rest Day Highlighting
+
+Weekdays now have a new setting that let you specify if that weekday is a rest day. Rest days are highlighted on the calendar.
+
+![](./docs/images/weekend-example.png)
+![](media://weekend-example.png)
+
+### Descriptions
+
+GM's can now add descriptions to months, weekdays and seasons! Descriptions can help give more detail or lore to your calendars. If a description is added to a month, weekday or season users can click on the name of that item and have an informational popup appear showing the description.
+
+The descriptions do support HTML to help with formatting the text!
+
+![](./docs/images/description-example.png)
+![](media://description-example.png)
+
+### Day Context Menu (Right Click)
+
+Right-clicking on a day will now bring up a menu that shows additional information about that day and potentially some actions! 
+
+The sunrise and sunset times are shown for the day clicked.
+
+If you are able to change the date of the calendar you will also see an option to set this day to the current date. This functions just like the set to current date button that appears when you select a day.
+
+If you are able to add notes you will also see an option to add a new note to that day. This functions just like adding a note to a selected day.
+
+![](./docs/images/day-context-gif.gif)
+![](media://day-context-gif.gif)
+
+### Bug Fixes
+
+- Fixed some performance issues in the Pathfinder 2E system.
+- Fixed a styling issue with the "Search Notes" search box.
+- Fixed an issue with the Simplified Chinese translation that would cause an error on loading in PF2E systems.
+
+### Quality of Life Improvements
+
+- Update anything that used the browser tooltip to use the new v10 Tooltips.
+- A few improvements to accessibility within the configuration dialog.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+* [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+
+### API Changes
+
+- Updated the [`sc-full-calendar`](https://simplecalendar.info/enums/HandlebarHelpers.html#sc_full_calendar) Handlebar Helper to accept a new parameter `showDescriptions` to choose if you want the descriptions for months, weekdays and seasons to be able to show or not.
+- The `description` property has been added to the [MonthData](https://simplecalendar.info/interfaces/SimpleCalendar.MonthData.html) object. All functions that return  month data will now include the description, if set.
+- The `description` property has been added to the [SeasonData](https://simplecalendar.info/interfaces/SimpleCalendar.SeasonData.html) object. All functions that return  season data will now include the description, if set.
+- The `description` property has been added to the [WeekdayData](https://simplecalendar.info/interfaces/SimpleCalendar.WeekdayData.html) object. All functions that return  weekday data will now include the description, if set.
+- The `restday` property has been added to the [WeekdayData](https://simplecalendar.info/interfaces/SimpleCalendar.WeekdayData.html) object. All functions that return  weekday data will now include if the weekday is considered a rest day or not.
+
+
+### Documentation Updates
+
+- Upgraded to the latest version of Typedoc which brings a host of usability and visual improvements.
+- Updated the [month settings](https://simplecalendar.info/pages/docs/calendar-configuration/month-settings.html) documentation to reflect the new description setting.
+- Updated the [season settings](https://simplecalendar.info/pages/docs/calendar-configuration/season-settings.html) documentation to reflect the new description setting.
+- Updated the [weekday settings](https://simplecalendar.info/pages/docs/calendar-configuration/weekday-settings.html) documentation to reflect the new rest day and description settings.
+- Updated the [using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) documentation to include information about the description popups and show example images.
+- Updated the [using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) documentation to include information about the new context menu for days.
+
 ## v2.1.10 - Bug Fixes, QoL Improvements and Translation Updates
 
 ![](https://img.shields.io/badge/release%20date-September%208%2C%202022-blue)

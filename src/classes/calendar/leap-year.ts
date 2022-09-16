@@ -60,9 +60,7 @@ export default class LeapYear extends ConfigurationItemBase{
      */
     loadFromSettings(config: SimpleCalendar.LeapYearData): void {
         if(config && Object.keys(config).length){
-            if(config.hasOwnProperty('id')){
-                this.id = config.id;
-            }
+            super.loadFromSettings(config);
             if(config.hasOwnProperty('rule')){
                 this.rule = config.rule;
             }

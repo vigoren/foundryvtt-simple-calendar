@@ -56,6 +56,7 @@ export default class Season extends ConfigurationItemBase{
     clone(): Season {
         const t = new Season(this.name, this.startingMonth, this.startingDay);
         t.id = this.id;
+        t.description = this.description;
         t.color = this.color;
         t.icon = this.icon;
         t.sunriseTime = this.sunriseTime;
@@ -70,6 +71,7 @@ export default class Season extends ConfigurationItemBase{
         return {
             id: this.id,
             name: this.name,
+            description: this.description,
             startingMonth: this.startingMonth,
             startingDay: this.startingDay,
             color: this.color,
@@ -102,6 +104,7 @@ export default class Season extends ConfigurationItemBase{
         return {
             ...super.toTemplate(),
             name: this.name,
+            description: this.description,
             startingMonth: this.startingMonth,
             startingDay: this.startingDay,
             color: this.color,
@@ -129,10 +132,7 @@ export default class Season extends ConfigurationItemBase{
      */
     loadFromSettings(config: SimpleCalendar.SeasonData) {
         if(config && Object.keys(config).length){
-            if(config.hasOwnProperty('id')){
-                this.id = config.id;
-            }
-            this.name = config.name;
+            super.loadFromSettings(config);
             this.startingMonth = config.startingMonth;
             this.startingDay = config.startingDay;
             const sCustColor = config.customColor;

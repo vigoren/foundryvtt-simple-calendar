@@ -1,5 +1,3 @@
-# Weekday Settings
-
 This section displays all the weekdays that exist in the calendar. Weekdays are used to determine how wide the calendar display is.
 
 ![](media://calendar-weekday-options.png)
@@ -15,10 +13,12 @@ This section contains the individual weekdays and their options.
 
 ![](media://calendar-weekdays.png)
 
-| Setting                   | Description                                                                                        |
-|---------------------------|----------------------------------------------------------------------------------------------------|
-| Weekday Name              | These text boxes for each weekday allow you to change the name of an existing weekday.             |
-| Weekday Name Abbreviation | These text boses for each weekday allow you to change the abbreviated name of an existing weekday. |
+| Setting                   | Description                                                                                                                                                               |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Weekday Name              | The full name of the weekday.                                                                                                                                             |
+| Weekday Name Abbreviation | Set the abbreviated name for the weekday. This defaults to the first 2 letters of the weekdays name.                                                                      |
+| Rest Day                  | If this day of the week is considered a rest day. Rest days are highlighted on the calendar.                                                                              |
+| Weekday Description       | A description of the weekday that users can view when clicking on the weekday name in the calendar. The description does support the addition of HTML to format the text. |
 
 
 ### Adding a New Weekday

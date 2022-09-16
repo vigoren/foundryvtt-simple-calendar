@@ -1,5 +1,3 @@
-# Year Settings
-
 This section shows all the settings for customizing details about the year.
 
 

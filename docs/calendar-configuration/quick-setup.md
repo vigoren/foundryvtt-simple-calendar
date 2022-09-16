@@ -1,5 +1,3 @@
-# Quick Setup
-
 This section lets you quickly configure a calendar to get up and running!
 
 ## Step One

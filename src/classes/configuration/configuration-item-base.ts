@@ -12,14 +12,28 @@ export default class ConfigurationItemBase{
      */
     numericRepresentation: number;
     /**
-     * The name of the weekday
+     * The name of the configuration item
      */
     name: string;
+    /**
+     * The shorthand version of the name
+     */
+    abbreviation: string;
+    /**
+     * A description of the configuration item for display to players
+     */
+    description: string;
+    /**
+     * Used to determine if the advanced options are should be shown or not. This is not saved.
+     */
+    showAdvanced: boolean = false;
 
     constructor(name: string = '', numericRepresentation: number = NaN) {
         this.id = generateUniqueId();
         this.name = name;
         this.numericRepresentation = numericRepresentation;
+        this.description = '';
+        this.abbreviation = '';
     }
 
     /**
@@ -28,6 +42,9 @@ export default class ConfigurationItemBase{
     clone() {
         const cib = new ConfigurationItemBase(this.name, this.numericRepresentation);
         cib.id = this.id;
+        cib.description = this.description;
+        cib.abbreviation = this.abbreviation;
+        cib.showAdvanced = this.showAdvanced;
         return cib;
 
     }
@@ -39,7 +56,9 @@ export default class ConfigurationItemBase{
         return {
             id: this.id,
             name: this.name,
-            numericRepresentation: this.numericRepresentation
+            numericRepresentation: this.numericRepresentation,
+            description: this.description,
+            abbreviation: this.abbreviation
         }
     }
 
@@ -51,7 +70,10 @@ export default class ConfigurationItemBase{
         return {
             id: this.id,
             name: this.name,
-            numericRepresentation: this.numericRepresentation
+            numericRepresentation: this.numericRepresentation,
+            description: this.description,
+            abbreviation: this.abbreviation,
+            showAdvanced: this.showAdvanced
         };
     }
 
@@ -60,12 +82,20 @@ export default class ConfigurationItemBase{
      * @param config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.IDataItemBase): void{
-        this.id = config.id;
+        if(config.hasOwnProperty('id')){
+            this.id = config.id;
+        }
         if(config.hasOwnProperty('name') && config.name){
             this.name = config.name;
         }
         if(config.hasOwnProperty('numericRepresentation') && config.numericRepresentation){
             this.numericRepresentation = config.numericRepresentation;
+        }
+        if(config.hasOwnProperty('description') && config.description){
+            this.description = config.description;
+        }
+        if(config.hasOwnProperty('abbreviation') && config.abbreviation){
+            this.abbreviation = config.abbreviation;
         }
     }
 }

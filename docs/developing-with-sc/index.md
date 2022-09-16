@@ -1,5 +1,3 @@
-# Developing With Simple Calendar
-
 Simple Calendar offers a [rich API](https://simplecalendar.info/modules/SimpleCalendar.html) to allow developers of systems, other modules and macros to easily add support for date and time functionality to their own projects!
 
 The following instructions are meant for projects written in TypeScript as a way to access Simple Calendar types in your project. 

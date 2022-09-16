@@ -1417,6 +1417,7 @@ declare global{
              */
             interface Season extends IDataItemBase {
                 name: string;
+                description: string;
                 startingMonth: number;
                 startingDay: number;
                 color: string;
@@ -1450,6 +1451,8 @@ declare global{
                 abbreviation: string;
                 name: string;
                 numericRepresentation: number;
+                showAdvanced: boolean;
+                restday: boolean;
             }
 
             /**
@@ -1572,6 +1575,10 @@ declare global{
                 };
                  /** If to highlight the current date for the calendar */
                 showCurrentDate?: boolean;
+                /** If to show more details about the day when it is right-clicked on */
+                showDayDetails?:boolean;
+                /** If to show the description popups */
+                showDescriptions?: boolean;
                  /** If to show the different moon phases on the calendar */
                 showMoonPhases?: boolean;
                  /** If to show any note counts on the calendar */
@@ -1728,6 +1735,12 @@ declare global{
             name?: string;
             /** The optional numeric representation of the data item */
             numericRepresentation?: number;
+            /** The optional description of the data item */
+            description?: string;
+            /** The abbreviated name of the data item. */
+            abbreviation?: string;
+            /** If to show the advanced options, this is not saved */
+            showAdvanced?: boolean;
         }
 
         /**
@@ -2059,6 +2072,8 @@ declare global{
             abbreviation: string;
             /** The name of the month. */
             name: string;
+            /** The description of the month. */
+            description: string;
             /** The number associated with the display of this month. */
             numericRepresentation: number;
             /** The amount to offset day numbers by for this month. */
@@ -2172,6 +2187,8 @@ declare global{
         interface SeasonData extends IDataItemBase {
             /** The name of the season. */
             name: string;
+            /** The description of the season. */
+            description: string;
             /** The month this season starts on */
             startingMonth: number;
             /** The day of the starting month this season starts on */
@@ -2217,8 +2234,12 @@ declare global{
             abbreviation: string;
             /** The name of the weekday. */
             name: string;
+            /** The description of the weekday. */
+            description: string;
             /** The number representing the weekday. */
             numericRepresentation: number;
+            /** If this weekday is considered a rest day */
+            restday: boolean;
         }
 
         /**
@@ -2320,7 +2341,6 @@ declare global{
          *
          * @remarks
          * Don't forget to call the {@link SimpleCalendar.api.activateFullCalendarListeners} function for any calendars that should be interactive. Static displays do not need to call this function.
-         * @remarks
          * A unique ID is required to ensure proper functionality of a Calendar added with this Handlebar helper.
          * <br/><br/>
          *
@@ -2332,6 +2352,7 @@ declare global{
          * - **date:** *boolean* = true<br/>The year and the month index to display for the full calendar view.<br/><br/>
          * - **id:** *string* = ""<br/>The unique ID to set in the calendar HTML.<br/><br/>
          * - **showCurrentDate:** *boolean* = true<br/>If to highlight the current date on the calendar.<br/><br/>
+         * - **showDescriptions:** *boolean* = true<br/>If to show the description pop ups for months,weekdays,seasons that have a description.<br/><br/>
          * - **showSeasonName:** *boolean* = true<br/>If to show the season name in the calendar view.<br/><br/>
          * - **showNoteCount:** *boolean* = true<br/>If to show the indicator for notes on the days being displayed.<br/><br/>
          * - **showMoonPhases:** *boolean* = true<br/>If to show the moon phases for the days being displayed.<br/><br/>

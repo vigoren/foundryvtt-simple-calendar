@@ -376,15 +376,15 @@ export default class ConfigurationApp extends FormApplication {
             this.appWindow.querySelector('.fsc-quick-setup .fsc-control-section .fsc-qs-save')?.addEventListener('click', this.quickSetupSaveClick.bind(this));
 
             //---------------------
-            // Month Show/Hide Advanced
+            // Show/Hide Advanced
             //---------------------
-            this.appWindow.querySelectorAll(".fsc-month-show-advanced").forEach(e => {
-                e.addEventListener('click', this.toggleMonthShowAdvanced.bind(this));
+            this.appWindow.querySelectorAll(".fsc-show-advanced").forEach(e => {
+                e.addEventListener('click', this.toggleShowAdvanced.bind(this));
             });
             //---------------------
             // Input Changes
             //---------------------
-            this.appWindow.querySelectorAll("input, select").forEach(e => {
+            this.appWindow.querySelectorAll("input, select, textarea").forEach(e => {
                 e.addEventListener('change', this.inputChange.bind(this));
                 e.addEventListener('keyup', this.inputChange.bind(this));
             });
@@ -603,15 +603,22 @@ export default class ConfigurationApp extends FormApplication {
      * @param e The Click Event
      * @private
      */
-    private toggleMonthShowAdvanced(e: Event){
+    private toggleShowAdvanced(e: Event){
         e.preventDefault();
         const target = <HTMLElement>e.currentTarget;
         if(target){
             const row = <HTMLElement>target.closest('.fsc-row');
             if(row){
                 const index = parseInt(row.getAttribute('data-index') || '');
-                if(!isNaN(index) && index >= 0 && index < (<Calendar>this.object).months.length){
-                    (<Calendar>this.object).months[index].showAdvanced = !(<Calendar>this.object).months[index].showAdvanced;
+                const type = row.getAttribute('data-type');
+                if(!isNaN(index) && index >= 0){
+                    if(type === 'month' && index < (<Calendar>this.object).months.length){
+                        (<Calendar>this.object).months[index].showAdvanced = !(<Calendar>this.object).months[index].showAdvanced;
+                    } else if(type === 'weekday' && index < (<Calendar>this.object).weekdays.length){
+                        (<Calendar>this.object).weekdays[index].showAdvanced = !(<Calendar>this.object).weekdays[index].showAdvanced;
+                    } else if(type === 'season' && index < (<Calendar>this.object).seasons.length){
+                        (<Calendar>this.object).seasons[index].showAdvanced = !(<Calendar>this.object).seasons[index].showAdvanced;
+                    }
                     this.updateUIFromObject();
                 }
             }
@@ -709,6 +716,7 @@ export default class ConfigurationApp extends FormApplication {
                     } else {
                         (<Calendar>this.object).months[index].abbreviation = getTextInputValue(".fsc-month-abbreviation", "New Month", e);
                     }
+                    (<Calendar>this.object).months[index].description = getTextInputValue(".fsc-month-description", "", e);
                     (<Calendar>this.object).months[index].name = name;
                     const days = <number>getNumericInputValue('.fsc-month-days', 1, false, e);
                     if(days !== (<Calendar>this.object).months[index].numberOfDays){
@@ -747,6 +755,8 @@ export default class ConfigurationApp extends FormApplication {
                     } else {
                         (<Calendar>this.object).weekdays[index].abbreviation = getTextInputValue('.fsc-weekday-abbreviation', 'New', e);
                     }
+                    (<Calendar>this.object).weekdays[index].description = getTextInputValue(".fsc-weekday-description", "", e);
+                    (<Calendar>this.object).weekdays[index].restday = getCheckBoxInputValue('.fsc-weekday-weekend', false, e);
                 }
             });
 
@@ -775,6 +785,7 @@ export default class ConfigurationApp extends FormApplication {
                     (<Calendar>this.object).seasons[index].name = getTextInputValue(".fsc-season-name", "New Season", e);
                     (<Calendar>this.object).seasons[index].icon = <Icons>getTextInputValue(".fsc-season-icon", Icons.None, e);
                     (<Calendar>this.object).seasons[index].color = getTextInputValue(".fsc-season-color", "#FFFFFF", e);
+                    (<Calendar>this.object).seasons[index].description = getTextInputValue(".fsc-season-description", "", e);
                 }
             });
 
@@ -874,19 +885,7 @@ export default class ConfigurationApp extends FormApplication {
             for(let i = 0; i < (<Calendar>this.object).months.length; i++){
                 const row = this.appWindow.querySelector(`.fsc-month-settings .fsc-months>.fsc-row[data-index="${i}"]`);
                 if(row){
-                    //Show Advanced Stuff
-                    const button = row.querySelector('.fsc-month-show-advanced');
-                    const options = row.querySelector('.fsc-options');
-                    if(button && options){
-                        if((options.classList.contains('fsc-closed') && (<Calendar>this.object).months[i].showAdvanced) || (options.classList.contains('fsc-open') && !(<Calendar>this.object).months[i].showAdvanced)){
-                            animateElement(options, 400);
-                        }
-                        if((<Calendar>this.object).months[i].showAdvanced){
-                            (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-up"></i><span>${GameSettings.Localize('FSC.HideAdvanced')}</span>`;
-                        } else {
-                            (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-down"></i><span>${GameSettings.Localize('FSC.ShowAdvanced')}</span>`;
-                        }
-                    }
+                    this.showAdvancedSection(row, (<Calendar>this.object).months[i].showAdvanced);
                     //Intercalary Stuff
                     animateFormGroup('.fsc-month-intercalary-include', (<Calendar>this.object).months[i].intercalary, row);
 
@@ -895,6 +894,15 @@ export default class ConfigurationApp extends FormApplication {
                     if(mn){
                         (<HTMLElement>mn).innerText = (<Calendar>this.object).months[i].numericRepresentation < 0 ? 'IC' : (<Calendar>this.object).months[i].numericRepresentation.toString();
                     }
+                }
+            }
+            //----------------------------------
+            // Calendar Config: Weekday
+            //----------------------------------
+            for(let i = 0; i < (<Calendar>this.object).weekdays.length; i++){
+                const row = this.appWindow.querySelector(`.fsc-weekday-settings .fsc-weekdays>.fsc-row[data-index="${i}"]`);
+                if(row){
+                    this.showAdvancedSection(row, (<Calendar>this.object).weekdays[i].showAdvanced);
                 }
             }
 
@@ -914,6 +922,15 @@ export default class ConfigurationApp extends FormApplication {
                     fg.classList.remove('fsc-open');
                 }
             }
+            //----------------------------------
+            // Calendar Config: Seasons
+            //----------------------------------
+            for(let i = 0; i < (<Calendar>this.object).seasons.length; i++){
+                const row = this.appWindow.querySelector(`.fsc-season-settings .fsc-seasons>.fsc-row[data-index="${i}"]`);
+                if(row){
+                    this.showAdvancedSection(row, (<Calendar>this.object).seasons[i].showAdvanced);
+                }
+            }
 
             //----------------------------------
             // Calendar Config: Moons
@@ -930,6 +947,22 @@ export default class ConfigurationApp extends FormApplication {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private showAdvancedSection(row: Element, showAdvanced: boolean){
+        //Show Advanced Stuff
+        const button = row.querySelector('.fsc-show-advanced');
+        const options = row.querySelector('.fsc-options');
+        if(button && options){
+            if((options.classList.contains('fsc-closed') && showAdvanced) || (options.classList.contains('fsc-open') && !showAdvanced)){
+                animateElement(options, 400);
+            }
+            if(showAdvanced){
+                (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-up"></i><span>${GameSettings.Localize('FSC.HideAdvanced')}</span>`;
+            } else {
+                (<HTMLElement>button).innerHTML = `<i class="fa fa-chevron-down"></i><span>${GameSettings.Localize('FSC.ShowAdvanced')}</span>`;
             }
         }
     }

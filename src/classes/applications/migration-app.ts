@@ -198,7 +198,10 @@ export default class MigrationApp extends Application{
                 .then((result: boolean) => {
                     GameSettings.UiNotification(GameSettings.Localize('FSC.Migration.v1v2.CleanupSuccess'), 'info');
                 })
-                .catch(Logger.error);
+                .catch((e: Error) => {
+                    console.log(e);
+                    GameSettings.UiNotification(GameSettings.Localize('FSC.Migration.v1v2.CleanupFail'), 'warning');
+                });
             Logger.info('All old data has been cleared.');
         }
     }

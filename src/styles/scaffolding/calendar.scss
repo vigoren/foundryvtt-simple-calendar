@@ -1,4 +1,101 @@
 @import "../variables";
+.fsc-calendar-wrapper{
+  position: relative;
+
+  .fsc-descriptions{
+    position: absolute;
+    z-index: 100;
+    min-width: 100%;
+    margin-top: $spacer-half * .5;
+
+    > div {
+      &::before{
+        content: ' ';
+        position: absolute;
+        width: 10px;
+        height: 5px;
+        left: 8px;
+        top: -6px;
+        clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+        z-index: -1;
+      }
+      position: absolute;
+      padding: $spacer-half;
+      margin: 0 $spacer-half;
+      border: 1px solid;
+      border-radius: 5px;
+      opacity: 1;
+
+
+      &.fsc-hide{
+        opacity: 0;
+        height: 0;
+        visibility: hidden;
+      }
+      .fsc-description-content{
+        max-height: 200px;
+        overflow: auto;
+
+        &.fsc-context-menu{
+          overflow: visible;
+        }
+        .fsc-day-context-list{
+          font-size: 12px;
+          .fa{
+            margin-right: $spacer-half;
+          }
+          .fsc-context-list-title{
+            font-size: 14px;
+            margin-bottom: $spacer-half;
+          }
+          .fsc-context-list-text{
+            margin: ($spacer-half * .5) 0 ($spacer-half * .5) ($spacer-half * .5);
+          }
+          .fsc-context-list-action{
+            margin: $spacer-half 0;
+            cursor: pointer;
+          }
+          .fsc-context-list-break{
+            border-bottom: 1px solid;
+            margin: $spacer-half 0;
+          }
+          .fsc-context-list-expand{
+            position: relative;
+
+            .fa-caret-right{
+              margin-right: 0;
+              margin-left: $spacer-half;
+              float: right;
+            }
+
+            &:hover{
+              .fsc-context-list-sub-menu{
+                opacity: 1;
+                left: calc(100% + $spacer-half);
+              }
+            }
+
+            .fsc-context-list-sub-menu{
+              position: absolute;
+              top: -($spacer *.45);
+              left: 0;
+              width: 100%;
+              border: 1px solid;
+              border-top-right-radius: 5px;
+              border-bottom-right-radius: 5px;
+              opacity: 0;
+              z-index: -1;
+              padding: 0 0.25rem;
+            }
+          }
+          > div:last-of-type{
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+}
 .fsc-calendar {
   border: 1px solid;
   padding: 0 5px 8px;
@@ -20,21 +117,28 @@
     }
     .fsc-days{
       .fsc-week{
-        .fsc-day{
-          cursor: default;
-          &:hover{
-            background-color: unset;
+        .fsc-day-wrapper{
+          .fsc-day{
+            cursor: default;
+            &:hover{
+              background-color: unset;
+            }
           }
         }
+
       }
     }
+  }
+
+  .fsc-description-clickable{
+    cursor: help;
   }
 
   .fsc-calendar-header{
     position: sticky;
     top: 0;
     z-index: 100;
-    padding: 5px 0;
+    padding: 5px 0 0;
     margin-bottom: 5px;
 
     .fsc-current-date{
@@ -67,7 +171,7 @@
       flex-wrap: nowrap;
       justify-content: center;
       align-items: center;
-      margin: -8px auto 10px;
+      margin: -6px auto 10px;
       font-size: 12px;
       font-style: italic;
       font-weight: 600;
@@ -86,12 +190,18 @@
       flex-direction: row;
       flex-wrap: nowrap;
       justify-content: center;
+      margin-bottom: -5px;
 
       .fsc-weekday{
-        width: 40px;
-        margin: 0 2px;
+        width: 44px;
+        padding: 0 2px 5px;
         text-align: center;
         font-weight: 600;
+
+        &.fsc-weekend{
+          border-top-right-radius: 4px;
+          border-top-left-radius: 4px;
+        }
       }
     }
   }
@@ -105,7 +215,6 @@
     .fsc-week{
       display: flex;
       flex-direction: row;
-      margin: 2px 0;
 
       .fsc-empty-day{
         width: 40px;
@@ -115,112 +224,132 @@
         margin: 0 2px;
       }
 
-      .fsc-day{
-        position: relative;
-        width: 40px;
-        height: 40px;
-        text-align: center;
-        padding-top: 12px;
-        margin: 0 2px;
-        border: 1px solid;
-        border-radius: 20px;
-        cursor: pointer;
+      .fsc-day-wrapper{
+        padding: 2px 0;
+        .fsc-day{
+          position: relative;
+          width: 40px;
+          height: 40px;
+          text-align: center;
+          padding-top: 12px;
+          margin: 0 2px;
+          border: 1px solid;
+          border-radius: 20px;
+          cursor: pointer;
 
-        &.fsc-selected-range-start{
-          border-top-right-radius: 0;
-          border-bottom-right-radius: 0;
-        }
-        &.fsc-selected-range-mid{
-          border-radius: 0;
-        }
-        &.fsc-selected-range-end{
-          border-top-left-radius: 0;
-          border-bottom-left-radius: 0;
-        }
-
-        .fsc-day-notes{
-          position: absolute;
-          top: -3px;
-          right: 0;
-          display: flex;
-          .fsc-note-count{
-            width: 16px;
-            height: 16px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 2px;
-            padding: 1px 1px 1px 2px;
-            border-radius: 8px;
-            box-shadow: 1px 1px 5px;
-
-            &.fsc-reminders{
-              margin-right: 0;
-            }
+          &.fsc-selected-range-start{
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
           }
-        }
+          &.fsc-selected-range-mid{
+            border-radius: 0;
+          }
+          &.fsc-selected-range-end{
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          }
 
-        .fsc-moons{
-          position: absolute;
-          right: 2px;
-          display: flex;
-          flex-direction: row;
+          .fsc-day-notes{
+            position: absolute;
+            top: -3px;
+            right: 0;
+            display: flex;
+            .fsc-note-count{
+              width: 16px;
+              height: 16px;
+              font-size: 12px;
+              font-weight: 600;
+              margin-right: 2px;
+              padding: 1px 1px 1px 2px;
+              border-radius: 8px;
+              box-shadow: 1px 1px 5px;
 
-          &:hover {
-            .fsc-moon-group-wrapper {
-              .fsc-moon-group {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                position: absolute;
-                z-index: 100;
-                border: 1px solid;
-                border-radius: 5px;
-                padding: 0.25rem;
-                width: 50px;
-                &.fsc-top{
-                  top: -5px;
-                }
-                &.fsc-bottom{
-                  bottom: 0;
-                }
-                &.fsc-right{
-                  left: -6px;
-                }
-                &.fsc-left{
-                  right: -5px;
-                }
-                .fsc-moon-phase{
-                  margin-bottom: 2px;
-                }
+              &.fsc-reminders{
+                margin-right: 0;
               }
             }
           }
 
-          .fsc-moon-group-wrapper{
+          .fsc-moons{
+            position: absolute;
+            right: 2px;
             display: flex;
-            margin-right: -7px;
-            .fa{
-              margin-left: -6px;
-              margin-top: 3px;
-              z-index: 1;
+            flex-direction: row;
 
+            &:hover {
+              .fsc-moon-group-wrapper {
+                .fsc-moon-group {
+                  display: flex;
+                  flex-wrap: wrap;
+                  justify-content: center;
+                  position: absolute;
+                  z-index: 100;
+                  border: 1px solid;
+                  border-radius: 5px;
+                  padding: 0.25rem;
+                  width: 50px;
+                  &.fsc-top{
+                    top: -5px;
+                  }
+                  &.fsc-bottom{
+                    bottom: 0;
+                  }
+                  &.fsc-right{
+                    left: -6px;
+                  }
+                  &.fsc-left{
+                    right: -5px;
+                  }
+                  .fsc-moon-phase{
+                    margin-bottom: 2px;
+                  }
+                }
+              }
             }
-            .fsc-moon-group{
-              display: none;
+
+            .fsc-moon-group-wrapper{
+              display: flex;
+              margin-right: -7px;
+              .fa{
+                margin-left: -6px;
+                margin-top: 3px;
+                z-index: 1;
+
+              }
+              .fsc-moon-group{
+                display: none;
+              }
+            }
+
+            .fsc-moon-phase{
+              svg{
+                width: 20px;
+                height: 20px;
+                margin-top: -5px;
+                margin-left: -3px;
+              }
+              width: 11px;
+              height: 11px;
+              margin-right: 2px;
+              font-size: 11px;
             }
           }
+        }
+      }
 
-          .fsc-moon-phase{
-            svg{
-              width: 20px;
-              height: 20px;
-              margin-top: -5px;
-              margin-left: -3px;
-            }
-            width: 11px;
-            height: 11px;
-            margin-right: 2px;
-            font-size: 11px;
+      &.fsc-weekend-round{
+        .fsc-day-wrapper{
+          &.fsc-weekend{
+            border-top-right-radius: 4px;
+            border-top-left-radius: 4px;
+          }
+        }
+      }
+      &:last-child{
+        .fsc-day-wrapper{
+          &.fsc-weekend{
+            border-bottom-right-radius: 4px;
+            border-bottom-left-radius: 4px;
           }
         }
       }

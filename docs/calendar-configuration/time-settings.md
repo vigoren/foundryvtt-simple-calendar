@@ -1,5 +1,3 @@
-# Time Settings
-
 This section contains all the options for configuring how time works within the calendar.
 
 ![](media://calendar-time.png)

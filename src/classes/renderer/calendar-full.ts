@@ -1,11 +1,12 @@
 import Calendar from "../calendar";
 import {deepMerge} from "../utilities/object";
-import {FormatDateTime, IsDayBetweenDates} from "../utilities/date-time";
+import {FormatDateTime, GetPresetTimeOfDay, IsDayBetweenDates} from "../utilities/date-time";
 import {GetIcon} from "../utilities/visual";
 import {GameSettings} from "../foundry-interfacing/game-settings";
-import {CalendarClickEvents, CalendarViews, DateRangeMatch} from "../../constants";
+import {CalendarClickEvents, CalendarViews, DateRangeMatch, NoteRepeat, PresetTimeOfDay} from "../../constants";
 import RendererUtilities from "./utilities";
-import {CalManager, NManager, SC} from "../index";
+import {CalManager, MainApplication, NManager, SC} from "../index";
+import {canUser} from "../utilities/permissions";
 
 export default class CalendarFull{
 
@@ -25,9 +26,17 @@ export default class CalendarFull{
         showNoteCount: true,
         showMoonPhases: true,
         showYear: true,
+        showDescriptions: true,
+        showDayDetails: true,
         theme: 'auto',
-        view: CalendarViews.Month
+        view: CalendarViews.Year
     };
+
+    /**
+     * Keep track if we have added the body click event for which calendars, so we don't flood that with click events
+     * @private
+     */
+    private static calendarBodyClicks: Record<string,boolean> = {};
 
     /**
      * Renders the full view for the passed in calendar
@@ -68,6 +77,10 @@ export default class CalendarFull{
         }
 
         let vYear, vMonthIndex = 0, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [], calendarStyle = '', seasonIcon = '', seasonName = '';
+        let seasonDescription = '';
+        let weekdayDescriptions: string[] = [];
+        let dayDetails: string[] = [];
+
         if(options.date){
             if(options.date.month >= 0 && options.date.month < calendar.months.length){
                 vMonthIndex = options.date.month;
@@ -95,14 +108,22 @@ export default class CalendarFull{
             }
         }
 
+
         if(options.showSeasonName || options.colorToMatchSeason){
             const season = calendar.getSeason(vMonthIndex, ssDay? ssDay : 0);
             seasonName = season.name;
+            seasonDescription = season.description;
             seasonIcon = GetIcon(season.icon, season.color, season.color);
             calendarStyle = `border-color: ${season.color};`;
         }
 
-        let html = `<div id="${options.id}" class="fsc-calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" data-calendar="${calendar.id}">`;
+        const monthDescription = calendar.months[vMonthIndex].description;
+        const showMonthClickable = monthDescription && options.showDescriptions;
+        const showSeasonClickable = seasonDescription && options.showDescriptions;
+
+        let html = `<div id="${options.id}" class="fsc-calendar-wrapper" data-calendar="${calendar.id}">`;
+        //Calendar HTML
+        html += `<div  class="fsc-calendar ${options.cssClasses}" style="${options.colorToMatchSeason? calendarStyle : ''}" >`;
         //Hidden Options
         html += `<input class="fsc-render-options" type="hidden" value="${encodeURIComponent(JSON.stringify(options))}"/>`;
         //Put the header together
@@ -110,24 +131,25 @@ export default class CalendarFull{
         //Visible date change and current date
         html += `<div class="fsc-current-date">`;
         if(options.allowChangeMonth){
-            html += `<a class="fa fa-chevron-left" title="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
+            html += `<a class="fa fa-chevron-left" data-tooltip="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
         } else {
             html += `<span></span>`;
         }
-        html += `<span class="fsc-month-year" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonthIndex, day: 0, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar, {year: options.editYear})}</span>`;
+        html += `<span class="fsc-month-year ${showMonthClickable? 'fsc-description-clickable' : ''}" data-visible="${vMonthIndex}/${vYear}">${FormatDateTime({year: vYear, month: vMonthIndex, day: 0, hour: 0, minute: 0, seconds: 0}, monthYearFormat, calendar, {year: options.editYear})}</span>`;
         if(options.allowChangeMonth){
-            html += `<a class="fa fa-chevron-right" title="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
+            html += `<a class="fa fa-chevron-right" data-tooltip="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
         } else {
             html += `<span></span>`;
         }
         html += '</div>';
         //Season Name
         if(options.showSeasonName){
-            html += `<div class="fsc-season">${seasonIcon}${seasonName}</div>`;
+            html += `<div class="fsc-season">${seasonIcon}<span class="fsc-season-name ${showSeasonClickable? 'fsc-description-clickable' : ''}">${seasonName}</span></div>`;
         }
         //Weekday Headings
         if(calendar.year.showWeekdayHeadings){
-            html += `<div class="fsc-weekdays">${calendar.weekdays.map(w => `<div class="fsc-weekday" title="${w.name}">${w.abbreviation}</div>`).join('')}</div>`;
+            html += `<div class="fsc-weekdays">${calendar.weekdays.map(w => `<div class="fsc-weekday ${w.restday? 'fsc-weekend' : ''} ${w.description && options.showDescriptions? 'fsc-description-clickable' : ''}" data-tooltip="${w.name}">${w.abbreviation}</div>`).join('')}</div>`;
+            weekdayDescriptions = calendar.weekdays.map(w => w.description);
         }
         //Close header div
         html += '</div>';
@@ -136,8 +158,10 @@ export default class CalendarFull{
         html += `<div class="fsc-days">`;
         for(let i = 0; i < weeks.length; i++){
             if(weeks[i]){
-                html += `<div class="fsc-week">`;
+                html += `<div class="fsc-week ${!calendar.year.showWeekdayHeadings? 'fsc-weekend-round' : ''}">`;
                 for(let x = 0; x < weeks[i].length; x++){
+                    const isWeekend = calendar.weekdays[x].restday;
+                    html += `<div class="fsc-day-wrapper ${isWeekend? 'fsc-weekend' : ''}">`;
                     if(weeks[i][x]){
                         let dayClass = 'fsc-day';
                         const dayIndex = calendar.months[vMonthIndex].days.findIndex(d => d.numericRepresentation === (<SimpleCalendar.HandlebarTemplateData.Day>weeks[i][x]).numericRepresentation);
@@ -174,6 +198,28 @@ export default class CalendarFull{
                             dayClass += ' fsc-current';
                         }
 
+                        if(options.showDayDetails){
+                            const currentDate = FormatDateTime({year: vYear, month: vMonthIndex, day: dayIndex, hour: 0, minute: 0, seconds: 0}, calendar.generalSettings.dateFormat.date, calendar);
+                            const sunrise = FormatDateTime({year: 0, month: 0, day: 0, ...GetPresetTimeOfDay(PresetTimeOfDay.Sunrise, calendar, { year: vYear, month: vMonthIndex, day: dayIndex})}, calendar.generalSettings.dateFormat.time, calendar);
+                            const sunset = FormatDateTime({year: 0, month: 0, day: 0, ...GetPresetTimeOfDay(PresetTimeOfDay.Sunset, calendar, { year: vYear, month: vMonthIndex, day: dayIndex})}, calendar.generalSettings.dateFormat.time, calendar);
+                            const canChangeTime = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime);
+                            const canAddNote = canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes);
+                            let dayHtml = `<div class="fsc-day-context-list" data-date="${vYear}/${vMonthIndex}/${dayIndex}">`;
+                            dayHtml += `<div class="fsc-context-list-title">${currentDate}</div>`;
+                            dayHtml += `<div class="fsc-context-list-expand"><span class="fa fa-sun"></span>${GameSettings.Localize('FSC.Configuration.Season.SunriseSunset')}<span class="fa fa-caret-right"></span><div class="fsc-context-list-sub-menu"><div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunrise')}</strong>: ${sunrise}</div><div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunset')}</strong>: ${sunset}</div></div></div>`;
+                            if(canChangeTime || canAddNote){
+                                dayHtml += `<div class="fsc-context-list-break"></div>`;
+                                if(canChangeTime){
+                                    dayHtml += `<div class="fsc-context-list-action" data-action="current"><span class="fa fa-calendar-check"></span>${GameSettings.Localize('FSC.SetCurrentDate')}</div>`;
+                                }
+                                if(canAddNote){
+                                    dayHtml += `<div class="fsc-context-list-action" data-action="note"><span class="fa fa-sticky-note"></span>${GameSettings.Localize('FSC.Notes.AddNew')}</div>`;
+                                }
+                            }
+                            dayHtml += `</div>`;
+                            dayDetails.push(dayHtml);
+                        }
+
                         html += `<div class="${dayClass}" data-day="${dayIndex}">`;
                         if(options.showNoteCount){
                             html += `<div class="fsc-day-notes">${CalendarFull.NoteIndicator(calendar, vYear, vMonthIndex, dayIndex)}</div>`;
@@ -186,6 +232,7 @@ export default class CalendarFull{
                     } else {
                         html += '<div class="fsc-empty-day"></div>'
                     }
+                    html += '</div>';
                 }
                 html += '</div>';
             }
@@ -193,7 +240,39 @@ export default class CalendarFull{
         //Close day list div
         html += '</div>';
 
-        //Close main div
+        //Close calendar div
+        html += '</div>';
+
+        //Element Descriptions
+        if(options.showDescriptions || options.showDayDetails){
+            html += `<div class="fsc-descriptions">`;
+            if(options.showDescriptions){
+                if(monthDescription){
+                    html += `<div class="fsc-hide" data-type="month"><div class="fsc-description-content">${monthDescription}</div></div>`;
+                }
+                if(weekdayDescriptions.length){
+                    for(let i = 0; i < weekdayDescriptions.length; i++){
+                        if(weekdayDescriptions[i]){
+                            html += `<div class="fsc-hide" data-type="week${i}"><div class="fsc-description-content">${weekdayDescriptions[i]}</div></div>`;
+                        }
+                    }
+                }
+                if(seasonDescription){
+                    html += `<div class="fsc-hide" data-type="season"><div class="fsc-description-content">${seasonDescription}</div></div>`;
+                }
+            }
+            if(dayDetails.length){
+                for(let i = 0; i < dayDetails.length; i++){
+                    if(dayDetails[i]){
+                        html += `<div class="fsc-hide" data-type="day${i}"><div class="fsc-description-content fsc-context-menu">${dayDetails[i]}</div></div>`;
+                    }
+                }
+            }
+
+            html += `</div>`;
+        }
+
+        //Close wrapper div
         html += '</div>';
         return html;
     }
@@ -221,11 +300,28 @@ export default class CalendarFull{
                 yearInput.addEventListener('click', (e)=> e.stopPropagation());
                 yearInput.addEventListener('change', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.year, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             }
-            calendarElement.querySelectorAll('.fsc-days .fsc-day').forEach(el => {
+            calendarElement.querySelectorAll('.fsc-days .fsc-day').forEach((el, index) => {
                 el.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.day, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
-                //el.addEventListener('contextmenu', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.dayContext, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
+                el.addEventListener('contextmenu', CalendarFull.ShowDescription.bind(CalendarFull, `day${index}`));
             });
             calendarElement.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.calendar, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
+
+            //Day context click
+            calendarElement.querySelectorAll('.fsc-context-list-action').forEach(el => {
+                el.addEventListener('click', CalendarFull.DayContextClick);
+            });
+
+            //Description Click events
+            calendarElement.querySelector('.fsc-month-year')?.addEventListener('click', CalendarFull.ShowDescription.bind(CalendarFull, 'month'));
+            calendarElement.querySelector('.fsc-season-name')?.addEventListener('click', CalendarFull.ShowDescription.bind(CalendarFull, 'season'));
+            calendarElement.querySelectorAll('.fsc-weekdays .fsc-weekday').forEach((el, index) => {
+                el.addEventListener('click', CalendarFull.ShowDescription.bind(CalendarFull, `week${index}`));
+            });
+            if(!this.calendarBodyClicks[calendarId]){
+                document.body.addEventListener('click', CalendarFull.HideDescription);
+                this.calendarBodyClicks[calendarId] = true;
+            }
+
         }
     }
 
@@ -377,6 +473,81 @@ export default class CalendarFull{
         return false;
     }
 
+    public static DayContextClick(e: Event){
+        e.preventDefault();
+        e.stopPropagation();
+        const target = <HTMLElement>e.target;
+        if(target){
+            const action = target.getAttribute('data-action');
+            const date = target.closest('.fsc-day-context-list')?.getAttribute('data-date');
+            if(action && date){
+                const dateParts = date.split('/');
+                if(dateParts.length === 3){
+                    const year = parseInt(dateParts[0]);
+                    const month = parseInt(dateParts[1]);
+                    const day = parseInt(dateParts[2]);
+                    if(!isNaN(year) && !isNaN(month) && !isNaN(day)){
+                        if(action === 'current'){
+                            MainApplication.setCurrentDate(year, month, day);
+                        } else if(action === 'note'){
+                            const calId = target.closest('.fsc-calendar-wrapper')?.getAttribute('data-calendar');
+                            if(calId){
+                                const cal = CalManager.getCalendar(calId);
+                                if(cal){
+                                    NManager.createNote('New Note', '', {
+                                        calendarId: calId,
+                                        startDate: {year: year, month: month, day: day, hour:0, minute:0, seconds:0},
+                                        endDate: {year: year, month: month, day: day, hour:0, minute:0, seconds:0},
+                                        allDay: true,
+                                        repeats: NoteRepeat.Never,
+                                        order: 0,
+                                        categories: [],
+                                        remindUsers: []
+                                    }, cal).catch(e => console.error(e));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Hides all descriptions then shows the specified type
+     * @param type Which description to show
+     * @param e The click event
+     */
+    public static ShowDescription(type: string, e: Event){
+        e.preventDefault();
+        e.stopPropagation();
+        const target = <HTMLElement>e.target;
+        if(target){
+            const descriptions = <HTMLElement>target.closest('.fsc-calendar-wrapper')?.querySelector('.fsc-descriptions');
+            if(descriptions){
+                descriptions.querySelectorAll('div[data-type]').forEach(e => e.classList.add('fsc-hide'));
+                const desc = descriptions.querySelector(`div[data-type="${type}"]`);
+                if(desc){
+
+                    desc.classList.remove('fsc-hide');
+                    descriptions.style.top = `${target.offsetTop + target.offsetHeight}px`;
+                    descriptions.style.left = `${target.offsetLeft}px`;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Hide all description popups
+     */
+    public static HideDescription(){
+        const descriptions = <HTMLElement>document.querySelector('.simple-calendar .fsc-calendar-wrapper .fsc-descriptions');
+        if(descriptions){
+            descriptions.querySelectorAll('div[data-type]').forEach(e => e.classList.add('fsc-hide'));
+        }
+    }
+
     /**
      * Checks if the passed in day has any notes from the passed in calendar and generates the note indicators
      * @param {Calendar} calendar The calendar to pull the data from
@@ -394,12 +565,12 @@ export default class CalendarFull{
             if(regularNotes.length){
                 const rCount = regularNotes.length < 100? regularNotes.length : 99;
                 let rTitle = RendererUtilities.GenerateNoteIconTitle(rCount, regularNotes);
-                r = `<span class="fsc-note-count" title="${rTitle}">${rCount}</span>`;
+                r = `<span class="fsc-note-count" data-tooltip="${rTitle}">${rCount}</span>`;
             }
             if(reminderNotes.length){
                 const remCount = reminderNotes.length < 100? reminderNotes.length : 99;
                 let remTitle = RendererUtilities.GenerateNoteIconTitle(remCount, reminderNotes);
-                r += `<span class="fsc-note-count fsc-reminders" title="${remTitle}">${remCount}</span>`;
+                r += `<span class="fsc-note-count fsc-reminders" data-tooltip="${remTitle}">${remCount}</span>`;
             }
         }
         return r;
@@ -422,7 +593,7 @@ export default class CalendarFull{
             const d = calendar.months[visibleMonthIndex].days[dayIndex];
             if(mp && (mp.singleDay || d.selected || d.current)){
                 let moon = GetIcon(mp.icon, "#000000", calendar.moons[i].color);
-                moonHtml.push(`<span class="fsc-moon-phase ${mp.icon}" title="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`)
+                moonHtml.push(`<span class="fsc-moon-phase ${mp.icon}" data-tooltip="${calendar.moons[i].name} - ${mp.name}">${moon}</span>`)
             }
         }
         if(moonHtml.length < 3){

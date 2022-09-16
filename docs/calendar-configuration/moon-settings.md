@@ -1,5 +1,3 @@
-# Moon Settings
-
 This section allows the configuration of the different moons in the world so that their cycles display on the calendar.
 
 There are lots of settings when configuring a moon to make it as customized as you would like.

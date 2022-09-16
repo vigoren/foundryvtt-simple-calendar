@@ -8,7 +8,7 @@ Adding a new calendar to Simple Calendar is easy, just follow these steps:
 - This will take you to a new section where you can enter the name of the new calendar.
 ![](media://calendar-add-new.png)
 - Click the "Add Calendar" button.
-- The new calendar will be created, and you will be taken to the {@page quick-setup.md quick setup} section so a predefined calendar can be applied. If you don't want to use a predefined calendar you can skip this section and jump right into customization!
+- The new calendar will be created, and you will be taken to the {@page ./quick-setup.md quick setup} section so a predefined calendar can be applied. If you don't want to use a predefined calendar you can skip this section and jump right into customization!
 
 # Remove a Calendar
 

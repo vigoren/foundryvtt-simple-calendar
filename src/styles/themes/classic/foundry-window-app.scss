@@ -114,6 +114,9 @@ header.window-header{
   background: url($classicDenim);
   border-color: #000000;
   color: $white;
+  h2{
+    border-bottom-color: $secondary;
+  }
 }
 
 .window-resizable-handle{

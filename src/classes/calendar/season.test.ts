@@ -22,7 +22,7 @@ describe('Season Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(s).length).toBe(9); //Make sure no new properties have been added
+        expect(Object.keys(s).length).toBe(12); //Make sure no new properties have been added
         expect(s.id).toBeDefined();
         expect(s.name).toBe('Spring');
         expect(s.startingMonth).toBe(1);
@@ -43,7 +43,7 @@ describe('Season Tests', () => {
 
     test('To Config', () => {
         const c = s.toConfig();
-        expect(Object.keys(c).length).toBe(8); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(9); //Make sure no new properties have been added
         expect(c.name).toBe('Spring');
         expect(c.startingMonth).toBe(1);
         expect(c.startingDay).toBe(1);
@@ -53,7 +53,7 @@ describe('Season Tests', () => {
 
     test('To Template', () => {
         let c = s.toTemplate();
-        expect(Object.keys(c).length).toBe(11); //Make sure no new properties have been added
+        expect(Object.keys(c).length).toBe(14); //Make sure no new properties have been added
         expect(c.name).toBe('Spring');
         expect(c.startingMonth).toBe(1);
         expect(c.startingDay).toBe(1);

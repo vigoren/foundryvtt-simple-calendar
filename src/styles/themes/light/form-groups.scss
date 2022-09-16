@@ -20,7 +20,7 @@
         .notes{
           color: $primary-1100;
         }
-        input, select{
+        input, select,textarea{
           background-color: $gray-400;
           color: $fontColor;
           &:focus{
