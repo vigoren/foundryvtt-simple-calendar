@@ -29,7 +29,7 @@ export default class CalendarFull{
         showDescriptions: true,
         showDayDetails: true,
         theme: 'auto',
-        view: CalendarViews.Year
+        view: CalendarViews.Month
     };
 
     /**
