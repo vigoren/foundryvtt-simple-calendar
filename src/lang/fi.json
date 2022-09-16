@@ -377,7 +377,6 @@
 	"FSC.NoteDirtyText": "Tässä merkinnässä on tallentamattomia muutoksia, sulje kuitenkin? Muutokset menetetään.",
 	"FSC.Configuration.Notes.NoteCategoriesHelp": "Valitse kaikki tähän merkintään liittyvät luokat.",
 	"FSC.Configuration.DefaultNoteVisibility": "Merkinnän oletusnäkyvyys pelaajille",
-	"FSC.Warn.Notes.NotGM": "Pelissä ei ole PJ:aa. PJ:n on kirjauduttava sisään, jotta pelaajat voivat lisätä merkintöjä.",
 	"FSC.Configuration.Global.SyncCalendars.Description": "Kun tämä on valittuna, kaikki kalenterit muuttavat päivämäärää/kellonaikaa, kun käytät ohjaimia muuttamaan niitä eteen- tai taaksepäin.",
 	"FSC.SetCurrentDateDialog.Title": "Vahvista nykyisen päivämäärän muutos",
 	"FSC.SetCurrentDateDialog.Content": "Olet valinnut päivämäärän muutettavaksi päivään, joka ei ole tällä hetkellä näkyvillä!<br/>Oletko varma, että haluat muuttaa nykyiseksi päivämääräksi <strong>{DATE}</strong>?",
@@ -386,6 +385,5 @@
 	"FSC.Cancel": "Peruuta",
 	"FSC.DeleteConfirmText": "Haluatko varmasti poistaa tämän merkinnän?",
 	"FSC.ViewingDifferentCalendar": "Jotkin ohjaimet on piilotettu, koska tämä ei ole käytössä oleva kalenteri.",
-	"FSC.ButtonTitle": "Kalenteri",
 	"FSC.MoveBackwardOne": "Siirry taaksepäin 1"
 }
