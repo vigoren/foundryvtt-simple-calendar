@@ -1,6 +1,13 @@
 # Change Log
 
-## v 2.1.18 - Rest Day Highlighting, Descriptions, Day Context Menu, Bug Fixes, QoL Improvements
+## v2.1.19 - Bug Fix... Oops
+
+![](https://img.shields.io/badge/release%20date-September%2016%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.19/module.zip)
+
+- Fixed showing all months at once (experimental year view).
+
+## v2.1.18 - Rest Day Highlighting, Descriptions, Day Context Menu, Bug Fixes, QoL Improvements
 
 ![](https://img.shields.io/badge/release%20date-September%2016%2C%202022-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.18/module.zip)
