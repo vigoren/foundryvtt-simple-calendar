@@ -386,7 +386,7 @@
 	"FSC.Configuration.Time.SecondsInCombatRound": "Secondes par Round de Combat",
 	"FSC.Configuration.Time.SecondsInCombatRoundHelp": "Combien de secondes s'écoulent durant 1 round de combat. Ceci n'est appliqué que si le système actuel n'incrémente pas le temps pendant les rounds de combat !",
 	"FSC.MakeActive": "Rendre actif",
-	"FSC.Configuration.Client.OpenOnLoad.Description": "Ouvrira l'application Simple Calendar quand Foundry sera chargé.",
+	"FSC.Configuration.Client.OpenOnLoad.Description": "Ouvrira l'application Simple Calendar quand Foundry VTT sera chargé.",
 	"FSC.Configuration.Global.SyncCalendars.Description": "Si cette option est cochée, tous les calendriers changeront leur date/heure lorsque vous utiliserez les contrôles pour changer la date/heure en avant ou en arrière.",
 	"FSC.Configuration.Notes.PostNoteRemindersOnFoundryLoadHelp": "Lorsqu'un utilisateur se connecte pour la première fois à foundry, tous les rappels de notes pour la journée en cours lui seront chuchotés.",
 	"FSC.Configuration.QuickSetup.ChoosePredefinedDescription": "Choisissez l'un de ces calendriers prédéfinis sur lequel baser le calendrier actuel. Les paramètres du calendrier actuel seront alors modifiés pour correspondre aux paramètres du calendrier prédéfini sélectionné.",
