@@ -44,6 +44,7 @@ export default class PredefinedCalendar{
             if(addNotes && data.notes){
                 const perms: Partial<Record<string, 0 | 1 | 2 | 3>> = {};
                 (<Game>game).users?.forEach(u => perms[u.id] = (<Game>game).user?.id === u.id? 3 : 2);
+                perms['default'] = 2;
 
                 for(let i = 0; i < data.notes.length; i++){
                     const note = data.notes[i];

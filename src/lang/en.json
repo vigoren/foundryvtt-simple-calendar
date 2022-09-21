@@ -252,6 +252,7 @@
 	"FSC.Notes.Editor.TinyMCE": "Text (TinyMCE)",
 	"FSC.Notes.Editor.ProseMirror": "Text (ProseMirror)",
 	"FSC.Notes.Editor.Markdown": "Text (Markdown)",
+	"FSC.Notes.Permissions.AllPlayers": "All Players",
 	"FSC.Date.Sunday": "Sunday",
 	"FSC.Date.Monday": "Monday",
 	"FSC.Date.Tuesday": "Tuesday",

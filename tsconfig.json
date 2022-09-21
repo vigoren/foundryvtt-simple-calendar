@@ -91,6 +91,7 @@
       "typedoc-plugin-extras",
       "@knodes/typedoc-plugin-pages"
     ],
+    "customCss": "./docs/sc-style.css",
     "disableSources": true,
     "hideGenerator": true,
     "excludeInternal": true,

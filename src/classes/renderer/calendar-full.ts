@@ -50,17 +50,31 @@ export default class CalendarFull{
         if(options.view === CalendarViews.Month){
             HTML = this.Build(calendar, options);
         } else if(options.view === CalendarViews.Year){
-            HTML = `<div class="fsc-year-view">`
+            const vYear = options.date? options.date.year : calendar.year.visibleYear;
+
+            HTML = `<div class="fsc-year-view-wrapper" id="${options.id}"><div class="fsc-current-year">`;
+            if(options.allowChangeMonth){
+                HTML += `<a class="fa fa-chevron-left" data-tooltip="${GameSettings.Localize('FSC.ChangePreviousMonth')}"></a>`;
+            }
+            HTML += `<span>${vYear}</span>`;
+            if(options.allowChangeMonth){
+                HTML += `<a class="fa fa-chevron-right" data-tooltip="${GameSettings.Localize('FSC.ChangeNextMonth')}"></a>`;
+            }
+            HTML += '</div>';
+            HTML += `<div  class="fsc-year-view">`;
             options.showYear = false;
             options.allowChangeMonth = false;
+            const origId = options.id;
             for(let i = 0; i < calendar.months.length; i++){
                 options.date = {
-                    year:  calendar.year.visibleYear,
+                    year:  vYear,
                     month: i,
                     day: 0
                 };
+                options.id = `${origId}-${i}`;
                 HTML += this.Build(calendar, options);
             }
+            HTML += '</div>';
             HTML += '</div>';
         }
         if(options.theme !== 'none'){

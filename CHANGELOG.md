@@ -1,5 +1,38 @@
 # Change Log
 
+## v2.1.26 - Improved Note Permissions and Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-September%2020%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.26/module.zip)
+
+### Improved Note Permissions
+
+Assigning permissions to notes has been improved!
+
+- Renamed the `Player Viewable` field on notes to `Who Can See` to clearly indicate what that setting is for.
+- Added an `All Players` options to the `Who Can See` field for setting note permissions. This setting will:
+  - Select all players in the drop-down and not allow you to unselect them while the `All Players` option is selected.
+  - Sets it so all current and future players will be able to see this note. GM's will no longer have to add new players to notes everyone should be able to see!
+- Updated all predefined notes so that when created they are set so All Players (current and future) can view them. **This is not retroactive**.
+- Updated the `Player Visible` icon on the notes list that GM's see:
+  - It now has 3 states instead of 2
+    - `Green Eye`![](./docs/images/note-list-player-visible.png) ![](media://note-list-player-visible.png): All players can view this note.
+    - `Yellow Partial Eye`![](./docs/images/note-list-partial-player-visible.png) ![](media://note-list-partial-player-visible.png): Some players can view this note.
+    - `Red Eye Slash`![](./docs/images/note-list-not-player-visible.png) ![](media://note-list-not-player-visible.png): Only the author of this note can view it.
+  - The tooltip for the `Player Visible` icon now shows a list of players that can view the note.<br/>![](./docs/images/note-list-who-can-see-tooltip.png)![](media://note-list-who-can-see-tooltip.png)
+- Added the `Show Players` button in the header of the note dialog so any note can be shown to the players. This works just like the Journal Show Players button.
+
+The `All Players` option for `Who Can See` a note is not retroactive, so older notes that should have that set will need to be updated.
+
+### Bug Fixes
+
+- Fixed a bug where the checked indicator of a multiple select dropdown would not select the item when clicked.
+- Fixed an issue where, in some instances, the calendar would be drawn wider than needed and slowly shrink as time was changed.
+
+### Documentation Updates
+
+- Added better styling for tables in the new look.
+
 ## v2.1.19 - Bug Fix... Oops
 
 ![](https://img.shields.io/badge/release%20date-September%2016%2C%202022-blue)

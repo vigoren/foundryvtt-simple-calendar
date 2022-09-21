@@ -257,24 +257,27 @@ export default class MainApp extends FormApplication{
                     wrapper.querySelectorAll(".fsc-section").forEach((s, index) => {
                         height += (<HTMLElement>s).offsetHeight;
                     });
+                    const minCalendarWidth = 200;
                     const currentDate = <HTMLElement>wrapper.querySelector('.fsc-calendar .fsc-calendar-header .fsc-current-date');
                     const week = <HTMLElement>wrapper.querySelector('.fsc-calendar .fsc-days .fsc-week');
                     const clock = <HTMLElement>wrapper.querySelector('.fsc-clock-display .fsc-clock');
                     const yearView = <HTMLElement>wrapper.querySelector('.fsc-year-view');
-                    let currentDateWidth = 0, weekWidth = 0, clockWidth = 0, yearViewWidth = 0;
+                    let weekWidth = 0, clockWidth = 0, yearViewWidth = 0;
 
                     if(yearView){
                         yearViewWidth = yearView.offsetWidth;
                         yearViewWidth += 16; //Spacing between calendars
                     }
-                    if (currentDate) {
-                        Array.from(currentDate.children).forEach(c => {
-                            currentDateWidth += (<HTMLElement>c).offsetWidth;
-                        });
-                        currentDateWidth += 20; //Margins on prev/next buttons
-                    }
                     if (week) {
-                        weekWidth = week.offsetWidth;
+                        weekWidth = week.offsetWidth < minCalendarWidth? minCalendarWidth : week.offsetWidth;
+                        if (currentDate) {
+                            currentDate.style.maxWidth = `${weekWidth}px`;
+                        }
+                    } else if (currentDate) {
+                        Array.from(currentDate.children).forEach(c => {
+                            weekWidth += (<HTMLElement>c).offsetWidth;
+                        });
+                        weekWidth += 20; //Margins on prev/next buttons
                     }
                     if (clock) {
                         Array.from(clock.children).forEach(c => {
@@ -282,7 +285,7 @@ export default class MainApp extends FormApplication{
                         });
                         clockWidth += 8; //Clock Icon Margin
                     }
-                    width = Math.max(currentDateWidth, weekWidth, clockWidth, yearViewWidth);
+                    width = Math.max(weekWidth, clockWidth, yearViewWidth);
                     width += 10; //Calendar Padding
                     width += 70; //Action list width + Margin
                     width += 16; // Window Padding

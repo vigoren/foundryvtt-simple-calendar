@@ -14,7 +14,7 @@ const fs = require('fs');
 function getEntries() {
     //Default required entry points
     const list = {
-        "index": './src/index.ts',
+        "index": {import: './src/index.ts'},
         "styles/calendar": './src/styles/index.scss'
     };
 
@@ -100,6 +100,10 @@ module.exports = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+    },
+    performance: {
+        maxEntrypointSize: 512000,
+        maxAssetSize: 512000
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

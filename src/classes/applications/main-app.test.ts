@@ -116,27 +116,54 @@ describe('Main App Class Tests', () => {
         const mainApp = document.createElement('div');
         const header = document.createElement('div');
         const wrapper = document.createElement('div');
-        const wrapperChild = document.createElement('div');
-        const wrapperChildChild = document.createElement('div');
+        const calendarSections = document.createElement('div');
+        const clockSections = document.createElement('div');
+        const yearView = document.createElement('div');
+        const calendarHeader = document.createElement('div');
+        const calendarHeaderCurDate = document.createElement('div');
+        const calendarHeaderCurDateChild = document.createElement('div');
+        const calendarDays = document.createElement('div');
+        const calendarWeek = document.createElement('div');
+        const clock = document.createElement('div');
+        const clockChild = document.createElement('div');
 
         header.classList.add('window-header');
         wrapper.classList.add('fsc-main-wrapper');
-        mainApp.append(header);
-        mainApp.append(wrapper);
-        wrapperChild.append(wrapperChildChild);
+        calendarSections.classList.add('fsc-section', 'fsc-calendar');
+        clockSections.classList.add('fsc-section', 'fsc-clock-display');
+        yearView.classList.add('fsc-year-view');
+        calendarHeader.classList.add('fsc-calendar-header');
+        calendarHeaderCurDate.classList.add('fsc-current-date');
+        calendarDays.classList.add('fsc-days');
+        calendarWeek.classList.add('fsc-week');
+        clock.classList.add('fsc-clock');
+
+        mainApp.append(header, wrapper);
+        wrapper.append(calendarSections, clockSections, yearView);
+        calendarSections.append(calendarHeader, calendarDays);
+        calendarHeader.append(calendarHeaderCurDate);
+        calendarHeaderCurDate.append(calendarHeaderCurDateChild);
+        calendarDays.append(calendarWeek);
+        clockSections.append(clock);
+        clock.append(clockChild);
 
         jest.spyOn(document, 'querySelector').mockReturnValue(mainApp);
         jest.spyOn(ma, 'setPosition').mockImplementation(() => {});
-        jest.spyOn(wrapper, 'querySelector').mockReturnValue(wrapperChild);
-        //@ts-ignore
-        jest.spyOn(wrapper, 'querySelectorAll').mockReturnValue([wrapperChild]);
 
         ma.setWidthHeight();
         expect(ma.setPosition).toHaveBeenCalledTimes(1);
 
-        ma.uiElementStates.compactView = true;
+        jest.spyOn(calendarWeek, 'offsetWidth', 'get').mockReturnValue(300);
         ma.setWidthHeight();
         expect(ma.setPosition).toHaveBeenCalledTimes(2);
+
+        calendarSections.removeChild(calendarDays);
+        ma.setWidthHeight();
+        expect(ma.setPosition).toHaveBeenCalledTimes(3);
+
+        ma.uiElementStates.compactView = true;
+        ma.setWidthHeight();
+        expect(ma.setPosition).toHaveBeenCalledTimes(4);
     });
 
     test('Ensure Current Date Is Visible', () => {

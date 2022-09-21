@@ -92,8 +92,10 @@ const game = {
             return v.call(undefined, user);
         },
         map: (v: any) => {
-            return v.call(undefined, user);
-        }
+            return [v.call(undefined, user)];
+        },
+        unshift: (v: any) => {},
+        contents: () => {return[user]}
     },
     scenes: null,
     system: {

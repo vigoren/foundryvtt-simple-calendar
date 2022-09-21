@@ -97,15 +97,9 @@
                         <h3 class="fsc-note-title">{{title}}</h3>
                         <div class="fsc-note-details">
                             {{#if ../isGM}}
-                            {{#if playerVisible}}
-                            <div class="fsc-note-category fsc-note-icon fsc-player-visible" data-tooltip="{{localize 'FSC.Notes.PlayerVisible'}}">
-                                <span class="fa fa-eye"></span>
+                            <div class="fsc-note-category fsc-note-icon {{playerVisible.color}}" data-tooltip="{{playerVisible.players}}">
+                                <span class="fa {{playerVisible.icon}}"></span>
                             </div>
-                            {{else}}
-                            <div class="fsc-note-category fsc-note-icon fsc-not-player-visible" data-tooltip="{{localize 'FSC.Notes.NotPlayerVisible'}}">
-                                <span class="fa fa-eye-slash"></span>
-                            </div>
-                            {{/if}}
                             {{/if}}
                             {{#if userReminderRegistered}}
                             <div class="fsc-note-category fsc-note-icon fsc-reminder" data-tooltip="{{localize 'FSC.Notes.ReminderHelp'}}">

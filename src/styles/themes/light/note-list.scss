@@ -16,11 +16,15 @@
         .fsc-note-category{
           box-shadow: 1px 1px 5px $fontColor;
 
-          &.fsc-player-visible{
+          &.fsc-secondary{
+            background-color: $secondary;
+            border-color: $secondary;
+          }
+          &.fsc-success{
             background-color: $success-400;
             border-color: $success-400;
           }
-          &.fsc-not-player-visible{
+          &.fsc-danger{
             background-color: $danger-400;
             border-color: $danger-400;
           }

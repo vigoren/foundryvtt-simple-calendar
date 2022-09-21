@@ -47,17 +47,21 @@ export default class MultiSelect {
                 }
             } else if(type === 'option'){
                 event.stopPropagation();
-                const target = event.target;
+                const target = (<HTMLElement>event.target)?.closest('li');
                 let renderOptions: SimpleCalendar.Renderer.MultiSelectOptions = {id: '', options: []};
                 const rawRenderOptions = (<HTMLInputElement>multiSelect.querySelector('.fsc-render-options'))?.value;
                 if(target && !(<HTMLElement>target).classList.contains('fsc-disabled') && rawRenderOptions){
                     renderOptions = JSON.parse(decodeURIComponent(rawRenderOptions));
+
                     const value = (<HTMLElement>target).getAttribute('data-value');
                     const selected = !(<HTMLElement>target).classList.contains('fsc-selected');
 
                     const optionIndex = renderOptions.options.findIndex((o: SimpleCalendar.Renderer.MultiSelectOption) => o.value === value);
                     if(optionIndex > -1){
                         renderOptions.options[optionIndex].selected = selected;
+                        if(renderOptions.options[optionIndex].makeOthersMatch){
+                            renderOptions.options.forEach((o, index) => { if(!o.static && index !== optionIndex){o.selected = selected; o.disabled = selected;}});
+                        }
                     }
 
                     const newHtml = MultiSelect.Render(renderOptions, true);
