@@ -148,7 +148,7 @@
 	"FSC.DateFormat.Day.NumberPadded": "Tagesnummer mit einer 0 vorangestellt.",
 	"FSC.DateFormat.Day.NumberPaddedExample": "01 02 ... 30 31",
 	"FSC.DateFormat.Day.NumberSuffix": "Tagesnummer mit einem Suffix versehen.",
-	"FSC.DateFormat.Day.NumberSuffixExample": "1er 2er ... 30er 31er",
+	"FSC.DateFormat.Day.NumberSuffixExample": "1er 2er … 30er 31er",
 	"FSC.DateFormat.Weekday.Number": "Die Nummer des Tages innerhalb der Woche.",
 	"FSC.DateFormat.Weekday.NumberExample": "1 2 ... 6 7",
 	"FSC.DateFormat.Weekday.NumberPadded": "Die Nummer des Tages innerhalb der Woche mit einer 0 vorangestellt.",
@@ -159,7 +159,7 @@
 	"FSC.DateFormat.Weekday.NameExample": "Sonntag Montag ... Freitag Samstag",
 	"FSC.DateFormat.Hour.12Hour": "Stunden als Zahlen innerhalb des 12-Stunden-Formats.",
 	"FSC.DateFormat.Hour.12HourExample": "1 2 ... 11 12",
-	"FSC.DateFormat.Hour.24Hour": "Stunden als Zahlen innerhalb des 24-Stunden-Formats",
+	"FSC.DateFormat.Hour.24Hour": "Stunden als Zahlen innerhalb des 24-Stunden-Formats.",
 	"FSC.DateFormat.Hour.24HourExample": "0 1 ... 22 23",
 	"FSC.DateFormat.Hour.12HourPadded": "Die Stunden als Zahlen mit einer 0 vorangestellt (12-Stunden-Format).",
 	"FSC.DateFormat.Hour.12HourPaddedExample": "01 02 ... 11 12",
@@ -283,7 +283,7 @@
 	"FSC.Configuration.General.CalendarPlayerVisible": "Kalender anzeigen",
 	"FSC.Configuration.General.CalendarPlayerVisibleHelp": "Die ausgewählte Rolle kann Simple Calendar öffnen.",
 	"FSC.Configuration.General.PlayersChangeDateTime": "Datum und Uhrzeit anpassen",
-	"FSC.Configuration.General.PlayersChangeDateTimeHelp": "Die ausgewählte Rolle kann Datum und Uhrzeit in Simple Calendar anpassen.",
+	"FSC.Configuration.General.PlayersChangeDateTimeHelp": "Die ausgewählte Rolle kann Datum und Uhrzeit in Simple Calendar anpassen",
 	"FSC.Configuration.General.DisplayOptions": "Darstellungs-Einstellungen",
 	"FSC.Configuration.General.Display.DateFormat.Date": "Datumsformat",
 	"FSC.Configuration.General.Display.DateFormat.DateHelp": "Das Datumsformat welches zur Darstellung verwendet wird.",
@@ -368,7 +368,7 @@
 	"FSC.Configuration.Weekday.FirstWeekDay": "Start der Woche",
 	"FSC.Configuration.Weekday.FirstWeekDayHelp": "Diese Einstellung steuert den Tag mit dem die Woche am ersten tag des Jahres 0 beginnt.",
 	"FSC.Configuration.DefaultNoteVisibility": "Standard Notiz Spielersichtbarkeit",
-	"FSC.Configuration.DefaultNoteVisibilityHint": "Für neue Notizen, ob standardmäßig die Sichtbarkeit für Spieler aktiviert sein soll",
+	"FSC.Configuration.DefaultNoteVisibilityHint": "Für neue Notizen, ob standardmäßig die Sichtbarkeit für Spieler aktiviert sein soll.",
 	"FSC.Configuration.LeapYear.Title": "Schaltjahre",
 	"FSC.Configuration.LeapYear.Rule": "Schaltjahresregeln",
 	"FSC.Configuration.LeapYear.RuleHelp": "Die Regeln, denen Schaltjahre folgen.",
@@ -433,5 +433,6 @@
 	"FSC.Warn.Time.ActiveCombats": "Es läuft ein aktiver Kampf. Bitte beende den Kampf vor dem Start der Echtzeituhr.",
 	"FSC.Warn.Macros.GMUpdate": "Nur ein SL kann das Kalenderdatum aktualisieren!",
 	"FSC.Warn.Calendar.NotGM": "Es ist kein SL im Spiel. Mindestens ein SL muss eingeloggt sein, damit Spieler Datum/Zeit ändern können.",
-	"FSC.Error.Calendar.GMCurrent": "Du musst SL sein, um das aktuelle Datum ändern zu können."
+	"FSC.Error.Calendar.GMCurrent": "Du musst SL sein, um das aktuelle Datum ändern zu können.",
+	"FSC.Configuration.Client.NoteReminderNotification.Title": "Notiz-Erinnerungs-Benachrichtigung"
 }
