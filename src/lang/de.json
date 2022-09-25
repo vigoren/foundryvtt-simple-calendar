@@ -218,7 +218,7 @@
 	"FSC.Notes.Date": "Notiz Datum",
 	"FSC.Notes.NotPlayerVisible": "Nicht sichtbar für Spieler",
 	"FSC.Notes.PlayerVisible": "Sichtbar für Spieler",
-	"FSC.Notes.Reminder": "Erinnere mich!",
+	"FSC.Notes.Reminder": "Erinnere mich",
 	"FSC.Notes.ReminderHelp": "Du wirst an dieses Ereignis erinnert.",
 	"FSC.Notes.Repeating": "Notizwiederholungen",
 	"FSC.Notes.RepeatingHelp": "Steuert, ob diese Notiz wöchentlich, monatlich, jährlich oder gar nicht wiederholt wird.",
@@ -462,5 +462,6 @@
 	"FSC.Notes.MacroHelp": "Wähle ein Macro, das automatisch ausgeführt wird, wenn der Zeitpunkt der Notiz erreicht wird.",
 	"FSC.Notes.Editor.TinyMCE": "Text (TinyMCE)",
 	"FSC.Notes.Editor.ProseMirror": "Text (ProseMirror)",
-	"FSC.Notes.Editor.Markdown": "Text (Markdown)"
+	"FSC.Notes.Editor.Markdown": "Text (Markdown)",
+	"FSC.Notes.Permissions.AllPlayers": "Alle Spieler"
 }
