@@ -12,11 +12,7 @@
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dvigorator%26type%3Dpatrons&style=flat)](https://patreon.com/vigorator)
 [![ko-fi](https://img.shields.io/badge/%20-Support%20me%20on%20Ko--fi-%23FF5E5B?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/A0A546HOX)
 
-<div style="overflow: hidden; height: 250px; position: relative;"><img style="width: 100%; position: relative; top: 50%; transform: translateY(-50%);" src="https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-theme-dark.png">
-<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(#0b0a13, transparent, #0b0a13);">&nbsp;</div>
-<img style="position: absolute; top: calc(50% - 100px); left: calc(50% - 91px); height: 200px; width: 182px; filter: drop-shadow(0 0 10px white);" src="https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.svg">
-</div>
-
+![](./docs/images/logo.svg)
 # Simple Calendar 
 
 Simple Calendar is the ultimate timekeeping module for [FoundryVTT](https://foundryvtt.com/) that works with all game systems!
