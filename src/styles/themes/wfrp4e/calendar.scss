@@ -1,35 +1,4 @@
 @import "../../variables";
-.fsc-calendar-wrapper{
-  .fsc-descriptions{
-    > div {
-      &::before{
-        top: -8px;
-        background-color: $secondary-800;
-      }
-      border: 3px double $secondary-800;
-      border-radius: 0;
-      background-color: $wfrpBlackBackground;
-    }
-    .fsc-day-context-list{
-      .fsc-context-list-action, .fsc-context-list-expand{
-        &:hover, &:focus, &:active{
-          color: #b98132;
-          .fsc-context-list-sub-menu{
-            color: $wfrpTextColor;
-          }
-        }
-      }
-      .fsc-context-list-break{
-        border-color: $gray-600;
-      }
-      .fsc-context-list-sub-menu{
-        border: 3px double $secondary-800;
-        border-radius: 0;
-        background-color: $wfrpBlackBackground;
-      }
-    }
-  }
-}
 //Calendar Styling
 .fsc-calendar {
   background-color: $wfrpBlackBackground;

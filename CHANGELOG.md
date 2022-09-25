@@ -1,16 +1,16 @@
 # Change Log
 
-## v2.1.26 - Improved Note Permissions and Bug Fixes
+## v2.1.27 - Improved Note Permissions, Note List Context Menu and Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-September%2020%2C%202022-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.26/module.zip)
+![](https://img.shields.io/badge/release%20date-September%2023%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.27/module.zip)
 
 ### Improved Note Permissions
 
 Assigning permissions to notes has been improved!
 
 - Renamed the `Player Viewable` field on notes to `Who Can See` to clearly indicate what that setting is for.
-- Added an `All Players` options to the `Who Can See` field for setting note permissions. This setting will:
+- Added an `All Players` option to the `Who Can See` field for setting note permissions. This setting will:
   - Select all players in the drop-down and not allow you to unselect them while the `All Players` option is selected.
   - Sets it so all current and future players will be able to see this note. GM's will no longer have to add new players to notes everyone should be able to see!
 - Updated all predefined notes so that when created they are set so All Players (current and future) can view them. **This is not retroactive**.
@@ -22,16 +22,43 @@ Assigning permissions to notes has been improved!
   - The tooltip for the `Player Visible` icon now shows a list of players that can view the note.<br/>![](./docs/images/note-list-who-can-see-tooltip.png)![](media://note-list-who-can-see-tooltip.png)
 - Added the `Show Players` button in the header of the note dialog so any note can be shown to the players. This works just like the Journal Show Players button.
 
-The `All Players` option for `Who Can See` a note is not retroactive, so older notes that should have that set will need to be updated.
+The `All Players` option for `Who Can See` a note is not retroactive, so older notes shared with everyone will not have this set.
+
+### Note List Context Menu (Right Click)
+
+You can now right-click on notes under the notes list to show different actions that can be done. The list of actions available will change depending on if you are the GM or own the note being right-clicked on.
+
+![](./docs/images/note-list-context-menu.png)
+![](media://note-list-context-menu.png)
+
+- All players will be shown the `Remind Me`/`Don't Remind Me` option as a quick way to toggle being reminded about the note.
+- GM's will be shown the `Show Players` option. This functions the exact same as the `Show Players` button in the header of a Journal Entry and allow you to show this note to the specified players regardless of if they can see it or not.
+- If you added the note, or are the GM you will see another 2 options:
+  - `Edit` will open the note directly into the edit mode.
+  - `Delete` will allow you to delete the note. A confirmation dialog is still shown to help make sure no accidental deletions happen.
+
 
 ### Bug Fixes
 
 - Fixed a bug where the checked indicator of a multiple select dropdown would not select the item when clicked.
 - Fixed an issue where, in some instances, the calendar would be drawn wider than needed and slowly shrink as time was changed.
 
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+* [vt-tom](https://weblate.foundryvtt-hub.com/user/vt-tom/) (German)
+* [Pierre Revat](https://weblate.foundryvtt-hub.com/user/Dolgren/) (French)
+* [benwater12](https://weblate.foundryvtt-hub.com/user/benwater12/) (Chinese Traditional)
+
 ### Documentation Updates
 
 - Added better styling for tables in the new look.
+- Updated the [note editing documentation](https://simplecalendar.info/pages/docs/using-sc/index/notes/index/adding-editing-removing.html#editing-notes) to account for the new `All Players` option in the `Who Can View` setting.
+- Updated the [notes documentation](https://simplecalendar.info/pages/docs/using-sc/index/notes/index/index.html) to account for the changes to the Player Visible option
+- Updated the [notes documentation](https://simplecalendar.info/pages/docs/using-sc/index/notes/index/index.html) to account for the new context menu in the note list.
+
+<hr/>
 
 ## v2.1.19 - Bug Fix... Oops
 
@@ -39,6 +66,8 @@ The `All Players` option for `Who Can See` a note is not retroactive, so older n
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.19/module.zip)
 
 - Fixed showing all months at once (experimental year view).
+
+<hr/>
 
 ## v2.1.18 - Rest Day Highlighting, Descriptions, Day Context Menu, Bug Fixes, QoL Improvements
 
@@ -109,6 +138,8 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 - Updated the [using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) documentation to include information about the description popups and show example images.
 - Updated the [using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) documentation to include information about the new context menu for days.
 
+<hr/>
+
 ## v2.1.10 - Bug Fixes, QoL Improvements and Translation Updates
 
 ![](https://img.shields.io/badge/release%20date-September%208%2C%202022-blue)
@@ -148,6 +179,8 @@ Many people have contributed on Weblate all ready to update and add translations
 
 - Updated the configuration documentation to reflect some improvements to the English language made while being translated.
 
+<hr/>
+
 ## v2.1.4 - QoL Updates and Bug Fixes 
 
 ![](https://img.shields.io/badge/release%20date-September%202%2C%202022-blue)
@@ -162,6 +195,8 @@ Many people have contributed on Weblate all ready to update and add translations
 - Fixed a bug that was making it not possible to update a notes title.
 - Added validation for the time settings ("Hours in a Day", "Minutes in an Hour", "Seconds in a Minute" and "Update Frequency") to ensure that they can not be set to 0 or a negative value.
 - Fixed a holiday for the Das Schwarze Auge/The Dark Eye 5th Edition Predefined Calendar that was on the wrong day.
+
+<hr/>
 
 ## v2.1.0 - FoundryVTT V10 Support, Note Pages, System Specific Themes, QoL Improvements, Bug Fixes
 
@@ -239,6 +274,8 @@ To go along with the release of FoundryVTT version 10 some depreciated options w
 - From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `time` property has been removed. Please use the options under the `date` property instead.
 - From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `year` property has been removed. Please use the options under the `date` property instead.
 
+<hr/>
+
 ## v2.0.30 - Combat Detection Changes & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%204%2C%202022-blue)
@@ -271,6 +308,8 @@ The new option can be handy in instances of pulling a single character to a new 
 
 - Added Simple Calendar as an [NPM package](https://www.npmjs.com/package/foundryvtt-simple-calendar) so that other projects can reference the built-in type definitions. See the [documentation](https://simplecalendar.info/pages/docs/developing-with-sc/index.html) for more details.
 
+<hr/>
+
 ## v2.0.25 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-June%2010%2C%202022-blue)
@@ -283,6 +322,8 @@ The new option can be handy in instances of pulling a single character to a new 
 - Fixed a bug where clicking on the configuration setting title "Show Notes Folder" would cause the "Sync Date/Time" setting checkbox to change its state.
 - Fixed a bug where clicking on the note settings title "Send Reminders On Login" would cause the "Note Default Player Visibility" setting checkbox to change its state.
 - Fixed a rare bug where invalid permissions could be loaded and cause the configuration dialog to fail to open properly.
+
+<hr/>
 
 ## v2.0.20 - Bug Fixes
 
@@ -301,6 +342,8 @@ The new option can be handy in instances of pulling a single character to a new 
 - Added a new function `SimpleCalendar.api.pauseClock()` that will pause the clock if it is started.
 - Added a new function `SimpleCalendar.api.removeNote()` that will remove the note and journal entry with the passed in ID.
 - Added a new function `SimpleCalendar.api.searchNotes()` that will search notes for the passed in term. Only the notes that the current player can see are searched.
+
+<hr/>
 
 ## v2.0.13 - Notes Auto Execute Macros and Bug Fixes
 
@@ -331,6 +374,8 @@ Notes that have a macro that will be triggered will have an icon appear. This ic
 
 - The German translation has been updated thanks to מר כוס!
 
+<hr/>
+
 ## v2.0.4 - Update Issue Fix and More Bugs Squished
 
 ![](https://img.shields.io/badge/release%20date-May%2010%2C%202022-blue)
@@ -358,6 +403,8 @@ I apologize about this mistake and the extra work/confusion that may have come b
 - Fixed a bug where the Display Options Time Formats previews were no longer updating as changes were made to the format.
 - Toned down the Token Control button coloring, so it is not as vivid and distracting.
 
+<hr/>
+
 ## v2.0.1 - Bug Fixing
 
 ![](https://img.shields.io/badge/release%20date-May%209%2C%202022-blue)
@@ -367,6 +414,8 @@ I apologize about this mistake and the extra work/confusion that may have come b
 - Changes to the migration process from v1.x to v2 to account for updates from Simple Calendar versions previous to 1.3.x
   - **Important**: If you ran into migration errors please run this command in the browser console after updating `SimpleCalendar.api.runMigration()`
 - Documentation Updates.
+
+<hr/>
 
 ## v2.0.0 - Visual Redesign / Themes, Multiple Calendar Support, Note Improvements and more!
 
@@ -620,6 +669,8 @@ The documentation for the API has also moved to [https://simplecalendar.info/api
 
 I have removed the functionality for importing calendar data from about-time and calendar/weather. About-time has not supported custom calendars for several months now and calendar/weather has been depreciated for weather control.
 
+<hr/>
+
 ## v1.3.75 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-October%2011%2C%202021-blue)
@@ -628,6 +679,8 @@ I have removed the functionality for importing calendar data from about-time and
   - Fixed a rare issue where date formats would throw an exception and cause the calendar and the configuration to not open.
   - Updated the Pathfinder 2E World Clock Sync to work properly with the updates World Clock in Pathfinder 2E System version 2.15.0 
 
+
+<hr/>
 
 ## v1.3.73 - Translation Updates, Bug Fixes, API Changes
 
@@ -658,6 +711,8 @@ I have removed the functionality for importing calendar data from about-time and
   - Current time is 11am, advancing to the next sunset would change the time be 6pm the same day.
   - Current Time is 11am, advancing to the next sunrise would change the time and date to 6am the next day.
 
+<hr/>
+
 ## v1.3.66 - Note Searching and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-September%2030%2C%202021-blue)
@@ -680,6 +735,8 @@ You can now search for notes!
 - Fixed a bug where the Pathfinder 2E World Time Sync option would not display in the configuration window for PF2E games. This was just a display bug not a functionality bug.
 - Fixed a bug where the clock would not use the custom time format while running.
 - Fixed a bug where if the clock was running and a player joins, the clock would not run for the player until the GM stopped and started it again.
+
+<hr/>
 
 ## v1.3.62 - Custom Date Formats, Quality of Life Improvements, API Changes and Bug Fixes
 
@@ -746,6 +803,8 @@ I will not tie any functionality of Simple Calendar to being a patron, Simple Ca
 
 If you are interested is becoming a patron please check out [my page here](https://www.patreon.com/vigorator) and thank you!
 
+<hr/>
+
 ## v1.3.44 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-September%2021%2C%202021-blue)
@@ -772,6 +831,8 @@ All functionality will be exactly the same as the previous version, with the exc
 This portion of the update is just informative to let everyone know where I am at with the multi-calendar support and that there have been some changes to the backend of the codebase.
 If any bugs do crop up in your game I am sorry and please let me know with a bug report and I will fix it up right away.
 
+
+<hr/>
 
 ## v1.3.39 - Season Changes, QoL Improvements, API Changes and Bug Fixing
 
@@ -818,6 +879,8 @@ If any bugs do crop up in your game I am sorry and please let me know with a bug
 - I am happy to say that Simple Calendar has been translated to French thanks to [JDR-Ninja](https://github.com/JDR-Ninja) with input from [Julien Stébenne](https://github.com/TheBird956)!
 - Updates to the Spanish translation thanks to [lozalojo](https://github.com/lozalojo)!
 
+<hr/>
+
 ## v1.3.28 - API Changes
 
 ![](https://img.shields.io/badge/release%20date-August%2011%2C%202021-blue)
@@ -833,6 +896,8 @@ If any bugs do crop up in your game I am sorry and please let me know with a bug
 - Updated the [PrimaryGM hook](https://simplecalendar.info/modules/SimpleCalendar.Hooks.html#PrimaryGM) so that it uses the same function as the [API isPrimaryGM function](https://simplecalendar.info/modules/SimpleCalendar.api.html#isPrimaryGM). No change to returned values, this is to keep consistency between those functions.
 - Changed when the DateTimeChange hook is fired to include every tick of the clock.
 - Added the "isLeapYear" property to the [Date Object](https://simplecalendar.info/interfaces/SimpleCalendar.DateData.html) returned by [timeStampToDate API function](https://simplecalendar.info/modules/SimpleCalendar.api.html#timestampToDate) that indicates if the date falls on a leap year or not.
+
+<hr/>
 
 ## v1.3.23 - Note Reminders, API Changes, Bug Fixing and Translations
 
@@ -881,6 +946,8 @@ GMs and players can select notes to be reminded of when the current calendar dat
 - Updates to the German translation thanks to [Fallayn](https://github.com/Fallayn)!
 - Updates to the Korean translation thanks to [drdwing](https://github.com/drdwing)!
 
+<hr/>
+
 ## v1.3.8 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%2015%2C%202021-blue)
@@ -899,6 +966,8 @@ GMs and players can select notes to be reminded of when the current calendar dat
 - Fixed a bug when calculating the seconds for a date for calendars with a "Leap Month" (A month with 0 days normally but days during a leap year) that had more than one day. The calendar would incorrectly advance by the number of days in that leap month.
 - Fixed a bug where months were unable to have 0 leap year days.
 - Fixed a bug where the moon calculation could occasionally say every day of a month was the same moon phase.
+
+<hr/>
 
 ## v1.3.0 - Note Improvements
 
@@ -959,6 +1028,8 @@ This update is mainly around notes and improving the experience around adding, e
 
 - German Translation updates from [BlueSkyBlackBird](https://github.com/BlueSkyBlackBird) and [MasterZelgadis](https://github.com/MasterZelgadis), thanks!
 
+<hr/>
+
 ## v1.2.113 - API Changes
 
 ![](https://img.shields.io/badge/release%20date-July%202%2C%202021-blue)
@@ -971,6 +1042,8 @@ This update is mainly around notes and improving the experience around adding, e
 - Added a function SimpleCalendar.api.getAllSeasons() that returns details for every configured season in Simple Calendar.
 - Fixed a bug when importing from Calendar/weather where the hours per day would end up being undefined.
 - Added the ability to use the new Date Selector input type to other modules/systems through Simple Calendars API. [Read more here!](https://simplecalendar.info/modules/SimpleCalendar.api.html)
+
+<hr/>
 
 ## v1.2.107 - Calendar Configuration Import/Export, API Changes, Bug Fixes
 
@@ -997,6 +1070,8 @@ You can now export and import calendar configurations for Simple Calendar. Under
   - If you use calendars that have months with day offsets, you will need to "toggle" (move the day forward 1 then back) the date to update the timestamp properly.
 - Renamed the "Include Intercalary Month in Total Day Count" to "Include Intercalary Month in Day Calculations" to better explain what the setting actually does.
 
+<hr/>
+
 ## v1.2.103 - API Changes, Module Import/Export Changes and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-June%2024%2C%202021-blue)
@@ -1018,6 +1093,8 @@ You can now export and import calendar configurations for Simple Calendar. Under
 
 - Fixed a bug where months with day offsets would not advance the days correctly.
 
+<hr/>
+
 ## v1.2.97 - API Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-June%2016%2C%202021-blue)
@@ -1026,6 +1103,8 @@ You can now export and import calendar configurations for Simple Calendar. Under
 - Fixed a bug with the API function timestampPlusInterval where adding just a year would increment to the first day of the year not by the number of years.
 - Fixed a bug with the API function timestampPlusInterval where if very large values for the different intervals were passed in an error would be thrown
 
+<hr/>
+
 ## v1.2.95 - Translations & Foundry 0.8.7
 
 ![](https://img.shields.io/badge/release%20date-June%2015%2C%202021-blue)
@@ -1033,6 +1112,8 @@ You can now export and import calendar configurations for Simple Calendar. Under
 
 - Ensured that Simple Calendar works in foundry version 0.8.7.
 - The addition of a Korean translation thanks to drdwing!
+
+<hr/>
 
 ## v1.2.93 - Clock Changes & Bug Fixing
 
@@ -1052,6 +1133,8 @@ You can now export and import calendar configurations for Simple Calendar. Under
 - Fixed a bug where calendars with a year zero of 0 a leap year rule of none would end up being behind by a day.
 - Fixed a bug with the PF2E system where advancing the time with the system clock would set the day in Simple Calendar ahead by one day.
 - Fixed a bug where after page load the first third party module date/time change would not be reflected in Simple Calendar. Subsequent changes were properly shown.
+
+<hr/>
 
 ## v1.2.85 - New Clock, API Changes and as always more Bug Fixing
 
@@ -1088,6 +1171,8 @@ It is important to note that while the clock does its best to keep everyone on t
 - Fixed an issue with the API timestampPlusInterval function that didn't account for the PF2E system.
 - Fixed a bug where occasionally the last day of the month would have a value of -1.
 
+<hr/>
+
 ## v1.2.73 - API Bug Fixing
 
 ![](https://img.shields.io/badge/release%20date-June%2071%2C%202021-blue)
@@ -1104,6 +1189,8 @@ It is important to note that while the clock does its best to keep everyone on t
 ### New API
 
 - Added a new API function [chooseRandomDate](https://simplecalendar.info/modules/SimpleCalendar.api.html#chooseRandomDate) that will choose a random date on the calendar or between a passed in start and end date.
+
+<hr/>
 
 ## v1.2.67 - Translations, Macro/API Changes, Bug Fixes
 
@@ -1126,6 +1213,8 @@ Check out the new [API documentation](https://simplecalendar.info/modules/Simple
 ### Translations
   - Updates to the existing translations for Traditional Chinese some new content.
   - The addition of a Spanish translation thanks to areymoreno!
+
+<hr/>
 
 ## v1.2.63 - Year Names, Bug Fixing & Foundry 0.8.6 Support
 
@@ -1195,6 +1284,8 @@ These are the current available permissions:
 - Fixed a discrepancy with the newest version of about-time (v0.8.3+) that would cause the day set in Simple Calendar to be off in about-time.
   - If you are running about-time version 0.8.3 or later and running into this issue please re-export Simple Calendars settings into about-time.
 
+<hr/>
+
 ## v1.2.47 - New Features, Translations, QoL Improvements & Bug Fixes 
 
 ![](https://img.shields.io/badge/release%20date-May%2013%2C%202021-blue)
@@ -1221,6 +1312,8 @@ These are the current available permissions:
 
 I am happy to say that Simple Calendar has been translated into Traditional Chinese by [benwater12](https://github.com/benwater12)
 
+<hr/>
+
 ## v1.2.38 - Quality of Life Improvements and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-May%209%2C%202021-blue)
@@ -1237,12 +1330,16 @@ I am happy to say that Simple Calendar has been translated into Traditional Chin
   - Change the day in Simple Calendar, move a day forward or backward. This will re-sync both modules.
 - Fixed an issue where Intercalary Days could not be set as the start of seasons or used for the moon's reference month.
 
+<hr/>
+
 ## v1.2.35 - Bug Fix
 
 ![](https://img.shields.io/badge/release%20date-April%2030%2C%202021-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v1.2.35/module.zip)
 
 - Fixed a bug where users were unable to set the custom leap year value.
+
+<hr/>
 
 ## v1.2.34 - Bug Fixing
 
@@ -1253,6 +1350,8 @@ I am happy to say that Simple Calendar has been translated into Traditional Chin
 - Fixed an issue where the compact view clock would show when the show clock setting was unchecked. 
 - Fixed an issue where GM date and time controls would show when they.
 - Fixed an issue when time was advanced by other means (combat tracker or third party module) on maps with intercalary days. Simple Calendar would calculate the new date incorrectly.
+
+<hr/>
 
 ## v1.2.30 - Compact View, Bug Fixes, QoL Improvements & Translations
 
@@ -1284,6 +1383,8 @@ I have added a compact view for the calendar that only shows the current day and
 ### Translations
 
 I am happy to say that Simple Calendar has been translated into German by [MasterZelgadis](https://github.com/MasterZelgadis)
+
+<hr/>
 
 ## v1.2.20 - Macros, Hooks, Bug Fixes and QoL Improvements
 
@@ -1327,6 +1428,8 @@ I have made a couple of small changes to Simple Calendar that allows it to work 
 That version of Foundry is still in alpha, so I do warn against updating your main games to that Foundry version yet. This step in testing will hopefully allow a very seamless transition into 0.8.x when it is released for everyone.
 
 
+<hr/>
+
 ## v1.2.5 - Bug Fixes and QoL Improvements
 
 ![](https://img.shields.io/badge/release%20date-April%205%2C%202021-blue)
@@ -1342,6 +1445,8 @@ That version of Foundry is still in alpha, so I do warn against updating your ma
 ### Bug Fixes
 
 - Fixed a bug where in some instances importing data from Calendar/Weather into Simple Calendar would incorrectly save numerical data as strings causing Simple Calendar to not open.
+
+<hr/>
 
 ## v1.2.0 - Time, Other Modules, Seasons, Moons and Notes
 
@@ -1423,6 +1528,8 @@ A configuration option has been added to allow players to add their own notes to
 I did a complete re-organization/clean up of all the documentation around Simple Calendar. I also added in links within the Simple Calendar configuration window to this documentation. I hope this will help make configuration and use of the tool easier for all.
 
 
+<hr/>
+
 ## v1.1.8 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-March%2010%2C%202021-blue)
@@ -1430,6 +1537,8 @@ I did a complete re-organization/clean up of all the documentation around Simple
 
 - Fixed a rare bug where the day of the week a month starts on would be incorrect.
 - Fixed an issue with the Harptos calendar preset where the wrong month was getting set as intercalary (oops)
+
+<hr/>
 
 ## v1.1.6 - Bug Fixes & QoL Improvements
 
@@ -1480,6 +1589,8 @@ Open the calendar to December 1999 and select the 25th day
 MainApp.show(1999, 11, 25);
 ```
 
+<hr/>
+
 ## v1.1.0 - Reoccurring Notes, Leap Years, Intercalary Months and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-March%204%2C%202021-blue)
@@ -1528,6 +1639,8 @@ This update also includes the following bug fixes and quality of life improvemen
   Added some predefined calendars that a GM can choose to use. These replace the existing calendar configuration with a new one to match the world.
 - Various improvements to the backend code.
 
+<hr/>
+
 ## v1.0.3 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-February%2025%2C%202021-blue)
@@ -1538,6 +1651,8 @@ Fixed issues around viewing notes in years that were not the current year.
 - Fixed an issue where clicking on a day in a year that was not in the current year, and the day would not get properly selected.
 - Fixed an issue where changing years would not show notes in different years.
 - Fixed an issue where clicking the today button would not take you to the correct day if you were viewing a different year.
+
+<hr/>
 
 ## v1.0.0 - Initial Release
 

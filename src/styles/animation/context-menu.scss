@@ -1,0 +1,9 @@
+.fsc-context-menu{
+  .fsc-day-context-list{
+    .fsc-context-list-expand{
+      .fsc-context-list-sub-menu{
+        transition: left 200ms, opacity 250ms;
+      }
+    }
+  }
+}

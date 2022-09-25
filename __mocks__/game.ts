@@ -111,7 +111,13 @@ const game = {
                 return {
                     getFlag: jest.fn().mockReturnValue({calendarId: 'test', startDate: {}, endDate: {}, allDay: true, repeats: 0, order: 0, categories: [], remindUsers: ['qwe']}),
                     update: jest.fn(),
-                    delete: async () => {}
+                    delete: async () => {},
+                    testUserPermission: () => {return true;},
+                    sheet: {
+                        delete: jest.fn(),
+                        render: jest.fn(),
+                        reminderChange: async () => {}
+                    }
                 };
             }
             return null;

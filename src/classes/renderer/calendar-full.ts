@@ -33,12 +33,6 @@ export default class CalendarFull{
     };
 
     /**
-     * Keep track if we have added the body click event for which calendars, so we don't flood that with click events
-     * @private
-     */
-    private static calendarBodyClicks: Record<string,boolean> = {};
-
-    /**
      * Renders the full view for the passed in calendar
      * @param calendar
      * @param options
@@ -93,7 +87,6 @@ export default class CalendarFull{
         let vYear, vMonthIndex = 0, ssYear, ssMonth, ssDay, seYear, seMonth, seDay, weeks: (boolean | SimpleCalendar.HandlebarTemplateData.Day)[][] = [], calendarStyle = '', seasonIcon = '', seasonName = '';
         let seasonDescription = '';
         let weekdayDescriptions: string[] = [];
-        let dayDetails: string[] = [];
 
         if(options.date){
             if(options.date.month >= 0 && options.date.month < calendar.months.length){
@@ -212,28 +205,6 @@ export default class CalendarFull{
                             dayClass += ' fsc-current';
                         }
 
-                        if(options.showDayDetails){
-                            const currentDate = FormatDateTime({year: vYear, month: vMonthIndex, day: dayIndex, hour: 0, minute: 0, seconds: 0}, calendar.generalSettings.dateFormat.date, calendar);
-                            const sunrise = FormatDateTime({year: 0, month: 0, day: 0, ...GetPresetTimeOfDay(PresetTimeOfDay.Sunrise, calendar, { year: vYear, month: vMonthIndex, day: dayIndex})}, calendar.generalSettings.dateFormat.time, calendar);
-                            const sunset = FormatDateTime({year: 0, month: 0, day: 0, ...GetPresetTimeOfDay(PresetTimeOfDay.Sunset, calendar, { year: vYear, month: vMonthIndex, day: dayIndex})}, calendar.generalSettings.dateFormat.time, calendar);
-                            const canChangeTime = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime);
-                            const canAddNote = canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes);
-                            let dayHtml = `<div class="fsc-day-context-list" data-date="${vYear}/${vMonthIndex}/${dayIndex}">`;
-                            dayHtml += `<div class="fsc-context-list-title">${currentDate}</div>`;
-                            dayHtml += `<div class="fsc-context-list-expand"><span class="fa fa-sun"></span>${GameSettings.Localize('FSC.Configuration.Season.SunriseSunset')}<span class="fa fa-caret-right"></span><div class="fsc-context-list-sub-menu"><div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunrise')}</strong>: ${sunrise}</div><div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunset')}</strong>: ${sunset}</div></div></div>`;
-                            if(canChangeTime || canAddNote){
-                                dayHtml += `<div class="fsc-context-list-break"></div>`;
-                                if(canChangeTime){
-                                    dayHtml += `<div class="fsc-context-list-action" data-action="current"><span class="fa fa-calendar-check"></span>${GameSettings.Localize('FSC.SetCurrentDate')}</div>`;
-                                }
-                                if(canAddNote){
-                                    dayHtml += `<div class="fsc-context-list-action" data-action="note"><span class="fa fa-sticky-note"></span>${GameSettings.Localize('FSC.Notes.AddNew')}</div>`;
-                                }
-                            }
-                            dayHtml += `</div>`;
-                            dayDetails.push(dayHtml);
-                        }
-
                         html += `<div class="${dayClass}" data-day="${dayIndex}">`;
                         if(options.showNoteCount){
                             html += `<div class="fsc-day-notes">${CalendarFull.NoteIndicator(calendar, vYear, vMonthIndex, dayIndex)}</div>`;
@@ -262,27 +233,35 @@ export default class CalendarFull{
             html += `<div class="fsc-descriptions">`;
             if(options.showDescriptions){
                 if(monthDescription){
-                    html += `<div class="fsc-hide" data-type="month"><div class="fsc-description-content">${monthDescription}</div></div>`;
+                    html += `<div class="fsc-context-menu fsc-hide" data-type="month"><div class="fsc-description-content">${monthDescription}</div></div>`;
                 }
                 if(weekdayDescriptions.length){
                     for(let i = 0; i < weekdayDescriptions.length; i++){
                         if(weekdayDescriptions[i]){
-                            html += `<div class="fsc-hide" data-type="week${i}"><div class="fsc-description-content">${weekdayDescriptions[i]}</div></div>`;
+                            html += `<div class="fsc-context-menu fsc-hide" data-type="week${i}"><div class="fsc-description-content">${weekdayDescriptions[i]}</div></div>`;
                         }
                     }
                 }
                 if(seasonDescription){
-                    html += `<div class="fsc-hide" data-type="season"><div class="fsc-description-content">${seasonDescription}</div></div>`;
+                    html += `<div class="fsc-context-menu fsc-hide" data-type="season"><div class="fsc-description-content">${seasonDescription}</div></div>`;
                 }
             }
-            if(dayDetails.length){
-                for(let i = 0; i < dayDetails.length; i++){
-                    if(dayDetails[i]){
-                        html += `<div class="fsc-hide" data-type="day${i}"><div class="fsc-description-content fsc-context-menu">${dayDetails[i]}</div></div>`;
+            if(options.showDayDetails){
+                const canChangeTime = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime);
+                const canAddNote = canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes);
+                html += `<div class="fsc-context-menu fsc-hide" data-type="day"><div class="fsc-day-context-list" data-date=""><div class="fsc-context-list-title"></div>`;
+                html += `<div class="fsc-context-list-expand fsc-sunrise-sunset"><span class="fa fa-sun"></span>${GameSettings.Localize('FSC.Configuration.Season.SunriseSunset')}<span class="fa fa-caret-right"></span><div class="fsc-context-list-sub-menu"><div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunrise')}</strong>: <span class="fsc-sunrise"></span></div><div class="fsc-context-list-text"><strong>${GameSettings.Localize('FSC.Sunset')}</strong>: <span class="fsc-sunset"></span></div></div></div>`;
+                if(canChangeTime || canAddNote){
+                    html += `<div class="fsc-context-list-break"></div>`;
+                    if(canChangeTime){
+                        html += `<div class="fsc-context-list-action" data-action="current"><span class="fa fa-calendar-check"></span>${GameSettings.Localize('FSC.SetCurrentDate')}</div>`;
+                    }
+                    if(canAddNote){
+                        html += `<div class="fsc-context-list-action" data-action="note"><span class="fa fa-sticky-note"></span>${GameSettings.Localize('FSC.Notes.AddNew')}</div>`;
                     }
                 }
+                html += `</div></div>`;
             }
-
             html += `</div>`;
         }
 
@@ -314,9 +293,9 @@ export default class CalendarFull{
                 yearInput.addEventListener('click', (e)=> e.stopPropagation());
                 yearInput.addEventListener('change', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.year, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
             }
-            calendarElement.querySelectorAll('.fsc-days .fsc-day').forEach((el, index) => {
+            calendarElement.querySelectorAll('.fsc-days .fsc-day').forEach(el => {
                 el.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.day, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
-                el.addEventListener('contextmenu', CalendarFull.ShowDescription.bind(CalendarFull, `day${index}`));
+                el.addEventListener('contextmenu', CalendarFull.ShowDescription.bind(CalendarFull, `day`));
             });
             calendarElement.addEventListener('click', CalendarFull.EventListener.bind(CalendarFull, calendarId, CalendarClickEvents.calendar, {onMonthChange: onMonthChange, onDayClick: onDayClick, onYearChange: onYearChange}));
 
@@ -331,11 +310,6 @@ export default class CalendarFull{
             calendarElement.querySelectorAll('.fsc-weekdays .fsc-weekday').forEach((el, index) => {
                 el.addEventListener('click', CalendarFull.ShowDescription.bind(CalendarFull, `week${index}`));
             });
-            if(!this.calendarBodyClicks[calendarId]){
-                document.body.addEventListener('click', CalendarFull.HideDescription);
-                this.calendarBodyClicks[calendarId] = true;
-            }
-
         }
     }
 
@@ -350,7 +324,7 @@ export default class CalendarFull{
      * @param event The click event
      */
     public static EventListener(calendarId: string, clickType: CalendarClickEvents, funcs:{onMonthChange: Function | null, onDayClick: Function | null, onYearChange: Function | null }, event: Event){
-        event.stopPropagation();
+        //event.stopPropagation();
         event.preventDefault();
         const calendarElement = document.getElementById(calendarId);
         if(calendarElement){
@@ -488,8 +462,6 @@ export default class CalendarFull{
     }
 
     public static DayContextClick(e: Event){
-        e.preventDefault();
-        e.stopPropagation();
         const target = <HTMLElement>e.target;
         if(target){
             const action = target.getAttribute('data-action');
@@ -537,15 +509,41 @@ export default class CalendarFull{
         e.stopPropagation();
         const target = <HTMLElement>e.target;
         if(target){
-            const descriptions = <HTMLElement>target.closest('.fsc-calendar-wrapper')?.querySelector('.fsc-descriptions');
-            if(descriptions){
+            const calWrapper = <HTMLElement>target.closest('.fsc-calendar-wrapper');
+            const descriptions = <HTMLElement>calWrapper?.querySelector('.fsc-descriptions');
+            if(calWrapper && descriptions){
                 descriptions.querySelectorAll('div[data-type]').forEach(e => e.classList.add('fsc-hide'));
                 const desc = descriptions.querySelector(`div[data-type="${type}"]`);
                 if(desc){
-
                     desc.classList.remove('fsc-hide');
                     descriptions.style.top = `${target.offsetTop + target.offsetHeight}px`;
                     descriptions.style.left = `${target.offsetLeft}px`;
+                    if(type === 'day'){
+                        const calendarId = calWrapper.getAttribute('data-calendar');
+                        const day = target.closest('.fsc-day')?.getAttribute('data-day');
+                        const monthYear = target.closest('.fsc-calendar')?.querySelector('.fsc-calendar-header .fsc-month-year')?.getAttribute('data-visible')?.split('/');
+
+                        const contextList = calWrapper.querySelector('.fsc-day-context-list');
+                        if(calendarId && day && monthYear && monthYear.length >=2 && contextList){
+                            const calendar = CalManager.getCalendar(calendarId);
+                            const dayIndex = parseInt(day);
+                            const monthIndex = parseInt(monthYear[0]);
+                            const yearIndex = parseInt(monthYear[1]);
+                            if(calendar && !isNaN(dayIndex) && !isNaN(monthIndex) && !isNaN(yearIndex)){
+                                contextList.setAttribute('data-date', `${yearIndex}/${monthIndex}/${dayIndex}`);
+                                const contextListTitle = contextList.querySelector('.fsc-context-list-title');
+                                if(contextListTitle){
+                                    contextListTitle.textContent = FormatDateTime({year: yearIndex, month: monthIndex, day: dayIndex, hour: 0, minute: 0, seconds: 0}, calendar.generalSettings.dateFormat.date, calendar);
+                                }
+                                const sunrise = contextList.querySelector('.fsc-sunrise-sunset .fsc-sunrise');
+                                const sunset = contextList.querySelector('.fsc-sunrise-sunset .fsc-sunset');
+                                if(sunrise && sunset){
+                                    sunrise.textContent = FormatDateTime({year: 0, month: 0, day: 0, ...GetPresetTimeOfDay(PresetTimeOfDay.Sunrise, calendar, { year: yearIndex, month: monthIndex, day: dayIndex})}, calendar.generalSettings.dateFormat.time, calendar);
+                                    sunset.textContent = FormatDateTime({year: 0, month: 0, day: 0, ...GetPresetTimeOfDay(PresetTimeOfDay.Sunset, calendar, { year: yearIndex, month: monthIndex, day: dayIndex})}, calendar.generalSettings.dateFormat.time, calendar);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

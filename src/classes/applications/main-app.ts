@@ -17,6 +17,7 @@ import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import {AdvanceTimeToPreset, FormatDateTime, GetPresetTimeOfDay} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
+import {NoteSheet} from "../notes/note-sheet";
 
 
 /**
@@ -430,6 +431,7 @@ export default class MainApp extends FormApplication{
                 n.addEventListener('click', this.viewNote.bind(this));
                 n.addEventListener('drag', this.noteDrag.bind(this));
                 n.addEventListener('dragend', this.noteDragEnd.bind(this));
+                n.addEventListener('contextmenu', this.noteContext.bind(this));
             });
             appWindow.querySelectorAll(".fsc-note-search .fsc-note-list .fsc-note").forEach(n => {
                 n.addEventListener('click', this.viewNote.bind(this));
@@ -445,6 +447,10 @@ export default class MainApp extends FormApplication{
             //Search Options Fields Change
             appWindow.querySelectorAll(".fsc-note-search .fsc-search-fields input").forEach(n => {
                 n.addEventListener('change', this.searchOptionsFieldsChange.bind(this));
+            });
+            //Context Item Click
+            appWindow.querySelectorAll('.fsc-section > .fsc-context-menu .fsc-context-list-action').forEach(e => {
+                e.addEventListener('click', this.noteContextClick.bind(this));
             });
 
             //-----------------------
@@ -469,7 +475,7 @@ export default class MainApp extends FormApplication{
     public toggleDrawer(selector: string){
         this.hideDrawers(selector);
         this.searchOptionsToggle(true);
-        const cList = document.querySelector(`.${selector}`);
+        const cList = document.querySelector(`#${MainApp.appWindowId} .${selector}`);
         if(cList){
             const member = selector.toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search' | 'fsc-day-details';
             this.uiElementStates[member] = animateElement(cList, 500, false);
@@ -637,7 +643,6 @@ export default class MainApp extends FormApplication{
      * @param e
      */
     public timeUnitClick(e: Event){
-        e.stopPropagation();
         const target = <HTMLElement>e.currentTarget;
         const dataType = target.getAttribute('data-type');
         const dataAmount = target.getAttribute('data-amount');
@@ -809,7 +814,6 @@ export default class MainApp extends FormApplication{
      * @param {Event} e The click event
      */
     public addNote(e: Event) {
-        e.stopPropagation();
         NManager.addNewNote(this.visibleCalendar, 'New Note').catch(Logger.error);
     }
 
@@ -818,12 +822,75 @@ export default class MainApp extends FormApplication{
      * @param {Event} e The click event
      */
     public viewNote(e: Event){
-        e.stopPropagation();
         const dataIndex = (<HTMLElement>e.currentTarget).getAttribute('data-index');
         if(dataIndex){
             NManager.showNote(dataIndex);
         } else {
             Logger.error('No Data index on note element found.');
+        }
+    }
+
+    public noteContext(e: Event){
+        const note = <HTMLElement>(<HTMLElement>e.target)?.closest('.fsc-note');
+        const noteID = note?.getAttribute('data-index');
+        if(note && noteID){
+            const journalEntry = (<Game>game).journal?.get(noteID);
+            if(journalEntry){
+                const sidebarSection = note.closest('.fsc-section')?.querySelector(':scope > .fsc-context-menu');
+                const appWindow = <HTMLElement>document.getElementById(MainApp.appWindowId);
+                if(appWindow && sidebarSection){
+                    sidebarSection.classList.remove('fsc-hide');
+                    const y = (<PointerEvent>e).y - appWindow.offsetTop;
+                    (<HTMLElement>sidebarSection).style.top = `${y}px`;
+                    (<HTMLElement>sidebarSection).style.left = `calc(100% + 300px)`;
+                    const noteStub = NManager.getNoteStub(journalEntry);
+                    sidebarSection.setAttribute('data-id', noteID);
+                    if(noteStub){
+                        //Hide items the player shouldn't see
+                        sidebarSection.querySelectorAll('div[data-action="edit"], div[data-action="delete"], .fsc-context-list-break').forEach(e => { if(noteStub.canEdit){e.classList.remove('fsc-hide');}else{e.classList.add('fsc-hide');} });
+                        //Reset the bottom margin of all elements then set the bottom margin of the last visible item
+                        const visibleItems = sidebarSection.querySelectorAll('.fsc-day-context-list div:not(.fsc-hide)');
+                        if(visibleItems.length){
+                            visibleItems.forEach(e => (<HTMLElement>e).style.marginBottom = '');
+                            (<HTMLElement>visibleItems[visibleItems.length - 1]).style.marginBottom = '0';
+                        }
+                        //Update the reminder button to show the appropriate text and icon
+                        const reminderAction = sidebarSection.querySelector('.fsc-context-list-action[data-action="remind"]');
+                        if(reminderAction){
+                            reminderAction.innerHTML = `<span class="fa ${noteStub.userReminderRegistered? 'fa-bell-slash' : 'fa-bell'}"></span>${noteStub.userReminderRegistered? GameSettings.Localize('FSC.Notes.ReminderCancel') : GameSettings.Localize('FSC.Notes.Reminder')}`;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public noteContextClick(e: Event){
+        const target = <HTMLElement>e.target;
+        const action = target?.getAttribute('data-action');
+        if(target && action){
+            const contextMenu = target.closest('.fsc-context-menu');
+            const noteId = contextMenu?.getAttribute('data-id');
+            if(noteId){
+                const journalEntry = (<Game>game).journal?.get(noteId);
+                if(journalEntry){
+                    if(action === 'showPlayers'){
+                        //@ts-ignore
+                        Journal.showDialog(journalEntry).catch(e => console.error(e));
+                    } else if(action === 'delete'){
+                        //@ts-ignore
+                        journalEntry.sheet?.delete(e);
+                    } else if(action === 'edit'){
+                        //@ts-ignore
+                        journalEntry.sheet?.render(true, {}, true);
+                    } else if(action === 'remind'){
+                        //@ts-ignore
+                        journalEntry.sheet?.reminderChange(false).catch(e => console.error(e));
+
+                    }
+                }
+            }
         }
     }
 

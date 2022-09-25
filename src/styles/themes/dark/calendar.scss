@@ -1,32 +1,8 @@
 @import "../../variables";
 .fsc-calendar-wrapper{
   .fsc-descriptions{
-    > div {
-      &::before{
-        background-color: $secondary;
-      }
-      border-color: $secondary;
-      background-color: rgba(0,0,0,0.85);
-      .fsc-description-content{
-        @include scrollbar($primary, $primary-600);
-      }
-      .fsc-day-context-list{
-        .fsc-context-list-action, .fsc-context-list-expand{
-          &:hover, &:focus, &:active{
-            color: $primary-A400;
-            .fsc-context-list-sub-menu{
-              color: $white;
-            }
-          }
-        }
-        .fsc-context-list-break{
-          border-color: $gray-600;
-        }
-        .fsc-context-list-sub-menu{
-          border-color: $secondary;
-          background-color: rgba(0,0,0,0.85);
-        }
-      }
+    .fsc-description-content{
+      @include scrollbar($primary, $primary-600);
     }
   }
 }

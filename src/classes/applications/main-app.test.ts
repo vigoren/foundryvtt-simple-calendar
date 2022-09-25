@@ -26,6 +26,7 @@ import * as DateUtilities from "../utilities/date-time";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import ConfigurationApp from "./configuration-app";
+import NoteStub from "../notes/note-stub";
 
 fetchMock.enableMocks();
 describe('Main App Class Tests', () => {
@@ -148,21 +149,27 @@ describe('Main App Class Tests', () => {
         clock.append(clockChild);
 
         jest.spyOn(document, 'querySelector').mockReturnValue(mainApp);
+
+        //@ts-ignore
         jest.spyOn(ma, 'setPosition').mockImplementation(() => {});
 
         ma.setWidthHeight();
+        //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(1);
 
         jest.spyOn(calendarWeek, 'offsetWidth', 'get').mockReturnValue(300);
         ma.setWidthHeight();
+        //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(2);
 
         calendarSections.removeChild(calendarDays);
         ma.setWidthHeight();
+        //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(3);
 
         ma.uiElementStates.compactView = true;
         ma.setWidthHeight();
+        //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(4);
     });
 
@@ -599,6 +606,115 @@ describe('Main App Class Tests', () => {
         //@ts-ignore
         ma.viewNote(fEvent);
         expect(NManager.showNote).toHaveBeenCalledTimes(1);
+    });
+
+    test('Note Context', () => {
+        const appWindow = document.createElement('div');
+        const section = document.createElement('div');
+        const contextMenu = document.createElement('div');
+        const note = document.createElement('div');
+        const editAction = document.createElement('div');
+        const contextList = document.createElement('div');
+        const visibleAction = document.createElement('div');
+
+        note.classList.add('fsc-note');
+        section.classList.add('fsc-section');
+        contextMenu.classList.add('fsc-context-menu');
+        contextList.classList.add('fsc-day-context-list');
+        visibleAction.classList.add('fsc-context-list-action')
+
+        appWindow.id = MainApp.appWindowId;
+        note.setAttribute('data-index', 'asd');
+        editAction.setAttribute('data-action', 'edit');
+        visibleAction.setAttribute('data-action', 'remind');
+
+        contextList.append(visibleAction);
+        contextList.append(editAction);
+        contextMenu.append(contextList);
+        section.append(contextMenu);
+        section.append(note);
+        appWindow.append(section);
+        document.body.append(appWindow);
+
+        const noteStub = new NoteStub('asd');
+        jest.spyOn(NManager, 'getNoteStub').mockReturnValue(noteStub);
+        jest.spyOn(noteStub, 'userReminderRegistered', 'get').mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValue(false);
+        jest.spyOn(noteStub, 'canEdit', 'get').mockReturnValueOnce(true).mockReturnValue(false);
+
+
+        const fEvent = {
+            target: note
+        };
+
+        //@ts-ignore
+        ma.noteContext(fEvent);
+        expect(contextMenu.getAttribute('data-id')).toBe('asd');
+
+        //@ts-ignore
+        ma.noteContext(fEvent);
+        expect(contextMenu.getAttribute('data-id')).toBe('asd');
+    });
+
+    test('Note Context Click', () => {
+        const contextMenu = document.createElement('div');
+        const action = document.createElement('div');
+
+        contextMenu.classList.add('fsc-context-menu');
+        action.classList.add('fsc-context-list-action');
+
+        contextMenu.setAttribute('data-id', 'asd');
+        action.setAttribute('data-action', 'showPlayers');
+
+        contextMenu.append(action);
+
+        jest.spyOn(console, 'error').mockImplementation(() => {});
+        //@ts-ignore
+        jest.spyOn(Journal, 'showDialog').mockImplementation(async () => {});
+
+        const fEvent = {
+            target: action
+        };
+        //@ts-ignore
+        ma.noteContextClick(fEvent);
+        //@ts-ignore
+        expect(Journal.showDialog).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        jest.spyOn(Journal, 'showDialog').mockRejectedValue('E');
+        //@ts-ignore
+        ma.noteContextClick(fEvent);
+        //@ts-ignore
+        expect(Journal.showDialog).toHaveBeenCalledTimes(2);
+
+        const je = {
+            sheet: {
+                delete: jest.fn(),
+                render: jest.fn(),
+                reminderChange: jest.fn(async () => {})
+            }
+        };
+        //@ts-ignore
+        jest.spyOn(game.journal, 'get').mockReturnValue(je);
+
+        action.setAttribute('data-action', 'delete');
+        //@ts-ignore
+        ma.noteContextClick(fEvent);
+        expect(je.sheet.delete).toHaveBeenCalledTimes(1);
+
+        action.setAttribute('data-action', 'edit');
+        //@ts-ignore
+        ma.noteContextClick(fEvent);
+        expect(je.sheet.render).toHaveBeenCalledTimes(1);
+
+        action.setAttribute('data-action', 'remind');
+        //@ts-ignore
+        ma.noteContextClick(fEvent);
+        expect(je.sheet.reminderChange).toHaveBeenCalledTimes(1);
+
+        je.sheet.reminderChange.mockRejectedValue('E');
+        //@ts-ignore
+        ma.noteContextClick(fEvent);
+        expect(je.sheet.reminderChange).toHaveBeenCalledTimes(2);
     });
 
     test('Update App', () => {

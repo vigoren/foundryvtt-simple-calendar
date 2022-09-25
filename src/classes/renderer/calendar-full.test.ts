@@ -240,29 +240,62 @@ describe('Renderer Calendar Full Class Tests', () => {
     });
 
     test('Show Description', () => {
-        const t = document.createElement('div');
-        const wrapper = document.createElement('div');
+        const target = document.createElement('div');
+        const calendarWrapper = document.createElement('div');
+        const calendar = document.createElement('div');
+        const calendarHeader = document.createElement('div');
+        const monthYear = document.createElement('div');
         const descriptions = document.createElement('div');
-        const div = document.createElement('div');
-        const div2 = document.createElement('div');
-        wrapper.classList.add('fsc-calendar-wrapper');
+        const description = document.createElement('div');
+        const contextMenu = document.createElement('div');
+        const contextMenuTitle = document.createElement('div');
+        const sunriseSunset = document.createElement('div');
+        const sunrise = document.createElement('div');
+        const sunset = document.createElement('div');
+
+        calendarWrapper.classList.add('fsc-calendar-wrapper');
+        calendar.classList.add('fsc-calendar');
+        calendarHeader.classList.add('fsc-calendar-header');
+        monthYear.classList.add('fsc-month-year');
         descriptions.classList.add('fsc-descriptions');
-        div.setAttribute('data-type', 'month');
-        div2.setAttribute('data-type', 'season');
-        wrapper.append(t);
-        wrapper.append(descriptions);
-        descriptions.append(div);
-        descriptions.append(div2);
+        target.classList.add('fsc-day');
+        contextMenu.classList.add('fsc-day-context-list');
+        contextMenuTitle.classList.add('fsc-context-list-title');
+        sunriseSunset.classList.add('fsc-sunrise-sunset');
+        sunrise.classList.add('fsc-sunrise');
+        sunset.classList.add('fsc-sunset');
+
+
+        target.setAttribute('data-day', '0');
+        calendarWrapper.setAttribute('data-calendar', 'asd');
+        description.setAttribute('data-type', 'month');
+        contextMenu.setAttribute('data-type', 'day');
+        monthYear.setAttribute('data-visible', '0/2022')
+
+
+        calendarHeader.append(monthYear);
+        calendar.append(calendarHeader, target);
+        descriptions.append(description);
+        descriptions.append(contextMenu);
+        calendarWrapper.append(calendar,descriptions);
+        contextMenu.append(contextMenuTitle, sunriseSunset);
+        sunriseSunset.append(sunrise, sunset);
+
+
         const fEvent = {
             stopPropagation: () => {},
             preventDefault: () => {},
-            target: t
+            target: target
         };
         //@ts-ignore
         CalendarFull.ShowDescription('month', fEvent);
+        expect(description.classList.contains('fsc-hide')).toBe(false);
+        expect(contextMenu.classList.contains('fsc-hide')).toBe(true);
 
-        expect(div.classList.contains('fsc-hide')).toBe(false);
-        expect(div2.classList.contains('fsc-hide')).toBe(true);
+
+        //@ts-ignore
+        CalendarFull.ShowDescription('day', fEvent);
+        expect(contextMenuTitle.textContent).toBe('January 01, 2022');
     });
 
     test('Hide Description', () => {

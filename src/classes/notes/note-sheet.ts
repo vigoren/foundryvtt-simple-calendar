@@ -449,7 +449,7 @@ export class NoteSheet extends JournalSheet{
                 // Reminder Button Click
                 //---------------------
                 this.appWindow.querySelector('.fsc-reminder')?.removeAttribute('disabled');
-                this.appWindow.querySelector('.fsc-reminder')?.addEventListener('click', this.reminderChange.bind(this));
+                this.appWindow.querySelector('.fsc-reminder')?.addEventListener('click', this.reminderChange.bind(this, true));
                 this.appWindow.querySelector('.load-pdf button')?.removeAttribute('disabled');
                 this.appWindow.querySelector('.load-pdf button')?.addEventListener('click', this._loadPDF.bind(this));
             }
@@ -490,7 +490,6 @@ export class NoteSheet extends JournalSheet{
      * @param event
      */
     public toggleDrawer(selector: string, event: Event){
-        event.preventDefault();
         if(this.appWindow){
             const cList = this.appWindow.querySelector(`.${selector}`);
             if(cList){
@@ -755,7 +754,7 @@ export class NoteSheet extends JournalSheet{
         }
     }
 
-    async reminderChange(){
+    async reminderChange(renderNote: boolean = true){
         const user = (<Game>game).user;
         if(user){
             const userId = user.id;
@@ -781,7 +780,9 @@ export class NoteSheet extends JournalSheet{
                 };
                 await GameSockets.emit(socket);
             }
-            this.render(true);
+            if(renderNote){
+                this.render(true);
+            }
             MainApplication.updateApp();
         }
     }
@@ -829,7 +830,6 @@ export class NoteSheet extends JournalSheet{
     }
 
     changePage(e: Event){
-        e.stopPropagation();
         const target = (<HTMLElement>e.target)?.closest('li');
         if(target){
             const id = target.getAttribute('data-index');
@@ -851,7 +851,6 @@ export class NoteSheet extends JournalSheet{
     }
 
     async removePage(e: Event){
-        e.stopPropagation();
         const target = (<HTMLElement>e.target)?.closest('li');
         if(target){
             const id = target.getAttribute('data-index');
