@@ -552,7 +552,7 @@ export default class ConfigurationApp extends FormApplication {
     }
 
     /**
-     * Process the confirm click of the next confirmation dialog
+     * Process the confirmation click of the next confirmation dialog
      * @private
      */
     private async quickSetupNextConfirm(){

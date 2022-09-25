@@ -257,23 +257,30 @@ export default class NoteStub{
     }
 
     /**
-     * Gets if the note is visible to the players or not
+     * Gets icon, color and formatted player list of who can see the note.
      */
     public get playerVisible(){
         const journalEntry = (<Game>game).journal?.get(this.entryId);
+        const result = {
+            icon: 'fa-eye-slash',
+            color: 'fsc-danger',
+            players: ''
+        };
         if(journalEntry){
             const own = this.ownership;
-            for(let k in own){
-                const permissionLevel = own[k] || 0;
-                if(permissionLevel >= 2){
-                    const user = (<Game>game).users?.get(k);
-                    if(user && !user.isGM){
-                        return true;
-                    }
+            const playerCoverage = (<Game>game).users?.filter(u => own[u.id] !== undefined && own[u.id] >=2);
+            if(playerCoverage){
+                if(playerCoverage.length === (<Game>game).users?.contents.length){
+                    result.icon = 'fa-eye';
+                    result.color = 'fsc-success';
+                } else if(playerCoverage.length > 1){
+                    result.icon = 'fa-eye-low-vision';
+                    result.color = 'fsc-secondary';
                 }
+                result.players = `${GameSettings.Localize('FSC.Notes.UserPermissionTitle')}:<ul style="text-align: left;padding: 0;margin-bottom:0;list-style: none;"><li>${playerCoverage.map(u => u.name || '').join('</li><li>')}</li></ul>`;
             }
         }
-        return false;
+        return result;
     }
 
     /**

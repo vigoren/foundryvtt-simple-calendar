@@ -1639,7 +1639,9 @@ declare global{
                 value: string;
                 text: string;
                 selected: boolean;
-                disabled?: boolean
+                disabled?: boolean;
+                static?: boolean;
+                makeOthersMatch?: boolean;
             }
         }
 

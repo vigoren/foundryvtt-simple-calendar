@@ -97,15 +97,9 @@
                         <h3 class="fsc-note-title">{{title}}</h3>
                         <div class="fsc-note-details">
                             {{#if ../isGM}}
-                            {{#if playerVisible}}
-                            <div class="fsc-note-category fsc-note-icon fsc-player-visible" data-tooltip="{{localize 'FSC.Notes.PlayerVisible'}}">
-                                <span class="fa fa-eye"></span>
+                            <div class="fsc-note-category fsc-note-icon {{playerVisible.color}}" data-tooltip="{{playerVisible.players}}">
+                                <span class="fa {{playerVisible.icon}}"></span>
                             </div>
-                            {{else}}
-                            <div class="fsc-note-category fsc-note-icon fsc-not-player-visible" data-tooltip="{{localize 'FSC.Notes.NotPlayerVisible'}}">
-                                <span class="fa fa-eye-slash"></span>
-                            </div>
-                            {{/if}}
                             {{/if}}
                             {{#if userReminderRegistered}}
                             <div class="fsc-note-category fsc-note-icon fsc-reminder" data-tooltip="{{localize 'FSC.Notes.ReminderHelp'}}">
@@ -210,6 +204,17 @@
                 {{else}}
                 <em>{{localize 'FSC.SearchEmpty'}}</em>
                 {{/if}}
+            </div>
+        </div>
+        <div class="fsc-context-menu fsc-arrow-left fsc-hide" data-id="">
+            <div class="fsc-day-context-list">
+                <div class="fsc-context-list-action" data-action="remind"></div>
+                {{#if isGM}}
+                <div class="fsc-context-list-action" data-action="showPlayers"><span class="fa fa-eye"></span>{{localize 'JOURNAL.ActionShow'}}</div>
+                {{/if}}
+                <div class="fsc-context-list-break"></div>
+                <div class="fsc-context-list-action" data-action="edit"><span class="fa fa-pen-to-square"></span>{{localize 'FSC.Edit'}}</div>
+                <div class="fsc-context-list-action" data-action="delete"><span class="fa fa-trash"></span>{{localize 'FSC.Delete'}}</div>
             </div>
         </div>
     </div>

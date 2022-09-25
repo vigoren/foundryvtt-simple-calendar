@@ -34,12 +34,6 @@
           flex: 1;
         }
 
-        .fsc-year-view{
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          grid-column-gap: $spacer-half;
-        }
-
         &:last-child{
           .fsc-controls {
             margin-bottom: 0;

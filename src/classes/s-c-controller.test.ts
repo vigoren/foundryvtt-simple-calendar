@@ -170,6 +170,14 @@ describe('SCController Tests', () => {
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
     });
 
+    test('Hide Context Menus', () => {
+        const context = document.createElement('div');
+        context.classList.add('fsc-context-menu');
+        document.body.append(context);
+        SCController.HideContextMenus();
+        expect(context.classList.contains('fsc-hide')).toBe(true);
+    });
+
     test('Get Scene Control Buttons', () => {
         const controls: any[] = [{name:'test', tools:[]}];
         const canUserSpy = spyOn(PermUtils, 'canUser').mockReturnValue(true);

@@ -40,7 +40,7 @@ describe('Renderer MultiSelect Class Tests', () => {
         MultiSelect.EventListener('', 'button', ()=>{}, new Event('click'));
         expect(msElm.classList.contains('fsc-show')).toBe(false);
 
-        const opt = document.createElement('div');
+        const opt = document.createElement('li');
         opt.setAttribute('data-value', 'v');
         msQS.mockReturnValue(msInput);
         const fEvent = {
@@ -48,7 +48,7 @@ describe('Renderer MultiSelect Class Tests', () => {
             target: opt
         };
         const callBack = jest.fn();
-        msInput.value = '{"id": "", "options":[{"value":"v"}]}';
+        msInput.value = '{"id": "", "options":[{"value":"v", "makeOthersMatch": true},{"value2":"v2", "makeOthersMatch": false}]}';
         //@ts-ignore
         MultiSelect.EventListener('', 'option', callBack, fEvent);
     });

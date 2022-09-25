@@ -178,6 +178,15 @@ export default class SCController {
         }
     }
 
+    /**
+     * Hides any open context menus
+     */
+    public static HideContextMenus(){
+        document.querySelectorAll('.fsc-context-menu').forEach(e => {
+            e.classList.add('fsc-hide');
+        });
+    }
+
     //---------------------------
     // Foundry Hooks
     //---------------------------

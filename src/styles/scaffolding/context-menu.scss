@@ -1,0 +1,101 @@
+@import "../variables";
+
+.fsc-context-menu{
+  &::before{
+    content: ' ';
+    position: absolute;
+    width: 10px;
+    height: 5px;
+    left: 8px;
+    top: -6px;
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    z-index: -1;
+  }
+  position: absolute;
+  padding: $spacer-half;
+  margin: 0 $spacer-half;
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 1;
+  min-width: max-content;
+
+  &.fsc-arrow-left{
+    &::before{
+      left: -6px;
+      top: 8px;
+      clip-path: polygon(100% 0%, 100% 100%, 0% 50%);
+      width: 5px;
+      height: 10px;
+    }
+  }
+
+  &.fsc-hide{
+    opacity: 0;
+    height: 0;
+    visibility: hidden;
+  }
+
+  .fsc-day-context-list{
+    font-size: 12px;
+
+    > div{
+      margin: $spacer-half 0;
+      &.fsc-hide{
+        display: none;
+      }
+      &:first-of-type{
+        margin-top: 0;
+      }
+      &:last-of-type{
+        margin-bottom: 0;
+      }
+    }
+
+    .fa{
+      margin-right: $spacer-half;
+    }
+    .fsc-context-list-title{
+      font-size: 14px;
+    }
+    .fsc-context-list-text{
+      margin: ($spacer-half * .5) 0 ($spacer-half * .5) ($spacer-half * .5);
+    }
+    .fsc-context-list-action{
+      cursor: pointer;
+    }
+    .fsc-context-list-break{
+      border-bottom: 1px solid;
+    }
+    .fsc-context-list-expand{
+      position: relative;
+
+      .fa-caret-right{
+        margin-right: 0;
+        margin-left: $spacer-half;
+        float: right;
+      }
+
+      &:hover{
+        .fsc-context-list-sub-menu{
+          opacity: 1;
+          left: calc(100% + $spacer-half);
+        }
+      }
+
+      .fsc-context-list-sub-menu{
+        position: absolute;
+        top: -($spacer *.45);
+        left: 0;
+        width: 100%;
+        border: 1px solid;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        opacity: 0;
+        z-index: -1;
+        padding: 0 0.25rem;
+      }
+    }
+  }
+
+
+}

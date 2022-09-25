@@ -32,6 +32,9 @@ updateConfigurationApplication(new ConfigurationApp());
 updateMigrationApplication(new MigrationApp());
 updateNManager(new NoteManager());
 
+//Add body click events
+document.body.addEventListener('click', SCController.HideContextMenus);
+
 //Expose the api
 (window as any).SimpleCalendar = {
     api: API,

@@ -2,6 +2,7 @@ body.game{
   @import "scaffolding/calendar";
   @import "scaffolding/clock";
   @import "scaffolding/configuration";
+  @import "scaffolding/context-menu";
   @import "scaffolding/control";
   @import "scaffolding/date-selector";
   @import "scaffolding/form-groups";
@@ -19,6 +20,7 @@ body.game{
   @import "scaffolding/toggle";
   @import "animation/calendar";
   @import "animation/configuration";
+  @import "animation/context-menu";
   @import "animation/form-groups";
   @import "animation/main";
   @import "animation/note-sheet";

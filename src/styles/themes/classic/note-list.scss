@@ -20,12 +20,16 @@
           box-shadow: 1px 1px 5px $gray-600;
           color: $white;
 
-          &.fsc-player-visible {
+          &.fsc-secondary{
+            background-color: #de810d;
+            border-color: #de810d;
+            color: $fontColor;
+          }
+          &.fsc-success{
             background-color: $classicSuccess;
             border-color: $classicSuccess;
           }
-
-          &.fsc-not-player-visible {
+          &.fsc-danger{
             background-color: $classicDanger;
             border-color: $classicDanger;
           }

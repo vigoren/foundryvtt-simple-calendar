@@ -30,6 +30,7 @@ describe('Note Sheet Class Tests', () => {
     let ns: NoteSheet;
     let je: any;
     let nd: any;
+    let oldUID: string;
 
     beforeEach(async () => {
         updateCalManager(new CalendarManager());
@@ -57,7 +58,7 @@ describe('Note Sheet Class Tests', () => {
             testUserPermission: () => {return true;},
             update: async () => {},
             delete: async () => {},
-            ownership:  {'': 3, 'a': 0},
+            ownership:  {'': 3, 'a': 0, 'default': 0},
             pages: {
                 contents: [{
                     _id: '',
@@ -78,6 +79,22 @@ describe('Note Sheet Class Tests', () => {
         ns.journalData.flags = {};
         //@ts-ignore
         ns.journalData.permission = {};
+    });
+
+    beforeAll(() => {
+        //@ts-ignore
+        oldUID = game.user.id;
+        //@ts-ignore
+        Object.defineProperty(game.user, 'id', {
+            get: () => {return '';}
+        });
+    });
+
+    afterAll(() => {
+        //@ts-ignore
+        delete game.user.id;
+        //@ts-ignore
+        game.user.id = oldUID;
     });
 
     test('Get Default Options', () => {
@@ -169,6 +186,8 @@ describe('Note Sheet Class Tests', () => {
         //@ts-ignore
         ns.editMode = true;
         jest.spyOn(ns, 'isEditable', 'get').mockReturnValue(true);
+        //@ts-ignore
+        jest.spyOn(game.user, 'id', 'get').mockReturnValueOnce('asd').mockReturnValueOnce('asd').mockReturnValueOnce('asd').mockReturnValueOnce('asd').mockReturnValueOnce('asd').mockReturnValueOnce('noth');
         expect(await ns.getData()).toBeDefined();
         je.pages.contents[0].text.content = '';
         je.pages.contents[0].video.timestamp = 666;
@@ -484,12 +503,12 @@ describe('Note Sheet Class Tests', () => {
         //@ts-ignore
         expect(ns.journalData.permission['123']).toBe(2);
         //@ts-ignore
-        ns.journalData.permission['123'] = 1
+        ns.journalData.permission['123'] = 1;
         ns.multiSelectOptionChange('scUserPermissions_undefined', '123', true);
         //@ts-ignore
         expect(ns.journalData.permission['123']).toBe(2);
         //@ts-ignore
-        ns.journalData.permission['123'] = 3
+        ns.journalData.permission['123'] = 3;
         ns.multiSelectOptionChange('scUserPermissions_undefined', '123', true);
         //@ts-ignore
         expect(ns.journalData.permission['123']).toBe(3);
@@ -497,6 +516,22 @@ describe('Note Sheet Class Tests', () => {
         ns.multiSelectOptionChange('scUserPermissions_undefined', '123', false);
         //@ts-ignore
         expect(ns.journalData.permission['123']).toBe(0);
+
+        //@ts-ignore
+        jest.spyOn(game.user, 'id', 'get').mockReturnValue('123');
+        //@ts-ignore
+        ns.journalData.permission[''] = 2;
+        ns.multiSelectOptionChange('scUserPermissions_undefined', 'default', false);
+        //@ts-ignore
+        expect(ns.journalData.permission['default']).toBe(0);
+        //@ts-ignore
+        expect(ns.journalData.permission['']).toBe(0);
+
+        ns.multiSelectOptionChange('scUserPermissions_undefined', 'default', true);
+        //@ts-ignore
+        expect(ns.journalData.permission['default']).toBe(2);
+        //@ts-ignore
+        expect(ns.journalData.permission['']).toBe(2);
     });
 
     test('Update Note Repeat Dropdown', () => {
@@ -571,7 +606,7 @@ describe('Note Sheet Class Tests', () => {
         jest.spyOn(MainApplication, 'updateApp').mockImplementation(() => {});
         jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true;});
         //@ts-ignore
-        game.user.id = 'a';
+        jest.spyOn(game.user, 'id', 'get').mockReturnValue('a');
 
         await ns.reminderChange();
         //@ts-ignore

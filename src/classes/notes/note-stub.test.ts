@@ -167,10 +167,16 @@ describe('Note Stub Class Tests', () => {
     });
 
     test('Player Visible', () => {
-        expect(nStub.playerVisible).toEqual(false);
+        jest.spyOn(nStub, 'ownership', 'get').mockReturnValue({'': 1});
+        expect(nStub.playerVisible).toEqual({ icon: 'fa-eye-slash', color: 'fsc-danger', players: "" });
+        //@ts-ignore
+        jest.spyOn(game.users, 'filter').mockReturnValueOnce([]);
+        expect(nStub.playerVisible).toEqual({ icon: 'fa-eye', color: 'fsc-success', players: ":<ul style=\"text-align: left;padding: 0;margin-bottom:0;list-style: none;\"><li></li></ul>" });
+        //@ts-ignore
+        jest.spyOn(game.users, 'filter').mockReturnValue([game.user, game.user]);
         //@ts-ignore
         (<Mock>game.users.get).mockReturnValueOnce(game.user);
-        expect(nStub.playerVisible).toEqual(true);
+        expect(nStub.playerVisible).toEqual({ icon: 'fa-eye-low-vision', color: 'fsc-secondary', players: ":<ul style=\"text-align: left;padding: 0;margin-bottom:0;list-style: none;\"><li></li><li></li></ul>" });
     });
 
     test('User Reminder Registered', () => {

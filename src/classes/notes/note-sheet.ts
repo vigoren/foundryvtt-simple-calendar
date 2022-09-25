@@ -160,17 +160,6 @@ export class NoteSheet extends JournalSheet{
         }
     }
 
-    protected _getHeaderButtons(): Application.HeaderButton[] {
-        const buttons = super._getHeaderButtons();
-        const reducedButtons = [];
-        for(let i = 0; i < buttons.length; i++){
-            if(buttons[i].class === 'close' || buttons[i].class === 'configure-sheet'){
-                reducedButtons.push(buttons[i]);
-            }
-        }
-        return reducedButtons;
-    }
-
     override get title(): string {
         return this.object.name || "Note";
     }
@@ -251,7 +240,7 @@ export class NoteSheet extends JournalSheet{
                 dateDisplay: '',
                 repeats: NoteRepeat.Never,
                 noteData: {},
-                users: <any>[],
+                users: <SimpleCalendar.Renderer.MultiSelectOption[]>[],
                 timeSelected: false,
                 dateSelectorId: this.dateSelectorId,
                 dateSelectorSelect: this.dateSelectorSelect.bind(this),
@@ -323,11 +312,13 @@ export class NoteSheet extends JournalSheet{
                 const users = (<Game>game).users;
                 if(users){
                     newOptions.edit.users = users.map(u => {return {
-                        text: u.name,
+                        text: u.name || '',
                         value: u.id,
                         selected: (noteStub.ownership[u.id] !== 0 && this.object.testUserPermission(u, 2)),
-                        disabled: u.id === (<Game>game).user?.id
+                        static: u.id === (<Game>game).user?.id,
+                        disabled: u.id === (<Game>game).user?.id || noteStub.ownership['default'] >= 2
                     }});
+                    newOptions.edit.users.unshift({text: GameSettings.Localize('FSC.Notes.Permissions.AllPlayers'), value: 'default', makeOthersMatch: true, selected: noteStub.ownership['default'] !== undefined && noteStub.ownership['default'] !== 0 , disabled: false});
                 }
                 const noteData = noteStub.noteData;
                 if(noteData){
@@ -458,7 +449,7 @@ export class NoteSheet extends JournalSheet{
                 // Reminder Button Click
                 //---------------------
                 this.appWindow.querySelector('.fsc-reminder')?.removeAttribute('disabled');
-                this.appWindow.querySelector('.fsc-reminder')?.addEventListener('click', this.reminderChange.bind(this));
+                this.appWindow.querySelector('.fsc-reminder')?.addEventListener('click', this.reminderChange.bind(this, true));
                 this.appWindow.querySelector('.load-pdf button')?.removeAttribute('disabled');
                 this.appWindow.querySelector('.load-pdf button')?.addEventListener('click', this._loadPDF.bind(this));
             }
@@ -499,7 +490,6 @@ export class NoteSheet extends JournalSheet{
      * @param event
      */
     public toggleDrawer(selector: string, event: Event){
-        event.preventDefault();
         if(this.appWindow){
             const cList = this.appWindow.querySelector(`.${selector}`);
             if(cList){
@@ -658,8 +648,24 @@ export class NoteSheet extends JournalSheet{
                 } else if(permissionValue === 3){
                     this.journalData.permission[value] = 3;
                 }
+                if(value === 'default'){
+                    (<Game>game).users?.forEach(u => {
+                        const pv = this.journalData.permission[u.id];
+                        if(pv === undefined || pv < 2){
+                            this.journalData.permission[u.id] = 2;
+                        }
+                    });
+                }
             } else {
                 this.journalData.permission[value] = 0;
+                if(value === 'default'){
+                    (<Game>game).users?.forEach(u => {
+                        const pv = this.journalData.permission[u.id];
+                        if(pv === 2){
+                            this.journalData.permission[u.id] = 0;
+                        }
+                    });
+                }
             }
             this.dirty = true;
         }
@@ -741,7 +747,6 @@ export class NoteSheet extends JournalSheet{
                     };
                     break;
             }
-console.log(this.journalPages);
             this.dirty = true;
             if(render){
                 this.render(true);
@@ -749,7 +754,7 @@ console.log(this.journalPages);
         }
     }
 
-    async reminderChange(){
+    async reminderChange(renderNote: boolean = true){
         const user = (<Game>game).user;
         if(user){
             const userId = user.id;
@@ -775,7 +780,9 @@ console.log(this.journalPages);
                 };
                 await GameSockets.emit(socket);
             }
-            this.render(true);
+            if(renderNote){
+                this.render(true);
+            }
             MainApplication.updateApp();
         }
     }
@@ -823,7 +830,6 @@ console.log(this.journalPages);
     }
 
     changePage(e: Event){
-        e.stopPropagation();
         const target = (<HTMLElement>e.target)?.closest('li');
         if(target){
             const id = target.getAttribute('data-index');
@@ -845,7 +851,6 @@ console.log(this.journalPages);
     }
 
     async removePage(e: Event){
-        e.stopPropagation();
         const target = (<HTMLElement>e.target)?.closest('li');
         if(target){
             const id = target.getAttribute('data-index');

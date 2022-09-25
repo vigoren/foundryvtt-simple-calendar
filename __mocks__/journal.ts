@@ -1,4 +1,5 @@
 //@ts-ignore
 global.Journal = {
-    registerSheet: jest.fn()
+    registerSheet: jest.fn(),
+    showDialog: async () => {}
 };
