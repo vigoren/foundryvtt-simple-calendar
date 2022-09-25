@@ -2,7 +2,7 @@
 
 ## v2.1.27 - Improved Note Permissions, Note List Context Menu and Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-September%2023%2C%202022-blue)
+![](https://img.shields.io/badge/release%20date-September%2024%2C%202022-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.27/module.zip)
 
 ### Improved Note Permissions
