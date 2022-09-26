@@ -74,7 +74,7 @@
 	"FSC.Notes.NotPlayerVisible": "Non visible pour les Joueurs",
 	"FSC.Notes.PlayerVisible": "Visible pour les joueurs",
 	"FSC.Notes.PlayerVisibleHelp": "Si cette note est visible par les joueurs ou non.",
-	"FSC.Notes.Reminder": "Rappelez le moi !",
+	"FSC.Notes.Reminder": "Rappelez le moi",
 	"FSC.Notes.ReminderHelp": "Cet évènement vous sera rappelé.",
 	"FSC.Notes.Repeating": "Récurrence de la note",
 	"FSC.Notes.RepeatingHelp": "Si cette note se répète hebdomadairement, mensuellement, annuellement ou pas du tout.",
