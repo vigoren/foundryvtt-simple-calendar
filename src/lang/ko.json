@@ -148,7 +148,7 @@
 	"FSC.Notes.NotPlayerVisible": "플레이어가 볼 수 없음",
 	"FSC.Notes.PlayerVisible": "플레이어가 볼 수 있음",
 	"FSC.Notes.PlayerVisibleHelp": "체크 시 플레이어가 이 노트를 볼 수 있습니다.",
-	"FSC.Notes.Reminder": "알려주세요!",
+	"FSC.Notes.Reminder": "알려주세요",
 	"FSC.Notes.ReminderHelp": "이 이벤트를 알림을 통해 상기시킨다.",
 	"FSC.Notes.Repeating": "노트 반복",
 	"FSC.Notes.RepeatingHelp": "이 노트가 반복되지 않거나 매주, 매월, 매년 반복되는지 설정합니다.",
