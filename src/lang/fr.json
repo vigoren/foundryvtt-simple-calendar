@@ -510,5 +510,15 @@
 	"FSC.Predefined.Harptos": "Royaumes Oubliés : Harptos",
 	"FSC.Sunrise": "Lever du soleil",
 	"FSC.Notes.Permissions.AllPlayers": "Tous les joueurs",
-	"FSC.Configuration.Year.YearNameHelp": "Le nom du texte qui est employé pour nommer les années."
+	"FSC.Configuration.Year.YearNameHelp": "Le nom du texte qui est employé pour nommer les années.",
+	"FSC.Configuration.Weekday.Weekend": "Jour de repos",
+	"FSC.Configuration.Weekday.DescriptionField": "Description des jours de la semaine",
+	"FSC.Configuration.Weekday.WeekendHelp": "La partie de la semaine qui est traditionnellement consacrée au repos, plutôt qu'au travail. Par exemple, le week-end dans le calendrier grégorien moderne",
+	"FSC.Predefined.Exandrian": "Exandrien",
+	"FSC.Predefined.ForbiddenLands": "Terres interdites",
+	"FSC.Configuration.Month.DescriptionField": "Description du mois",
+	"FSC.Configuration.Month.DescriptionHelp": "Une description de la saison pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom de la saison dans la vue principale du calendrier.",
+	"FSC.Configuration.Season.DescriptionField": "Description de la saison",
+	"FSC.Configuration.Season.DescriptionHelp": "Une description de la saison pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom de la saison dans la vue principale du calendrier.",
+	"FSC.Configuration.Weekday.DescriptionHelp": "Une description du jour de la semaine pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom d'un jour de la semaine dans la vue principale du calendrier."
 }
