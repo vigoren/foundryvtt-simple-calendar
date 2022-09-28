@@ -453,5 +453,6 @@
 	"FSC.Migration.Title": "Migración",
 	"FSC.Migration.v1v2.Title": "Migración desde Simple Calendar v1 a v2",
 	"FSC.Migration.v1v2.Calendar": "¡Migrando los datos del calendario a la nueva versión!",
-	"FSC.Migration.v1v2.Help": "¡Bienvenido a Simple Calendar versión 2!<br/><br/>¡Para la lista completa de mejoras, revisa el <a href='https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/CHANGELOG.md'> registro de cambios</a>!<br/><br/>Partes de las mejoras requirieron cambios en la forma como Simple Calendar guarda datos, pero no te preocupes, ¡Simple Calendar ya está moviendo tus datos al nuevo formato!"
+	"FSC.Migration.v1v2.Help": "¡Bienvenido a Simple Calendar versión 2!<br/><br/>¡Para la lista completa de mejoras, revisa el <a href='https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/CHANGELOG.md'> registro de cambios</a>!<br/><br/>Partes de las mejoras requirieron cambios en la forma como Simple Calendar guarda datos, pero no te preocupes, ¡Simple Calendar ya está moviendo tus datos al nuevo formato!",
+	"FSC.MakeActive": "Activar este Calendario"
 }
