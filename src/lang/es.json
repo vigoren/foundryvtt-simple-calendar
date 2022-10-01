@@ -448,5 +448,11 @@
 	"FSC.Configuration.Month.Description": "Estos ajustes le permiten añadir y eliminar meses al calendario seleccionado, así como personalizar esos meses. Es importante tener en cuenta que un calendario debe tener siempre al menos 1 mes.",
 	"FSC.Configuration.QuickSetup.ChoosePredefinedDescription": "Elija uno de estos calendarios predefinidos para basar este calendario actual. Esto cambiará la configuración del calendario actual para que coincida con la configuración del calendario predefinido seleccionado.",
 	"FSC.Configuration.QuickSetup.ImportNotesDescription": "Añadir cualquier nota que viene junto con el calendario predefinido. Por lo general, se trata de días festivos específicos del calendario.",
-	"FSC.Configuration.Theme.Classic": "Clásico"
+	"FSC.Configuration.Theme.Classic": "Clásico",
+	"FSC.Configuration.Season.Title": "Ajustes de Estaciones",
+	"FSC.Migration.Title": "Migración",
+	"FSC.Migration.v1v2.Title": "Migración desde Simple Calendar v1 a v2",
+	"FSC.Migration.v1v2.Calendar": "¡Migrando los datos del calendario a la nueva versión!",
+	"FSC.Migration.v1v2.Help": "¡Bienvenido a Simple Calendar versión 2!<br/><br/>¡Para la lista completa de mejoras, revisa el <a href='https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/CHANGELOG.md'> registro de cambios</a>!<br/><br/>Partes de las mejoras requirieron cambios en la forma como Simple Calendar guarda datos, pero no te preocupes, ¡Simple Calendar ya está moviendo tus datos al nuevo formato!",
+	"FSC.MakeActive": "Activar este Calendario"
 }

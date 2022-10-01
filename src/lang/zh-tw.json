@@ -342,7 +342,7 @@
 	"FSC.Notes.Date": "筆記日期",
 	"FSC.Notes.DateHelp": "筆記的日期",
 	"FSC.Notes.NotPlayerVisible": "玩家無法看見",
-	"FSC.Notes.Reminder": "提醒我!",
+	"FSC.Notes.Reminder": "提醒我",
 	"FSC.Notes.ReminderHelp": "你會被提醒這個事件.",
 	"FSC.Notes.Time": "時間",
 	"FSC.Notes.DateTime.Title": "筆記日期/時間",
@@ -415,5 +415,6 @@
 	"FSC.AddNewCalendar": "新增日曆",
 	"FSC.Configuration.AddCalendar.Button": "新增日曆",
 	"FSC.Configuration.AddCalendar.CalendarNameHelp": "一個能夠讓你的新日曆和其他日曆區分的名字。",
-	"FSC.Configuration.Client.NoteReminderNotification.Whisper": "寄送一個帶有記事詳細資訊的私密訊息。"
+	"FSC.Configuration.Client.NoteReminderNotification.Whisper": "寄送一個帶有記事詳細資訊的私密訊息。",
+	"FSC.Configuration.CombatPauseRule.Active": "只會在啟動的場景中暫停"
 }
