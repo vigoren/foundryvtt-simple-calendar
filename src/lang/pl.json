@@ -121,5 +121,6 @@
 	"FSC.Predefined.TravellerIC": "Traveller: Kalendarz Imperialny",
 	"FSC.ChangeNextMonth": "Następny miesiąc",
 	"FSC.RemoveCalendarConfirmText": "Zamierzasz usunąć kalendarz <strong>${CAL_NAME}</strong> na stałe. Czy jesteś pewien/pewna?",
-	"FSC.Configure": "Konfiguruj"
+	"FSC.Configure": "Konfiguruj",
+	"FSC.Configuration.QuickSetup.Description": "Postępuj zgodnie z poniższymi wskazówkami, aby szybko skonfigurować i uruchomić kalendarz!"
 }
