@@ -280,11 +280,13 @@ describe('Note Sheet Class Tests', () => {
 
     test('Set Height', () => {
         const form = document.createElement('form');
+        const header  = document.createElement('header');
+        const section  = document.createElement('section');
         const elm = document.createElement('div');
         //@ts-ignore
         ns.appWindow = document.createElement('div');
         //@ts-ignore
-        jest.spyOn(ns.appWindow, 'getElementsByTagName').mockImplementation(() => {return [form]});
+        jest.spyOn(ns.appWindow, 'getElementsByTagName').mockReturnValueOnce([form]).mockReturnValueOnce([header]).mockReturnValueOnce([section]).mockReturnValueOnce([form]).mockReturnValueOnce([header]).mockReturnValueOnce([section]);
         //@ts-ignore
         jest.spyOn(ns,'setPosition').mockImplementation(() => {});
         //@ts-ignore

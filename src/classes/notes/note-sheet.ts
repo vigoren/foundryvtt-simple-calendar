@@ -3,7 +3,7 @@ import {DateTheSame, DaysBetweenDates, FormatDateTime} from "../utilities/date-t
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import {CalManager, MainApplication, NManager, SC} from "../index";
-import {animateElement, GetThemeName} from "../utilities/visual";
+import {animateElement, ConvertPxBasedOnRemSize, GetThemeName} from "../utilities/visual";
 import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import {
@@ -32,7 +32,7 @@ export class NoteSheet extends JournalSheet{
         _id: '',
         name: '',
         flags: <Record<string,any>>{},
-        permission: <Partial<Record<string, 0 | 1 | 2 | 3>>>{}
+        ownership: <Partial<Record<string, 0 | 1 | 2 | 3>>>{}
     };
 
     private journalPages: SimpleCalendar.JournalPageData[] = [];
@@ -56,10 +56,20 @@ export class NoteSheet extends JournalSheet{
             if(!ns.resized){
                 const form = ns.appWindow.getElementsByTagName('form');
                 if(form && form.length){
-                    let height = 46;//Header height and padding of form
+                    let height = 0;
+                    const header = ns.appWindow.getElementsByTagName('header');
+                    if(header && header.length){
+                        height += header[0].offsetHeight;
+                    }
+                    const section = ns.appWindow.getElementsByTagName('section');
+                    if(section && section.length){
+                        const cs = window.getComputedStyle(section[0]);
+                        height += (parseInt(cs.borderTop) || 0) + (parseInt(cs.borderBottom) || 0);
+                    }
                     if(ns.editMode){
-                        height += form[0].scrollHeight - 16;//minus the padding as we account for this above
+                        height += form[0].scrollHeight;
                     } else {
+                        height += 16;
                         const nHeader = <HTMLElement>ns.appWindow.querySelector('.fsc-note-header');
                         const nContent = <HTMLElement>ns.appWindow.querySelector('.fsc-content');
                         const nEditControls = <HTMLElement>ns.appWindow.querySelector('.fsc-edit-controls');
@@ -69,7 +79,7 @@ export class NoteSheet extends JournalSheet{
                         }
                         if(nContent){
                             const cs = window.getComputedStyle(nContent);
-                            height +=  nContent.scrollHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom);
+                            height +=  nContent.scrollHeight + parseInt(cs.marginTop) + parseInt(cs.marginBottom) + (parseInt(cs.borderTop) || 0) + (parseInt(cs.borderBottom) || 0);
                         }
                         if(nEditControls){
                             const cs = window.getComputedStyle(nEditControls);
@@ -84,7 +94,7 @@ export class NoteSheet extends JournalSheet{
                     if(height > maxHeight){
                         height = maxHeight;
                     }
-                    ns.setPosition({height: height, width: 720});
+                    ns.setPosition({height: ConvertPxBasedOnRemSize(height), width: ConvertPxBasedOnRemSize(720)});
                 }
             }
             const cList = ns.appWindow.querySelector(`.fsc-page-list`);
@@ -136,7 +146,7 @@ export class NoteSheet extends JournalSheet{
         //@ts-ignore
         this.journalData.flags = mergeObject({}, this.object.flags);
         //@ts-ignore
-        this.journalData.permission = mergeObject({}, this.object.ownership);
+        this.journalData.ownership = mergeObject({}, this.object.ownership);
         this.journalPages = [];
         //@ts-ignore
         for(let i = 0; i < this.object.pages.contents.length; i++){
@@ -276,7 +286,7 @@ export class NoteSheet extends JournalSheet{
             newOptions.name = this.journalData.name;
             if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'text'){
                 //@ts-ignore
-                newOptions.enrichedContent = await TextEditor.enrichHTML(this.journalPages[this.uiElementStates.selectedPageIndex].text?.content || '', {async: true});
+                newOptions.enrichedContent = `<section>${await TextEditor.enrichHTML(this.journalPages[this.uiElementStates.selectedPageIndex].text?.content || '', {async: true})}</section>`;
             } else if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'image'){
                 newOptions.enrichedContent = this.generateImageHTML();
             } else if(this.journalPages[this.uiElementStates.selectedPageIndex].type === 'pdf'){
@@ -642,27 +652,27 @@ export class NoteSheet extends JournalSheet{
             this.dirty = true;
         } else if(multiSelectId === this.playerMultiSelectId){
             if(selected){
-                const permissionValue = this.journalData.permission[value];
+                const permissionValue = this.journalData.ownership[value];
                 if(permissionValue === undefined || permissionValue < 2){
-                    this.journalData.permission[value] = 2;
+                    this.journalData.ownership[value] = 2;
                 } else if(permissionValue === 3){
-                    this.journalData.permission[value] = 3;
+                    this.journalData.ownership[value] = 3;
                 }
                 if(value === 'default'){
                     (<Game>game).users?.forEach(u => {
-                        const pv = this.journalData.permission[u.id];
+                        const pv = this.journalData.ownership[u.id];
                         if(pv === undefined || pv < 2){
-                            this.journalData.permission[u.id] = 2;
+                            this.journalData.ownership[u.id] = 2;
                         }
                     });
                 }
             } else {
-                this.journalData.permission[value] = 0;
+                this.journalData.ownership[value] = 0;
                 if(value === 'default'){
                     (<Game>game).users?.forEach(u => {
-                        const pv = this.journalData.permission[u.id];
+                        const pv = this.journalData.ownership[u.id];
                         if(pv === 2){
-                            this.journalData.permission[u.id] = 0;
+                            this.journalData.ownership[u.id] = 0;
                         }
                     });
                 }
@@ -948,6 +958,7 @@ export class NoteSheet extends JournalSheet{
     }
 
     async deleteConfirm(){
+        this.dirty = false;
         NManager.removeNoteStub((<JournalEntry>this.object));
         MainApplication.updateApp();
         await (<JournalEntry>this.object).delete();

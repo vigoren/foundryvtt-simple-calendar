@@ -1,3 +1,4 @@
+@import "../variables";
 
 .simple-calendar{
   .fsc-category-list, .form-fields.fsc-category-list{
@@ -5,19 +6,37 @@
   }
   .fsc-note-category, label.fsc-note-category, .form-fields .fsc-note-category{
     font-size: 0.725rem;
-    border-radius: 7px;
+    border-radius: pxToRem(7);
     padding: .2rem .4rem;
-    margin-right: 5px;
-    margin-bottom: 5px;
+    margin-right: pxToRem(5);
+    margin-bottom: pxToRem(5);
     display: flex;
     flex-direction: row;
     align-items: center;
+    background-color: var(--note-cat-bg-color);
+    border-color: var(--note-cat-bg-color);
+    color: var(--note-cat-color);
+    box-shadow: 1px 1px 5px var(--note-cat-box-shadow-color);
 
-    input{
-      width: 15px;
-      height: 15px;
-      flex: 0 0 15px;
-      margin-left: 0;
+    &.fsc-secondary{
+      background-color: var(--note-cat-secondary-bg-color);
+      border-color: var(--note-cat-secondary-bg-color);
+      color: var(--note-cat-secondary-color);
+    }
+    &.fsc-success{
+      background-color: var(--note-cat-success-bg-color);
+      border-color: var(--note-cat-success-bg-color);
+      color: var(--note-cat-success-color);
+    }
+    &.fsc-danger{
+      background-color: var(--note-cat-danger-bg-color);
+      border-color: var(--note-cat-danger-bg-color);
+      color: var(--note-cat-danger-color);
+    }
+    &.fsc-reminder{
+      background-color: var(--note-cat-reminder-bg-color);
+      border-color: var(--note-cat-reminder-bg-color);
+      color: var(--note-cat-reminder-color);
     }
 
     span{

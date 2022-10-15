@@ -12,7 +12,7 @@
             background-repeat: no-repeat !important;
             background-position: left center;
             background-size: contain;
-            border: 1px solid;
+            border: 1px solid var(--toggle-border-color) !important;
             cursor: pointer;
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -21,13 +21,15 @@
             color-adjust: exact;
             print-color-adjust: exact;
             float: left;
-            background-image: url($checkboxSVGLight);
+            background-image: var(--toggle-unchecked-image);
             border-radius: 2em;
             transition: background-position .15s ease-in-out;
 
             &:checked{
               background-position: right center;
-              background-image: url($checkboxSVGWhite);
+              background-image: var(--toggle-checked-image);
+              background-color: var(--toggle-checked-bg-color) !important;
+              -webkit-filter: unset;
             }
           }
         }

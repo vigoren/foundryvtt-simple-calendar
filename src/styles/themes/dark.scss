@@ -1,48 +1,233 @@
 @import "../variables";
-body.game{
-  .simple-calendar{
-    &.dark{
-      &.window-app{
-        @import "src/styles/themes/dark/calendar";
-        @import "src/styles/themes/dark/clock";
-        @import "src/styles/themes/dark/configuration";
-        @import "src/styles/themes/dark/context-menu";
-        @import "src/styles/themes/dark/control";
-        @import "src/styles/themes/dark/date-selector";
-        @import "src/styles/themes/dark/form-groups";
-        @import "src/styles/themes/dark/foundry-window-app";
-        @import "src/styles/themes/dark/foundry-window-app-compact";
-        @import "src/styles/themes/dark/foundry-window-app-migration";
-        @import "src/styles/themes/dark/message";
-        @import "src/styles/themes/dark/multi-select";
-        @import "src/styles/themes/dark/note-category";
-        @import "src/styles/themes/dark/note-list";
-        @import "src/styles/themes/dark/note-sheet";
-        @import "src/styles/themes/dark/prosemirror";
-        @import "src/styles/themes/dark/search-box";
-        @import "src/styles/themes/dark/time-selector";
-        @import "src/styles/themes/dark/toggle";
+$theme: (
+  //Font
+        font-family: $font-family,
+  //Input Colors
+        input-bg-color: $gray-700,
+        input-border-color: $gray-500,
+        input-color: $white,
+
+  //Link Color
+        link-color: $secondary,
+        link-hover-color: $secondary-800,
+        entity-link-bg-color: $primary-700,
+        entity-link-border-color: $primary-400,
+        entity-link-icon-color: $secondary,
+        entity-link-icon-hover-color: $secondary-800,
+
+  //Headings
+        heading-border-color: $secondary,
+        about-heading-border-color: $primary,
+
+  //Application Coloring
+        app-header-bg-color: $primary-1000,
+        app-header-bg-image: unset,
+        app-header-color: $white,
+        app-header-border: 0,
+        app-header-border-image: unset,
+        app-header-height: pxToRem(30),
+        app-bg-color: $primary-1100,
+        app-bg-image: unset,
+        app-border: 0,
+        app-border-image: unset,
+        app-color: $white,
+
+  // Dialog section coloring
+        section-bg-color: $primary-950,
+        section-border-color: $primary-200,
+        section-color: $white,
+
+  //Side Drawer Coloring
+        side-drawer-color: $white,
+        side-drawer-bg-color: $primary-1000,
+        side-drawer-bg-image: unset,
+        side-drawer-border-color: $primary-1100,
+        side-drawer-border-image: unset,
+
+  // Scrollbar Coloring
+        scrollbar-background-color: $primary,
+        scrollbar-border-color: $primary-600,
+
+  //Calendar Coloring
+        cal-weekend-bg-color: rgba(0,0,0,0.25),
+        cal-day-border-color: $primary-900,
+        cal-day-hover-color: $gray-700,
+        cal-day-current-bg-color: $primary-800,
+        cal-day-current-box-shadow-color: $primary-200,
+        cal-day-current-hover-bg-color: $primary,
+        cal-day-selected-bg-color: $success-800,
+        cal-day-selected-box-shadow-color: $success-200,
+        cal-day-selected-hover-bg-color: $success,
+        cal-note-indicator-bg-color: $secondary,
+        cal-note-reminder-indicator-bg-color: $tertiary-300,
+        cal-note-indicator-color: $fontColor,
+        cal-moon-group-bg-color: $primary-1000,
+        cal-moon-group-border-color: $primary-600,
+        cal-moon-group-box-shadow-color: $boxShadowColor,
+        cal-moon-text-shadow: rgba(255, 255, 255, 0.4),
+
+  //Calendar List Coloring
+        cal-list-color: $white,
+        cal-list-active-border-color: $primary-A400,
+        cal-list-active-bg-color: $primary-800,
+        cal-list-visible-bg-color: $tertiary-600,
+        cal-list-bg-hover-color: $tertiary-400,
+
+  //Clock Coloring
+        clock-started-color: $success-400,
+        clock-stopped-color: $danger-400,
+        clock-paused-color: $secondary-400,
+
+  //Context Menu
+        context-menu-color: $white,
+        context-menu-border-color: $secondary,
+        context-menu-bg-color: rgba(0,0,0,0.85),
+        context-menu-action-hover-color: $primary-A400,
+        context-menu-divider-color: $gray-600,
+
+  //Configuration Menu
+        config-menu-heading-color: $primary-A400,
+        config-menu-item-border-color: $gray-700,
+        config-menu-item-color: $secondary,
+        config-menu-item-hover-color: $fontColor,
+        config-menu-item-hover-bg-color: $secondary,
+        config-menu-cal-settings-bg-color: $primary-1000,
+        config-menu-cal-selector-bg-color: $primary-1100,
+        config-menu-cal-selector-hover-bg-color: $primary-950,
+        config-menu-cal-selector-color: $white,
+        config-menu-cal-selector-hover-color: $white,
+
+  //Controls
+        btn-bg-image: unset,
+        btn-border: 1px solid,
+        btn-border-image: unset,
+        btn-grey-border-color: $gray-600,
+        btn-grey-bg-color: $gray-600,
+        btn-grey-color: $white,
+        btn-grey-bg-hover-color: $gray-500,
+        btn-grey-disabled-bg-color: $gray-300,
+        btn-primary-border-color: $primary-800,
+        btn-primary-bg-color: $primary-800,
+        btn-primary-color: $white,
+        btn-primary-bg-hover-color: $primary,
+        btn-primary-disabled-bg-color: $primary-T900,
+        btn-secondary-border-color: $secondary,
+        btn-secondary-bg-color: $secondary,
+        btn-secondary-color: $fontColor,
+        btn-secondary-bg-hover-color: $secondary-300,
+        btn-secondary-disabled-bg-color: $secondary-T900,
+        btn-tertiary-border-color: $tertiary-300,
+        btn-tertiary-bg-color: $tertiary-300,
+        btn-tertiary-color: $fontColor,
+        btn-tertiary-bg-hover-color: $tertiary-200,
+        btn-tertiary-disabled-bg-color: $tertiary-T900,
+        btn-delete-border-color: $danger-900,
+        btn-delete-bg-color: $danger-900,
+        btn-delete-color: $white,
+        btn-delete-bg-hover-color: $danger,
+        btn-delete-disabled-bg-color: $danger-T900,
+        btn-save-border-color: $success-900,
+        btn-save-bg-color: $success-900,
+        btn-save-color: $white,
+        btn-save-bg-hover-color: $success,
+        btn-save-disabled-bg-color: $success-T900,
+
+  //Form Groups
+        form-group-bg-color: $primary-1000,
+        form-group-bg-hover-color: $primary-950,
+        form-group-border-color: $primary-200,
+        form-group-label-color: $primary-A200,
+        form-group-help-color: $primary-50,
+        form-group-input-bg-color: $gray-700,
+        form-group-input-border-color: $gray-500,
+        form-group-input-color: $white,
+        form-group-help-icon-color: $secondary,
 
 
-        //Links
-        a{
-          color: $secondary;
-          &:hover, &:active, &:focus{
-            color: $secondary-800;
-            text-shadow: unset;
-          }
-        }
+  //Messages
+        message-color: $white,
+        message-warn-bg-color: $secondary-950,
+        message-warn-border-color: $secondary-900,
+        message-success-bg-color: $success-950,
+        message-success-border-color: $success-900,
+        message-info-bg-color: $primary-950,
+        message-info-border-color: $primary-900,
+        message-danger-bg-color: $danger-1000,
+        message-danger-border-color: $danger-950,
 
-        //Inputs
-        input, select, option{
-          background-color: $gray-700 !important;
-          border-color: $gray-500 !important;
-          color: $white !important;
-          &:focus{
-            box-shadow: unset;
-          }
-        }
-      }
+
+  //Multi Select
+        multi-select-option-bg-color: $primary-900,
+        multi-select-option-bg-hover-color: $primary-400,
+        multi-select-option-border-color: $gray-600,
+        multi-select-option-color: $white,
+        multi-select-disabled-bg-color: $gray-700,
+        multi-select-disabled-color: $gray-400,
+
+  //Note Category
+        note-cat-color: $white,
+        note-cat-bg-color: $gray-600,
+        note-cat-box-shadow-color: $fontColor,
+        note-cat-secondary-bg-color: $secondary,
+        note-cat-secondary-color: $fontColor,
+        note-cat-success-bg-color: $success-900,
+        note-cat-success-color: $white,
+        note-cat-danger-bg-color: $danger-900,
+        note-cat-danger-color: $white,
+        note-cat-reminder-bg-color: $tertiary-300,
+        note-cat-reminder-color: $fontColor,
+
+  //Note List
+        note-list-note-border-color: $primary-200,
+        note-list-note-bg-hover-color: $primary-800,
+        note-list-note-hover-color: $white,
+        note-list-note-dragger-bg-color: $gray-600,
+        note-list-note-dragger-box-shadow-color: $fontColor,
+
+  //Note Sheet
+        note-sheet-page-list-border-color: $primary-A200,
+        note-sheet-page-list-page-hover-bg-color: $primary-800,
+
+  //Predefined Calendar Colors
+        pre-cal-color: $tertiary-A100,
+        pre-cal-border-color: $tertiary-400,
+        pre-cal-border-hover-color: $tertiary-600,
+        precal-hover-color: $white,
+
+  //Progress Bar
+        progress-bar-bg-color: $gray-700,
+        progress-bar-border-color: $gray-500,
+        progress-bar-fill-color: $tertiary-300,
+
+  //Prose Mirror
+        editor-color: $white,
+        editor-menu-bg-color: $primary-50,
+        editor-menu-control-bg-color: $primary-150,
+        editor-menu-control-bg-hover-color: $primary-100,
+
+  //Search Box
+        search-box-placeholder-color: $gray-400,
+        search-box-color: $white,
+
+  //Time Selector
+        time-selector-color: $white,
+        time-selector-input-bg-color: $gray-700,
+        time-selector-input-border-color: $gray-500,
+        time-selector-option-bg-even-color: $gray-600,
+        time-selector-option-hover-bg-color: $primary-600,
+
+  //Toggle
+        toggle-unchecked-image: url($checkboxSVGLight),
+        toggle-checked-image: url($checkboxSVGWhite),
+        toggle-border-color: $white,
+        toggle-checked-bg-color: $primary-A500,
+
+
+);
+.simple-calendar{
+  &.dark{
+    @each $prop, $value in $theme {
+      --#{$prop}: #{$value};
     }
   }
 }

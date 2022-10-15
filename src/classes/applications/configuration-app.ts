@@ -21,7 +21,14 @@ import {saveAs} from "file-saver";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Calendar from "../calendar";
 import DateSelectorManager from "../date-selector/date-selector-manager";
-import {animateElement, animateFormGroup, GetContrastColor, GetThemeList, GetThemeName} from "../utilities/visual";
+import {
+    animateElement,
+    animateFormGroup,
+    ConvertPxBasedOnRemSize,
+    GetContrastColor,
+    GetThemeList,
+    GetThemeName
+} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import UserPermissions from "../configuration/user-permissions";
 import {deepMerge, isObjectEmpty} from "../utilities/object";
@@ -155,8 +162,8 @@ export default class ConfigurationApp extends FormApplication {
         options.classes = ["simple-calendar", "fsc-simple-calendar-configuration"];
         options.resizable = true;
         options.tabs = [{navSelector: ".tabs", contentSelector: "form", initial: "yearSettings"}];
-        options.height = 700;
-        options.width = 1005;
+        options.height = ConvertPxBasedOnRemSize(700);
+        options.width = ConvertPxBasedOnRemSize(1005);
         options.scrollY = ['.fsc-tab-wrapper', '.fsc-sheet-tabs'];
         return options;
     }

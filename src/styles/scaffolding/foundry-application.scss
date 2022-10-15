@@ -1,0 +1,87 @@
+@import "src/styles/variables";
+.simple-calendar{
+  font-family: var(--font-family);
+  &.window-app{
+    box-shadow: 2px 2px pxToRem(10) #000000ab;
+    background: unset;
+    border: 0;
+    &:after{
+      content: unset;
+    }
+    header{
+      font-size: $spacer;
+      border-radius: pxToRem(5) pxToRem(5) 0 0;
+      border-bottom-width: 0;
+      &.window-header{
+        background-image: var(--app-header-bg-image);
+        background-color: var(--app-header-bg-color);
+        color: var(--app-header-color);
+        border: var(--app-header-border);
+        border-image: var(--app-header-border-image);
+        font-size: 1rem;
+        line-height: pxToRem(30);
+        flex: 0 0 var(--app-header-height);
+        padding: 0 pxToRem(8);
+        margin: 0;
+        position: unset;
+        min-height: unset;
+        height: unset;
+
+        .window-title{
+          color: var(--app-header-color);
+          margin: 0;
+          border: 0;
+          text-align: left;
+          box-shadow: unset;
+          text-shadow: unset;
+          font-family: var(--font-family);
+          font-size: 1rem;
+          font-weight: 400;
+          opacity: 1;
+        }
+
+        a.header-button, a.header-button.close{
+          color: var(--app-header-color) !important;
+          margin-top: 0!important;
+          margin-right: 0;
+          font-size: 1rem;
+          background: unset;
+          height: unset;
+          width: unset;
+          max-width: unset;
+          display: block;
+          line-height: inherit;
+          &:hover, &:active, &:focus{
+            background-color: unset;
+            color: var(--link-color)!important;
+            text-shadow: unset;
+            box-shadow: unset;
+            i{
+              color: var(--link-color)!important;
+            }
+          }
+          i{
+            display: inline-block;
+            width: unset;
+            color: var(--app-header-color);
+            font-size: 1rem;
+            margin: 0 3px 0 0;
+            position: relative;
+          }
+        }
+      }
+    }
+    .window-content{
+      padding: 0 !important;
+      overflow-x: visible !important;
+      overflow-y: visible !important;
+      background-color: var(--app-bg-color) !important;
+      background-image: var(--app-bg-image) !important;
+      color: var(--app-color) !important;
+      border: var(--app-border);
+      border-image: var(--app-border-image);
+      box-shadow: unset;
+      @include scrollbar();
+    }
+  }
+}

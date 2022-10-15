@@ -90,6 +90,13 @@ describe('API Class Tests', () => {
 
         expect(await API.addNote('', '', {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, true, 0, [], '')).toBe(null);
         expect(NManager.createNote).toHaveBeenCalledTimes(2);
+
+        expect(await API.addNote('', '', {}, {}, false)).toBe(null);
+        expect(NManager.createNote).toHaveBeenCalledTimes(3);
+
+        //@ts-ignore
+        expect(await API.addNote('', '', {}, {}, false, 0, [], '', '', 2)).toBe(null);
+        expect(NManager.createNote).toHaveBeenCalledTimes(4);
     });
 
     test('Advance Time to Preset', () => {

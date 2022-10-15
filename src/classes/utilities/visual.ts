@@ -17,6 +17,11 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
 
 /**
+ * The current Rem size for this system. Most systems are 16px
+ */
+export const RemSize = parseInt(window.getComputedStyle(document.documentElement).getPropertyValue('font-size'));
+
+/**
  * Finds the "best" contrast color for the passed in color
  * @param color
  */
@@ -157,6 +162,23 @@ export function GetThemeList(): {[key: string]: string}{
         }
     }
     return choices
+}
+
+/**
+ * Converts a pixel amount to a new pixel amount based on the current pages REM size
+ * @param px The pixel amount to convert
+ */
+export function ConvertPxBasedOnRemSize(px: number){
+    return px * (RemSize / 16);
+}
+
+/**
+ * Checks the current systems Rem size and adds the appropriate class to the body to account for that size.
+ */
+export function CheckRemScaling(){
+    if(RemSize !== 16){
+        document.body.classList.add(`sc-scale-${RemSize}`);
+    }
 }
 
 /**

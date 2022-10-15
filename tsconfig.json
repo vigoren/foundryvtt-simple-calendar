@@ -131,7 +131,9 @@
               {"title": "Add / Edit / Remove Notes", "source": "adding-editing-removing.md"}
             ]}
           ]},
-          {"title": "Developing With Simple Calendar", "childrenSourceDir":  "./docs/developing-with-sc", "source": "./docs/developing-with-sc/index.md"}
+          {"title": "Developing With Simple Calendar", "childrenSourceDir":  "./docs/developing-with-sc", "source": "./docs/developing-with-sc/index.md", "children":  [
+            {"title": "Theming Simple Calendar", "source":  "theming.md"}
+          ]}
         ]
     }
   }

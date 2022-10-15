@@ -1,40 +1,429 @@
-@import "../variables.scss";
+@import "../variables";
+$theme: (
+  //Font
+        font-family: CaslonPro,
+  //Input Colors
+        input-bg-color: $wfrpInputBackground,
+        input-border-color: $wfrpBorderColor,
+        input-color: $wfrpInputTextColor,
+
+  //Link Color
+        link-color: var(--color-text-hyperlink),
+        link-hover-color: var(--color-text-hyperlink),
+        entity-link-bg-color: #9e57001f,
+        entity-link-border-color: #b9935e99,
+        entity-link-icon-color: var(--color-text-dark-inactive),
+        entity-link-icon-hover-color: var(--color-text-dark-inactive),
+
+  //Headings
+        heading-border-color: var(--color-underline-header),
+        about-heading-border-color: $primary,
+
+  //Dialog Coloring
+        app-header-bg-color: $wfrpInputBackground,
+        app-header-bg-image: unset,
+        app-header-color: #d6d6d6,
+        app-header-border: 1px solid,
+        app-header-border-image: url($wfrpAppHeader) 19 21 19 21 fill / 19px 21px 21px 21px / 0 repeat,
+        app-header-height: pxToRem(45),
+        app-bg-color: $wfrpBlackBackground,
+        app-bg-image: url($wfrpAppBackground),
+        app-border: 10px solid,
+        app-border-image: url($wfrpAppBorder) 10 13 13 13 / 10px 13px 13px 13px / 0 repeat,
+        app-color: $white,
+
+  // Dialog section coloring
+        section-bg-color: $wfrpBlackBackground,
+        section-border-color: $wfrpBorderColor,
+        section-color: $wfrpTextColor,
+
+  //Side Drawer Coloring
+        side-drawer-color: #000000,
+        side-drawer-bg-color: #fff,
+        side-drawer-bg-image: url($wfrpParchmentTexture),
+        side-drawer-border-color: #000000,
+        side-drawer-border-image: url($wfrpChatMessageBorderPrivate) 21 / 10px / 8px repeat,
+
+  // Scrollbar Coloring
+        scrollbar-background-color: $wfrpInputBackground,
+        scrollbar-border-color: #000000,
+
+  //Calendar Coloring
+        cal-weekend-bg-color: rgba(255,255,255,0.15),
+        cal-day-border-color: $gray-600,
+        cal-day-hover-color: unset,
+        cal-day-current-bg-color: #2e4f66,
+        cal-day-current-box-shadow-color: #3289c5,
+        cal-day-current-hover-bg-color: #2e4f66,
+        cal-day-selected-bg-color: #185c45,
+        cal-day-selected-box-shadow-color: #0bb77d,
+        cal-day-selected-hover-bg-color: #185c45,
+        cal-note-indicator-bg-color: #91292e,
+        cal-note-reminder-indicator-bg-color: #5f3179,
+        cal-note-indicator-color: $white,
+        cal-moon-group-bg-color: $white,
+        cal-moon-group-border-color: $fontColor,
+        cal-moon-group-box-shadow-color: $boxShadowColor,
+        cal-moon-text-shadow: rgba(255, 255, 255, 1),
+
+  //Calendar List Coloring
+        cal-list-color: #000000,
+        cal-list-active-border-color: #00165878,
+        cal-list-active-bg-color: rgba(46, 79, 102, 0.9),
+        cal-list-visible-bg-color: rgba(95, 49, 121, 0.9),
+        cal-list-bg-hover-color: #5f3179BE,
+
+  //Clock Coloring
+        clock-started-color: #25ad7f,
+        clock-stopped-color: #c12121,
+        clock-paused-color: #daa32a,
+
+  //Context Menu
+        context-menu-color: $wfrpTextColor,
+        context-menu-border-color: $secondary-800,
+        context-menu-bg-color: $wfrpBlackBackground,
+        context-menu-action-hover-color: #b98132,
+        context-menu-divider-color: $gray-600,
+
+  //Configuration Menu
+        config-menu-heading-color: $wfrpTextColor,
+        config-menu-item-border-color: $wfrpBorderColor,
+        config-menu-item-color: $wfrpTextColor,
+        config-menu-item-hover-color: #000000,
+        config-menu-item-hover-bg-color: rgba($secondary, .65),
+        config-menu-cal-settings-bg-color: $wfrpInputBackground,
+        config-menu-cal-selector-bg-color: $wfrpBlackBackground,
+        config-menu-cal-selector-hover-bg-color: $gray-800,
+        config-menu-cal-selector-color: $wfrpTextColor,
+        config-menu-cal-selector-hover-color: $wfrpTextColor,
+
+  //Controls
+        btn-bg-image: unset,
+        btn-border: 4px solid,
+        btn-border-image: url($wfrpFooterButton) 10 / 4px / 0 repeat,
+        btn-grey-border-color: $gray-600,
+        btn-grey-bg-color: $gray-600,
+        btn-grey-color: $white,
+        btn-grey-bg-hover-color: $gray-500,
+        btn-grey-disabled-bg-color: $gray-300,
+        btn-primary-border-color: $primary-800,
+        btn-primary-bg-color: $primary-800,
+        btn-primary-color: $white,
+        btn-primary-bg-hover-color: $primary,
+        btn-primary-disabled-bg-color: $primary-T900,
+        btn-secondary-border-color: $secondary,
+        btn-secondary-bg-color: $secondary,
+        btn-secondary-color: $fontColor,
+        btn-secondary-bg-hover-color: $secondary-300,
+        btn-secondary-disabled-bg-color: $secondary-T900,
+        btn-tertiary-border-color: $tertiary-300,
+        btn-tertiary-bg-color: $tertiary-300,
+        btn-tertiary-color: $white,
+        btn-tertiary-bg-hover-color: $tertiary-200,
+        btn-tertiary-disabled-bg-color: $tertiary-T900,
+        btn-delete-border-color: $danger-900,
+        btn-delete-bg-color: $danger-900,
+        btn-delete-color: $white,
+        btn-delete-bg-hover-color: $danger,
+        btn-delete-disabled-bg-color: $danger-T900,
+        btn-save-border-color: $success-900,
+        btn-save-bg-color: $success-900,
+        btn-save-color: $white,
+        btn-save-bg-hover-color: $success,
+        btn-save-disabled-bg-color: $success-T900,
+
+  //Form Groups
+        form-group-bg-color: $wfrpBlackBackground,
+        form-group-bg-hover-color: rgba(28, 28, 28, 0.91),
+        form-group-border-color: $wfrpBorderColor,
+        form-group-label-color: #ccc6c6,
+        form-group-help-color: #BBB,
+        form-group-input-bg-color: $wfrpInputBackground,
+        form-group-input-border-color: #736953a6,
+        form-group-input-color: $wfrpInputTextColor,
+        form-group-help-icon-color: var(--color-text-hyperlink),
+
+
+  //Messages
+        message-color: $white,
+        message-warn-bg-color: $secondary-950,
+        message-warn-border-color: $secondary-900,
+        message-success-bg-color: $success-950,
+        message-success-border-color: $success-900,
+        message-info-bg-color: $primary-950,
+        message-info-border-color: $primary-900,
+        message-danger-bg-color: $danger-1000,
+        message-danger-border-color: $danger-950,
+
+
+  //Multi Select
+        multi-select-option-bg-color: $wfrpInputBackground,
+        multi-select-option-bg-hover-color: #4C3520,
+        multi-select-option-border-color: $gray-600,
+        multi-select-option-color: $wfrpInputTextColor,
+        multi-select-disabled-bg-color: #3C352F,
+        multi-select-disabled-color: $wfrpInputTextColor,
+
+  //Note Category
+        note-cat-color: $white,
+        note-cat-bg-color: #444141,
+        note-cat-box-shadow-color: $fontColor,
+        note-cat-secondary-bg-color: #daa32a,
+        note-cat-secondary-color: $fontColor,
+        note-cat-success-bg-color: #185c45,
+        note-cat-success-color: $white,
+        note-cat-danger-bg-color: #91292e,
+        note-cat-danger-color: $white,
+        note-cat-reminder-bg-color: #5f3179,
+        note-cat-reminder-color: $white,
+
+  //Note List
+        note-list-note-border-color: #00165878,
+        note-list-note-bg-hover-color: #00000026,
+        note-list-note-hover-color: $white,
+        note-list-note-dragger-bg-color: #c3c3c37a,
+        note-list-note-dragger-box-shadow-color: #a5a5a5,
+
+  //Note Sheet
+        note-sheet-page-list-border-color: transparent,
+        note-sheet-page-list-page-hover-bg-color: #ffffff82,
+
+  //Predefined Calendar Colors
+        pre-cal-color: $white,
+        pre-cal-border-color: $wfrpBorderColor,
+        pre-cal-border-hover-color: $wfrpInputBackground,
+        precal-hover-color: $white,
+
+  //Progress Bar
+        progress-bar-bg-color: $gray-700,
+        progress-bar-border-color: $gray-500,
+        progress-bar-fill-color: $tertiary-300,
+
+  //Prose Mirror
+        editor-color: #000000,
+        editor-menu-bg-color: rgba(0, 0, 0, 0.1),
+        editor-menu-control-bg-color: $primary-150,
+        editor-menu-control-bg-hover-color: $primary-100,
+
+  //Search Box
+        search-box-placeholder-color: $gray-400,
+        search-box-color: $wfrpTextColor,
+
+  //Time Selector
+        time-selector-color: $wfrpTextColor,
+        time-selector-input-bg-color: $wfrpInputBackground,
+        time-selector-input-border-color: rgba(115,105,83,.6509803922),
+        time-selector-option-bg-even-color: #ffffff26,
+        time-selector-option-hover-bg-color: #ffffff6b,
+
+  //Toggle
+        toggle-unchecked-image: url($checkboxSVGLight),
+        toggle-checked-image: url($checkboxSVGWhite),
+        toggle-border-color: unset,
+        toggle-checked-bg-color: #c85019,
+
+
+);
+.simple-calendar{
+  &.wfrp4e{
+    @each $prop, $value in $theme {
+      --#{$prop}: #{$value};
+    }
+  }
+}
 
 body.game{
   .simple-calendar{
     &.wfrp4e{
       &.window-app {
+        //Compact View
+        &.fsc-compact-view {
+          .window-content {
+            border: 2px solid #540e0ec2 !important;
+            border-image: url($wfrpPlayerBorder) 24 20 19 17 / 20px / 17px 14px 13px 14px repeat !important;
+          }
+          .fsc-main-wrapper{
+            .fsc-time-keeper-buttons{
+              .fsc-control{
+                border: 1px solid;
+              }
+            }
+          }
+          button.fsc-control{
+            padding-top: pxToRem(1);
+            padding-left: 0.3rem;
+            padding-right: 0.3rem;
+          }
+        }
+        //Action List
         .fsc-actions-list {
-          flex: 0 0 63px;
-          width: 63px;
+          flex: 0 0 pxToRem(63);
+          width: pxToRem(63);
           margin-left: 0;
           .fsc-time-keeper-buttons{
             .fsc-control{
-              padding: 5px 0.4rem;
+              padding: pxToRem(3) pxToRem(4) 1px;
             }
           }
         }
+        //Application Header
+        header.window-header{
+          .window-title{
+            font-size: var(--window-header-title-font-size);
+            font-family: var(--window-header-title-font-family);
+            text-align: center;
+            text-shadow: 1px 1px 5px #000000;
+            box-shadow: 0 0 10px inset black;
+          }
+          a.header-button{
+            color: #00e5ff00;
+            height: 30px;
+            width: 30px;
+            i{
+              color: rgba(0,229,255,0);
+            }
+            &:hover{
+              i{
+                color: rgba(0,229,255,0)!important;
+              }
+            }
+          }
+          a.header-button.close{
+            background: url($wfrpCloseButton);
+          }
+          a.header-button.configure-sheet{
+            background: url($wfrpConfigureButton);
+          }
+          a.header-button.share-image{
+            background: url($wfrpShareButton);
+          }
+        }
+        //Calendar
+        .fsc-calendar {
+          .fsc-days {
+            .fsc-week {
+              .fsc-day {
+                &:hover {
+                  filter: brightness(1.25);
+                  box-shadow: 0 0 10px var(--color-shadow-highlight);
+                }
+              }
+            }
+          }
+        }
+        //Calendar List
+        .fsc-calendar-list {
+          .fsc-calendar-display {
+            border: 3px double #00000078;
+            border-radius: 0;
+          }
+        }
+        //Controls
+        button.fsc-control{
+          padding-top: pxToRem(3);
+          padding-bottom: pxToRem(1);
+          &:before{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: -1;
+          }
+          &:hover, &.active, &:focus {
+            filter: brightness(1.5);
+          }
+          &:disabled{
+            filter: brightness(.5);
+          }
+          &.fsc-grey{
+            &:before{
+              background: url($wfrpButtonGrey) repeat;
+            }
+          }
+          &.fsc-primary {
+            &:before{
+              background: url($wfrpButtonGrey) repeat;
+              filter: sepia(22%) saturate(1240%) hue-rotate(162deg) brightness(87%) contrast(81%);
+            }
+            &:hover, &.active, &:focus {
+              filter: brightness(1.5);
+            }
+            &:disabled{
+              filter: brightness(.5);
+            }
+          }
+          &.fsc-secondary {
+            &:before{
+              background: url($wfrpButtonGrey) repeat;
+              filter: sepia(45%) saturate(673%) hue-rotate(3deg) brightness(220%) contrast(93%);
+            }
+          }
+          &.fsc-tertiary{
+            &:before{
+              background: url($wfrpButtonGrey) repeat;
+              filter: sepia(1) brightness(.75) saturate(4) hue-rotate(235deg);
+            }
+          }
+          &.fsc-delete {
+            &:before{
+              background: url($wfrpButtonRed) repeat;
+            }
+          }
+          &.fsc-save {
+            &:before{
+              background: url($wfrpButtonGrey) repeat;
+              filter: sepia(20%) saturate(1630%) hue-rotate(109deg) brightness(93%) contrast(83%);
+            }
+          }
+        }
+        //Context Menu
+        .fsc-context-menu{
+          border-width: 3px;
+          border-style: double;
+          border-radius: 0;
+          &::before{
+            top: pxToRem(-8);
+          }
+          &.fsc-arrow-left{
+            &::before{
+              top: pxToRem(8);
+              left: pxToRem(-8);
+            }
+          }
 
-        @import "src/styles/themes/wfrp4e/calendar";
-        @import "src/styles/themes/wfrp4e/clock";
-        @import "src/styles/themes/wfrp4e/configuration";
-        @import "src/styles/themes/wfrp4e/context-menu";
-        @import "src/styles/themes/wfrp4e/control";
-        @import "src/styles/themes/wfrp4e/date-selector";
-        @import "src/styles/themes/wfrp4e/form-groups";
-        @import "src/styles/themes/wfrp4e/foundry-window-app";
-        @import "src/styles/themes/wfrp4e/foundry-window-app-compact";
-        @import "src/styles/themes/wfrp4e/foundry-window-app-migration";
-        @import "src/styles/themes/wfrp4e/menu-icon";
-        @import "src/styles/themes/wfrp4e/message";
-        @import "src/styles/themes/wfrp4e/multi-select";
-        @import "src/styles/themes/wfrp4e/note-category";
-        @import "src/styles/themes/wfrp4e/note-list";
-        @import "src/styles/themes/wfrp4e/note-sheet";
-        @import "src/styles/themes/wfrp4e/search-box";
-        @import "src/styles/themes/wfrp4e/time-selector";
-        @import "src/styles/themes/wfrp4e/toggle";
-
+          .fsc-day-context-list{
+            .fsc-context-list-sub-menu{
+              border-width: 3px;
+              border-style: double;
+              border-radius: 0;
+            }
+          }
+        }
+        //Messages
+        .fsc-message {
+          border-width: 3px;
+          border-style: double;
+          border-radius: 0;
+        }
+        //Note List
+        .fsc-note-list {
+          .fsc-note {
+            border-width: 3px;
+            border-style: double;
+          }
+        }
+        //Note Sheet
+        &.journal-sheet {
+          .fsc-content, .editor{
+            background: url($wfrpParchmentTexture);
+            padding: 20px;
+            border: 10px solid transparent;
+            border-image: url($wfrpJopurnalSheetContent) 25 / 25px / 0 repeat;
+            color: #000000;
+          }
+        }
         input {
           border: 1px solid;
         }

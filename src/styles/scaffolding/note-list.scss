@@ -3,6 +3,7 @@
 .fsc-note-list {
   overflow-x: hidden;
   overflow-y: auto;
+  @include scrollbar();
   .fsc-note{
     padding: 0.25rem 0.5rem;
     display: flex;
@@ -18,6 +19,9 @@
         font-size: 1.25rem;
         word-break: break-word;
         border-bottom-width: 0;
+        text-align: left;
+        text-transform: unset;
+        font-family: var(--font-family);
       }
 
       .fsc-note-details{
@@ -36,16 +40,21 @@
     .fsc-sorting-dragger{
       padding: 0.5rem;
       margin: auto 0;
-      border: 1px solid;
+      border: 1px solid var(--note-list-note-dragger-bg-color);
       border-radius: 3px;
       cursor: move;
+      background-color: var(--note-list-note-dragger-bg-color);
+      box-shadow: 1px 1px 5px var(--note-list-note-dragger-box-shadow-color);
     }
 
     &:hover {
       cursor: pointer;
+      color: var(--note-list-note-hover-color);
+      background-color: var(--note-list-note-bg-hover-color);
     }
 
     &.fsc-drag-active{
+      background-color: var(--note-list-note-bg-hover-color);
       .fsc-note-details-wrapper{
         visibility: hidden;
       }

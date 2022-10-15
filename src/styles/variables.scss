@@ -1,7 +1,10 @@
+@import "mixin/sizing";
 @import "mixin/scrollbar";
 
-$spacer: 1rem;
-$spacer-half: $spacer*0.5;
+$font-family: 'Roboto', sans-serif;
+
+$spacer-half: $spacer * 0.5;       //8px
+$spacer-quarter: $spacer-half * 0.5;    //4px
 
 $primary-50: #E8EFF3;
 $primary-100: #C5D6E2;
@@ -110,7 +113,7 @@ $white: #ffffff;
 $fontColor: #2b292a;
 $boxShadowColor: #7a7a7ab5;
 
-$font-size-compact-form-group: 14px;
+$font-size-compact-form-group: pxToRem(14);
 
 $checkboxSVGWhite: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e";
 $checkboxSVGLight: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28255, 255, 255, 0.5%29'/%3e%3c/svg%3e";
@@ -136,6 +139,12 @@ $wfrpBorderColor: #736953a6;
 $wfrpTextColor: #efefef;
 $wfrpInputTextColor: #d6d6d6;
 
+$wfrpAppHeader: '/systems/wfrp4e/ui/frames/window-app-header-blank.webp';
+$wfrpCloseButton: '/systems/wfrp4e/ui/buttons/button-close.webp';
+$wfrpConfigureButton: '/systems/wfrp4e/ui/buttons/button-configure-sheet.webp';
+$wfrpShareButton: '/systems/wfrp4e/ui/buttons/button-show-players.webp';
+$wfrpAppBackground: '/systems/wfrp4e/ui/frames/window-app-background-bookshelf.webp';
+$wfrpAppBorder: 'http://localhost:30000/systems/wfrp4e/ui/window-app-dialog-content.webp';
 $wfrpParchmentTexture: '/systems/wfrp4e/ui/frames/parchment-texture.webp';
 $wfrpJopurnalSheetContent: '/systems/wfrp4e/ui/frames/window-app-journal-sheet-content.webp';
 $wfrpChatMessageBorderPrivate: '/systems/wfrp4e/ui/frames/chat-message-border-private.webp';
@@ -144,3 +153,8 @@ $wfrpFooterButton: '/systems/wfrp4e/ui/footer-button.webp';
 $wfrpButtonCyan: '/systems/wfrp4e/ui/sidebar_button-background_cyan.webp';
 $wfrpButtonGrey: '/systems/wfrp4e/ui/sidebar_button-background_grey.webp';
 $wfrpButtonRed: '/systems/wfrp4e/ui/sidebar_button-background_red.webp';
+
+$flFontFamily: Poppins,sans-serif;
+
+$flAppBorder: '/systems/forbidden-lands/assets/journal-art/box-border-large.webp';
+$flSmallBorder: '/systems/forbidden-lands/assets/journal-art/small-border.webp';

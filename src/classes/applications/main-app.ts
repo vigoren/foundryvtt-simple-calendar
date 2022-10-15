@@ -14,10 +14,9 @@ import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
 import {animateElement, GetIcon, GetThemeName} from "../utilities/visual";
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
-import {AdvanceTimeToPreset, FormatDateTime, GetPresetTimeOfDay} from "../utilities/date-time";
+import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
-import {NoteSheet} from "../notes/note-sheet";
 
 
 /**
@@ -244,6 +243,11 @@ export default class MainApp extends FormApplication{
         let width = 0, height = 0;
         const main = <HTMLElement>document.querySelector(`#${MainApp.appWindowId}`);
         if(main){
+            const appWindowBorder = parseInt(window.getComputedStyle(main).getPropertyValue('border-width'));
+            if(!isNaN(appWindowBorder)){
+                height += appWindowBorder * 2;
+                width += appWindowBorder * 2;
+            }
             const header = <HTMLElement>main.querySelector('.window-header');
             if(header){
                 height += header.offsetHeight;
@@ -842,7 +846,7 @@ export default class MainApp extends FormApplication{
                     sidebarSection.classList.remove('fsc-hide');
                     const y = (<PointerEvent>e).y - appWindow.offsetTop;
                     (<HTMLElement>sidebarSection).style.top = `${y}px`;
-                    (<HTMLElement>sidebarSection).style.left = `calc(100% + 300px)`;
+                    (<HTMLElement>sidebarSection).style.left = `calc(100% + 18.75rem)`;
                     const noteStub = NManager.getNoteStub(journalEntry);
                     sidebarSection.setAttribute('data-id', noteID);
                     if(noteStub){

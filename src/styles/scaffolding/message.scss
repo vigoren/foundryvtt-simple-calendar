@@ -6,6 +6,23 @@
     border: 1px solid;
     border-radius: 5px;
     font-size: 0.75rem;
+    color: var(--message-color);
+    &.fsc-warn{
+      background-color: var(--message-warn-bg-color);
+      border-color: var(--message-warn-border-color) !important;
+    }
+    &.fsc-success{
+      background-color: var(--message-success-bg-color);
+      border-color: var(--message-success-border-color) !important;
+    }
+    &.fsc-info{
+      background-color: var(--message-info-bg-color);
+      border-color: var(--message-info-border-color) !important;
+    }
+    &.fsc-danger{
+      background-color: var(--message-danger-bg-color);
+      border-color: var(--message-danger-border-color) !important;
+    }
   }
   &.fsc-simple-calendar-message{
     .fsc-chat-command-input{

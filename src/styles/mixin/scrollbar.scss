@@ -1,13 +1,13 @@
-@mixin scrollbar($background, $border){
-  scrollbar-color: $background, $border;
+@mixin scrollbar(){
+  scrollbar-color: var(--scrollbar-background-color), var(--scrollbar-border-color);
 
   &::-webkit-scrollbar{
     width: 6px;
   }
 
   &::-webkit-scrollbar-thumb{
-    background: $background;
-    border-color:$border;
+    background: var(--scrollbar-background-color);
+    border-color:var(--scrollbar-border-color);
     border-image: unset;
   }
 

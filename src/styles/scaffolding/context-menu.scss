@@ -4,28 +4,31 @@
   &::before{
     content: ' ';
     position: absolute;
-    width: 10px;
-    height: 5px;
-    left: 8px;
-    top: -6px;
+    width: pxToRem(10);
+    height: pxToRem(5);
+    left: pxToRem(8);
+    top: pxToRem(-6);
     clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
     z-index: -1;
+    background-color: var(--context-menu-border-color);
   }
   position: absolute;
   padding: $spacer-half;
   margin: 0 $spacer-half;
-  border: 1px solid;
-  border-radius: 5px;
+  border: 1px solid var(--context-menu-border-color);
+  border-radius: pxToRem(5);
   opacity: 1;
   min-width: max-content;
+  background-color: var(--context-menu-bg-color);
+  color: var(--context-menu-color);
 
   &.fsc-arrow-left{
     &::before{
-      left: -6px;
-      top: 8px;
+      left: pxToRem(-6);
+      top: pxToRem(8);
       clip-path: polygon(100% 0%, 100% 100%, 0% 50%);
-      width: 5px;
-      height: 10px;
+      width: pxToRem(5);
+      height: pxToRem(10);
     }
   }
 
@@ -36,7 +39,7 @@
   }
 
   .fsc-day-context-list{
-    font-size: 12px;
+    font-size: pxToRem(12);
 
     > div{
       margin: $spacer-half 0;
@@ -55,16 +58,19 @@
       margin-right: $spacer-half;
     }
     .fsc-context-list-title{
-      font-size: 14px;
+      font-size: pxToRem(14);
     }
     .fsc-context-list-text{
-      margin: ($spacer-half * .5) 0 ($spacer-half * .5) ($spacer-half * .5);
+      margin: $spacer-quarter 0 $spacer-quarter $spacer-quarter;
     }
     .fsc-context-list-action{
       cursor: pointer;
+      &:hover, &:focus, &:active{
+        color: var(--context-menu-action-hover-color);
+      }
     }
     .fsc-context-list-break{
-      border-bottom: 1px solid;
+      border-bottom: 1px solid var(--context-menu-divider-color);
     }
     .fsc-context-list-expand{
       position: relative;
@@ -74,11 +80,15 @@
         margin-left: $spacer-half;
         float: right;
       }
-
+      &:focus, &:active{
+        color: var(--context-menu-action-hover-color);
+      }
       &:hover{
+        color: var(--context-menu-action-hover-color);
         .fsc-context-list-sub-menu{
           opacity: 1;
           left: calc(100% + $spacer-half);
+          color: var(--context-menu-color);
         }
       }
 
@@ -87,12 +97,13 @@
         top: -($spacer *.45);
         left: 0;
         width: 100%;
-        border: 1px solid;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
+        border: 1px solid var(--context-menu-border-color);
+        border-top-right-radius: pxToRem(5);
+        border-bottom-right-radius: pxToRem(5);
         opacity: 0;
         z-index: -1;
-        padding: 0 0.25rem;
+        padding: 0 $spacer-quarter;
+        background-color: var(--context-menu-bg-color);
       }
     }
   }

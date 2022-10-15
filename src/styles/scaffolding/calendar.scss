@@ -1,6 +1,6 @@
 @import "../variables";
 .fsc-year-view-wrapper{
-  max-height: 550px;
+  max-height: pxToRem(550);
   overflow: auto;
   margin-bottom: $spacer-half;
 
@@ -37,18 +37,22 @@
       min-width: unset;
     }
     .fsc-description-content{
-      max-height: 200px;
+      max-height: pxToRem(200);
       overflow: auto;
+      @include scrollbar();
     }
   }
 }
 .fsc-calendar {
-  border: 1px solid;
-  padding: 0 5px 8px;
+  background-color: var(--section-bg-color);
+  border: 1px solid var(--section-border-color);
+  color: var(--section-color);
+  padding: 0 pxToRem(5) $spacer-half;
   margin: 0 0 $spacer-half;
-  max-height: 500px;
+  max-height: pxToRem(500);
   overflow-y: auto;
   position: relative;
+  @include scrollbar();
 
   &.fsc-display-only{
     .fsc-calendar-header{
@@ -81,25 +85,26 @@
   }
 
   .fsc-calendar-header{
+    background-color: var(--section-bg-color);
     position: sticky;
     top: 0;
     z-index: 100;
-    padding: 5px 0 0;
-    margin-bottom: 5px;
+    padding: pxToRem(5) 0 0;
+    margin-bottom: pxToRem(5);
 
     .fsc-current-date{
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       font-size: 1.25rem;
-      margin: 0 auto 10px;
+      margin: 0 auto pxToRem(10);
 
       a:first-child{
-        margin: 2px 5px 0;
+        margin: 2px pxToRem(5) 0;
       }
 
       a:last-child{
-        margin: 2px 5px 0;
+        margin: 2px pxToRem(5) 0;
       }
 
       .fsc-month-year{
@@ -117,17 +122,17 @@
       flex-wrap: nowrap;
       justify-content: center;
       align-items: center;
-      margin: -6px auto 10px;
-      font-size: 12px;
+      margin: pxToRem(-6) auto pxToRem(10);
+      font-size: pxToRem(12);
       font-style: italic;
       font-weight: 600;
 
       svg{
-        height: 15px;
-        margin-right: $spacer-half * 0.5;
+        height: pxToRem(15);
+        margin-right: $spacer-quarter;
       }
       span{
-        margin-right: $spacer-half * 0.5;
+        margin-right: $spacer-quarter;
       }
     }
 
@@ -136,20 +141,25 @@
       flex-direction: row;
       flex-wrap: nowrap;
       justify-content: center;
-      margin-bottom: -5px;
+      margin-bottom: pxToRem(-5);
 
       .fsc-weekday{
-        width: 44px;
-        padding: 0 2px 5px;
+        width: pxToRem(44);
+        padding: 0 2px pxToRem(5);
         text-align: center;
+        font-size: $spacer;
         font-weight: 600;
 
         &.fsc-weekend{
-          border-top-right-radius: 4px;
-          border-top-left-radius: 4px;
+          border-top-right-radius: $spacer-quarter;
+          border-top-left-radius: $spacer-quarter;
         }
       }
     }
+  }
+
+  .fsc-weekend{
+    background-color: var(--cal-weekend-bg-color);
   }
 
   .fsc-days{
@@ -163,10 +173,10 @@
       flex-direction: row;
 
       .fsc-empty-day{
-        width: 40px;
-        height: 40px;
+        width: pxToRem(40);
+        height: pxToRem(40);
         text-align: center;
-        padding-top: 12px;
+        padding-top: pxToRem(11.2);
         margin: 0 2px;
       }
 
@@ -174,14 +184,33 @@
         padding: 2px 0;
         .fsc-day{
           position: relative;
-          width: 40px;
-          height: 40px;
+          width: pxToRem(40);
+          height: pxToRem(40);
+          font-size: pxToRem(14);
           text-align: center;
-          padding-top: 12px;
+          padding-top: pxToRem(11.2);
           margin: 0 2px;
-          border: 1px solid;
-          border-radius: 20px;
+          border: 1px solid var(--cal-day-border-color);
+          border-radius: pxToRem(20);
           cursor: pointer;
+
+          &:hover{
+            background-color: var(--cal-day-hover-color);
+          }
+          &.fsc-current{
+            box-shadow: inset 0 0 5px var(--cal-day-current-box-shadow-color);
+            background-color: var(--cal-day-current-bg-color);
+            &:hover{
+              background-color: var(--cal-day-current-hover-bg-color);
+            }
+          }
+          &.fsc-selected{
+            box-shadow: inset 0 0 5px var(--cal-day-selected-box-shadow-color);
+            background-color: var(--cal-day-selected-bg-color);
+            &:hover{
+              background-color: var(--cal-day-selected-hover-bg-color);
+            }
+          }
 
           &.fsc-selected-range-start{
             border-top-right-radius: 0;
@@ -201,17 +230,20 @@
             right: 0;
             display: flex;
             .fsc-note-count{
-              width: 16px;
-              height: 16px;
-              font-size: 12px;
+              width: $spacer;
+              height: $spacer;
+              font-size: pxToRem(12);
               font-weight: 600;
               margin-right: 2px;
               padding: 1px 1px 1px 2px;
-              border-radius: 8px;
-              box-shadow: 1px 1px 5px;
+              border-radius: $spacer-half;
+              box-shadow: 1px 1px pxToRem(5);
+              background-color: var(--cal-note-indicator-bg-color);
+              color: var(--cal-note-indicator-color);
 
               &.fsc-reminders{
                 margin-right: 0;
+                background-color: var(--cal-note-reminder-indicator-bg-color);
               }
             }
           }
@@ -226,58 +258,61 @@
               .fsc-moon-group-wrapper {
                 .fsc-moon-group {
                   display: flex;
-                  flex-wrap: wrap;
-                  justify-content: center;
-                  position: absolute;
-                  z-index: 100;
-                  border: 1px solid;
-                  border-radius: 5px;
-                  padding: 0.25rem;
-                  width: 50px;
-                  &.fsc-top{
-                    top: -5px;
-                  }
-                  &.fsc-bottom{
-                    bottom: 0;
-                  }
-                  &.fsc-right{
-                    left: -6px;
-                  }
-                  &.fsc-left{
-                    right: -5px;
-                  }
-                  .fsc-moon-phase{
-                    margin-bottom: 2px;
-                  }
                 }
               }
             }
 
             .fsc-moon-group-wrapper{
               display: flex;
-              margin-right: -7px;
+              margin-right: pxToRem(-7);
               .fa{
-                margin-left: -6px;
+                margin-left: pxToRem(-6);
                 margin-top: 3px;
                 z-index: 1;
-
+                text-shadow: -2px -1px 0px var(--cal-moon-text-shadow);
               }
               .fsc-moon-group{
                 display: none;
+                flex-wrap: wrap;
+                justify-content: center;
+                position: absolute;
+                z-index: 100;
+                border: 1px solid var(--cal-moon-group-border-color);
+                border-radius: pxToRem(5);
+                padding: 0.25rem;
+                width: pxToRem(50);
+                &.fsc-top{
+                  top: pxToRem(-5);
+                }
+                &.fsc-bottom{
+                  bottom: 0;
+                }
+                &.fsc-right{
+                  left: pxToRem(-6);
+                }
+                &.fsc-left{
+                  right: pxToRem(-5);
+                }
+                .fsc-moon-phase{
+                  margin-bottom: 2px;
+                }
+                background-color: var(--cal-moon-group-bg-color);
+                box-shadow: 1px 1px 5px var(--cal-moon-group-box-shadow-color);
               }
             }
 
             .fsc-moon-phase{
               svg{
-                width: 20px;
-                height: 20px;
-                margin-top: -5px;
+                width: pxToRem(20);
+                height: pxToRem(20);
+                margin-top: pxToRem(-5);
                 margin-left: -3px;
+                filter: drop-shadow(0px 0px 1px var(--cal-moon-text-shadow));
               }
-              width: 11px;
-              height: 11px;
+              width: pxToRem(11);
+              height: pxToRem(11);
               margin-right: 2px;
-              font-size: 11px;
+              font-size: pxToRem(11);
             }
           }
         }
@@ -286,16 +321,16 @@
       &.fsc-weekend-round{
         .fsc-day-wrapper{
           &.fsc-weekend{
-            border-top-right-radius: 4px;
-            border-top-left-radius: 4px;
+            border-top-right-radius: $spacer-quarter;
+            border-top-left-radius: $spacer-quarter;
           }
         }
       }
       &:last-child{
         .fsc-day-wrapper{
           &.fsc-weekend{
-            border-bottom-right-radius: 4px;
-            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: $spacer-quarter;
+            border-bottom-left-radius: $spacer-quarter;
           }
         }
       }

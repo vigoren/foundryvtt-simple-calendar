@@ -24,6 +24,7 @@ import MigrationApp from "./classes/applications/migration-app";
 import NoteManager from "./classes/notes/note-manager";
 import {NoteSheet} from "./classes/notes/note-sheet";
 import PF2E from "./classes/systems/pf2e";
+import {CheckRemScaling} from "./classes/utilities/visual";
 
 updateCalManager(new CalendarManager());
 updateSC(new SCController());
@@ -40,6 +41,8 @@ document.body.addEventListener('click', SCController.HideContextMenus);
     api: API,
     Hooks: SimpleCalendarHooks
 };
+
+CheckRemScaling();
 
 Hooks.on('init', async () => {
     //Register Handlebar Helpers and our game settings

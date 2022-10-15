@@ -77,12 +77,43 @@ export function FormatDateTime(date: SimpleCalendar.DateTime, mask: string, cale
 }
 
 /**
+ * Make sure the passed in date has the properties from the passed in target, or if that is not passed in the current date from the calendar
+ * @param date
+ * @param target
+ * @param calendar
+ * @constructor
+ */
+export function MergeDateTimeObject(date: SimpleCalendar.DateTimeParts, target: SimpleCalendar.DateTime | null = null, calendar: Calendar | null = null): SimpleCalendar.DateTime{
+    const currentMonthDay = calendar?.getMonthAndDayIndex('current');
+    const currentTime = calendar?.time.getCurrentTime();
+    if(date.year === undefined){
+        date.year = target?.year || calendar?.year.numericRepresentation || 0;
+    }
+    if(date.month === undefined){
+        date.month = target?.month || currentMonthDay?.month || 0;
+    }
+    if(date.day === undefined){
+        date.day = target?.day || currentMonthDay?.day || 0;
+    }
+    if(date.hour === undefined){
+        date.hour = target?.hour || currentTime?.hour || 0;
+    }
+    if(date.minute === undefined){
+        date.minute = target?.minute || currentTime?.minute || 0;
+    }
+    if(date.seconds === undefined){
+        date.seconds = target?.seconds || currentTime?.seconds || 0;
+    }
+    return <SimpleCalendar.DateTime>date;
+}
+
+/**
  * Converts that year, month and day numbers into a total number of seconds for the current active calendar
- * @param {Calendar} calendar The calendar to use to convert a date to seconds
- * @param {number} year The year number
- * @param {number} monthIndex The month number
- * @param {number} dayIndex The day number
- * @param {boolean} [includeToday=true] If to include today's seconds in the calculation
+ * @param calendar The calendar to use to convert a date to seconds
+ * @param year The year number
+ * @param monthIndex The month number
+ * @param dayIndex The day number
+ * @param includeToday If to include today's seconds in the calculation
  */
 export function ToSeconds(calendar: Calendar, year: number, monthIndex: number, dayIndex: number, includeToday: boolean = true){
     //Get the days so for and add one to include the current day
@@ -284,39 +315,12 @@ export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCale
  * @param calendar The calendar to use to do the conversion
  */
 export function DateToTimestamp(date: SimpleCalendar.DateTimeParts , calendar: Calendar): number {
-    let ts = 0;
+    let ts;
     const clone = calendar.clone(false);
-    const monthIndex = clone.months.findIndex(m => m.current);
-    const currentTime = clone.time.getCurrentTime();
-    if (date.seconds === undefined) {
-        date.seconds = currentTime.seconds;
-    }
-
-    if (date.minute === undefined) {
-        date.minute = currentTime.minute;
-    }
-
-    if (date.hour === undefined) {
-        date.hour = currentTime.hour;
-    }
-
-    // If not year is passed in, set to the current year
-    if (date.year === undefined) {
-        date.year = clone.year.numericRepresentation;
-    }
-    if (date.month === undefined) {
-        date.month = monthIndex > -1? monthIndex : 0;
-    }
-    if (date.day === undefined) {
-        date.day = 0;
-        if (monthIndex > -1) {
-            const dayIndex = clone.months[monthIndex].days.findIndex(d => d.current);
-            date.day = dayIndex > -1? dayIndex : 0;
-        }
-    }
-    clone.updateMonth(date.month, 'current', true, date.day);
-    clone.year.numericRepresentation = date.year;
-    clone.time.setTime(date.hour, date.minute, date.seconds);
+    const mergedDate = MergeDateTimeObject(date, null, clone);
+    clone.updateMonth(mergedDate.month, 'current', true, mergedDate.day);
+    clone.year.numericRepresentation = mergedDate.year;
+    clone.time.setTime(mergedDate.hour, mergedDate.minute, mergedDate.seconds);
     ts = clone.toSeconds();
     return ts;
 }

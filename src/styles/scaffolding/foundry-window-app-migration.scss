@@ -17,6 +17,18 @@
       }
       .fsc-status-indicator{
         margin-right: $spacer;
+        .fsc-running{
+          color: var(--btn-secondary-bg-hover-color);
+        }
+        .fsc-completed{
+          color: var(--btn-save-bg-hover-color);
+        }
+        .fsc-error{
+          color: var(--btn-delete-bg-hover-color);
+        }
+        .fsc-cancel{
+          color: var(--btn-grey-bg-hover-color);
+        }
       }
       .fsc-migration-status{
         flex: 1;

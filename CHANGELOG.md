@@ -1,5 +1,65 @@
 # Change Log
 
+## 2.1.34 - Theming, Bug Fixes & API Updates
+
+![](https://img.shields.io/badge/release%20date-October%2030%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.34/module.zip)
+
+### Theming
+
+I have done a lot of work around making theming Simple Calendar as easy as possible. This allows me to add new themes easier and quicker. It also opens up the ability of third party modules or individuals to easily customize the look of Simple Calendar. For more details on how to theme Simple Calendar check out the [theming](https://simplecalendar.info//pages/docs/developing-with-sc/index/theming.html) documentation!
+
+Changes that has been done to enable easy theming:
+
+- Changed all sizes to use REM instead of PX so that the entire interface can scale easily with any changes to the root REM size.
+- The addition of many CSS variables to quickly change how Simple Calendar looks. All the included themes use these variables to style SC.
+
+#### New Themes
+
+To go along with these changes I have added a couple of new themes to Simple Calendar!
+
+- A system specific theme for [Forbidden Lands](https://foundryvtt.com/packages/forbidden-lands).
+
+### Bug Fixes
+
+- Fixed a few instances where the notes dialog would not be sized correctly.
+- Fixed an issue where deleting a note after starting an edit would spawn several "Discard current changes" dialogs.
+- Fixed a bug where notes shown in the search result list would not properly show who had access to view the note.
+
+### API Updates
+
+- Changed the [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/functions/SimpleCalendar.api.addNote.html) function so that the `repeats` and `categories` parameters are now optional.
+- Changed the [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/functions/SimpleCalendar.api.addNote.html) function so that the start and end dates are now [DateTimeParts](https://simplecalendar.info/types/SimpleCalendar.DateTimeParts.html) and any missing date/time properties on them will be filled out with the current date/time equivalent.
+- Added a new optional parameter to the [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/functions/SimpleCalendar.api.addNote.html) function, `userVisibility` that takes in an array of user ID's. These users will be able to view the note.
+- Added a new optional parameter to the [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/functions/SimpleCalendar.api.addNote.html) function, `remindUsers` that takes in an array of user ID's. These users will be reminded of the note.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Bextia](https://weblate.foundryvtt-hub.com/user/bext1a/) (Spanish)
+- [DragonHale](https://weblate.foundryvtt-hub.com/user/DragonHale/) (Spanish)
+- [Marc Feuillen](https://weblate.foundryvtt-hub.com/user/Elfenduil/) (French)
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Sir Motte](https://weblate.foundryvtt-hub.com/user/SirMotte/) (German)
+- [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+- [Damian Wodziński](https://weblate.foundryvtt-hub.com/user/waaldii/) (Polish)
+- [eunaumtenhoid](https://weblate.foundryvtt-hub.com/user/eunaumtenhoid/) (Portuguese (Brazil))
+- [benwater12](https://weblate.foundryvtt-hub.com/user/benwater12/) (Chinese Traditional)
+
+### Documentation Changes
+
+- Fixed some typos in the example of the [setDate API function](https://simplecalendar.info/functions/SimpleCalendar.api.setDate.html)
+- Fixed typos in the API documentation when referencing a `second` property when it should be `seconds`.
+- Updated the example for the [timestampToDate](https://simplecalendar.info/functions/SimpleCalendar.api.timestampToDate.html) API function. 
+- Updated the example for the [DateTimeChange](https://simplecalendar.info/variables/SimpleCalendar.Hooks.DateTimeChange.html) hook.
+- Updated the example for the [getAllSeasons](https://simplecalendar.info/functions/SimpleCalendar.api.getAllSeasons.html) API function.
+- Updated the example for the [getCurrentSeason](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentSeason.html) API function.
+- Updated the example for the [getAllMonths](https://simplecalendar.info/functions/SimpleCalendar.api.getAllMonths.html) API function.
+- Updated the example for the [getCurrentMonth](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentMonth.html) API function.
+- Updated the example for the [getAllWeekdays](https://simplecalendar.info/functions/SimpleCalendar.api.getAllWeekdays.html) API function.
+- Updated the example for the [getCurrentWeekday](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentWeekday.html) API function.
+
 ## v2.1.27 - Improved Note Permissions, Note List Context Menu and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-September%2024%2C%202022-blue)
