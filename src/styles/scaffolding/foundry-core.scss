@@ -1,0 +1,25 @@
+@import "../variables";
+.simple-calendar{
+  &.window-app{
+    //Links
+    a{
+      color: var(--link-color);
+      &:hover, &:active, &:focus{
+        color:  var(--link-hover-color);
+        text-shadow: unset;
+      }
+    }
+
+    //Inputs
+    input, select, option{
+      background-color: var(--input-bg-color) !important;
+      border-color: var(--input-border-color) !important;
+      color: var(--input-color) !important;
+      font-size: pxToRem(14);
+      text-align: left;
+      &:focus{
+        box-shadow: unset;
+      }
+    }
+  }
+}

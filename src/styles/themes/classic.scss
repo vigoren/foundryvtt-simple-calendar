@@ -1,27 +1,260 @@
 @import "../variables";
+$theme: (
+  //Font
+        font-family: $font-family,
+        heading-font-family: $font-family,
+  //Input Colors
+        input-bg-color: rgba(0, 0, 0, 0.05),
+        input-border-color: var(--color-border-light-tertiary),
+        input-color: var(--color-text-dark-primary),
+
+  //Link Color
+        link-color: var(--color-text-hyperlink),
+        link-hover-color: var(--color-text-hyperlink),
+        entity-link-bg-color: #DDD,
+        entity-link-border-color: var(--color-border-dark-tertiary),
+        entity-link-icon-color: var(--color-text-dark-inactive),
+        entity-link-icon-hover-color: var(--color-text-dark-inactive),
+
+  //Headings
+        heading-border-color: var(--color-underline-header),
+        about-heading-border-color: $primary,
+
+  //Dialog Coloring
+        app-header-bg-color: $white,
+        app-header-bg-image: url($classicDenim),
+        app-header-color: var(--app-header-color),
+        app-header-border: 0,
+        app-header-border-image: unset,
+        app-header-height: pxToRem(30),
+        app-bg-color: $white,
+        app-bg-image: url($classicParchment),
+        app-border: 0,
+        app-border-image: unset,
+        app-color: var(--color-text-dark-primary),
+
+  // Dialog section coloring
+        section-bg-color: $white,
+        section-border-color: #c3c3c3,
+        section-color: #191813,
+
+  //Side Drawer Coloring
+        side-drawer-color: $white,
+        side-drawer-bg-color: $white,
+        side-drawer-bg-image: unset,
+        side-drawer-border-color: #000000,
+        side-drawer-border-image: unset,
+
+  // Scrollbar Coloring
+        scrollbar-background-color: #782e22,
+        scrollbar-border-color: var(--color-border-highlight),
+        scrollbar-track-bg-color: unset,
+        scrollbar-track-border: 1px solid #999,
+        scrollbar-button-height: 0,
+        scrollbar-button-bg-color: unset,
+        scrollbar-button-border: unset,
+
+  //Calendar Coloring
+        cal-weekend-bg-color: rgba(67, 60, 159,0.15),
+        cal-day-border-color: $gray-500,
+        cal-day-hover-color: #ddd,
+        cal-day-current-bg-color: #d2d2ff,
+        cal-day-current-box-shadow-color: #5c5cff,
+        cal-day-current-hover-bg-color: #5c5cff,
+        cal-day-selected-bg-color: #eafff2,
+        cal-day-selected-box-shadow-color: #40a94d,
+        cal-day-selected-hover-bg-color: #40a94d,
+        cal-note-indicator-bg-color: #c30505,
+        cal-note-reminder-indicator-bg-color: $classicPrimary,
+        cal-note-indicator-color: $white,
+        cal-moon-group-bg-color: $white,
+        cal-moon-group-border-color: $fontColor,
+        cal-moon-group-box-shadow-color: $boxShadowColor,
+        cal-moon-text-shadow: rgba(255, 255, 255, 0.4),
+
+  //Calendar List Coloring
+        cal-list-color: $white,
+        cal-list-active-border-color: #cad1f3,
+        cal-list-active-bg-color: $classicPrimary,
+        cal-list-visible-bg-color: $classicTertiary,
+        cal-list-bg-hover-color: $classicTertiaryHover,
+
+  //Clock Coloring
+        clock-started-color: green,
+        clock-stopped-color: #c12121,
+        clock-paused-color: $classicSecondary,
+
+  //Context Menu
+        context-menu-color: #191813,
+        context-menu-border-color: $secondary,
+        context-menu-bg-color: rgba(255,255,255,0.95),
+        context-menu-action-hover-color: var(--color-text-hyperlink),
+        context-menu-divider-color: $gray-500,
+
+  //Configuration Menu
+        config-menu-heading-color: $fontColor,
+        config-menu-item-border-color: $gray-700,
+        config-menu-item-color: $fontColor,
+        config-menu-item-hover-color: $fontColor,
+        config-menu-item-hover-bg-color: $secondary,
+        config-menu-cal-settings-bg-color: $white,
+        config-menu-cal-selector-bg-color: $gray-100,
+        config-menu-cal-selector-hover-bg-color: $gray-300,
+        config-menu-cal-selector-color: $fontColor,
+        config-menu-cal-selector-hover-color: $fontColor,
+
+  //Controls
+        btn-bg-image: unset,
+        btn-border: 1px solid,
+        btn-border-image: unset,
+        btn-grey-border-color: $gray-600,
+        btn-grey-bg-color: $gray-600,
+        btn-grey-color: $white,
+        btn-grey-bg-hover-color: $gray-500,
+        btn-grey-disabled-bg-color: $gray-300,
+        btn-primary-border-color: #384582,
+        btn-primary-bg-color: #384582,
+        btn-primary-color: $white,
+        btn-primary-bg-hover-color: #cad1f3,
+        btn-primary-disabled-bg-color: $primary-T900,
+        btn-secondary-border-color: #de810d,
+        btn-secondary-bg-color: #de810d,
+        btn-secondary-color: $fontColor,
+        btn-secondary-bg-hover-color: $secondary-300,
+        btn-secondary-disabled-bg-color: $secondary-T900,
+        btn-tertiary-border-color: #603382,
+        btn-tertiary-bg-color: #603382,
+        btn-tertiary-color: $white,
+        btn-tertiary-bg-hover-color: #cd9cf3,
+        btn-tertiary-disabled-bg-color: $tertiary-T900,
+        btn-delete-border-color: #922121,
+        btn-delete-bg-color: #922121,
+        btn-delete-color: $white,
+        btn-delete-bg-hover-color: #fbaeae,
+        btn-delete-disabled-bg-color: $danger-T900,
+        btn-save-border-color: #2f581d,
+        btn-save-bg-color: #2f581d,
+        btn-save-color: $white,
+        btn-save-bg-hover-color: #9bce85,
+        btn-save-disabled-bg-color: $success-T900,
+
+  //Form Groups
+        form-group-bg-color: $gray-200,
+        form-group-bg-hover-color: $gray-300,
+        form-group-border-color: #9e9c9c,
+        form-group-label-color: #000000,
+        form-group-help-color: $gray-800,
+        form-group-input-bg-color: $gray-400,
+        form-group-input-border-color: $gray-500,
+        form-group-input-color: $fontColor,
+        form-group-help-icon-color: #de810d,
+
+
+  //Messages
+        message-color: $fontColor,
+        message-warn-bg-color: $secondary-100,
+        message-warn-border-color: $secondary,
+        message-success-bg-color: $success-100,
+        message-success-border-color: $success,
+        message-info-bg-color: $primary-100,
+        message-info-border-color: $primary,
+        message-danger-bg-color: $danger-100,
+        message-danger-border-color: $danger,
+
+
+  //Multi Select
+        multi-select-option-bg-color: var(--color-bg-option),
+        multi-select-option-bg-hover-color: $primary-50,
+        multi-select-option-border-color: $gray-600,
+        multi-select-option-color: $fontColor,
+        multi-select-disabled-bg-color: $gray-700,
+        multi-select-disabled-color: $gray-400,
+
+  //Note Category
+        note-cat-color: $white,
+        note-cat-bg-color: #444141,
+        note-cat-box-shadow-color: $fontColor,
+        note-cat-secondary-bg-color: #de810d,
+        note-cat-secondary-color: $fontColor,
+        note-cat-success-bg-color: $classicSuccess,
+        note-cat-success-color: $white,
+        note-cat-danger-bg-color: $classicDanger,
+        note-cat-danger-color: $white,
+        note-cat-reminder-bg-color: $classicTertiary,
+        note-cat-reminder-color: $white,
+
+  //Note List
+        note-list-note-border-color: $gray-500,
+        note-list-note-bg-hover-color: $gray-400,
+        note-list-note-hover-color: $fontColor,
+        note-list-note-dragger-bg-color: #c3c3c37a,
+        note-list-note-dragger-box-shadow-color: #a5a5a5,
+
+  //Note Sheet
+        note-sheet-page-list-border-color: #dbdbdb,
+        note-sheet-page-list-page-hover-bg-color: #ff000020,
+
+  //Predefined Calendar Colors
+        pre-cal-color: #603382,
+        pre-cal-border-color: #603382,
+        pre-cal-border-hover-color: #cd9cf3,
+        precal-hover-color: $fontColor,
+
+  //Progress Bar
+        progress-bar-bg-color: $gray-700,
+        progress-bar-border-color: $gray-500,
+        progress-bar-fill-color: $tertiary-300,
+
+  //Prose Mirror
+        editor-color: $fontColor,
+        editor-menu-bg-color: rgba(0, 0, 0, 0.1),
+        editor-menu-control-bg-color: #d9d8c8,
+        editor-menu-control-bg-hover-color: #f0f0e0,
+
+  //Search Box
+        search-box-placeholder-color: $gray-400,
+        search-box-color: $white,
+
+  //Time Selector
+        time-selector-color: $fontColor,
+        time-selector-input-bg-color: rgba(0, 0, 0, 0.05),
+        time-selector-input-border-color: #c3c3c3,
+        time-selector-option-bg-even-color: #d8d8d8,
+        time-selector-option-hover-bg-color: #a8a8a8,
+
+  //Toggle
+        toggle-unchecked-image: url($checkboxSVGDark),
+        toggle-checked-image: url($checkboxSVGWhite),
+        toggle-border-color: $gray-900,
+        toggle-checked-bg-color: #c85019,
+
+
+);
+.simple-calendar {
+  &.classic {
+    @each $prop, $value in $theme {
+      --#{$prop}: #{$value};
+    }
+  }
+}
+
 body.game{
   .simple-calendar {
     &.classic {
-      &.window-app{
-        @import "src/styles/themes/classic/calendar";
-        @import "src/styles/themes/classic/clock";
-        @import "src/styles/themes/classic/configuration";
-        @import "src/styles/themes/classic/context-menu";
-        @import "src/styles/themes/classic/control";
-        @import "src/styles/themes/classic/date-selector";
-        @import "src/styles/themes/classic/form-groups";
-        @import "src/styles/themes/classic/foundry-window-app";
-        @import "src/styles/themes/classic/foundry-window-app-compact";
-        @import "src/styles/themes/classic/foundry-window-app-migration";
-        @import "src/styles/themes/classic/message";
-        @import "src/styles/themes/classic/multi-select";
-        @import "src/styles/themes/classic/note-category";
-        @import "src/styles/themes/classic/note-list";
-        @import "src/styles/themes/classic/note-sheet";
-        @import "src/styles/themes/classic/search-box";
-        @import "src/styles/themes/classic/time-selector";
-        @import "src/styles/themes/classic/toggle";
-      }
+     &.window-app{
+       //Dialog Header
+       .window-content{
+         --color-text-dark-primary: #{$fontColor};
+       }
+       //Links
+       a:hover{
+         text-shadow: 0 0 8px var(--color-shadow-primary);
+       }
+       //Note List Styling
+       .fsc-side-drawer {
+         background: url($classicDenim);
+       }
+     }
     }
   }
 }

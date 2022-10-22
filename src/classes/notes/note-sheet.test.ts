@@ -78,7 +78,7 @@ describe('Note Sheet Class Tests', () => {
         //@ts-ignore
         ns.journalData.flags = {};
         //@ts-ignore
-        ns.journalData.permission = {};
+        ns.journalData.ownership = {};
     });
 
     beforeAll(() => {
@@ -280,11 +280,13 @@ describe('Note Sheet Class Tests', () => {
 
     test('Set Height', () => {
         const form = document.createElement('form');
+        const header  = document.createElement('header');
+        const section  = document.createElement('section');
         const elm = document.createElement('div');
         //@ts-ignore
         ns.appWindow = document.createElement('div');
         //@ts-ignore
-        jest.spyOn(ns.appWindow, 'getElementsByTagName').mockImplementation(() => {return [form]});
+        jest.spyOn(ns.appWindow, 'getElementsByTagName').mockReturnValueOnce([form]).mockReturnValueOnce([header]).mockReturnValueOnce([section]).mockReturnValueOnce([form]).mockReturnValueOnce([header]).mockReturnValueOnce([section]);
         //@ts-ignore
         jest.spyOn(ns,'setPosition').mockImplementation(() => {});
         //@ts-ignore
@@ -501,37 +503,37 @@ describe('Note Sheet Class Tests', () => {
 
         ns.multiSelectOptionChange('scUserPermissions_undefined', '123', true);
         //@ts-ignore
-        expect(ns.journalData.permission['123']).toBe(2);
+        expect(ns.journalData.ownership['123']).toBe(2);
         //@ts-ignore
-        ns.journalData.permission['123'] = 1;
+        ns.journalData.ownership['123'] = 1;
         ns.multiSelectOptionChange('scUserPermissions_undefined', '123', true);
         //@ts-ignore
-        expect(ns.journalData.permission['123']).toBe(2);
+        expect(ns.journalData.ownership['123']).toBe(2);
         //@ts-ignore
-        ns.journalData.permission['123'] = 3;
+        ns.journalData.ownership['123'] = 3;
         ns.multiSelectOptionChange('scUserPermissions_undefined', '123', true);
         //@ts-ignore
-        expect(ns.journalData.permission['123']).toBe(3);
+        expect(ns.journalData.ownership['123']).toBe(3);
 
         ns.multiSelectOptionChange('scUserPermissions_undefined', '123', false);
         //@ts-ignore
-        expect(ns.journalData.permission['123']).toBe(0);
+        expect(ns.journalData.ownership['123']).toBe(0);
 
         //@ts-ignore
         jest.spyOn(game.user, 'id', 'get').mockReturnValue('123');
         //@ts-ignore
-        ns.journalData.permission[''] = 2;
+        ns.journalData.ownership[''] = 2;
         ns.multiSelectOptionChange('scUserPermissions_undefined', 'default', false);
         //@ts-ignore
-        expect(ns.journalData.permission['default']).toBe(0);
+        expect(ns.journalData.ownership['default']).toBe(0);
         //@ts-ignore
-        expect(ns.journalData.permission['']).toBe(0);
+        expect(ns.journalData.ownership['']).toBe(0);
 
         ns.multiSelectOptionChange('scUserPermissions_undefined', 'default', true);
         //@ts-ignore
-        expect(ns.journalData.permission['default']).toBe(2);
+        expect(ns.journalData.ownership['default']).toBe(2);
         //@ts-ignore
-        expect(ns.journalData.permission['']).toBe(2);
+        expect(ns.journalData.ownership['']).toBe(2);
     });
 
     test('Update Note Repeat Dropdown', () => {
@@ -568,9 +570,9 @@ describe('Note Sheet Class Tests', () => {
         //@ts-ignore
         ns.journalData.flags[ModuleName] = {noteData:{}};
         //@ts-ignore
-        ns.journalData.permission['a'] = 3;
+        ns.journalData.ownership['a'] = 3;
         //@ts-ignore
-        ns.journalData.permission['b'] = 2;
+        ns.journalData.ownership['b'] = 2;
         //@ts-ignore
         ns.editors['content'] = {};
         await ns.writeInputValuesToObjects();

@@ -170,8 +170,10 @@ export default class MigrationApp extends Application{
             openOnLoad: true,
             openCompact: false,
             rememberPosition: true,
+            rememberCompactPosition: false,
             appPosition: {},
-            noteReminderNotification: NoteReminderNotificationType.whisper
+            noteReminderNotification: NoteReminderNotificationType.whisper,
+            sideDrawerDirection: 'sc-right'
         });
     }
 

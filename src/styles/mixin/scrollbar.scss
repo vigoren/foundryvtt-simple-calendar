@@ -1,23 +1,25 @@
-@mixin scrollbar($background, $border){
-  scrollbar-color: $background, $border;
+@mixin scrollbar(){
+  scrollbar-color: var(--scrollbar-background-color), var(--scrollbar-track-bg-color);
 
   &::-webkit-scrollbar{
     width: 6px;
   }
 
   &::-webkit-scrollbar-thumb{
-    background: $background;
-    border-color:$border;
+    background: var(--scrollbar-background-color);
+    border-color:var(--scrollbar-border-color);
     border-image: unset;
   }
 
   &::-webkit-scrollbar-button{
-    background: unset;
-    height: 0;
+    background: var(--scrollbar-button-bg-color);
+    border: var(--scrollbar-button-border);
+    height: var(--scrollbar-button-height);
   }
 
   &::-webkit-scrollbar-track{
-    background: unset;
+    background: var(--scrollbar-track-bg-color);
+    border: var(--scrollbar-track-border);
     border-image: unset;
   }
 }

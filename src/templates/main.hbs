@@ -61,7 +61,7 @@
             {{/unless}}
         </div>
         {{#if (gt mainViewDisplay.calendarList.length 1)}}
-        <div class="fsc-side-drawer fsc-calendar-list {{#if uiElementStates.fsc-calendar-list}} fsc-open{{else}} fsc-closed{{/if}}">
+        <div class="fsc-side-drawer fsc-calendar-list {{sideDrawerDirection}} {{#if uiElementStates.fsc-calendar-list}} fsc-open{{else}} fsc-closed{{/if}}">
             <h2>{{localize 'FSC.Calendars'}}</h2>
             {{#each mainViewDisplay.calendarList}}
                 <div class="fsc-calendar-display {{#if (eq id ../activeCalendarId)}} fsc-active{{/if}} {{#if (eq id ../calendar.id)}} fsc-visible{{/if}} {{#unless ../mainViewDisplay.showChangeCalendarControls}} fsc-clickable{{/unless}}" data-calid="{{id}}">
@@ -87,7 +87,7 @@
             {{/each}}
         </div>
         {{/if}}
-        <div class="fsc-side-drawer fsc-note-list {{#if uiElementStates.fsc-note-list}} fsc-open{{else}} fsc-closed{{/if}}">
+        <div class="fsc-side-drawer fsc-note-list {{sideDrawerDirection}} {{#if uiElementStates.fsc-note-list}} fsc-open{{else}} fsc-closed{{/if}}">
             <h2>{{localize 'FSC.Notes.For'}} {{calendar.selectedDay.dateDisplay}}</h2>
             {{#if calendar.selectedDay.notes.length}}
             <div class="fsc-note-list">
@@ -136,7 +136,7 @@
             <em>{{localize 'FSC.Notes.Empty'}}</em>
             {{/if}}
         </div>
-        <div class="fsc-side-drawer fsc-note-search {{#if uiElementStates.fsc-note-search}} fsc-open{{else}} fsc-closed{{/if}}">
+        <div class="fsc-side-drawer fsc-note-search {{sideDrawerDirection}} {{#if uiElementStates.fsc-note-search}} fsc-open{{else}} fsc-closed{{/if}}">
             <h2>{{localize 'FSC.SearchNotes'}}</h2>
             <div class="fsc-search-box">
                 <input id="simpleCalendarSearchBox" type="text" value="{{mainViewDisplay.search.term}}" aria-label="{{localize 'FSC.SearchNotes'}}" />
@@ -164,15 +164,9 @@
                         <h3 class="fsc-note-title">{{title}}</h3>
                         <div class="fsc-note-details">
                             {{#if ../isGM}}
-                            {{#if playerVisible}}
-                            <div class="fsc-note-category fsc-note-icon fsc-player-visible" data-tooltip="{{localize 'FSC.Notes.PlayerVisible'}}">
-                                <span class="fa fa-eye"></span>
-                            </div>
-                            {{else}}
-                            <div class="fsc-note-category fsc-note-icon fsc-not-player-visible" data-tooltip="{{localize 'FSC.Notes.NotPlayerVisible'}}">
-                                <span class="fa fa-eye-slash"></span>
-                            </div>
-                            {{/if}}
+                                <div class="fsc-note-category fsc-note-icon {{playerVisible.color}}" data-tooltip="{{playerVisible.players}}">
+                                    <span class="fa {{playerVisible.icon}}"></span>
+                                </div>
                             {{/if}}
                             {{#if reminder}}
                             <div class="fsc-note-category fsc-note-icon fsc-reminder" data-tooltip="{{localize 'FSC.Notes.ReminderHelp'}}">
@@ -250,7 +244,7 @@
                 <button class="fsc-control fsc-primary fsc-selector" data-unit="time">{{localize uiElementStates.dateTimeUnitText}}&nbsp;</button>
                 <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveForwardOne' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="1"><span class="fa fa-angle-right"></span></button>
                 <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveForwardFive' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="5"><span class="fa fa-angle-double-right"></span></button>
-                <ul class="fsc-unit-list fsc-time-units {{#if uiElementStates.dateTimeUnitOpen}} fsc-open{{else}} fsc-closed{{/if}}">
+                <ul class="fsc-unit-list fsc-time-units fsc-primary {{#if uiElementStates.dateTimeUnitOpen}} fsc-open{{else}} fsc-closed{{/if}}">
                     {{#if showTimeControls}}
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'seconds')}} fsc-selected{{/if}}" data-unit="seconds">{{localize 'FSC.Second'}}</li>
                     <li class="{{#if (eq uiElementStates.dateTimeUnit 'round')}} fsc-selected{{/if}}" data-unit="round">{{localize 'FSC.Round'}}</li>

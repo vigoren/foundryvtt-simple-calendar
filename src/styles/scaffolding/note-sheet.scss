@@ -2,16 +2,17 @@
 
 .simple-calendar{
   &.journal-sheet{
-
     min-height: unset;
     min-width: unset;
 
     .window-content{
       position: unset;
       overflow-y: auto !important;
+      box-shadow: unset;
     }
 
     form{
+      @include scrollbar();
       background: unset;
       display: flex;
       flex-direction: column;
@@ -20,9 +21,11 @@
 
       > h1{
         margin: 0;
+        border-color: var(--heading-border-color);
+        font-family: var(--heading-font-family);
         input{
           height: unset;
-          margin-bottom: $spacer-half*0.5;
+          margin-bottom: $spacer-quarter;
         }
       }
 
@@ -33,6 +36,8 @@
         flex-direction: column;
 
         h2{
+          border-color: var(--heading-border-color);
+          font-family: var(--heading-font-family);
           margin: 0;
           display: flex;
           flex-wrap: nowrap;
@@ -45,18 +50,18 @@
         width: unset;
         margin-bottom: $spacer * 0.125;
         margin-right: $spacer-half;
-        font-size: 14px;
-        line-height: 16px;
+        font-size: pxToRem(14);
+        line-height: pxToRem(16);
       }
 
       .fsc-editor-container{
         flex: 1;
-        min-height: 300px;
+        min-height: pxToRem(300);
         .editor{
-          min-height: 300px;
+          min-height: pxToRem(300);
           height: 100%;
           .tox.tox-tinymce{
-            min-height: 300px;
+            min-height: pxToRem(300);
           }
         }
 
@@ -96,7 +101,7 @@
         }
         &.fsc-open{
           visibility: visible;
-          max-height: 150px;
+          max-height: pxToRem(150);
         }
       }
     }
@@ -115,6 +120,9 @@
         flex-wrap: nowrap;
         justify-content: space-between;
         align-items: center;
+        border-color: var(--heading-border-color);
+        text-align: left;
+        font-family: var(--heading-font-family);
 
         .fsc-title-text{
           flex: 1;
@@ -123,12 +131,16 @@
         .fsc-reminder{
           flex: 0;
           cursor: pointer;
+          color: var(--btn-grey-color);
+          background-color: var(--btn-grey-bg-color);
+          border-color: var(--btn-grey-bg-color);
 
           &.fsc-selected{
             color: #ffffff;
-            background-color: #2f581d;
+            background-color: var(--btn-save-bg-color);
           }
           label{
+            font-size: 0.725rem;
             cursor: pointer;
           }
           span{
@@ -153,9 +165,15 @@
       justify-content: flex-end;
     }
     .fsc-content{
+      @include scrollbar();
+      overflow: hidden;
       margin: $spacer-half 0;
-      overflow-y: auto;
-      word-break: break-word;
+
+      section{
+        overflow-y: auto;
+        word-break: break-word;
+        height: 100%;
+      }
 
       .load-pdf{
         padding: $spacer 0;
@@ -165,6 +183,19 @@
           display: block;
         }
       }
+
+      a.entity-link, a.content-link, a.inline-roll{
+        background-color: var(--entity-link-bg-color);
+        border-color: var(--entity-link-border-color);
+        i {
+          color: var(--entity-link-icon-color);
+        }
+        &:hover{
+          i{
+            color:var(--entity-link-icon-hover-color);
+          }
+        }
+      }
     }
     figure, .fsc-image-placeholder{
       margin: 0;
@@ -172,7 +203,7 @@
 
       &.flex-ratio{
         position: relative;
-        min-height: 400px;
+        min-height: pxToRem(400);
 
         &:before{
           content: "";
@@ -212,23 +243,23 @@
     .fsc-pdf-viewer{
       flex-grow: 1;
       width: 100%;
-      min-height: 620px;
-      flex-basis: 620px;
+      min-height: pxToRem(620);
+      flex-basis: pxToRem(620);
       border: none;
     }
 
     .fsc-page-list{
       top: unset;
-      bottom: 40px;
-      height: 350px;
-      left: -32px;
+      bottom: pxToRem(40);
+      height: pxToRem(350);
+      left: pxToRem(-32);
       display: flex;
       flex-direction: column;
-      border-left: 1px solid;
+      border: 1px solid var(--note-sheet-page-list-border-color);
       border-right: 0;
       box-shadow: unset;
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
+      border-top-left-radius: pxToRem(5);
+      border-bottom-left-radius: pxToRem(5);
 
       &.fsc-read-only{
         bottom: 0;
@@ -236,11 +267,11 @@
       }
 
       &.fsc-open{
-        left: -300px;
+        left: pxToRem(-300);
       }
 
       &.fsc-closed{
-        left: -32px;
+        left: pxToRem(-32);
         visibility: visible;
       }
 
@@ -262,26 +293,28 @@
           }
           .fsc-control{
             position: absolute;
-            right: 5px;
+            right: pxToRem(5);
             top: 50%;
             transform: translateY(-50%);
             border: 0;
+            background-color: unset;
           }
           .fsc-hide{
             visibility: hidden;
           }
         }
         .fsc-save{
-          flex: 0 0 45px;
+          flex: 0 0 pxToRem(45);
         }
 
         .fsc-pages{
-          flex: 0 32px;
+          flex: 0 pxToRem(32);
           text-align: center;
         }
       }
 
       .fsc-list-of-pages{
+        @include scrollbar();
         padding: 0;
         margin: 0;
         list-style: none;
@@ -289,6 +322,7 @@
         overflow-y: auto;
 
         li{
+          font-size: pxToRem(14);
           cursor: pointer;
           padding: $spacer-half;
           border-bottom: 1px solid;
@@ -298,6 +332,10 @@
           align-items: center;
           flex-wrap: nowrap;
 
+          &:hover, &.fsc-current{
+            background-color: var(--note-sheet-page-list-page-hover-bg-color);
+          }
+
           &:first-child{
             border-top: 1px solid;
           }
@@ -305,8 +343,8 @@
           &:before{
             content: counters(section, ".") ". ";
             counter-increment: section;
-            margin-right: ($spacer-half * 0.5);
-            flex: 0 calc(32px - $spacer-half );
+            margin-right: $spacer-quarter;
+            flex: 0 calc(#{pxToRem(32)} - $spacer-half );
             text-align: center;
           }
 

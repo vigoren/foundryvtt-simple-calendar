@@ -44,8 +44,8 @@ declare global{
              *
              * If being used in a FoundryVTT application or FormApplication it is best called in the activateListeners function.
              * @param calendarId The ID of the HTML element of the calendar to activate listeners for. This is the same ID used in the {@link HandlebarHelpers.sc-full-calendar}.
-             * @param {Function|null} onMonthChange Optional function to be called when the month being viewed has changed. Returned parameters to the function are:<br/> - The direction moved, previous or next.<br/> - The options used to render the calendar, which includes the date being shown.
-             * @param {Function|null} onDayClick Optional function to be called when a day is clicked. Returned parameters to the function are:<br/>- The options used to render the calendar, which includes the selected date.
+             * @param onMonthChange Optional function to be called when the month being viewed has changed. Returned parameters to the function are:<br/> - The direction moved, previous or next.<br/> - The options used to render the calendar, which includes the date being shown.
+             * @param onDayClick Optional function to be called when a day is clicked. Returned parameters to the function are:<br/>- The options used to render the calendar, which includes the selected date.
              *
              * @example
              * ```javascript
@@ -59,13 +59,15 @@ declare global{
              *
              * @param title The title of the new note
              * @param content The contents of the new note
-             * @param starDate The date and time the note starts
-             * @param endDate The date and time the note ends (can be the same as the start date)
+             * @param startDate The date and time the note starts, if any date or time properties are missing the current date/time values will be used.
+             * @param endDate The date and time the note ends (can be the same as the start date), if any date or time properties are missing the current date/time values will be used.
              * @param allDay If the note lasts all day or if it has a specific time duration. Whether to ignore the time portion of the start and end dates.
              * @param repeats If the note repeats and how often it does
              * @param categories A list of note categories to assign to this note
              * @param macro The ID of the macro that this note should execute when the in game time meets or exceeds the note time. Or null if no macro should be executed.
              * @param calendarId Optional parameter to specify the ID of the calendar to add the note too. If not provided the current active calendar will be used.
+             * @param userVisibility Optional parameter to specify an array of user ID's who will have permission to view the note. The creator of the note will always have permission. Use `['default']` if you want all users to be able to view it.
+             * @param remindUsers Optional parameter to provide an array of user ID's who will be reminded of the note.
              *
              * @returns The newly created JournalEntry that contains the note data, or null if there was an error encountered.
              *
@@ -75,7 +77,7 @@ declare global{
              * // Will create a new note on Christmas day of 2022 that lasts all day and repeats yearly.
              * ```
              */
-            export async function addNote(title: string, content: string, starDate: SimpleCalendar.DateTime, endDate: SimpleCalendar.DateTime, allDay: boolean, repeats: NoteRepeat, categories: string[], calendarId: string = 'active', macro: string | null = null): Promise<StoredDocument<JournalEntry> | null>
+            export async function addNote(title: string, content: string, startDate: SimpleCalendar.DateTimeParts, endDate: SimpleCalendar.DateTimeParts, allDay: boolean, repeats: NoteRepeat = NoteRepeat.Never, categories: string[] = [], calendarId: string = 'active', macro: string | null = null, userVisibility: string[] = [], remindUsers: string[] = []): Promise<StoredDocument<JournalEntry> | null>
 
             /**
              * Advance the date and time to match the next preset time.
@@ -116,10 +118,10 @@ declare global{
              * SimpleCalendar.api.changeDate({day: -1}); // Will set the new date to May 31, 2021
              *
              * //Assuming a date of June 1, 2021 10:00:00 and user has permission to change the date
-             * SimpleCalendar.api.changeDate({year: 1, month: 1, day: 1, hour: 1, minute: 1, second: 1}); // Will set the new date to July 2, 2022 11:01:01
+             * SimpleCalendar.api.changeDate({year: 1, month: 1, day: 1, hour: 1, minute: 1, seconds: 1}); // Will set the new date to July 2, 2022 11:01:01
              *
              * //Assuming a date of June 1, 2021 10:00:00 and user has permission to change the date
-             * SimpleCalendar.api.changeDate({second: 3600}); // Will set the new date to June 1, 2021 11:00:00
+             * SimpleCalendar.api.changeDate({seconds: 3600}); // Will set the new date to June 1, 2021 11:00:00
              * ```
              */
             export function changeDate(interval: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean
@@ -141,7 +143,7 @@ declare global{
              * //     hour: 12
              * //     minute: 5
              * //     month: 4
-             * //     second: 41
+             * //     seconds: 41
              * //     year: 2021
              * // }
              *
@@ -151,7 +153,7 @@ declare global{
              * //     hour: 8
              * //     minute: 16
              * //     month: 3
-             * //     second: 25
+             * //     seconds: 25
              * //     year: 1982
              * // }
              *
@@ -161,7 +163,7 @@ declare global{
              * //     hour: 0
              * //     minute: 49
              * //     month: 8
-             * //     second: 37
+             * //     seconds: 37
              * //     year: 3276
              * // }
              * ```
@@ -205,7 +207,7 @@ declare global{
 
             /**
              * Converts the passed in date to a timestamp.
-             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, second: 0}`) with the parameters set to the date that should be converted to a timestamp. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that should be converted to a timestamp. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
              * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a timestamp. If not provided the current active calendar will be used.
              *
              * @returns The timestamp for that date.
@@ -214,7 +216,7 @@ declare global{
              * ```javascript
              * SimpleCalendar.api.dateToTimestamp({}); //Returns the timestamp for the current date
              *
-             * SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, second: 0}); //Returns 1609462860
+             * SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, seconds: 0}); //Returns 1609462860
              * ```
              */
             export function dateToTimestamp(date: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): number
@@ -226,7 +228,7 @@ declare global{
              * - If the date/time parameters are negative, their value will be set to 0. The exception to this is the year parameter, it can be negative.
              * - If the date/time parameters are set to a value greater than possible (eg. the 20th month in a calendar that only has 12 months, or the 34th hour when a day can only have 24 hours) the max value will be used.
              *
-             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, second: 0}`) with the parameters set to the date and time that should be formatted.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date and time that should be formatted.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
              * @param format Optional format string to return custom formats for the passed in date and time.
              * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a formatted string. If not provided the current active calendar will be used.
              *
@@ -238,16 +240,16 @@ declare global{
              * // Date: Full Month Name Day, Year
              * // Time: 24Hour:Minute:Second
              *
-             * SimpleCalendar.api.formatDateTime({year: 2021, month: 11, day: 24, hour: 12, minute: 13, second: 14});
+             * SimpleCalendar.api.formatDateTime({year: 2021, month: 11, day: 24, hour: 12, minute: 13, seconds: 14});
              * // Returns {date: 'December 25, 2021', time: '12:13:14'}
              *
-             * SimpleCalendar.api.formatDateTime({year: -2021, month: -11, day: 24, hour: 12, minute: 13, second: 14})
+             * SimpleCalendar.api.formatDateTime({year: -2021, month: -11, day: 24, hour: 12, minute: 13, seconds: 14})
              * // Returns {date: 'January 25, -2021', time: '12:13:14'}
              *
-             * SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, minute: 313, second: 314})
+             * SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, minute: 313, seconds: 314})
              * // Returns {date: 'December 31, 2021', time: '23:59:59'}
              *
-             * SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, minute: 313, second: 314},"DD/MM/YYYY HH:mm:ss A")
+             * SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, minute: 313, seconds: 314},"DD/MM/YYYY HH:mm:ss A")
              * // Returns "31/12/2021 23:59:00 PM"
              * ```
              */
@@ -281,6 +283,7 @@ declare global{
              * //     {
              * //         "id": "13390ed",
              * //         "name": "January",
+             * //         "description" : "",
              * //         "abbreviation": "Jan",
              * //         "numericRepresentation": 1,
              * //         "numericRepresentationOffset": 0,
@@ -293,6 +296,7 @@ declare global{
              * //     {
              * //         "id": "effafeee",
              * //         "name": "February",
+             * //         "description" : "",
              * //         "abbreviation": "Feb",
              * //         "numericRepresentation": 2,
              * //         "numericRepresentationOffset": 0,
@@ -305,6 +309,7 @@ declare global{
              * //     {
              * //         "id": "25b48251",
              * //         "name": "March",
+             * //         "description" : "",
              * //         "abbreviation": "Mar",
              * //         "numericRepresentation": 3,
              * //         "numericRepresentationOffset": 0,
@@ -317,6 +322,7 @@ declare global{
              * //     {
              * //         "id": "e5e9782f",
              * //         "name": "April",
+             * //         "description" : "",
              * //         "abbreviation": "Apr",
              * //         "numericRepresentation": 4,
              * //         "numericRepresentationOffset": 0,
@@ -329,6 +335,7 @@ declare global{
              * //     {
              * //         "id": "93f626f6",
              * //         "name": "May",
+             * //         "description" : "",
              * //         "abbreviation": "May",
              * //         "numericRepresentation": 5,
              * //         "numericRepresentationOffset": 0,
@@ -341,6 +348,7 @@ declare global{
              * //     {
              * //         "id": "22b4b204",
              * //         "name": "June",
+             * //         "description" : "",
              * //         "abbreviation": "Jun",
              * //         "numericRepresentation": 6,
              * //         "numericRepresentationOffset": 0,
@@ -353,6 +361,7 @@ declare global{
              * //     {
              * //         "id": "adc0a7ca",
              * //         "name": "July",
+             * //         "description" : "",
              * //         "abbreviation": "Jul",
              * //         "numericRepresentation": 7,
              * //         "numericRepresentationOffset": 0,
@@ -365,6 +374,7 @@ declare global{
              * //     {
              * //         "id": "58197d71",
              * //         "name": "August",
+             * //         "description" : "",
              * //         "abbreviation": "Aug",
              * //         "numericRepresentation": 8,
              * //         "numericRepresentationOffset": 0,
@@ -377,6 +387,7 @@ declare global{
              * //     {
              * //         "id": "eca76bbd",
              * //         "name": "September",
+             * //         "description" : "",
              * //         "abbreviation": "Sep",
              * //         "numericRepresentation": 9,
              * //         "numericRepresentationOffset": 0,
@@ -389,6 +400,7 @@ declare global{
              * //     {
              * //         "id": "6b0da33e",
              * //         "name": "October",
+             * //         "description" : "",
              * //         "abbreviation": "Oct",
              * //         "numericRepresentation": 10,
              * //         "numericRepresentationOffset": 0,
@@ -401,6 +413,7 @@ declare global{
              * //     {
              * //         "id": "150f5519",
              * //         "name": "November",
+             * //         "description" : "",
              * //         "abbreviation": "Nov",
              * //         "numericRepresentation": 11,
              * //         "numericRepresentationOffset": 0,
@@ -413,6 +426,7 @@ declare global{
              * //     {
              * //         "id": "b67bc3ee",
              * //         "name": "December",
+             * //         "description" : "",
              * //         "abbreviation": "Dec",
              * //         "numericRepresentation": 12,
              * //         "numericRepresentationOffset": 0,
@@ -528,6 +542,8 @@ declare global{
              * // [
              * //     {
              * //         color: "#fffce8",
+             * //         description : "",
+             * //         icon: "spring,
              * //         id: "4916a231",
              * //         name: "Spring",
              * //         startingDay: 20,
@@ -537,6 +553,8 @@ declare global{
              * //     },
              * //     {
              * //         color: "#f3fff3",
+             * //         description : "",
+             * //         icon: "summer,
              * //         id: "e596489",
              * //         name: "Summer",
              * //         startingDay: 20,
@@ -546,6 +564,8 @@ declare global{
              * //     },
              * //     {
              * //         color: "#fff7f2",
+             * //         description : "",
+             * //         icon: "fall,
              * //         id: "3f137ee5",
              * //         name: "Fall",
              * //         startingDay: 22,
@@ -555,6 +575,8 @@ declare global{
              * //     },
              * //     {
              * //         color: "#f2f8ff",
+             * //         description : "",
+             * //         icon: "winter,
              * //         id: "92f919a2",
              * //         name: "Winter",
              * //         startingDay: 21,
@@ -582,37 +604,51 @@ declare global{
              * //     {
              * //         id: "dafbfd4",
              * //         name: "Sunday",
-             * //         numericRepresentation: 1
+             * //         description : "",
+             * //         numericRepresentation: 1,
+             * //         restday : false,
              * //     },
              * //     {
              * //         id: "8648c7e9",
              * //         name: "Monday",
-             * //         numericRepresentation: 2
+             * //         description : "",
+             * //         numericRepresentation: 2,
+             * //         restday : false,
              * //     }
              * //     {
              * //         id: "b40f3a20",
              * //         name: "Tuesday",
-             * //         numericRepresentation: 3
+             * //         description : "",
+             * //         numericRepresentation: 3,
+             * //         restday : false,
              * //     },
              * //     {
              * //         id: "6c20a99e",
              * //         name: "Wednesday",
-             * //         numericRepresentation: 4
+             * //         description : "",
+             * //         numericRepresentation: 4,
+             * //         restday : false,
              * //     },
              * //     {
              * //         id: "56c14ec7",
              * //         name: "Thursday",
-             * //         numericRepresentation: 5
+             * //         description : "",
+             * //         numericRepresentation: 5,
+             * //         restday : false,
              * //     },
              * //     {
              * //         id: "2c732d04",
              * //         name: "Friday",
-             * //         numericRepresentation: 6
+             * //         description : "",
+             * //         numericRepresentation: 6,
+             * //         restday : false,
              * //     },
              * //     {
              * //         id: "c8f72e3d",
              * //         name: "Saturday",
-             * //         numericRepresentation: 7
+             * //         description : "",
+             * //         numericRepresentation: 7,
+             * //         restday : false,
              * //     }
              * // ]
              * ```
@@ -669,6 +705,7 @@ declare global{
              * //     intercalary: false,
              * //     intercalaryInclude: false,
              * //     name: "June",
+             * //     description: "",
              * //     numberOfDays: 30,
              * //     numberOfLeapYearDays: 30,
              * //     numericRepresentation: 6,
@@ -694,6 +731,8 @@ declare global{
              * //     color: "#fffce8",
              * //     id: "4916a231",
              * //     name: "Spring",
+             * //     description: "",
+             * //     icon: "spring",
              * //     startingDay: 19,
              * //     startingMonth: 2,
              * //     sunriseTime: 21600,
@@ -717,7 +756,10 @@ declare global{
              * // {
              * //     id: "b40f3a20",
              * //     name: "Tuesday",
-             * //     numericRepresentation: 3
+             * //     abbreviation: "Tu",
+             * //     description: "",
+             * //     numericRepresentation: 3,
+             * //     restday: false
              * // }
              * ```
              */
@@ -913,12 +955,12 @@ declare global{
              * @example
              * ```javascript
              * //Assuming a Gregorian Calendar
-             * SimpleCalendar.api.secondsToInterval(3600); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 0, second 0}
-             * SimpleCalendar.api.secondsToInterval(3660); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 1, second: 0}
-             * SimpleCalendar.api.secondsToInterval(86400); //Returns {year: 0, month: 0, day: 1, hour: 0, minute: 0, second: 0}
-             * SimpleCalendar.api.secondsToInterval(604800); //Returns {year: 0, month: 0, day: 7, hour: 0, minute: 0, second: 0}
-             * SimpleCalendar.api.secondsToInterval(2629743); //Returns {year: 0, month: 1, day: 0, hour: 10, minute: 29, second: 3}
-             * SimpleCalendar.api.secondsToInterval(31556926); //Returns {year: 1, month: 0, day: 0, hour: 5, minute: 48, second: 46}
+             * SimpleCalendar.api.secondsToInterval(3600); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 0, seconds: 0}
+             * SimpleCalendar.api.secondsToInterval(3660); //Returns {year: 0, month: 0, day: 0, hour: 1, minute: 1, seconds: 0}
+             * SimpleCalendar.api.secondsToInterval(86400); //Returns {year: 0, month: 0, day: 1, hour: 0, minute: 0, seconds: 0}
+             * SimpleCalendar.api.secondsToInterval(604800); //Returns {year: 0, month: 0, day: 7, hour: 0, minute: 0, seconds: 0}
+             * SimpleCalendar.api.secondsToInterval(2629743); //Returns {year: 0, month: 1, day: 0, hour: 10, minute: 29, seconds: 3}
+             * SimpleCalendar.api.secondsToInterval(31556926); //Returns {year: 1, month: 0, day: 0, hour: 5, minute: 48, seconds: 46}
              * ```
              */
             export function secondsToInterval(seconds: number, calendarId: string = 'active'): SimpleCalendar.DateTimeParts
@@ -927,7 +969,7 @@ declare global{
              * Will set the current date of the specified calendar to match the passed in date.
              * **Important**: This function can only be run by users who have permission to change the date in Simple Calendar.
              *
-             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, second: 0}`) with the parameters set to the date that the calendar should be set to. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that the calendar should be set to. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
              * @param calendarId Optional parameter to specify the ID of the calendar to set the date of. If not provided the current active calendar will be used.
              *
              * @returns True if the date was set successfully, false otherwise.
@@ -935,10 +977,10 @@ declare global{
              * @example
              * ```javascript
              * //To set the date to December 25th 1999 with the time 00:00:00
-             * SimpleCalendar.setDate({year: 1999, month: 11, day: 24, hour: 0, minute: 0, second: 0});
+             * SimpleCalendar.api.setDate({year: 1999, month: 11, day: 24, hour: 0, minute: 0, seconds: 0});
              *
              * //To set the date to December 31st 1999 and the time to 11:59:59pm
-             * SimpleCalendar.setDate({year: 1999, month: 11, day: 30, hour: 23, minute: 59, second: 59});
+             * SimpleCalendar.api.setDate({year: 1999, month: 11, day: 30, hour: 23, minute: 59, seconds: 59});
              * ```
              */
             export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean
@@ -1037,9 +1079,8 @@ declare global{
              * console.log(scDate);
              * // This is what the returned object will look like
              * // {
-             * //     currentSeason: {color: "#fffce8", startingMonth: 3, startingDay: 20, name: "Spring"},
+             * //     "currentSeason": { "showAdvanced": false, "id": "75a4ba97", "name": "Spring", "numericRepresentation": null, "description": "", "abbreviation": "", "color": "#46b946", "startingMonth": 2, "startingDay": 19, "sunriseTime": 21600, "sunsetTime": 64800, "icon": "spring"},
              * //     day: 0,
-             * //     dayDisplay: "1",
              * //     dayOfTheWeek: 2,
              * //     dayOffset: 0,
              * //     display: {
@@ -1056,16 +1097,16 @@ declare global{
              * //         yearPrefix: "",
              * //     },
              * //     hour: 0,
+             * //     isLeapYear: false,
+             * //     midday: 1622548800,
              * //     minute: 0,
              * //     month: 5,
-             * //     monthName: "June",
              * //     second: 0,
              * //     showWeekdayHeadings: true,
+             * //     sunrise: 1622527200,
+             * //     sunset: 1622570400,
              * //     weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
              * //     year: 2021,
-             * //     yearName: "",
-             * //     yearPostfix: "",
-             * //     yearPrefix: "",
              * //     yearZero: 1970
              * // }
              * ```
@@ -1110,6 +1151,9 @@ declare global{
              *     "minute": 15,
              *     "second": 30,
              *     "yearZero": 1970,
+             *     "sunrise": 1622527200,
+             *     "sunset": 1622570400,
+             *     "midday": 1622548800,
              *     "weekdays": [
              *       "Sunday",
              *       "Monday",
@@ -1127,11 +1171,6 @@ declare global{
              *       "name": "Summer"
              *     },
              *     "isLeapYear": false,
-             *     "monthName": "July",
-             *     "dayDisplay": "9",
-             *     "yearName": "",
-             *     "yearPrefix": "",
-             *     "yearPostfix": "",
              *     "display": {
              *       "day": "9",
              *       "daySuffix": "th",
@@ -1159,32 +1198,7 @@ declare global{
              *         "singleDay": true
              *       }
              *     }
-             *   ],
-             *   "season": {
-             *     "name": "Summer",
-             *     "color": "#f3fff3"
-             *   },
-             *   "month": {
-             *     "name": "July",
-             *     "number": 7,
-             *     "intercalary": false,
-             *     "numberOfDays": 31,
-             *     "numberOfLeapYearDays": 31
-             *   },
-             *   "day": {
-             *     "number": 9
-             *   },
-             *   "time": {
-             *     "hour": "00",
-             *     "minute": "15",
-             *     "second": "30"
-             *   },
-             *   "year": {
-             *     "number": 2021,
-             *     "prefix": "",
-             *     "postfix": "",
-             *     "isLeapYear": false
-             *   }
+             *   ]
              * }
              * ```
              */
@@ -1337,45 +1351,6 @@ declare global{
             interface LeapYearTemplate extends IDataItemBase{
                 rule: LeapYearRules;
                 customMod: number;
-            }
-
-            /**
-             * Interface for the note template that is passed to the HTML for rendering
-             */
-            interface NoteTemplate extends IDataItemBase{
-                title: string;
-                content: string;
-                playerVisible: boolean;
-                author: string;
-                authorDisplay: UserColorData | null;
-                monthDisplay: string;
-                displayDate: string;
-                allDay: boolean;
-                hour: number;
-                minute: number;
-                endDate: DateTime;
-                order: number;
-                categories: SimpleCalendar.NoteCategory[];
-                reminder: boolean;
-            }
-
-            interface MainAppData {
-                compactViewDisplay: any;
-                mainViewDisplay: any;
-                addNotes: boolean;
-                activeCalendarId: string;
-                calendar: CalendarData;
-                changeDateTime: boolean;
-                clockClass: string;
-                uiElementStates: any;
-                isGM: boolean;
-                isPrimary: boolean;
-                message: string;
-                reorderNotes: boolean;
-                showClock: boolean;
-                showDateControls: boolean;
-                showTimeControls: boolean;
-                showSetCurrentDate: boolean;
             }
 
             /**
@@ -1859,10 +1834,14 @@ declare global{
             openCompact: boolean;
             /** If the Simple Calendar module should remember where it was last positioned. */
             rememberPosition: boolean;
+            /** If the Simple Calendar module should remember where the compact view was last positioned. */
+            rememberCompactPosition: boolean;
             /** The current position of the Simple Calendar module. */
             appPosition: AppPosition;
             /** How the user wants note reminder notifications to be displayed. */
             noteReminderNotification: NoteReminderNotificationType;
+            /** The direction the side drawers open from the main application. */
+            sideDrawerDirection: string;
         }
 
         /**
@@ -2041,29 +2020,6 @@ declare global{
             rule: LeapYearRules;
             /** The number of years that a leap year happens when the rule is set to 'custom'. */
             customMod: number;
-        }
-
-        /**
-         * Interface for the data saved to the game settings for a note
-         * @internal
-         */
-        interface NoteConfig extends IDataItemBase{
-            year: number;
-            month: number;
-            day: number;
-            title: string;
-            content: string;
-            author: string;
-            monthDisplay: string;
-            playerVisible: boolean;
-            repeats: NoteRepeat;
-            allDay: boolean;
-            hour: number;
-            minute: number;
-            endDate: DateTime;
-            order: number;
-            categories: string[];
-            remindUsers: string[];
         }
 
         /**
@@ -2277,15 +2233,6 @@ declare global{
             1?: string,
             2?: string,
             3?: string
-        }
-
-        /**
-         * @internal
-         */
-        interface UserColorData {
-            name: string;
-            color: string;
-            textColor: string;
         }
 
         /**

@@ -8,20 +8,38 @@
         flex-wrap: nowrap;
         align-items: stretch;
         padding: $spacer-half;
+        font-size: pxToRem(14);
 
         input{
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
           border-right-width: 0;
+          height: pxToRem(26);
+          color: var(--search-box-color) !important;
+          &::placeholder{
+            color:var(--search-box-placeholder-color);
+            opacity: 1;
+          }
         }
         .fsc-control{
-          width: 35px;
+          box-shadow: unset;
+          width: pxToRem(35);
           border-radius: 0;
           margin: 0;
           border-left-width: 0;
           border-right-width: 0;
           border-top: 1px solid;
           border-bottom: 1px solid;
+          background-color: var(--input-bg-color);
+          border-color: var(--input-border-color);
+          color: var(--search-box-color);
+
+          &:hover, &.active, &:focus {
+            text-shadow: unset;
+            color: var(--input-color);
+            background-color: var(--input-bg-color);
+            border-color: var(--input-border-color);
+          }
 
           &:last-child{
             border-right-width: 1px;

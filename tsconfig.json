@@ -92,6 +92,10 @@
       "@knodes/typedoc-plugin-pages"
     ],
     "customCss": "./docs/sc-style.css",
+    "titleLink": "/index.html",
+    "navigationLinks": {
+      "GitHub": "https://github.com/vigoren/foundryvtt-simple-calendar"
+    },
     "disableSources": true,
     "hideGenerator": true,
     "excludeInternal": true,
@@ -129,9 +133,12 @@
             { "title": "Changing the Date and Time", "source": "changing-date-time.md"},
             { "title": "Notes", "childrenSourceDir": "/notes", "source":"/notes/index.md", "children":  [
               {"title": "Add / Edit / Remove Notes", "source": "adding-editing-removing.md"}
-            ]}
+            ]},
+            { "title": "Themes", "source": "themes.md"}
           ]},
-          {"title": "Developing With Simple Calendar", "childrenSourceDir":  "./docs/developing-with-sc", "source": "./docs/developing-with-sc/index.md"}
+          {"title": "Developing With Simple Calendar", "childrenSourceDir":  "./docs/developing-with-sc", "source": "./docs/developing-with-sc/index.md", "children":  [
+            {"title": "Theming Simple Calendar", "source":  "theming.md"}
+          ]}
         ]
     }
   }

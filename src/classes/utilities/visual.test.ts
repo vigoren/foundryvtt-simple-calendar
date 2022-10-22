@@ -5,11 +5,11 @@ import "../../../__mocks__/index";
 import {Icons, Themes} from "../../constants";
 import {
     animateElement,
-    animateFormGroup,
+    animateFormGroup, CheckRemScaling, ConvertPxBasedOnRemSize,
     GetContrastColor,
     GetIcon,
     GetThemeList,
-    GetThemeName,
+    GetThemeName, RemSize,
     timeoutCall
 } from "./visual";
 import {GameSettings} from "../foundry-interfacing/game-settings";
@@ -79,6 +79,15 @@ describe('Utilities Visual Tests', () => {
         jest.spyOn(game.modules, 'get').mockReturnValue({active: true});
         obj = GetThemeList();
         expect(Object.keys(obj).length).toBe(5);
+    });
+
+    test('Convert PX Based On REM Size', () => {
+        expect(ConvertPxBasedOnRemSize(16)).toBe(NaN);
+    });
+
+    test('Check REM Scaling', () => {
+        CheckRemScaling();
+        expect(document.body.classList.contains('sc-scale-NaN')).toBe(true);
     });
 
     test('Animate Element', () => {

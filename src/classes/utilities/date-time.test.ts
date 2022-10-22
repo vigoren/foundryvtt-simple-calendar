@@ -11,7 +11,7 @@ import {
     FormatDateTime,
     GetDisplayDate,
     GetPresetTimeOfDay,
-    IsDayBetweenDates,
+    IsDayBetweenDates, MergeDateTimeObject,
     TimestampToDate,
     ToSeconds
 } from "./date-time";
@@ -75,6 +75,13 @@ describe('Utilities Date/Time Tests', () => {
         jest.spyOn(Logger,'error').mockImplementation(() => {});
         expect(FormatDateTime({year: 2021, month: 12, day: 24, hour: 11, minute: 22, seconds: 33}, "M MM MMM MMMM", tCal)).toBe('');
         expect(Logger.error).toHaveBeenCalled();
+    });
+
+    test('MergeDateTimeObject', () => {
+        const d = new Date();
+        expect(MergeDateTimeObject({})).toEqual({year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0})
+        expect(MergeDateTimeObject({hour: 0, minute: 0, seconds: 0}, {year:1999, month: 11, day: 24, hour: 23, minute: 59, seconds: 59})).toEqual({year:1999, month: 11, day: 24, hour: 0, minute: 0, seconds: 0});
+        expect(MergeDateTimeObject({}, null, tCal)).toEqual({year: 2022, month: d.getMonth(), day: d.getDate() - 1, hour: 0, minute: 2, seconds: 7});
     });
 
     test('To Seconds', async () => {

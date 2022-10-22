@@ -1,0 +1,11 @@
+// These classes are used to scale the SC interface up or down depending on if the root font-size has been changed
+// The number in the class name represents the font-size of the root element
+// This is not a perfect scaling solution but works "well enough"
+
+.sc-scale-10{
+  .simple-calendar{
+    &.dark, &.light, &.classic, &.forbidden-lands{
+      transform: scale(1.5);
+    }
+  }
+}

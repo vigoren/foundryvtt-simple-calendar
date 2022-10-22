@@ -1,3 +1,5 @@
+@import "../variables";
+
 .fsc-date-selector{
   position: relative;
 }
@@ -5,28 +7,30 @@
 .fsc-date-selector-calendar-wrapper{
   position: absolute;
   z-index: 100;
-  border: 1px solid;
+  border: 1px solid var(--section-bg-color);
+  background-color: var(--section-bg-color);
+  box-shadow: 0 0 0 1px var(--section-border-color);
 
   &.fsc-just-time{
     overflow-y: visible;
-    padding: 0 0.5rem;
+    padding: 0 $spacer-half;
   }
 
   &.left-down{
     left: 0;
-    top: 26px;
+    top: pxToRem(26);
   }
   &.left-up{
     left: 0;
-    bottom: 26px;
+    bottom: pxToRem(26);
   }
   &.right-down{
     right: 0;
-    top: 26px;
+    top: pxToRem(26);
   }
   &.right-up{
     right: 0;
-    bottom: 26px;
+    bottom: pxToRem(26);
   }
 
 

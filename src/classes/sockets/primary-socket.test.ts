@@ -38,11 +38,6 @@ describe('Primary Socket Tests', () => {
         expect(MainApplication.timeKeepingCheck).toHaveBeenCalledTimes(1);
         expect(GameSockets.emit).toHaveBeenCalledTimes(2);
         expect(Hook.emit).toHaveBeenCalledTimes(1);
-
-        tCal.time.unifyGameAndClockPause = true;
-        jest.spyOn((<Game>game), 'togglePause').mockImplementation(() => {});
-        await s.primaryCheckTimeoutCall();
-        expect((<Game>game).togglePause).toHaveBeenCalledTimes(1);
     });
 
     test('Initialize', async () => {

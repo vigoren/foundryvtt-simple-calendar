@@ -90,6 +90,31 @@ describe('API Class Tests', () => {
 
         expect(await API.addNote('', '', {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, true, 0, [], '')).toBe(null);
         expect(NManager.createNote).toHaveBeenCalledTimes(2);
+
+        expect(await API.addNote('', '', {}, {}, false)).toBe(null);
+        expect(NManager.createNote).toHaveBeenCalledTimes(3);
+
+        const je = {update: jest.fn()};
+        //@ts-ignore
+        jest.spyOn(NManager, 'createNote').mockImplementation(() => {return je;});
+
+        //@ts-ignore
+        expect(await API.addNote('', '', {}, {}, false, 0, [], '', '', ['asd'], 2)).toBe(je);
+        expect(NManager.createNote).toHaveBeenCalledTimes(4);
+
+        //@ts-ignore
+        expect(await API.addNote('', '', {}, {}, false, 0, [], '', '', [''])).toBe(je);
+        expect(NManager.createNote).toHaveBeenCalledTimes(5);
+
+        //@ts-ignore
+        const ou = game.users;
+        //@ts-ignore
+        game.users = [{id: ''},{id: 'asd'}];
+        //@ts-ignore
+        expect(await API.addNote('', '', {}, {}, false, 0, [], '', '', ['default'])).toBe(je);
+        expect(NManager.createNote).toHaveBeenCalledTimes(6);
+        //@ts-ignore
+        game.users = ou;
     });
 
     test('Advance Time to Preset', () => {

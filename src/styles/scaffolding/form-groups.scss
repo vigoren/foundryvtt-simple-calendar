@@ -7,17 +7,20 @@
           .form-group{
             margin: $spacer-half 0;
             padding: $spacer-half;
-            border: 1px solid;
+            border: 1px solid var(--form-group-border-color);
             max-height: 0;
             overflow: hidden;
             align-items: flex-start;
-
+            background-color: var(--form-group-bg-color);
+            &:hover{
+              background-color: var(--form-group-bg-hover-color);
+            }
             &.fsc-border-none{
               border-width: 0;
             }
             &.fsc-open{
               visibility: visible;
-              max-height: 150px;
+              max-height: pxToRem(150);
               &.fsc-no-max-height{
                 max-height: unset;
               }
@@ -42,12 +45,16 @@
                   cursor: help;
                 }
               }
+              &:hover{
+                background-color: var(--form-group-bg-color);
+              }
             }
             label{
+              color: var(--form-group-label-color);
               text-align: left !important;
               background: unset !important;
               border: 0 !important;
-              font-family: 'Roboto', sans-serif !important;
+              font-family: var(--font-family) !important;
               font-size: 1rem !important;
               font-weight: 600 !important;
               flex: 2;
@@ -56,14 +63,17 @@
               }
             }
             input, select{
-              font-family: 'Roboto', sans-serif !important;
-              font-size: 14px;
-              border: 1px solid !important;
+              font-family: var(--font-family) !important;
+              font-size: pxToRem(14);
+              border: 1px solid var(--form-group-input-border-color) !important;
               box-shadow: unset !important;
               width: 100%;
+              background-color: var(--form-group-input-bg-color);
+              color: var(--form-group-input-color);
             }
             .notes{
-              font-family: 'Roboto', sans-serif !important;
+              color: var(--form-group-help-color);
+              font-family: var(--font-family) !important;
             }
             .fsc-example{
               flex: 0 0 100%;
@@ -78,9 +88,10 @@
           flex-wrap: nowrap;
           align-items: center;
           position: relative;
-          border: 1px solid;
+          border: 1px solid var(--form-group-border-color);
           border-radius: 3px;
           margin-bottom: $spacer-half;
+          background-color: var(--form-group-bg-color);
 
           &.fsc-check-group{
             padding-top: $spacer-half;
@@ -103,13 +114,16 @@
             transform-origin: 0 0;
             transition: opacity .1s ease-in-out,transform .1s ease-in-out;
             font-size: $font-size-compact-form-group;
+            color: var(--form-group-label-color);
           }
           > input[type=text], > input[type=number], > input[type=range], > select, > .fsc-date-selector, > .fsc-multiselect{
+            background-color: unset !important;
             border: 0;
             border-radius: 0;
             padding: ($spacer * .75) $spacer-half;
             width: 100%;
             height: calc(($spacer * 2.5) + 2px);
+            font-size: pxToRem(14);
 
             &::placeholder{
               visibility: hidden;
@@ -131,20 +145,33 @@
           }
           > .fsc-date-selector{
             > input{
+              background-color: unset !important;
               border: 0;
               margin-top: -($spacer-half * 0.5);
+              height: pxToRem(26);
             }
             .fsc-date-selector-calendar-wrapper{
               min-width: 100%;
               &.left-down, &.right-down{
-                top: 42px;
+                top: pxToRem(42);
               }
               &.left-up, &.right-up{
-                bottom: 42px;
+                bottom: pxToRem(42);
               }
             }
           }
-
+          > .fsc-multiselect{
+            > button{
+              background-color: unset !important;
+            }
+          }
+          button{
+            background-color: unset !important;
+            color: var(--form-group-input-color);
+          }
+          option{
+            background-color: var(--multi-select-option-bg-color) !important;
+          }
           .fsc-form-group-help{
             position: absolute;
             top: -3px;
@@ -152,6 +179,7 @@
             cursor: help;
             font-size: $spacer;
             opacity: 0;
+            color: var(--form-group-help-icon-color);
           }
           .fsc-form-group-actions{
             display: flex;
@@ -165,6 +193,19 @@
               margin: 0;
               border: 0;
               border-radius: 0;
+            }
+          }
+          .file-picker{
+            cursor: pointer;
+            background-color: var(--btn-primary-bg-color) !important;
+            border-color: var(--btn-primary-border-color);
+            color: var(--btn-primary-color);
+
+            &:hover, &.active, &:focus {
+              box-shadow: unset;
+              background-color: var(--btn-primary-bg-hover-color) !important;
+              border-color: var(--btn-primary-border-color);
+              color: var(--btn-primary-color);
             }
           }
           &:hover{

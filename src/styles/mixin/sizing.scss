@@ -1,0 +1,15 @@
+@use "sass:math";
+
+$rem-base: 16px;
+$spacer: 1rem;
+
+@function strip-units($number) {
+  @return math.div($number, ($number * 0 + 1));
+}
+
+@function pxToRem($size, $important: false) {
+  $v: math.div(strip-units($size), strip-units($rem-base)) * $spacer;
+  @if ($v == 0rem) { $v: 0; }
+  @if($important){$v: $v !important;}
+  @return $v;
+}

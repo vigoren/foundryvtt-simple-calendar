@@ -122,6 +122,13 @@
                     <p class="notes">{{localize 'FSC.Configuration.Client.RememberPosition.Description'}}</p>
                 </div>
                 <div class="form-group fsc-open">
+                    <label for="scRememberCompactPos">{{localize 'FSC.Configuration.Client.RememberCompactPosition.Title'}}</label>
+                    <div class="form-fields">
+                        <input class="fsc-toggle" value="{{clientSettings.rememberCompactPos}}" type="checkbox" id="scRememberCompactPos" {{checked clientSettings.rememberCompactPos}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Client.RememberCompactPosition.Description'}}</p>
+                </div>
+                <div class="form-group fsc-open">
                     <label for="scNoteReminderNotification">{{localize 'FSC.Configuration.Client.NoteReminderNotification.Title'}}</label>
                     <div class="form-fields">
                         <select id="scNoteReminderNotification">
@@ -129,6 +136,15 @@
                         </select>
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Client.NoteReminderNotification.Description'}}</p>
+                </div>
+                <div class="form-group fsc-open">
+                    <label for="scSideDrawerDirection">{{localize 'FSC.Configuration.Client.NoteListOpenDirection.Title'}}</label>
+                    <div class="form-fields">
+                        <select id="scSideDrawerDirection">
+                            {{selectOptions clientSettings.sideDrawerDirections selected=clientSettings.sideDrawerDirection localize=true}}
+                        </select>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Client.NoteListOpenDirection.Description'}}</p>
                 </div>
             </div>
         </div>

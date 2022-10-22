@@ -33,7 +33,7 @@ export default class Sockets {
     }
 
     /**
-     * Initializes all of the socket types
+     * Initializes all the socket types
      */
     public initialize(){
         //Set up the socket we use to forward data between players and the GM

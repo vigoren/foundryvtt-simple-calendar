@@ -6,6 +6,8 @@ body.game{
   @import "scaffolding/control";
   @import "scaffolding/date-selector";
   @import "scaffolding/form-groups";
+  @import "scaffolding/foundry-application";
+  @import "scaffolding/foundry-core";
   @import "scaffolding/foundry-window-app";
   @import "scaffolding/foundry-window-app-compact";
   @import "scaffolding/foundry-window-app-migration";
@@ -15,6 +17,7 @@ body.game{
   @import "scaffolding/note-category";
   @import "scaffolding/note-list";
   @import "scaffolding/note-sheet";
+  @import "scaffolding/prosemirror";
   @import "scaffolding/search-box";
   @import "scaffolding/time-selector";
   @import "scaffolding/toggle";
@@ -25,3 +28,4 @@ body.game{
   @import "animation/main";
   @import "animation/note-sheet";
 }
+@import "scaling";

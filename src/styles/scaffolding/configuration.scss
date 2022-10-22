@@ -15,13 +15,14 @@
           padding:0;
           //List of tabs on the left
           .tabs.fsc-sheet-tabs {
+            @include scrollbar();
             flex: 0 0 10rem;
             flex-direction: column;
             flex-wrap: nowrap;
             justify-content: flex-start;
             overflow-y: auto;
             overflow-x: visible;
-            padding-bottom: 30px;
+            padding-bottom: pxToRem(30);
             border:0;
             border-right: 1px solid;
 
@@ -30,10 +31,18 @@
               display: flex;
               flex-direction: column;
 
+              .fsc-heading{
+                color: var(--config-menu-heading-color);
+                border-top-color: var(--config-menu-heading-color);
+                border-bottom-color: var(--config-menu-item-border-color);
+              }
               &:first-child{
                 .fsc-heading{
                   border-top-width: 0;
                 }
+              }
+              &.fsc-stripe{
+                background-color: var(--config-menu-cal-settings-bg-color);
               }
 
               .fsc-calendar-selector{
@@ -44,7 +53,7 @@
                   justify-content: space-between;
                   cursor: pointer;
                   &::after{
-                    font-family: "Font Awesome 5 Free";
+                    font-family: "Font Awesome 6 Pro";
                     content: "\f0d7";
                     -moz-osx-font-smoothing: grayscale;
                     -webkit-font-smoothing: antialiased;
@@ -64,24 +73,38 @@
                   overflow: hidden;
                   list-style: none;
                   z-index: 10;
+                  font-size: pxToRem(14);
+                  box-shadow: 0 5px 5px 0 #000;
 
                   &.fsc-closed{
                     visibility: hidden;
                   }
                   &.fsc-open{
                     visibility: visible;
-                    max-height: 300px;
+                    max-height: pxToRem(300);
                   }
 
                   li{
                     flex: unset;
                     padding: $spacer-half $spacer-half $spacer-half $spacer;
                     cursor: pointer;
-                    border-bottom: 1px solid;
+                    border-bottom: 1px solid var(--section-border-color);
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    background-color: var(--config-menu-cal-selector-bg-color);
+                    color: var(--config-menu-cal-selector-color);
 
+                    &.fsc-active,&:hover{
+                      background-color: var(--config-menu-cal-selector-hover-bg-color);
+                      color: var(--config-menu-cal-selector-hover-color);
+                    }
+                    &.fsc-new-calendar{
+                      color: var(--btn-save-bg-hover-color);
+                      &.fsc-active,&:hover{
+                        color: var(--config-menu-cal-selector-hover-color);
+                      }
+                    }
                     .fsc-control{
                       width: unset;
                       font-size: 0.75rem;
@@ -92,7 +115,12 @@
               }
 
               .fsc-item{
-                border-bottom: 1px solid;
+                border-bottom: 1px solid var(--config-menu-item-border-color);
+                color: var(--config-menu-item-color);
+                &.fsc-active, &.active, &:hover{
+                  background-color: var(--config-menu-item-hover-bg-color);
+                  color: var(--config-menu-item-hover-color);
+                }
                 &:last-child{
                   border-bottom: unset;
                 }
@@ -121,6 +149,7 @@
               padding: $spacer-half $spacer-half $spacer-half $spacer;
               text-align: left;
               text-decoration: none;
+              font-size: pxToRem(14);
               font-weight: 600;
               border-radius: 0;
               border: 0;
@@ -136,26 +165,36 @@
                 justify-content: space-between;
                 align-items: center;
                 &:after{
-                  font-family: "Font Awesome 5 Free";
+                  font-family: "Font Awesome 6 Pro";
                   font-weight: 900;
                   content: '\f061';
-                  padding-left: $spacer-half * 0.5;
+                  padding-left: $spacer-quarter;
                 }
               }
             }
           }
           //Actual Tabs
           .fsc-tab-wrapper{
+            @include scrollbar();
             flex: 1;
             overflow-x: hidden;
             overflow-y: auto;
-            padding: $spacer-half $spacer-half 30px;
+            padding: $spacer-half $spacer-half pxToRem(30);
 
             h2{
+              border-color: var(--heading-border-color);
+              font-size: pxToRem(22);
+              font-family: var(--heading-font-family);
               a{
                 font-size: 0.875rem;
                 text-decoration: none;
               }
+            }
+            p{
+              font-size: pxToRem(14);
+            }
+            input:not(.fsc-toggle), select{
+              height: pxToRem(26);
             }
 
             .fsc-settings-group{
@@ -170,21 +209,9 @@
                 overflow: hidden;
               }
             }
-
-
-
-            .fsc-warning{
-              padding: 16px;
-              text-align: center;
-              border: 1px solid;
-              width: fit-content;
-              margin: 0 auto;
-            }
-
             .fsc-section-wrapper{
               position: relative;
             }
-
             .fsc-section{
               margin: $spacer 0;
               opacity: 0;
@@ -219,8 +246,10 @@
             .fsc-f-table{
               display: flex;
               flex-direction: column;
-              border: 1px solid;
+              border: 1px solid var(--form-group-border-color);
               margin-bottom: $spacer-half;
+              font-size: pxToRem(14);
+              background-color: var(--form-group-bg-color);
               .fsc-row{
                 display: flex;
                 flex-direction: row;
@@ -230,31 +259,34 @@
                 &.fsc-head{
                   font-weight: 600;
                   text-align: center;
-                  border-bottom: 1px solid;
+                  border-bottom: 1px solid var(--form-group-border-color);
+                }
+                &:nth-child(even) {
+                  background-color: var(--form-group-bg-hover-color);
                 }
                 .fsc-col{
                   flex: 1;
                   text-align: center;
-                  margin: 0 ($spacer-half * 0.5);
+                  margin: 0 ($spacer-quarter);
                   input{
                     text-align: left;
                   }
                   .fsc-show-advanced{
                     span{
                       font-weight: normal;
-                      margin-left: ($spacer-half * 0.5);
+                      margin-left: ($spacer-quarter);
                     }
                   }
                 }
                 .fsc-options{
                   flex: 0 0 100%;
-                  padding: .25rem 2rem;
+                  padding: $spacer-quarter 2rem;
                   max-height: 0;
                   overflow: hidden;
 
                   &.fsc-open{
                     visibility: visible;
-                    max-height: 500px;
+                    max-height: pxToRem(500);
                   }
                   &.fsc-closed{
                     visibility: hidden;
@@ -265,9 +297,10 @@
                   }
 
                   h3{
-                    margin-top: 0.5rem;
-                    border-bottom: 1px solid;
+                    margin-top: $spacer-half;
+                    border-bottom: 1px solid var(--heading-border-color);
                     font-weight: 600;
+                    font-family: var(--heading-font-family);
                   }
                 }
               }
@@ -292,7 +325,7 @@
                 flex: 1 1;
               }
               button{
-                width: 200px;
+                width: pxToRem(200);
               }
             }
 
@@ -304,14 +337,16 @@
                 flex-direction: column;
                 .fsc-progress{
                   margin-top: $spacer-half;
-                  border: 1px solid;
+                  border: 1px solid var(--progress-bar-border-color);
                   width: 100%;
+                  background-color: var(--progress-bar-bg-color);
                   &.fsc-hide{
                     display: none;
                   }
                   .fsc-progress-bar{
-                    height: 1rem;
+                    height: $spacer;
                     width: 0;
+                    background-color: var(--progress-bar-fill-color);
                   }
                 }
                 .fsc-file-details{
@@ -326,7 +361,7 @@
                     }
                   }
                   .fsc-save{
-                    width: 200px;
+                    width: pxToRem(200);
                     margin: 0 auto;
                   }
                 }
@@ -365,8 +400,8 @@
             }
             .fsc-new-calendar{
               button{
-                max-width: 200px;
-                margin: 0.5rem auto;
+                max-width: pxToRem(200);
+                margin: $spacer-half auto;
               }
             }
             .fsc-quick-setup{
@@ -389,20 +424,31 @@
 
                 .fsc-predefined-calendar{
                   padding: $spacer-half;
-                  border: 1px solid;
-                  border-radius: 10px;
+                  border: 1px solid var(--pre-cal-border-color);
+                  border-radius: pxToRem(10);
                   cursor: pointer;
+                  font-size: pxToRem(14);
+                  color: var(--pre-cal-color);
+                  box-shadow: inset 0 0 5px var(--pre-cal-color);
+                  &:hover{
+                    border-color: var(--pre-cal-border-hover-color);
+                    background-color: var(--pre-cal-border-hover-color);
+                    color: var(--precal-hover-color);
+                  }
                   &.fsc-selected{
+                    border-color: var(--pre-cal-border-hover-color);
+                    background-color: var(--pre-cal-border-hover-color);
+                    color: var(--precal-hover-color);
                     display: flex;
                     flex-direction: row;
                     flex-wrap: nowrap;
                     justify-content: space-between;
                     align-items: center;
                     &:after{
-                      font-family: "Font Awesome 5 Free";
+                      font-family: "Font Awesome 6 Pro";
                       font-weight: 900;
                       content: '\f00c';
-                      padding-left: $spacer-half * 0.5;
+                      padding-left: $spacer-quarter;
                     }
                   }
                   .fsc-predefined-calendar-details{
@@ -412,12 +458,12 @@
                   .fsc-predefined-calendar-includes{
                     font-size: 0.75rem;
                     font-weight: 500;
-                    margin-top: $spacer-half * 0.5;
+                    margin-top: $spacer-quarter;
                     padding-left: $spacer-half;
-                    padding-top: $spacer-half * 0.5;
+                    padding-top: $spacer-quarter;
                     border-top: 1px solid;
                     .fa{
-                      margin-left: $spacer-half * 0.5;
+                      margin-left: $spacer-quarter;
                     }
                   }
                 }
@@ -425,11 +471,11 @@
             }
             .fsc-permissions{
               .fsc-table-header{
-                padding: ($spacer-half * 0.5) $spacer-half;
+                padding: ($spacer-quarter) $spacer-half;
                 border: 1px solid;
                 border-radius: 0;
                 .fsc-index{
-                  flex: 0 0 200px;
+                  flex: 0 0 pxToRem(200);
                   text-align: left;
                 }
                 label{
@@ -440,13 +486,13 @@
                 list-style: none;
                 margin: 0;
                 padding: 0;
-                max-height: 400px;
+                max-height: pxToRem(400);
                 overflow: hidden auto;
                 scrollbar-width: thin;
                 .fsc-permission{
                   margin: -1px 0 0;
                   label{
-                    flex: 0 0 200px;
+                    flex: 0 0 pxToRem(200);
                   }
                   .form-fields{
                     justify-content: space-around;
@@ -457,11 +503,14 @@
 
             .fsc-about{
               .fsc-logo{
-                width: 100px;
+                width: pxToRem(100);
                 margin: 0 auto;
               }
               h1{
                 text-align: center;
+                font-size: pxToRem(28);
+                border-color: var(--about-heading-border-color);
+                font-family: var(--heading-font-family);
               }
               .fsc-description{
                 margin-bottom: $spacer;
@@ -474,18 +523,25 @@
 
                 .fsc-card{
                   flex: 1;
-                  border: 1px solid;
-                  border-radius: 5px;
-                  padding: 0.5rem;
-                  margin-right: 0.5rem;
+                  background-color: var(--section-bg-color);
+                  border: 1px solid var(--section-border-color);
+                  border-radius: pxToRem(5);
+                  padding: $spacer-half;
+                  margin-right: $spacer-half;
+                  font-size: pxToRem(14);
                   &:last-child{
                     margin-right: 0;
+                  }
+
+                  h2{
+                    font-size: pxToRem(18);
+                    font-family: var(--heading-font-family);
                   }
                 }
 
                 ul{
                   li{
-                    margin: ($spacer-half * 0.5) 0;
+                    margin: ($spacer-quarter) 0;
                   }
                 }
               }
@@ -493,7 +549,7 @@
               .fsc-translations{
                 table{
                   border: 1px solid;
-                  width: 400px;
+                  width: pxToRem(400);
                 }
               }
             }
@@ -505,14 +561,14 @@
             backdrop-filter: blur(2px);
             left: 0;
             bottom: 0;
-            height: 30px;
+            height: pxToRem(30);
             border-top: 1px solid #b5b5b5;
 
             button{
               display: inline-block;
               width: 30%;
               margin-left: $spacer;
-              margin-top: $spacer-half * 0.5;
+              margin-top: $spacer-quarter;
             }
           }
         }

@@ -116,6 +116,7 @@ describe('Main App Class Tests', () => {
     test('Set Width Height', () => {
         const mainApp = document.createElement('div');
         const header = document.createElement('div');
+        const windowContent = document.createElement('div');
         const wrapper = document.createElement('div');
         const calendarSections = document.createElement('div');
         const clockSections = document.createElement('div');
@@ -129,6 +130,7 @@ describe('Main App Class Tests', () => {
         const clockChild = document.createElement('div');
 
         header.classList.add('window-header');
+        windowContent.classList.add('window-content');
         wrapper.classList.add('fsc-main-wrapper');
         calendarSections.classList.add('fsc-section', 'fsc-calendar');
         clockSections.classList.add('fsc-section', 'fsc-clock-display');
@@ -139,7 +141,8 @@ describe('Main App Class Tests', () => {
         calendarWeek.classList.add('fsc-week');
         clock.classList.add('fsc-clock');
 
-        mainApp.append(header, wrapper);
+        mainApp.append(header, windowContent);
+        windowContent.append(wrapper);
         wrapper.append(calendarSections, clockSections, yearView);
         calendarSections.append(calendarHeader, calendarDays);
         calendarHeader.append(calendarHeaderCurDate);
@@ -148,29 +151,34 @@ describe('Main App Class Tests', () => {
         clockSections.append(clock);
         clock.append(clockChild);
 
+        mainApp.style.borderWidth = "5px";
+
         jest.spyOn(document, 'querySelector').mockReturnValue(mainApp);
 
         //@ts-ignore
         jest.spyOn(ma, 'setPosition').mockImplementation(() => {});
 
-        ma.setWidthHeight();
-        //@ts-ignore
-        expect(ma.setPosition).toHaveBeenCalledTimes(1);
-
-        jest.spyOn(calendarWeek, 'offsetWidth', 'get').mockReturnValue(300);
-        ma.setWidthHeight();
+        MainApp.setWidthHeight(ma);
         //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(2);
 
-        calendarSections.removeChild(calendarDays);
-        ma.setWidthHeight();
-        //@ts-ignore
-        expect(ma.setPosition).toHaveBeenCalledTimes(3);
-
-        ma.uiElementStates.compactView = true;
-        ma.setWidthHeight();
+        jest.spyOn(calendarWeek, 'offsetWidth', 'get').mockReturnValue(300);
+        MainApp.setWidthHeight(ma);
         //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(4);
+
+        calendarSections.removeChild(calendarDays);
+        jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
+        jest.spyOn(GameSettings, 'GetObjectSettings').mockReturnValue({top:1, left: 1});
+
+        MainApp.setWidthHeight(ma);
+        //@ts-ignore
+        expect(ma.setPosition).toHaveBeenCalledTimes(6);
+
+        ma.uiElementStates.compactView = true;
+        MainApp.setWidthHeight(ma);
+        //@ts-ignore
+        expect(ma.setPosition).toHaveBeenCalledTimes(8);
     });
 
     test('Ensure Current Date Is Visible', () => {
@@ -203,6 +211,10 @@ describe('Main App Class Tests', () => {
         jest.spyOn(GameSettings, 'SaveObjectSetting').mockImplementation(async () => {return true;});
         ma.appDragEnd(new Event('drag'));
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(1);
+
+        mainApp.classList.add('fsc-compact-view');
+        ma.appDragEnd(new Event('drag'));
+        expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
     });
 
     test('Activate Listeners', () => {
@@ -212,7 +224,7 @@ describe('Main App Class Tests', () => {
         jest.spyOn(mainApp, 'querySelector').mockReturnValue(elm);
         //@ts-ignore
         jest.spyOn(mainApp, 'querySelectorAll').mockReturnValue([elm]);
-        jest.spyOn(ma, 'setWidthHeight').mockImplementation(() => {});
+        jest.spyOn(MainApp, 'setWidthHeight').mockImplementation(() => {});
         jest.spyOn(ma, 'ensureCurrentDateIsVisible').mockImplementation(() => {});
 
         ma.activateListeners();
@@ -359,17 +371,17 @@ describe('Main App Class Tests', () => {
 
     test('Change Month', () => {
         jest.spyOn(ma, 'toggleUnitSelector').mockImplementation(() => {});
-        jest.spyOn(ma, 'setWidthHeight').mockImplementation(() => {});
+        jest.spyOn(MainApp, 'setWidthHeight').mockImplementation(() => {});
         jest.spyOn(tCal, 'changeMonth').mockImplementation(() => {});
 
         ma.changeMonth(CalendarClickEvents.next, {id: ''});
         expect(ma.toggleUnitSelector).toHaveBeenCalledTimes(1);
-        expect(ma.setWidthHeight).toHaveBeenCalledTimes(1);
+        expect(MainApp.setWidthHeight).toHaveBeenCalledTimes(1);
         expect(tCal.changeMonth).toHaveBeenCalledTimes(1);
 
         ma.changeMonth(CalendarClickEvents.previous, {id: ''});
         expect(ma.toggleUnitSelector).toHaveBeenCalledTimes(2);
-        expect(ma.setWidthHeight).toHaveBeenCalledTimes(2);
+        expect(MainApp.setWidthHeight).toHaveBeenCalledTimes(2);
         expect(tCal.changeMonth).toHaveBeenCalledTimes(2);
     });
 

@@ -40,7 +40,7 @@ module.exports = {
                 mangle: true,
                 sourceMap: false,
                 module: true,
-                keep_classnames: /^NoteSheet$/,
+                keep_classnames: /^(NoteSheet|MainApp)$/,
                 keep_fnames: false,
                 toplevel: true,
             },

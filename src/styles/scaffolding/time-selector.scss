@@ -1,37 +1,43 @@
+@import "../variables";
+
 .simple-calendar{
   &.window-app{
     .window-content{
       .fsc-time-selector{
         display: flex;
         justify-content: space-evenly;
-        margin: 0.5rem 0;
+        margin: $spacer-half 0;
+        color: var(--time-selector-color);
         .fsc-ts-inputs{
           position: relative;
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
-          margin-bottom: 5px;
-          border-radius: 5px;
-          border: 1px solid;
+          margin-bottom: pxToRem(5);
+          border-radius: pxToRem(5);
+          border: 1px solid var(--time-selector-input-border-color);
+          background-color: var(--time-selector-input-bg-color);
 
           input{
-            width: 2rem;
+            width: $spacer * 2;
             border: unset;
-            border-radius: 5px;
+            border-radius: pxToRem(5);
             margin: 0 2px;
             text-align: center;
           }
 
           .fsc-dropdown{
             position: absolute;
-            bottom: 23px;
-            width: 3rem;
-            max-height: 150px;
+            bottom: pxToRem(23);
+            width: $spacer * 3;
+            max-height: pxToRem(150);
             margin: 0;
             padding: 0;
-            border: 1px solid;
+            border: 1px solid var(--time-selector-input-bg-color);
             z-index: 100;
             overflow-y: scroll;
+            background-color: var(--time-selector-input-bg-color);
+            @include scrollbar();
 
             &.fsc-hide{
               display: none;
@@ -47,15 +53,21 @@
 
             li{
               list-style: none;
-              padding: 0.25rem 0.5rem;
+              padding: $spacer-quarter $spacer-half;
+              &:nth-child(even){
+                background-color: var(--time-selector-option-bg-even-color);
+              }
+              &:hover{
+                background-color: var(--time-selector-option-hover-bg-color);
+              }
             }
           }
         }
 
         .fsc-time-spacer{
           font-size: 1.5rem;
-          margin-top: -4px;
-          padding: 0 0.25rem
+          margin-top: -$spacer-quarter;
+          padding: 0 $spacer-quarter
         }
 
         .fa-clock{
@@ -68,7 +80,7 @@
       .fsc-add-time, .fsc-remove-time{
         display: flex;
         justify-content: space-evenly;
-        margin: 1rem 0;
+        margin: $spacer 0;
         button{
           flex: 0 1 50% !important;
         }

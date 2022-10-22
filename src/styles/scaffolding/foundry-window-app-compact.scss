@@ -2,13 +2,13 @@
 .simple-calendar{
   &.window-app.fsc-compact-view {
     header {
-      flex: 0 0 10px !important;
+      flex: 0 0 pxToRem(10) !important;
       justify-content: flex-end;
       align-content: center;
 
       a.header-button.close {
         i[class^='fa']{
-          font-size: 10px;
+          font-size: pxToRem(10);
         }
         font-size: 0 !important;
         line-height: 0;
@@ -21,11 +21,11 @@
     }
     .window-content{
       .fsc-main-wrapper{
-        padding: $spacer-half * 0.5;
+        padding: $spacer-quarter;
         .fsc-control{
           font-size: 0.625rem !important;
           line-height: 0.625rem !important;
-          margin-bottom: 0.25rem;
+          margin-bottom: 0.25rem !important;
           svg{
             height: 0.875rem;
           }
@@ -50,11 +50,11 @@
             font-size: 0.75rem;
             flex: 1;
             svg{
-              height: 15px;
-              margin-right: $spacer-half * 0.5;
+              height: pxToRem(15);
+              margin-right: $spacer-quarter;
             }
             span{
-              margin-right: $spacer-half * 0.5;
+              margin-right: $spacer-quarter;
             }
           }
         }
@@ -78,18 +78,23 @@
 
           &:hover {
             .fsc-moon-group-wrapper {
+              .fa{
+                text-shadow: -2px -1px 0px var(--cal-moon-text-shadow);
+              }
               .fsc-moon-group {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
                 position: absolute;
-                top: -5px;
-                left: -6px;
+                top: pxToRem(-5);
+                left: pxToRem(-6);
                 z-index: 100;
-                border: 1px solid;
-                border-radius: 5px;
+                border: 1px solid var(--cal-moon-group-border-color);
+                border-radius: pxToRem(5);
                 padding: 0.25rem;
-                width: 55px;
+                width: pxToRem(55);
+                background-color: var(--cal-moon-group-bg-color);
+                box-shadow: 1px 1px 5px var(--cal-moon-group-box-shadow-color);
                 .fsc-moon-phase{
                   margin-bottom: 2px;
                 }
@@ -99,10 +104,10 @@
 
           .fsc-moon-group-wrapper{
             display: flex;
-            margin-right: -7px;
+            margin-right: pxToRem(-7);
             .fa{
-              font-size: 11px;
-              margin-left: -6px;
+              font-size: pxToRem(11);
+              margin-left: pxToRem(-6);
               margin-top: 3px;
               z-index: 1;
 
@@ -113,21 +118,22 @@
           }
 
           svg{
-            height: 15px;
-            width: 15px;
+            height: pxToRem(15);
+            width: pxToRem(15);
             filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
           }
         }
         .fsc-clock{
+          background-color: var(--app-bg-color);
           border: unset;
           padding: 0;
           margin: 0 $spacer-half $spacer-half 0;
 
           .fsc-animated-clock{
             svg{
-              width: 20px;
-              height: 20px;
-              margin-bottom: -4px;
+              width: pxToRem(20);
+              height: pxToRem(20);
+              margin-bottom: pxToRem(-4);
             }
           }
 
@@ -137,13 +143,25 @@
         }
         .fsc-actions-list{
           padding: 0;
-          flex-basis: 40px;
+          flex-basis: pxToRem(40);
         }
         .fsc-time-keeper-buttons{
           .fsc-control{
             background: unset;
             border: unset;
             box-shadow: unset;
+            &.fsc-save{
+              color: var(--btn-save-bg-color);
+            }
+            &.fsc-secondary{
+              color: var(--btn-secondary-bg-color);
+              &:hover{
+                color: var(--btn-secondary-bg-color);
+              }
+            }
+            &.fsc-delete{
+              color: var(--btn-delete-bg-color);
+            }
           }
         }
         .fsc-unit-controls{
@@ -153,11 +171,14 @@
         }
 
         .fsc-side-drawer{
-          top: 10px;
-          height: calc(100% - 10px);
+          top: pxToRem(10);
+          height: calc(100% - #{pxToRem(10)});
 
           &.fsc-open{
-            height: 200px;
+            height: pxToRem(200);
+            &.down{
+              top: 100%;
+            }
           }
         }
       }
