@@ -520,5 +520,14 @@
 	"FSC.Configuration.Month.DescriptionHelp": "Une description de la saison pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom de la saison dans la vue principale du calendrier.",
 	"FSC.Configuration.Season.DescriptionField": "Description de la saison",
 	"FSC.Configuration.Season.DescriptionHelp": "Une description de la saison pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom de la saison dans la vue principale du calendrier.",
-	"FSC.Configuration.Weekday.DescriptionHelp": "Une description du jour de la semaine pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom d'un jour de la semaine dans la vue principale du calendrier."
+	"FSC.Configuration.Weekday.DescriptionHelp": "Une description du jour de la semaine pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom d'un jour de la semaine dans la vue principale du calendrier.",
+	"FSC.Right": "Droite",
+	"FSC.Configuration.Client.RememberCompactPosition.Title": "Se souvenir de la position compacte",
+	"FSC.Configuration.Client.RememberCompactPosition.Description": "Simple Calendar se souviendra où la version compacte a été placée pour la dernière fois et s'y placera de lui-même en mode compact. C'est un emplacement différent de la version complète.",
+	"FSC.Predefined.Starfinder": "Starfinder",
+	"FSC.Left": "Gauche",
+	"FSC.Down": "Bas",
+	"FSC.Configuration.Client.NoteListOpenDirection.Title": "Direction de l'ouverture du tiroir latéral",
+	"FSC.Configuration.Client.NoteListOpenDirection.Description": "La direction dans laquelle le tiroir latéral du calendrier principal s'ouvrira. Le tiroir latéral contient les listes de calendrier, de note et la recherche de note.",
+	"FSC.Predefined.Warhammer40kWG": "Warhammer 40,000 : Wrath & Glory"
 }
