@@ -2,7 +2,7 @@
 
 ## 2.1.40 - Theming, Quality of Life Improvements, Bug Fixes & API Updates
 
-![](https://img.shields.io/badge/release%20date-October%2030%2C%202022-blue)
+![](https://img.shields.io/badge/release%20date-October%2022%2C%202022-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.40/module.zip)
 
 ### Theming
