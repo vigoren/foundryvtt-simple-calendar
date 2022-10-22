@@ -15,7 +15,7 @@
           flex-direction: row;
           flex-wrap: nowrap;
           justify-content: space-between;
-          line-height: $spacer;
+          line-height: pxToRem(14);
           padding: ($spacer * 1.25) ($spacer * .75) $spacer-half;
           margin: 0;
 

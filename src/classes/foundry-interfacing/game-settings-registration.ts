@@ -57,8 +57,24 @@ export default class GameSettingsRegistration{
             type: Boolean,
             default: true
         });
+        (<Game>game).settings.register(ModuleName, SettingNames.RememberCompactPosition, {
+            name: "FSC.Configuration.Client.RememberCompactPosition.Title",
+            hint: "FSC.Configuration.Client.RememberCompactPosition.Description",
+            scope: "client",
+            config: true,
+            type: Boolean,
+            default: false
+        });
         (<Game>game).settings.register(ModuleName, SettingNames.AppPosition, {
             name: "Application Position",
+            hint: "",
+            scope: "client",
+            config: false,
+            type: Object,
+            default: {}
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.AppCompactPosition, {
+            name: "Application Compact Position",
             hint: "",
             scope: "client",
             config: false,
@@ -77,6 +93,21 @@ export default class GameSettingsRegistration{
                 'render': GameSettings.Localize("FSC.Configuration.Client.NoteReminderNotification.Render")
             },
             default: 'whisper'
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.NoteListOpenDirection, {
+            name: "FSC.Configuration.Client.NoteListOpenDirection.Title",
+            hint: "FSC.Configuration.Client.NoteListOpenDirection.Description",
+            scope: "client",
+            config: true,
+            type: String,
+            // @ts-ignore
+            choices: {
+                'sc-right': GameSettings.Localize("FSC.Right"),
+                'sc-left': GameSettings.Localize("FSC.Left"),
+                'sc-down': GameSettings.Localize("FSC.Down")
+            },
+            default: 'sc-right',
+            onChange: SCController.SideDrawerDirectionChange.bind(SCController)
         });
         // -------------------
         // Configuration Button

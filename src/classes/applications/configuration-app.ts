@@ -79,8 +79,10 @@ export default class ConfigurationApp extends FormApplication {
         openOnLoad: true,
         openCompact: false,
         rememberPosition: true,
+        rememberCompactPosition: false,
         appPosition: {},
-        noteReminderNotification: NoteReminderNotificationType.whisper
+        noteReminderNotification: NoteReminderNotificationType.whisper,
+        sideDrawerDirection: 'sc-right'
     };
     /**
      * A list of different states for the UI
@@ -223,12 +225,19 @@ export default class ConfigurationApp extends FormApplication {
                 openOnLoad: this.clientSettings.openOnLoad,
                 openInCompact: this.clientSettings.openCompact,
                 rememberPos: this.clientSettings.rememberPosition,
+                rememberCompactPos: this.clientSettings.rememberCompactPosition,
                 theme: this.clientSettings.theme,
                 themes:  GetThemeList(),
                 noteReminderNotification: this.clientSettings.noteReminderNotification,
                 noteReminderNotifications: {
                     'whisper': 'FSC.Configuration.Client.NoteReminderNotification.Whisper',
                     'render': 'FSC.Configuration.Client.NoteReminderNotification.Render'
+                },
+                sideDrawerDirection: this.clientSettings.sideDrawerDirection,
+                sideDrawerDirections: {
+                    'sc-right': "FSC.Right",
+                    'sc-left': "FSC.Left",
+                    'sc-down': "FSC.Down"
                 }
             },
             combatPauseRules: {
@@ -654,7 +663,9 @@ export default class ConfigurationApp extends FormApplication {
             this.clientSettings.openOnLoad = getCheckBoxInputValue('#scOpenOnLoad', true, this.appWindow);
             this.clientSettings.openCompact = getCheckBoxInputValue('#scOpenInCompact', false, this.appWindow);
             this.clientSettings.rememberPosition = getCheckBoxInputValue('#scRememberPos', true, this.appWindow);
+            this.clientSettings.rememberCompactPosition = getCheckBoxInputValue('#scRememberCompactPos', true, this.appWindow);
             this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>getTextInputValue('#scNoteReminderNotification', <string>NoteReminderNotificationType.whisper, this.appWindow);
+            this.clientSettings.sideDrawerDirection = getTextInputValue('#scSideDrawerDirection', 'sc-right', this.appWindow);
 
             //----------------------------------
             // Global Config: Permissions

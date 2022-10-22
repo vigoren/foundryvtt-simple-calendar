@@ -7,6 +7,7 @@
     border: 0;
     &:after{
       content: unset;
+      height: 0;
     }
     header{
       font-size: $spacer;

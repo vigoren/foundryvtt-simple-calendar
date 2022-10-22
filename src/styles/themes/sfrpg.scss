@@ -1,0 +1,264 @@
+@import "../variables";
+$theme: (
+  //Font
+        font-family: $starfinderFontFamily,
+        heading-font-family: $starfinderFontFamily,
+  //Input Colors
+        input-bg-color: rgba(0, 0, 0, 0.05),
+        input-border-color: #7a7971,
+        input-color: var(--color-text-dark-primary),
+
+  //Link Color
+        link-color: var(--color-text-hyperlink),
+        link-hover-color: var(--color-text-hyperlink),
+        entity-link-bg-color: #DDD,
+        entity-link-border-color: var(--color-border-dark-tertiary),
+        entity-link-icon-color: var(--color-text-dark-inactive),
+        entity-link-icon-hover-color: var(--color-text-dark-inactive),
+
+  //Headings
+        heading-border-color: var(--color-underline-header),
+        about-heading-border-color: $primary,
+
+  //Dialog Coloring
+        app-header-bg-color: transparent,
+        app-header-bg-image: linear-gradient(25deg, #671818 0%, #c41e1e 40%, #c01c1c 60%, #8a0303 100%),
+        app-header-color: var(--color-text-light-highlight),
+        app-header-border: 0,
+        app-header-border-image: unset,
+        app-header-height: pxToRem(30),
+        app-bg-color: #f2f2f2,
+        app-bg-image: url($starfinderHexellence),
+        app-border: 0,
+        app-border-image: unset,
+        app-color: var(--color-text-dark-primary),
+
+  // Dialog section coloring
+        section-bg-color: #323552,
+        section-border-color: #7096bf,
+        section-color: $white,
+
+  //Side Drawer Coloring
+        side-drawer-color: var(--color-text-dark-primary),
+        side-drawer-bg-color: #f2f2f2,
+        side-drawer-bg-image: url($starfinderHexellence),
+        side-drawer-border-color: #7096bf,
+        side-drawer-border-image: unset,
+
+  // Scrollbar Coloring
+        scrollbar-background-color: #782e22,
+        scrollbar-border-color: var(--color-border-highlight),
+        scrollbar-track-bg-color: unset,
+        scrollbar-track-border: 1px solid #999,
+        scrollbar-button-height: 0,
+        scrollbar-button-bg-color: unset,
+        scrollbar-button-border: unset,
+
+  //Calendar Coloring
+        cal-weekend-bg-color: rgba(0,0,0,0.25),
+        cal-day-border-color: #f2f2f2,
+        cal-day-hover-color: rgba(0,0,0,0.5),
+        cal-day-current-bg-color: #496c93,
+        cal-day-current-box-shadow-color: #7495BA,
+        cal-day-current-hover-bg-color: #344D69,
+        cal-day-selected-bg-color: #4A9463,
+        cal-day-selected-box-shadow-color: #6AB482,
+        cal-day-selected-hover-bg-color: #3B754E,
+        cal-note-indicator-bg-color: $secondary,
+        cal-note-reminder-indicator-bg-color: #B86FBE,
+        cal-note-indicator-color: var(--color-text-dark-primary),
+        cal-moon-group-bg-color: #f2f2f2,
+        cal-moon-group-border-color: #7096bf,
+        cal-moon-group-box-shadow-color: $boxShadowColor,
+        cal-moon-text-shadow: rgba(0, 0, 0, 0.4),
+
+  //Calendar List Coloring
+        cal-list-color: var(--color-text-dark-primary),
+        cal-list-active-border-color: #567EAC,
+        cal-list-active-bg-color: #7495BA,
+        cal-list-visible-bg-color: #B86FBE,
+        cal-list-bg-hover-color: #CC98D1,
+
+  //Clock Coloring
+        clock-started-color: #6AB482,
+        clock-stopped-color: $danger-300,
+        clock-paused-color: $secondary,
+
+  //Context Menu
+        context-menu-color: var(--color-text-dark-primary),
+        context-menu-border-color: #B86FBE,
+        context-menu-bg-color: rgba(255,255,255,0.95),
+        context-menu-action-hover-color: #7F3C85,
+        context-menu-divider-color: $gray-500,
+
+  //Configuration Menu
+        config-menu-heading-color: #c41e1e,
+        config-menu-item-border-color: $gray-500,
+        config-menu-item-color: #235683,
+        config-menu-item-hover-color: $white,
+        config-menu-item-hover-bg-color: #c41e1e,
+        config-menu-cal-settings-bg-color: rgba(0,0,0,0.15),
+        config-menu-cal-selector-bg-color: #323552,
+        config-menu-cal-selector-hover-bg-color: #4c5077,
+        config-menu-cal-selector-color: $white,
+        config-menu-cal-selector-hover-color: $white,
+
+  //Controls
+        btn-bg-image: unset,
+        btn-border: 1px solid,
+        btn-border-image: unset,
+        btn-grey-border-color: var(--color-border-light-secondary),
+        btn-grey-bg-color: rgba(0, 0, 0, 0.05),
+        btn-grey-color: var(--color-text-dark-primary),
+        btn-grey-bg-hover-color: rgba(0, 0, 0, 0.15),
+        btn-grey-disabled-bg-color: $gray-700,
+        btn-primary-border-color: rgba(116, 149, 186, 0.95),
+        btn-primary-bg-color: rgba(116, 149, 186, 0.95),
+        btn-primary-color: var(--color-text-dark-primary),
+        btn-primary-bg-hover-color: rgba(145, 171, 201, 0.95),
+        btn-primary-disabled-bg-color: #8595A8,
+        btn-secondary-border-color: rgba($secondary-400,0.95),
+        btn-secondary-bg-color: rgba($secondary-400,0.95),
+        btn-secondary-color: var(--color-text-dark-primary),
+        btn-secondary-bg-hover-color: rgba($secondary-300,0.95),
+        btn-secondary-disabled-bg-color: rgba($secondary-T400,0.95),
+        btn-tertiary-border-color: rgba(#B86FBE, 0.95),
+        btn-tertiary-bg-color: rgba(#B86FBE, 0.95),
+        btn-tertiary-color: var(--color-text-dark-primary),
+        btn-tertiary-bg-hover-color: rgba(#CC98D1, 0.95),
+        btn-tertiary-disabled-bg-color: #A288A5,
+        btn-delete-border-color: rgba(#E85B5B, 0.95),
+        btn-delete-bg-color: rgba(#E85B5B, 0.95),
+        btn-delete-color: var(--color-text-dark-primary),
+        btn-delete-bg-hover-color: rgba(#EF9292, 0.95),
+        btn-delete-disabled-bg-color: $danger-T400,
+        btn-save-border-color: rgba(74, 148, 99, 0.75),
+        btn-save-bg-color: rgba(74, 148, 99, 0.75),
+        btn-save-color: var(--color-text-dark-primary),
+        btn-save-bg-hover-color: rgba(106, 180, 130, 0.75),
+        btn-save-disabled-bg-color: #68786E,
+
+  //Form Groups
+        form-group-bg-color: #7076bf66,
+        form-group-bg-hover-color: rgba(160, 164, 222, 0.4),
+        form-group-border-color: #7495BA,
+        form-group-label-color: #c41e1e,
+        form-group-help-color:  var(--color-text-dark-primary),
+        form-group-input-bg-color:  rgba(0, 0, 0, 0.05),
+        form-group-input-border-color: #7a7971,
+        form-group-input-color: var(--color-text-dark-primary),
+        form-group-help-icon-color: #B86FBE,
+
+
+  //Messages
+        message-color: $fontColor,
+        message-warn-bg-color: $secondary-100,
+        message-warn-border-color: $secondary,
+        message-success-bg-color: $success-100,
+        message-success-border-color: $success,
+        message-info-bg-color: $primary,
+        message-info-border-color: $primary,
+        message-danger-bg-color: $danger-100,
+        message-danger-border-color: $danger,
+
+
+  //Multi Select
+        multi-select-option-bg-color: #f2f2f2,
+        multi-select-option-bg-hover-color: #d5d5d5,
+        multi-select-option-border-color: $gray-600,
+        multi-select-option-color: var(--color-text-dark-primary),
+        multi-select-disabled-bg-color: $gray-700,
+        multi-select-disabled-color: $gray-400,
+
+  //Note Category
+        note-cat-color: var(--color-text-dark-primary),
+        note-cat-bg-color: rgba($gray-400,0.95),
+        note-cat-box-shadow-color: var(--color-text-dark-primary),
+        note-cat-secondary-bg-color: rgba($secondary-400,0.95),
+        note-cat-secondary-color: var(--color-text-dark-primary),
+        note-cat-success-bg-color: rgba(74, 148, 99, 0.75),
+        note-cat-success-color: var(--color-text-dark-primary),
+        note-cat-danger-bg-color: rgba(#E85B5B, 0.95),
+        note-cat-danger-color: var(--color-text-dark-primary),
+        note-cat-reminder-bg-color: rgba(#B86FBE, 0.95),
+        note-cat-reminder-color: var(--color-text-dark-primary),
+
+  //Note List
+        note-list-note-border-color: $primary-200,
+        note-list-note-bg-hover-color: rgba(0,0,0,0.25),
+        note-list-note-hover-color: var(--color-text-dark-primary),
+        note-list-note-dragger-bg-color: $gray-500,
+        note-list-note-dragger-box-shadow-color: var(--color-text-dark-primary),
+
+  //Note Sheet
+        note-sheet-page-list-border-color: unset,
+        note-sheet-page-list-page-hover-bg-color: $primary-200,
+
+  //Predefined Calendar Colors
+        pre-cal-color: $primary-1000,
+        pre-cal-border-color: $primary-950,
+        pre-cal-border-hover-color: $primary-400,
+        precal-hover-color: $white,
+
+  //Progress Bar
+        progress-bar-bg-color: $gray-300,
+        progress-bar-border-color: $gray-500,
+        progress-bar-fill-color: $tertiary-300,
+
+  //Prose Mirror
+        editor-color: var(--color-text-dark-primary),
+        editor-menu-bg-color: rgba(0, 0, 0, 0.1),
+        editor-menu-control-bg-color: #d9d8c8,
+        editor-menu-control-bg-hover-color: #f0f0e0,
+
+  //Search Box
+        search-box-placeholder-color: $gray-800,
+        search-box-color: var(--color-text-dark-primary),
+
+  //Time Selector
+        time-selector-color: var(--color-text-dark-primary),
+        time-selector-input-bg-color: #7076bf,
+        time-selector-input-border-color: #7a7971,
+        time-selector-option-bg-even-color: #9399e7,
+        time-selector-option-hover-bg-color: #b170bf,
+
+  //Toggle
+        toggle-unchecked-image: url($checkboxSVGDark),
+        toggle-checked-image: url($checkboxSVGWhite),
+        toggle-border-color: $gray-900,
+        toggle-checked-bg-color: #c85019,
+
+
+);
+.simple-calendar{
+  &.sfrpg{
+    @each $prop, $value in $theme {
+      --#{$prop}: #{$value};
+    }
+  }
+}
+
+body.game{
+  .simple-calendar{
+    &.sfrpg{
+      &.window-app {
+        &.fsc-compact-view{
+          .window-content{
+            .fsc-clock{
+              color: var(--color-text-dark-primary);
+            }
+          }
+        }
+        .fsc-calendar{
+          background-image: url($starfinderHexellence);
+          .fsc-calendar-header{
+            background-image: url($starfinderHexellence);
+          }
+        }
+        .fsc-clock{
+          background-image: url($starfinderHexellence);
+        }
+      }
+    }
+  }
+}

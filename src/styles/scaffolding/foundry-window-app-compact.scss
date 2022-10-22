@@ -176,6 +176,9 @@
 
           &.fsc-open{
             height: pxToRem(200);
+            &.down{
+              top: 100%;
+            }
           }
         }
       }

@@ -184,6 +184,7 @@
             h2{
               border-color: var(--heading-border-color);
               font-size: pxToRem(22);
+              font-family: var(--heading-font-family);
               a{
                 font-size: 0.875rem;
                 text-decoration: none;
@@ -299,6 +300,7 @@
                     margin-top: $spacer-half;
                     border-bottom: 1px solid var(--heading-border-color);
                     font-weight: 600;
+                    font-family: var(--heading-font-family);
                   }
                 }
               }
@@ -508,6 +510,7 @@
                 text-align: center;
                 font-size: pxToRem(28);
                 border-color: var(--about-heading-border-color);
+                font-family: var(--heading-font-family);
               }
               .fsc-description{
                 margin-bottom: $spacer;
@@ -532,6 +535,7 @@
 
                   h2{
                     font-size: pxToRem(18);
+                    font-family: var(--heading-font-family);
                   }
                 }
 

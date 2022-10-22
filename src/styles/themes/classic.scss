@@ -2,6 +2,7 @@
 $theme: (
   //Font
         font-family: $font-family,
+        heading-font-family: $font-family,
   //Input Colors
         input-bg-color: rgba(0, 0, 0, 0.05),
         input-border-color: var(--color-border-light-tertiary),
@@ -47,6 +48,11 @@ $theme: (
   // Scrollbar Coloring
         scrollbar-background-color: #782e22,
         scrollbar-border-color: var(--color-border-highlight),
+        scrollbar-track-bg-color: unset,
+        scrollbar-track-border: 1px solid #999,
+        scrollbar-button-height: 0,
+        scrollbar-button-bg-color: unset,
+        scrollbar-button-border: unset,
 
   //Calendar Coloring
         cal-weekend-bg-color: rgba(67, 60, 159,0.15),

@@ -5,7 +5,15 @@
       .fsc-main-wrapper {
         .fsc-side-drawer {
           &.fsc-animate {
-            transition: left 500ms, height 500ms;
+            &.sc-right{
+              transition: left 500ms, height 500ms;
+            }
+            &.sc-left{
+              transition: right 500ms, height 500ms;
+            }
+            &.sc-down{
+              transition: top 500ms, height 500ms;
+            }
           }
         }
       }
@@ -22,7 +30,15 @@
       }
       .fsc-side-drawer{
         &.fsc-animate{
-          transition: left 500ms;
+          &.sc-right{
+            transition: left 500ms;
+          }
+          &.sc-left{
+            transition: right 500ms;
+          }
+          &.sc-down{
+            transition: top 500ms;
+          }
         }
       }
       .fsc-calendar-list{

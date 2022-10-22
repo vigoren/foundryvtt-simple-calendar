@@ -2,6 +2,7 @@
 $theme: (
   //Font
         font-family: $font-family,
+        heading-font-family: $font-family,
   //Input Colors
         input-bg-color: rgba(0, 0, 0, 0.05),
         input-border-color: var(--color-border-light-tertiary),
@@ -42,11 +43,16 @@ $theme: (
         side-drawer-bg-color: $white,
         side-drawer-bg-image: unset,
         side-drawer-border-color: transparent,
-        side-drawer-border-image: url($flAppBorder) 100 100 100 0/10px 10px 10px 0 repeat,
+        side-drawer-border-image: url($flAppBorder) 100 100 100 100/10px 10px 10px 10px repeat,
 
   // Scrollbar Coloring
         scrollbar-background-color: #999,
         scrollbar-border-color: #333,
+        scrollbar-track-bg-color: unset,
+        scrollbar-track-border: unset,
+        scrollbar-button-height: 0,
+        scrollbar-button-bg-color: unset,
+        scrollbar-button-border: unset,
 
   //Calendar Coloring
         cal-weekend-bg-color: rgba(0,0,0,0.15),
@@ -240,8 +246,38 @@ body.game{
         box-shadow: unset;
         .window-content{
           .fsc-configuration-wrapper{
+            .tabs.fsc-sheet-tabs {
+              .fsc-tab-section{
+                .fsc-item{
+                  &.fsc-active, &.active, &:hover{
+                    background: linear-gradient(90deg, transparent, var(--config-menu-item-hover-bg-color));
+                  }
+                }
+              }
+            }
             .fsc-tab-wrapper{
               margin-bottom: pxToRem(19);
+            }
+          }
+          .fsc-main-wrapper{
+            .fsc-time-keeper-buttons{
+              .fsc-control{
+                width: 50%;
+              }
+            }
+          }
+          .fsc-side-drawer{
+            &.sc-right{
+              border-left-width: 0;
+              border-image-slice: 100 100 100 0;
+            }
+            &.sc-left{
+              border-right-width: 0;
+              border-image-slice: 100 0 100 100;
+            }
+            &.sc-down{
+              border-top-width: 0;
+              border-image-slice: 0 100 100 100;
             }
           }
         }
@@ -250,6 +286,32 @@ body.game{
             .fsc-weekdays{
               .fsc-weekday{
                 width: pxToRem(46.4);
+              }
+            }
+          }
+        }
+        &.journal-sheet{
+          .editor{
+            .editor-menu{
+              font-size: pxToRem(14);
+              padding: pxToRem(8);
+              border-right: pxToRem(6);
+              .pm-dropdown{
+                height: pxToRem(26);
+                line-height: pxToRem(24);
+                span{
+                  font-size: pxToRem(12);
+                }
+              }
+              button{
+                line-height: pxToRem(26);
+              }
+            }
+            .editor-container{
+              .editor-content{
+                font-size: pxToRem(18);
+                line-height: pxToRem(20);
+                padding: 0 1.5rem;
               }
             }
           }

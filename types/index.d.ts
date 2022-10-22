@@ -1834,10 +1834,14 @@ declare global{
             openCompact: boolean;
             /** If the Simple Calendar module should remember where it was last positioned. */
             rememberPosition: boolean;
+            /** If the Simple Calendar module should remember where the compact view was last positioned. */
+            rememberCompactPosition: boolean;
             /** The current position of the Simple Calendar module. */
             appPosition: AppPosition;
             /** How the user wants note reminder notifications to be displayed. */
             noteReminderNotification: NoteReminderNotificationType;
+            /** The direction the side drawers open from the main application. */
+            sideDrawerDirection: string;
         }
 
         /**

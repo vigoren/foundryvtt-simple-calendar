@@ -53,6 +53,7 @@ export class NoteSheet extends JournalSheet{
 
     public static SetHeight(ns: NoteSheet){
         if(ns.appWindow){
+            const pseudoAfter = window.getComputedStyle(ns.appWindow, ':after');
             if(!ns.resized){
                 const form = ns.appWindow.getElementsByTagName('form');
                 if(form && form.length){
@@ -61,15 +62,18 @@ export class NoteSheet extends JournalSheet{
                     if(header && header.length){
                         height += header[0].offsetHeight;
                     }
-                    const section = ns.appWindow.getElementsByTagName('section');
-                    if(section && section.length){
-                        const cs = window.getComputedStyle(section[0]);
+                    const section = ns.appWindow.querySelector('.window-content');
+                    if(section){
+                        const cs = window.getComputedStyle(section);
                         height += (parseInt(cs.borderTop) || 0) + (parseInt(cs.borderBottom) || 0);
                     }
                     if(ns.editMode){
                         height += form[0].scrollHeight;
                     } else {
-                        height += 16;
+                        const formCompStyl = window.getComputedStyle(form[0]);
+                        if(formCompStyl){
+                            height += (parseInt(formCompStyl.paddingTop) || 0) + (parseInt(formCompStyl.paddingBottom) || 0);
+                        }
                         const nHeader = <HTMLElement>ns.appWindow.querySelector('.fsc-note-header');
                         const nContent = <HTMLElement>ns.appWindow.querySelector('.fsc-content');
                         const nEditControls = <HTMLElement>ns.appWindow.querySelector('.fsc-edit-controls');
@@ -87,6 +91,11 @@ export class NoteSheet extends JournalSheet{
                         }
                     }
 
+                    //Check for an after element
+                    if(pseudoAfter){
+                        height += parseInt(pseudoAfter.height) || 0;
+                    }
+
                     if(ns.editMode && height < 740){
                         height = 740;
                     }
@@ -101,7 +110,7 @@ export class NoteSheet extends JournalSheet{
             const wrapper = ns.appWindow.querySelector('.fsc-page-details, .fsc-note-header');
             if(cList && wrapper){
                 (<HTMLElement>cList).style.top = (<HTMLElement>wrapper).offsetTop + 'px';
-                (<HTMLElement>cList).style.height = `calc(100% - ${(<HTMLElement>wrapper).offsetTop}px)`;
+                (<HTMLElement>cList).style.height = `calc(100% - ${(<HTMLElement>wrapper).offsetTop}px - ${pseudoAfter.height})`;
             }
         }
     }

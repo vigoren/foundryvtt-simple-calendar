@@ -22,15 +22,10 @@
       > h1{
         margin: 0;
         border-color: var(--heading-border-color);
+        font-family: var(--heading-font-family);
         input{
           height: unset;
           margin-bottom: $spacer-quarter;
-        }
-      }
-      h1{
-
-        .fsc-reminder{
-
         }
       }
 
@@ -42,6 +37,7 @@
 
         h2{
           border-color: var(--heading-border-color);
+          font-family: var(--heading-font-family);
           margin: 0;
           display: flex;
           flex-wrap: nowrap;
@@ -126,6 +122,7 @@
         align-items: center;
         border-color: var(--heading-border-color);
         text-align: left;
+        font-family: var(--heading-font-family);
 
         .fsc-title-text{
           flex: 1;
@@ -325,6 +322,7 @@
         overflow-y: auto;
 
         li{
+          font-size: pxToRem(14);
           cursor: pointer;
           padding: $spacer-half;
           border-bottom: 1px solid;

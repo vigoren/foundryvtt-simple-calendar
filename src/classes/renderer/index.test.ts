@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import Renderer from "./index";
 
 describe('Renderer Class Tests', () => {

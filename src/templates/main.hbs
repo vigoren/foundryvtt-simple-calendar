@@ -61,7 +61,7 @@
             {{/unless}}
         </div>
         {{#if (gt mainViewDisplay.calendarList.length 1)}}
-        <div class="fsc-side-drawer fsc-calendar-list {{#if uiElementStates.fsc-calendar-list}} fsc-open{{else}} fsc-closed{{/if}}">
+        <div class="fsc-side-drawer fsc-calendar-list {{sideDrawerDirection}} {{#if uiElementStates.fsc-calendar-list}} fsc-open{{else}} fsc-closed{{/if}}">
             <h2>{{localize 'FSC.Calendars'}}</h2>
             {{#each mainViewDisplay.calendarList}}
                 <div class="fsc-calendar-display {{#if (eq id ../activeCalendarId)}} fsc-active{{/if}} {{#if (eq id ../calendar.id)}} fsc-visible{{/if}} {{#unless ../mainViewDisplay.showChangeCalendarControls}} fsc-clickable{{/unless}}" data-calid="{{id}}">
@@ -87,7 +87,7 @@
             {{/each}}
         </div>
         {{/if}}
-        <div class="fsc-side-drawer fsc-note-list {{#if uiElementStates.fsc-note-list}} fsc-open{{else}} fsc-closed{{/if}}">
+        <div class="fsc-side-drawer fsc-note-list {{sideDrawerDirection}} {{#if uiElementStates.fsc-note-list}} fsc-open{{else}} fsc-closed{{/if}}">
             <h2>{{localize 'FSC.Notes.For'}} {{calendar.selectedDay.dateDisplay}}</h2>
             {{#if calendar.selectedDay.notes.length}}
             <div class="fsc-note-list">
@@ -136,7 +136,7 @@
             <em>{{localize 'FSC.Notes.Empty'}}</em>
             {{/if}}
         </div>
-        <div class="fsc-side-drawer fsc-note-search {{#if uiElementStates.fsc-note-search}} fsc-open{{else}} fsc-closed{{/if}}">
+        <div class="fsc-side-drawer fsc-note-search {{sideDrawerDirection}} {{#if uiElementStates.fsc-note-search}} fsc-open{{else}} fsc-closed{{/if}}">
             <h2>{{localize 'FSC.SearchNotes'}}</h2>
             <div class="fsc-search-box">
                 <input id="simpleCalendarSearchBox" type="text" value="{{mainViewDisplay.search.term}}" aria-label="{{localize 'FSC.SearchNotes'}}" />

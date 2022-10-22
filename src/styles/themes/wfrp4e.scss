@@ -2,6 +2,7 @@
 $theme: (
   //Font
         font-family: CaslonPro,
+        heading-font-family: CaslonPro,
   //Input Colors
         input-bg-color: $wfrpInputBackground,
         input-border-color: $wfrpBorderColor,
@@ -47,6 +48,11 @@ $theme: (
   // Scrollbar Coloring
         scrollbar-background-color: $wfrpInputBackground,
         scrollbar-border-color: #000000,
+        scrollbar-track-bg-color: unset,
+        scrollbar-track-border: unset,
+        scrollbar-button-height: 0,
+        scrollbar-button-bg-color: unset,
+        scrollbar-button-border: unset,
 
   //Calendar Coloring
         cal-weekend-bg-color: rgba(255,255,255,0.15),

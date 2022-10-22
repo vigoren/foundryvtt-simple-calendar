@@ -1,0 +1,367 @@
+@import "../variables";
+$theme: (
+  //Font
+        font-family: $w40kwgFontFamily,
+        heading-font-family: $w40kwgFontFamily,
+  //Input Colors
+        input-bg-color: trasparent,
+        input-border-color: #000,
+        input-color: #000,
+
+  //Link Color
+        link-color: var(--color-text-hyperlink),
+        link-hover-color: var(--color-text-hyperlink),
+        entity-link-bg-color: unset,
+        entity-link-border-color: unset,
+        entity-link-icon-color: var(--color-imperium),
+        entity-link-icon-hover-color: var(--color-imperium),
+
+  //Headings
+        heading-border-color: var(--color-red),
+        about-heading-border-color: $primary,
+
+  //Dialog Coloring
+        app-header-bg-color: transparent,
+        app-header-bg-image: unset,
+        app-header-color: var(--color-text-light-highlight),
+        app-header-border: 1px solid var(--color-border-dark),
+        app-header-border-image: url($w40kwgHeaderImage) 8 8 7 7 fill / 0px 0px 2px 2px,
+        app-header-height: pxToRem(30),
+        app-bg-color: #f2f2f2,
+        app-bg-image: url($w40kwgBodyBackground),
+        app-border: pxToRem(30) solid transparent,
+        app-border-image: url($w40kwgBodyBorder) 0 80 60 repeat,
+        app-color: #000,
+
+  // Dialog section coloring
+        section-bg-color: #000,
+        section-border-color: var(--color-imperium),
+        section-color: #e6e5e3,
+
+  //Side Drawer Coloring
+        side-drawer-color: #000,
+        side-drawer-bg-color: #f2f2f2,
+        side-drawer-bg-image: url($w40kwgBodyBackground),
+        side-drawer-border-color: transparent,
+        side-drawer-border-image: url($w40kwgAltBorder) 8 8 8 8 repeat repeat,
+
+  // Scrollbar Coloring
+        scrollbar-background-color: #782e22,
+        scrollbar-border-color: var(--color-border-highlight),
+        scrollbar-track-bg-color: unset,
+        scrollbar-track-border: 1px solid #999,
+        scrollbar-button-height: 0,
+        scrollbar-button-bg-color: unset,
+        scrollbar-button-border: unset,
+
+  //Calendar Coloring
+        cal-weekend-bg-color: rgba(255,255,255,0.15),
+        cal-day-border-color: $gray-600,
+        cal-day-hover-color: unset,
+        cal-day-current-bg-color: #2e4f66,
+        cal-day-current-box-shadow-color: #3289c5,
+        cal-day-current-hover-bg-color: #2e4f66,
+        cal-day-selected-bg-color: #185c45,
+        cal-day-selected-box-shadow-color: #0bb77d,
+        cal-day-selected-hover-bg-color: #185c45,
+        cal-note-indicator-bg-color: #91292e,
+        cal-note-reminder-indicator-bg-color: #5f3179,
+        cal-note-indicator-color: $white,
+        cal-moon-group-bg-color: $white,
+        cal-moon-group-border-color: $fontColor,
+        cal-moon-group-box-shadow-color: $boxShadowColor,
+        cal-moon-text-shadow: rgba(255, 255, 255, 1),
+
+  //Calendar List Coloring
+        cal-list-color: #000000,
+        cal-list-active-border-color: #00165878,
+        cal-list-active-bg-color: rgba(46, 79, 102, 0.9),
+        cal-list-visible-bg-color: rgba(95, 49, 121, 0.9),
+        cal-list-bg-hover-color: #5f3179BE,
+
+  //Clock Coloring
+        clock-started-color: #25ad7f,
+        clock-stopped-color: #c12121,
+        clock-paused-color: #daa32a,
+
+  //Context Menu
+        context-menu-color: $wfrpTextColor,
+        context-menu-border-color: $secondary-800,
+        context-menu-bg-color: $wfrpBlackBackground,
+        context-menu-action-hover-color: #b98132,
+        context-menu-divider-color: $gray-600,
+
+  //Configuration Menu
+        config-menu-heading-color: #8a2e2a,
+        config-menu-item-border-color: $gray-500,
+        config-menu-item-color: #000,
+        config-menu-item-hover-color: $white,
+        config-menu-item-hover-bg-color: #8a2e2a,
+        config-menu-cal-settings-bg-color: rgba(0,0,0,0.15),
+        config-menu-cal-selector-bg-color: #000,
+        config-menu-cal-selector-hover-bg-color: #2f2f2f,
+        config-menu-cal-selector-color: $white,
+        config-menu-cal-selector-hover-color: $white,
+
+  //Controls
+        btn-bg-image: unset,
+        btn-border: 1px solid,
+        btn-border-image: unset,
+        btn-grey-border-color: #000,
+        btn-grey-bg-color: rgba(0, 0, 0, 0.05),
+        btn-grey-color: #e6e5e3,
+        btn-grey-bg-hover-color: rgba(0, 0, 0, 0.15),
+        btn-grey-disabled-bg-color: $gray-700,
+        btn-primary-border-color: #000,
+        btn-primary-bg-color: #2f516a,
+        btn-primary-color: #e6e5e3,
+        btn-primary-bg-hover-color: #416986,
+        btn-primary-disabled-bg-color: #8595A8,
+        btn-secondary-border-color: #000,
+        btn-secondary-bg-color: #dca42b,
+        btn-secondary-color: #e6e5e3,
+        btn-secondary-bg-hover-color: #ecb236,
+        btn-secondary-disabled-bg-color: rgba($secondary-T400,0.95),
+        btn-tertiary-border-color: #000,
+        btn-tertiary-bg-color: #5f3078,
+        btn-tertiary-color: #e6e5e3,
+        btn-tertiary-bg-hover-color: #7b4698,
+        btn-tertiary-disabled-bg-color: #A288A5,
+        btn-delete-border-color: #000,
+        btn-delete-bg-color: #8b3434,
+        btn-delete-color: #e6e5e3,
+        btn-delete-bg-hover-color: #b45050,
+        btn-delete-disabled-bg-color: $danger-T400,
+        btn-save-border-color: #000,
+        btn-save-bg-color: #185f47,
+        btn-save-color: #e6e5e3,
+        btn-save-bg-hover-color: #247359,
+        btn-save-disabled-bg-color: #68786E,
+
+  //Form Groups
+        form-group-bg-color: rgba(0, 0, 0, 0.15),
+        form-group-bg-hover-color: rgba(0, 0, 0, 0.25),
+        form-group-border-color: #000,
+        form-group-label-color: #8a2e2a,
+        form-group-help-color:  #000,
+        form-group-input-bg-color: transparent,
+        form-group-input-border-color: #000,
+        form-group-input-color: #000,
+        form-group-help-icon-color: var(--color-text-hyperlink),
+
+
+  //Messages
+        message-color: $white,
+        message-warn-bg-color: $secondary-950,
+        message-warn-border-color: $secondary-900,
+        message-success-bg-color: $success-950,
+        message-success-border-color: $success-900,
+        message-info-bg-color: $primary-950,
+        message-info-border-color: $primary-900,
+        message-danger-bg-color: $danger-1000,
+        message-danger-border-color: $danger-950,
+
+
+  //Multi Select
+        multi-select-option-bg-color: transparent,
+        multi-select-option-bg-hover-color: rgba(0,0,0,0.1),
+        multi-select-option-border-color: #000,
+        multi-select-option-color: #000,
+        multi-select-disabled-bg-color: $gray-700,
+        multi-select-disabled-color: $gray-400,
+
+  //Note Category
+        note-cat-color: $white,
+        note-cat-bg-color: #454545,
+        note-cat-box-shadow-color: $white,
+        note-cat-secondary-bg-color: #dca42b,
+        note-cat-secondary-color: $white,
+        note-cat-success-bg-color: #185f47,
+        note-cat-success-color: $white,
+        note-cat-danger-bg-color: #8b3434,
+        note-cat-danger-color: $white,
+        note-cat-reminder-bg-color: #5f3078,
+        note-cat-reminder-color: $white,
+
+  //Note List
+        note-list-note-border-color: $primary-200,
+        note-list-note-bg-hover-color: rgba(0,0,0,0.25),
+        note-list-note-hover-color: #000,
+        note-list-note-dragger-bg-color: $gray-500,
+        note-list-note-dragger-box-shadow-color: #000,
+
+  //Note Sheet
+        note-sheet-page-list-border-color: unset,
+        note-sheet-page-list-page-hover-bg-color: rgba(0,0,0,0.25),
+
+  //Predefined Calendar Colors
+        pre-cal-color: $primary-1000,
+        pre-cal-border-color: $primary-950,
+        pre-cal-border-hover-color: $primary-400,
+        precal-hover-color: $white,
+
+  //Progress Bar
+        progress-bar-bg-color: $gray-300,
+        progress-bar-border-color: $gray-500,
+        progress-bar-fill-color: $tertiary-300,
+
+  //Prose Mirror
+        editor-color: #000,
+        editor-menu-bg-color: rgba(138, 46, 42, 0.8),
+        editor-menu-control-bg-color: #d9d8c8,
+        editor-menu-control-bg-hover-color: #f0f0e0,
+
+  //Search Box
+        search-box-placeholder-color: $gray-800,
+        search-box-color: #000,
+
+  //Time Selector
+        time-selector-color: #000,
+        time-selector-input-bg-color: rgba(0,0,0,0.15),
+        time-selector-input-border-color: #000,
+        time-selector-option-bg-even-color: rgba(0,0,0,0.15),
+        time-selector-option-hover-bg-color: rgba(0,0,0,0.25),
+
+  //Toggle
+        toggle-unchecked-image: url($checkboxSVGDark),
+        toggle-checked-image: url($checkboxSVGWhite),
+        toggle-border-color: $gray-900,
+        toggle-checked-bg-color: #c85019,
+
+
+);
+.simple-calendar{
+  &.wrath-and-glory{
+    @each $prop, $value in $theme {
+      --#{$prop}: #{$value};
+    }
+  }
+}
+
+body.game{
+  .simple-calendar{
+    &.wrath-and-glory{
+      &.window-app {
+        input, select, option{
+          background: url($w40kwgInputBackground) repeat;
+        }
+        .window-content{
+          border-top: 0;
+          border-bottom-width: pxToRem(20);
+
+          .fsc-side-drawer{
+            border-width: 8px;
+            &.sc-right{
+              border-left-width: 0;
+            }
+            &.sc-left{
+              border-right-width: 0;
+            }
+            &.sc-down{
+              border-top-width: 0;
+            }
+
+          }
+        }
+        //Calendar
+        .fsc-calendar {
+          .fsc-days {
+            .fsc-week {
+              .fsc-day {
+                &:hover {
+                  filter: brightness(1.25);
+                  box-shadow: 0 0 10px var(--color-shadow-highlight);
+                }
+              }
+            }
+          }
+        }
+        //Controls
+        button.fsc-control{
+          padding-top: pxToRem(3);
+          padding-bottom: pxToRem(1);
+          &:before{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: -1;
+          }
+          &:hover, &.active, &:focus {
+            filter: brightness(1.5);
+          }
+          &:disabled{
+            filter: brightness(.5);
+          }
+          &.fsc-grey{
+            &:before{
+              background: url($w40kwgButtonImage) repeat;
+              filter: grayscale(1);
+            }
+          }
+          &.fsc-primary {
+            &:before{
+              background: url($w40kwgButtonImage) repeat;
+              filter: grayscale(1) sepia(22%) saturate(1240%) hue-rotate(162deg) brightness(87%) contrast(81%);
+            }
+            &:hover, &.active, &:focus {
+              filter: brightness(1.5);
+            }
+            &:disabled{
+              filter: brightness(.5);
+            }
+          }
+          &.fsc-secondary {
+            &:before{
+              background: url($w40kwgButtonImage) repeat;
+              filter: grayscale(1) sepia(45%) saturate(673%) hue-rotate(3deg) brightness(220%) contrast(93%);
+            }
+          }
+          &.fsc-tertiary{
+            &:before{
+              background: url($w40kwgButtonImage) repeat;
+              filter: grayscale(1) sepia(1) brightness(.75) saturate(4) hue-rotate(235deg);
+            }
+          }
+          &.fsc-delete {
+            &:before{
+              background: url($w40kwgButtonImage) repeat;
+            }
+          }
+          &.fsc-save {
+            &:before{
+              background: url($w40kwgButtonImage) repeat;
+              filter: grayscale(1) sepia(20%) saturate(1630%) hue-rotate(109deg) brightness(93%) contrast(83%);
+            }
+          }
+        }
+
+        form{
+          .fsc-compact-form-group{
+            background: url($w40kwgInputBackground) repeat;
+          }
+        }
+
+        .fsc-multiselect{
+          button{
+            background: url($w40kwgInputBackground) repeat;
+          }
+          .fsc-multi-select-options{
+            background: url($w40kwgInputBackground) repeat;
+          }
+        }
+
+        .fsc-time-selector{
+          .fsc-ts-inputs{
+            background: url($w40kwgInputBackground) repeat;
+            .fsc-dropdown{
+              background: url($w40kwgInputBackground) repeat;
+            }
+          }
+        }
+      }
+    }
+  }
+}

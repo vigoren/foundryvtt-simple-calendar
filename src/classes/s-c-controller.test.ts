@@ -4,7 +4,7 @@
 import "../../__mocks__/index";
 import SCController from "./s-c-controller";
 import {
-    CalManager,
+    CalManager, MainApplication,
     NManager,
     SC,
     updateCalManager,
@@ -95,6 +95,12 @@ describe('SCController Tests', () => {
         expect(docHeadA).toHaveBeenCalledTimes(3);
     });
 
+    test('Side Drawer Direction Change', () => {
+        jest.spyOn(MainApplication, 'render').mockImplementation(() => {});
+        SCController.SideDrawerDirectionChange();
+        expect(MainApplication.render).toHaveBeenCalledTimes(1);
+    });
+
     test('initialize', () => {
         jest.spyOn(SC.sockets, 'initialize').mockImplementation(() => {});
         jest.spyOn(NManager, 'checkNoteTriggers').mockImplementation(() => {});
@@ -161,12 +167,14 @@ describe('SCController Tests', () => {
             openOnLoad: true,
             openCompact: false,
             rememberPosition: false,
+            rememberCompactPosition: false,
             appPosition: {},
-            noteReminderNotification: NoteReminderNotificationType.whisper
+            noteReminderNotification: NoteReminderNotificationType.whisper,
+            sideDrawerDirection: 'sc-right'
         });
         expect(CalManager.saveCalendars).toHaveBeenCalledTimes(2);
-        expect(GameSettings.SaveStringSetting).toHaveBeenCalledTimes(2);
-        expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(3);
+        expect(GameSettings.SaveStringSetting).toHaveBeenCalledTimes(3);
+        expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(4);
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
     });
 

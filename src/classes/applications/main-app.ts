@@ -125,7 +125,8 @@ export default class MainApp extends FormApplication{
                 showClock: this.visibleCalendar.generalSettings.showClock,
                 showDateControls: false,
                 showSetCurrentDate: false,
-                showTimeControls: false
+                showTimeControls: false,
+                sideDrawerDirection: GameSettings.GetStringSettings(SettingNames.NoteListOpenDirection)
             };
         //If the active and visible calendar are the same then show the controls as per the usual rules. Other wise do not show any controls
         if(this.activeCalendar.id === this.visibleCalendar.id){
@@ -192,18 +193,10 @@ export default class MainApp extends FormApplication{
             if(this.opening){
                 this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
 
-                if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
-                    const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
-                    if(pos.top !== undefined && pos.top >= 0){
-                        options.top = pos.top;
-                    }
-                    if(pos.left !== undefined && pos.left >= 0){
-                        options.left = pos.left;
-                    }
-                }
-                options.classes = ["simple-calendar", GetThemeName()];
                 this.opening = false;
             }
+
+            options.classes = ["simple-calendar", GetThemeName()];
             return super.render(true, options);
         }
         return;
@@ -222,7 +215,6 @@ export default class MainApp extends FormApplication{
         this.uiElementStates.compactView = !this.uiElementStates.compactView;
         this.visibleCalendar.resetMonths('selected');
         this.hideDrawers();
-        this.setWidthHeight();
         this.render(true);
     }
 
@@ -232,31 +224,26 @@ export default class MainApp extends FormApplication{
     async maximize(){
         this.uiElementStates.compactView = false;
         this.hideDrawers();
-        this.setWidthHeight();
         this.render(true);
     }
 
     /**
      * Sets the width and height of the calendar window so that it is sized to show the calendar, the controls and space for 2 notes.
      */
-    setWidthHeight(){
+    public static setWidthHeight(ma: MainApp){
         let width = 0, height = 0;
         const main = <HTMLElement>document.querySelector(`#${MainApp.appWindowId}`);
         if(main){
-            const appWindowBorder = parseInt(window.getComputedStyle(main).getPropertyValue('border-width'));
-            if(!isNaN(appWindowBorder)){
-                height += appWindowBorder * 2;
-                width += appWindowBorder * 2;
-            }
             const header = <HTMLElement>main.querySelector('.window-header');
             if(header){
                 height += header.offsetHeight;
             }
             const wrapper = <HTMLElement>main.querySelector('.fsc-main-wrapper');
             if(wrapper) {
-                if (this.uiElementStates.compactView) {
-                    height += 28; //Height of top bar
-                    height += 8; // Window Padding
+                if (ma.uiElementStates.compactView) {
+                    wrapper.querySelectorAll('.fsc-section').forEach(e => {
+                        height += (<HTMLElement>e).offsetHeight
+                    });
                     width = 300;
                 } else {
                     wrapper.querySelectorAll(".fsc-section").forEach((s, index) => {
@@ -293,11 +280,68 @@ export default class MainApp extends FormApplication{
                     width = Math.max(weekWidth, clockWidth, yearViewWidth);
                     width += 10; //Calendar Padding
                     width += 70; //Action list width + Margin
-                    width += 16; // Window Padding
-                    height += 16; // Window Padding
+
+
+                }
+                //Add in the border thickness for the main app
+                const appWindowBorder = parseInt(window.getComputedStyle(main).borderWidth);
+                if(!isNaN(appWindowBorder)){
+                    height += appWindowBorder * 2;
+                    width += appWindowBorder * 2;
+                }
+                //Add in our wrapper padding
+                const wrapperCompStyle = window.getComputedStyle(wrapper);
+                const paddingTop = parseInt(wrapperCompStyle.paddingTop);
+                const paddingBottom = parseInt(wrapperCompStyle.paddingBottom);
+                const paddingLeft = parseInt(wrapperCompStyle.paddingLeft);
+                const paddingRight = parseInt(wrapperCompStyle.paddingRight);
+                height += (paddingTop || 0) + (paddingBottom || 0);
+                width += (paddingLeft || 0) + (paddingRight || 0);
+
+                //Add in the padding for the window-content section.
+                const section = <HTMLElement>main.querySelector('.window-content');
+                if(section){
+                    const sectionCompStyle = window.getComputedStyle(section);
+                    const paddingTop = parseInt(sectionCompStyle.paddingTop);
+                    const paddingBottom = parseInt(sectionCompStyle.paddingBottom);
+                    const paddingLeft = parseInt(sectionCompStyle.paddingLeft);
+                    const paddingRight = parseInt(sectionCompStyle.paddingRight);
+                    const borderTop = parseInt(sectionCompStyle.borderTop);
+                    const borderBottom = parseInt(sectionCompStyle.borderBottom);
+                    const borderLeft = parseInt(sectionCompStyle.borderLeft);
+                    const borderRight = parseInt(sectionCompStyle.borderRight);
+                    height += (paddingTop || 0) + (paddingBottom || 0) + (borderTop || 0) + (borderBottom || 0);
+                    width += (paddingLeft || 0) + (paddingRight || 0) + (borderLeft || 0) + (borderRight || 0);
                 }
             }
-            this.setPosition({width: width, height: height});
+
+            const options:  Partial<Application.Position> = {};
+            if(ma.uiElementStates.compactView && GameSettings.GetBooleanSettings(SettingNames.RememberCompactPosition)){
+                const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppCompactPosition);
+                if(pos.top !== undefined && pos.top >= 0){
+                    options.top = pos.top;
+                }
+                if(pos.left !== undefined && pos.left >= 0){
+                    options.left = pos.left;
+                }
+            } else if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
+                const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
+                if(pos.top !== undefined && pos.top >= 0){
+                    options.top = pos.top;
+                }
+                if(pos.left !== undefined && pos.left >= 0){
+                    options.left = pos.left;
+                }
+            }
+            //Foundry does weird things if you pass in a height with a top, so we have to do these changes in a specific order
+            //depending on which view we are entering.
+            if(ma.uiElementStates.compactView){
+                ma.setPosition({height: height, width: width});
+                ma.setPosition(options);
+            } else {
+                ma.setPosition(options);
+                ma.setPosition({height: height, width: width});
+            }
         }
     }
 
@@ -351,9 +395,15 @@ export default class MainApp extends FormApplication{
         const app = document.getElementById(MainApp.appWindowId);
         if(app){
             const appPos: SimpleCalendar.AppPosition = {};
-            appPos.top = parseFloat(app.style.top);
-            appPos.left = parseFloat(app.style.left);
-            GameSettings.SaveObjectSetting(SettingNames.AppPosition, appPos, false).catch(Logger.error);
+            if(app.classList.contains('fsc-compact-view')){
+                appPos.top = parseFloat(app.style.top);
+                appPos.left = parseFloat(app.style.left);
+                GameSettings.SaveObjectSetting(SettingNames.AppCompactPosition, appPos, false).catch(Logger.error);
+            } else {
+                appPos.top = parseFloat(app.style.top);
+                appPos.left = parseFloat(app.style.left);
+                GameSettings.SaveObjectSetting(SettingNames.AppPosition, appPos, false).catch(Logger.error);
+            }
         }
     }
 
@@ -361,18 +411,17 @@ export default class MainApp extends FormApplication{
      * Adds any event listeners to the application DOM
      */
     public activateListeners() {
-        this.setWidthHeight();
         this.ensureCurrentDateIsVisible();
 
         const appWindow = document.getElementById(MainApp.appWindowId);
         if(appWindow){
             //Window Drag Listener
-            const header = appWindow.querySelector('header');
-            if(header){
-                const drag = new Draggable(this, jQuery(appWindow), header, this.options.resizable);
-                drag.handlers["dragMove"] = ["mousemove", this.appDragMove.bind(drag), false];
-                drag.handlers["dragUp"] = ["mouseup", this.appDragEnd.bind(drag), false];
-            }
+             const header = appWindow.querySelector('header');
+             if(header){
+                 const drag = new Draggable(this, jQuery(appWindow), header, this.options.resizable);
+                 drag.handlers["dragMove"] = ["mousemove", this.appDragMove.bind(drag), false];
+                 drag.handlers["dragUp"] = ["mouseup", this.appDragEnd.bind(drag), false];
+             }
 
             // Click anywhere in the app
             appWindow.addEventListener('click', this.toggleUnitSelector.bind(this, true));
@@ -590,7 +639,7 @@ export default class MainApp extends FormApplication{
     public changeMonth(clickType: CalendarClickEvents, options: SimpleCalendar.Renderer.CalendarOptions){
         this.toggleUnitSelector(true);
         this.visibleCalendar.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
-        this.setWidthHeight();
+        MainApp.setWidthHeight(this);
     }
     
     /**
