@@ -519,5 +519,14 @@
 	"FSC.Configuration.Season.DescriptionHelp": "Uma descrição sobre a estação para dar mais sabor ao seu calendário. Essas informações ficam visíveis quando um usuário clica no nome da estação na visualização principal do calendário.",
 	"FSC.Configuration.Weekday.Weekend": "Dia de descanso",
 	"FSC.Configuration.Weekday.WeekendHelp": "A parte da semana que é tradicionalmente dedicada ao descanso, ao invés do trabalho. por exemplo. O fim de semana no calendário gregoriano moderno",
-	"FSC.Configuration.Weekday.DescriptionHelp": "Uma descrição sobre o dia da semana para dar mais sabor ao seu calendário. Essas informações ficam visíveis quando um usuário clica no nome de um dia da semana na visualização principal do calendário."
+	"FSC.Configuration.Weekday.DescriptionHelp": "Uma descrição sobre o dia da semana para dar mais sabor ao seu calendário. Essas informações ficam visíveis quando um usuário clica no nome de um dia da semana na visualização principal do calendário.",
+	"FSC.Configuration.Client.NoteListOpenDirection.Description": "A direção do calendário principal em que as gavetas laterais serão abertas. As gavetas laterais contêm a lista de calendários, lista de notas e pesquisa de notas.",
+	"FSC.Predefined.Starfinder": "Starfinder",
+	"FSC.Right": "Direita",
+	"FSC.Left": "Esquerda",
+	"FSC.Down": "Para baixo",
+	"FSC.Configuration.Client.RememberCompactPosition.Title": "Lembrar posição compacta",
+	"FSC.Configuration.Client.RememberCompactPosition.Description": "O Simple Calendar lembrará onde a versão compacta foi posicionada pela última vez e se colocará lá quando estiver no modo compacto. Esta é uma posição separada da versão completa.",
+	"FSC.Configuration.Client.NoteListOpenDirection.Title": "Direção de Abertura da Gaveta Lateral",
+	"FSC.Predefined.Warhammer40kWG": "Warhammer 40,000 Roleplay: Wrath & Glory"
 }
