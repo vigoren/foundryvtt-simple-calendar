@@ -528,5 +528,8 @@
 	"FSC.Configuration.Client.RememberCompactPosition.Title": "Lembrar posição compacta",
 	"FSC.Configuration.Client.RememberCompactPosition.Description": "O Simple Calendar lembrará onde a versão compacta foi posicionada pela última vez e se colocará lá quando estiver no modo compacto. Esta é uma posição separada da versão completa.",
 	"FSC.Configuration.Client.NoteListOpenDirection.Title": "Direção de Abertura da Gaveta Lateral",
-	"FSC.Predefined.Warhammer40kWG": "Warhammer 40,000 Roleplay: Wrath & Glory"
+	"FSC.Predefined.Warhammer40kWG": "Warhammer 40,000 Roleplay: Wrath & Glory",
+	"FSC.Predefined.EclipsePhase": "Eclipse Phase 2E",
+	"FSC.Configuration.Client.AlwaysShowNoteList.Title": "Mostrar sempre a lista de notas",
+	"FSC.Configuration.Client.AlwaysShowNoteList.Description": "Esta configuração fará com que a lista de notas seja sempre visível e não possa ser fechada. A única excepção é se a lista de calendário ou a pesquisa de notas forem abertas, elas abrir-se-ão por cima da lista de notas, mas quando fechada, a lista de notas permanecerá visível."
 }
