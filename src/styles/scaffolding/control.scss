@@ -72,6 +72,12 @@
             color: var(--btn-secondary-color);
             cursor: not-allowed;
           }
+          svg{
+            line, path, circle{
+              fill: var(--btn-secondary-color);
+              stroke: var(--btn-secondary-color);
+            }
+          }
         }
         &.fsc-tertiary{
           background-color: var(--btn-tertiary-bg-color);

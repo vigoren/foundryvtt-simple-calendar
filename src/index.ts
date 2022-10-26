@@ -52,6 +52,8 @@ Hooks.on('init', async () => {
     await CalManager.initialize();
     //Load the global configuration settings
     SC.load();
+    //Initialize the main application (Pre-set values before render)
+    MainApplication.initialize();
 });
 Hooks.on('ready',async () => {
     if(PF2E.isPF2E){

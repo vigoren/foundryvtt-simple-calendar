@@ -82,7 +82,8 @@ export default class ConfigurationApp extends FormApplication {
         rememberCompactPosition: false,
         appPosition: {},
         noteReminderNotification: NoteReminderNotificationType.whisper,
-        sideDrawerDirection: 'sc-right'
+        sideDrawerDirection: 'sc-right',
+        alwaysShowNoteList: false
     };
     /**
      * A list of different states for the UI
@@ -238,7 +239,8 @@ export default class ConfigurationApp extends FormApplication {
                     'sc-right': "FSC.Right",
                     'sc-left': "FSC.Left",
                     'sc-down': "FSC.Down"
-                }
+                },
+                alwaysShowNoteList: this.clientSettings.alwaysShowNoteList
             },
             combatPauseRules: {
                 'active': 'FSC.Configuration.CombatPauseRule.Active',
@@ -666,6 +668,7 @@ export default class ConfigurationApp extends FormApplication {
             this.clientSettings.rememberCompactPosition = getCheckBoxInputValue('#scRememberCompactPos', true, this.appWindow);
             this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>getTextInputValue('#scNoteReminderNotification', <string>NoteReminderNotificationType.whisper, this.appWindow);
             this.clientSettings.sideDrawerDirection = getTextInputValue('#scSideDrawerDirection', 'sc-right', this.appWindow);
+            this.clientSettings.alwaysShowNoteList = getCheckBoxInputValue('#scAlwaysOpenNoteList', false, this.appWindow);
 
             //----------------------------------
             // Global Config: Permissions

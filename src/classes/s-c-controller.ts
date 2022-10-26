@@ -50,7 +50,7 @@ export default class SCController {
 
     constructor() {
         this.sockets = new Sockets();
-        this.clientSettings = {id: '', theme: Themes[0].key, openOnLoad: true, openCompact: false, rememberPosition: true, rememberCompactPosition: false, appPosition: {}, noteReminderNotification: NoteReminderNotificationType.whisper, sideDrawerDirection: 'sc-right'};
+        this.clientSettings = {id: '', theme: Themes[0].key, openOnLoad: true, openCompact: false, rememberPosition: true, rememberCompactPosition: false, appPosition: {}, noteReminderNotification: NoteReminderNotificationType.whisper, sideDrawerDirection: 'sc-right', alwaysShowNoteList: false};
         this.globalConfiguration = {
             id: '',
             version: '',
@@ -110,7 +110,12 @@ export default class SCController {
      * When the side drawer direction client setting has changed re-render the main application.
      */
     public static SideDrawerDirectionChange(){
-        MainApplication.render(true);
+        MainApplication.updateApp();
+    }
+
+    public static AlwaysShowNoteListChange(){
+        MainApplication.initialize();
+        MainApplication.updateApp();
     }
 
     /**
@@ -146,6 +151,7 @@ export default class SCController {
         this.clientSettings.appPosition = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
         this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>GameSettings.GetStringSettings(SettingNames.NoteReminderNotification);
         this.clientSettings.sideDrawerDirection = GameSettings.GetStringSettings(SettingNames.NoteListOpenDirection);
+        this.clientSettings.alwaysShowNoteList = GameSettings.GetBooleanSettings(SettingNames.AlwaysShowNoteList);
     }
 
     /**
@@ -182,6 +188,7 @@ export default class SCController {
             GameSettings.SaveObjectSetting(SettingNames.AppPosition, clientConfig.appPosition, false).catch(Logger.error);
             GameSettings.SaveStringSetting(SettingNames.NoteReminderNotification, clientConfig.noteReminderNotification, false).catch(Logger.error);
             GameSettings.SaveStringSetting(SettingNames.NoteListOpenDirection, clientConfig.sideDrawerDirection, false).catch(Logger.error);
+            GameSettings.SaveBooleanSetting(SettingNames.AlwaysShowNoteList, clientConfig.alwaysShowNoteList, false).catch(Logger.error);
             //Save the global configuration (triggers the load function)
             GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc)
                 .then(() => GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}}))

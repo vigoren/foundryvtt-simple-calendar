@@ -22,6 +22,6 @@ describe('Game Settings Registration Class Tests', () => {
     test('Register Settings', () => {
         GameSettingsRegistration.Register();
         expect((<Game>game).settings.registerMenu).toHaveBeenCalledTimes(2);
-        expect((<Game>game).settings.register).toHaveBeenCalledTimes(25);
+        expect((<Game>game).settings.register).toHaveBeenCalledTimes(26);
     });
 });

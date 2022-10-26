@@ -73,6 +73,12 @@ describe('Main App Class Tests', () => {
         expect(MainApp.defaultOptions).toBeDefined();
     });
 
+    test('Initialize', () => {
+        jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
+        ma.initialize();
+        expect(ma.uiElementStates['fsc-note-list']).toBe(true);
+    });
+
     test('Get Data', () => {
         expect(ma.getData()).toBeDefined();
 
@@ -239,12 +245,19 @@ describe('Main App Class Tests', () => {
         const elm = document.createElement('div');
         jest.spyOn(ma, 'hideDrawers').mockImplementation(() => {});
         jest.spyOn(ma, 'searchOptionsToggle').mockImplementation(() => {});
-        jest.spyOn(VisualUtilities, 'animateElement').mockImplementation(() => {return true;});
+        jest.spyOn(VisualUtilities, 'animateElement').mockReturnValueOnce(true).mockReturnValueOnce(false).mockReturnValueOnce(true);
         jest.spyOn(document, 'querySelector').mockReturnValue(elm);
 
         ma.toggleDrawer('fsc-calendar-list');
         expect(ma.uiElementStates["fsc-calendar-list"]).toBe(true);
 
+        jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
+        ma.toggleDrawer('fsc-calendar-list');
+        expect(ma.uiElementStates["fsc-calendar-list"]).toBe(false);
+
+        ma.uiElementStates["fsc-note-list"] = false;
+        ma.toggleDrawer('fsc-note-list');
+        expect(ma.uiElementStates["fsc-note-list"]).toBe(true);
     });
 
     test('Hide Drawers', () => {
@@ -260,7 +273,7 @@ describe('Main App Class Tests', () => {
         ma.uiElementStates["fsc-note-list"] = true;
         ma.uiElementStates["fsc-note-search"] = true;
 
-        ma.hideDrawers('fsc-note-search');
+        ma.hideDrawers(['fsc-note-search']);
         expect(ma.uiElementStates["fsc-calendar-list"]).toBe(false);
         expect(ma.uiElementStates["fsc-note-list"]).toBe(false);
         expect(ma.uiElementStates["fsc-note-search"]).toBe(true);

@@ -24,6 +24,7 @@ export enum SettingNames {
     AppCompactPosition = 'app-compact-position',
     NoteReminderNotification = 'note-reminder-notification',
     NoteListOpenDirection = 'note-list-open-direction',
+    AlwaysShowNoteList = 'always-show-note-list',
     CalendarMainApp = 'calendar-main-app',
     CalendarConfigurationMenu= 'calendar-configuration-menu',
     CalendarConfiguration = 'calendar-configuration',
@@ -58,6 +59,7 @@ export const Themes: SimpleCalendar.Theme[] = [
     {key: 'dsa5', name: 'FSC.Predefined.DSA-TDE5e', system: true, module: false},
     {key: 'sfrpg', name: 'FSC.Predefined.Starfinder', system: true, module: false},
     {key: 'wrath-and-glory', name: 'FSC.Predefined.Warhammer40kWG', system: true, module: false},
+    {key: 'eclipsephase', name: 'FSC.Predefined.EclipsePhase', system: true, module: false},
     //key: "ernies-modern-layout", name: "Ernie's Modern UI", system: false, module: true}
 ];
 
@@ -417,5 +419,5 @@ export enum TriggerParameters{
     Equal,
     Before,
     After,
-    Nth,
+    Nth
 }

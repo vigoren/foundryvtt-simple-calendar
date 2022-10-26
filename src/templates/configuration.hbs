@@ -146,6 +146,13 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Client.NoteListOpenDirection.Description'}}</p>
                 </div>
+                <div class="form-group fsc-open">
+                    <label for="scAlwaysOpenNoteList">{{localize 'FSC.Configuration.Client.AlwaysShowNoteList.Title'}}</label>
+                    <div class="form-fields">
+                        <input class="fsc-toggle" value="{{clientSettings.alwaysShowNoteList}}" type="checkbox" id="scAlwaysOpenNoteList" {{checked clientSettings.alwaysShowNoteList}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Client.AlwaysShowNoteList.Description'}}</p>
+                </div>
             </div>
         </div>
 
