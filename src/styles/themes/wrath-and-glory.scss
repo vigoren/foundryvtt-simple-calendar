@@ -119,7 +119,7 @@ $theme: (
         btn-primary-disabled-bg-color: #8595A8,
         btn-secondary-border-color: #000,
         btn-secondary-bg-color: #dca42b,
-        btn-secondary-color: #e6e5e3,
+        btn-secondary-color: #000,
         btn-secondary-bg-hover-color: #ecb236,
         btn-secondary-disabled-bg-color: rgba($secondary-T400,0.95),
         btn-tertiary-border-color: #000,
@@ -242,6 +242,13 @@ body.game{
   .simple-calendar{
     &.wrath-and-glory{
       &.window-app {
+        //Compact View
+        &.fsc-compact-view {
+          .fsc-clock{
+            background: unset!important;
+            color: #000;
+          }
+        }
         input, select, option{
           background: url($w40kwgInputBackground) repeat;
         }

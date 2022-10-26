@@ -1,5 +1,37 @@
 # Change Log
 
+## 2.1.50 - Quality of Life Improvements, Bug Fixes and a New Theme
+
+![](https://img.shields.io/badge/release%20date-October%2024%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.50/module.zip)
+
+### Quality of Life Improvements
+
+- A new client setting [Always Show Note List](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings) has been added. This setting will make it so the note list will always be visible and can not be closed. The only exception is if the calendar list or note search are opened they will open over top of the note list, but when closed the note list will remain visible.
+
+### Bug Fixes
+
+- Fixed an issue with the DSA/TDE 5 system theme that would cause the dialog background not to load properly.
+- Fixed an issue with the DSA/TDE 5 system theme that cause the compact view dialog header to display incorrectly.
+- Fixed an issue with the DSA/TDE 5 system theme where the clock would have a background color in compact view.
+- Fixed an issue with the Warhammer 40,000: Wrath & Glory system theme where the clock would have a background color in compact view.
+- Fixed an issue with the Warhammer Fantasy Roleplay system theme that would cause the dialog borders to not load correctly.
+- Fixed a bug where the context menu for the note list would not appear in the correct location when the list expanded to the left or bottom of the calendar.
+- Fixed a bug where if the side drawers were set to open below the calendar, the note list would not fully open in the compact view.
+
+### New Themes
+
+- **New** [Eclipse Phase 2E](https://foundryvtt.com/packages/eclipsephase) System Theme<br/>![](./docs/images/sc-theme-eclipsephase.png) ![](media://sc-theme-eclipsephase.png)
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [eunaumtenhoid](https://weblate.foundryvtt-hub.com/user/eunaumtenhoid/) (Portuguese (Brazil))
+
+<hr/>
+
 ## 2.1.40 - Theming, Quality of Life Improvements, Bug Fixes & API Updates
 
 ![](https://img.shields.io/badge/release%20date-October%2022%2C%202022-blue)
@@ -77,6 +109,8 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 - Updated the example for the [getCurrentMonth](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentMonth.html) API function.
 - Updated the example for the [getAllWeekdays](https://simplecalendar.info/functions/SimpleCalendar.api.getAllWeekdays.html) API function.
 - Updated the example for the [getCurrentWeekday](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentWeekday.html) API function.
+
+<hr/>
 
 ## v2.1.27 - Improved Note Permissions, Note List Context Menu and Bug Fixes
 

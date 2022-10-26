@@ -13,7 +13,7 @@ import {
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
 import {animateElement, GetIcon, GetThemeName} from "../utilities/visual";
-import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
+import {CalManager, ConfigurationApplication, MainApplication, NManager, SC} from "../index";
 import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
@@ -52,7 +52,6 @@ export default class MainApp extends FormApplication{
         "fsc-calendar-list": false,
         "fsc-note-list": false,
         "fsc-note-search": false,
-        "fsc-day-details": false,
         compactView: false,
         dateTimeUnitOpen: false,
         dateTimeUnit: DateTimeUnits.Day,
@@ -80,6 +79,14 @@ export default class MainApp extends FormApplication{
      */
     constructor() {
         super({});
+    }
+
+    /**
+     * Initialize the Main Application to pre-set certain values before being rendered.
+     */
+    initialize() {
+        //Check if the note list should always be shown
+        this.uiElementStates['fsc-note-list'] = GameSettings.GetBooleanSettings(SettingNames.AlwaysShowNoteList);
     }
 
     /**
@@ -457,8 +464,6 @@ export default class MainApp extends FormApplication{
             // Real Time Clock
             appWindow.querySelector(".fsc-time-start")?.addEventListener('click', this.startTime.bind(this));
             appWindow.querySelector(".fsc-time-stop")?.addEventListener('click', this.stopTime.bind(this));
-            //Details button click
-            appWindow.querySelector(".fsc-actions-list .fsc-details-button")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-day-details'));
 
             //-----------------------
             // Calendar Drawer
@@ -526,12 +531,36 @@ export default class MainApp extends FormApplication{
      * @param selector The unique class name of the drawer we want to toggle
      */
     public toggleDrawer(selector: string){
-        this.hideDrawers(selector);
+        const alwaysShowNoteList = GameSettings.GetBooleanSettings(SettingNames.AlwaysShowNoteList);
+        const hideExcluded = [selector];
+        //Exclude the note list from being hidden if the note list is not visible
+        if(alwaysShowNoteList && !this.uiElementStates['fsc-note-list']){
+           hideExcluded.push('fsc-note-list');
+        }
+        this.hideDrawers(hideExcluded);
         this.searchOptionsToggle(true);
         const cList = document.querySelector(`#${MainApp.appWindowId} .${selector}`);
         if(cList){
-            const member = selector.toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search' | 'fsc-day-details';
-            this.uiElementStates[member] = animateElement(cList, 500, false);
+            const member = selector.toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search';
+            if(alwaysShowNoteList){
+                //If the note list was clicked, and it is not visible (another drawer is) then show the note list
+                if(member === 'fsc-note-list' && !this.uiElementStates['fsc-note-list']){
+                    this.uiElementStates[member] = animateElement(cList, 500, false);
+                }
+                //If a drawer was clicked that is not the note list, process.
+                else if(member !== 'fsc-note-list'){
+                    this.uiElementStates[member] = animateElement(cList, 500, false);
+                    //If the drawer is now hidden and the note list is not visible, show the note list.
+                    if(!this.uiElementStates[member] && !this.uiElementStates['fsc-note-list']){
+                        const noteList = document.querySelector(`#${MainApp.appWindowId} .fsc-note-list`);
+                        if(noteList){
+                            this.uiElementStates['fsc-note-list'] = animateElement(noteList, 500, false);
+                        }
+                    }
+                }
+            } else {
+                this.uiElementStates[member] = animateElement(cList, 500, false);
+            }
         }
     }
 
@@ -539,11 +568,17 @@ export default class MainApp extends FormApplication{
      * Hides all drawers, except one that contains the excluded class
      * @param exclude The unique class name of the drawer to exclude from being hidden
      */
-    public hideDrawers(exclude: string = ''){
+    public hideDrawers(exclude: string[] = []){
         document.querySelectorAll('.fsc-side-drawer').forEach(e => {
-            if(!e.classList.contains(exclude)){
+            let hide = true;
+            for(let i = 0; i < exclude.length; i++){
+                if(e.classList.contains(exclude[i])){
+                    hide = false;
+                }
+            }
+            if(hide){
                 animateElement(e, 500, true);
-                const member = e.classList[1].toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search' | 'fsc-day-details';
+                const member = e.classList[1].toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search';
                 this.uiElementStates[member] = false;
             }
         });
@@ -895,7 +930,6 @@ export default class MainApp extends FormApplication{
                     sidebarSection.classList.remove('fsc-hide');
                     const y = (<PointerEvent>e).y - appWindow.offsetTop;
                     (<HTMLElement>sidebarSection).style.top = `${y}px`;
-                    (<HTMLElement>sidebarSection).style.left = `calc(100% + 18.75rem)`;
                     const noteStub = NManager.getNoteStub(journalEntry);
                     sidebarSection.setAttribute('data-id', noteID);
                     if(noteStub){

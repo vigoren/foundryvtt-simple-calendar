@@ -8,6 +8,7 @@ There are 3 types of themes for simple calendar:
   - [Classic](#classic)
 - [System Specific](#system-specific)
   - [Das Schwarze Auge/The Dark Eye (5th Edition)](#das-schwarze-augethe-dark-eye-5th-edition)
+  - [Eclipse Phase 2e](#eclipse-phase-2e)
   - [Forbidden Lands](#forbidden-lands)
   - [Starfinder](#starfinder)
   - [Warhammer 40,000 Roleplay: Wrath & Glory](#warhammer-40000-roleplay-wrath--glory)
@@ -51,6 +52,14 @@ This theme is for the [Das Schwarze Auge / The Dark Eye (5th Edition)](https://f
 This theme uses the styling of DSA's dialogs to make Simple Calendar look like it fits within the system.
 
 ![](media://sc-theme-dsa5.png)
+
+### Eclipse Phase 2E
+
+This theme is for the [Eclipse Phase 2E](https://foundryvtt.com/packages/eclipsephase) system.
+
+This theme uses the styling of Eclipse Phases dialogs to make Simple Calendar look like it fits within the system.
+
+![](media://sc-theme-eclipsephase.png)
 
 ### Forbidden Lands
 

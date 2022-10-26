@@ -243,6 +243,25 @@ body.game{
     &.dsa5{
       &.window-app {
         box-shadow: unset;
+        //Compact View
+        &.fsc-compact-view {
+          header.window-header{
+            flex: 0 0 pxToRem(20) !important;
+            background-size: 100% pxToRem(20);
+            a.header-button.close{
+              width: pxToRem(10);
+              margin-top: 0!important;
+              i{
+                width: pxToRem(15);
+                height: pxToRem(15);
+                line-height: pxToRem(8);
+              }
+            }
+          }
+          .fsc-clock{
+            background: unset;
+          }
+        }
         header.window-header{
           background-repeat: no-repeat;
           position: relative;

@@ -1842,6 +1842,8 @@ declare global{
             noteReminderNotification: NoteReminderNotificationType;
             /** The direction the side drawers open from the main application. */
             sideDrawerDirection: string;
+            /** If the note list should always be open. */
+            alwaysShowNoteList: boolean;
         }
 
         /**

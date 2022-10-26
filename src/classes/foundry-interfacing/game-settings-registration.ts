@@ -109,6 +109,16 @@ export default class GameSettingsRegistration{
             default: 'sc-right',
             onChange: SCController.SideDrawerDirectionChange.bind(SCController)
         });
+        (<Game>game).settings.register(ModuleName, SettingNames.AlwaysShowNoteList, {
+            name: "FSC.Configuration.Client.AlwaysShowNoteList.Title",
+            hint: "FSC.Configuration.Client.AlwaysShowNoteList.Description",
+            scope: "client",
+            config: true,
+            type: Boolean,
+            default: false,
+            onChange: SCController.AlwaysShowNoteListChange.bind(SCController)
+        });
+
         // -------------------
         // Configuration Button
         // -------------------

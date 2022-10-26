@@ -22,7 +22,30 @@
   background-color: var(--context-menu-bg-color);
   color: var(--context-menu-color);
 
-  &.fsc-arrow-left{
+  &.sc-left{
+    right: calc(100% + 18.75rem);
+    &::before{
+      left:101%;
+      top: pxToRem(8);
+      clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      width: pxToRem(5);
+      height: pxToRem(10);
+    }
+  }
+
+  &.sc-right{
+    left: calc(100% + 18.75rem);
+    &::before{
+      left: pxToRem(-6);
+      top: pxToRem(8);
+      clip-path: polygon(100% 0%, 100% 100%, 0% 50%);
+      width: pxToRem(5);
+      height: pxToRem(10);
+    }
+  }
+
+  &.sc-down{
+    left: 100%;
     &::before{
       left: pxToRem(-6);
       top: pxToRem(8);

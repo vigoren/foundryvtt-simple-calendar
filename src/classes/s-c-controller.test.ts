@@ -101,6 +101,16 @@ describe('SCController Tests', () => {
         expect(MainApplication.render).toHaveBeenCalledTimes(1);
     });
 
+    test('Always Show Note List Change', () => {
+        jest.spyOn(MainApplication, 'initialize').mockImplementation(() => {});
+        jest.spyOn(MainApplication, 'render').mockImplementation(() => {});
+
+        SCController.AlwaysShowNoteListChange();
+
+        expect(MainApplication.initialize).toHaveBeenCalledTimes(1);
+        expect(MainApplication.render).toHaveBeenCalledTimes(1);
+    });
+
     test('initialize', () => {
         jest.spyOn(SC.sockets, 'initialize').mockImplementation(() => {});
         jest.spyOn(NManager, 'checkNoteTriggers').mockImplementation(() => {});
@@ -170,11 +180,12 @@ describe('SCController Tests', () => {
             rememberCompactPosition: false,
             appPosition: {},
             noteReminderNotification: NoteReminderNotificationType.whisper,
-            sideDrawerDirection: 'sc-right'
+            sideDrawerDirection: 'sc-right',
+            alwaysShowNoteList: false
         });
         expect(CalManager.saveCalendars).toHaveBeenCalledTimes(2);
         expect(GameSettings.SaveStringSetting).toHaveBeenCalledTimes(3);
-        expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(4);
+        expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(5);
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
     });
 

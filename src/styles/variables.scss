@@ -144,7 +144,7 @@ $wfrpCloseButton: '/systems/wfrp4e/ui/buttons/button-close.webp';
 $wfrpConfigureButton: '/systems/wfrp4e/ui/buttons/button-configure-sheet.webp';
 $wfrpShareButton: '/systems/wfrp4e/ui/buttons/button-show-players.webp';
 $wfrpAppBackground: '/systems/wfrp4e/ui/frames/window-app-background-bookshelf.webp';
-$wfrpAppBorder: 'http://localhost:30000/systems/wfrp4e/ui/window-app-dialog-content.webp';
+$wfrpAppBorder: '/systems/wfrp4e/ui/window-app-dialog-content.webp';
 $wfrpParchmentTexture: '/systems/wfrp4e/ui/frames/parchment-texture.webp';
 $wfrpJopurnalSheetContent: '/systems/wfrp4e/ui/frames/window-app-journal-sheet-content.webp';
 $wfrpChatMessageBorderPrivate: '/systems/wfrp4e/ui/frames/chat-message-border-private.webp';
@@ -169,9 +169,11 @@ $flSmallBorder: '/systems/forbidden-lands/assets/journal-art/small-border.webp';
 $dsa5FontFamily: Signika;
 $dsa5AppHeader: '/systems/dsa5/icons/backgrounds/blackhat.webp';
 $dsa5AppFooter: '/systems/dsa5/icons/backgrounds/blackbook.webp';
-$dsa5AppBackground: 'http://localhost:30000/systems/dsa5/icons/backgrounds/journalentry.webp';
+$dsa5AppBackground: '/systems/dsa5/icons/backgrounds/journalentry.webp';
 $dsa5SidebarBackground: '/systems/dsa5/icons/backgrounds/menu.webp';
 $dsa5ActorBorder: '/systems/dsa5/icons/backgrounds/actor.webp';
 
 $starfinderFontFamily: "Exo 2", sans-serif;
 $starfinderHexellence: '/systems/sfrpg/images/hexellence.webp';
+
+$eclipsePhaseBackground: '/systems/eclipsephase/resources/img/background2.jpg';
