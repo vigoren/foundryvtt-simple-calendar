@@ -25,7 +25,7 @@ import {
     DateToTimestamp,
     FormatDateTime,
     MergeDateTimeObject,
-    TimestampToDate
+    TimestampToDateData
 } from "../utilities/date-time";
 import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
@@ -33,6 +33,7 @@ import Renderer from "../renderer";
 import {CalManager, MainApplication, MigrationApplication, NManager, SC} from "../index";
 import {canUser} from "../utilities/permissions";
 import GameSockets from "../foundry-interfacing/game-sockets";
+import {ordinalSuffix} from "../utilities/string";
 
 /**
  * The Date selector class used to create date selector inputs based on the calendar
@@ -430,6 +431,96 @@ export async function configureCalendar(calendarData: PredefinedCalendars | Simp
 }
 
 /**
+ * Gets the current date and time for the current calendar or the passed in calendar.
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used.
+ *
+ * @returns The current date and time. The month and day are index's and as such start at 0 instead of 1. If the passed in calendar can't be found null will be returned.
+ *
+ * @example
+ * ```javascript
+ * // Assuming a Gregorian calendar
+ * SimpleCalendar.api.currentDateTime();
+ * //Returns a DateTime object like this
+ * // {
+ * //     year: 2021,
+ * //     month: 11,
+ * //     day: 24,
+ * //     hour: 12,
+ * //     minute: 13,
+ * //     seconds: 14
+ * // }
+ * ```
+ */
+export function currentDateTime(calendarId: string = 'active'): SimpleCalendar.DateTime | null {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        const monthDayIndex = cal.getMonthAndDayIndex();
+        const time = cal.time.getCurrentTime();
+        return {
+            year: cal.year.numericRepresentation,
+            month: monthDayIndex.month || 0,
+            day: monthDayIndex.day || 0,
+            hour: time.hour,
+            minute: time.minute,
+            seconds: time.seconds
+        };
+    }
+    return null;
+}
+
+/**
+ * Gets the formatted display data for the current date and time of the active calendar, or the calendar with the passed in ID.
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used.
+ *
+ * @returns All the formatted display strings for the current date and time. Or if the passed in calendar can't be found, null.
+ *
+ * @example
+ * ```javascript
+ * // Assuming a Gregorian calendar
+ * SimpleCalendar.api.currentDateTimeDisplay();
+ * //Returns a DateTime object like this
+ * // {
+ * //     date: "June 01, 2021",
+ * //     day: "1",
+ * //     daySuffix: "st",
+ * //     month: "6",
+ * //     monthName: "June",
+ * //     time: "00:00:00",
+ * //     weekday: "Tuesday",
+ * //     year: "2021",
+ * //     yearName: "",
+ * //     yearPostfix: "",
+ * //     yearPrefix: ""
+ * // }
+ * ```
+ */
+export function currentDateTimeDisplay(calendarId: string = 'active'): SimpleCalendar.DateDisplayData | null {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        const monthDayIndex = cal.getMonthAndDayIndex();
+        const month = cal.months[monthDayIndex.month || 0];
+        const day = month.days[monthDayIndex.day || 0];
+        const dayOfTheWeek = cal.dayOfTheWeek(cal.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0)
+        const time = cal.time.getCurrentTime();
+
+        return {
+            date: FormatDateTime({year: cal.year.numericRepresentation, month: monthDayIndex.month || 0, day: monthDayIndex.day || 0, hour: time.hour, minute: time.minute, seconds: time.seconds}, cal.generalSettings.dateFormat.date, cal),
+            day: day.numericRepresentation.toString(),
+            daySuffix: ordinalSuffix(day.numericRepresentation),
+            weekday: cal.weekdays.length > dayOfTheWeek? cal.weekdays[dayOfTheWeek].name : '',
+            monthName: month.name,
+            month: month.numericRepresentation.toString(),
+            year: cal.year.numericRepresentation.toString(),
+            yearName: cal.year.getYearName(cal.year.numericRepresentation),
+            yearPrefix: cal.year.prefix,
+            yearPostfix: cal.year.postfix,
+            time: FormatDateTime({year: cal.year.numericRepresentation, month: monthDayIndex.month || 0, day: monthDayIndex.day || 0, hour: time.hour, minute: time.minute, seconds: time.seconds}, cal.generalSettings.dateFormat.time, cal)
+        };
+    }
+    return null;
+}
+
+/**
  * Converts the passed in date to a timestamp.
  * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that should be converted to a timestamp. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
  * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a timestamp. If not provided the current active calendar will be used.
@@ -482,7 +573,7 @@ export function dateToTimestamp(date: SimpleCalendar.DateTimeParts, calendarId: 
  * // Returns {date: 'December 31, 2021', time: '23:59:59'}
  *
  * SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, minute: 313, seconds: 314},"DD/MM/YYYY HH:mm:ss A")
- * // Returns ""
+ * // Returns '31/12/2021 23:59:59 PM'
  * ```
  */
 export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: string = '', calendarId: string = 'active'): string | {date: string, time: string} {
@@ -520,6 +611,50 @@ export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: strin
         }
     } else {
         Logger.error(`SimpleCalendar.api.formatDateTime - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return '';
+    }
+}
+
+/**
+ * Converts the passed in timestamp into formatted date and time strings that match the configured date and time formats or the passed in format string.
+ *
+ * @param timestamp The timestamp (in seconds) of the date to format.
+ * @param format Optional format string to return custom formats for the passed in date and time.
+ * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a formatted string. If not provided the current active calendar will be used.
+ *
+ * @returns If no format string is provided an object with the date and time formatted strings, as set in the configuration, will be returned. If a format is provided then a formatted string will be returned.
+ *
+ * @examples
+ * ```javascript
+ * // Assuming that the default date and time formats are in place
+ * // Date: Full Month Name Day, Year
+ * // Time: 24Hour:Minute:Second
+ *
+ * SimpleCalendar.api.formatTimestamp(1640434394);
+ * // Returns {date: 'December 25, 2021', time: '12:13:14'}
+ *
+ * SimpleCalendar.api.formatTimestamp(1640434394,"DD/MM/YYYY HH:mm:ss A");
+ * // Returns '25/12/2021 12:13:14 PM'
+ * ```
+ */
+export function formatTimestamp(timestamp: number, format: string = '', calendarId: string = 'active'): string | {date: string, time: string} {
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(activeCalendar){
+        // If this is a Pathfinder 2E game, add the world creation seconds
+        if(PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync){
+            timestamp += PF2E.getWorldCreateSeconds(activeCalendar);
+        }
+        const date = activeCalendar.secondsToDate(timestamp);
+        if(format){
+            return FormatDateTime(date, format, activeCalendar);
+        } else {
+            return {
+                date: FormatDateTime(date, activeCalendar.generalSettings.dateFormat.date, activeCalendar),
+                time: FormatDateTime(date, activeCalendar.generalSettings.dateFormat.time, activeCalendar)
+            };
+        }
+    } else {
+        Logger.error(`SimpleCalendar.api.formatTimestamp - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return '';
     }
 }
@@ -1701,7 +1836,7 @@ export function timestampPlusInterval(currentSeconds: number, interval: SimpleCa
 export function timestampToDate(seconds: number, calendarId: string = 'active'): SimpleCalendar.DateData | null{
     const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(cal){
-        return TimestampToDate(seconds, cal);
+        return TimestampToDateData(seconds, cal);
     } else {
         Logger.error(`SimpleCalendar.api.stopClock - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return null;

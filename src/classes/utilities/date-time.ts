@@ -224,7 +224,7 @@ export function IsDayBetweenDates(calendar: Calendar, checkDate: SimpleCalendar.
  * @param seconds The timestamp to be converted
  * @param calendar The calendar to use to do the conversion
  */
-export function TimestampToDate(seconds: number, calendar: Calendar): SimpleCalendar.DateData{
+export function TimestampToDateData(seconds: number, calendar: Calendar): SimpleCalendar.DateData{
     const result: SimpleCalendar.DateData = {
         year: 0,
         month: 0,

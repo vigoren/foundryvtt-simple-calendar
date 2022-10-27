@@ -1,5 +1,11 @@
 # Change Log
 
+### API Changes
+
+- Added a new function `SimpleCalendar.api.currentDateTime()` that returns a [DateTime](https://simplecalendar.info/types/SimpleCalendar.DateTime.html) object with the current date and time of the active calendar, or calendar with the passed in ID.
+- Added a new function `SimpleCalendar.api.currentDateTimeDisplay()` that returns a [DateDisplayData](https://simplecalendar.info/interfaces/SimpleCalendar.DateDisplayData.html) object for the current date and time of the active calendar, or the calendar with the passed in ID.
+- Added a new function `SimpleCalendar.api.formatTimestamp()` that functions just like the [formatDateTime](https://simplecalendar.info/functions/SimpleCalendar.api.formatDateTime.html) function but instead takes in a timestamp instead of a [DateTimeParts](https://simplecalendar.info/types/SimpleCalendar.DateTimeParts.html) object.
+
 ## 2.1.50 - Quality of Life Improvements, Bug Fixes and a New Theme
 
 ![](https://img.shields.io/badge/release%20date-October%2024%2C%202022-blue)

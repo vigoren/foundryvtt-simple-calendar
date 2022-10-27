@@ -37,6 +37,7 @@ import NoteStub from "../notes/note-stub";
 import Mock = jest.Mock;
 import MigrationApp from "../applications/migration-app";
 import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
+import {ordinalSuffix} from "../utilities/string";
 
 fetchMock.enableMocks();
 describe('API Class Tests', () => {
@@ -179,6 +180,49 @@ describe('API Class Tests', () => {
         expect(CalManager.saveCalendars).toHaveBeenCalledTimes(2);
     });
 
+    test('Current Date Time', () => {
+        const d = new Date();
+        expect(API.currentDateTime()).toBeNull();
+        expect(API.currentDateTime('')).toEqual({year: d.getFullYear(), month: d.getMonth(), day: d.getDate() - 1, hour: 0, minute: 0, seconds: 0});
+
+        jest.spyOn(tCal, 'getMonthAndDayIndex').mockReturnValue({});
+        expect(API.currentDateTime('')).toEqual({year: d.getFullYear(), month: 0, day: 0, hour: 0, minute: 0, seconds: 0});
+    });
+
+    test('Current Date Time Display', () => {
+        const d = new Date();
+        expect(API.currentDateTimeDisplay()).toBeNull();
+        expect(API.currentDateTimeDisplay('')).toEqual({
+            date: `${tCal.months[d.getMonth()].name} ${d.getDate()}, ${d.getFullYear()}`,
+            day: d.getDate().toString(),
+            daySuffix: ordinalSuffix(d.getDay()),
+            weekday: tCal.weekdays[d.getDay()].name,
+            monthName: tCal.months[d.getMonth()].name,
+            month: (d.getMonth() + 1).toString(),
+            year: d.getFullYear().toString(),
+            yearName: '',
+            yearPrefix: '',
+            yearPostfix: '',
+            time: '00:00:00'
+        });
+
+        tCal.weekdays = [];
+        jest.spyOn(tCal, 'getMonthAndDayIndex').mockReturnValue({});
+        expect(API.currentDateTimeDisplay('')).toEqual({
+            date: `January 01, ${d.getFullYear()}`,
+            day: "1",
+            daySuffix: "",
+            weekday: '',
+            monthName: 'January',
+            month: '1',
+            year: d.getFullYear().toString(),
+            yearName: '',
+            yearPrefix: '',
+            yearPostfix: '',
+            time: '00:00:00'
+        });
+    });
+
     test('Date to Timestamp', () => {
         expect(API.dateToTimestamp({})).toBe(0);
         expect(console.error).toHaveBeenCalledTimes(1);
@@ -198,6 +242,20 @@ describe('API Class Tests', () => {
         expect(API.formatDateTime({year: 2021, month: 111, day: 124, hour: 110, minute: 120, seconds: 130})).toStrictEqual({date: 'December 31, 2021', time: '23:59:59'});
 
         expect(API.formatDateTime({year: 2021, month: 111, day: 124, hour: 110, minute: 120, seconds: 130}, 'DD/MM/YY HH:mm:ss', '')).toStrictEqual("31/12/21 23:59:59");
+    });
+
+    test('Format Timestamp', () => {
+        expect(API.formatTimestamp(0)).toStrictEqual('');
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        expect(API.formatTimestamp(0)).toStrictEqual({"date": "January 01, 1970", "time": "00:00:00"});
+        expect(API.formatTimestamp(0, 'DD/MM/YY HH:mm:ss', '')).toStrictEqual("01/01/70 00:00:00");
+
+        (<Game>game).system.id = 'pf2e';
+        tCal.generalSettings.pf2eSync = true;
+        expect(API.formatTimestamp(0)).toStrictEqual({"date": "January 01, 1970", "time": "00:00:00"});
+        (<Game>game).system.id = '';
+        tCal.generalSettings.pf2eSync = false;
     });
 
     test('Get All Calendars', () => {
@@ -469,9 +527,9 @@ describe('API Class Tests', () => {
         expect(console.error).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        jest.spyOn(DateUtilities,'TimestampToDate').mockImplementation(() => {return {};});
+        jest.spyOn(DateUtilities,'TimestampToDateData').mockImplementation(() => {return {};});
         expect(API.timestampToDate( 0, '')).toEqual({});
-        expect(DateUtilities.TimestampToDate).toHaveBeenCalledTimes(1);
+        expect(DateUtilities.TimestampToDateData).toHaveBeenCalledTimes(1);
     });
 
 
