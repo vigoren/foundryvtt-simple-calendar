@@ -146,15 +146,19 @@ export class GameSettings {
      * Display a notification using the game UI
      * @param {string} message The message to display
      * @param {string} type The type of notification to show
+     * @param permanent If the message should stay until dismissed.
      */
-    static UiNotification(message: string, type: string = 'info'){
+    static UiNotification(message: string, type: string = 'info', permanent: boolean = false){
         if(ui.notifications){
             if(type === 'info'){
-                ui.notifications.info(message);
+                // @ts-ignore
+                ui.notifications.info(message, {permanent: permanent, console: false, localize: true});
             } else if(type === 'warn'){
-                ui.notifications.warn(message);
+                // @ts-ignore
+                ui.notifications.warn(message, {permanent: permanent, console: false, localize: true});
             } else if(type === 'error'){
-                ui.notifications.error(message);
+                // @ts-ignore
+                ui.notifications.error(message, {permanent: permanent, console: false, localize: true});
             }
         } else {
             Logger.error('The UI class is not initialized.');

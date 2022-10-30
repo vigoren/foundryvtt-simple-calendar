@@ -38,6 +38,8 @@ import Mock = jest.Mock;
 import MigrationApp from "../applications/migration-app";
 import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
 import {ordinalSuffix} from "../utilities/string";
+import {GameSettings} from "../foundry-interfacing/game-settings";
+import * as VisualUtilities from "../utilities/visual";
 
 fetchMock.enableMocks();
 describe('API Class Tests', () => {
@@ -282,6 +284,10 @@ describe('API Class Tests', () => {
         expect(API.getAllSeasons('').length).toBeGreaterThan(0);
     });
 
+    test('Get All Themes', () => {
+        expect(Object.keys(API.getAllThemes()).length).toBe(3);
+    });
+
     test('Get All Weekdays', () => {
         expect(API.getAllWeekdays().length).toBe(0);
         expect(console.error).toHaveBeenCalledTimes(1);
@@ -323,6 +329,10 @@ describe('API Class Tests', () => {
 
         tCal.months[0].current = true;
         expect(API.getCurrentSeason('')).not.toBeNull();
+    });
+
+    test('Get Current Theme', () => {
+        expect(API.getCurrentTheme()).toBeUndefined();
     });
 
     test('Get Current Weekday', () => {
@@ -437,6 +447,17 @@ describe('API Class Tests', () => {
         jest.spyOn(tCal,'setDateTime').mockImplementation(() => {return true;});
         expect(API.setDate({}, '')).toEqual(true);
         expect(tCal.setDateTime).toHaveBeenCalledTimes(1);
+    });
+
+    test('Set Theme', async () => {
+        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
+        jest.spyOn(VisualUtilities, 'GetThemeName').mockReturnValueOnce('dark').mockReturnValueOnce('light');
+        expect(await API.setTheme('light')).toBe(true);
+        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+        expect(await API.setTheme('light')).toBe(true);
+        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+        expect(await API.setTheme('asd')).toBe(false);
+        expect(console.error).toHaveBeenCalledTimes(1);
     });
 
     test('Show Calendar', () => {

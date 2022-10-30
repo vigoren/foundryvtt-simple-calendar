@@ -2,9 +2,12 @@
 
 ### API Changes
 
-- Added a new function `SimpleCalendar.api.currentDateTime()` that returns a [DateTime](https://simplecalendar.info/types/SimpleCalendar.DateTime.html) object with the current date and time of the active calendar, or calendar with the passed in ID.
-- Added a new function `SimpleCalendar.api.currentDateTimeDisplay()` that returns a [DateDisplayData](https://simplecalendar.info/interfaces/SimpleCalendar.DateDisplayData.html) object for the current date and time of the active calendar, or the calendar with the passed in ID.
-- Added a new function `SimpleCalendar.api.formatTimestamp()` that functions just like the [formatDateTime](https://simplecalendar.info/functions/SimpleCalendar.api.formatDateTime.html) function but instead takes in a timestamp instead of a [DateTimeParts](https://simplecalendar.info/types/SimpleCalendar.DateTimeParts.html) object.
+- Added a new function [`SimpleCalendar.api.currentDateTime()`](https://simplecalendar.info/functions/SimpleCalendar.api.currentDateTime.html) that returns a [DateTime](https://simplecalendar.info/types/SimpleCalendar.DateTime.html) object with the current date and time of the active calendar, or calendar with the passed in ID.
+- Added a new function [`SimpleCalendar.api.currentDateTimeDisplay()`](https://simplecalendar.info/functions/SimpleCalendar.api.currentDateTimeDisplay.html) that returns a [DateDisplayData](https://simplecalendar.info/interfaces/SimpleCalendar.DateDisplayData.html) object for the current date and time of the active calendar, or the calendar with the passed in ID.
+- Added a new function [`SimpleCalendar.api.formatTimestamp()`](https://simplecalendar.info/functions/SimpleCalendar.api.formatTimestamp.html) that functions just like the [formatDateTime](https://simplecalendar.info/functions/SimpleCalendar.api.formatDateTime.html) function but instead takes in a timestamp instead of a [DateTimeParts](https://simplecalendar.info/types/SimpleCalendar.DateTimeParts.html) object.
+- Added a new function [`SimpleCalendar.api.getAllThemes()`](https://simplecalendar.info/functions/SimpleCalendar.api.getAllThemes.html) that returns a list of all available themes for players to choose from.
+- Added a new function [`SimpleCalendar.api.getCurrentTheme()`](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentTheme.html) that returns the ID of the theme being used by the player.
+- Added a new function [`SimpleCalendar.api.setTheme()`](https://simplecalendar.info/functions/SimpleCalendar.api.setTheme.html) that takes in a theme ID and will set Simple Calendars theme to that ID for the player. An information notification will be shown to the player if the theme was changed to let them know it has been changed programmatically.
 
 ## 2.1.50 - Quality of Life Improvements, Bug Fixes and a New Theme
 

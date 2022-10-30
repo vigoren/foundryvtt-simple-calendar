@@ -14,7 +14,7 @@ import {
     MoonYearResetOptions,
     NoteRepeat,
     PredefinedCalendars,
-    PresetTimeOfDay,
+    PresetTimeOfDay, SettingNames,
     SocketTypes,
     TimeKeeperStatus,
     YearNamingRules
@@ -34,6 +34,7 @@ import {CalManager, MainApplication, MigrationApplication, NManager, SC} from ".
 import {canUser} from "../utilities/permissions";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import {ordinalSuffix} from "../utilities/string";
+import {GetThemeList, GetThemeName} from "../utilities/visual";
 
 /**
  * The Date selector class used to create date selector inputs based on the calendar
@@ -1030,6 +1031,29 @@ export function getAllSeasons(calendarId: string = 'active'): SimpleCalendar.Sea
 }
 
 /**
+ * Gets a list of all available themes a user can choose from. System specific themes that do not match the current system will be excluded. Module specific themes whos modules are not installed and enabled will be excluded.
+ *
+ * @returns A object where the properties represent theme IDs and the values are the localized strings of the theme name.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getAllThemes();
+ * // {
+ * //    "dark": "Dark",
+ * //    "light": "Light",
+ * //    "classic": "Classic"
+ * // }
+ * ```
+ */
+export function getAllThemes(): {[themeId: string]: string}{
+    const themes = GetThemeList();
+    for(let key in themes){
+        themes[key] = GameSettings.Localize(themes[key]);
+    }
+    return themes;
+}
+
+/**
  * Gets the details about all the weekdays for the specified calendar.
  *
  * @param calendarId Optional parameter to specify the ID of the calendar to get the list of weekdays from. If not provided the current active calendar will be used.
@@ -1224,6 +1248,21 @@ export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.
         Logger.error(`SimpleCalendar.api.getCurrentSeason - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
     return {id:'', name: '', description: '', icon: Icons.None, color: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0};
+}
+
+/**
+ * Gets the ID of the theme being used by the player.
+ *
+ * @returns A string ID of the theme being used.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getCurrentTheme();
+ * // Returns "dark"
+ * ```
+ */
+export function getCurrentTheme(): string{
+    return GetThemeName();
 }
 
 /**
@@ -1584,6 +1623,44 @@ export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string =
         return activeCalendar.setDateTime(date, {showWarning: true});
     } else {
         Logger.error(`SimpleCalendar.api.setDate - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+    }
+    return false;
+}
+
+/**
+ * Will set the players Simple Calendar theme that matches the passed in theme ID.
+ *
+ * An information notification will be shown to the player if the theme was changed to let them know it has been changed programmatically.
+ *
+ * @param themeId The ID of the theme to set. The ID's of all available themes can be found using {@link SimpleCalendar.api.getAllThemes}.
+ *
+ * @returns A promise that resolves to True if the theme is valid and was applied successfully, or it was the theme already being used. The promise will resolve to False if a theme with that ID could not be found.
+ *
+ * @example
+ * ```javascript
+ *
+ * await SimpleCalendar.api.setTheme('light');
+ * //Will return true and change Simple Calendar's theme to the light theme.
+ *
+ * await SimpleCalendar.api.setTheme('light');
+ * //Will return true and will not change the theme as it was already set to light.
+ *
+ * await SimpleCalendar.api.setTheme('themeDoesNotExist');
+ * //Will return false and log an error to the console.
+ * ```
+ */
+export async function setTheme(themeId: string): Promise<boolean>{
+    themeId = themeId.toLowerCase();
+    const availableThemes = GetThemeList();
+    if(availableThemes[themeId] !== undefined){
+        //If the passed in theme is the same as the current theme being used don't apply the changes
+        if(themeId !== GetThemeName()){
+            await GameSettings.SaveStringSetting(`${(<Game>game).world.id}.${SettingNames.Theme}`, themeId, false);
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Info.ThemeChange').replace('{THEME}', GameSettings.Localize(availableThemes[themeId])), 'info', true);
+        }
+        return true;
+    } else {
+        console.error(`SimpleCalendar.api.setTheme - Unable to find a theme with the ID of "${themeId}"`);
     }
     return false;
 }
