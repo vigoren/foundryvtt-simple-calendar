@@ -464,5 +464,9 @@
 	"FSC.Notes.Editor.ProseMirror": "Text (ProseMirror)",
 	"FSC.Notes.Editor.Markdown": "Text (Markdown)",
 	"FSC.Notes.Permissions.AllPlayers": "Alle Spieler",
-	"FSC.Notes.ReminderCancel": "Nicht erneut erinnern"
+	"FSC.Notes.ReminderCancel": "Nicht erneut erinnern",
+	"FSC.Left": "Links",
+	"FSC.Down": "Runter",
+	"FSC.Right": "Rechts",
+	"FSC.Configuration.Client.RememberCompactPosition.Title": "Kompaktdarstellungsposition merken"
 }
