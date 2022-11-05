@@ -456,8 +456,10 @@ describe('Calendar Class Tests', () => {
         expect(tCal.months[(d.getMonth() + 1) % tCal.months.length].visible).toBe(true);
         expect(tCal.year.visibleYear).toBe(d.getFullYear() + 1);
 
+        tCal.resetMonths('visible');
+        tCal.months[10].visible = true;
         tCal.changeMonth(-1 * tCal.months.length);
-        expect(tCal.months[(d.getMonth() + 1) % tCal.months.length].visible).toBe(true);
+        expect(tCal.months[10].visible).toBe(true);
         expect(tCal.year.visibleYear).toBe(d.getFullYear());
     });
 

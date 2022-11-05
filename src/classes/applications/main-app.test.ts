@@ -166,12 +166,12 @@ describe('Main App Class Tests', () => {
 
         MainApp.setWidthHeight(ma);
         //@ts-ignore
-        expect(ma.setPosition).toHaveBeenCalledTimes(2);
+        expect(ma.setPosition).toHaveBeenCalledTimes(1);
 
         jest.spyOn(calendarWeek, 'offsetWidth', 'get').mockReturnValue(300);
         MainApp.setWidthHeight(ma);
         //@ts-ignore
-        expect(ma.setPosition).toHaveBeenCalledTimes(4);
+        expect(ma.setPosition).toHaveBeenCalledTimes(2);
 
         calendarSections.removeChild(calendarDays);
         jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
@@ -179,12 +179,12 @@ describe('Main App Class Tests', () => {
 
         MainApp.setWidthHeight(ma);
         //@ts-ignore
-        expect(ma.setPosition).toHaveBeenCalledTimes(6);
+        expect(ma.setPosition).toHaveBeenCalledTimes(4);
 
         ma.uiElementStates.compactView = true;
         MainApp.setWidthHeight(ma);
         //@ts-ignore
-        expect(ma.setPosition).toHaveBeenCalledTimes(8);
+        expect(ma.setPosition).toHaveBeenCalledTimes(6);
     });
 
     test('Ensure Current Date Is Visible', () => {

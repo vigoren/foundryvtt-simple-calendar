@@ -37,7 +37,7 @@ import NoteStub from "../notes/note-stub";
 import Mock = jest.Mock;
 import MigrationApp from "../applications/migration-app";
 import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
-import {ordinalSuffix} from "../utilities/string";
+import {ordinalSuffix, PadNumber} from "../utilities/string";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import * as VisualUtilities from "../utilities/visual";
 
@@ -195,7 +195,7 @@ describe('API Class Tests', () => {
         const d = new Date();
         expect(API.currentDateTimeDisplay()).toBeNull();
         expect(API.currentDateTimeDisplay('')).toEqual({
-            date: `${tCal.months[d.getMonth()].name} ${d.getDate()}, ${d.getFullYear()}`,
+            date: `${tCal.months[d.getMonth()].name} ${PadNumber(d.getDate())}, ${d.getFullYear()}`,
             day: d.getDate().toString(),
             daySuffix: ordinalSuffix(d.getDay()),
             weekday: tCal.weekdays[d.getDay()].name,
