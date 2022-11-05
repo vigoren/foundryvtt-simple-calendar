@@ -344,9 +344,13 @@ export default class MainApp extends FormApplication{
             //depending on which view we are entering.
             if(ma.uiElementStates.compactView){
                 ma.setPosition({height: height, width: width});
-                ma.setPosition(options);
+                if(GameSettings.GetBooleanSettings(SettingNames.RememberCompactPosition)){
+                    ma.setPosition(options);
+                }
             } else {
-                ma.setPosition(options);
+                if(GameSettings.GetBooleanSettings(SettingNames.RememberPosition)){
+                    ma.setPosition(options);
+                }
                 ma.setPosition({height: height, width: width});
             }
         }
@@ -676,7 +680,7 @@ export default class MainApp extends FormApplication{
         this.visibleCalendar.changeMonth(clickType === CalendarClickEvents.previous? -1 : 1);
         MainApp.setWidthHeight(this);
     }
-    
+
     /**
      * Click event when a users clicks on a day
      * @param options The renderer options for the calendar who's day was clicked

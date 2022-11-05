@@ -1,5 +1,37 @@
 # Change Log
 
+## 2.1.58 - Bug Fixes and API Changes
+
+![](https://img.shields.io/badge/release%20date-November%2004%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.58/module.zip)
+
+### Bug Fixes
+
+- Fixed an issue where if the `Remember Position` option was enabled and the `Remember Compact Position` option was disabled the compact view would snap back to the full view's position when the time was changed.
+
+### Predefined Calendar
+
+- Added a predefined calendar for the Ambrian Calendar from the Symbaroum system (Thanks [bithir](https://github.com/bithir)!)
+
+### API Changes
+
+- Added a new function [`SimpleCalendar.api.currentDateTime()`](https://simplecalendar.info/functions/SimpleCalendar.api.currentDateTime.html) that returns a [DateTime](https://simplecalendar.info/types/SimpleCalendar.DateTime.html) object with the current date and time of the active calendar, or calendar with the passed in ID.
+- Added a new function [`SimpleCalendar.api.currentDateTimeDisplay()`](https://simplecalendar.info/functions/SimpleCalendar.api.currentDateTimeDisplay.html) that returns a [DateDisplayData](https://simplecalendar.info/interfaces/SimpleCalendar.DateDisplayData.html) object for the current date and time of the active calendar, or the calendar with the passed in ID.
+- Added a new function [`SimpleCalendar.api.formatTimestamp()`](https://simplecalendar.info/functions/SimpleCalendar.api.formatTimestamp.html) that functions just like the [formatDateTime](https://simplecalendar.info/functions/SimpleCalendar.api.formatDateTime.html) function but instead takes in a timestamp instead of a [DateTimeParts](https://simplecalendar.info/types/SimpleCalendar.DateTimeParts.html) object.
+- Added a new function [`SimpleCalendar.api.getAllThemes()`](https://simplecalendar.info/functions/SimpleCalendar.api.getAllThemes.html) that returns a list of all available themes for players to choose from.
+- Added a new function [`SimpleCalendar.api.getCurrentTheme()`](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentTheme.html) that returns the ID of the theme being used by the player.
+- Added a new function [`SimpleCalendar.api.setTheme()`](https://simplecalendar.info/functions/SimpleCalendar.api.setTheme.html) that takes in a theme ID and will set Simple Calendars theme to that ID for the player. An information notification will be shown to the player if the theme was changed to let them know it has been changed programmatically.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [eunaumtenhoid](https://weblate.foundryvtt-hub.com/user/eunaumtenhoid/) (Portuguese (Brazil))
+- [ricdark](https://weblate.foundryvtt-hub.com/user/ricdark/) (German)
+
+<hr/>
+
 ## 2.1.50 - Quality of Life Improvements, Bug Fixes and a New Theme
 
 ![](https://img.shields.io/badge/release%20date-October%2024%2C%202022-blue)

@@ -1,5 +1,5 @@
 import {SimpleCalendarHooks, TimeKeeperStatus} from "../../constants";
-import {TimestampToDate} from "../utilities/date-time";
+import {TimestampToDateData} from "../utilities/date-time";
 import type Calendar from "../calendar";
 import {SC} from "../index";
 
@@ -16,7 +16,7 @@ export class Hook{
         let data: any = {};
 
         if(hook === SimpleCalendarHooks.DateTimeChange){
-            data['date'] = TimestampToDate(calendar.toSeconds(), calendar);
+            data['date'] = TimestampToDateData(calendar.toSeconds(), calendar);
             data['diff'] = param;
             data['moons'] = [];
 

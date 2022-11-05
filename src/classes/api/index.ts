@@ -14,7 +14,7 @@ import {
     MoonYearResetOptions,
     NoteRepeat,
     PredefinedCalendars,
-    PresetTimeOfDay,
+    PresetTimeOfDay, SettingNames,
     SocketTypes,
     TimeKeeperStatus,
     YearNamingRules
@@ -25,7 +25,7 @@ import {
     DateToTimestamp,
     FormatDateTime,
     MergeDateTimeObject,
-    TimestampToDate
+    TimestampToDateData
 } from "../utilities/date-time";
 import DateSelectorManager from "../date-selector/date-selector-manager"
 import PredefinedCalendar from "../configuration/predefined-calendar";
@@ -33,6 +33,8 @@ import Renderer from "../renderer";
 import {CalManager, MainApplication, MigrationApplication, NManager, SC} from "../index";
 import {canUser} from "../utilities/permissions";
 import GameSockets from "../foundry-interfacing/game-sockets";
+import {ordinalSuffix} from "../utilities/string";
+import {GetThemeList, GetThemeName} from "../utilities/visual";
 
 /**
  * The Date selector class used to create date selector inputs based on the calendar
@@ -430,6 +432,96 @@ export async function configureCalendar(calendarData: PredefinedCalendars | Simp
 }
 
 /**
+ * Gets the current date and time for the current calendar or the passed in calendar.
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used.
+ *
+ * @returns The current date and time. The month and day are index's and as such start at 0 instead of 1. If the passed in calendar can't be found null will be returned.
+ *
+ * @example
+ * ```javascript
+ * // Assuming a Gregorian calendar
+ * SimpleCalendar.api.currentDateTime();
+ * //Returns a DateTime object like this
+ * // {
+ * //     year: 2021,
+ * //     month: 11,
+ * //     day: 24,
+ * //     hour: 12,
+ * //     minute: 13,
+ * //     seconds: 14
+ * // }
+ * ```
+ */
+export function currentDateTime(calendarId: string = 'active'): SimpleCalendar.DateTime | null {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        const monthDayIndex = cal.getMonthAndDayIndex();
+        const time = cal.time.getCurrentTime();
+        return {
+            year: cal.year.numericRepresentation,
+            month: monthDayIndex.month || 0,
+            day: monthDayIndex.day || 0,
+            hour: time.hour,
+            minute: time.minute,
+            seconds: time.seconds
+        };
+    }
+    return null;
+}
+
+/**
+ * Gets the formatted display data for the current date and time of the active calendar, or the calendar with the passed in ID.
+ * @param calendarId Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used.
+ *
+ * @returns All the formatted display strings for the current date and time. Or if the passed in calendar can't be found, null.
+ *
+ * @example
+ * ```javascript
+ * // Assuming a Gregorian calendar
+ * SimpleCalendar.api.currentDateTimeDisplay();
+ * //Returns a DateTime object like this
+ * // {
+ * //     date: "June 01, 2021",
+ * //     day: "1",
+ * //     daySuffix: "st",
+ * //     month: "6",
+ * //     monthName: "June",
+ * //     time: "00:00:00",
+ * //     weekday: "Tuesday",
+ * //     year: "2021",
+ * //     yearName: "",
+ * //     yearPostfix: "",
+ * //     yearPrefix: ""
+ * // }
+ * ```
+ */
+export function currentDateTimeDisplay(calendarId: string = 'active'): SimpleCalendar.DateDisplayData | null {
+    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(cal){
+        const monthDayIndex = cal.getMonthAndDayIndex();
+        const month = cal.months[monthDayIndex.month || 0];
+        const day = month.days[monthDayIndex.day || 0];
+        const dayOfTheWeek = cal.dayOfTheWeek(cal.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0)
+        const time = cal.time.getCurrentTime();
+
+        return {
+            date: FormatDateTime({year: cal.year.numericRepresentation, month: monthDayIndex.month || 0, day: monthDayIndex.day || 0, hour: time.hour, minute: time.minute, seconds: time.seconds}, cal.generalSettings.dateFormat.date, cal),
+            day: day.numericRepresentation.toString(),
+            daySuffix: ordinalSuffix(day.numericRepresentation),
+            weekday: cal.weekdays.length > dayOfTheWeek? cal.weekdays[dayOfTheWeek].name : '',
+            monthName: month.name,
+            month: month.numericRepresentation.toString(),
+            year: cal.year.numericRepresentation.toString(),
+            yearName: cal.year.getYearName(cal.year.numericRepresentation),
+            yearPrefix: cal.year.prefix,
+            yearPostfix: cal.year.postfix,
+            time: FormatDateTime({year: cal.year.numericRepresentation, month: monthDayIndex.month || 0, day: monthDayIndex.day || 0, hour: time.hour, minute: time.minute, seconds: time.seconds}, cal.generalSettings.dateFormat.time, cal)
+        };
+    }
+    return null;
+}
+
+/**
  * Converts the passed in date to a timestamp.
  * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that should be converted to a timestamp. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
  * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a timestamp. If not provided the current active calendar will be used.
@@ -482,7 +574,7 @@ export function dateToTimestamp(date: SimpleCalendar.DateTimeParts, calendarId: 
  * // Returns {date: 'December 31, 2021', time: '23:59:59'}
  *
  * SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, minute: 313, seconds: 314},"DD/MM/YYYY HH:mm:ss A")
- * // Returns ""
+ * // Returns '31/12/2021 23:59:59 PM'
  * ```
  */
 export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: string = '', calendarId: string = 'active'): string | {date: string, time: string} {
@@ -520,6 +612,50 @@ export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: strin
         }
     } else {
         Logger.error(`SimpleCalendar.api.formatDateTime - Unable to find a calendar with the passed in ID of "${calendarId}"`);
+        return '';
+    }
+}
+
+/**
+ * Converts the passed in timestamp into formatted date and time strings that match the configured date and time formats or the passed in format string.
+ *
+ * @param timestamp The timestamp (in seconds) of the date to format.
+ * @param format Optional format string to return custom formats for the passed in date and time.
+ * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a formatted string. If not provided the current active calendar will be used.
+ *
+ * @returns If no format string is provided an object with the date and time formatted strings, as set in the configuration, will be returned. If a format is provided then a formatted string will be returned.
+ *
+ * @examples
+ * ```javascript
+ * // Assuming that the default date and time formats are in place
+ * // Date: Full Month Name Day, Year
+ * // Time: 24Hour:Minute:Second
+ *
+ * SimpleCalendar.api.formatTimestamp(1640434394);
+ * // Returns {date: 'December 25, 2021', time: '12:13:14'}
+ *
+ * SimpleCalendar.api.formatTimestamp(1640434394,"DD/MM/YYYY HH:mm:ss A");
+ * // Returns '25/12/2021 12:13:14 PM'
+ * ```
+ */
+export function formatTimestamp(timestamp: number, format: string = '', calendarId: string = 'active'): string | {date: string, time: string} {
+    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if(activeCalendar){
+        // If this is a Pathfinder 2E game, add the world creation seconds
+        if(PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync){
+            timestamp += PF2E.getWorldCreateSeconds(activeCalendar);
+        }
+        const date = activeCalendar.secondsToDate(timestamp);
+        if(format){
+            return FormatDateTime(date, format, activeCalendar);
+        } else {
+            return {
+                date: FormatDateTime(date, activeCalendar.generalSettings.dateFormat.date, activeCalendar),
+                time: FormatDateTime(date, activeCalendar.generalSettings.dateFormat.time, activeCalendar)
+            };
+        }
+    } else {
+        Logger.error(`SimpleCalendar.api.formatTimestamp - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return '';
     }
 }
@@ -895,6 +1031,29 @@ export function getAllSeasons(calendarId: string = 'active'): SimpleCalendar.Sea
 }
 
 /**
+ * Gets a list of all available themes a user can choose from. System specific themes that do not match the current system will be excluded. Module specific themes whos modules are not installed and enabled will be excluded.
+ *
+ * @returns A object where the properties represent theme IDs and the values are the localized strings of the theme name.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getAllThemes();
+ * // {
+ * //    "dark": "Dark",
+ * //    "light": "Light",
+ * //    "classic": "Classic"
+ * // }
+ * ```
+ */
+export function getAllThemes(): {[themeId: string]: string}{
+    const themes = GetThemeList();
+    for(let key in themes){
+        themes[key] = GameSettings.Localize(themes[key]);
+    }
+    return themes;
+}
+
+/**
  * Gets the details about all the weekdays for the specified calendar.
  *
  * @param calendarId Optional parameter to specify the ID of the calendar to get the list of weekdays from. If not provided the current active calendar will be used.
@@ -1089,6 +1248,21 @@ export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.
         Logger.error(`SimpleCalendar.api.getCurrentSeason - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
     return {id:'', name: '', description: '', icon: Icons.None, color: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0};
+}
+
+/**
+ * Gets the ID of the theme being used by the player.
+ *
+ * @returns A string ID of the theme being used.
+ *
+ * @example
+ * ```javascript
+ * SimpleCalendar.api.getCurrentTheme();
+ * // Returns "dark"
+ * ```
+ */
+export function getCurrentTheme(): string{
+    return GetThemeName();
 }
 
 /**
@@ -1454,6 +1628,44 @@ export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string =
 }
 
 /**
+ * Will set the players Simple Calendar theme that matches the passed in theme ID.
+ *
+ * An information notification will be shown to the player if the theme was changed to let them know it has been changed programmatically.
+ *
+ * @param themeId The ID of the theme to set. The ID's of all available themes can be found using {@link SimpleCalendar.api.getAllThemes}.
+ *
+ * @returns A promise that resolves to True if the theme is valid and was applied successfully, or it was the theme already being used. The promise will resolve to False if a theme with that ID could not be found.
+ *
+ * @example
+ * ```javascript
+ *
+ * await SimpleCalendar.api.setTheme('light');
+ * //Will return true and change Simple Calendar's theme to the light theme.
+ *
+ * await SimpleCalendar.api.setTheme('light');
+ * //Will return true and will not change the theme as it was already set to light.
+ *
+ * await SimpleCalendar.api.setTheme('themeDoesNotExist');
+ * //Will return false and log an error to the console.
+ * ```
+ */
+export async function setTheme(themeId: string): Promise<boolean>{
+    themeId = themeId.toLowerCase();
+    const availableThemes = GetThemeList();
+    if(availableThemes[themeId] !== undefined){
+        //If the passed in theme is the same as the current theme being used don't apply the changes
+        if(themeId !== GetThemeName()){
+            await GameSettings.SaveStringSetting(`${(<Game>game).world.id}.${SettingNames.Theme}`, themeId, false);
+            GameSettings.UiNotification(GameSettings.Localize('FSC.Info.ThemeChange').replace('{THEME}', GameSettings.Localize(availableThemes[themeId])), 'info', true);
+        }
+        return true;
+    } else {
+        console.error(`SimpleCalendar.api.setTheme - Unable to find a theme with the ID of "${themeId}"`);
+    }
+    return false;
+}
+
+/**
  * Will open up Simple Calendar to the current date, or the passed in date.
  *
  * @param date A date object (eg `{year:2021, month: 4, day: 12}`) with the year, month and day set to the date to be visible when the calendar is opened.<br>**Important**: The month is index based so January would be 0.
@@ -1701,7 +1913,7 @@ export function timestampPlusInterval(currentSeconds: number, interval: SimpleCa
 export function timestampToDate(seconds: number, calendarId: string = 'active'): SimpleCalendar.DateData | null{
     const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if(cal){
-        return TimestampToDate(seconds, cal);
+        return TimestampToDateData(seconds, cal);
     } else {
         Logger.error(`SimpleCalendar.api.stopClock - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return null;

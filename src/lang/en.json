@@ -474,6 +474,7 @@
 	"FSC.Configuration.Moon.Month": "New Moon Month and Day",
 	"FSC.Configuration.Moon.MonthHelp": "The month and day of a new moon to use as a reference.",
 	"FSC.Configuration.Moons": "Moons",
+	"FSC.Info.ThemeChange": "Simple Calendar's theme has been changed by a system/module/macro to <strong>\"{THEME}\"</strong>. The theme can be changed back under Simple Calendar's settings.",
 	"FSC.Warn.Time.ActiveCombats": "There is an active combat/combats running, please resolve them before starting the real time clock.",
 	"FSC.Warn.Macros.GMUpdate": "Only the GM can update the calendar date!",
 	"FSC.Warn.Calendar.NotGM": "There is no GM present in the game, a GM needs to be logged in for players to change the date/time.",
