@@ -106,6 +106,7 @@
 	"FSC.Predefined.TravellerIC": "Traveller: Imperial Calendar",
 	"FSC.Predefined.WarhammerIC": "Warhammer: Imperial Calendar",
 	"FSC.Predefined.Warhammer40kWG": "Warhammer 40,000 Roleplay: Wrath & Glory",
+	"FSC.Predefined.SymbaroumIC": "Symbaroum: Ambrian Calendar",
 	"FSC.RemoveCalendar": "Delete Calendar",
 	"FSC.RemoveCalendarConfirmText": "This will permanently remove the calendar <strong>${CAL_NAME}</strong>. Are you sure?",
 	"FSC.Round": "Round",
