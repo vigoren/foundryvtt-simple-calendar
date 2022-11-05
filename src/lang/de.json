@@ -467,5 +467,6 @@
 	"FSC.Notes.ReminderCancel": "Nicht erneut erinnern",
 	"FSC.Left": "Links",
 	"FSC.Down": "Runter",
-	"FSC.Right": "Rechts"
+	"FSC.Right": "Rechts",
+	"FSC.Configuration.Client.RememberCompactPosition.Title": "Kompaktdarstellungsposition merken"
 }
