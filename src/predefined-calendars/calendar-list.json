@@ -10,5 +10,6 @@
   {"key": "golarianpf2e", "label": "FSC.Predefined.GolarianPF2E", "config":  true, "notes":  false},
   {"key": "greyhawk", "label": "FSC.Predefined.Greyhawk", "config":  true, "notes":  false},
   {"key": "traveller-ic", "label": "FSC.Predefined.TravellerIC", "config":  true, "notes":  false},
-  {"key": "warhammer", "label": "FSC.Predefined.WarhammerIC", "config":  true, "notes":  false}
+  {"key": "warhammer", "label": "FSC.Predefined.WarhammerIC", "config":  true, "notes":  false},
+  {"key": "symbaroum", "label": "FSC.Predefined.SymbaroumIC", "config":  true, "notes":  false}
 ]
