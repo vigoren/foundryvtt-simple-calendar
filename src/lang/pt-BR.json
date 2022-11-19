@@ -532,5 +532,6 @@
 	"FSC.Predefined.EclipsePhase": "Eclipse Phase 2E",
 	"FSC.Configuration.Client.AlwaysShowNoteList.Title": "Mostrar sempre a lista de notas",
 	"FSC.Configuration.Client.AlwaysShowNoteList.Description": "Esta configuração fará com que a lista de notas seja sempre visível e não possa ser fechada. A única excepção é se a lista de calendário ou a pesquisa de notas forem abertas, elas abrir-se-ão por cima da lista de notas, mas quando fechada, a lista de notas permanecerá visível.",
-	"FSC.Predefined.SymbaroumIC": "Symbaroum: Ambrian Calendar"
+	"FSC.Predefined.SymbaroumIC": "Symbaroum: Ambrian Calendar",
+	"FSC.Info.ThemeChange": "O tema do Simple Calendar foi alterado por um sistema/módulo/macro para <strong>\"{THEME}\"</strong>. O tema pode ser alterado novamente nas definições do Simple Calendar."
 }

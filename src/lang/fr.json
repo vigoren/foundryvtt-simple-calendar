@@ -529,9 +529,10 @@
 	"FSC.Down": "Bas",
 	"FSC.Configuration.Client.NoteListOpenDirection.Title": "Direction de l'ouverture du tiroir latéral",
 	"FSC.Configuration.Client.NoteListOpenDirection.Description": "La direction dans laquelle le tiroir latéral du calendrier principal s'ouvrira. Le tiroir latéral contient les listes de calendrier, de note et la recherche de note.",
-	"FSC.Predefined.Warhammer40kWG": "Warhammer 40,000 : Wrath & Glory",
+	"FSC.Predefined.Warhammer40kWG": "Warhammer 40.000 : Wrath & Glory",
 	"FSC.Configuration.Client.AlwaysShowNoteList.Title": "Toujours afficher la liste des notes",
 	"FSC.Configuration.Client.AlwaysShowNoteList.Description": "Ce réglage fera en sorte que la liste de notes soit toujours visible et ne pourra être fermée. La seule exception est que l'ouverture de la recherche de liste ou de note du calendrier se fera au sommet de la liste de note, mais la liste de notes restera visible après sa fermeture.",
 	"FSC.Predefined.EclipsePhase": "Éclipse phase 2e",
-	"FSC.Predefined.SymbaroumIC": "Symbaroum : Ambrian Calendar"
+	"FSC.Predefined.SymbaroumIC": "Symbaroum : Ambrian Calendar",
+	"FSC.Info.ThemeChange": "Le thème de Simple Calendar a été modifié par un system/module/macro en <strong>\"{THEME}\"</strong>. Le thème peut être modifié à nouveau dans les paramètres de Simple Calendar."
 }
