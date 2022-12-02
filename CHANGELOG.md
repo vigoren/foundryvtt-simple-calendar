@@ -1,5 +1,27 @@
 # Change Log
 
+## 2.1.60 - Bug Fix and Translation Updates
+
+![](https://img.shields.io/badge/release%20date-November%2017%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.60/module.zip)
+
+### Bug Fixes
+
+- Fixed broken help links in the configuration dialog.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Marc Feuillen](https://weblate.foundryvtt-hub.com/user/Elfenduil/) (French)
+- [Raul Castaño](https://weblate.foundryvtt-hub.com/user/ZRAAA78/) (Spanish)
+- [Farevell](https://weblate.foundryvtt-hub.com/user/Farevell/) (Chinese (Simplified))
+- [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+- [Michał Gołaszewski](https://github.com/MichalGolaszewski) (Polish)
+
+<hr/>
+
 ## 2.1.58 - Bug Fixes and API Changes
 
 ![](https://img.shields.io/badge/release%20date-November%2004%2C%202022-blue)

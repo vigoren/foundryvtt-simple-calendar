@@ -1,4 +1,4 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# This workflow will do a clean installation of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: Update Release's
@@ -14,12 +14,12 @@ jobs:
     - uses: actions/checkout@v3
     - name: Manifest and Download Links
       id: manifest_link_version
-      uses: microsoft/variable-substitution@v1
+      uses: cschleiden/replace-tokens@v1
       with:
         files: './src/module.json'
       env:
-        manifest: https://github.com/${{github.repository}}/releases/latest/download/module.json
-        download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
+        MANIFEST: https://github.com/${{github.repository}}/releases/latest/download/module.json
+        DOWNLOAD: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
