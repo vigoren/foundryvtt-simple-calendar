@@ -476,5 +476,7 @@
 	"FSC.Configuration.Client.AlwaysShowNoteList.Description": "Diese Einstellung bewirkt, dass die Notizliste immer sichtbar ist und nicht geschlossen werden kann. Die einzige Ausnahme ist, wenn die Kalenderliste oder die Notizensuche geöffnet sind, werden sie über der Notizliste geöffnet, aber wenn sie geschlossen werden, bleibt die Notizliste sichtbar.",
 	"FSC.Predefined.EclipsePhase": "Eclipse Phase 2E",
 	"FSC.Predefined.Starfinder": "Starfinder",
-	"FSC.Configuration.Client.NoteListOpenDirection.Title": "Öffnungsrichtung der seitlichen Schublade"
+	"FSC.Configuration.Client.NoteListOpenDirection.Title": "Öffnungsrichtung der seitlichen Schublade",
+	"FSC.Predefined.Warhammer40kWG": "Warhammer 40,000 Roleplay: Wrath & Glory",
+	"FSC.Predefined.SymbaroumIC": "Symbaroum: Ambrian Kalender"
 }
