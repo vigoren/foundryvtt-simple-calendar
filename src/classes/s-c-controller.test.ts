@@ -197,6 +197,30 @@ describe('SCController Tests', () => {
         expect(context.classList.contains('fsc-hide')).toBe(true);
     });
 
+    test('Check Combat Active', () => {
+        const tCal = new Calendar('', '');
+        jest.spyOn(CalManager, 'getActiveCalendar').mockReturnValue(tCal);
+        const orig = (<Game>game).combats;
+        const origScenes = (<Game>game).scenes;
+        //@ts-ignore
+        (<Game>game).combats = {size: 1, find: jest.fn((v)=>{return v.call(undefined, {id: 'cid'})? {id: 'cid', started: false, scene: {id:"sid"}} : null; }) };
+        //@ts-ignore
+        SC.checkCombatActive();
+        expect(tCal.time.combatRunning).toBe(false);
+
+        //@ts-ignore
+        (<Game>game).combats = {size: 1, find: jest.fn((v)=>{return v.call(undefined, {id: 'cid', started: true, scene: {id:"sid"}})? {id: 'cid', started: true, scene: {id:"sid"}} : null; }) };
+        //@ts-ignore
+        jest.spyOn(GameSettings, "GetSceneForCombatCheck").mockReturnValue({id: 'sid'});
+        //@ts-ignore
+        SC.checkCombatActive();
+        expect(tCal.time.combatRunning).toBe(true);
+
+
+        (<Game>game).combats = orig;
+        (<Game>game).scenes = origScenes;
+    });
+
     test('Get Scene Control Buttons', () => {
         const controls: any[] = [{name:'test', tools:[]}];
         const canUserSpy = spyOn(PermUtils, 'canUser').mockReturnValue(true);

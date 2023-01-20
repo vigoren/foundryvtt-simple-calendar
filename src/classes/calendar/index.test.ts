@@ -507,7 +507,7 @@ describe('Calendar Class Tests', () => {
         expect(tCal.months[0].days[1].current).toBe(true);
         expect(tCal.year.numericRepresentation).toBe(d.getFullYear() + 1);
 
-        tCal.changeDayBulk(366);
+        tCal.changeDayBulk(367);
         expect(tCal.months[0].days[2].current).toBe(true);
         expect(tCal.year.numericRepresentation).toBe(d.getFullYear() + 2);
     });

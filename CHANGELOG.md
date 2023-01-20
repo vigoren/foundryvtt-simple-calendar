@@ -2,7 +2,7 @@
 
 ## 2.1.66 - Refreshed Compact Display and Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-January%2017%2C%202023-blue)
+![](https://img.shields.io/badge/release%20date-January%2019%2C%202023-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.66/module.zip)
 
 ### Refreshed Compact Display
@@ -42,6 +42,17 @@ A preview of all themes for the new compact mode:
 - Fixed a few style issues with the Forbidden Lands theme.
 - Fixed an issue with the Eclipse Phase system where note pages couldn't be added (Style change hide the interface).
 - Fixed an issue where "When Leap Years Happen" could be set to 0 or a negative value, which doesn't make sense and would cause issues. If the value is set to something not valid the leap year rule will be set to None.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+- [Farevell](https://weblate.foundryvtt-hub.com/user/Farevell/) (Chinese (Simplified))
+- [Sir Motte](https://weblate.foundryvtt-hub.com/user/SirMotte/) (German)
+- [Chris76J](https://weblate.foundryvtt-hub.com/user/Chris76J/) (German)
+- [Novella Locritani](https://weblate.foundryvtt-hub.com/user/Nuvvola/) (Italian)
+- [Davide Lamberti](https://weblate.foundryvtt-hub.com/user/leWebslinger/) (Italian)
 
 <hr/>
 

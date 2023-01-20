@@ -19,7 +19,7 @@ import SCController from "../s-c-controller";
 import NoteManager from "../notes/note-manager";
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
-import {CalendarClickEvents, DateTimeUnits, PredefinedCalendars} from "../../constants";
+import {CalendarClickEvents, DateTimeUnits, Icons, PredefinedCalendars} from "../../constants";
 import * as PermUtilities from "../utilities/permissions";
 import * as VisualUtilities from "../utilities/visual";
 import * as DateUtilities from "../utilities/date-time";
@@ -93,6 +93,11 @@ describe('Main App Class Tests', () => {
         jest.spyOn(CalManager, 'getActiveCalendar').mockImplementation(() => {return vCal;});
         ma.uiElementStates.compactView = true;
         expect(ma.getData()).toBeDefined();
+
+        jest.spyOn(tCal, "getCurrentSeason").mockReturnValue({name: "Summer", icon: Icons.None, color: "red"});
+        ma.uiElementStates.compactView = true;
+        expect(ma.getData()).toBeDefined();
+
     });
 
     test('Render', () => {
@@ -182,6 +187,21 @@ describe('Main App Class Tests', () => {
         expect(ma.setPosition).toHaveBeenCalledTimes(4);
 
         ma.uiElementStates.compactView = true;
+        const date = document.createElement('div');
+        const dateText = document.createElement('div');
+        const unitControls = document.createElement('div');
+        const controlGroup = document.createElement('div');
+
+        date.classList.add('fsc-date');
+        dateText.classList.add('fsc-date-text');
+        unitControls.classList.add('fsc-unit-controls');
+        controlGroup.classList.add('fsc-control-group');
+
+        date.append(dateText);
+        unitControls.append(controlGroup);
+
+        wrapper.append(date, unitControls);
+
         MainApp.setWidthHeight(ma);
         //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(6);

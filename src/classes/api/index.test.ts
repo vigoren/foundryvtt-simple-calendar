@@ -327,7 +327,9 @@ describe('API Class Tests', () => {
         expect(API.getCurrentSeason()).toStrictEqual({id:'', name: '', icon: Icons.None, color: '', description: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0});
         expect(console.error).toHaveBeenCalledTimes(1);
 
+        tCal.resetMonths();
         tCal.months[0].current = true;
+        tCal.months[0].days[0].current = true;
         expect(API.getCurrentSeason('')).not.toBeNull();
     });
 
