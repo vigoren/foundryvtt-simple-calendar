@@ -17,7 +17,6 @@ import {CalManager, ConfigurationApplication, MainApplication, NManager, SC} fro
 import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
-import HeaderButton = Application.HeaderButton;
 
 
 /**
@@ -49,7 +48,7 @@ export default class MainApp extends FormApplication{
     opening = true;
 
 
-    uiElementStates = {
+    uiElementStates: Record<string, boolean | string> = {
         "fsc-calendar-list": false,
         "fsc-note-list": false,
         "fsc-note-search": false,
@@ -75,6 +74,8 @@ export default class MainApp extends FormApplication{
             }
         }
     };
+
+    addonButtons: SimpleCalendar.AddonButton[] = [];
     /**
      * Simple Calendar constructor
      */
@@ -118,7 +119,9 @@ export default class MainApp extends FormApplication{
                 mainViewDisplay: {
                     calendarList: <any>[],
                     search: this.search,
-                    showChangeCalendarControls: false
+                    showChangeCalendarControls: false,
+                    addonButtons: "",
+                    addonButtonSidePanels: ""
                 },
                 addNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.addNotes),
                 activeCalendarId: this.activeCalendar.id,
@@ -173,6 +176,15 @@ export default class MainApp extends FormApplication{
                 }
             }
         } else {
+            for(let i = 0; i < this.addonButtons.length; i++){
+                data.mainViewDisplay.addonButtons += `<button class="fsc-control fsc-grey fsc-addon-button ${this.addonButtons[i].customClass}" data-sc-abi="${i}" data-tooltip="${this.addonButtons[i].title}"><span class="fa ${this.addonButtons[i].iconClass}"></span></button>`;
+                if(this.addonButtons[i].showSidePanel){
+                    if(this.uiElementStates[`fsc-addon-button-side-drawer-${i}`] === undefined){
+                        this.uiElementStates[`fsc-addon-button-side-drawer-${i}`] = false;
+                    }
+                    data.mainViewDisplay.addonButtonSidePanels += `<div class="fsc-side-drawer fsc-addon-button-side-drawer fsc-addon-button-side-drawer-${i} ${data.sideDrawerDirection} ${this.uiElementStates[`fsc-addon-button-side-drawer-${i}`]? 'fsc-open' : 'fsc-closed' }" data-sc-abi="${i}"></div>`;
+                }
+            }
             data.mainViewDisplay.showChangeCalendarControls = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeActiveCalendar);
             data.mainViewDisplay.calendarList = CalManager.getAllCalendars().map(c => {
                 const cd = c.getCurrentDate();
@@ -367,6 +379,8 @@ export default class MainApp extends FormApplication{
                     ma.setPosition(options);
                 }
                 ma.setPosition({height: height, width: width});
+
+                ma.addonButtonSidePanelContentRender(main);
             }
         }
     }
@@ -542,7 +556,52 @@ export default class MainApp extends FormApplication{
             appWindow.querySelectorAll(".fsc-controls .fsc-control").forEach(c => {
                 c.addEventListener('click', this.timeUnitClick.bind(this));
             });
+
+            //-----------------------
+            // Addon Buttons
+            //-----------------------
+            appWindow.querySelectorAll(".fsc-addon-button").forEach(s => {
+                s.addEventListener('click', this.addonButtonClick.bind(this));
+            });
         }
+    }
+
+    async addonButtonClick(event: Event){
+        const attr = (<HTMLElement>event.target)?.closest("button")?.attributes.getNamedItem('data-sc-abi');
+        if(attr && attr.value){
+            const index = parseInt(attr.value);
+            if(!isNaN(index) && index >= 0 && index < this.addonButtons.length){
+                const ab = this.addonButtons[index];
+                if(ab.showSidePanel){
+                    this.toggleDrawer(`fsc-addon-button-side-drawer-${index}`);
+                } else {
+                    try {
+                        await ab.onRender(event, null);
+                    } catch (e: any) {
+                        Logger.error(`Button Click Render Error: ${e}`);
+                    }
+                }
+            }
+        }
+    }
+
+    addonButtonSidePanelContentRender(main: HTMLElement){
+        main.querySelectorAll('.fsc-addon-button-side-drawer').forEach( async (sd)=> {
+            const attr = sd.attributes.getNamedItem('data-sc-abi');
+            if(attr && attr.value){
+                const index = parseInt(attr.value);
+                if(!isNaN(index) && index >= 0 && index < this.addonButtons.length){
+                    const ab = this.addonButtons[index];
+                    if(ab.showSidePanel){
+                        try {
+                            await ab.onRender(null, <HTMLElement>sd);
+                        } catch (e: any) {
+                            Logger.error(`Side Panel Render Error: ${e}`);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**

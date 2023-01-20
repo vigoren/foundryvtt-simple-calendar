@@ -25,6 +25,7 @@ import NoteManager from "./classes/notes/note-manager";
 import {NoteSheet} from "./classes/notes/note-sheet";
 import PF2E from "./classes/systems/pf2e";
 import {CheckRemScaling} from "./classes/utilities/visual";
+import {Hook} from "./classes/api/hook";
 
 updateCalManager(new CalendarManager());
 updateSC(new SCController());
@@ -77,6 +78,7 @@ Hooks.on('ready',async () => {
             MainApplication.render();
         }
     }
+    Hook.emit(SimpleCalendarHooks.Ready, CalManager.getActiveCalendar());
 });
 Hooks.on('canvasInit', SC.canvasInit.bind(SC));
 Hooks.on('getSceneControlButtons', SC.getSceneControlButtons.bind(SC));
@@ -102,3 +104,29 @@ Logger.debugMode = false;
 
 //Hooks.on(SimpleCalendarHooks.DateTimeChange, (...args: any) => {console.log(...args);});
 //Hooks.on(SimpleCalendarHooks.Ready, (...args: any) => {console.log('SC Ready!');});
+
+
+Hooks.on(SimpleCalendarHooks.Init, () => {
+    console.log("SC adding sidebar button");
+    SimpleCalendar.api.addSidebarButton("SmallWeather", "fa-cloud-sun-rain", "custom-class", false, (event: Event | null, element: HTMLElement | null | undefined) => {
+       if(element){
+           const header = document.createElement('h2');
+           header.innerText = "SmallWeather";
+           element.append(header);
+       }
+        if(event){
+            const dialog = new Dialog({
+                title: "My Module",
+                content: "You clicked the button!",
+                buttons:{
+                    awesome: {
+                        icon: '<i class="fa-solid fa-face-smile"></i>',
+                        label: "Awesome!"
+                    }
+                },
+                default: "awesome"
+            });
+            dialog.render(true);
+        }
+    });
+});

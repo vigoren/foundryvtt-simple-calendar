@@ -80,6 +80,66 @@ declare global{
             export async function addNote(title: string, content: string, startDate: SimpleCalendar.DateTimeParts, endDate: SimpleCalendar.DateTimeParts, allDay: boolean, repeats: NoteRepeat = NoteRepeat.Never, categories: string[] = [], calendarId: string = 'active', macro: string | null = null, userVisibility: string[] = [], remindUsers: string[] = []): Promise<StoredDocument<JournalEntry> | null>
 
             /**
+             * Add a custom button to the right side of the calendar (When in full view). The button will be added below the Note Search button.
+             *
+             * @param buttonTitle The text that appears when the button is hovered over.
+             * @param iconClass The Font Awesome Free icon class to use for the buttons display.
+             * @param customClass A custom CSS class to add to the button.
+             * @param showSidePanel If the button should open a side panel or not. A side panel functions like the notes list but will be completely empty.
+             * @param onRender Function that is called to show information to users.
+             *
+             * If the showSidePanel parameter is true this function will be passed an HTMLElement representing the side panel.
+             * The element could potentially be null so code should account for that.
+             * This function is then responsible for populating the side panel with any information.
+             * This function is called everytime the calendar is rendered.
+             *
+             * If the showSidePanel parameter is false this function will be passed an Event for the click.
+             * The event could potentially be null so code should account for that.
+             * This function should then open up an application or dialog or perform an action for the user.
+             * This function is called everytime the button is clicked.
+             *
+             * @example
+             * ```javascript
+             * // Function to call to populate the side panel
+             * function populateSidePanel(event, element){
+             *     if(element){
+             *            const header = document.createElement('h2');
+             *            header.innerText = "My Custom Button";
+             *            element.append(header);
+             *        }
+             * }
+             *
+             * // Function to call when the button is clicked
+             * function sidePanelButtonClick(event, element){
+             *     if(event){
+             *          const dialog = new Dialog({
+             *             title: "My Module",
+             *             content: "You clicked the button!",
+             *             buttons:{
+             *                 awesome: {
+             *                     icon: '<i class="fa-solid fa-face-smile"></i>',
+             *                     label: "Awesome!"
+             *                 }
+             *             },
+             *             default: "awesome"
+             *         });
+             *         dialog.render(true);
+             *     }
+             * }
+             *
+             *
+             * // Adding a button that should show a side panel
+             * // Clicking the button will show a side panel that will have the title "My Custom Button"
+             * SimpleCalendar.api.addSidebarButton("My Module", "fa-computer-mouse", "my-custom-class", true, populateSidePanel);
+             *
+             * // Adding a button that will show a dialog when clicked
+             * SimpleCalendar.api.addSidebarButton("My Module", "fa-computer-mouse", "my-custom-class", false, sidePanelButtonClick);
+             *
+             * ```
+             */
+            export function addSidebarButton(buttonTitle: string, iconClass: string, customClass: string, showSidePanel: boolean, onRender: (event: Event | null, renderTarget: HTMLElement | null | undefined) => void)
+
+            /**
              * Advance the date and time to match the next preset time.
              *
              * **Important**: This function can only be run by users who have permission to change the date in Simple Calendar.
@@ -1387,6 +1447,21 @@ declare global{
              */
             const PrimaryGM = 'simple-calendar-primary-gm';
             /**
+             * This hook is emitted while Simple Calendar is initializing, before the module is ready to use.
+             *
+             * **What is passed**: No data is passed when this hook is fired.
+             *
+             * **Examples:**
+             *
+             * @example How to listen for the hook:
+             *   ```javascript
+             * Hooks.on(SimpleCalendar.Hooks.Init, () => {
+             *      console.log(`Simple Calendar is initializing!`);
+             *  });
+             * ```
+             */
+            const Init = 'simple-calendar-init';
+            /**
              * This hook is emitted when Simple Calendar is fully initialized and ready to use.
              *
              * For GMs this will happen up to 5 seconds after loading the game as additional checks are done to see which GM is to be considered the primary GM.
@@ -1866,6 +1941,14 @@ declare global{
             system: boolean;
             module: boolean;
         }
+
+        type AddonButton = {
+            title: string;
+            iconClass: string;
+            customClass: string;
+            showSidePanel: boolean;
+            onRender: (event: Event | null, renderTarget: HTMLElement | null | undefined) => void;
+        };
 
         /**
          * Interface for Journal page data

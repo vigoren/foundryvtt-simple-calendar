@@ -6,7 +6,7 @@ import Calendar from "../calendar";
 import MainApp from "./main-app";
 import {
     CalManager,
-    ConfigurationApplication,
+    ConfigurationApplication, MainApplication,
     NManager,
     SC,
     updateCalManager, updateConfigurationApplication,
@@ -96,6 +96,19 @@ describe('Main App Class Tests', () => {
 
         jest.spyOn(tCal, "getCurrentSeason").mockReturnValue({name: "Summer", icon: Icons.None, color: "red"});
         ma.uiElementStates.compactView = true;
+        expect(ma.getData()).toBeDefined();
+
+        ma.uiElementStates.compactView = false;
+        ma.addonButtons.push({
+            title: "title",
+            iconClass: "icon",
+            customClass: "class",
+            showSidePanel: true,
+            onRender: () => {}
+        });
+        expect(ma.getData()).toBeDefined();
+
+        ma.uiElementStates['fsc-addon-button-side-drawer-0'] = true;
         expect(ma.getData()).toBeDefined();
 
     });
@@ -259,6 +272,65 @@ describe('Main App Class Tests', () => {
         ma.uiElementStates.compactView = true;
         ma.activateListeners();
         expect(mainApp.classList.contains('fsc-compact-view')).toBe(true);
+    });
+
+    test('Addon Button Click', () => {
+        const button = document.createElement('button');
+        button.setAttribute('data-sc-abi', '0');
+
+        MainApplication.addonButtons.push({
+            title: "title",
+            iconClass: "icon",
+            customClass: "class",
+            showSidePanel: false,
+            onRender: jest.fn().mockImplementationOnce(() => {throw "no";})
+        });
+        jest.spyOn(console, "error").mockImplementation(() => {});
+
+        const fEvent = {target: button};
+
+        //@ts-ignore
+        MainApplication.addonButtonClick(fEvent);
+        expect(MainApplication.addonButtons[0].onRender).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        MainApplication.addonButtonClick(fEvent);
+        expect(MainApplication.addonButtons[0].onRender).toHaveBeenCalledTimes(2);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        MainApplication.addonButtons[0].showSidePanel = true;
+        jest.spyOn(MainApplication, "toggleDrawer").mockImplementation(() => {});
+        //@ts-ignore
+        MainApplication.addonButtonClick(fEvent);
+        expect(MainApplication.toggleDrawer).toHaveBeenCalledTimes(1);
+    });
+
+    test('Addon Button Side Panel Content Render', () => {
+        const mainApp = document.createElement('div');
+        const sideDrawer = document.createElement('div');
+
+        sideDrawer.classList.add('fsc-addon-button-side-drawer');
+        sideDrawer.setAttribute('data-sc-abi', '0');
+
+        mainApp.append(sideDrawer);
+
+        MainApplication.addonButtons.push({
+            title: "title",
+            iconClass: "icon",
+            customClass: "class",
+            showSidePanel: true,
+            onRender: jest.fn().mockImplementationOnce(() => {throw "no";})
+        });
+        jest.spyOn(console, "error").mockImplementation(() => {});
+
+        MainApplication.addonButtonSidePanelContentRender(mainApp);
+        expect(MainApplication.addonButtons[0].onRender).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        MainApplication.addonButtonSidePanelContentRender(mainApp);
+        expect(MainApplication.addonButtons[0].onRender).toHaveBeenCalledTimes(2);
+
     });
 
     test('Toggle Drawers', () => {

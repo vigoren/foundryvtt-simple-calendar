@@ -4,7 +4,7 @@ import {
     CombatPauseRules,
     ModuleName,
     NoteReminderNotificationType,
-    SettingNames,
+    SettingNames, SimpleCalendarHooks,
     SocketTypes,
     Themes,
     TimeKeeperStatus
@@ -20,6 +20,7 @@ import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/fou
 import MultiSelect from "./renderer/multi-select";
 import {GetThemeName} from "./utilities/visual";
 import {FoundryVTTGameData} from "./foundry-interfacing/game-data";
+import {Hook} from "./api/hook";
 
 /**
  * The global Simple Calendar Controller class
@@ -128,6 +129,7 @@ export default class SCController {
         //Close all open multi selects except the one being interacted with
         document.body.addEventListener('click', MultiSelect.BodyEventListener);
         this.checkCombatActive();
+        Hook.emit(SimpleCalendarHooks.Init, CalManager.getActiveCalendar());
     }
 
     /**

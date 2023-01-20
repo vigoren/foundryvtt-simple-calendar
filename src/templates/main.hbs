@@ -179,6 +179,7 @@
                     <button class="fsc-control fsc-save fsc-add-note" data-tooltip="{{localize 'FSC.Notes.AddNew'}}"><span class="fa fa-sticky-note"></span>&nbsp;<span class="fa fa-plus"></span></button>
                 {{/if}}
                 <button class="fsc-control fsc-grey fsc-search" data-tooltip="{{localize 'FSC.Search.Title'}}"><span class="fa fa-search "></span></button>
+                {{{mainViewDisplay.addonButtons}}}
                 <span class="fsc-spacer"></span>
                 {{#if changeDateTime}}
                     {{#if showSetCurrentDate}}
@@ -328,6 +329,7 @@
                     {{/if}}
                 </div>
             </div>
+            {{{mainViewDisplay.addonButtonSidePanels}}}
             <div class="fsc-context-menu {{sideDrawerDirection}} fsc-hide" data-id="">
                 <div class="fsc-day-context-list">
                     <div class="fsc-context-list-action" data-action="remind"></div>

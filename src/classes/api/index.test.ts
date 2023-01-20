@@ -120,6 +120,13 @@ describe('API Class Tests', () => {
         game.users = ou;
     });
 
+    test('Add Sidebar Button', () => {
+        jest.spyOn(MainApplication, "updateApp").mockImplementation(() => {});
+        API.addSidebarButton("title", "icon", "class", true, ()=>{});
+        expect(MainApplication.updateApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.addonButtons.length).toBe(1);
+    });
+
     test('Advance Time to Preset', () => {
         expect(API.advanceTimeToPreset(PresetTimeOfDay.Midday)).toBe(false);
         expect(console.error).toHaveBeenCalledTimes(1);
