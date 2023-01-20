@@ -27,17 +27,23 @@ A dark mode or dark-colored theme.
 
 ![](media://sc-theme-dark.png)
 
+![](media://sc-v2-theme-dark-comp.png)
+
 ### Light
 
 A light mode or light-colored theme.
 
 ![](media://sc-theme-light.png)
 
+![](media://sc-v2-theme-light-comp.png)
+
 ### Classic
 
 A theme made to match the original look of Simple Calendar version 1.x. This theme also works well for systems that use the default look and feel of Foundry VTT.
 
 ![](media://sc-theme-classic.png)
+
+![](media://sc-v2-theme-classic-comp.png)
 
 ## System Specific
 
@@ -53,6 +59,8 @@ This theme uses the styling of DSA's dialogs to make Simple Calendar look like i
 
 ![](media://sc-theme-dsa5.png)
 
+![](media://sc-v2-theme-dsa5-comp.png)
+
 ### Eclipse Phase 2E
 
 This theme is for the [Eclipse Phase 2E](https://foundryvtt.com/packages/eclipsephase) system.
@@ -60,6 +68,8 @@ This theme is for the [Eclipse Phase 2E](https://foundryvtt.com/packages/eclipse
 This theme uses the styling of Eclipse Phases dialogs to make Simple Calendar look like it fits within the system.
 
 ![](media://sc-theme-eclipsephase.png)
+
+![](media://sc-v2-theme-eclipsephase-comp.png)
 
 ### Forbidden Lands
 
@@ -69,6 +79,8 @@ This theme uses the styling of Forbidden Lands dialogs to make Simple Calendar l
 
 ![](media://sc-theme-forbidden-lands.png)
 
+![](media://sc-v2-theme-forbidden-lands-comp.png)
+
 ### Starfinder
 
 This theme is for the [Starfinder](https://foundryvtt.com/packages/sfrpg) system.
@@ -76,6 +88,8 @@ This theme is for the [Starfinder](https://foundryvtt.com/packages/sfrpg) system
 This theme uses the styling of Starfinder's dialogs to make Simple Calendar look like it fits within the system.
 
 ![](media://sc-theme-sfrpg.png)
+
+![](media://sc-v2-theme-sfrpg-comp.png)
 
 ### Warhammer 40,000 Roleplay: Wrath & Glory
 
@@ -85,6 +99,8 @@ This theme uses the styling of Wrath & Glory's dialogs to make Simple Calendar l
 
 ![](media://sc-theme-wrath-and-glory.png)
 
+![](media://sc-v2-theme-wrath-and-glory-comp.png)
+
 ### Warhammer Fantasy Roleplay 4th Edition
 
 This theme is for the [Warhammer Fantasy Roleplay 4th Edition](https://foundryvtt.com/packages/wfrp4e) system.
@@ -92,6 +108,8 @@ This theme is for the [Warhammer Fantasy Roleplay 4th Edition](https://foundryvt
 This theme uses the styling of Warhammer Fantasy Roleplay dialogs to make Simple Calendar look like it fits within the system.
 
 ![](media://sc-theme-wfrp4e.png)
+
+![](media://sc-v2-theme-wfrp4e-comp.png)
 
 ## Module Specific
 

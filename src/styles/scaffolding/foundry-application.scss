@@ -5,6 +5,7 @@
     box-shadow: 2px 2px pxToRem(10) #000000ab;
     background: unset;
     border: 0;
+    padding: 0;
     &:after{
       content: unset;
       height: 0;
@@ -69,6 +70,9 @@
             margin: 0 3px 0 0;
             position: relative;
           }
+        }
+        a.fsc-hb-view-notes, a.fsc-hb-add-note, a.fsc-hb-play-pause, a.fsc-hb-stop{
+          display: none;
         }
       }
     }

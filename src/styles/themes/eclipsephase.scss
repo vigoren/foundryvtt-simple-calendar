@@ -33,6 +33,12 @@ $theme: (
         app-border-image: unset,
         app-color: var(--mainText),
 
+  // Compact Coloring
+        comapct-header-control-grey: $gray-500,
+        comapct-header-control-secondary: $secondary,
+        comapct-header-control-tertiary: $tertiary-200,
+        comapct-header-control-save: $success-700,
+
   // Dialog section coloring
         section-bg-color: #1f1f1f,
         section-border-color: #24485d,
@@ -335,6 +341,50 @@ body.game{
         //Compact View
         &.fsc-compact-view {
           .window-content{
+            .fsc-main-wrapper{
+              .fsc-header-add-right{
+                .fsc-note-buttons{
+                  .fsc-control{
+                    &.fsc-grey{
+                      &:hover, &.active, &:focus{
+                        box-shadow: inset 0 0 10px 0 var(--mainText);
+                      }
+                    }
+                    &.fsc-secondary {
+                      &:hover, &.active, &:focus{
+                        box-shadow: inset 0 0 10px 0 $secondary;
+                      }
+                    }
+                    &.fsc-tertiary{
+                      &:hover, &.active, &:focus{
+                        box-shadow: inset 0 0 10px 0 #a455df;
+                      }
+                    }
+                    &.fsc-save {
+                      &:hover, &.active, &:focus{
+                        box-shadow: inset 0 0 10px 0 #2bb42b;
+                      }
+                    }
+                  }
+                }
+              }
+              .fsc-clock-display{
+                .fsc-control{
+                  &.fsc-save{
+                    color: #2bb42b;
+                  }
+                  &.fsc-secondary{
+                    color: $secondary;
+                    &:hover{
+                      color: $secondary;
+                    }
+                  }
+                  &.fsc-delete{
+                    color: #db2a2a;
+                  }
+                }
+              }
+            }
             .fsc-clock{
               background: unset;
             }

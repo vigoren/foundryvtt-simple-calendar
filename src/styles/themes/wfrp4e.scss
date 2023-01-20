@@ -33,6 +33,12 @@ $theme: (
         app-border-image: url($wfrpAppBorder) 10 13 13 13 / 10px 13px 13px 13px / 0 repeat,
         app-color: $white,
 
+  // Compact Coloring
+        comapct-header-control-grey: #EEDDA8,
+        comapct-header-control-secondary: #EEDDA8,
+        comapct-header-control-tertiary: #EEDDA8,
+        comapct-header-control-save: #EEDDA8,
+
   // Dialog section coloring
         section-bg-color: $wfrpBlackBackground,
         section-border-color: $wfrpBorderColor,
@@ -247,11 +253,32 @@ body.game{
           .window-content {
             border: 2px solid #540e0ec2 !important;
             border-image: url($wfrpPlayerBorder) 24 20 19 17 / 20px / 17px 14px 13px 14px repeat !important;
-          }
-          .fsc-main-wrapper{
-            .fsc-time-keeper-buttons{
-              .fsc-control{
-                border: 1px solid;
+            .fsc-main-wrapper{
+              .fsc-header-add-right{
+                .fsc-note-buttons{
+                  margin-right: $spacer;
+                  .fsc-control{
+                    &:before{
+                      height: 30px;
+                      width: 30px;
+                      margin-top: -7px;
+                      margin-left: -3px;
+                      background: url($wfrpBlankButton);
+                      filter: unset;
+                    }
+                    &:hover{
+                      background-color: unset;
+                      border-color: unset;
+                      color: $white;
+                      box-shadow: unset !important;
+                    }
+                  }
+                }
+              }
+              .fsc-time-keeper-buttons{
+                .fsc-control{
+                  border: 1px solid;
+                }
               }
             }
           }

@@ -33,6 +33,12 @@ $theme: (
         app-border-image: unset,
         app-color: #000,
 
+  // Compact Coloring
+        comapct-header-control-grey: $gray-700,
+        comapct-header-control-secondary: $secondary-700,
+        comapct-header-control-tertiary: $tertiary-700,
+        comapct-header-control-save: $success-700,
+
   // Dialog section coloring
         section-bg-color: $gray-300,
         section-border-color: $gray-400,
@@ -244,6 +250,7 @@ body.game{
         border: 9px solid transparent;
         border-image: url($flAppBorder) 108/3 repeat;
         box-shadow: unset;
+        padding: 0 4px 4px;
         .window-content{
           .fsc-configuration-wrapper{
             .tabs.fsc-sheet-tabs {
@@ -278,15 +285,6 @@ body.game{
             &.sc-down{
               border-top-width: 0;
               border-image-slice: 0 100 100 100;
-            }
-          }
-        }
-        .fsc-calendar {
-          .fsc-calendar-header{
-            .fsc-weekdays{
-              .fsc-weekday{
-                width: pxToRem(46.4);
-              }
             }
           }
         }

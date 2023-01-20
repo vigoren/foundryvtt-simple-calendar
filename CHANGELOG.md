@@ -1,5 +1,50 @@
 # Change Log
 
+## 2.1.66 - Refreshed Compact Display and Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-January%2017%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.66/module.zip)
+
+### Refreshed Compact Display
+
+The compact display has been updated to make it a little cleaner and utilize the unused space to keep it nice and compact without losing any functionality.
+
+![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
+
+Changes include:
+
+- If seasons are configured the current season will be shown by just its icon (or the first 2 letters of its name if no icon is chosen) in the top left of the header. Hovering over the icon will show the full season name.
+- If moons are configured they are shown next to the season in the top left of the header. The current phase of the moon(s) are shown. If 1-2 moons are configured they will be shown beside each-other, if 3 or more  moons are configured the first moon will be shown with an indicator that hovering over that icon will show a dialog will all the moons current phases.
+- The note indicators (Notes for that day and notes you want to be reminded of) are shown in the top right of the header next to the close button.
+- If the player has permissions to add notes the add note button is displayed next to the note indicators in the top right of the header.
+- The main body of the display contains the current date and time. The primary GM will see the buttons to start/pause/stop the real time clock next to the time.
+- If the player has permissions to change the current date and time at the bottom the buttons used to change the date and time as well as the dawn/midday/dusk/midnight buttons.
+- All the themes have been updated to take advantage of this new layout.
+
+Overall these changes have helped reduce the height and width of the compact display making it easier to keep on the screen while playing.
+
+A preview of all themes for the new compact mode:
+
+![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
+![](./docs/images/sc-v2-theme-light-comp.png) ![](media://sc-v2-theme-light-comp.png)
+![](./docs/images/sc-v2-theme-classic-comp.png) ![](media://sc-v2-theme-classic-comp.png)
+![](./docs/images/sc-v2-theme-eclipsephase-comp.png) ![](media://sc-v2-theme-eclipsephase-comp.png)
+![](./docs/images/sc-v2-theme-sfrpg-comp.png) ![](media://sc-v2-theme-sfrpg-comp.png)
+![](./docs/images/sc-v2-theme-dsa5-comp.png) ![](media://sc-v2-theme-dsa5-comp.png)
+![](./docs/images/sc-v2-theme-forbidden-lands-comp.png) ![](media://sc-v2-theme-forbidden-lands-comp.png)
+![](./docs/images/sc-v2-theme-wfrp4e-comp.png) ![](media://sc-v2-theme-wfrp4e-comp.png)
+![](./docs/images/sc-v2-theme-wrath-and-glory-comp.png) ![](media://sc-v2-theme-wrath-and-glory-comp.png)
+
+### Bug Fixes
+
+- Fixed an issue when changing the [Update Frequency](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) setting while the clock was running that would result in the time updating incorrectly.
+- Fixed an issue when reloading the page would not properly recognise any active combats and in certain cases the clock could be started.
+- Fixed a few style issues with the Forbidden Lands theme.
+- Fixed an issue with the Eclipse Phase system where note pages couldn't be added (Style change hide the interface).
+- Fixed an issue where "When Leap Years Happen" could be set to 0 or a negative value, which doesn't make sense and would cause issues. If the value is set to something not valid the leap year rule will be set to None.
+
+<hr/>
+
 ## 2.1.60 - Bug Fix and Translation Updates
 
 ![](https://img.shields.io/badge/release%20date-November%2017%2C%202022-blue)

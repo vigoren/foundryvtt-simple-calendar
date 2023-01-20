@@ -40,9 +40,8 @@ export default class TimeKeeper{
     private pauseClicked: boolean = false;
     /**
      * How often (in seconds) to have the timekeeper process an interval
-     * @type {number}
      */
-    public updateFrequency: number;
+    private uf: number;
     /**
      * A list of functions that listen for intervals or status changes from the timekeeper and are then called.
      * @private
@@ -51,9 +50,28 @@ export default class TimeKeeper{
 
     constructor(calendarId: string, updateFrequency: number) {
         this.calendarId = calendarId;
-        this.updateFrequency = updateFrequency;
+        this.uf = updateFrequency;
     }
 
+    /**
+     * Getter for the updateFrequency
+     */
+    get updateFrequency(): number {
+        return this.uf;
+    }
+
+    /**
+     * Setter for the updateFrequency.
+     * If the clock is running when this setting is updated, stop and restart the clock at the new frequency.
+     * @param freq The new frequency to update the clock too.
+     */
+    set updateFrequency(freq: number) {
+        this.uf = freq;
+        if(this.intervalNumber !== undefined){
+            window.clearInterval(this.intervalNumber);
+            this.intervalNumber = window.setInterval(this.interval.bind(this), 1000 * this.updateFrequency);
+        }
+    }
     /**
      * Starts the timekeeper interval and save interval
      */

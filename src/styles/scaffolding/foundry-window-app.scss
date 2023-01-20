@@ -39,7 +39,7 @@
         flex-direction: row;
         justify-content: center;
         flex-wrap: wrap;
-        align-items: start;
+        align-items: stretch;
 
         .fsc-control-group{
           margin-right: $spacer-quarter;
@@ -54,11 +54,6 @@
 
       .fsc-control-group{
         justify-content: center;
-        margin-bottom: $spacer-half;
-
-        &:last-child{
-          margin-bottom: 0;
-        }
       }
 
       button{

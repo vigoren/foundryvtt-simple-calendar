@@ -2,7 +2,7 @@
 .simple-calendar{
   &.window-app.fsc-compact-view {
     header {
-      flex: 0 0 pxToRem(10) !important;
+      flex: 0 0 pxToRem(16) !important;
       justify-content: flex-end;
       align-content: center;
 
@@ -10,22 +10,22 @@
         i[class^='fa']{
           font-size: pxToRem(10);
         }
+        padding-top: 2px;
         font-size: 0 !important;
         line-height: 0;
       }
-
       > *:not(.close) {
         display: none;
       }
-
     }
     .window-content{
+      position: unset;
+      backdrop-filter: unset;
       .fsc-main-wrapper{
         padding: $spacer-quarter;
         .fsc-control{
           font-size: 0.625rem !important;
           line-height: 0.625rem !important;
-          margin-bottom: 0.25rem !important;
           svg{
             height: 0.875rem;
           }
@@ -33,151 +33,255 @@
             font-size: 0.625rem !important;
           }
         }
-        .fsc-season{
+        .fsc-header-add-left{
+          position: absolute;
+          top: 0;
+          left: $spacer-quarter;
+          height: pxToRem(16);
           display: flex;
-          flex-direction: row;
           flex-wrap: nowrap;
-          justify-content: space-between;
+          flex-direction: row;
           align-items: center;
-          .fsc-season-text{
+          z-index: 1;
+          .fsc-season{
+            margin-right: $spacer-half;
+            font-size: pxToRem(12);
+            line-height: pxToRem(16);
+            text-shadow: 1px 1px 0 black;
+            svg{
+              height: pxToRem(12);
+            }
+          }
+          .fsc-moons{
+            flex: 0;
             display: flex;
             flex-direction: row;
             flex-wrap: nowrap;
-            justify-content: center;
-            align-items: center;
-            font-style: italic;
-            font-weight: 600;
-            font-size: 0.75rem;
-            flex: 1;
-            svg{
-              height: pxToRem(15);
-              margin-right: $spacer-quarter;
+            position: relative;
+
+            &:hover {
+              .fsc-moon-group-wrapper {
+                .fsc-moon-group {
+                  display: flex;
+                  flex-wrap: wrap;
+                  justify-content: center;
+                  position: absolute;
+                  top: pxToRem(-5);
+                  left: pxToRem(-8);
+                  z-index: 100;
+                  border: 1px solid var(--cal-moon-group-border-color);
+                  border-radius: pxToRem(5);
+                  padding: 0.25rem;
+                  width: pxToRem(55);
+                  background-color: var(--cal-moon-group-bg-color);
+                  box-shadow: 1px 1px 5px var(--cal-moon-group-box-shadow-color);
+                  .fsc-moon-phase{
+                    margin-right: 2px;
+                    margin-bottom: 2px;
+                  }
+                }
+              }
             }
-            span{
-              margin-right: $spacer-quarter;
+
+            .fsc-moon-group-wrapper{
+              display: flex;
+              margin-right: pxToRem(-7);
+              .fa{
+                font-size: pxToRem(11);
+                margin-left: pxToRem(-5);
+                margin-top: pxToRem(5);
+                z-index: 1;
+                text-shadow: -3px -1px var(--cal-moon-text-shadow);
+              }
+              .fsc-moon-group{
+                display: none;
+              }
+            }
+
+            .fsc-moon-phase{
+              height: pxToRem(16);
+              margin-top: pxToRem(2);
+            }
+            svg{
+              height: pxToRem(12);
+              width: pxToRem(12);
+              filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
+            }
+          }
+        }
+        .fsc-header-add-right{
+          position: absolute;
+          top: 0;
+          right: $spacer-quarter + pxToRem(14);
+          height: pxToRem(16);
+          display: flex;
+          flex-wrap: nowrap;
+          flex-direction: row;
+          .fsc-note-buttons{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: flex-end;
+            align-items: stretch;
+            height: pxToRem(16);
+            margin-right: $spacer-quarter;
+            .fsc-control{
+              background: unset;
+              border: unset;
+              border-radius: 0;
+              box-shadow: unset;
+              margin-bottom: 0;
+              padding: 0 $spacer-quarter;
+              &.fsc-grey{
+                color: var(--comapct-header-control-grey);
+                &:hover{
+                  border-color: var(--btn-grey-border-color);
+                  background-color: var(--btn-grey-bg-color);
+                  color: var(--btn-grey-color);
+                }
+              }
+              &.fsc-save{
+                color: var(--comapct-header-control-save);
+                &:hover{
+                  background-color: var(--btn-save-bg-color);
+                  border-color: var(--btn-save-border-color);
+                  color: var(--btn-save-color);
+                }
+              }
+              &.fsc-secondary{
+                color: var(--comapct-header-control-secondary);
+                &:hover{
+                  background-color: var(--btn-secondary-bg-color);
+                  border-color: var(--btn-secondary-border-color);
+                  color: var(--btn-secondary-color);
+                }
+              }
+              &.fsc-tertiary{
+                color: var(--comapct-header-control-tertiary);
+                &:hover{
+                  background-color: var(--btn-tertiary-bg-color);
+                  border-color: var(--btn-tertiary-border-color);
+                  color: var(--btn-tertiary-color);
+                }
+              }
+              &.fsc-add-note{
+                white-space: nowrap;
+              }
             }
           }
         }
         .fsc-date{
-          display: flex;
-          flex-direction: row;
-          flex-wrap: nowrap;
-          justify-content: space-between;
-          margin-bottom: 0.25rem;
+          flex-basis: 100%;
+          margin-bottom: $spacer-quarter;
           .fsc-date-text{
-            flex: 1;
-            text-align: center;
+            width: fit-content;
+            margin: 0 auto;
           }
         }
-        .fsc-moons{
-          flex: 0;
+        .fsc-clock-display{
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
-          position: relative;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: $spacer-quarter;
+          .fsc-clock{
+            background-color: rgba(0,0,0,0);
+            border: unset;
+            padding: 0;
+            margin: 0;
 
-          &:hover {
-            .fsc-moon-group-wrapper {
-              .fa{
-                text-shadow: -2px -1px 0px var(--cal-moon-text-shadow);
+            .fsc-animated-clock{
+              svg{
+                width: pxToRem(20);
+                height: pxToRem(20);
+                margin-bottom: pxToRem(-4);
               }
-              .fsc-moon-group {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                position: absolute;
-                top: pxToRem(-5);
-                left: pxToRem(-6);
-                z-index: 100;
-                border: 1px solid var(--cal-moon-group-border-color);
-                border-radius: pxToRem(5);
-                padding: 0.25rem;
-                width: pxToRem(55);
-                background-color: var(--cal-moon-group-bg-color);
-                box-shadow: 1px 1px 5px var(--cal-moon-group-box-shadow-color);
-                .fsc-moon-phase{
-                  margin-bottom: 2px;
+            }
+
+            .fsc-current-time{
+              font-size: 0.875rem;
+            }
+          }
+          .fsc-time-keeper-buttons{
+            display: flex;
+            width: 2rem;
+            margin-left: $spacer-quarter;
+            opacity: 0.5;
+            transition: opacity 300ms;
+            .fsc-control{
+              background: unset;
+              border: unset;
+              box-shadow: unset;
+              margin-bottom: 0;
+              padding: 0.15rem 0;
+              &.fsc-save{
+                color: var(--btn-save-bg-color);
+              }
+              &.fsc-secondary{
+                color: var(--btn-secondary-bg-color);
+                &:hover{
+                  color: var(--btn-secondary-bg-color);
                 }
               }
-            }
-          }
-
-          .fsc-moon-group-wrapper{
-            display: flex;
-            margin-right: pxToRem(-7);
-            .fa{
-              font-size: pxToRem(11);
-              margin-left: pxToRem(-6);
-              margin-top: 3px;
-              z-index: 1;
-
-            }
-            .fsc-moon-group{
-              display: none;
-            }
-          }
-
-          svg{
-            height: pxToRem(15);
-            width: pxToRem(15);
-            filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.4));
-          }
-        }
-        .fsc-clock{
-          background-color: var(--app-bg-color);
-          border: unset;
-          padding: 0;
-          margin: 0 $spacer-half $spacer-half 0;
-
-          .fsc-animated-clock{
-            svg{
-              width: pxToRem(20);
-              height: pxToRem(20);
-              margin-bottom: pxToRem(-4);
-            }
-          }
-
-          .fsc-current-time{
-            font-size: 0.875rem;
-          }
-        }
-        .fsc-actions-list{
-          padding: 0;
-          flex-basis: pxToRem(40);
-        }
-        .fsc-time-keeper-buttons{
-          .fsc-control{
-            background: unset;
-            border: unset;
-            box-shadow: unset;
-            &.fsc-save{
-              color: var(--btn-save-bg-color);
-            }
-            &.fsc-secondary{
-              color: var(--btn-secondary-bg-color);
-              &:hover{
-                color: var(--btn-secondary-bg-color);
+              &.fsc-delete{
+                color: var(--btn-delete-bg-color);
               }
-            }
-            &.fsc-delete{
-              color: var(--btn-delete-bg-color);
             }
           }
         }
         .fsc-unit-controls{
-          .fsc-control{
-            margin-bottom: 0;
+          opacity: 0.5;
+          transition: opacity 300ms;
+          flex-wrap: nowrap;
+          padding-top: $spacer-quarter;
+          margin: 0 ($spacer-quarter * -1) ($spacer-quarter * -1);
+          .fsc-control-group{
+            margin: 0 ($spacer-half - pxToRem(1)) 0 0;
+            &:first-child{
+              .fsc-control:first-of-type{
+                border-bottom-left-radius: 0;
+                border-top-left-radius: 0;
+              }
+              .fsc-control:last-of-type{
+                border-bottom-right-radius: 0;
+              }
+            }
+            &:last-child{
+              .fsc-control:first-of-type{
+                border-bottom-left-radius: 0;
+              }
+              .fsc-control:last-of-type{
+                border-bottom-right-radius: 0;
+                border-top-right-radius: 0;
+              }
+            }
           }
         }
-
         .fsc-side-drawer{
           top: pxToRem(10);
           height: calc(100% - #{pxToRem(10)});
-
+          &.sc-down{
+            min-width: pxToRem(225);
+          }
           &.fsc-open{
             height: pxToRem(200);
             &.sc-down{
               top: 100%;
+            }
+          }
+        }
+      }
+    }
+    &:hover{
+      .window-content{
+        .fsc-main-wrapper{
+          .fsc-unit-controls{
+            opacity: 1;
+          }
+          .fsc-clock-display{
+            .fsc-time-keeper-buttons{
+              opacity: 1;
             }
           }
         }

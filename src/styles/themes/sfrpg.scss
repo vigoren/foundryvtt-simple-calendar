@@ -33,6 +33,12 @@ $theme: (
         app-border-image: unset,
         app-color: var(--color-text-dark-primary),
 
+  // Compact Coloring
+        comapct-header-control-grey: $gray-400,
+        comapct-header-control-secondary: $secondary-400,
+        comapct-header-control-tertiary: $tertiary-100,
+        comapct-header-control-save: $success-300,
+
   // Dialog section coloring
         section-bg-color: #323552,
         section-border-color: #7096bf,

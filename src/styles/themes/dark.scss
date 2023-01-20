@@ -33,6 +33,12 @@ $theme: (
         app-border-image: unset,
         app-color: $white,
 
+  // Compact Coloring
+        comapct-header-control-grey: $gray-500,
+        comapct-header-control-secondary: $secondary,
+        comapct-header-control-tertiary: $tertiary-200,
+        comapct-header-control-save: $success-700,
+
   // Dialog section coloring
         section-bg-color: $primary-950,
         section-border-color: $primary-200,
@@ -70,7 +76,7 @@ $theme: (
         cal-moon-group-bg-color: $primary-1000,
         cal-moon-group-border-color: $primary-600,
         cal-moon-group-box-shadow-color: $boxShadowColor,
-        cal-moon-text-shadow: rgba(255, 255, 255, 0.4),
+        cal-moon-text-shadow: rgba(0, 0, 0, 0.5),
 
   //Calendar List Coloring
         cal-list-color: $white,

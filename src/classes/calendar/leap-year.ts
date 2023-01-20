@@ -13,7 +13,7 @@ export default class LeapYear extends ConfigurationItemBase{
      * The custom modifier that determines how often a custom leap year happens in years
      * @type {number}
      */
-    customMod: number = 0;
+    customMod: number = 1;
 
     constructor() {
         super();
@@ -66,6 +66,10 @@ export default class LeapYear extends ConfigurationItemBase{
             }
             if(config.hasOwnProperty('customMod')){
                 this.customMod = config.customMod;
+            }
+
+            if(this.rule === LeapYearRules.Custom && this.customMod <= 0){
+                this.rule = LeapYearRules.None;
             }
         }
     }

@@ -33,6 +33,12 @@ $theme: (
         app-border-image: url($w40kwgBodyBorder) 0 80 60 repeat,
         app-color: #000,
 
+  // Compact Coloring
+        comapct-header-control-grey: #e6e5e3,
+        comapct-header-control-secondary: #e6e5e3,
+        comapct-header-control-tertiary: #e6e5e3,
+        comapct-header-control-save: #e6e5e3,
+
   // Dialog section coloring
         section-bg-color: #000,
         section-border-color: var(--color-imperium),

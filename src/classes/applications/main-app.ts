@@ -17,6 +17,7 @@ import {CalManager, ConfigurationApplication, MainApplication, NManager, SC} fro
 import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
+import HeaderButton = Application.HeaderButton;
 
 
 /**
@@ -156,6 +157,9 @@ export default class MainApp extends FormApplication{
             const season = this.visibleCalendar.getCurrentSeason();
             data.compactViewDisplay.currentSeasonName = season.name;
             data.compactViewDisplay.currentSeasonIcon = GetIcon(season.icon, season.color, season.color);
+            if(data.compactViewDisplay.currentSeasonIcon === ""){
+                data.compactViewDisplay.currentSeasonIcon = `<span style="color:${season.color};">${season.name.slice(0, 2)}</span>`;
+            }
 
             if(this.visibleCalendar.moons.length){
                 for(let i = 0; i < this.visibleCalendar.moons.length; i++){
@@ -251,7 +255,18 @@ export default class MainApp extends FormApplication{
                     wrapper.querySelectorAll('.fsc-section').forEach(e => {
                         height += (<HTMLElement>e).offsetHeight
                     });
-                    width = 300;
+                    const minCalendarWidth = 225;
+                    const currentDate = <HTMLElement>wrapper.querySelector('.fsc-date .fsc-date-text');
+                    const controls = wrapper.querySelectorAll('.fsc-unit-controls .fsc-control-group');
+                    let curDateWidth = 0, controlWidth = 0;
+                    if (currentDate) {
+                        curDateWidth = currentDate.offsetWidth;
+                    }
+                    if(controls.length){
+                        controls.forEach((e) => {controlWidth += (<HTMLElement>e).offsetWidth;});
+                    }
+                    width = Math.max(minCalendarWidth, curDateWidth, controlWidth);
+
                 } else {
                     wrapper.querySelectorAll(".fsc-section").forEach((s, index) => {
                         height += (<HTMLElement>s).offsetHeight;
@@ -457,10 +472,10 @@ export default class MainApp extends FormApplication{
             //Search button click
             appWindow.querySelector(".fsc-actions-list .fsc-search")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-note-search'));
             // Add new note click
-            appWindow.querySelector(".fsc-actions-list .fsc-add-note")?.addEventListener('click', this.addNote.bind(this));
+            appWindow.querySelector(".fsc-add-note")?.addEventListener('click', this.addNote.bind(this));
             // Note Drawer Toggle
-            appWindow.querySelector(".fsc-actions-list .fsc-notes")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-note-list'));
-            appWindow.querySelector(".fsc-actions-list .fsc-reminder-notes")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-note-list'));
+            appWindow.querySelector(".fsc-notes")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-note-list'));
+            appWindow.querySelector(".fsc-reminder-notes")?.addEventListener('click', this.toggleDrawer.bind(this, 'fsc-note-list'));
             // Today button click
             appWindow.querySelector('.fsc-actions-list .fsc-today')?.addEventListener('click', this.todayClick.bind(this));
             // Set Current Date

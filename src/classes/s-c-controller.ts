@@ -127,6 +127,7 @@ export default class SCController {
         NManager.checkNoteTriggers(this.activeCalendar.id, true);
         //Close all open multi selects except the one being interacted with
         document.body.addEventListener('click', MultiSelect.BodyEventListener);
+        this.checkCombatActive();
     }
 
     /**
@@ -203,6 +204,19 @@ export default class SCController {
         document.querySelectorAll('.fsc-context-menu').forEach(e => {
             e.classList.add('fsc-hide');
         });
+    }
+
+    private checkCombatActive(){
+        const activeScene = GameSettings.GetSceneForCombatCheck();
+        const combat = (<Game>game).combats?.find((c: Combat) => {
+            if(c.scene && activeScene){
+                return c.scene.id === activeScene.id;
+            }
+            return false;
+        });
+        if(combat && combat.started){
+            this.activeCalendar.time.combatRunning = true;
+        }
     }
 
     //---------------------------
