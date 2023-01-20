@@ -388,6 +388,10 @@ describe('API Class Tests', () => {
         expect(API.getTimeConfiguration('')).toBeDefined();
     });
 
+    test('Is Open', () => {
+        expect(API.isOpen()).toBe(true);
+    });
+
     test('Is Primary GM', () => {
         expect(API.isPrimaryGM()).toBe(false);
     });

@@ -104,29 +104,3 @@ Logger.debugMode = false;
 
 //Hooks.on(SimpleCalendarHooks.DateTimeChange, (...args: any) => {console.log(...args);});
 //Hooks.on(SimpleCalendarHooks.Ready, (...args: any) => {console.log('SC Ready!');});
-
-
-Hooks.on(SimpleCalendarHooks.Init, () => {
-    console.log("SC adding sidebar button");
-    SimpleCalendar.api.addSidebarButton("SmallWeather", "fa-cloud-sun-rain", "custom-class", false, (event: Event | null, element: HTMLElement | null | undefined) => {
-       if(element){
-           const header = document.createElement('h2');
-           header.innerText = "SmallWeather";
-           element.append(header);
-       }
-        if(event){
-            const dialog = new Dialog({
-                title: "My Module",
-                content: "You clicked the button!",
-                buttons:{
-                    awesome: {
-                        icon: '<i class="fa-solid fa-face-smile"></i>',
-                        label: "Awesome!"
-                    }
-                },
-                default: "awesome"
-            });
-            dialog.render(true);
-        }
-    });
-});

@@ -1,9 +1,9 @@
 # Change Log
 
-## 2.1.68 - Refreshed Compact Display and Bug Fixes
+## 2.1.69 - Refreshed Compact Display and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-January%2019%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.68/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.69/module.zip)
 
 ### Refreshed Compact Display
 
@@ -56,6 +56,7 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 
 ### API Changes
 
+- Added a new function [`SimpleCalendar.api.isOpen()`](https://simplecalendar.info/functions/SimpleCalendar.api.isOpen.html) that will return a boolean if the calendar is open or closed.
 - Added a new hook [`SimpleCalendar.Hooks.Init`](https://simplecalendar.info/variables/SimpleCalendar.Hooks.Init.html). This hook fires as Simple Calendar is initializing but before the module is fully ready to use.
 - Added a new function, [`SimpleCalendar.api.addSidebarButton`](https://simplecalendar.info/functions/SimpleCalendar.api.addSidebarButton.html), for adding custom buttons to the right of the calendar.
 

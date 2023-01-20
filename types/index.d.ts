@@ -1035,6 +1035,18 @@ declare global{
             export function getTimeConfiguration(calendarId: string = 'active'): SimpleCalendar.TimeData | null
 
             /**
+             * If the calendar is open or not.
+             *
+             * @returns boolean True if the calendar is open, false if it is closed.
+             *
+             * @example
+             * ```javascript
+             * SimpleCalendar.api.isOpen(); // True or false depending on if the calendar is open or closed.
+             * ```
+             */
+            export function isOpen(): boolean
+
+            /**
              * Get if the current user is considered the primary GM or not.
              *
              * @returns If the current user is the primary GM.
