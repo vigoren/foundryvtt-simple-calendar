@@ -1,9 +1,9 @@
 # Change Log
 
-## 2.1.69 - Refreshed Compact Display and Bug Fixes
+## 2.1.70 - Refreshed Compact Display and Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-January%2019%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.69/module.zip)
+![](https://img.shields.io/badge/release%20date-January%2020%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.70/module.zip)
 
 ### Refreshed Compact Display
 
@@ -42,6 +42,13 @@ A preview of all themes for the new compact mode:
 - Fixed a few style issues with the Forbidden Lands theme.
 - Fixed an issue with the Eclipse Phase system where note pages couldn't be added (Style change hide the interface).
 - Fixed an issue where "When Leap Years Happen" could be set to 0 or a negative value, which doesn't make sense and would cause issues. If the value is set to something not valid the leap year rule will be set to None.
+- Fixed a bug where loading of corrupt calendar configurations would prevent the module from working at all.
+
+### API Changes
+
+- Added a new function [`SimpleCalendar.api.isOpen()`](https://simplecalendar.info/functions/SimpleCalendar.api.isOpen.html) that will return a boolean if the calendar is open or closed.
+- Added a new hook [`SimpleCalendar.Hooks.Init`](https://simplecalendar.info/variables/SimpleCalendar.Hooks.Init.html). This hook fires as Simple Calendar is initializing but before the module is fully ready to use.
+- Added a new function, [`SimpleCalendar.api.addSidebarButton`](https://simplecalendar.info/functions/SimpleCalendar.api.addSidebarButton.html), for adding custom buttons to the right of the calendar.
 
 ### Translation Updates
 
@@ -54,11 +61,10 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 - [Novella Locritani](https://weblate.foundryvtt-hub.com/user/Nuvvola/) (Italian)
 - [Davide Lamberti](https://weblate.foundryvtt-hub.com/user/leWebslinger/) (Italian)
 
-### API Changes
+### Documentation Changes
 
-- Added a new function [`SimpleCalendar.api.isOpen()`](https://simplecalendar.info/functions/SimpleCalendar.api.isOpen.html) that will return a boolean if the calendar is open or closed.
-- Added a new hook [`SimpleCalendar.Hooks.Init`](https://simplecalendar.info/variables/SimpleCalendar.Hooks.Init.html). This hook fires as Simple Calendar is initializing but before the module is fully ready to use.
-- Added a new function, [`SimpleCalendar.api.addSidebarButton`](https://simplecalendar.info/functions/SimpleCalendar.api.addSidebarButton.html), for adding custom buttons to the right of the calendar.
+- Added a new [FAQ](https://simplecalendar.info/pages/site/docs/faq.html) page to help answer some commonly asked questions!
+- Updated images of the compact view.
 
 <hr/>
 
