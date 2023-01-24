@@ -1,0 +1,13 @@
+@import "src/styles/variables";
+// Some systems break font-awesome styling, this will force the styles to use the correct font.
+.simple-calendar{
+  .fa, .fas, .fa-solid{
+    font-family: $icon-font-family;
+  }
+  .fa-classic,.fa-light,.fa-regular,.fa-solid,.fa-thin,.fal,.far,.fas,.fat {
+    font-family: $icon-font-family;
+  }
+  .fa-brands,.fab {
+    font-family: $icon-font-family-brands;
+  }
+}

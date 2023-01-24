@@ -2,6 +2,8 @@
 @import "mixin/scrollbar";
 
 $font-family: 'Roboto', sans-serif;
+$icon-font-family: var(--fa-style-family,"Font Awesome 6 Pro");
+$icon-font-family-brands: var(--fa-style-family,"Font Awesome 6 Brands");
 
 $spacer-half: $spacer * 0.5;       //8px
 $spacer-quarter: $spacer-half * 0.5;    //4px

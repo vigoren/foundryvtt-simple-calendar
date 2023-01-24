@@ -204,7 +204,7 @@
 
         .fsc-selector{
           &::after{
-            font-family: "Font Awesome 6 Pro";
+            font-family: $icon-font-family;
             content: "\f0d7";
             -moz-osx-font-smoothing: grayscale;
             -webkit-font-smoothing: antialiased;

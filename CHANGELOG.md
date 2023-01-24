@@ -1,9 +1,9 @@
 # Change Log
 
-## 2.1.70 - Refreshed Compact Display and Bug Fixes
+## 2.1.71 - Refreshed Compact Display and Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-January%2020%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.70/module.zip)
+![](https://img.shields.io/badge/release%20date-January%2023%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.71/module.zip)
 
 ### Refreshed Compact Display
 
@@ -43,6 +43,7 @@ A preview of all themes for the new compact mode:
 - Fixed an issue with the Eclipse Phase system where note pages couldn't be added (Style change hide the interface).
 - Fixed an issue where "When Leap Years Happen" could be set to 0 or a negative value, which doesn't make sense and would cause issues. If the value is set to something not valid the leap year rule will be set to None.
 - Fixed a bug where loading of corrupt calendar configurations would prevent the module from working at all.
+- Fixed an issue where some systems would break the displaying of icons within Simple Calendar.
 
 ### API Changes
 

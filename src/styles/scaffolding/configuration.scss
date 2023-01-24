@@ -53,7 +53,7 @@
                   justify-content: space-between;
                   cursor: pointer;
                   &::after{
-                    font-family: "Font Awesome 6 Pro";
+                    font-family: $icon-font-family;
                     content: "\f0d7";
                     -moz-osx-font-smoothing: grayscale;
                     -webkit-font-smoothing: antialiased;
@@ -165,7 +165,7 @@
                 justify-content: space-between;
                 align-items: center;
                 &:after{
-                  font-family: "Font Awesome 6 Pro";
+                  font-family: $icon-font-family;
                   font-weight: 900;
                   content: '\f061';
                   padding-left: $spacer-quarter;
@@ -445,7 +445,7 @@
                     justify-content: space-between;
                     align-items: center;
                     &:after{
-                      font-family: "Font Awesome 6 Pro";
+                      font-family: $icon-font-family;
                       font-weight: 900;
                       content: '\f00c';
                       padding-left: $spacer-quarter;
