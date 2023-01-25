@@ -1,9 +1,9 @@
 # Change Log
 
-## 2.1.71 - Refreshed Compact Display and Bug Fixes
+## 2.1.72 - Refreshed Compact Display and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-January%2023%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.71/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.72/module.zip)
 
 ### Refreshed Compact Display
 
@@ -34,6 +34,13 @@ A preview of all themes for the new compact mode:
 ![](./docs/images/sc-v2-theme-forbidden-lands-comp.png) ![](media://sc-v2-theme-forbidden-lands-comp.png)
 ![](./docs/images/sc-v2-theme-wfrp4e-comp.png) ![](media://sc-v2-theme-wfrp4e-comp.png)
 ![](./docs/images/sc-v2-theme-wrath-and-glory-comp.png) ![](media://sc-v2-theme-wrath-and-glory-comp.png)
+
+#### Time Control Button Options
+
+The compact display also now lets you choose from 2 button layouts for changing the time!
+
+- **Full**: This is the current layout and allows you to change any time unit forward or back.<br/>![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)<br/><br/>
+- **Quick Increment**: This layout offers 5 options (1 Round, 1 Minute, 5 Minutes, 15 Minutes, 1 Hour) and allows users to quickly advance the time by those amounts.<br/>![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
 
 ### Bug Fixes
 

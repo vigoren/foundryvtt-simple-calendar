@@ -4,7 +4,7 @@ import {DateSelector} from "../src/classes/date-selector";
 import Calendar from "../src/classes/calendar";
 import UserPermissions from "../src/classes/configuration/user-permissions";
 import {
-    CalendarViews, CombatPauseRules,
+    CalendarViews, CombatPauseRules, CompactViewDateTimeControlDisplay,
     DateSelectorPositions, DateTimeChangeSocketTypes,
     GameWorldTimeIntegrations,
     Icons,
@@ -1833,6 +1833,18 @@ declare global{
                 disabled?: boolean;
                 static?: boolean;
                 makeOthersMatch?: boolean;
+            }
+
+            export interface DateTimeControlOptions{
+                showDateControls?: boolean;
+                showTimeControls?: boolean;
+                displayType?: CompactViewDateTimeControlDisplay;
+                showPresetTimeOfDay?: boolean;
+                fullDisplay?: {
+                    unit: string;
+                    unitText: string;
+                    dateTimeUnitOpen: boolean;
+                }
             }
         }
 

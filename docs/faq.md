@@ -1,4 +1,4 @@
-Below are a few common issues / questions and steps on how to fix them!
+Below are a few common issues and questions!
 
 - [Can't Change Calendar Settings / Can't Edit Notes](#can39t-change-calendar-settings--can39t-edit-notes)
 - [Unable to Update to the Latest Version / Stuck on Version 1.3.75](#unable-to-update-to-the-latest-version--stuck-on-version-1375)
@@ -8,13 +8,9 @@ Below are a few common issues / questions and steps on how to fix them!
 
 ## Can't Change Calendar Settings / Can't Edit Notes
 
-This issue appears after updating to Foundry v10+ from Foundry v9 and has a simple fix.
+The most common cause of this issue is due to the module not having updated past version 1.3.75. If your Simple Calendar version is on 1.3.75 please follow the steps in this [FAQ](#unable-to-update-to-the-latest-version--stuck-on-version-1375).
 
-1. **Check the version of Simple Calendar**: Due to an update bug Simple Calendar can get stuck on version 1.3.75. If you are on this version follow the rest of the steps.
-2. **Uninstall Simple Calendar**: In the module management section of FoundryVTT uninstall the module. This is a safe procedure as no data (notes, configuration settings) is deleted when uninstalling.
-3. **Reinstall Simple Calendar**: In the module management section of FoundryVTT reinstall the module, the new version of Simple Calendar should be 2+.
-4. **Relaunch Your World**: Go back into the world that was having the problem, you will see a dialog informing you of a data migration. Once that has finished all your information will be available, the module will work, and you are ready to use the calendar!
-
+If you are on a version newer than 1.3.75 and still can not update the configuration or notes please [submit an issue on GitHub](https://github.com/vigoren/foundryvtt-simple-calendar/issues).
 
 ## Unable to Update to the Latest Version / Stuck on Version 1.3.75
 

@@ -62,38 +62,7 @@
         {{/if}}
         {{#if changeDateTime}}
             <div class="fsc-section">
-                <div class="fsc-controls fsc-unit-controls">
-                    {{#if showDateControls}}
-                        <div class="fsc-control-group">
-                            <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveBackwardFive' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-5"><span class="fa fa-angle-double-left"></span></button>
-                            <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveBackwardOne' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-1"><span class="fa fa-angle-left"></span></button>
-                            <button class="fsc-control fsc-primary fsc-selector" data-unit="time">{{localize uiElementStates.dateTimeUnitText}}&nbsp;</button>
-                            <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveForwardOne' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="1"><span class="fa fa-angle-right"></span></button>
-                            <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveForwardFive' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="5"><span class="fa fa-angle-double-right"></span></button>
-                            <ul class="fsc-unit-list fsc-time-units fsc-primary {{#if uiElementStates.dateTimeUnitOpen}} fsc-open{{else}} fsc-closed{{/if}}">
-                                {{#if showTimeControls}}
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'seconds')}} fsc-selected{{/if}}" data-unit="seconds">{{localize 'FSC.Second'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'round')}} fsc-selected{{/if}}" data-unit="round">{{localize 'FSC.Round'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'minute')}} fsc-selected{{/if}}" data-unit="minute">{{localize 'FSC.Minute'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'hour')}} fsc-selected{{/if}}" data-unit="hour">{{localize 'FSC.Hour'}}</li>
-                                {{/if}}
-                                {{#if showDateControls}}
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'day')}} fsc-selected{{/if}}" data-unit="day">{{localize 'FSC.Day'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'month')}} fsc-selected{{/if}}" data-unit="month">{{localize 'FSC.Month'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'year')}} fsc-selected{{/if}}" data-unit="year">{{localize 'FSC.Year'}}</li>
-                                {{/if}}
-                            </ul>
-                        </div>
-                    {{/if}}
-                    {{#if showTimeControls}}
-                        <div class="fsc-control-group">
-                            <button class="fsc-control fsc-secondary" data-type="sunrise" data-tooltip="{{localize 'FSC.Dawn'}}">{{sc-icon name='sunrise'}}</button>
-                            <button class="fsc-control fsc-secondary" data-type="midday" data-tooltip="{{localize 'FSC.Midday'}}">{{sc-icon name='midday'}}</button>
-                            <button class="fsc-control fsc-secondary" data-type="sunset" data-tooltip="{{localize 'FSC.Dusk'}}">{{sc-icon name='sunset'}}</button>
-                            <button class="fsc-control fsc-secondary" data-type="midnight" data-tooltip="{{localize 'FSC.Midnight'}}">{{sc-icon name='midnight'}}</button>
-                        </div>
-                    {{/if}}
-                </div>
+                {{sc-date-time-controls showDateControls=showDateControls showTimeControls=showTimeControls displayType=compactViewDisplay.dateTimeControlDisplay fullDisplay=dateTimeFullDisplay }}
             </div>
         {{/if}}
         <div class="fsc-section">
@@ -366,38 +335,7 @@
         {{/if}}
         {{#if changeDateTime}}
             <div class="fsc-section">
-                <div class="fsc-controls fsc-unit-controls">
-                    {{#if showDateControls}}
-                        <div class="fsc-control-group">
-                            <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveBackwardFive' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-5"><span class="fa fa-angle-double-left"></span></button>
-                            <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveBackwardOne' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="-1"><span class="fa fa-angle-left"></span></button>
-                            <button class="fsc-control fsc-primary fsc-selector" data-unit="time">{{localize uiElementStates.dateTimeUnitText}}&nbsp;</button>
-                            <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveForwardOne' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="1"><span class="fa fa-angle-right"></span></button>
-                            <button class="fsc-control fsc-primary" data-tooltip="{{localize 'FSC.MoveForwardFive' }}" data-type="{{uiElementStates.dateTimeUnit}}" data-amount="5"><span class="fa fa-angle-double-right"></span></button>
-                            <ul class="fsc-unit-list fsc-time-units fsc-primary {{#if uiElementStates.dateTimeUnitOpen}} fsc-open{{else}} fsc-closed{{/if}}">
-                                {{#if showTimeControls}}
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'seconds')}} fsc-selected{{/if}}" data-unit="seconds">{{localize 'FSC.Second'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'round')}} fsc-selected{{/if}}" data-unit="round">{{localize 'FSC.Round'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'minute')}} fsc-selected{{/if}}" data-unit="minute">{{localize 'FSC.Minute'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'hour')}} fsc-selected{{/if}}" data-unit="hour">{{localize 'FSC.Hour'}}</li>
-                                {{/if}}
-                                {{#if showDateControls}}
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'day')}} fsc-selected{{/if}}" data-unit="day">{{localize 'FSC.Day'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'month')}} fsc-selected{{/if}}" data-unit="month">{{localize 'FSC.Month'}}</li>
-                                    <li class="{{#if (eq uiElementStates.dateTimeUnit 'year')}} fsc-selected{{/if}}" data-unit="year">{{localize 'FSC.Year'}}</li>
-                                {{/if}}
-                            </ul>
-                        </div>
-                    {{/if}}
-                    {{#if showTimeControls}}
-                        <div class="fsc-control-group">
-                            <button class="fsc-control fsc-secondary" data-type="sunrise" data-tooltip="{{localize 'FSC.Dawn'}}">{{sc-icon name='sunrise'}}</button>
-                            <button class="fsc-control fsc-secondary" data-type="midday" data-tooltip="{{localize 'FSC.Midday'}}">{{sc-icon name='midday'}}</button>
-                            <button class="fsc-control fsc-secondary" data-type="sunset" data-tooltip="{{localize 'FSC.Dusk'}}">{{sc-icon name='sunset'}}</button>
-                            <button class="fsc-control fsc-secondary" data-type="midnight" data-tooltip="{{localize 'FSC.Midnight'}}">{{sc-icon name='midnight'}}</button>
-                        </div>
-                    {{/if}}
-                </div>
+                {{sc-date-time-controls showDateControls=showDateControls showTimeControls=showTimeControls displayType='full' fullDisplay=dateTimeFullDisplay }}
                 <div class="fsc-actions-list"></div>
             </div>
         {{/if}}

@@ -1,7 +1,7 @@
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
-    CalendarClickEvents,
+    CalendarClickEvents, CompactViewDateTimeControlDisplay,
     DateTimeChangeSocketTypes,
     DateTimeUnits,
     GameWorldTimeIntegrations,
@@ -13,7 +13,7 @@ import {
 import GameSockets from "../foundry-interfacing/game-sockets";
 import Renderer from "../renderer";
 import {animateElement, GetIcon, GetThemeName} from "../utilities/visual";
-import {CalManager, ConfigurationApplication, MainApplication, NManager, SC} from "../index";
+import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
@@ -114,7 +114,8 @@ export default class MainApp extends FormApplication{
                 compactViewDisplay: {
                     currentSeasonName: '',
                     currentSeasonIcon: '',
-                    selectedDayMoons: <any>[]
+                    selectedDayMoons: <any>[],
+                    dateTimeControlDisplay: CompactViewDateTimeControlDisplay.Full
                 },
                 mainViewDisplay: {
                     calendarList: <any>[],
@@ -137,6 +138,11 @@ export default class MainApp extends FormApplication{
                 showDateControls: false,
                 showSetCurrentDate: false,
                 showTimeControls: false,
+                dateTimeFullDisplay: {
+                    unit: this.uiElementStates.dateTimeUnit,
+                    unitText: this.uiElementStates.dateTimeUnitText,
+                    dateTimeUnitOpen: this.uiElementStates.dateTimeUnitOpen
+                },
                 sideDrawerDirection: GameSettings.GetStringSettings(SettingNames.NoteListOpenDirection)
             };
         //If the active and visible calendar are the same then show the controls as per the usual rules. Other wise do not show any controls
@@ -280,7 +286,7 @@ export default class MainApp extends FormApplication{
                     width = Math.max(minCalendarWidth, curDateWidth, controlWidth);
 
                 } else {
-                    wrapper.querySelectorAll(".fsc-section").forEach((s, index) => {
+                    wrapper.querySelectorAll(".fsc-section").forEach((s) => {
                         height += (<HTMLElement>s).offsetHeight;
                     });
                     const minCalendarWidth = 200;

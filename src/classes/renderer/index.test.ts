@@ -9,5 +9,6 @@ describe('Renderer Class Tests', () => {
         expect(Renderer.Clock).toBeDefined();
         expect(Renderer.TimeSelector).toBeDefined();
         expect(Renderer.MultiSelect).toBeDefined();
+        expect(Renderer.DateTimeControls).toBeDefined();
     });
 });

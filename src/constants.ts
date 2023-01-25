@@ -323,6 +323,11 @@ export enum TimeKeeperStatus {
     Paused = 'paused'
 }
 
+export enum CompactViewDateTimeControlDisplay {
+    Full = 'full',
+    QuickIncrement = 'quick-increment'
+}
+
 /**
  * Which view the calendar should render
  * @internal
