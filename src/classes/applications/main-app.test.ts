@@ -119,12 +119,34 @@ describe('Main App Class Tests', () => {
         jest.spyOn(PermUtilities, 'canUser').mockReturnValue(true);
         jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
         jest.spyOn(GameSettings, 'GetObjectSettings').mockReturnValue({top:1, left: 1});
+        SC.clientSettings.persistentOpen = true;
         ma.render();
+
+        SC.clientSettings.persistentOpen = false;
+        ma.render();
+    });
+
+    test('Scene Control Button Click', () => {
+        jest.spyOn(ma, "render").mockImplementation(() => {});
+
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(1);
+
+        SC.clientSettings.persistentOpen = true;
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        jest.spyOn(ma, "rendered", "get").mockReturnValue(false);
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(2);
     });
 
     test('close', () => {
         ma.close();
         expect(ma.opening).toBe(true);
+        SC.clientSettings.persistentOpen = true;
+        ma.close();
     });
 
     test('minimize', async () => {

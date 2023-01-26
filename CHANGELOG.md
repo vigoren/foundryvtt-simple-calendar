@@ -1,9 +1,9 @@
 # Change Log
 
-## 2.1.72 - Refreshed Compact Display and Bug Fixes
+## 2.1.73 - Refreshed Compact Display, Quality of Life Updates and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-January%2023%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.72/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.73/module.zip)
 
 ### Refreshed Compact Display
 
@@ -40,7 +40,13 @@ A preview of all themes for the new compact mode:
 The compact display also now lets you choose from 2 button layouts for changing the time!
 
 - **Full**: This is the current layout and allows you to change any time unit forward or back.<br/>![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)<br/><br/>
-- **Quick Increment**: This layout offers 5 options (1 Round, 1 Minute, 5 Minutes, 15 Minutes, 1 Hour) and allows users to quickly advance the time by those amounts.<br/>![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
+- **Quick Increment**: This layout offers 5 options (1 Round, 1 Minute, 5 Minutes, 15 Minutes, 1 Hour) and allows users to quickly advance the time by those amounts.<br/>![](./docs/images/sc-v2-theme-dark-comp-qi.png) ![](media://sc-v2-theme-dark-comp-qi.png)
+
+The setting for this can be found under the calendars [Display Options](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html) configuration section.
+
+### Quality of Life Updates
+
+- Added a new client setting, [Persistent Open](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings), that when enabled will remove the close button from the calendar window and prevent the escape key from closing it. The button under the scene control then becomes a toggle to open and close the calendar.
 
 ### Bug Fixes
 
@@ -72,7 +78,13 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 ### Documentation Changes
 
 - Added a new [FAQ](https://simplecalendar.info/pages/site/docs/faq.html) page to help answer some commonly asked questions!
+- Added documentation for the new [client setting Persistent Open](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings).
+- Added documentation for the new [compact view options](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options).
+- Updated the [client settings](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings) documentation for the new Persistent Open setting.
 - Updated images of the compact view.
+- Updated image for the client settings.
+- Updated the image for the date/time formatting section of the display options.
+- Added an image for the compact view options section of the display options.
 
 <hr/>
 

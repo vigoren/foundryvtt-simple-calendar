@@ -25,6 +25,7 @@ export enum SettingNames {
     NoteReminderNotification = 'note-reminder-notification',
     NoteListOpenDirection = 'note-list-open-direction',
     AlwaysShowNoteList = 'always-show-note-list',
+    PersistentOpen = 'persistent-open',
     CalendarMainApp = 'calendar-main-app',
     CalendarConfigurationMenu= 'calendar-configuration-menu',
     CalendarConfiguration = 'calendar-configuration',
@@ -323,6 +324,9 @@ export enum TimeKeeperStatus {
     Paused = 'paused'
 }
 
+/**
+ * The different options for how to display the compact view date/time controls
+ */
 export enum CompactViewDateTimeControlDisplay {
     Full = 'full',
     QuickIncrement = 'quick-increment'

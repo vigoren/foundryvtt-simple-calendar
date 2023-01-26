@@ -1,6 +1,6 @@
 import {ModuleName, SettingNames, Themes} from "../../constants";
 import ConfigurationApp from "../applications/configuration-app";
-import {CalManager, SC} from "../index"
+import {CalManager, MainApplication, SC} from "../index"
 import {GameSettings} from "./game-settings";
 import SCController from "../s-c-controller";
 import MainApp from "../applications/main-app";
@@ -117,6 +117,15 @@ export default class GameSettingsRegistration{
             type: Boolean,
             default: false,
             onChange: SCController.AlwaysShowNoteListChange.bind(SCController)
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.PersistentOpen, {
+            name: "FSC.Configuration.Client.PersistentOpen.Title",
+            hint: "FSC.Configuration.Client.PersistentOpen.Description",
+            scope: "client",
+            config: true,
+            type: Boolean,
+            default: false,
+            onChange: SC.PersistenceChange.bind(SC)
         });
 
         // -------------------

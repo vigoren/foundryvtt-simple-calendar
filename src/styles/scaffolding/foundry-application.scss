@@ -10,6 +10,15 @@
       content: unset;
       height: 0;
     }
+    &.fsc-persistent{
+      header{
+        &.window-header{
+          a.header-button.close{
+            display: none;
+          }
+        }
+      }
+    }
     header{
       font-size: $spacer;
       border-radius: pxToRem(5) pxToRem(5) 0 0;

@@ -95,6 +95,17 @@ describe('SCController Tests', () => {
         expect(docHeadA).toHaveBeenCalledTimes(3);
     });
 
+    test("Persistence Change", () => {
+        const mainApp = document.createElement('div');
+        jest.spyOn(GameSettings, "GetBooleanSettings").mockReturnValueOnce(false).mockReturnValue(true);
+        jest.spyOn(document, "getElementById").mockReturnValue(mainApp);
+
+        SC.PersistenceChange();
+        expect(mainApp.classList.contains('fsc-persistent')).toBe(false);
+        SC.PersistenceChange();
+        expect(mainApp.classList.contains('fsc-persistent')).toBe(true);
+    });
+
     test('Side Drawer Direction Change', () => {
         jest.spyOn(MainApplication, 'render').mockImplementation(() => {});
         SCController.SideDrawerDirectionChange();
@@ -181,11 +192,12 @@ describe('SCController Tests', () => {
             appPosition: {},
             noteReminderNotification: NoteReminderNotificationType.whisper,
             sideDrawerDirection: 'sc-right',
-            alwaysShowNoteList: false
+            alwaysShowNoteList: false,
+            persistentOpen: false
         });
         expect(CalManager.saveCalendars).toHaveBeenCalledTimes(2);
         expect(GameSettings.SaveStringSetting).toHaveBeenCalledTimes(3);
-        expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(5);
+        expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(6);
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
     });
 

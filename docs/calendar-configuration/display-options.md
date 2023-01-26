@@ -1,8 +1,8 @@
-This section is used to configure how different aspects of Simple Calendar are displayed. Right now the only options are for date and time formatting.
+This section is used to configure how different aspects of Simple Calendar are displayed.
+
+## Date/Time Formatting
 
 ![](media://calendar-display-options.png)
-
-## Date/Time Formats
 
 A date time format is text containing special tokens. These tokens are replaced with the corresponding date/time information to create a finalized display of that date and time. Below is a list of the different tokens available to use in Simple Calendar and what they do.
 
@@ -186,3 +186,14 @@ Below are the tokens used in the above settings fields to configure the date and
     </tr>
   </tbody>
 </table>
+
+## Compact View Options
+
+![](media://calendar-display-options-compact-view.png)
+
+The [compact view](https://simplecalendar.info/pages/docs/using-sc/index/index.html#compact-view) has options to customize how it looks. These options are listed here:
+
+| Setting                               | Description                                                                                                                                                                                                                                                                                                                                                                                                                             | Default       |
+|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| Compact View Date/Time Control Layout | Choose the layout for the buttons used to change the date/time of the calendar while in compact view.<br/>The options are:<ul><li>**Full Controls**: This display the full set of controls, the same that are available on the full calendar view.</li><li>**Quick Increment**: This layout offers 5 options (1 Round, 1 Minute, 5 Minutes, 15 Minutes, 1 Hour) and allows users to quickly advance the time by those amounts</li></ul> | Full Controls |
+

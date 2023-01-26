@@ -3,7 +3,7 @@ import {GameSettings} from "../foundry-interfacing/game-settings";
 import Month from "../calendar/month";
 import {Weekday} from "../calendar/weekday";
 import {
-    CombatPauseRules,
+    CombatPauseRules, CompactViewDateTimeControlDisplay,
     ConfigurationDateSelectors,
     GameWorldTimeIntegrations,
     Icons,
@@ -32,7 +32,12 @@ import {
 import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import UserPermissions from "../configuration/user-permissions";
 import {deepMerge, isObjectEmpty} from "../utilities/object";
-import {getCheckBoxInputValue, getNumericInputValue, getTextInputValue} from "../utilities/inputs";
+import {
+    getCheckBoxGroupValues,
+    getCheckBoxInputValue,
+    getNumericInputValue,
+    getTextInputValue
+} from "../utilities/inputs";
 import {FormatDateTime} from "../utilities/date-time";
 import {generateUniqueId} from "../utilities/string";
 import PF2E from "../systems/pf2e";
@@ -83,7 +88,8 @@ export default class ConfigurationApp extends FormApplication {
         appPosition: {},
         noteReminderNotification: NoteReminderNotificationType.whisper,
         sideDrawerDirection: 'sc-right',
-        alwaysShowNoteList: false
+        alwaysShowNoteList: false,
+        persistentOpen: false
     };
     /**
      * A list of different states for the UI
@@ -240,7 +246,8 @@ export default class ConfigurationApp extends FormApplication {
                     'sc-left': "FSC.Left",
                     'sc-down': "FSC.Down"
                 },
-                alwaysShowNoteList: this.clientSettings.alwaysShowNoteList
+                alwaysShowNoteList: this.clientSettings.alwaysShowNoteList,
+                persistentOpen: this.clientSettings.persistentOpen
             },
             combatPauseRules: {
                 'active': 'FSC.Configuration.CombatPauseRule.Active',
@@ -669,6 +676,7 @@ export default class ConfigurationApp extends FormApplication {
             this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>getTextInputValue('#scNoteReminderNotification', <string>NoteReminderNotificationType.whisper, this.appWindow);
             this.clientSettings.sideDrawerDirection = getTextInputValue('#scSideDrawerDirection', 'sc-right', this.appWindow);
             this.clientSettings.alwaysShowNoteList = getCheckBoxInputValue('#scAlwaysOpenNoteList', false, this.appWindow);
+            this.clientSettings.persistentOpen = getCheckBoxInputValue('#scPersistentOpen', false, this.appWindow);
 
             //----------------------------------
             // Global Config: Permissions
@@ -707,6 +715,7 @@ export default class ConfigurationApp extends FormApplication {
             (<Calendar>this.object).generalSettings.dateFormat.date = getTextInputValue('#scDateFormatsDate', 'MMMM DD, YYYY', this.appWindow);
             (<Calendar>this.object).generalSettings.dateFormat.time = getTextInputValue('#scDateFormatsTime', 'HH:mm:ss', this.appWindow);
             (<Calendar>this.object).generalSettings.dateFormat.monthYear = getTextInputValue('#scDateFormatsMonthYear', 'MMMM YAYYYYYZ', this.appWindow);
+            (<Calendar>this.object).generalSettings.compactViewOptions.controlLayout = <CompactViewDateTimeControlDisplay>(getCheckBoxGroupValues('scCompactControlLayout', this.appWindow)[0] || 'full');
 
             //----------------------------------
             // Calendar: Year Settings

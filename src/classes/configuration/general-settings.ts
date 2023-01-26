@@ -1,4 +1,4 @@
-import {GameWorldTimeIntegrations} from "../../constants";
+import {CompactViewDateTimeControlDisplay, GameWorldTimeIntegrations} from "../../constants";
 import ConfigurationItemBase from "./configuration-item-base";
 
 export default class GeneralSettings extends ConfigurationItemBase{
@@ -33,6 +33,13 @@ export default class GeneralSettings extends ConfigurationItemBase{
         /** Format for displaying just the month and year. Used at the top of any calendar month display */
         monthYear: 'MMMM YAYYYYYZ'
     };
+    /**
+     * The different display options tied to the compact view.
+     */
+    compactViewOptions = {
+        /** How to display the date/time control buttons. */
+        controlLayout: CompactViewDateTimeControlDisplay.Full
+    };
 
     constructor() {
         super();
@@ -52,6 +59,7 @@ export default class GeneralSettings extends ConfigurationItemBase{
         gs.dateFormat.date = this.dateFormat.date;
         gs.dateFormat.time = this.dateFormat.time;
         gs.dateFormat.monthYear = this.dateFormat.monthYear;
+        gs.compactViewOptions.controlLayout = this.compactViewOptions.controlLayout;
         return gs;
     }
 
@@ -66,7 +74,8 @@ export default class GeneralSettings extends ConfigurationItemBase{
             noteDefaultVisibility: this.noteDefaultVisibility,
             postNoteRemindersOnFoundryLoad: this.postNoteRemindersOnFoundryLoad,
             pf2eSync: this.pf2eSync,
-            dateFormat: this.dateFormat
+            dateFormat: this.dateFormat,
+            compactViewOptions: this.compactViewOptions
         }
     }
 
@@ -81,7 +90,8 @@ export default class GeneralSettings extends ConfigurationItemBase{
             noteDefaultVisibility: this.noteDefaultVisibility,
             postNoteRemindersOnFoundryLoad: this.postNoteRemindersOnFoundryLoad,
             pf2eSync: this.pf2eSync,
-            dateFormat: this.dateFormat
+            dateFormat: this.dateFormat,
+            compactViewOptions: this.compactViewOptions
         };
     }
 
@@ -102,6 +112,10 @@ export default class GeneralSettings extends ConfigurationItemBase{
 
             if(config.hasOwnProperty('dateFormat')){
                 this.dateFormat = config.dateFormat;
+            }
+
+            if(config.hasOwnProperty('compactViewOptions')){
+                this.compactViewOptions = config.compactViewOptions;
             }
 
             if(config.hasOwnProperty('postNoteRemindersOnFoundryLoad')){

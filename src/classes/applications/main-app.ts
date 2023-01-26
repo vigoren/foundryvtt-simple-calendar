@@ -115,7 +115,7 @@ export default class MainApp extends FormApplication{
                     currentSeasonName: '',
                     currentSeasonIcon: '',
                     selectedDayMoons: <any>[],
-                    dateTimeControlDisplay: CompactViewDateTimeControlDisplay.Full
+                    dateTimeControlDisplay: this.activeCalendar.generalSettings.compactViewOptions.controlLayout
                 },
                 mainViewDisplay: {
                     calendarList: <any>[],
@@ -225,15 +225,34 @@ export default class MainApp extends FormApplication{
                 this.opening = false;
             }
 
-            options.classes = ["simple-calendar", GetThemeName()];
+            const persistentClass = SC.clientSettings.persistentOpen? "fsc-persistent" : "";
+            options.classes = ["simple-calendar", GetThemeName(), persistentClass];
             return super.render(true, options);
         }
         return;
     }
 
+    /**
+     * Processes when the scene control button is clicked
+     */
+    public sceneControlButtonClick(){
+        if(SC.clientSettings.persistentOpen){
+            if(this.rendered){
+                super.close().catch(Logger.error);
+            } else {
+                this.render();
+            }
+        } else {
+            this.render();
+        }
+    }
+
     override close(options?: FormApplication.CloseOptions): Promise<void> {
-        this.opening = true;
-        return super.close(options);
+        if(!SC.clientSettings.persistentOpen){
+            this.opening = true;
+            return super.close(options);
+        }
+        return Promise.resolve();
     }
 
     /**

@@ -80,6 +80,15 @@
               text-align: right;
               padding: $spacer-half 0 0 0;
             }
+            .fsc-radio-group{
+              font-size: 0.825rem !important;
+              line-height: 1rem;
+              color: var(--app-color);
+              input{
+                width: unset;
+                height: unset !important;
+              }
+            }
           }
         }
         .fsc-compact-form-group{

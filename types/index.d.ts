@@ -38,6 +38,7 @@ declare global{
             export {PresetTimeOfDay};
             export {GameWorldTimeIntegrations};
             export {NoteRepeat};
+            export {CompactViewDateTimeControlDisplay}
 
             /**
              * This function is used to activate event listeners for calendars displayed with the {@link HandlebarHelpers.sc-full-calendar}.
@@ -1562,6 +1563,11 @@ declare global{
                     time: string;
                     monthYear: string;
                 };
+                /** The different display options tied to the compact view. */
+                compactViewOptions:{
+                    /** How to display the date/time control buttons. */
+                    controlLayout: CompactViewDateTimeControlDisplay;
+                }
             }
 
             interface LeapYearTemplate extends IDataItemBase{
@@ -2080,6 +2086,8 @@ declare global{
             sideDrawerDirection: string;
             /** If the note list should always be open. */
             alwaysShowNoteList: boolean;
+            /** If the calendar is always open (no close button) and the Toolbar button becomes a toggle. */
+            persistentOpen: boolean;
         }
 
         /**
@@ -2225,6 +2233,11 @@ declare global{
                 /** The format string used to display the month and year at the top of a calendar display */
                 monthYear: string;
             };
+            /** The different display options tied to the compact view. */
+            compactViewOptions: {
+                /** How to display the date/time control buttons. */
+                controlLayout: CompactViewDateTimeControlDisplay
+            }
             /** @deprecated Old 'Players Can Add Notes' permission setting, only used for very old setting files */
             playersAddNotes?: boolean;
         }
