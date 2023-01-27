@@ -12,6 +12,8 @@ The most common cause of this issue is due to the module not having updated past
 
 If you are on a version newer than 1.3.75 and still can not update the configuration or notes please [submit an issue on GitHub](https://github.com/vigoren/foundryvtt-simple-calendar/issues).
 
+<hr/>
+
 ## Unable to Update to the Latest Version / Stuck on Version 1.3.75
 
 This is due to an update bug when on version 1.3.75 or earlier. Follow these steps to get the latest version:
@@ -19,6 +21,8 @@ This is due to an update bug when on version 1.3.75 or earlier. Follow these ste
 1. **Uninstall Simple Calendar**: In the module management section of FoundryVTT uninstall the module. This is a safe procedure as no data (notes, configuration settings) is deleted when uninstalling.
 2. **Reinstall Simple Calendar**: In the module management section of FoundryVTT reinstall the module, the new version of Simple Calendar should be 2+.
 3. **Relaunch Your World**: Go back into the world that was having the problem, you will see a dialog informing you of a data migration. Once that has finished all your information will be available, the module will work, and you are ready to use the calendar!
+
+<hr/>
 
 ## Where Did the Toolbar Button Go?
 
@@ -29,6 +33,7 @@ There is also a button to open Simple Calendar under the Configure Settings menu
 
 This move was made as Simple Calendar does not have anything specific to do with tokens and is largely a journal tool, so it makes more sense for it to live there.
 
+<hr/>
 
 ## Why Is Simple Calendar not in Sync with X module/system?
 
@@ -52,6 +57,7 @@ Simple Calendar and SmallTime should work together correctly. If Simple Calendar
 
 If the time takes place before the Pathfinder 2E's epoch (The date the world was created, resetting the world clock will show the exact date). Simple Calendar and SmallTime will be off by 1 minute. This is a known issue with SmallTime.
 
+<hr/>
 
 ## How do I set the time to be a 12-hour clock instead of a 24-hour clock?
 
