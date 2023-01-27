@@ -90,7 +90,7 @@ export default class CalendarManager {
         if(cal && cal.timeKeeper.getStatus() !== TimeKeeperStatus.Started){
             MainApplication.updateApp();
         }
-        return calendars.length;
+        return Object.keys(this.calendars).length;
     }
 
     public loadActiveCalendar(): void {

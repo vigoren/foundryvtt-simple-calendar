@@ -4,7 +4,7 @@ import {DateSelector} from "../src/classes/date-selector";
 import Calendar from "../src/classes/calendar";
 import UserPermissions from "../src/classes/configuration/user-permissions";
 import {
-    CalendarViews, CombatPauseRules,
+    CalendarViews, CombatPauseRules, CompactViewDateTimeControlDisplay,
     DateSelectorPositions, DateTimeChangeSocketTypes,
     GameWorldTimeIntegrations,
     Icons,
@@ -38,6 +38,7 @@ declare global{
             export {PresetTimeOfDay};
             export {GameWorldTimeIntegrations};
             export {NoteRepeat};
+            export {CompactViewDateTimeControlDisplay}
 
             /**
              * This function is used to activate event listeners for calendars displayed with the {@link HandlebarHelpers.sc-full-calendar}.
@@ -78,6 +79,66 @@ declare global{
              * ```
              */
             export async function addNote(title: string, content: string, startDate: SimpleCalendar.DateTimeParts, endDate: SimpleCalendar.DateTimeParts, allDay: boolean, repeats: NoteRepeat = NoteRepeat.Never, categories: string[] = [], calendarId: string = 'active', macro: string | null = null, userVisibility: string[] = [], remindUsers: string[] = []): Promise<StoredDocument<JournalEntry> | null>
+
+            /**
+             * Add a custom button to the right side of the calendar (When in full view). The button will be added below the Note Search button.
+             *
+             * @param buttonTitle The text that appears when the button is hovered over.
+             * @param iconClass The Font Awesome Free icon class to use for the buttons display.
+             * @param customClass A custom CSS class to add to the button.
+             * @param showSidePanel If the button should open a side panel or not. A side panel functions like the notes list but will be completely empty.
+             * @param onRender Function that is called to show information to users.
+             *
+             * If the showSidePanel parameter is true this function will be passed an HTMLElement representing the side panel.
+             * The element could potentially be null so code should account for that.
+             * This function is then responsible for populating the side panel with any information.
+             * This function is called everytime the calendar is rendered.
+             *
+             * If the showSidePanel parameter is false this function will be passed an Event for the click.
+             * The event could potentially be null so code should account for that.
+             * This function should then open up an application or dialog or perform an action for the user.
+             * This function is called everytime the button is clicked.
+             *
+             * @example
+             * ```javascript
+             * // Function to call to populate the side panel
+             * function populateSidePanel(event, element){
+             *     if(element){
+             *            const header = document.createElement('h2');
+             *            header.innerText = "My Custom Button";
+             *            element.append(header);
+             *        }
+             * }
+             *
+             * // Function to call when the button is clicked
+             * function sidePanelButtonClick(event, element){
+             *     if(event){
+             *          const dialog = new Dialog({
+             *             title: "My Module",
+             *             content: "You clicked the button!",
+             *             buttons:{
+             *                 awesome: {
+             *                     icon: '<i class="fa-solid fa-face-smile"></i>',
+             *                     label: "Awesome!"
+             *                 }
+             *             },
+             *             default: "awesome"
+             *         });
+             *         dialog.render(true);
+             *     }
+             * }
+             *
+             *
+             * // Adding a button that should show a side panel
+             * // Clicking the button will show a side panel that will have the title "My Custom Button"
+             * SimpleCalendar.api.addSidebarButton("My Module", "fa-computer-mouse", "my-custom-class", true, populateSidePanel);
+             *
+             * // Adding a button that will show a dialog when clicked
+             * SimpleCalendar.api.addSidebarButton("My Module", "fa-computer-mouse", "my-custom-class", false, sidePanelButtonClick);
+             *
+             * ```
+             */
+            export function addSidebarButton(buttonTitle: string, iconClass: string, customClass: string, showSidePanel: boolean, onRender: (event: Event | null, renderTarget: HTMLElement | null | undefined) => void)
 
             /**
              * Advance the date and time to match the next preset time.
@@ -975,6 +1036,18 @@ declare global{
             export function getTimeConfiguration(calendarId: string = 'active'): SimpleCalendar.TimeData | null
 
             /**
+             * If the calendar is open or not.
+             *
+             * @returns boolean True if the calendar is open, false if it is closed.
+             *
+             * @example
+             * ```javascript
+             * SimpleCalendar.api.isOpen(); // True or false depending on if the calendar is open or closed.
+             * ```
+             */
+            export function isOpen(): boolean
+
+            /**
              * Get if the current user is considered the primary GM or not.
              *
              * @returns If the current user is the primary GM.
@@ -1387,6 +1460,21 @@ declare global{
              */
             const PrimaryGM = 'simple-calendar-primary-gm';
             /**
+             * This hook is emitted while Simple Calendar is initializing, before the module is ready to use.
+             *
+             * **What is passed**: No data is passed when this hook is fired.
+             *
+             * **Examples:**
+             *
+             * @example How to listen for the hook:
+             *   ```javascript
+             * Hooks.on(SimpleCalendar.Hooks.Init, () => {
+             *      console.log(`Simple Calendar is initializing!`);
+             *  });
+             * ```
+             */
+            const Init = 'simple-calendar-init';
+            /**
              * This hook is emitted when Simple Calendar is fully initialized and ready to use.
              *
              * For GMs this will happen up to 5 seconds after loading the game as additional checks are done to see which GM is to be considered the primary GM.
@@ -1475,6 +1563,11 @@ declare global{
                     time: string;
                     monthYear: string;
                 };
+                /** The different display options tied to the compact view. */
+                compactViewOptions:{
+                    /** How to display the date/time control buttons. */
+                    controlLayout: CompactViewDateTimeControlDisplay;
+                }
             }
 
             interface LeapYearTemplate extends IDataItemBase{
@@ -1747,6 +1840,18 @@ declare global{
                 static?: boolean;
                 makeOthersMatch?: boolean;
             }
+
+            export interface DateTimeControlOptions{
+                showDateControls?: boolean;
+                showTimeControls?: boolean;
+                displayType?: CompactViewDateTimeControlDisplay;
+                showPresetTimeOfDay?: boolean;
+                fullDisplay?: {
+                    unit: string;
+                    unitText: string;
+                    dateTimeUnitOpen: boolean;
+                }
+            }
         }
 
         /**
@@ -1867,6 +1972,14 @@ declare global{
             module: boolean;
         }
 
+        type AddonButton = {
+            title: string;
+            iconClass: string;
+            customClass: string;
+            showSidePanel: boolean;
+            onRender: (event: Event | null, renderTarget: HTMLElement | null | undefined) => void;
+        };
+
         /**
          * Interface for Journal page data
          * @internal
@@ -1973,6 +2086,8 @@ declare global{
             sideDrawerDirection: string;
             /** If the note list should always be open. */
             alwaysShowNoteList: boolean;
+            /** If the calendar is always open (no close button) and the Toolbar button becomes a toggle. */
+            persistentOpen: boolean;
         }
 
         /**
@@ -2118,6 +2233,11 @@ declare global{
                 /** The format string used to display the month and year at the top of a calendar display */
                 monthYear: string;
             };
+            /** The different display options tied to the compact view. */
+            compactViewOptions: {
+                /** How to display the date/time control buttons. */
+                controlLayout: CompactViewDateTimeControlDisplay
+            }
             /** @deprecated Old 'Players Can Add Notes' permission setting, only used for very old setting files */
             playersAddNotes?: boolean;
         }

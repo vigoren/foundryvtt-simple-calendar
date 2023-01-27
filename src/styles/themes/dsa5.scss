@@ -34,6 +34,12 @@ $theme: (
         app-border-image: unset,
         app-color: var(--color-text-dark-primary),
 
+  // Compact Coloring
+        comapct-header-control-grey: $white,
+        comapct-header-control-secondary: $white,
+        comapct-header-control-tertiary: $white,
+        comapct-header-control-save: $white,
+
   // Dialog section coloring
         section-bg-color: rgb(219 209 207),
         section-border-color: var(--border-color),
@@ -246,8 +252,8 @@ body.game{
         //Compact View
         &.fsc-compact-view {
           header.window-header{
-            flex: 0 0 pxToRem(20) !important;
-            background-size: 100% pxToRem(20);
+            flex: 0 0 pxToRem(24) !important;
+            background-size: 100% pxToRem(24);
             a.header-button.close{
               width: pxToRem(10);
               margin-top: 0!important;
@@ -255,6 +261,35 @@ body.game{
                 width: pxToRem(15);
                 height: pxToRem(15);
                 line-height: pxToRem(8);
+              }
+            }
+          }
+          .fsc-main-wrapper{
+            margin-bottom: $spacer-half;
+            .fsc-header-add-left{
+              top: pxToRem(30);
+              left: 1.25rem;
+              flex-direction: column;
+              .fsc-season{
+                margin-right: 0;
+              }
+            }
+            .fsc-header-add-right{
+              top: pxToRem(10);
+              right: 2.5rem;
+              .fsc-control{
+                &.fsc-grey:hover{
+                  background: linear-gradient(transparent, var(--btn-grey-bg-color), var(--btn-grey-bg-color),transparent) !important;
+                }
+                &.fsc-secondary:hover{
+                  background: linear-gradient(transparent, var(--btn-secondary-bg-color), var(--btn-secondary-bg-color),transparent) !important;
+                }
+                &.fsc-tertiary:hover{
+                  background: linear-gradient(transparent, var(--btn-tertiary-bg-color), var(--btn-tertiary-bg-color),transparent) !important;
+                }
+                &.fsc-save:hover{
+                  background: linear-gradient(transparent, var(--btn-save-bg-color), var(--btn-save-bg-color),transparent) !important;
+                }
               }
             }
           }

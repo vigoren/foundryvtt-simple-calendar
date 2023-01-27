@@ -95,6 +95,17 @@ describe('SCController Tests', () => {
         expect(docHeadA).toHaveBeenCalledTimes(3);
     });
 
+    test("Persistence Change", () => {
+        const mainApp = document.createElement('div');
+        jest.spyOn(GameSettings, "GetBooleanSettings").mockReturnValueOnce(false).mockReturnValue(true);
+        jest.spyOn(document, "getElementById").mockReturnValue(mainApp);
+
+        SC.PersistenceChange();
+        expect(mainApp.classList.contains('fsc-persistent')).toBe(false);
+        SC.PersistenceChange();
+        expect(mainApp.classList.contains('fsc-persistent')).toBe(true);
+    });
+
     test('Side Drawer Direction Change', () => {
         jest.spyOn(MainApplication, 'render').mockImplementation(() => {});
         SCController.SideDrawerDirectionChange();
@@ -181,11 +192,12 @@ describe('SCController Tests', () => {
             appPosition: {},
             noteReminderNotification: NoteReminderNotificationType.whisper,
             sideDrawerDirection: 'sc-right',
-            alwaysShowNoteList: false
+            alwaysShowNoteList: false,
+            persistentOpen: false
         });
         expect(CalManager.saveCalendars).toHaveBeenCalledTimes(2);
         expect(GameSettings.SaveStringSetting).toHaveBeenCalledTimes(3);
-        expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(5);
+        expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(6);
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
     });
 
@@ -195,6 +207,30 @@ describe('SCController Tests', () => {
         document.body.append(context);
         SCController.HideContextMenus();
         expect(context.classList.contains('fsc-hide')).toBe(true);
+    });
+
+    test('Check Combat Active', () => {
+        const tCal = new Calendar('', '');
+        jest.spyOn(CalManager, 'getActiveCalendar').mockReturnValue(tCal);
+        const orig = (<Game>game).combats;
+        const origScenes = (<Game>game).scenes;
+        //@ts-ignore
+        (<Game>game).combats = {size: 1, find: jest.fn((v)=>{return v.call(undefined, {id: 'cid'})? {id: 'cid', started: false, scene: {id:"sid"}} : null; }) };
+        //@ts-ignore
+        SC.checkCombatActive();
+        expect(tCal.time.combatRunning).toBe(false);
+
+        //@ts-ignore
+        (<Game>game).combats = {size: 1, find: jest.fn((v)=>{return v.call(undefined, {id: 'cid', started: true, scene: {id:"sid"}})? {id: 'cid', started: true, scene: {id:"sid"}} : null; }) };
+        //@ts-ignore
+        jest.spyOn(GameSettings, "GetSceneForCombatCheck").mockReturnValue({id: 'sid'});
+        //@ts-ignore
+        SC.checkCombatActive();
+        expect(tCal.time.combatRunning).toBe(true);
+
+
+        (<Game>game).combats = orig;
+        (<Game>game).scenes = origScenes;
     });
 
     test('Get Scene Control Buttons', () => {

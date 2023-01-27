@@ -1,5 +1,5 @@
 {
-	"FSC.AddNewCalendar": "Kalender hinzufügen",
+	"FSC.AddNewCalendar": "Neuen Kalender hinzufügen",
 	"FSC.ApplyPredefined": "Voreingestellte Konfiguration anwenden?",
 	"FSC.ApplyPredefinedText": "Dies wird die Konfiguration des Kalenders <strong>${CAL_NAME}</strong> mit der Konfiguration des voreingestellten Kalenders überschreiben. Diese Änderungen werden nur übernommen wenn die Konfiguration gespeichert wird. Bist du dir sicher?",
 	"FSC.Calendar": "Kalender",
@@ -14,7 +14,7 @@
 	"FSC.Configuration.Client.Description": "Diese Einstellungen sind nur für den jeweiligen Benutzer wirksam. Sie haben keine Auswirkungen auf andere Benutzer. Diese Änderungen können auch unter den Modul Einstellungen gefunden werden.",
 	"FSC.Configuration.Client.OpenOnLoad.Title": "Beim Start öffen",
 	"FSC.Configuration.Client.OpenOnLoad.Description": "Öffnet den Kalender direkt nach dem Laden von Foundry VTT.",
-	"FSC.Configuration.Client.OpenCompact.Title": "Öffnen in kompakter Ansicht",
+	"FSC.Configuration.Client.OpenCompact.Title": "Öffnen in kompakter Darstellung",
 	"FSC.Configuration.Client.OpenCompact.Description": "Wenn der Kalender geöffnet wird, öffnet er sich standartmäßig in kompakter Ansicht.",
 	"FSC.Configuration.Client.RememberPosition.Title": "Position beibehalten",
 	"FSC.Configuration.Client.RememberPosition.Description": "Simple Calendar wird sich die letzte Position merken und wieder dort öffnen.",
@@ -449,7 +449,7 @@
 	"FSC.Configuration.Weekday.DescriptionHelp": "Eine Beschreibung des Wochentags, um deinem Kalender mehr Atmosphäre zu verleihen. Diese Information wird angezeigt, wenn ein Benutzer in der Hauptansicht des Kalenders auf den Namen eines Wochentags klickt.",
 	"FSC.Configuration.Client.NoteReminderNotification.Description": "Wie soll Simple Calender Erinnerungsbenachrichtigungen für Notizen senden.",
 	"FSC.Configuration.Client.NoteReminderNotification.Render": "Öffne die Notiz automatisch.",
-	"FSC.Configuration.CombatPauseRule.Title": "Pausiere die Echtzeit-Uhr im Kampf Regel",
+	"FSC.Configuration.CombatPauseRule.Title": "Pausiere die Echtzeit-Uhr im Kampf nach Regel",
 	"FSC.Configuration.CombatPauseRule.Description": "Wähle wann die Echtzeit-Uhr pausiert werden soll, wenn Kämpfe in Szenen stattfinden.",
 	"FSC.Configuration.CombatPauseRule.Current": "Die Szene pausieren, die der SL gerade ansieht",
 	"FSC.Configuration.CombatPauseRule.Active": "Nur die aktive Szene pausieren",
@@ -468,5 +468,15 @@
 	"FSC.Left": "Links",
 	"FSC.Down": "Runter",
 	"FSC.Right": "Rechts",
-	"FSC.Configuration.Client.RememberCompactPosition.Title": "Kompaktdarstellungsposition merken"
+	"FSC.Configuration.Client.RememberCompactPosition.Title": "Kompaktdarstellungsposition merken",
+	"FSC.Configuration.Client.NoteListOpenDirection.Description": "Die Richtung, in der sich die seitlichen Schubladen vom Hauptkalender aus öffnen sollen. Die seitlichen Schubladen enthalten die Kalenderliste, die Notizliste und die Notizensuche.",
+	"FSC.Configuration.Client.RememberCompactPosition.Description": "Simple Calendar wird sich die Position der letzten kompakten Version merken und sich selbst dort im kompakten Modus wieder platzieren. Dies ist eine eigenständige Position von der großen Version.",
+	"FSC.Info.ThemeChange": "Simple Calendars Theme wurde durch ein System/Modul/Makro auf <strong>\"{THEME}\"</strong> geändert. Das Theme kann in den Simple Calendar Einstellungenwieder geändert werden.",
+	"FSC.Configuration.Client.AlwaysShowNoteList.Title": "Notizliste immer anzeigen",
+	"FSC.Configuration.Client.AlwaysShowNoteList.Description": "Diese Einstellung bewirkt, dass die Notizliste immer sichtbar ist und nicht geschlossen werden kann. Die einzige Ausnahme ist, wenn die Kalenderliste oder die Notizensuche geöffnet sind, werden sie über der Notizliste geöffnet, aber wenn sie geschlossen werden, bleibt die Notizliste sichtbar.",
+	"FSC.Predefined.EclipsePhase": "Eclipse Phase 2E",
+	"FSC.Predefined.Starfinder": "Starfinder",
+	"FSC.Configuration.Client.NoteListOpenDirection.Title": "Öffnungsrichtung der seitlichen Schublade",
+	"FSC.Predefined.Warhammer40kWG": "Warhammer 40,000 Roleplay: Wrath & Glory",
+	"FSC.Predefined.SymbaroumIC": "Symbaroum: Ambrian Kalender"
 }

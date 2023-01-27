@@ -2,6 +2,8 @@
 @import "mixin/scrollbar";
 
 $font-family: 'Roboto', sans-serif;
+$icon-font-family: var(--fa-style-family,"Font Awesome 6 Pro");
+$icon-font-family-brands: var(--fa-style-family,"Font Awesome 6 Brands");
 
 $spacer-half: $spacer * 0.5;       //8px
 $spacer-quarter: $spacer-half * 0.5;    //4px
@@ -141,6 +143,7 @@ $wfrpInputTextColor: #d6d6d6;
 
 $wfrpAppHeader: '/systems/wfrp4e/ui/frames/window-app-header-blank.webp';
 $wfrpCloseButton: '/systems/wfrp4e/ui/buttons/button-close.webp';
+$wfrpBlankButton: '/systems/wfrp4e/ui/buttons/button-blank.webp';
 $wfrpConfigureButton: '/systems/wfrp4e/ui/buttons/button-configure-sheet.webp';
 $wfrpShareButton: '/systems/wfrp4e/ui/buttons/button-show-players.webp';
 $wfrpAppBackground: '/systems/wfrp4e/ui/frames/window-app-background-bookshelf.webp';

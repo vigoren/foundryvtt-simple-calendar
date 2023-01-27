@@ -30,7 +30,7 @@
             color: var(--btn-grey-color);
             background-color: var(--btn-grey-bg-hover-color);
             border-color: var(--btn-grey-border-color);
-            box-shadow: unset;
+            box-shadow: unset !important;
           }
           &:disabled{
             color: var(--btn-grey-disabled-bg-color);
@@ -46,7 +46,7 @@
             background-color: var(--btn-primary-bg-hover-color);
             border-color: var(--btn-primary-border-color);
             color: var(--btn-primary-color);
-            box-shadow: unset;
+            box-shadow: unset !important;
           }
           &:disabled{
             background-color: var(--btn-primary-disabled-bg-color);
@@ -64,7 +64,7 @@
             background-color: var(--btn-secondary-bg-hover-color);
             border-color: var(--btn-secondary-border-color);
             color: var(--btn-secondary-color);
-            box-shadow: unset;
+            box-shadow: unset !important;
           }
           &:disabled{
             background-color: var(--btn-secondary-disabled-bg-color);
@@ -88,7 +88,7 @@
             background-color: var(--btn-tertiary-bg-hover-color);
             border-color: var(--btn-tertiary-border-color);
             color: var(--btn-tertiary-color);
-            box-shadow: unset;
+            box-shadow: unset !important;
           }
           &:disabled{
             background-color: var(--btn-tertiary-disabled-bg-color);
@@ -106,7 +106,7 @@
             background-color: var(--btn-delete-bg-hover-color);
             border-color: var(--btn-delete-border-color);
             color: var(--btn-delete-color);
-            box-shadow: unset;
+            box-shadow: unset !important;
           }
           &:disabled{
             background-color: var(--btn-delete-disabled-bg-color);
@@ -124,7 +124,7 @@
             background-color: var(--btn-save-bg-hover-color);
             border-color: var(--btn-save-border-color);
             color: var(--btn-save-color);
-            box-shadow: unset;
+            box-shadow: unset !important;
           }
           &:disabled{
             background-color: var(--btn-save-disabled-bg-color);
@@ -204,7 +204,7 @@
 
         .fsc-selector{
           &::after{
-            font-family: "Font Awesome 6 Pro";
+            font-family: $icon-font-family;
             content: "\f0d7";
             -moz-osx-font-smoothing: grayscale;
             -webkit-font-smoothing: antialiased;

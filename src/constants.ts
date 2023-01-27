@@ -25,6 +25,7 @@ export enum SettingNames {
     NoteReminderNotification = 'note-reminder-notification',
     NoteListOpenDirection = 'note-list-open-direction',
     AlwaysShowNoteList = 'always-show-note-list',
+    PersistentOpen = 'persistent-open',
     CalendarMainApp = 'calendar-main-app',
     CalendarConfigurationMenu= 'calendar-configuration-menu',
     CalendarConfiguration = 'calendar-configuration',
@@ -309,7 +310,8 @@ export enum SimpleCalendarHooks {
     DateTimeChange = 'simple-calendar-date-time-change',
     ClockStartStop = 'simple-calendar-clock-start-stop',
     PrimaryGM = 'simple-calendar-primary-gm',
-    Ready = 'simple-calendar-ready'
+    Ready = 'simple-calendar-ready',
+    Init = 'simple-calendar-init'
 }
 
 /**
@@ -320,6 +322,14 @@ export enum TimeKeeperStatus {
     Started = 'started',
     Stopped = 'stopped',
     Paused = 'paused'
+}
+
+/**
+ * The different options for how to display the compact view date/time controls
+ */
+export enum CompactViewDateTimeControlDisplay {
+    Full = 'full',
+    QuickIncrement = 'quick-increment'
 }
 
 /**

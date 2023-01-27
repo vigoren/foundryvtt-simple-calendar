@@ -105,7 +105,8 @@
       "pages":
         [
           { "title": "VIRTUAL", "childrenSourceDir":  "./", "childrenOutputDir": "./site", "children": [
-            { "title": "Changelog", "source": "CHANGELOG.md" }
+            { "title": "Changelog", "source": "CHANGELOG.md" },
+            { "title":  "FAQ", "source": "./docs/faq.md" }
           ]},
           { "title": "Configuring Simple Calendar", "childrenSourceDir": "./docs", "children":  [
             { "title": "Global Configuration", "childrenSourceDir": "./global-configuration", "source": "global-configuration/index.md", "children":  [

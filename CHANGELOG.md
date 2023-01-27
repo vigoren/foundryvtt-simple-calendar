@@ -1,5 +1,93 @@
 # Change Log
 
+## 2.1.73 - Refreshed Compact Display, Quality of Life Updates and Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-January%2026%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.73/module.zip)
+
+### Refreshed Compact Display
+
+The compact display has been updated to make it a little cleaner and utilize the unused space to keep it nice and compact without losing any functionality.
+
+![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
+
+Changes include:
+
+- If seasons are configured the current season will be shown by just its icon (or the first 2 letters of its name if no icon is chosen) in the top left of the header. Hovering over the icon will show the full season name.
+- If moons are configured they are shown next to the season in the top left of the header. The current phase of the moon(s) are shown. If 1-2 moons are configured they will be shown beside each-other, if 3 or more  moons are configured the first moon will be shown with an indicator that hovering over that icon will show a dialog will all the moons current phases.
+- The note indicators (Notes for that day and notes you want to be reminded of) are shown in the top right of the header next to the close button.
+- If the player has permissions to add notes the add note button is displayed next to the note indicators in the top right of the header.
+- The main body of the display contains the current date and time. The primary GM will see the buttons to start/pause/stop the real time clock next to the time.
+- If the player has permissions to change the current date and time at the bottom the buttons used to change the date and time as well as the dawn/midday/dusk/midnight buttons.
+- All the themes have been updated to take advantage of this new layout.
+
+Overall these changes have helped reduce the height and width of the compact display making it easier to keep on the screen while playing.
+
+A preview of all themes for the new compact mode:
+
+![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
+![](./docs/images/sc-v2-theme-light-comp.png) ![](media://sc-v2-theme-light-comp.png)
+![](./docs/images/sc-v2-theme-classic-comp.png) ![](media://sc-v2-theme-classic-comp.png)
+![](./docs/images/sc-v2-theme-eclipsephase-comp.png) ![](media://sc-v2-theme-eclipsephase-comp.png)
+![](./docs/images/sc-v2-theme-sfrpg-comp.png) ![](media://sc-v2-theme-sfrpg-comp.png)
+![](./docs/images/sc-v2-theme-dsa5-comp.png) ![](media://sc-v2-theme-dsa5-comp.png)
+![](./docs/images/sc-v2-theme-forbidden-lands-comp.png) ![](media://sc-v2-theme-forbidden-lands-comp.png)
+![](./docs/images/sc-v2-theme-wfrp4e-comp.png) ![](media://sc-v2-theme-wfrp4e-comp.png)
+![](./docs/images/sc-v2-theme-wrath-and-glory-comp.png) ![](media://sc-v2-theme-wrath-and-glory-comp.png)
+
+#### Time Control Button Options
+
+The compact display also now lets you choose from 2 button layouts for changing the time!
+
+- **Full**: This is the current layout and allows you to change any time unit forward or back.<br/>![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)<br/><br/>
+- **Quick Increment**: This layout offers 5 options (1 Round, 1 Minute, 5 Minutes, 15 Minutes, 1 Hour) and allows users to quickly advance the time by those amounts.<br/>![](./docs/images/sc-v2-theme-dark-comp-qi.png) ![](media://sc-v2-theme-dark-comp-qi.png)
+
+The setting for this can be found under the calendars [Display Options](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html) configuration section.
+
+### Quality of Life Updates
+
+- Added a new client setting, [Persistent Open](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings), that when enabled will remove the close button from the calendar window and prevent the escape key from closing it. The button under the scene control then becomes a toggle to open and close the calendar.
+
+### Bug Fixes
+
+- Fixed an issue when changing the [Update Frequency](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) setting while the clock was running that would result in the time updating incorrectly.
+- Fixed an issue when reloading the page would not properly recognise any active combats and in certain cases the clock could be started.
+- Fixed a few style issues with the Forbidden Lands theme.
+- Fixed an issue with the Eclipse Phase system where note pages couldn't be added (Style change hide the interface).
+- Fixed an issue where "When Leap Years Happen" could be set to 0 or a negative value, which doesn't make sense and would cause issues. If the value is set to something not valid the leap year rule will be set to None.
+- Fixed a bug where loading of corrupt calendar configurations would prevent the module from working at all.
+- Fixed an issue where some systems would break the displaying of icons within Simple Calendar.
+
+### API Changes
+
+- Added a new function [`SimpleCalendar.api.isOpen()`](https://simplecalendar.info/functions/SimpleCalendar.api.isOpen.html) that will return a boolean if the calendar is open or closed.
+- Added a new hook [`SimpleCalendar.Hooks.Init`](https://simplecalendar.info/variables/SimpleCalendar.Hooks.Init.html). This hook fires as Simple Calendar is initializing but before the module is fully ready to use.
+- Added a new function, [`SimpleCalendar.api.addSidebarButton`](https://simplecalendar.info/functions/SimpleCalendar.api.addSidebarButton.html), for adding custom buttons to the right of the calendar.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+- [Farevell](https://weblate.foundryvtt-hub.com/user/Farevell/) (Chinese (Simplified))
+- [Sir Motte](https://weblate.foundryvtt-hub.com/user/SirMotte/) (German)
+- [Chris76J](https://weblate.foundryvtt-hub.com/user/Chris76J/) (German)
+- [Novella Locritani](https://weblate.foundryvtt-hub.com/user/Nuvvola/) (Italian)
+- [Davide Lamberti](https://weblate.foundryvtt-hub.com/user/leWebslinger/) (Italian)
+
+### Documentation Changes
+
+- Added a new [FAQ](https://simplecalendar.info/pages/site/docs/faq.html) page to help answer some commonly asked questions!
+- Added documentation for the new [client setting Persistent Open](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings).
+- Added documentation for the new [compact view options](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options).
+- Updated the [client settings](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings) documentation for the new Persistent Open setting.
+- Updated images of the compact view.
+- Updated image for the client settings.
+- Updated the image for the date/time formatting section of the display options.
+- Added an image for the compact view options section of the display options.
+
+<hr/>
+
 ## 2.1.60 - Bug Fix and Translation Updates
 
 ![](https://img.shields.io/badge/release%20date-November%2017%2C%202022-blue)

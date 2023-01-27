@@ -41,10 +41,6 @@ export default class Sockets {
         //Initialize all our sockets
 
         Promise.all(this.sockets.map(s => s.initialize()))
-            .then((results => {
-                MainApplication.updateApp();
-                Hook.emit(SimpleCalendarHooks.Ready, CalManager.getActiveCalendar());
-            }))
             .catch(Logger.error);
     }
 

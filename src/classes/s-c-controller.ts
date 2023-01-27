@@ -4,7 +4,7 @@ import {
     CombatPauseRules,
     ModuleName,
     NoteReminderNotificationType,
-    SettingNames,
+    SettingNames, SimpleCalendarHooks,
     SocketTypes,
     Themes,
     TimeKeeperStatus
@@ -20,6 +20,7 @@ import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/fou
 import MultiSelect from "./renderer/multi-select";
 import {GetThemeName} from "./utilities/visual";
 import {FoundryVTTGameData} from "./foundry-interfacing/game-data";
+import {Hook} from "./api/hook";
 
 /**
  * The global Simple Calendar Controller class
@@ -50,7 +51,19 @@ export default class SCController {
 
     constructor() {
         this.sockets = new Sockets();
-        this.clientSettings = {id: '', theme: Themes[0].key, openOnLoad: true, openCompact: false, rememberPosition: true, rememberCompactPosition: false, appPosition: {}, noteReminderNotification: NoteReminderNotificationType.whisper, sideDrawerDirection: 'sc-right', alwaysShowNoteList: false};
+        this.clientSettings = {
+            id: '',
+            theme: Themes[0].key,
+            openOnLoad: true,
+            openCompact: false,
+            rememberPosition: true,
+            rememberCompactPosition: false,
+            appPosition: {},
+            noteReminderNotification: NoteReminderNotificationType.whisper,
+            sideDrawerDirection: 'sc-right',
+            alwaysShowNoteList: false,
+            persistentOpen: false
+        };
         this.globalConfiguration = {
             id: '',
             version: '',
@@ -106,6 +119,18 @@ export default class SCController {
         }
     }
 
+    public PersistenceChange() {
+        this.clientSettings.persistentOpen = GameSettings.GetBooleanSettings(SettingNames.PersistentOpen);
+        const mainApp = document.getElementById(MainApp.appWindowId);
+        if(mainApp){
+            if(this.clientSettings.persistentOpen){
+                mainApp.classList.add('fsc-persistent');
+            } else {
+                mainApp.classList.remove('fsc-persistent');
+            }
+        }
+    }
+
     /**
      * When the side drawer direction client setting has changed re-render the main application.
      */
@@ -127,6 +152,8 @@ export default class SCController {
         NManager.checkNoteTriggers(this.activeCalendar.id, true);
         //Close all open multi selects except the one being interacted with
         document.body.addEventListener('click', MultiSelect.BodyEventListener);
+        this.checkCombatActive();
+        Hook.emit(SimpleCalendarHooks.Init, CalManager.getActiveCalendar());
     }
 
     /**
@@ -152,6 +179,7 @@ export default class SCController {
         this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>GameSettings.GetStringSettings(SettingNames.NoteReminderNotification);
         this.clientSettings.sideDrawerDirection = GameSettings.GetStringSettings(SettingNames.NoteListOpenDirection);
         this.clientSettings.alwaysShowNoteList = GameSettings.GetBooleanSettings(SettingNames.AlwaysShowNoteList);
+        this.clientSettings.persistentOpen = GameSettings.GetBooleanSettings(SettingNames.PersistentOpen);
     }
 
     /**
@@ -189,6 +217,7 @@ export default class SCController {
             GameSettings.SaveStringSetting(SettingNames.NoteReminderNotification, clientConfig.noteReminderNotification, false).catch(Logger.error);
             GameSettings.SaveStringSetting(SettingNames.NoteListOpenDirection, clientConfig.sideDrawerDirection, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.AlwaysShowNoteList, clientConfig.alwaysShowNoteList, false).catch(Logger.error);
+            GameSettings.SaveBooleanSetting(SettingNames.PersistentOpen, clientConfig.persistentOpen, false).catch(Logger.error);
             //Save the global configuration (triggers the load function)
             GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc)
                 .then(() => GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}}))
@@ -203,6 +232,19 @@ export default class SCController {
         document.querySelectorAll('.fsc-context-menu').forEach(e => {
             e.classList.add('fsc-hide');
         });
+    }
+
+    private checkCombatActive(){
+        const activeScene = GameSettings.GetSceneForCombatCheck();
+        const combat = (<Game>game).combats?.find((c: Combat) => {
+            if(c.scene && activeScene){
+                return c.scene.id === activeScene.id;
+            }
+            return false;
+        });
+        if(combat && combat.started){
+            this.activeCalendar.time.combatRunning = true;
+        }
     }
 
     //---------------------------
@@ -221,7 +263,7 @@ export default class SCController {
                     title: "FSC.Title",
                     icon: "fas fa-calendar simple-calendar-icon",
                     button: true,
-                    onClick: MainApplication.render.bind(MainApplication)
+                    onClick: MainApplication.sceneControlButtonClick.bind(MainApplication)
                 });
             }
         }

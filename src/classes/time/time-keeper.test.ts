@@ -29,6 +29,14 @@ describe('Time Keeper Class Tests', () => {
         tk.intervalNumber = undefined;
     });
 
+    test('Update Frequency (Set)', () => {
+        //@ts-ignore
+        tk.intervalNumber = 123;
+        tk.updateFrequency = 2;
+        //@ts-ignore
+        expect(tk.intervalNumber).not.toBe(123);
+    });
+
 
     test('Start/Stop/Pause', () => {
         const tCal = new Calendar('', '');

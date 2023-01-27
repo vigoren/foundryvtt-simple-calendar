@@ -4,7 +4,7 @@
 import "../../../__mocks__/index";
 
 import GeneralSettings from "./general-settings";
-import {GameWorldTimeIntegrations} from "../../constants";
+import {CompactViewDateTimeControlDisplay, GameWorldTimeIntegrations} from "../../constants";
 
 describe('General Settings Class Tests', () => {
 
@@ -14,7 +14,7 @@ describe('General Settings Class Tests', () => {
     test('Properties', () => {
         const gs = new GeneralSettings();
 
-        expect(Object.keys(gs).length).toBe(12); //Make sure no new properties have been added
+        expect(Object.keys(gs).length).toBe(13); //Make sure no new properties have been added
     });
 
     test('Clone', () => {
@@ -51,7 +51,7 @@ describe('General Settings Class Tests', () => {
         gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, playersAddNotes: true });
         expect(gs.id).toBe('a');
 
-        gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, dateFormat:{date: '', time: '', monthYear: ''}, playersAddNotes: true, noteDefaultVisibility: true, postNoteRemindersOnFoundryLoad: true });
+        gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, dateFormat:{date: '', time: '', monthYear: ''}, playersAddNotes: true, noteDefaultVisibility: true, postNoteRemindersOnFoundryLoad: true, compactViewOptions:{controlLayout: CompactViewDateTimeControlDisplay.Full} });
         expect(gs.id).toBe('a');
         expect(gs.showClock).toBe(true);
         expect(gs.pf2eSync).toBe(true);

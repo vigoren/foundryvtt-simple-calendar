@@ -80,6 +80,8 @@ describe('Calendar Manager Class Tests', () => {
     });
 
     test('Load Calendars', () => {
+        //@ts-ignore
+        CalManager.calendars = {};
         const mLoad = jest.spyOn(GameSettings, 'GetObjectSettings').mockReturnValue([]);
         jest.spyOn(NManager, 'checkNoteTriggers').mockImplementation(() => {});
         expect(CalManager.loadCalendars()).toBe(0);
@@ -88,18 +90,17 @@ describe('Calendar Manager Class Tests', () => {
         expect(CalManager.loadCalendars()).toBe(0);
 
         jest.spyOn(tCal,'loadFromSettings').mockImplementation(() => {});
-        jest.spyOn(CalManager,'addCalendar').mockImplementation(() => {return new Calendar('','')});
+        //jest.spyOn(CalManager,'addCalendar').mockImplementation(() => {return new Calendar('','')});
         mLoad.mockReturnValueOnce([tCal.toConfig()]);
         expect(CalManager.loadCalendars()).toBe(1);
-        expect(tCal.loadFromSettings).toHaveBeenCalledTimes(1);
 
         mLoad.mockReturnValueOnce([{id: '3'}]);
-        expect(CalManager.loadCalendars()).toBe(1);
+        expect(CalManager.loadCalendars()).toBe(2);
 
         mLoad.mockReturnValueOnce([{id: '3'}]);
         //@ts-ignore
         CalManager.activeId = '';
-        expect(CalManager.loadCalendars()).toBe(1);
+        expect(CalManager.loadCalendars()).toBe(2);
         //@ts-ignore
         expect(CalManager.activeId).toBe('3');
     });

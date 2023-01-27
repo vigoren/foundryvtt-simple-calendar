@@ -153,6 +153,13 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Client.AlwaysShowNoteList.Description'}}</p>
                 </div>
+                <div class="form-group fsc-open">
+                    <label for="scPersistentOpen">{{localize 'FSC.Configuration.Client.PersistentOpen.Title'}}</label>
+                    <div class="form-fields">
+                        <input class="fsc-toggle" value="{{clientSettings.persistentOpen}}" type="checkbox" id="scPersistentOpen" {{checked clientSettings.persistentOpen}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Client.PersistentOpen.Description'}}</p>
+                </div>
             </div>
         </div>
 
@@ -357,275 +364,296 @@
             </div>
         </div>
         <div class="tab fsc-display-options" data-tab="displayOptions">
-            <h2>{{localize 'FSC.Configuration.General.DisplayOptions'}} <a href="https://simplecalendar.info/pages/calendar-configuration/index/display-options.html" data-tooltip="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
-            <p>{{{localize 'FSC.Configuration.Display.Description'}}}</p>
-            <div class="fsc-f-table fsc-tokens" style="border-top: 1px solid #7a7971;">
-                <div class="fsc-row fsc-head fsc-date-format-token-show" style="cursor: pointer;">
-                    <div class="fsc-col">
-                        <div>{{localize 'FSC.DateFormat.Title'}}</div>
-                        <div style="flex: 1 1 100%;font-weight: normal;font-size: 0.75rem; margin-top: 0.5rem;">{{localize 'FSC.DateFormat.Description'}}</div>
+            <div class="settings-group fsc-open">
+                <h2>{{localize 'FSC.Configuration.Display.DateTimeFormat'}} <a href="https://simplecalendar.info/pages/calendar-configuration/index/display-options.html" data-tooltip="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <p>{{{localize 'FSC.Configuration.Display.Description'}}}</p>
+                <div class="fsc-f-table fsc-tokens" style="border-top: 1px solid #7a7971;">
+                    <div class="fsc-row fsc-head fsc-date-format-token-show" style="cursor: pointer;">
+                        <div class="fsc-col">
+                            <div>{{localize 'FSC.DateFormat.Title'}}</div>
+                            <div style="flex: 1 1 100%;font-weight: normal;font-size: 0.75rem; margin-top: 0.5rem;">{{localize 'FSC.DateFormat.Description'}}</div>
+                        </div>
+                        <div class="fa {{#if showDateFormatTokens}}fa-chevron-up{{else}}fa-chevron-down{{/if}}" style="flex: 0 1 50px;"></div>
                     </div>
-                    <div class="fa {{#if showDateFormatTokens}}fa-chevron-up{{else}}fa-chevron-down{{/if}}" style="flex: 0 1 50px;"></div>
-                </div>
-                <div class="fsc-collapse-data" style="{{#unless showDateFormatTokens}}display: none;{{/unless}}">
-                    <div class="fsc-row">
-                        <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.YearOptions'}}</strong></div>
-                        <div style="flex: 1 1 75%;">
-                            <table style="border-left: 1px solid #7a7971;">
-                                <tr>
-                                    <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
-                                    <th>{{localize 'FSC.Description'}}</th>
-                                    <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
-                                </tr>
-                                <tr>
-                                    <td>YYYY</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.Full'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.FullExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>YY</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.Short'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.ShortExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>YN</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.Name'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.NameExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>YA</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.Prefix'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.PrefixExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>YZ</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.Postfix'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Year.PostfixExample'}}</td>
-                                </tr>
+                    <div class="fsc-collapse-data" style="{{#unless showDateFormatTokens}}display: none;{{/unless}}">
+                        <div class="fsc-row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.YearOptions'}}</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
+                                        <th>{{localize 'FSC.Description'}}</th>
+                                        <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>YYYY</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.Full'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.FullExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>YY</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.Short'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.ShortExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>YN</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.Name'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.NameExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>YA</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.Prefix'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.PrefixExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>YZ</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.Postfix'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Year.PostfixExample'}}</td>
+                                    </tr>
 
-                            </table>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fsc-row">
-                        <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.MonthOptions'}}</strong></div>
-                        <div style="flex: 1 1 75%;">
-                            <table style="border-left: 1px solid #7a7971;">
-                                <tr>
-                                    <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
-                                    <th>{{localize 'FSC.Description'}}</th>
-                                    <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
-                                </tr>
-                                <tr>
-                                    <td>M</td>
-                                    <td>{{localize 'FSC.DateFormat.Month.Number'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Month.NumberExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>MM</td>
-                                    <td>{{localize 'FSC.DateFormat.Month.NumberPadded'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Month.NumberPaddedExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>MMM</td>
-                                    <td>{{localize 'FSC.DateFormat.Month.AbbreviatedName'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Month.AbbreviatedNameExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>MMMM</td>
-                                    <td>{{localize 'FSC.DateFormat.Month.Name'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Month.NameExample'}}</td>
-                                </tr>
-                            </table>
+                        <div class="fsc-row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.MonthOptions'}}</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
+                                        <th>{{localize 'FSC.Description'}}</th>
+                                        <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>M</td>
+                                        <td>{{localize 'FSC.DateFormat.Month.Number'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Month.NumberExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MM</td>
+                                        <td>{{localize 'FSC.DateFormat.Month.NumberPadded'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Month.NumberPaddedExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MMM</td>
+                                        <td>{{localize 'FSC.DateFormat.Month.AbbreviatedName'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Month.AbbreviatedNameExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MMMM</td>
+                                        <td>{{localize 'FSC.DateFormat.Month.Name'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Month.NameExample'}}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fsc-row">
-                        <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.DayOptions'}}</strong></div>
-                        <div style="flex: 1 1 75%;">
-                            <table style="border-left: 1px solid #7a7971;">
-                                <tr>
-                                    <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
-                                    <th>{{localize 'FSC.Description'}}</th>
-                                    <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
-                                </tr>
-                                <tr>
-                                    <td>D</td>
-                                    <td>{{localize 'FSC.DateFormat.Day.Number'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Day.NumberExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>DD</td>
-                                    <td>{{localize 'FSC.DateFormat.Day.NumberPadded'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Day.NumberPaddedExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>DO</td>
-                                    <td>{{localize 'FSC.DateFormat.Day.NumberSuffix'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Day.NumberSuffixExample'}}</td>
-                                </tr>
-                            </table>
+                        <div class="fsc-row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.DayOptions'}}</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
+                                        <th>{{localize 'FSC.Description'}}</th>
+                                        <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>D</td>
+                                        <td>{{localize 'FSC.DateFormat.Day.Number'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Day.NumberExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>DD</td>
+                                        <td>{{localize 'FSC.DateFormat.Day.NumberPadded'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Day.NumberPaddedExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>DO</td>
+                                        <td>{{localize 'FSC.DateFormat.Day.NumberSuffix'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Day.NumberSuffixExample'}}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fsc-row">
-                        <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.WeekdayOptions'}}</strong></div>
-                        <div style="flex: 1 1 75%;">
-                            <table style="border-left: 1px solid #7a7971;">
-                                <tr>
-                                    <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
-                                    <th>{{localize 'FSC.Description'}}</th>
-                                    <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
-                                </tr>
-                                <tr>
-                                    <td>d</td>
-                                    <td>{{localize 'FSC.DateFormat.Weekday.Number'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Weekday.NumberExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>dd</td>
-                                    <td>{{localize 'FSC.DateFormat.Weekday.NumberPadded'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Weekday.NumberPaddedExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>ddd</td>
-                                    <td>{{localize 'FSC.DateFormat.Weekday.AbbreviatedName'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Weekday.AbbreviatedNameExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>dddd</td>
-                                    <td>{{localize 'FSC.DateFormat.Weekday.Name'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Weekday.NameExample'}}</td>
-                                </tr>
-                            </table>
+                        <div class="fsc-row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.WeekdayOptions'}}</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
+                                        <th>{{localize 'FSC.Description'}}</th>
+                                        <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>d</td>
+                                        <td>{{localize 'FSC.DateFormat.Weekday.Number'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Weekday.NumberExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>dd</td>
+                                        <td>{{localize 'FSC.DateFormat.Weekday.NumberPadded'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Weekday.NumberPaddedExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ddd</td>
+                                        <td>{{localize 'FSC.DateFormat.Weekday.AbbreviatedName'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Weekday.AbbreviatedNameExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>dddd</td>
+                                        <td>{{localize 'FSC.DateFormat.Weekday.Name'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Weekday.NameExample'}}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fsc-row">
-                        <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.HourOptions'}}</strong></div>
-                        <div style="flex: 1 1 75%;">
-                            <table style="border-left: 1px solid #7a7971;">
-                                <tr>
-                                    <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
-                                    <th>{{localize 'FSC.Description'}}</th>
-                                    <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
-                                </tr>
-                                <tr>
-                                    <td>h</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.12Hour'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.12HourExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>H</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.24Hour'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.24HourExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>hh</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.12HourPadded'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.12HourPaddedExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>HH</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.24HourPadded'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.24HourPaddedExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>a</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.ampm'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.ampmExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>A</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.AMPM'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Hour.AMPMExample'}}</td>
-                                </tr>
-                            </table>
+                        <div class="fsc-row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.HourOptions'}}</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
+                                        <th>{{localize 'FSC.Description'}}</th>
+                                        <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>h</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.12Hour'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.12HourExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>H</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.24Hour'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.24HourExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>hh</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.12HourPadded'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.12HourPaddedExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>HH</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.24HourPadded'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.24HourPaddedExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>a</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.ampm'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.ampmExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>A</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.AMPM'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Hour.AMPMExample'}}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fsc-row">
-                        <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.MinuteOptions'}}</strong></div>
-                        <div style="flex: 1 1 75%;">
-                            <table style="border-left: 1px solid #7a7971;">
-                                <tr>
-                                    <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
-                                    <th>{{localize 'FSC.Description'}}</th>
-                                    <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
-                                </tr>
-                                <tr>
-                                    <td>m</td>
-                                    <td>{{localize 'FSC.DateFormat.Minute.Number'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Minute.NumberExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>mm</td>
-                                    <td>{{localize 'FSC.DateFormat.Minute.NumberPadded'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Minute.NumberPaddedExample'}}</td>
-                                </tr>
-                            </table>
+                        <div class="fsc-row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.MinuteOptions'}}</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
+                                        <th>{{localize 'FSC.Description'}}</th>
+                                        <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>m</td>
+                                        <td>{{localize 'FSC.DateFormat.Minute.Number'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Minute.NumberExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>mm</td>
+                                        <td>{{localize 'FSC.DateFormat.Minute.NumberPadded'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Minute.NumberPaddedExample'}}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fsc-row">
-                        <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.SecondOptions'}}</strong></div>
-                        <div style="flex: 1 1 75%;">
-                            <table style="border-left: 1px solid #7a7971;">
-                                <tr>
-                                    <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
-                                    <th>{{localize 'FSC.Description'}}</th>
-                                    <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
-                                </tr>
-                                <tr>
-                                    <td>s</td>
-                                    <td>{{localize 'FSC.DateFormat.Second.Number'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Second.NumberExample'}}</td>
-                                </tr>
-                                <tr>
-                                    <td>ss</td>
-                                    <td>{{localize 'FSC.DateFormat.Second.NumberPadded'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.Second.NumberPaddedExample'}}</td>
-                                </tr>
-                            </table>
+                        <div class="fsc-row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.SecondOptions'}}</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
+                                        <th>{{localize 'FSC.Description'}}</th>
+                                        <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>s</td>
+                                        <td>{{localize 'FSC.DateFormat.Second.Number'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Second.NumberExample'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ss</td>
+                                        <td>{{localize 'FSC.DateFormat.Second.NumberPadded'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.Second.NumberPaddedExample'}}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fsc-row">
-                        <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.Text'}}</strong></div>
-                        <div style="flex: 1 1 75%;">
-                            <table style="border-left: 1px solid #7a7971;">
-                                <tr>
-                                    <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
-                                    <th>{{localize 'FSC.Description'}}</th>
-                                    <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
-                                </tr>
-                                <tr>
-                                    <td>[*]</td>
-                                    <td>{{localize 'FSC.DateFormat.TextDescription'}}</td>
-                                    <td>{{localize 'FSC.DateFormat.TextExample'}}</td>
-                                </tr>
-                            </table>
+                        <div class="fsc-row">
+                            <div style="flex: 1 1 25%;text-align: center;"><strong>{{localize 'FSC.DateFormat.Text'}}</strong></div>
+                            <div style="flex: 1 1 75%;">
+                                <table style="border-left: 1px solid #7a7971;">
+                                    <tr>
+                                        <th style="width: 55px;">{{localize 'FSC.Token'}}</th>
+                                        <th>{{localize 'FSC.Description'}}</th>
+                                        <th style="width: 36%;">{{localize 'FSC.ExampleResult'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>[*]</td>
+                                        <td>{{localize 'FSC.DateFormat.TextDescription'}}</td>
+                                        <td>{{localize 'FSC.DateFormat.TextExample'}}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group fsc-open">
-                <label for="scDateFormatsDate">{{localize 'FSC.Configuration.General.Display.DateFormat.Date'}}</label>
-                <div class="form-fields">
-                    <input value="{{generalSettings.dateFormat.date}}" id="scDateFormatsDate" type="text" />
+                <div class="form-group fsc-open">
+                    <label for="scDateFormatsDate">{{localize 'FSC.Configuration.General.Display.DateFormat.Date'}}</label>
+                    <div class="form-fields">
+                        <input value="{{generalSettings.dateFormat.date}}" id="scDateFormatsDate" type="text" />
+                    </div>
+                    <div class="fsc-example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.dateFormatExample}}</div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.DateHelp'}}</p>
                 </div>
-                <div class="fsc-example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.dateFormatExample}}</div>
-                <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.DateHelp'}}</p>
+                <div class="form-group fsc-open">
+                    <label for="scDateFormatsTime">{{localize 'FSC.Configuration.General.Display.DateFormat.Time'}}</label>
+                    <div class="form-fields">
+                        <input value="{{generalSettings.dateFormat.time}}" id="scDateFormatsTime" type="text" />
+                    </div>
+                    <div class="fsc-example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.timeFormatExample}}</div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.TimeHelp'}}</p>
+                </div>
+                <div class="form-group fsc-open">
+                    <label for="scDateFormatsMonthYear">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYear'}}</label>
+                    <div class="form-fields">
+                        <input value="{{generalSettings.dateFormat.monthYear}}" id="scDateFormatsMonthYear" type="text" />
+                    </div>
+                    <div class="fsc-example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.monthYearFormatExample}}</div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYearHelp'}}</p>
+                </div>
             </div>
-            <div class="form-group fsc-open">
-                <label for="scDateFormatsTime">{{localize 'FSC.Configuration.General.Display.DateFormat.Time'}}</label>
-                <div class="form-fields">
-                    <input value="{{generalSettings.dateFormat.time}}" id="scDateFormatsTime" type="text" />
+            <div class="settings-group fsc-open">
+                <h2>{{localize 'FSC.Configuration.Display.Compact'}} <a href="https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options" data-tooltip="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>
+                <div class="form-group fsc-open">
+                    <label>{{localize 'FSC.Configuration.Display.CompactControls.Title'}}</label>
+                    <div class="form-fields">
+                        <label class="fsc-radio-group">
+                            <img src="/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp.png" alt="{{localize 'FSC.FullControls'}}" />
+                            <input value="full" name="scCompactControlLayout" type="radio" {{#if (eq generalSettings.compactViewOptions.controlLayout 'full')}} checked{{/if}} />
+                            {{localize 'FSC.FullControls'}}
+                        </label>
+                        <label class="fsc-radio-group">
+                            <img src="/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp-qi.png" alt="{{localize 'FSC.QuickIncrement'}}" />
+                            <input value="quick-increment" name="scCompactControlLayout" type="radio" {{#if (eq generalSettings.compactViewOptions.controlLayout 'quick-increment')}} checked{{/if}} />
+                            {{localize 'FSC.QuickIncrement'}}
+                        </label>
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Display.CompactControls.Description'}}</p>
                 </div>
-                <div class="fsc-example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.timeFormatExample}}</div>
-                <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.TimeHelp'}}</p>
-            </div>
-            <div class="form-group fsc-open">
-                <label for="scDateFormatsMonthYear">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYear'}}</label>
-                <div class="form-fields">
-                    <input value="{{generalSettings.dateFormat.monthYear}}" id="scDateFormatsMonthYear" type="text" />
-                </div>
-                <div class="fsc-example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.monthYearFormatExample}}</div>
-                <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYearHelp'}}</p>
             </div>
         </div>
         <div class="tab fsc-year-settings" data-tab="yearSettings">

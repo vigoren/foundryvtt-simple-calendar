@@ -120,6 +120,13 @@ describe('API Class Tests', () => {
         game.users = ou;
     });
 
+    test('Add Sidebar Button', () => {
+        jest.spyOn(MainApplication, "updateApp").mockImplementation(() => {});
+        API.addSidebarButton("title", "icon", "class", true, ()=>{});
+        expect(MainApplication.updateApp).toHaveBeenCalledTimes(1);
+        expect(MainApplication.addonButtons.length).toBe(1);
+    });
+
     test('Advance Time to Preset', () => {
         expect(API.advanceTimeToPreset(PresetTimeOfDay.Midday)).toBe(false);
         expect(console.error).toHaveBeenCalledTimes(1);
@@ -327,7 +334,9 @@ describe('API Class Tests', () => {
         expect(API.getCurrentSeason()).toStrictEqual({id:'', name: '', icon: Icons.None, color: '', description: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0});
         expect(console.error).toHaveBeenCalledTimes(1);
 
+        tCal.resetMonths();
         tCal.months[0].current = true;
+        tCal.months[0].days[0].current = true;
         expect(API.getCurrentSeason('')).not.toBeNull();
     });
 
@@ -377,6 +386,10 @@ describe('API Class Tests', () => {
         expect(API.getTimeConfiguration()).toBe(null);
         expect(console.error).toHaveBeenCalledTimes(1);
         expect(API.getTimeConfiguration('')).toBeDefined();
+    });
+
+    test('Is Open', () => {
+        expect(API.isOpen()).toBe(true);
     });
 
     test('Is Primary GM', () => {

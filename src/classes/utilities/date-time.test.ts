@@ -81,7 +81,7 @@ describe('Utilities Date/Time Tests', () => {
         const d = new Date();
         expect(MergeDateTimeObject({})).toEqual({year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0})
         expect(MergeDateTimeObject({hour: 0, minute: 0, seconds: 0}, {year:1999, month: 11, day: 24, hour: 23, minute: 59, seconds: 59})).toEqual({year:1999, month: 11, day: 24, hour: 0, minute: 0, seconds: 0});
-        expect(MergeDateTimeObject({}, null, tCal)).toEqual({year: 2022, month: d.getMonth(), day: d.getDate() - 1, hour: 0, minute: 2, seconds: 7});
+        expect(MergeDateTimeObject({}, null, tCal)).toEqual({year: d.getFullYear(), month: d.getMonth(), day: d.getDate() - 1, hour: 0, minute: 2, seconds: 7});
     });
 
     test('To Seconds', async () => {

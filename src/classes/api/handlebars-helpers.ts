@@ -1,7 +1,7 @@
 import DateSelectorManager from "../date-selector/date-selector-manager";
 import Renderer from "../renderer";
 import {GetIcon} from "../utilities/visual";
-import {CalManager, SC} from "../index";
+import {CalManager} from "../index";
 import SCController from "../s-c-controller";
 
 /**
@@ -18,6 +18,7 @@ export class HandlebarsHelpers{
         Handlebars.registerHelper("sc-clock", HandlebarsHelpers.Clock);
         Handlebars.registerHelper("sc-icon", HandlebarsHelpers.Icon);
         Handlebars.registerHelper("sc-multi-select", HandlebarsHelpers.MultiSelect);
+        Handlebars.registerHelper("sc-date-time-controls", HandlebarsHelpers.DateTimeControls);
     }
 
     /**
@@ -201,5 +202,25 @@ export class HandlebarsHelpers{
         }
 
         return new Handlebars.SafeString(Renderer.MultiSelect.Render(renderOptions));
+    }
+
+    static DateTimeControls(options: any){
+        const renderOptions: SimpleCalendar.Renderer.DateTimeControlOptions = {};
+        if(options.hash.hasOwnProperty('showDateControls')){
+            renderOptions.showDateControls = options.hash['showDateControls'];
+        }
+        if(options.hash.hasOwnProperty('showTimeControls')){
+            renderOptions.showTimeControls = options.hash['showTimeControls'];
+        }
+        if(options.hash.hasOwnProperty('showPresetTimeOfDay')){
+            renderOptions.showPresetTimeOfDay = options.hash['showPresetTimeOfDay'];
+        }
+        if(options.hash.hasOwnProperty('displayType')){
+            renderOptions.displayType = options.hash['displayType'];
+        }
+        if(options.hash.hasOwnProperty('fullDisplay')){
+            renderOptions.fullDisplay = options.hash['fullDisplay'];
+        }
+        return new Handlebars.SafeString(Renderer.DateTimeControls.Render(renderOptions));
     }
 }

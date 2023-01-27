@@ -25,7 +25,7 @@ describe('Leap Year Tests', () => {
     test('Properties', () => {
         expect(Object.keys(lr).length).toBe(8); //Make sure no new properties have been added
         expect(lr.rule).toBe(LeapYearRules.None);
-        expect(lr.customMod).toBe(0);
+        expect(lr.customMod).toBe(1);
     });
 
     test('Clone', () => {
@@ -36,13 +36,13 @@ describe('Leap Year Tests', () => {
         const lyc = lr.toConfig();
         expect(lyc.id).toBeDefined();
         expect(lyc.rule).toBe(LeapYearRules.None);
-        expect(lyc.customMod).toBe(0);
+        expect(lyc.customMod).toBe(1);
     });
 
     test('To Template', () => {
         const lyt = lr.toTemplate();
         expect(lyt.rule).toBe(LeapYearRules.None);
-        expect(lyt.customMod).toBe(0);
+        expect(lyt.customMod).toBe(1);
     });
 
     test('Load From Settings', () => {
@@ -55,15 +55,20 @@ describe('Leap Year Tests', () => {
         //@ts-ignore
         lr.loadFromSettings();
         expect(lr.rule).toBe(LeapYearRules.None);
-        expect(lr.customMod).toBe(0);
+        expect(lr.customMod).toBe(1);
         //@ts-ignore
         lr.loadFromSettings({});
         expect(lr.rule).toBe(LeapYearRules.None);
-        expect(lr.customMod).toBe(0);
+        expect(lr.customMod).toBe(1);
 
         lr.loadFromSettings(config);
         expect(lr.rule).toBe(LeapYearRules.Custom);
         expect(lr.customMod).toBe(10);
+
+        config.customMod = 0;
+        lr.loadFromSettings(config);
+        expect(lr.rule).toBe(LeapYearRules.None);
+        expect(lr.customMod).toBe(0);
     });
 
     test('Is Leap Year', () => {
@@ -106,6 +111,7 @@ describe('Leap Year Tests', () => {
         expect(lr.howManyLeapYears(2021)).toBe(490);
 
         lr.rule = LeapYearRules.Custom;
+        lr.customMod = 0;
         expect(lr.howManyLeapYears(0)).toBe(0);
         expect(lr.howManyLeapYears(4)).toBe(0);
         expect(lr.howManyLeapYears(2020)).toBe(0);

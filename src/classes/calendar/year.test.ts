@@ -21,7 +21,7 @@ describe('Year Class Tests', () => {
         expect(tCal.year.numericRepresentation).toBe(0);
         expect(tCal.year.selectedYear).toBe(0);
         expect(tCal.year.visibleYear).toBe(0);
-        expect(tCal.year.leapYearRule.customMod).toBe(0);
+        expect(tCal.year.leapYearRule.customMod).toBe(1);
         expect(tCal.year.leapYearRule.rule).toBe(LeapYearRules.None);
         expect(tCal.year.showWeekdayHeadings).toBe(true);
         expect(tCal.year.firstWeekday).toBe(0);

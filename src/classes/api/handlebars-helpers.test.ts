@@ -11,6 +11,7 @@ import DateSelectorManager from "../date-selector/date-selector-manager";
 import Renderer from "../renderer";
 import * as VUtils from "../utilities/visual";
 import SCController from "../s-c-controller";
+import {CompactViewDateTimeControlDisplay} from "../../constants";
 
 
 describe('Handlebars Helpers Tests', () => {
@@ -24,7 +25,7 @@ describe('Handlebars Helpers Tests', () => {
 
     test('Register', () => {
         HandlebarsHelpers.Register();
-        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(5);
+        expect(Handlebars.registerHelper).toHaveBeenCalledTimes(6);
     });
 
     test('Date Selector', () => {
@@ -127,5 +128,23 @@ describe('Handlebars Helpers Tests', () => {
             options:''
         };
         expect(HandlebarsHelpers.MultiSelect(options)).toEqual({"v": ""});
+    });
+
+    test("Date Time Controls", () => {
+        jest.spyOn(Renderer.DateTimeControls, "Render").mockImplementation(() => {return '';});
+        const options: any = {hash:{}};
+        expect(HandlebarsHelpers.DateTimeControls(options)).toEqual({"v": ""});
+        options.hash = {
+            showDateControls: true,
+            showTimeControls: true,
+            showPresetTimeOfDay: true,
+            displayType: CompactViewDateTimeControlDisplay.Full,
+            fullDisplay:{
+                unit: '',
+                unitText: '',
+                dateTimeUnitOpen: false
+            }
+        };
+        expect(HandlebarsHelpers.DateTimeControls(options)).toEqual({"v": ""});
     });
 });

@@ -6,7 +6,7 @@ import Calendar from "../calendar";
 import MainApp from "./main-app";
 import {
     CalManager,
-    ConfigurationApplication,
+    ConfigurationApplication, MainApplication,
     NManager,
     SC,
     updateCalManager, updateConfigurationApplication,
@@ -19,7 +19,7 @@ import SCController from "../s-c-controller";
 import NoteManager from "../notes/note-manager";
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
-import {CalendarClickEvents, DateTimeUnits, PredefinedCalendars} from "../../constants";
+import {CalendarClickEvents, DateTimeUnits, Icons, PredefinedCalendars} from "../../constants";
 import * as PermUtilities from "../utilities/permissions";
 import * as VisualUtilities from "../utilities/visual";
 import * as DateUtilities from "../utilities/date-time";
@@ -93,6 +93,24 @@ describe('Main App Class Tests', () => {
         jest.spyOn(CalManager, 'getActiveCalendar').mockImplementation(() => {return vCal;});
         ma.uiElementStates.compactView = true;
         expect(ma.getData()).toBeDefined();
+
+        jest.spyOn(tCal, "getCurrentSeason").mockReturnValue({name: "Summer", icon: Icons.None, color: "red"});
+        ma.uiElementStates.compactView = true;
+        expect(ma.getData()).toBeDefined();
+
+        ma.uiElementStates.compactView = false;
+        ma.addonButtons.push({
+            title: "title",
+            iconClass: "icon",
+            customClass: "class",
+            showSidePanel: true,
+            onRender: () => {}
+        });
+        expect(ma.getData()).toBeDefined();
+
+        ma.uiElementStates['fsc-addon-button-side-drawer-0'] = true;
+        expect(ma.getData()).toBeDefined();
+
     });
 
     test('Render', () => {
@@ -101,12 +119,34 @@ describe('Main App Class Tests', () => {
         jest.spyOn(PermUtilities, 'canUser').mockReturnValue(true);
         jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
         jest.spyOn(GameSettings, 'GetObjectSettings').mockReturnValue({top:1, left: 1});
+        SC.clientSettings.persistentOpen = true;
         ma.render();
+
+        SC.clientSettings.persistentOpen = false;
+        ma.render();
+    });
+
+    test('Scene Control Button Click', () => {
+        jest.spyOn(ma, "render").mockImplementation(() => {});
+
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(1);
+
+        SC.clientSettings.persistentOpen = true;
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        jest.spyOn(ma, "rendered", "get").mockReturnValue(false);
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(2);
     });
 
     test('close', () => {
         ma.close();
         expect(ma.opening).toBe(true);
+        SC.clientSettings.persistentOpen = true;
+        ma.close();
     });
 
     test('minimize', async () => {
@@ -182,6 +222,21 @@ describe('Main App Class Tests', () => {
         expect(ma.setPosition).toHaveBeenCalledTimes(4);
 
         ma.uiElementStates.compactView = true;
+        const date = document.createElement('div');
+        const dateText = document.createElement('div');
+        const unitControls = document.createElement('div');
+        const controlGroup = document.createElement('div');
+
+        date.classList.add('fsc-date');
+        dateText.classList.add('fsc-date-text');
+        unitControls.classList.add('fsc-unit-controls');
+        controlGroup.classList.add('fsc-control-group');
+
+        date.append(dateText);
+        unitControls.append(controlGroup);
+
+        wrapper.append(date, unitControls);
+
         MainApp.setWidthHeight(ma);
         //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(6);
@@ -239,6 +294,65 @@ describe('Main App Class Tests', () => {
         ma.uiElementStates.compactView = true;
         ma.activateListeners();
         expect(mainApp.classList.contains('fsc-compact-view')).toBe(true);
+    });
+
+    test('Addon Button Click', () => {
+        const button = document.createElement('button');
+        button.setAttribute('data-sc-abi', '0');
+
+        MainApplication.addonButtons.push({
+            title: "title",
+            iconClass: "icon",
+            customClass: "class",
+            showSidePanel: false,
+            onRender: jest.fn().mockImplementationOnce(() => {throw "no";})
+        });
+        jest.spyOn(console, "error").mockImplementation(() => {});
+
+        const fEvent = {target: button};
+
+        //@ts-ignore
+        MainApplication.addonButtonClick(fEvent);
+        expect(MainApplication.addonButtons[0].onRender).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        MainApplication.addonButtonClick(fEvent);
+        expect(MainApplication.addonButtons[0].onRender).toHaveBeenCalledTimes(2);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        MainApplication.addonButtons[0].showSidePanel = true;
+        jest.spyOn(MainApplication, "toggleDrawer").mockImplementation(() => {});
+        //@ts-ignore
+        MainApplication.addonButtonClick(fEvent);
+        expect(MainApplication.toggleDrawer).toHaveBeenCalledTimes(1);
+    });
+
+    test('Addon Button Side Panel Content Render', () => {
+        const mainApp = document.createElement('div');
+        const sideDrawer = document.createElement('div');
+
+        sideDrawer.classList.add('fsc-addon-button-side-drawer');
+        sideDrawer.setAttribute('data-sc-abi', '0');
+
+        mainApp.append(sideDrawer);
+
+        MainApplication.addonButtons.push({
+            title: "title",
+            iconClass: "icon",
+            customClass: "class",
+            showSidePanel: true,
+            onRender: jest.fn().mockImplementationOnce(() => {throw "no";})
+        });
+        jest.spyOn(console, "error").mockImplementation(() => {});
+
+        MainApplication.addonButtonSidePanelContentRender(mainApp);
+        expect(MainApplication.addonButtons[0].onRender).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        MainApplication.addonButtonSidePanelContentRender(mainApp);
+        expect(MainApplication.addonButtons[0].onRender).toHaveBeenCalledTimes(2);
+
     });
 
     test('Toggle Drawers', () => {

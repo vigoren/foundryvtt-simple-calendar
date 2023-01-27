@@ -25,6 +25,7 @@ import NoteManager from "./classes/notes/note-manager";
 import {NoteSheet} from "./classes/notes/note-sheet";
 import PF2E from "./classes/systems/pf2e";
 import {CheckRemScaling} from "./classes/utilities/visual";
+import {Hook} from "./classes/api/hook";
 
 updateCalManager(new CalendarManager());
 updateSC(new SCController());
@@ -77,6 +78,7 @@ Hooks.on('ready',async () => {
             MainApplication.render();
         }
     }
+    Hook.emit(SimpleCalendarHooks.Ready, CalManager.getActiveCalendar());
 });
 Hooks.on('canvasInit', SC.canvasInit.bind(SC));
 Hooks.on('getSceneControlButtons', SC.getSceneControlButtons.bind(SC));

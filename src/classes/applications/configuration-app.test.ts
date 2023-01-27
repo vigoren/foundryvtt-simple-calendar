@@ -404,6 +404,7 @@ describe('Configuration App Class Tests', () => {
 
         tCal.year.yearNames.push('123');
         tCal.noteCategories.push({id: '', name: 'asd', textColor: '', color: ''});
+        const compcatControlDisplay = document.createElement('input');
         const yearName = document.createElement('div');
         const month = document.createElement('div');
         const weekday = document.createElement('div');
@@ -412,7 +413,7 @@ describe('Configuration App Class Tests', () => {
         const moonPhase = document.createElement('div');
         const noteCategory = document.createElement('div');
         //@ts-ignore
-        jest.spyOn(ca.appWindow, 'querySelectorAll').mockReturnValueOnce([yearName]).mockReturnValueOnce([month]).mockReturnValueOnce([weekday]).mockReturnValueOnce([month]).mockReturnValueOnce([season]).mockReturnValueOnce([moon]).mockReturnValueOnce([noteCategory]);
+        jest.spyOn(ca.appWindow, 'querySelectorAll').mockReturnValueOnce([compcatControlDisplay]).mockReturnValueOnce([yearName]).mockReturnValueOnce([month]).mockReturnValueOnce([weekday]).mockReturnValueOnce([month]).mockReturnValueOnce([season]).mockReturnValueOnce([moon]).mockReturnValueOnce([noteCategory]);
         //@ts-ignore
         jest.spyOn(moon, 'querySelectorAll').mockReturnValue([moonPhase]);
         //@ts-ignore
@@ -427,7 +428,7 @@ describe('Configuration App Class Tests', () => {
         noteCategory.setAttribute('data-index', '0');
 
         //@ts-ignore
-        jest.spyOn(ca.appWindow, 'querySelectorAll').mockReturnValueOnce([yearName]).mockReturnValueOnce([month]).mockReturnValueOnce([weekday]).mockReturnValueOnce([month]).mockReturnValueOnce([season]).mockReturnValueOnce([moon]).mockReturnValueOnce([noteCategory]);
+        jest.spyOn(ca.appWindow, 'querySelectorAll').mockReturnValueOnce([compcatControlDisplay]).mockReturnValueOnce([yearName]).mockReturnValueOnce([month]).mockReturnValueOnce([weekday]).mockReturnValueOnce([month]).mockReturnValueOnce([season]).mockReturnValueOnce([moon]).mockReturnValueOnce([noteCategory]);
 
         //@ts-ignore
         ca.writeInputValuesToObjects();
@@ -436,7 +437,7 @@ describe('Configuration App Class Tests', () => {
         tCal.months[0].intercalary = true;
         tCal.months[0].intercalaryInclude = true;
         //@ts-ignore
-        jest.spyOn(ca.appWindow, 'querySelectorAll').mockReturnValueOnce([yearName]).mockReturnValueOnce([month]).mockReturnValueOnce([weekday]).mockReturnValueOnce([month]).mockReturnValueOnce([season]).mockReturnValueOnce([moon]).mockReturnValueOnce([noteCategory]);
+        jest.spyOn(ca.appWindow, 'querySelectorAll').mockReturnValueOnce([compcatControlDisplay]).mockReturnValueOnce([yearName]).mockReturnValueOnce([month]).mockReturnValueOnce([weekday]).mockReturnValueOnce([month]).mockReturnValueOnce([season]).mockReturnValueOnce([moon]).mockReturnValueOnce([noteCategory]);
 
         //@ts-ignore
         ca.writeInputValuesToObjects();
