@@ -520,5 +520,19 @@
 	"FSC.Configuration.Month.DescriptionHelp": "Una descripción sobre el mes para darle más sabor a tu calendario. Esta información es visible cuando un usuario hace clic en el nombre del mes, en la pantalla principal del calendario.",
 	"FSC.Configuration.Weekday.Weekend": "Día de Descanso",
 	"FSC.Configuration.Weekday.WeekendHelp": "Parte de la semana que tradicionalmente se emplea para descansar, en lugar de trabajar. p.ej. Los dos dias del fin de semana del calendario gregoriano moderno",
-	"FSC.Configuration.Weekday.DescriptionHelp": "Una descripción sobre el día de la semana para darle más sabor a tu calendario. Esta información es visible cuando un usuario hace clic en el nombre del día de la semana, en la pantalla principal del calendario."
+	"FSC.Configuration.Weekday.DescriptionHelp": "Una descripción sobre el día de la semana para darle más sabor a tu calendario. Esta información es visible cuando un usuario hace clic en el nombre del día de la semana, en la pantalla principal del calendario.",
+	"FSC.Configuration.Client.AlwaysShowNoteList.Title": "Mostrar siempre la lista de notas",
+	"FSC.Configuration.Client.AlwaysShowNoteList.Description": "Esta configuración hará que la lista de notas siempre sea visible y no pueda ser cerrada. La única excepción es que si la lista de calendarios o la búsqueda de notas están abiertas lo harán sobre la lista de notas, pero al cerrarlas la lista de notas permanecerá visible.",
+	"FSC.Predefined.EclipsePhase": "Eclipse Fase 2E",
+	"FSC.Predefined.Starfinder": "Buscador de Estrellas",
+	"FSC.Right": "Derecha",
+	"FSC.Left": "Izquierda",
+	"FSC.Down": "Abajo",
+	"FSC.Configuration.Client.RememberCompactPosition.Title": "Recordar posición compacta",
+	"FSC.Configuration.Client.NoteListOpenDirection.Title": "Dirección de apertura de paneles laterales",
+	"FSC.Configuration.Client.NoteListOpenDirection.Description": "Dirección desde el calendario principal hacia la que se abrirán los paneles laterales. Los paneles laterales contienen la lista de calendarios, lista de notas y búsqueda de notas.",
+	"FSC.Configuration.Client.RememberCompactPosition.Description": "Simple Calendar recordará dónde fue posicionado por última vez y se colocará en ese lugar en modo compacto. Se trata de una posición diferente de la versión completa.",
+	"FSC.Info.ThemeChange": "El tema de Simple Calendar ha sido cambiado por un sistema/módulo/macro a <strong>\"{THEME}\"</strong>. El tema se puede volver a cambiar en la configuración de Simple Calendar.",
+	"FSC.Predefined.Warhammer40kWG": "Juego de rol de Warhammer 40,000: Ira y gloria",
+	"FSC.Predefined.SymbaroumIC": "Symbaroum: Calendario Ambrio"
 }
