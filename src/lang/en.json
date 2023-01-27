@@ -32,7 +32,7 @@
 	"FSC.Configuration.Client.AlwaysShowNoteList.Title": "Always Show Note List",
 	"FSC.Configuration.Client.AlwaysShowNoteList.Description": "This setting will make it so the note list will always be visible and can not be closed. The only exception is if the calendar list or note search are opened they will open over top of the note list, but when closed the note list will remain visible.",
 	"FSC.Configuration.Client.PersistentOpen.Title": "Persistent Open",
-	"FSC.Configuration.Client.PersistentOpen.Description": "When enabled this setting will remove the close button from the calendar window and prevent the escape key from closing it. The button under the scene control then becomes a toggle to open and close the calendar.",
+	"FSC.Configuration.Client.PersistentOpen.Description": "When enabled this setting will remove the close button from the calendar window and prevent the escape key from closing it. The button under Journal Notes in the left toolbar then becomes a toggle to open and close the calendar.",
 	"FSC.Configuration.CombatPauseRule.Title": "Pause Real Time Clock on Combat Rule",
 	"FSC.Configuration.CombatPauseRule.Description": "Choose when the real time clock will be paused when combats are running on scenes.",
 	"FSC.Configuration.CombatPauseRule.Active": "Pause Only on the Active Scene",

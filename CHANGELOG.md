@@ -1,5 +1,16 @@
 # Change Log
 
+## 2.1.74 - Documentation Changes
+
+![](https://img.shields.io/badge/release%20date-January%2026%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.74/module.zip)
+
+### Documentation Changes
+
+- Improved the wording of the "Persistent Open" client setting to be more clear on where the toggle button is.
+
+<hr/>
+
 ## 2.1.73 - Refreshed Compact Display, Quality of Life Updates and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-January%2026%2C%202023-blue)
