@@ -319,7 +319,7 @@
 	"FSC.Configuration.LeapYear.Rules.Gregorian": "Gregoriano",
 	"FSC.Configuration.LeapYear.Rules.Custom": "Personalizzato",
 	"FSC.Configuration.LeapYear.Days": "Numero di Giorni in un Anno Bisestile",
-	"FSC.Configuration.LeapYear.DaysHelp": "Il numero di giorni che che compongono questo mese durante un anno bisestile.",
+	"FSC.Configuration.LeapYear.DaysHelp": "Il numero di giorni che compongono questo mese durante un anno bisestile.",
 	"FSC.Configuration.Time.Title": "Impostazioni Ora",
 	"FSC.Configuration.Time.HoursInDay": "Ore in un Giorno",
 	"FSC.Configuration.Time.HoursInDayHelp": "Quante ore ci sono in un singolo giorno.",
@@ -501,5 +501,10 @@
 	"FSC.Configuration.CombatPauseRule.Title": "Regola della pausa dello scorrimento in tempo reale dell'orologio durante il combattimento",
 	"FSC.Includes": "Include",
 	"FSC.Configuration.Display.Description": "Queste impostazioni ti permettono di cambiare come vengono mostrate la data e l'ora nel calendario selezionato. Per ulteriori dettagli su come configurare le varie modalità, va' alla <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">documentazione</a> o espandi la tabella qui sotto.",
-	"FSC.Configuration.Global.SameTimestamp.Description": "Questa è un'opzione avanzata, leggi la documentazione per una descrizione più dettagliata. Questa opzione forzerà tutti i calendari a usare gli stessi timestamp. Questo significa che cambiando calendario gli effetti attivi non finiranno dato che l'orario nel mondo rimarrà lo stesso. Questo significa anche che non sarai in grado di specificare le date individuali di ogni calendario dato che indicheranno qualunque data o orario segnalato dal timestamp."
+	"FSC.Configuration.Global.SameTimestamp.Description": "Questa è un'opzione avanzata, leggi la documentazione per una descrizione più dettagliata. Questa opzione forzerà tutti i calendari a usare gli stessi timestamp. Questo significa che cambiando calendario gli effetti attivi non finiranno dato che l'orario nel mondo rimarrà lo stesso. Questo significa anche che non sarai in grado di specificare le date individuali di ogni calendario dato che indicheranno qualunque data o orario segnalato dal timestamp.",
+	"FSC.Configuration.Client.RememberCompactPosition.Title": "Ricorda posizione compatta",
+	"FSC.Configuration.Client.RememberCompactPosition.Description": "Simple Calendar ricorderà l'ultima posizione della versione compatta e la piazzera lì in modalità compatta. Questa è una posizione separata da quella della versione completa.",
+	"FSC.Right": "Destra",
+	"FSC.Left": "Sinistra",
+	"FSC.Down": "Giù"
 }
