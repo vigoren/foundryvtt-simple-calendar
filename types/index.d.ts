@@ -2088,6 +2088,8 @@ declare global{
             alwaysShowNoteList: boolean;
             /** If the calendar is always open (no close button) and the Toolbar button becomes a toggle. */
             persistentOpen: boolean;
+            /** The scaling options for the compact view. */
+            compactViewScale: number;
         }
 
         /**

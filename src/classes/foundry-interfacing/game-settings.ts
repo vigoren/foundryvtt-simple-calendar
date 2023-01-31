@@ -88,6 +88,14 @@ export class GameSettings {
         return <string>(<Game>game).settings.get(ModuleName, setting);
     }
 
+    /**
+     * Will return the value for the passed in number setting
+     * @param {SettingNames} setting The name of the setting to get
+     */
+    static GetNumericSettings(setting: SettingNames | string): number{
+        return <number>(<Game>game).settings.get(ModuleName, setting);
+    }
+
     static async SaveBooleanSetting(setting: SettingNames, data: boolean, checkIfGM: boolean = true): Promise<boolean> {
         let save = false;
         if(checkIfGM){
@@ -117,6 +125,22 @@ export class GameSettings {
         }
         return false;
     }
+
+    static async SaveNumericSetting(setting: SettingNames | string, data: number, checkIfGM: boolean = true): Promise<boolean> {
+        let save = false;
+        if(checkIfGM){
+            if(this.IsGm()){
+                save = true;
+            }
+        } else {
+            save = true;
+        }
+        if(save){
+            return await (<Game>game).settings.set(ModuleName, setting, data).then(() => {return true;});
+        }
+        return false;
+    }
+
 
     /**
      * Save the passed in object to the passed in setting

@@ -127,6 +127,21 @@ export default class GameSettingsRegistration{
             default: false,
             onChange: SC.PersistenceChange.bind(SC)
         });
+        (<Game>game).settings.register(ModuleName, SettingNames.CompactViewScale, {
+            name: "FSC.Configuration.Client.CompactViewScale.Title",
+            hint: "FSC.Configuration.Client.CompactViewScale.Description",
+            scope: "client",
+            config: true,
+            type: Number,
+            // @ts-ignore
+            range: {
+                min: 70,
+                max: 200,
+                step: 10
+            },
+            default: 100,
+            onChange: SC.CompactScaleChange.bind(SC)
+        });
 
         // -------------------
         // Configuration Button

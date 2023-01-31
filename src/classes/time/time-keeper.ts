@@ -161,7 +161,6 @@ export default class TimeKeeper{
                 if (GameSettings.IsGm() && SC.primary && activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None) {
                     GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: this.status }).catch(Logger.error);
                 }
-                Hook.emit(SimpleCalendarHooks.DateTimeChange, activeCalendar, changeAmount);
                 this.callListeners();
             }
         }

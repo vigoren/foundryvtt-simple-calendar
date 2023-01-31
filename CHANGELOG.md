@@ -1,13 +1,26 @@
 # Change Log
 
-## 2.1.74 - Documentation Changes
+## 2.1.78 - Quality of Life Updates && Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-January%2026%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.74/module.zip)
+![](https://img.shields.io/badge/release%20date-January%2030%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.78/module.zip)
+
+### Quality of Life Updates
+
+- Changed the [Update Frequency](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) setting so that it can support decimals. This can allow you to set an "Update Frequency" of 0.5 and a "Game Seconds Per Real Life Seconds" of 2 to get the game to move at twice the speed but have the clock still update for every game second.
+- Updated the compact view to show up to 5 moons before collapsing them into a hover-over view.
+- Added a new client setting "Compact View Scale" that allows you to change the scale at which the compact view is displayed at. You can use this to make the compact view appear larger or smaller. The number represents the percentage of the scale size when compared to the default size, 100%. The range goes in increments of 10 from 70% to 200%.
+
+### Bug Fixes
+
+- Fixed an issue where the hook `SimpleCalendar.Hooks.DateTimeChange` would fire twice when the time changed while the clock was running. It should now only fire once for every time increment.
+- Fixed an issue where on the full calendar view the preset time of day buttons would sometimes get bumped down to a second row.
 
 ### Documentation Changes
 
 - Improved the wording of the "Persistent Open" client setting to be more clear on where the toggle button is.
+- Updated the [Update Frequency](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) documentation to note it supports decimals.
+- Updated the [Client Setting](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings) documentation to include information about the new "Compact View Scale" setting.
 
 <hr/>
 

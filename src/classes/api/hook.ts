@@ -14,7 +14,6 @@ export class Hook{
      */
     public static emit(hook: SimpleCalendarHooks, calendar: Calendar, param: any = undefined){
         let data: any = {};
-
         if(hook === SimpleCalendarHooks.DateTimeChange){
             data['date'] = TimestampToDateData(calendar.toSeconds(), calendar);
             data['diff'] = param;

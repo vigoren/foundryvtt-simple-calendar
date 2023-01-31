@@ -1,7 +1,7 @@
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
-    CalendarClickEvents, CompactViewDateTimeControlDisplay,
+    CalendarClickEvents,
     DateTimeChangeSocketTypes,
     DateTimeUnits,
     GameWorldTimeIntegrations,
@@ -226,7 +226,13 @@ export default class MainApp extends FormApplication{
             }
 
             const persistentClass = SC.clientSettings.persistentOpen? "fsc-persistent" : "";
-            options.classes = ["simple-calendar", GetThemeName(), persistentClass];
+
+            let scaleClass = '';
+            if(this.uiElementStates.compactView){
+                scaleClass = `sc-scale-${SC.clientSettings.compactViewScale}`;
+            }
+
+            options.classes = ["simple-calendar", GetThemeName(), persistentClass, scaleClass];
             return super.render(true, options);
         }
         return;
@@ -881,12 +887,10 @@ export default class MainApp extends FormApplication{
      */
     public dateControlApply(e: Event){
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
-            let validSelection = false;
             const selectedYear = this.activeCalendar.year.selectedYear;
             const selectedMonthDayIndex = this.activeCalendar.getMonthAndDayIndex('selected');
             const selectedMonth = this.activeCalendar.getMonth('selected');
             if(selectedMonth){
-                validSelection = true;
                 if(selectedYear !== this.activeCalendar.year.visibleYear || !selectedMonth.visible){
                     const utsd = new Dialog({
                         title: GameSettings.Localize('FSC.SetCurrentDateDialog.Title'),

@@ -7,7 +7,7 @@
                 </div>
             {{/if}}
             <div class="fsc-moons">
-                {{#if (gt compactViewDisplay.selectedDayMoons.length 2)}}
+                {{#if (gt compactViewDisplay.selectedDayMoons.length 5)}}
                     <div class="fsc-moon-group-wrapper">
                         <div class="fsc-moon-phase {{compactViewDisplay.selectedDayMoons.0.phase.icon}}" data-tooltip="{{compactViewDisplay.selectedDayMoons.0.name}} - {{compactViewDisplay.selectedDayMoons.0.phase.name}}">{{{compactViewDisplay.selectedDayMoons.0.iconSVG}}}</div>
                         <span class="fsc-moon-phase fa fa-caret-down"></span>
@@ -336,7 +336,6 @@
         {{#if changeDateTime}}
             <div class="fsc-section">
                 {{sc-date-time-controls showDateControls=showDateControls showTimeControls=showTimeControls displayType='full' fullDisplay=dateTimeFullDisplay }}
-                <div class="fsc-actions-list"></div>
             </div>
         {{/if}}
     {{/if}}
