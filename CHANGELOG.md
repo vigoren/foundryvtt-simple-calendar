@@ -1,15 +1,18 @@
 # Change Log
 
-## 2.1.78 - Quality of Life Updates && Bug Fixes
+## 2.1.79 - Quality of Life Updates && Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-January%2030%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.78/module.zip)
+![](https://img.shields.io/badge/release%20date-February%2003%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.79/module.zip)
 
 ### Quality of Life Updates
 
 - Changed the [Update Frequency](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) setting so that it can support decimals. This can allow you to set an "Update Frequency" of 0.5 and a "Game Seconds Per Real Life Seconds" of 2 to get the game to move at twice the speed but have the clock still update for every game second.
 - Updated the compact view to show up to 5 moons before collapsing them into a hover-over view.
 - Added a new client setting "Compact View Scale" that allows you to change the scale at which the compact view is displayed at. You can use this to make the compact view appear larger or smaller. The number represents the percentage of the scale size when compared to the default size, 100%. The range goes in increments of 10 from 70% to 200%.
+- Added support for keyboard key modifiers when in compact view with [Time Control Layout](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options) set to `Quick Increment`:
+  - **Shift Key**: When the shift key is held down the amount of time that is changed for each increment is increased from `1 round, 1 minute, 5 minutes, 15 minutes, 1 hour` to `5 rounds, 5 minutes, 20 minutes, 45 minutes, 5 hours`.
+  - **Control Key**: When the control key is held down each increment will be subtracted from the current time, this can be combined with the shift key for going back in time by larger amounts.
 
 ### Bug Fixes
 

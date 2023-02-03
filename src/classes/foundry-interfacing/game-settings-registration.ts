@@ -1,6 +1,6 @@
-import {ModuleName, SettingNames, Themes} from "../../constants";
+import {ModuleName, SettingNames} from "../../constants";
 import ConfigurationApp from "../applications/configuration-app";
-import {CalManager, MainApplication, SC} from "../index"
+import {CalManager, SC} from "../index"
 import {GameSettings} from "./game-settings";
 import SCController from "../s-c-controller";
 import MainApp from "../applications/main-app";

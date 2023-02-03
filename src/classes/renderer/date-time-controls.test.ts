@@ -16,7 +16,9 @@ describe('Renderer DateTimeControls Class Tests', () => {
                 unit: 'seconds',
                 unitText: 'FSC.Second',
                 dateTimeUnitOpen: true
-            }
+            },
+            largerSteps: false,
+            reverseTime: false
         };
         expect(DateTimeControls.Render()).toContain('fsc-unit-controls');
         expect(DateTimeControls.Render(options)).toContain('fsc-open');
@@ -34,6 +36,9 @@ describe('Renderer DateTimeControls Class Tests', () => {
         expect(DateTimeControls.Render(options)).toContain('fsc-selected');
 
         options.displayType = CompactViewDateTimeControlDisplay.QuickIncrement;
+        expect(DateTimeControls.Render(options)).toContain('fsc-control-group');
+        options.largerSteps = true;
+        options.reverseTime = true;
         expect(DateTimeControls.Render(options)).toContain('fsc-control-group');
     });
 });

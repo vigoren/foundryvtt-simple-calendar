@@ -14,7 +14,9 @@ export class DateTimeControls {
             unit: '',
             unitText: '',
             dateTimeUnitOpen: false
-        }
+        },
+        reverseTime: false,
+        largerSteps: false
     };
     public static Render(options: SimpleCalendar.Renderer.DateTimeControlOptions = {}): string{
         options = deepMerge({}, this.defaultOptions, options);
@@ -40,13 +42,43 @@ export class DateTimeControls {
             }
             html += '</ul></div>';
         } else if(options.showTimeControls && options.displayType === CompactViewDateTimeControlDisplay.QuickIncrement){
-            html += `<div class="fsc-control-group">                        
-                        <button class="fsc-control fsc-primary" data-tooltip="1 ${GameSettings.Localize('FSC.Round')}" data-type="round" data-amount="1">1&nbsp;${GameSettings.Localize('FSC.RoundShorthand')}</button>
-                        <button class="fsc-control fsc-primary" data-tooltip="1 ${GameSettings.Localize('FSC.Minute')}" data-type="minute" data-amount="1">1&nbsp;${GameSettings.Localize('FSC.MinuteShorthand')}</button>
-                        <button class="fsc-control fsc-primary" data-tooltip="5 ${GameSettings.Localize('FSC.Minute')}" data-type="minute" data-amount="5">5&nbsp;${GameSettings.Localize('FSC.MinuteShorthand')}</button>
-                        <button class="fsc-control fsc-primary" data-tooltip="15 ${GameSettings.Localize('FSC.Minute')}" data-type="minute" data-amount="15">15&nbsp;${GameSettings.Localize('FSC.MinuteShorthand')}</button>
-                        <button class="fsc-control fsc-primary" data-tooltip="1 ${GameSettings.Localize('FSC.Hour')}" data-type="hour" data-amount="1">1&nbsp;${GameSettings.Localize('FSC.HourShorthand')}</button>
-                    </div>`;
+            const btn = [
+                {
+                    type: 'round',
+                    amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
+                    tooltip: GameSettings.Localize('FSC.Round'),
+                    text: GameSettings.Localize('FSC.RoundShorthand')
+                },
+                {
+                    type: 'minute',
+                    amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
+                    tooltip: GameSettings.Localize('FSC.Minute'),
+                    text: GameSettings.Localize('FSC.MinuteShorthand')
+                },
+                {
+                    type: 'minute',
+                    amount: (options.largerSteps? 20 : 5) * (options.reverseTime? -1 : 1),
+                    tooltip: GameSettings.Localize('FSC.Minute'),
+                    text: GameSettings.Localize('FSC.MinuteShorthand')
+                },
+                {
+                    type: 'minute',
+                    amount: (options.largerSteps? 45 : 15) * (options.reverseTime? -1 : 1),
+                    tooltip: GameSettings.Localize('FSC.Minute'),
+                    text: GameSettings.Localize('FSC.MinuteShorthand')
+                },
+                {
+                    type: 'hour',
+                    amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
+                    tooltip: GameSettings.Localize('FSC.Hour'),
+                    text: GameSettings.Localize('FSC.HourShorthand')
+                }
+            ];
+            html += `<div class="fsc-control-group">`;
+            for(let i = 0; i < btn.length; i++){
+                html += `<button class="fsc-control fsc-primary" data-tooltip="${btn[i].amount} ${btn[i].tooltip}" data-type="${btn[i].type}" data-amount="${btn[i].amount}">${btn[i].amount}&nbsp;${btn[i].text}</button>`;
+            }
+            html += `</div>`;
         }
         if(options.showTimeControls && options.showPresetTimeOfDay){
             html += `<div class="fsc-control-group">

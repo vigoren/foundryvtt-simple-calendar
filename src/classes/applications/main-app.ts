@@ -58,7 +58,9 @@ export default class MainApp extends FormApplication{
         dateTimeUnitText: 'FSC.Day',
         searchOptionsOpen: false,
         calendarListOpen: false,
-        primaryCheckRunning: true
+        primaryCheckRunning: true,
+        cvReverseTime: false,
+        cvLargerSteps: false
     };
 
     search = {
@@ -89,6 +91,9 @@ export default class MainApp extends FormApplication{
     initialize() {
         //Check if the note list should always be shown
         this.uiElementStates['fsc-note-list'] = GameSettings.GetBooleanSettings(SettingNames.AlwaysShowNoteList);
+
+        document.addEventListener('keydown', this.keyClick.bind(this));
+        document.addEventListener('keyup', this.keyClick.bind(this));
     }
 
     /**
@@ -493,7 +498,6 @@ export default class MainApp extends FormApplication{
                  drag.handlers["dragMove"] = ["mousemove", this.appDragMove.bind(drag), false];
                  drag.handlers["dragUp"] = ["mouseup", this.appDragEnd.bind(drag), false];
              }
-
             // Click anywhere in the app
             appWindow.addEventListener('click', this.toggleUnitSelector.bind(this, true));
 
@@ -839,7 +843,7 @@ export default class MainApp extends FormApplication{
      * When the change time unit buttons are clicked
      * @param e
      */
-    public timeUnitClick(e: Event){
+    public timeUnitClick(e: Event){console.log(e);
         const target = <HTMLElement>e.currentTarget;
         const dataType = target.getAttribute('data-type');
         const dataAmount = target.getAttribute('data-amount');
@@ -1188,4 +1192,11 @@ export default class MainApp extends FormApplication{
         return Promise.resolve(undefined);
     }
 
+    keyClick(event: KeyboardEvent){
+        if(this.rendered && this.uiElementStates.compactView && !event.repeat){
+            this.uiElementStates.cvLargerSteps = event.shiftKey;
+            this.uiElementStates.cvReverseTime = event.ctrlKey;
+            this.updateApp();
+        }
+    }
 }

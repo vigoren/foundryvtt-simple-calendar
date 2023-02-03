@@ -1851,6 +1851,9 @@ declare global{
                     unitText: string;
                     dateTimeUnitOpen: boolean;
                 }
+
+                largerSteps?: boolean;
+                reverseTime?: boolean;
             }
         }
 

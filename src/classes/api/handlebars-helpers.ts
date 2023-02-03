@@ -221,6 +221,12 @@ export class HandlebarsHelpers{
         if(options.hash.hasOwnProperty('fullDisplay')){
             renderOptions.fullDisplay = options.hash['fullDisplay'];
         }
+        if(options.hash.hasOwnProperty('largeSteps')){
+            renderOptions.largerSteps = options.hash['largeSteps'];
+        }
+        if(options.hash.hasOwnProperty('reverseTime')){
+            renderOptions.reverseTime = options.hash['reverseTime'];
+        }
         return new Handlebars.SafeString(Renderer.DateTimeControls.Render(renderOptions));
     }
 }

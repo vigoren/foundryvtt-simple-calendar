@@ -955,4 +955,17 @@ describe('Main App Class Tests', () => {
         //@ts-ignore
         ma._updateObject();
     });
+
+    test('keyClick', () => {
+        jest.spyOn(ma, 'updateApp').mockImplementation(() => {});
+
+        //@ts-ignore
+        ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
+        expect(ma.updateApp).not.toHaveBeenCalled();
+
+        ma.uiElementStates.compactView = true;
+        //@ts-ignore
+        ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
+        expect(ma.updateApp).toHaveBeenCalledTimes(1);
+    });
 });
