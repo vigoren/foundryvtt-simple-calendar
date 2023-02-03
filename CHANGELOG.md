@@ -1,9 +1,9 @@
 # Change Log
 
-## 2.1.79 - Quality of Life Updates && Bug Fixes
+## 2.1.80 - Quality of Life Updates && Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-February%2003%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.79/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.80/module.zip)
 
 ### Quality of Life Updates
 
@@ -18,6 +18,7 @@
 
 - Fixed an issue where the hook `SimpleCalendar.Hooks.DateTimeChange` would fire twice when the time changed while the clock was running. It should now only fire once for every time increment.
 - Fixed an issue where on the full calendar view the preset time of day buttons would sometimes get bumped down to a second row.
+- Fixed an issue where when in the compact view with the [Time Control Layout](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options) set to `Full Controls` the unit selector would open up when near the top of the page potentially making some options inaccessible.
 
 ### Documentation Changes
 

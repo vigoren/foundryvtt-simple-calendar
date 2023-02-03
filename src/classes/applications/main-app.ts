@@ -700,11 +700,21 @@ export default class MainApp extends FormApplication{
     /**
      * Opens and closes the date time unit selector dropdown
      * @param forceHide
+     * @param event
      */
-    public toggleUnitSelector(forceHide: boolean = false){
+    public toggleUnitSelector(forceHide: boolean = false, event: Event | null = null){
+        event?.stopPropagation();
         let unitList = document.querySelector(`.fsc-main-wrapper .fsc-unit-list`);
         if(unitList){
             this.uiElementStates.dateTimeUnitOpen = animateElement(unitList, 500, forceHide);
+            if(this.uiElementStates.compactView){
+                const rect = unitList.getBoundingClientRect();
+                if(rect.top < (window.innerHeight / 2)){
+                    unitList.classList.add('fsc-down');
+                } else {
+                    unitList.classList.remove('fsc-down');
+                }
+            }
         }
     }
 
@@ -843,7 +853,7 @@ export default class MainApp extends FormApplication{
      * When the change time unit buttons are clicked
      * @param e
      */
-    public timeUnitClick(e: Event){console.log(e);
+    public timeUnitClick(e: Event){
         const target = <HTMLElement>e.currentTarget;
         const dataType = target.getAttribute('data-type');
         const dataAmount = target.getAttribute('data-amount');
