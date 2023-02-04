@@ -1,7 +1,7 @@
 import {Logger} from "../logging";
 import {GameSettings} from "../foundry-interfacing/game-settings";
 import {
-    CalendarClickEvents, CompactViewDateTimeControlDisplay,
+    CalendarClickEvents,
     DateTimeChangeSocketTypes,
     DateTimeUnits,
     GameWorldTimeIntegrations,
@@ -58,7 +58,9 @@ export default class MainApp extends FormApplication{
         dateTimeUnitText: 'FSC.Day',
         searchOptionsOpen: false,
         calendarListOpen: false,
-        primaryCheckRunning: true
+        primaryCheckRunning: true,
+        cvReverseTime: false,
+        cvLargerSteps: false
     };
 
     search = {
@@ -89,6 +91,9 @@ export default class MainApp extends FormApplication{
     initialize() {
         //Check if the note list should always be shown
         this.uiElementStates['fsc-note-list'] = GameSettings.GetBooleanSettings(SettingNames.AlwaysShowNoteList);
+
+        document.addEventListener('keydown', this.keyClick.bind(this));
+        document.addEventListener('keyup', this.keyClick.bind(this));
     }
 
     /**
@@ -226,7 +231,13 @@ export default class MainApp extends FormApplication{
             }
 
             const persistentClass = SC.clientSettings.persistentOpen? "fsc-persistent" : "";
-            options.classes = ["simple-calendar", GetThemeName(), persistentClass];
+
+            let scaleClass = '';
+            if(this.uiElementStates.compactView){
+                scaleClass = `sc-scale-${SC.clientSettings.compactViewScale}`;
+            }
+
+            options.classes = ["simple-calendar", GetThemeName(), persistentClass, scaleClass];
             return super.render(true, options);
         }
         return;
@@ -487,7 +498,6 @@ export default class MainApp extends FormApplication{
                  drag.handlers["dragMove"] = ["mousemove", this.appDragMove.bind(drag), false];
                  drag.handlers["dragUp"] = ["mouseup", this.appDragEnd.bind(drag), false];
              }
-
             // Click anywhere in the app
             appWindow.addEventListener('click', this.toggleUnitSelector.bind(this, true));
 
@@ -690,11 +700,21 @@ export default class MainApp extends FormApplication{
     /**
      * Opens and closes the date time unit selector dropdown
      * @param forceHide
+     * @param event
      */
-    public toggleUnitSelector(forceHide: boolean = false){
+    public toggleUnitSelector(forceHide: boolean = false, event: Event | null = null){
+        event?.stopPropagation();
         let unitList = document.querySelector(`.fsc-main-wrapper .fsc-unit-list`);
         if(unitList){
             this.uiElementStates.dateTimeUnitOpen = animateElement(unitList, 500, forceHide);
+            if(this.uiElementStates.compactView){
+                const rect = unitList.getBoundingClientRect();
+                if(rect.top < (window.innerHeight / 2)){
+                    unitList.classList.add('fsc-down');
+                } else {
+                    unitList.classList.remove('fsc-down');
+                }
+            }
         }
     }
 
@@ -881,12 +901,10 @@ export default class MainApp extends FormApplication{
      */
     public dateControlApply(e: Event){
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)){
-            let validSelection = false;
             const selectedYear = this.activeCalendar.year.selectedYear;
             const selectedMonthDayIndex = this.activeCalendar.getMonthAndDayIndex('selected');
             const selectedMonth = this.activeCalendar.getMonth('selected');
             if(selectedMonth){
-                validSelection = true;
                 if(selectedYear !== this.activeCalendar.year.visibleYear || !selectedMonth.visible){
                     const utsd = new Dialog({
                         title: GameSettings.Localize('FSC.SetCurrentDateDialog.Title'),
@@ -1184,4 +1202,11 @@ export default class MainApp extends FormApplication{
         return Promise.resolve(undefined);
     }
 
+    keyClick(event: KeyboardEvent){
+        if(this.rendered && this.uiElementStates.compactView && !event.repeat){
+            this.uiElementStates.cvLargerSteps = event.shiftKey;
+            this.uiElementStates.cvReverseTime = event.ctrlKey;
+            this.updateApp();
+        }
+    }
 }

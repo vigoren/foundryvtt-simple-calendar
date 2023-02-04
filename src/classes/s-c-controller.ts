@@ -10,7 +10,7 @@ import {
     TimeKeeperStatus
 } from "../constants";
 import {Logger} from "./logging";
-import {CalManager, MainApplication, NManager} from "./index";
+import {CalManager, MainApplication, NManager, SC} from "./index";
 import ConfigurationApp from "./applications/configuration-app";
 import MainApp from "./applications/main-app";
 import UserPermissions from "./configuration/user-permissions";
@@ -62,7 +62,8 @@ export default class SCController {
             noteReminderNotification: NoteReminderNotificationType.whisper,
             sideDrawerDirection: 'sc-right',
             alwaysShowNoteList: false,
-            persistentOpen: false
+            persistentOpen: false,
+            compactViewScale: 100
         };
         this.globalConfiguration = {
             id: '',
@@ -131,6 +132,19 @@ export default class SCController {
         }
     }
 
+    public CompactScaleChange() {
+        this.clientSettings.compactViewScale = GameSettings.GetNumericSettings(SettingNames.CompactViewScale);
+        const mainApp = document.getElementById(MainApp.appWindowId);
+        if(mainApp){
+            for(let i = mainApp.classList.length - 1; i >= 0; i--){
+                if(mainApp.classList[i].startsWith('sc-scale')){
+                    mainApp.classList.remove(mainApp.classList[i]);
+                }
+            }
+            mainApp.classList.add(`sc-scale-${SC.clientSettings.compactViewScale}`);
+        }
+    }
+
     /**
      * When the side drawer direction client setting has changed re-render the main application.
      */
@@ -180,6 +194,7 @@ export default class SCController {
         this.clientSettings.sideDrawerDirection = GameSettings.GetStringSettings(SettingNames.NoteListOpenDirection);
         this.clientSettings.alwaysShowNoteList = GameSettings.GetBooleanSettings(SettingNames.AlwaysShowNoteList);
         this.clientSettings.persistentOpen = GameSettings.GetBooleanSettings(SettingNames.PersistentOpen);
+        this.clientSettings.compactViewScale = GameSettings.GetNumericSettings(SettingNames.CompactViewScale);
     }
 
     /**
@@ -218,6 +233,7 @@ export default class SCController {
             GameSettings.SaveStringSetting(SettingNames.NoteListOpenDirection, clientConfig.sideDrawerDirection, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.AlwaysShowNoteList, clientConfig.alwaysShowNoteList, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.PersistentOpen, clientConfig.persistentOpen, false).catch(Logger.error);
+            GameSettings.SaveNumericSetting(SettingNames.CompactViewScale, clientConfig.compactViewScale, false).catch(Logger.error);
             //Save the global configuration (triggers the load function)
             GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc)
                 .then(() => GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}}))

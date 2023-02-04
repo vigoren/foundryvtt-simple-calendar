@@ -97,6 +97,11 @@ describe('Game Settings Class Tests', () => {
         expect(GameSettings.GetStringSettings(SettingNames.ActiveCalendar)).toBe('');
     });
 
+    test('Get Numeric Settings', () => {
+        (<Mock>(<Game>game).settings.get).mockReturnValueOnce(1);
+        expect(GameSettings.GetNumericSettings(SettingNames.ActiveCalendar)).toBe(1);
+    });
+
     test('Save Boolean Setting', async () => {
         expect(await GameSettings.SaveBooleanSetting(SettingNames.ActiveCalendar, false)).toBe(false);
         expect(await GameSettings.SaveBooleanSetting(SettingNames.ActiveCalendar, false, false)).toBe(true);
@@ -111,6 +116,14 @@ describe('Game Settings Class Tests', () => {
         //@ts-ignore
         game.user.isGM = true;
         expect(await GameSettings.SaveStringSetting(SettingNames.ActiveCalendar, '')).toBe(true);
+    });
+
+    test('Save Numeric Setting', async () => {
+        expect(await GameSettings.SaveNumericSetting(SettingNames.ActiveCalendar, 1)).toBe(false);
+        expect(await GameSettings.SaveNumericSetting(SettingNames.ActiveCalendar, 1, false)).toBe(true);
+        //@ts-ignore
+        game.user.isGM = true;
+        expect(await GameSettings.SaveNumericSetting(SettingNames.ActiveCalendar, 1)).toBe(true);
     });
 
     test('Save Object Setting', async () => {

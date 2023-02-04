@@ -175,7 +175,8 @@ export default class MigrationApp extends Application{
             noteReminderNotification: NoteReminderNotificationType.whisper,
             sideDrawerDirection: 'sc-right',
             alwaysShowNoteList: false,
-            persistentOpen: false
+            persistentOpen: false,
+            compactViewScale: 100
         });
     }
 

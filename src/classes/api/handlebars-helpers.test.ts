@@ -143,7 +143,9 @@ describe('Handlebars Helpers Tests', () => {
                 unit: '',
                 unitText: '',
                 dateTimeUnitOpen: false
-            }
+            },
+            largeSteps: false,
+            reverseTime: false
         };
         expect(HandlebarsHelpers.DateTimeControls(options)).toEqual({"v": ""});
     });

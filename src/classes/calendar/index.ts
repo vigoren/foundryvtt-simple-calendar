@@ -1124,15 +1124,17 @@ export default class Calendar extends ConfigurationItemBase{
         if(PF2E.isPF2E && this.generalSettings.pf2eSync){
             newTime += PF2E.getWorldCreateSeconds(this);
         }
-
         if(changeAmount !== 0){
             // If the tracking rules are for self or mixed and the clock is running then we make the change.
             if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && this.timeKeeper.getStatus() === TimeKeeperStatus.Started){
-                const parsedDate = this.secondsToDate(newTime);
-                this.setDateTime(parsedDate, {updateApp: (this.time.updateFrequency * this.time.gameTimeRatio) !== changeAmount, sync: false, save: false, bypassPermissionCheck: true});
-                Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.timeKeeper.getStatus());
+                //If we didn't request the change (we are running the clock) we need to update the internal time to match the new world time
+                if(!this.timeChangeTriggered){
+                    const parsedDate = this.secondsToDate(newTime);
+                    this.setDateTime(parsedDate, {updateApp: (this.time.updateFrequency * this.time.gameTimeRatio) !== changeAmount, sync: false, save: false, bypassPermissionCheck: true});
+                    Renderer.Clock.UpdateListener(`sc_${this.id}_clock`, this.timeKeeper.getStatus());
+                }
             }
-            // If the tracking rules are for self only and we requested the change OR the change came from a combat turn change
+            // If the tracking rules are for self only, and we requested the change OR the change came from a combat turn change
             else if((this.generalSettings.gameWorldTimeIntegration=== GameWorldTimeIntegrations.Self || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && (this.timeChangeTriggered || this.combatChangeTriggered)){
                 //If we didn't request the change (from a combat change) we need to update the internal time to match the new world time
                 if(!this.timeChangeTriggered){
@@ -1142,8 +1144,8 @@ export default class Calendar extends ConfigurationItemBase{
                     this.setDateTime(parsedDate, {updateApp: false, sync: false, save: GameSettings.IsGm() && SC.primary});
                 }
             }
-                // If we didn't (locally) request this change then parse the new time into years, months, days and seconds and set those values
-            // This covers other modules/built in features updating the world time and Simple Calendar updating to reflect those changes
+            // If we didn't (locally) request this change then parse the new time into years, months, days and seconds and set those values
+            // This covers other modules/built-in features updating the world time and Simple Calendar updating to reflect those changes
             else if((this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.ThirdParty || this.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.Mixed) && !this.timeChangeTriggered){
                 const parsedDate = this.secondsToDate(newTime);
                 // If the current player is the GM then we need to save this new value to the database
@@ -1169,6 +1171,7 @@ export default class Calendar extends ConfigurationItemBase{
         if(roundSeconds !== 0 && roundsPassed !== 0){
             // If the current player is the GM then we need to save this new value to the database
             // Since the current date is updated this will trigger an update on all players as well
+            console.log('processOwnCombatRoundTime');
             this.changeDateTime({seconds: roundSeconds * roundsPassed}, {updateApp: false, sync: true, save: GameSettings.IsGm() && SC.primary})
         }
     }

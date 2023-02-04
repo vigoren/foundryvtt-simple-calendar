@@ -407,6 +407,14 @@ describe('Main App Class Tests', () => {
         jest.spyOn(VisualUtilities, 'animateElement').mockImplementation(() => {return true;});
         ma.toggleUnitSelector();
         expect(ma.uiElementStates.dateTimeUnitOpen).toBe(true);
+
+        ma.uiElementStates.compactView = true;
+        ma.toggleUnitSelector();
+        expect(ma.uiElementStates.dateTimeUnitOpen).toBe(true);
+
+        jest.spyOn(elm, "getBoundingClientRect").mockReturnValue({top: 5000, bottom: 0, left: 0, right: 0, x: 0, y: 0, height: 100, width: 100, toJSON: ()=>{}});
+        ma.toggleUnitSelector();
+        expect(ma.uiElementStates.dateTimeUnitOpen).toBe(true);
     });
 
     test('Change Unit', () => {
@@ -954,5 +962,18 @@ describe('Main App Class Tests', () => {
     test('Update Object', () => {
         //@ts-ignore
         ma._updateObject();
+    });
+
+    test('keyClick', () => {
+        jest.spyOn(ma, 'updateApp').mockImplementation(() => {});
+
+        //@ts-ignore
+        ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
+        expect(ma.updateApp).not.toHaveBeenCalled();
+
+        ma.uiElementStates.compactView = true;
+        //@ts-ignore
+        ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
+        expect(ma.updateApp).toHaveBeenCalledTimes(1);
     });
 });

@@ -236,6 +236,10 @@
               border-bottom-width: 0;
             }
           }
+          &.fsc-down{
+            bottom: unset;
+            top: 100%;
+          }
           &.fsc-open{
             visibility: visible;
             max-height: pxToRem(250);

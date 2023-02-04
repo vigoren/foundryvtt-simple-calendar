@@ -1,6 +1,6 @@
-import {ModuleName, SettingNames, Themes} from "../../constants";
+import {ModuleName, SettingNames} from "../../constants";
 import ConfigurationApp from "../applications/configuration-app";
-import {CalManager, MainApplication, SC} from "../index"
+import {CalManager, SC} from "../index"
 import {GameSettings} from "./game-settings";
 import SCController from "../s-c-controller";
 import MainApp from "../applications/main-app";
@@ -126,6 +126,21 @@ export default class GameSettingsRegistration{
             type: Boolean,
             default: false,
             onChange: SC.PersistenceChange.bind(SC)
+        });
+        (<Game>game).settings.register(ModuleName, SettingNames.CompactViewScale, {
+            name: "FSC.Configuration.Client.CompactViewScale.Title",
+            hint: "FSC.Configuration.Client.CompactViewScale.Description",
+            scope: "client",
+            config: true,
+            type: Number,
+            // @ts-ignore
+            range: {
+                min: 70,
+                max: 200,
+                step: 10
+            },
+            default: 100,
+            onChange: SC.CompactScaleChange.bind(SC)
         });
 
         // -------------------

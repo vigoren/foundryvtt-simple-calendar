@@ -26,6 +26,8 @@ export enum SettingNames {
     NoteListOpenDirection = 'note-list-open-direction',
     AlwaysShowNoteList = 'always-show-note-list',
     PersistentOpen = 'persistent-open',
+
+    CompactViewScale='compact-view-scale',
     CalendarMainApp = 'calendar-main-app',
     CalendarConfigurationMenu= 'calendar-configuration-menu',
     CalendarConfiguration = 'calendar-configuration',

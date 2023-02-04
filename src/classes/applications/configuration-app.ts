@@ -89,7 +89,8 @@ export default class ConfigurationApp extends FormApplication {
         noteReminderNotification: NoteReminderNotificationType.whisper,
         sideDrawerDirection: 'sc-right',
         alwaysShowNoteList: false,
-        persistentOpen: false
+        persistentOpen: false,
+        compactViewScale: 100
     };
     /**
      * A list of different states for the UI
@@ -247,7 +248,8 @@ export default class ConfigurationApp extends FormApplication {
                     'sc-down': "FSC.Down"
                 },
                 alwaysShowNoteList: this.clientSettings.alwaysShowNoteList,
-                persistentOpen: this.clientSettings.persistentOpen
+                persistentOpen: this.clientSettings.persistentOpen,
+                compactViewScale: this.clientSettings.compactViewScale
             },
             combatPauseRules: {
                 'active': 'FSC.Configuration.CombatPauseRule.Active',
@@ -677,6 +679,7 @@ export default class ConfigurationApp extends FormApplication {
             this.clientSettings.sideDrawerDirection = getTextInputValue('#scSideDrawerDirection', 'sc-right', this.appWindow);
             this.clientSettings.alwaysShowNoteList = getCheckBoxInputValue('#scAlwaysOpenNoteList', false, this.appWindow);
             this.clientSettings.persistentOpen = getCheckBoxInputValue('#scPersistentOpen', false, this.appWindow);
+            this.clientSettings.compactViewScale = getNumericInputValue('input[name="scCompactViewScale"]', 100, false, this.appWindow) || 100;
 
             //----------------------------------
             // Global Config: Permissions
@@ -854,7 +857,7 @@ export default class ConfigurationApp extends FormApplication {
             (<Calendar>this.object).time.secondsInMinute = <number>getNumericInputValue('#scSecondsInMinute', 60, false, this.appWindow);
             (<Calendar>this.object).generalSettings.showClock = getCheckBoxInputValue('#scShowClock', true, this.appWindow);
             (<Calendar>this.object).time.gameTimeRatio = <number>getNumericInputValue('#scGameTimeRatio', 1, true, this.appWindow);
-            (<Calendar>this.object).time.updateFrequency = <number>getNumericInputValue('#scTimeUpdateFrequency', 1, false, this.appWindow);
+            (<Calendar>this.object).time.updateFrequency = <number>getNumericInputValue('#scTimeUpdateFrequency', 1, true, this.appWindow);
             (<Calendar>this.object).time.unifyGameAndClockPause = getCheckBoxInputValue('#scUnifyClockWithFoundryPause', false, this.appWindow);
 
             if((<Calendar>this.object).time.hoursInDay <= 0){(<Calendar>this.object).time.hoursInDay = 1;}

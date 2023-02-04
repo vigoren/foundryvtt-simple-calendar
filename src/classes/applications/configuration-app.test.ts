@@ -439,6 +439,8 @@ describe('Configuration App Class Tests', () => {
         //@ts-ignore
         jest.spyOn(ca.appWindow, 'querySelectorAll').mockReturnValueOnce([compcatControlDisplay]).mockReturnValueOnce([yearName]).mockReturnValueOnce([month]).mockReturnValueOnce([weekday]).mockReturnValueOnce([month]).mockReturnValueOnce([season]).mockReturnValueOnce([moon]).mockReturnValueOnce([noteCategory]);
 
+        jest.spyOn(InputUtilities, 'getNumericInputValue').mockReturnValue(0);
+
         //@ts-ignore
         ca.writeInputValuesToObjects();
 

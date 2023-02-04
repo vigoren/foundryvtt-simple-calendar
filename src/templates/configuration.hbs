@@ -160,6 +160,13 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Client.PersistentOpen.Description'}}</p>
                 </div>
+                <div class="form-group fsc-open">
+                    <label for="scCompactViewScale">{{localize 'FSC.Configuration.Client.CompactViewScale.Title'}}</label>
+                    <div class="form-fields">
+                        {{rangePicker name="scCompactViewScale" value=clientSettings.compactViewScale step=10 min=70 max=200}}
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Client.CompactViewScale.Description'}}</p>
+                </div>
             </div>
         </div>
 

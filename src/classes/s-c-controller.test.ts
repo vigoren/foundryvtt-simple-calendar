@@ -106,6 +106,18 @@ describe('SCController Tests', () => {
         expect(mainApp.classList.contains('fsc-persistent')).toBe(true);
     });
 
+    test("Compact Scale Change", () => {
+        const mainApp = document.createElement('div');
+        jest.spyOn(GameSettings, "GetNumericSettings").mockReturnValueOnce(120).mockReturnValue(200);
+        jest.spyOn(document, "getElementById").mockReturnValue(mainApp);
+
+        SC.CompactScaleChange();
+        expect(mainApp.classList.contains('sc-scale-120')).toBe(true);
+        SC.CompactScaleChange();
+        expect(mainApp.classList.contains('sc-scale-120')).toBe(false);
+        expect(mainApp.classList.contains('sc-scale-200')).toBe(true);
+    });
+
     test('Side Drawer Direction Change', () => {
         jest.spyOn(MainApplication, 'render').mockImplementation(() => {});
         SCController.SideDrawerDirectionChange();
@@ -193,7 +205,8 @@ describe('SCController Tests', () => {
             noteReminderNotification: NoteReminderNotificationType.whisper,
             sideDrawerDirection: 'sc-right',
             alwaysShowNoteList: false,
-            persistentOpen: false
+            persistentOpen: false,
+            compactViewScale: 100
         });
         expect(CalManager.saveCalendars).toHaveBeenCalledTimes(2);
         expect(GameSettings.SaveStringSetting).toHaveBeenCalledTimes(3);
