@@ -534,5 +534,14 @@
 	"FSC.Configuration.Client.AlwaysShowNoteList.Description": "Ce réglage fera en sorte que la liste de notes soit toujours visible et ne pourra être fermée. La seule exception est que l'ouverture de la recherche de liste ou de note du calendrier se fera au sommet de la liste de note, mais la liste de notes restera visible après sa fermeture.",
 	"FSC.Predefined.EclipsePhase": "Éclipse phase 2e",
 	"FSC.Predefined.SymbaroumIC": "Symbaroum : Ambrian Calendar",
-	"FSC.Info.ThemeChange": "Le thème de Simple Calendar a été modifié par un system/module/macro en <strong>\"{THEME}\"</strong>. Le thème peut être modifié à nouveau dans les paramètres de Simple Calendar."
+	"FSC.Info.ThemeChange": "Le thème de Simple Calendar a été modifié par un system/module/macro en <strong>\"{THEME}\"</strong>. Le thème peut être modifié à nouveau dans les paramètres de Simple Calendar.",
+	"FSC.RoundShorthand": "r",
+	"FSC.Configuration.Display.DateTimeFormat": "Format Date/Heure",
+	"FSC.Configuration.Display.Compact": "Options de la vue compacte",
+	"FSC.Configuration.Display.CompactControls.Title": "Disposition du contrôle de la date et de l'heure en mode compact",
+	"FSC.Configuration.Display.CompactControls.Description": "Choisissez la disposition des boutons utilisés pour modifier la date et l'heure du calendrier en mode compact.",
+	"FSC.QuickIncrement": "Incrément rapide",
+	"FSC.FullControls": "Contrôles complets",
+	"FSC.Configuration.Client.PersistentOpen.Title": "Ouverture persistante",
+	"FSC.Configuration.Client.PersistentOpen.Description": "Lorsqu'il est activé, ce paramètre retirera le bouton fermer de la fenêtre de calendrier et empêchera la clé Echap de le fermer. Le bouton en dessous des contrôles de la scène permet d'ouvrir et de fermer le calendrier."
 }
