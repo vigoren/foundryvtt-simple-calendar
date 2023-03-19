@@ -1,6 +1,5 @@
 {
   "calendar": {
-    "id": "default",
     "name": "Exalted",
     "currentDate": {
       "year": 768,
@@ -9,7 +8,6 @@
       "seconds": 0
     },
     "general": {
-      "id": "ab10a1d4",
       "gameWorldTimeIntegration": "mixed",
       "showClock": true,
       "noteDefaultVisibility": false,
@@ -25,13 +23,11 @@
       }
     },
     "leapYear": {
-      "id": "5ea7f44e",
       "rule": "none",
       "customMod": 0
     },
     "months": [
       {
-        "id": "2f9ee5f9",
         "name": "Ascending Air",
         "description": "",
         "abbreviation": "AAI",
@@ -44,7 +40,6 @@
         "startingWeekday": null
       },
       {
-        "id": "d943ba9b",
         "name": "Resplendant Air",
         "description": "",
         "abbreviation": "RAI",
@@ -57,7 +52,6 @@
         "startingWeekday": null
       },
       {
-        "id": "8f82e654",
         "name": "Descending Air",
         "description": "",
         "abbreviation": "DAI",
@@ -70,7 +64,6 @@
         "startingWeekday": null
       },
       {
-        "id": "c3acb041",
         "name": "Ascending Water",
         "description": "",
         "abbreviation": "AWA",
@@ -83,7 +76,6 @@
         "startingWeekday": null
       },
       {
-        "id": "b88fbfeb",
         "name": "Resplendant Water",
         "description": "",
         "abbreviation": "RWA",
@@ -96,7 +88,6 @@
         "startingWeekday": null
       },
       {
-        "id": "bb8d42d1",
         "name": "Descending Water",
         "description": "",
         "abbreviation": "DWA",
@@ -109,7 +100,6 @@
         "startingWeekday": null
       },
       {
-        "id": "578fef23",
         "name": "Ascending Wood",
         "description": "",
         "abbreviation": "AWO",
@@ -122,7 +112,6 @@
         "startingWeekday": null
       },
       {
-        "id": "3fcb86ce",
         "name": "Resplendant Wood",
         "description": "",
         "abbreviation": "RWO",
@@ -135,7 +124,6 @@
         "startingWeekday": null
       },
       {
-        "id": "8da65956",
         "name": "Descending Wood",
         "description": "",
         "abbreviation": "DWO",
@@ -148,7 +136,6 @@
         "startingWeekday": null
       },
       {
-        "id": "b7bf131a",
         "name": "Ascending Fire",
         "description": "",
         "abbreviation": "AFI",
@@ -161,7 +148,6 @@
         "startingWeekday": null
       },
       {
-        "id": "52384a36",
         "name": "Resplendant Fire",
         "description": "",
         "abbreviation": "RFI",
@@ -174,7 +160,6 @@
         "startingWeekday": null
       },
       {
-        "id": "5dd21e03",
         "name": "Descending Fire",
         "description": "",
         "abbreviation": "DFI",
@@ -187,7 +172,6 @@
         "startingWeekday": null
       },
       {
-        "id": "28dda916",
         "name": "Ascending Earth",
         "description": "",
         "abbreviation": "AEA",
@@ -200,7 +184,6 @@
         "startingWeekday": null
       },
       {
-        "id": "aae86a72",
         "name": "Resplendant Earth",
         "description": "",
         "abbreviation": "REA",
@@ -213,7 +196,6 @@
         "startingWeekday": null
       },
       {
-        "id": "108be3a5",
         "name": "Descending Earth",
         "description": "",
         "abbreviation": "DEA",
@@ -226,7 +208,6 @@
         "startingWeekday": null
       },
       {
-        "id": "808df60d",
         "name": "Calibration",
         "description": "",
         "abbreviation": "CAL",
@@ -241,7 +222,6 @@
     ],
     "moons": [
       {
-        "id": "39cf35fd",
         "name": "Luna",
         "cycleLength": 28,
         "firstNewMoon": {
@@ -314,7 +294,6 @@
     ],
     "seasons": [
       {
-        "id": "ca644a5a",
         "name": "Spring",
         "description": "",
         "startingMonth": 3,
@@ -325,7 +304,6 @@
         "sunsetTime": 0
       },
       {
-        "id": "f4a0165c",
         "name": "Summer",
         "description": "",
         "startingMonth": 7,
@@ -336,7 +314,6 @@
         "sunsetTime": 0
       },
       {
-        "id": "c6801b72",
         "name": "Fall",
         "description": "",
         "startingMonth": 11,
@@ -347,7 +324,6 @@
         "sunsetTime": 0
       },
       {
-        "id": "be830f5",
         "name": "Winter",
         "description": "",
         "startingMonth": 14,
@@ -359,7 +335,6 @@
       }
     ],
     "time": {
-      "id": "dadc8c37",
       "hoursInDay": 25,
       "minutesInHour": 60,
       "secondsInMinute": 60,
@@ -370,7 +345,6 @@
     "weekdays": [
       {
         "abbreviation": "Su",
-        "id": "6f3a28a0",
         "name": "Sunday",
         "description": "",
         "numericRepresentation": 1,
@@ -378,7 +352,6 @@
       },
       {
         "abbreviation": "Mo",
-        "id": "cdf9966a",
         "name": "Moonday",
         "description": "",
         "numericRepresentation": 2,
@@ -386,7 +359,6 @@
       },
       {
         "abbreviation": "Ma",
-        "id": "81d8586a",
         "name": "Marsday",
         "description": "",
         "numericRepresentation": 3,
@@ -394,7 +366,6 @@
       },
       {
         "abbreviation": "Me",
-        "id": "7be376c0",
         "name": "Mercuryday",
         "description": "",
         "numericRepresentation": 4,
@@ -402,7 +373,6 @@
       },
       {
         "abbreviation": "Ju",
-        "id": "ac78938e",
         "name": "Jupiterday",
         "description": "",
         "numericRepresentation": 5,
@@ -410,7 +380,6 @@
       },
       {
         "abbreviation": "Ve",
-        "id": "a0f227c2",
         "name": "Venusday",
         "description": "",
         "numericRepresentation": 6,
@@ -418,7 +387,6 @@
       },
       {
         "abbreviation": "Sa",
-        "id": "7ff37fe7",
         "name": "Saturnday",
         "description": "",
         "numericRepresentation": 7,
@@ -426,7 +394,6 @@
       }
     ],
     "year": {
-      "id": "ee1456e0",
       "numericRepresentation": 768,
       "prefix": "RY",
       "postfix": "",
