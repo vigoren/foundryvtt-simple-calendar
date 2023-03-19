@@ -299,7 +299,7 @@
         "startingMonth": 3,
         "startingDay": 19,
         "color": "#46b946",
-        "icon": "none",
+        "icon": "spring",
         "sunriseTime": 0,
         "sunsetTime": 0
       },
@@ -309,7 +309,7 @@
         "startingMonth": 7,
         "startingDay": 12,
         "color": "#e0c40b",
-        "icon": "none",
+        "icon": "summer",
         "sunriseTime": 0,
         "sunsetTime": 0
       },
@@ -319,7 +319,7 @@
         "startingMonth": 11,
         "startingDay": 5,
         "color": "#ff8e47",
-        "icon": "none",
+        "icon": "fall",
         "sunriseTime": 0,
         "sunsetTime": 0
       },
