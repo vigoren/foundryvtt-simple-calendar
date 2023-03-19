@@ -231,56 +231,7 @@
           "month": 1,
           "day": 0
         },
-        "phases": [
-          {
-            "name": "New Moon",
-            "length": 3.5,
-            "icon": "new",
-            "singleDay": false
-          },
-          {
-            "name": "Waxing Crescent",
-            "length": 3.5,
-            "icon": "waxing-crescent",
-            "singleDay": false
-          },
-          {
-            "name": "Waxing Half Moon",
-            "length": 3.5,
-            "icon": "first-quarter",
-            "singleDay": false
-          },
-          {
-            "name": "Waxing Gibbous",
-            "length": 3.5,
-            "icon": "waxing-gibbous",
-            "singleDay": false
-          },
-          {
-            "name": "Full Moon",
-            "length": 3.5,
-            "icon": "full",
-            "singleDay": false
-          },
-          {
-            "name": "Waning Gibbous",
-            "length": 3.5,
-            "icon": "waning-gibbous",
-            "singleDay": false
-          },
-          {
-            "name": "Waning Half Moon",
-            "length": 3.5,
-            "icon": "last-quarter",
-            "singleDay": false
-          },
-          {
-            "name": "Waning Crescent",
-            "length": 3.5,
-            "icon": "waning-crescent",
-            "singleDay": false
-          }
-        ],
+        "phases": [],
         "color": "#ffffff",
         "cycleDayAdjust": 0
       }
