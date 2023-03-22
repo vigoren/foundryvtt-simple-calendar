@@ -1,5 +1,26 @@
 # Change Log
 
+# 2.1.81 - Quality of Life Updates && Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-March%2015%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.81/module.zip)
+
+### Quality of Life Updates
+
+### Bug Fixes
+
+- Fixed a bug where system specific themes would not load images properly if a routePrefix was set in Foundry's configuration.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Sven Hesse](https://weblate.foundryvtt-hub.com/user/DrMcCoy/) (German)
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Jakub](https://weblate.foundryvtt-hub.com/user/Lioheart/) (Polish)
+
+<hr/>
+
 ## 2.1.80 - Quality of Life Updates && Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-February%2004%2C%202023-blue)
