@@ -1,11 +1,13 @@
 # Change Log
 
-# 2.1.81 - Quality of Life Updates && Bug Fixes
+# 2.1.81 - Quality of Life Updates & Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-March%2015%2C%202023-blue)
+![](https://img.shields.io/badge/release%20date-March%2022%2C%202023-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.81/module.zip)
 
 ### Quality of Life Updates
+
+- Added a new predefined calendar for White Wolf's Exalted setting (Thanks [Aliharu](https://github.com/Aliharu)!)
 
 ### Bug Fixes
 
@@ -18,6 +20,7 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 - [Sven Hesse](https://weblate.foundryvtt-hub.com/user/DrMcCoy/) (German)
 - [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
 - [Jakub](https://weblate.foundryvtt-hub.com/user/Lioheart/) (Polish)
+- [SwedishRabbit](https://github.com/SwedishRabbit) (Swedish)
 
 <hr/>
 
