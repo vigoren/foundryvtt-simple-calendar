@@ -74,9 +74,9 @@ Hooks.on('ready',async () => {
         //Initialize the Simple Calendar Class
         SC.initialize();
         //If we are to open the main app on foundry load, open it
-        if(SC.clientSettings.openOnLoad){
-            MainApplication.render();
-        }
+        //if(SC.clientSettings.openOnLoad){
+            //MainApplication.render();
+        //}
     }
     Hook.emit(SimpleCalendarHooks.Ready, CalManager.getActiveCalendar());
 });
