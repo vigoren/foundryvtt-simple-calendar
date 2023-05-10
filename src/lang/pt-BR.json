@@ -391,7 +391,7 @@
 	"FSC.Configuration.General.Description": "Estas configurações permitem que você configure opções mais gerais para o calendário selecionado.",
 	"FSC.Configuration.Global.Description": "Estas configurações afetarão o funcionamento do Simple Calendar para todos os calendário, ao contrário de como um calendário específico irá funcionar.",
 	"FSC.Configuration.Global.SameTimestamp.Description": "Esta é uma opção avançada, leia a documentação para uma explicação mais detalhada. Esta opção forçará todos os calendários a usar a mesmo marca temporal. Isto significa que ao trocar os calendários quaisquer efeitos ativos não expirarão, pois a hora do mundo do jogo será a mesma. Isto significa que você não será capaz de especificar as datas individuais de cada calendário, pois elas mapearão a data/hora para a qual a marca temporal é destinada.",
-	"FSC.Configuration.Display.Description": "Estas configurações permitem alterar a forma como a data e a hora são exibidas para o calendário selecionado. Para mais detalhes sobre a configuração dos formatos de data, por favor, verifique a <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\"> documentação</a> ou expanda a tabela abaixo.",
+	"FSC.Configuration.Display.Description": "Estas configurações permitem alterar a forma como a data e a hora são exibidas para o calendário selecionado. Para mais detalhes sobre a configuração dos formatos de data, por favor, verifique a <a target=\"_blank\" href=\"https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#datetime-formatting\"> documentação</a> ou expanda a tabela abaixo.",
 	"FSC.Configuration.Notes.PostNoteRemindersOnFoundryLoadHelp": "Quando um usuário entra pela primeira vez no Foundry VTT, qualquer lembrete de nota no dia atual será sussurrado a ele.",
 	"FSC.Configuration.QuickSetup.ChoosePredefinedDescription": "Escolha um destes calendários pré-definidos para basear este calendário atual. Isto mudará as configurações do calendário atual para corresponder às configurações do calendário pré-definido selecionado.",
 	"FSC.Migration.v1v2.Help": "Bem-vindo ao Simple Calendar versão 2!<br/><br/>Para a lista completa de melhorias, consulte o <a href='https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/CHANGELOG.md'>change log</a>!<br/><br/>Parte das melhorias necessita de mudanças na forma como o Simple Calendar armazena os dados, mas não se preocupe o Simple Calendar está pronto para mover seus dados para o novo formato!",
@@ -533,5 +533,16 @@
 	"FSC.Configuration.Client.AlwaysShowNoteList.Title": "Mostrar sempre a lista de notas",
 	"FSC.Configuration.Client.AlwaysShowNoteList.Description": "Esta configuração fará com que a lista de notas seja sempre visível e não possa ser fechada. A única excepção é se a lista de calendário ou a pesquisa de notas forem abertas, elas abrir-se-ão por cima da lista de notas, mas quando fechada, a lista de notas permanecerá visível.",
 	"FSC.Predefined.SymbaroumIC": "Symbaroum: Ambrian Calendar",
-	"FSC.Info.ThemeChange": "O tema do Simple Calendar foi alterado por um sistema/módulo/macro para <strong>\"{THEME}\"</strong>. O tema pode ser alterado novamente nas definições do Simple Calendar."
+	"FSC.Info.ThemeChange": "O tema do Simple Calendar foi alterado por um sistema/módulo/macro para <strong>\"{THEME}\"</strong>. O tema pode ser alterado novamente nas definições do Simple Calendar.",
+	"FSC.Configuration.Client.PersistentOpen.Description": "Quando habilitada, essa configuração removerá o botão Fechar da janela do calendário e impedirá que a tecla Escape a feche. O botão em Notas do diário na barra de ferramentas à esquerda torna-se um botão para abrir e fechar o calendário.",
+	"FSC.Configuration.Client.CompactViewScale.Title": "Escala de Visualização Compacta",
+	"FSC.Configuration.Client.CompactViewScale.Description": "Essa configuração permite alterar a escala na qual a exibição compacta é exibida. Você pode usar isso para fazer a exibição compacta parecer maior ou menor. O número representa a porcentagem do tamanho da escala em relação ao tamanho padrão, 100%.",
+	"FSC.FullControls": "Controles Completos",
+	"FSC.QuickIncrement": "Incremento rápido",
+	"FSC.RoundShorthand": "r",
+	"FSC.Configuration.Display.DateTimeFormat": "Formatação de data/hora",
+	"FSC.Configuration.Display.Compact": "Opções de visualização compacta",
+	"FSC.Configuration.Display.CompactControls.Title": "Layout de controle de data/hora de visualização compacta",
+	"FSC.Configuration.Display.CompactControls.Description": "Escolha o layout dos botões usados para alterar a data/hora do calendário na exibição compacta.",
+	"FSC.Configuration.Client.PersistentOpen.Title": "Abertura constante"
 }

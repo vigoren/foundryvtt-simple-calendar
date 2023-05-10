@@ -1,0 +1,360 @@
+{
+  "calendar": {
+    "name": "Exalted",
+    "currentDate": {
+      "year": 768,
+      "month": 2,
+      "day": 24,
+      "seconds": 0
+    },
+    "general": {
+      "gameWorldTimeIntegration": "mixed",
+      "showClock": true,
+      "noteDefaultVisibility": false,
+      "postNoteRemindersOnFoundryLoad": true,
+      "pf2eSync": true,
+      "dateFormat": {
+        "date": "DD, MMMM, YYYY",
+        "time": "HH:mm:ss",
+        "monthYear": "MMMM YAYYYYYZ"
+      },
+      "compactViewOptions": {
+        "controlLayout": "full"
+      }
+    },
+    "leapYear": {
+      "rule": "none",
+      "customMod": 0
+    },
+    "months": [
+      {
+        "name": "Ascending Air",
+        "description": "",
+        "abbreviation": "AAI",
+        "numericRepresentation": 1,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Resplendant Air",
+        "description": "",
+        "abbreviation": "RAI",
+        "numericRepresentation": 2,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Descending Air",
+        "description": "",
+        "abbreviation": "DAI",
+        "numericRepresentation": 3,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Ascending Water",
+        "description": "",
+        "abbreviation": "AWA",
+        "numericRepresentation": 4,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Resplendant Water",
+        "description": "",
+        "abbreviation": "RWA",
+        "numericRepresentation": 5,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Descending Water",
+        "description": "",
+        "abbreviation": "DWA",
+        "numericRepresentation": 6,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Ascending Wood",
+        "description": "",
+        "abbreviation": "AWO",
+        "numericRepresentation": 7,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Resplendant Wood",
+        "description": "",
+        "abbreviation": "RWO",
+        "numericRepresentation": 8,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Descending Wood",
+        "description": "",
+        "abbreviation": "DWO",
+        "numericRepresentation": 9,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Ascending Fire",
+        "description": "",
+        "abbreviation": "AFI",
+        "numericRepresentation": 10,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Resplendant Fire",
+        "description": "",
+        "abbreviation": "RFI",
+        "numericRepresentation": 11,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Descending Fire",
+        "description": "",
+        "abbreviation": "DFI",
+        "numericRepresentation": 12,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Ascending Earth",
+        "description": "",
+        "abbreviation": "AEA",
+        "numericRepresentation": 13,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Resplendant Earth",
+        "description": "",
+        "abbreviation": "REA",
+        "numericRepresentation": 14,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Descending Earth",
+        "description": "",
+        "abbreviation": "DEA",
+        "numericRepresentation": 15,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 28,
+        "numberOfLeapYearDays": 28,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      },
+      {
+        "name": "Calibration",
+        "description": "",
+        "abbreviation": "CAL",
+        "numericRepresentation": 16,
+        "numericRepresentationOffset": 0,
+        "numberOfDays": 5,
+        "numberOfLeapYearDays": 5,
+        "intercalary": false,
+        "intercalaryInclude": false,
+        "startingWeekday": null
+      }
+    ],
+    "moons": [
+      {
+        "name": "Luna",
+        "cycleLength": 28,
+        "firstNewMoon": {
+          "yearReset": "none",
+          "yearX": 1,
+          "year": 0,
+          "month": 1,
+          "day": 0
+        },
+        "phases": [],
+        "color": "#ffffff",
+        "cycleDayAdjust": 0
+      }
+    ],
+    "noteCategories": [
+      {
+        "name": "Holiday",
+        "textColor": "#FFFFFF",
+        "color": "#148e94"
+      }
+    ],
+    "seasons": [
+      {
+        "name": "Spring",
+        "description": "",
+        "startingMonth": 3,
+        "startingDay": 19,
+        "color": "#46b946",
+        "icon": "spring",
+        "sunriseTime": 0,
+        "sunsetTime": 0
+      },
+      {
+        "name": "Summer",
+        "description": "",
+        "startingMonth": 7,
+        "startingDay": 12,
+        "color": "#e0c40b",
+        "icon": "summer",
+        "sunriseTime": 0,
+        "sunsetTime": 0
+      },
+      {
+        "name": "Fall",
+        "description": "",
+        "startingMonth": 11,
+        "startingDay": 5,
+        "color": "#ff8e47",
+        "icon": "fall",
+        "sunriseTime": 0,
+        "sunsetTime": 0
+      },
+      {
+        "name": "Winter",
+        "description": "",
+        "startingMonth": 14,
+        "startingDay": 26,
+        "color": "#479dff",
+        "icon": "winter",
+        "sunriseTime": 0,
+        "sunsetTime": 0
+      }
+    ],
+    "time": {
+      "hoursInDay": 25,
+      "minutesInHour": 60,
+      "secondsInMinute": 60,
+      "gameTimeRatio": 1,
+      "unifyGameAndClockPause": false,
+      "updateFrequency": 1
+    },
+    "weekdays": [
+      {
+        "abbreviation": "Su",
+        "name": "Sunday",
+        "description": "",
+        "numericRepresentation": 1,
+        "restday": false
+      },
+      {
+        "abbreviation": "Mo",
+        "name": "Moonday",
+        "description": "",
+        "numericRepresentation": 2,
+        "restday": false
+      },
+      {
+        "abbreviation": "Ma",
+        "name": "Marsday",
+        "description": "",
+        "numericRepresentation": 3,
+        "restday": false
+      },
+      {
+        "abbreviation": "Me",
+        "name": "Mercuryday",
+        "description": "",
+        "numericRepresentation": 4,
+        "restday": false
+      },
+      {
+        "abbreviation": "Ju",
+        "name": "Jupiterday",
+        "description": "",
+        "numericRepresentation": 5,
+        "restday": false
+      },
+      {
+        "abbreviation": "Ve",
+        "name": "Venusday",
+        "description": "",
+        "numericRepresentation": 6,
+        "restday": false
+      },
+      {
+        "abbreviation": "Sa",
+        "name": "Saturnday",
+        "description": "",
+        "numericRepresentation": 7,
+        "restday": false
+      }
+    ],
+    "year": {
+      "numericRepresentation": 768,
+      "prefix": "RY",
+      "postfix": "",
+      "showWeekdayHeadings": true,
+      "firstWeekday": 0,
+      "yearZero": 0,
+      "yearNames": [],
+      "yearNamingRule": "default",
+      "yearNamesStart": 0
+    }
+  },
+  "notes": []
+}

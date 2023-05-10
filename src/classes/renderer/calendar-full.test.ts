@@ -49,27 +49,29 @@ describe('Renderer Calendar Full Class Tests', () => {
         tCal.weekdays[0].restday = true;
         tCal.seasons[0].description = 'Season Description';
 
+        tCal.months[2].description = 'Month Description';
+
         let HTML = CalendarFull.Render(tCal);
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year ${d.getMonth() === 0? "fsc-description-clickable" : ""}" data-visible="${d.getMonth()}/${d.getFullYear()}">${tCal.months[d.getMonth()].name} ${d.getFullYear()}</span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year ${d.getMonth() === 2? "fsc-description-clickable" : ""}" data-visible="${d.getMonth()}/${d.getFullYear()}">${tCal.months[d.getMonth()].name} ${d.getFullYear()}</span>`);
 
         tCal.months[2].selected = true;
         tCal.months[2].days[3].selected = true;
         HTML = CalendarFull.Render(tCal, {id: '', showYear: false, showSeasonName: false, allowChangeMonth: false, date: {year: d.getFullYear(), month: 2, day: 3}});
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year ${d.getMonth() === 2? "fsc-description-clickable" : ""}" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} </span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year fsc-description-clickable" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} </span>`);
 
         HTML = CalendarFull.Render(tCal, {id: '', colorToMatchSeason: false, date: {year: d.getFullYear(), month: 2, day: 3}});
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year ${d.getMonth() === 2? "fsc-description-clickable" : ""}" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year fsc-description-clickable" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
 
         HTML = CalendarFull.Render(tCal, {id: '', colorToMatchSeason: false, date: {year: d.getFullYear(), month: 2, day: 3}, selectedDates:{start:{year: d.getFullYear(), month: 2, day: 4}, end:{year: d.getFullYear(), month:2, day: 6}}});
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year ${d.getMonth() === 2? "fsc-description-clickable" : ""}" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year fsc-description-clickable" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
 
         HTML = CalendarFull.Render(tCal, {id: '', colorToMatchSeason: false, date: {year: d.getFullYear(), month: 2, day: 3}, selectedDates:{start:{year: d.getFullYear(), month: -1, day: 0}, end:{year: d.getFullYear(), month:-1, day: 0}}});
         expect(HTML).toContain('fsc-calendar');
-        expect(HTML).toContain(`<span class="fsc-month-year ${d.getMonth() === 2? "fsc-description-clickable" : ""}" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
+        expect(HTML).toContain(`<span class="fsc-month-year fsc-description-clickable" data-visible="2/${d.getFullYear()}">${tCal.months[2].name} ${d.getFullYear()}</span>`);
 
         tCal.year.showWeekdayHeadings = false;
         //@ts-ignore

@@ -340,7 +340,7 @@
 	"FSC.Configuration.Client.RememberPosition.Description": "Simple Calendar muistaa, missä se oli viimeksi ja asettaa itsensä sinne.",
 	"FSC.Moon.Phase.WaningGibbous": "Vähenevä kupera",
 	"FSC.Configuration.CombatPauseRule.Description": "Valitse, milloin reaaliaikakello pysäytetään, kun taistelut ovat käynnissä kohtauksissa.",
-	"FSC.Configuration.Display.Description": "Näillä asetuksilla voit muuttaa, miten päivämäärä ja kellonaika näytetään valitussa kalenterissa. Lisätietoja päivämäärämuotojen määrittämisestä saat <a target=\"_blank\" href=\"https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/docs/Configuration.md#datetime-formats\">dokumentaatiosta</a> (englanniksi) tai laajentamalla alla olevan taulukon.",
+	"FSC.Configuration.Display.Description": "Näillä asetuksilla voit muuttaa, miten päivämäärä ja kellonaika näytetään valitussa kalenterissa. Lisätietoja päivämäärämuotojen määrittämisestä saat <a target=\"_blank\" href=\"https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#datetime-formatting\">dokumentaatiosta</a> (englanniksi) tai laajentamalla alla olevan taulukon.",
 	"FSC.Configuration.Year.Current": "Nykyinen vuosi",
 	"FSC.Configuration.Season.IconHelp": "Tähän vuodenaikaan liittyvä kuvake.",
 	"FSC.Configuration.Global.SameTimestamp.Description": "Tämä on edistynyt vaihtoehto, lue dokumentaatiosta tarkempi selitys. Tämä vaihtoehto pakottaa kaikki kalenterit käyttämään samaa aikaleimaa. Tämä tarkoittaa, että kun kalenteria vaihdetaan, aktiiviset tehosteet eivät vanhene, koska pelimaailman aika on sama. Tämä tarkoittaa, että et voi määrittää kunkin kalenterin yksittäisiä päivämääriä, koska ne vastaavat sitä päivämäärää/aikaa, jota aikaleima koskee.",
