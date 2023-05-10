@@ -3,6 +3,7 @@
   {"key": "darksun", "label": "FSC.Predefined.DarkSun", "config":  true, "notes":  false},
   {"key": "dsa-tde5e", "label": "FSC.Predefined.DSA-TDE5e", "config":  true, "notes":  true},
   {"key": "eberron", "label": "FSC.Predefined.Eberron", "config":  true, "notes":  true},
+  {"key": "exalted", "label": "FSC.Predefined.Exalted", "config":  true, "notes":  false},
   {"key": "exandrian", "label": "FSC.Predefined.Exandrian", "config":  true, "notes":  true},
   {"key": "forbidden-lands", "label": "FSC.Predefined.ForbiddenLands", "config":  true, "notes":  false},
   {"key": "harptos", "label": "FSC.Predefined.Harptos", "config":  true, "notes":  true},
