@@ -78,6 +78,11 @@
             "name": "Français",
             "path": "lang/fr.json"
         },
+	{
+            "lang": "sv",
+            "name": "Svenska",
+            "path": "lang/sv.json"
+        },
         {
             "lang": "it",
             "name": "Italiano",
