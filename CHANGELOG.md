@@ -1,9 +1,9 @@
 # Change Log
 
-# 2.1.81 - Quality of Life Updates & Bug Fixes
+# 2.1.82 - Quality of Life Updates & Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-March%2022%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.81/module.zip)
+![](https://img.shields.io/badge/release%20date-May%2022%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.82/module.zip)
 
 ### Quality of Life Updates
 
@@ -12,6 +12,7 @@
 ### Bug Fixes
 
 - Fixed a bug where system specific themes would not load images properly if a routePrefix was set in Foundry's configuration.
+- Fixed an issue where if the setting [Show Clock](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) was disabled and a user was using the [Quick Increment](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options) Compact view layout no buttons would appear to adjust the date.
 
 ### Translation Updates
 

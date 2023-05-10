@@ -41,39 +41,63 @@ export class DateTimeControls {
                         <li class="${options.fullDisplay?.unit === 'year'? 'fsc-selected' : ''}" data-unit="year">${GameSettings.Localize('FSC.Year')}</li>`;
             }
             html += '</ul></div>';
-        } else if(options.showTimeControls && options.displayType === CompactViewDateTimeControlDisplay.QuickIncrement){
-            const btn = [
-                {
-                    type: 'round',
-                    amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
-                    tooltip: GameSettings.Localize('FSC.Round'),
-                    text: GameSettings.Localize('FSC.RoundShorthand')
-                },
-                {
-                    type: 'minute',
-                    amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
-                    tooltip: GameSettings.Localize('FSC.Minute'),
-                    text: GameSettings.Localize('FSC.MinuteShorthand')
-                },
-                {
-                    type: 'minute',
-                    amount: (options.largerSteps? 20 : 5) * (options.reverseTime? -1 : 1),
-                    tooltip: GameSettings.Localize('FSC.Minute'),
-                    text: GameSettings.Localize('FSC.MinuteShorthand')
-                },
-                {
-                    type: 'minute',
-                    amount: (options.largerSteps? 45 : 15) * (options.reverseTime? -1 : 1),
-                    tooltip: GameSettings.Localize('FSC.Minute'),
-                    text: GameSettings.Localize('FSC.MinuteShorthand')
-                },
-                {
-                    type: 'hour',
-                    amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
-                    tooltip: GameSettings.Localize('FSC.Hour'),
-                    text: GameSettings.Localize('FSC.HourShorthand')
-                }
-            ];
+        } else if(options.displayType === CompactViewDateTimeControlDisplay.QuickIncrement){
+            let btn: {type: string, amount: number, tooltip: string, text: string}[] = [];
+            if(options.showTimeControls){
+                btn = [
+                    {
+                        type: 'round',
+                        amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
+                        tooltip: GameSettings.Localize('FSC.Round'),
+                        text: GameSettings.Localize('FSC.RoundShorthand')
+                    },
+                    {
+                        type: 'minute',
+                        amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
+                        tooltip: GameSettings.Localize('FSC.Minute'),
+                        text: GameSettings.Localize('FSC.MinuteShorthand')
+                    },
+                    {
+                        type: 'minute',
+                        amount: (options.largerSteps? 20 : 5) * (options.reverseTime? -1 : 1),
+                        tooltip: GameSettings.Localize('FSC.Minute'),
+                        text: GameSettings.Localize('FSC.MinuteShorthand')
+                    },
+                    {
+                        type: 'minute',
+                        amount: (options.largerSteps? 45 : 15) * (options.reverseTime? -1 : 1),
+                        tooltip: GameSettings.Localize('FSC.Minute'),
+                        text: GameSettings.Localize('FSC.MinuteShorthand')
+                    },
+                    {
+                        type: 'hour',
+                        amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
+                        tooltip: GameSettings.Localize('FSC.Hour'),
+                        text: GameSettings.Localize('FSC.HourShorthand')
+                    }
+                ];
+            } else if(options.showDateControls){
+                btn = [
+                    {
+                        type: 'day',
+                        amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
+                        tooltip: GameSettings.Localize('FSC.Day'),
+                        text: GameSettings.Localize('FSC.Day')
+                    },
+                    {
+                        type: 'month',
+                        amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
+                        tooltip: GameSettings.Localize('FSC.Month'),
+                        text: GameSettings.Localize('FSC.Month')
+                    },
+                    {
+                        type: 'year',
+                        amount: (options.largerSteps? 5 : 1) * (options.reverseTime? -1 : 1),
+                        tooltip: GameSettings.Localize('FSC.Year'),
+                        text: GameSettings.Localize('FSC.Year')
+                    }
+                ];
+            }
             html += `<div class="fsc-control-group">`;
             for(let i = 0; i < btn.length; i++){
                 html += `<button class="fsc-control fsc-primary" data-tooltip="${btn[i].amount} ${btn[i].tooltip}" data-type="${btn[i].type}" data-amount="${btn[i].amount}">${btn[i].amount}&nbsp;${btn[i].text}</button>`;
