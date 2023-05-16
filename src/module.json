@@ -102,11 +102,6 @@
 			"lang": "ceb",
 			"name": "Cebuano",
 			"path": "lang/ceb.json"
-		},
-		{
-			"lang": "pt-BR",
-			"name": "Português (Brasil)",
-			"path": "lang/pt_BR.json"
 		}
 	],
 	"socket": true,
