@@ -275,13 +275,17 @@ export default class MainApp extends FormApplication{
         this.visibleCalendar.resetMonths('selected');
         this.hideDrawers();
         this.render(true);
+        return Promise.resolve();
     }
 
     /**
      * Overwrite the maximize function to set the calendar to its full form
      */
     async maximize(){
-        this.uiElementStates.compactView = false;
+        //@ts-ignore
+        if((<Game>game).release.generation < 11){
+            this.uiElementStates.compactView = false;
+        }
         this.hideDrawers();
         this.render(true);
     }
@@ -503,7 +507,6 @@ export default class MainApp extends FormApplication{
              }
             // Click anywhere in the app
             appWindow.addEventListener('click', this.toggleUnitSelector.bind(this, true));
-
             if(this.uiElementStates.compactView){
                 appWindow.classList.add('fsc-compact-view');
             } else {
