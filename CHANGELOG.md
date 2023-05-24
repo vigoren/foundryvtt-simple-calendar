@@ -1,9 +1,19 @@
 # Change Log
 
-# 2.1.82 - Quality of Life Updates & Bug Fixes
+# 2.2.0 - Foundry Version 11 Update, Quality of Life Updates & Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-May%2022%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.82/module.zip)
+![](https://img.shields.io/badge/release%20date-May%2026%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.0/module.zip)
+
+### Foundry Version 11 Update
+
+Updated Simple Calendar to be functional with FoundryVTT version 10 and 11.
+
+Fixes Include:
+
+- Fixed when moving the application window to a new location, releasing the mouse would not stop the dragging action.
+- Fixed switching into compact mode would fail to stay in compact mode.
+- Fixed the icon for the button under "Journal Notes" not displaying correctly.
 
 ### Quality of Life Updates
 
