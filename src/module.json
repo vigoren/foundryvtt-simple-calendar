@@ -109,7 +109,7 @@
 	"media": [
 		{
 			"type": "setup",
-			"url": "modules/foundryvtt-simple-calendar/assets/sc-theme-dark.png"
+			"url": "modules/foundryvtt-simple-calendar/assets/setup-cover.png"
 		},
 		{
 			"type": "cover",
