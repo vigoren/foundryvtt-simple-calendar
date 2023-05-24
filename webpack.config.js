@@ -59,6 +59,7 @@ module.exports = {
                 { context: './', from : 'README.md', to : './' },
                 { context: './', from : 'LICENSE', to : './' },
                 { context: './docs/images', from: 'logo.png', to: './assets/'},
+                { context: './docs/images', from: 'sc-theme-dark.png', to: './assets/'},
                 { context: './docs/images', from: 'sc-v2-theme-dark-comp-qi.png', to: './assets/'},
                 { context: './docs/images', from: 'sc-v2-theme-dark-comp.png', to: './assets/'}
             ]

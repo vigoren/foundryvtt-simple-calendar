@@ -106,8 +106,11 @@
 	],
 	"socket": true,
 	"manifestPlusVersion": "1.2.0",
-	"background": "modules/foundryvtt-simple-calendar/assets/logo.png",
 	"media": [
+		{
+			"type": "setup",
+			"url": "modules/foundryvtt-simple-calendar/assets/sc-theme-dark.png"
+		},
 		{
 			"type": "cover",
 			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.png"
