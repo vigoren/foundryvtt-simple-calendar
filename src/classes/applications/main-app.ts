@@ -458,7 +458,10 @@ export default class MainApp extends FormApplication{
      */
     public appDragMove(e: Event){
         //@ts-ignore
-        this._onDragMouseMove(e);
+        if((<Game>game).release.generation < 11){
+            //@ts-ignore
+            this._onDragMouseMove(e);
+        }
     }
 
     /**
