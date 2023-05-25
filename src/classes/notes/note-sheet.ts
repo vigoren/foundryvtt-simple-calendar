@@ -327,7 +327,7 @@ export class NoteSheet extends JournalSheet{
 
                 newOptions.edit.noteData = noteStub.noteData || {};
                 newOptions.edit.timeSelected = !noteStub.allDay;
-                newOptions.edit.repeats = noteStub.repeats;
+                newOptions.edit.repeats = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats || noteStub.repeats;
                 const users = (<Game>game).users;
                 if(users){
                     newOptions.edit.users = users.map(u => {return {
@@ -362,7 +362,7 @@ export class NoteSheet extends JournalSheet{
                         newOptions.edit.macroList[m.id] = m.name;
                     }
                 });
-                newOptions.edit.selectedMacro = noteStub.macro;
+                newOptions.edit.selectedMacro = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).macro || noteStub.macro;
             } else {
                 newOptions.display.date = noteStub.fullDisplayDate;
                 newOptions.display.reminder = noteStub.userReminderRegistered;

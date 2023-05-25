@@ -23,6 +23,7 @@ Fixes Include:
 
 - Fixed a bug where system specific themes would not load images properly if a routePrefix was set in Foundry's configuration.
 - Fixed an issue where if the setting [Show Clock](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) was disabled and a user was using the [Quick Increment](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options) Compact view layout no buttons would appear to adjust the date.
+- Fixed a bug where a macro could not be selected from the macro list in a note.
 
 ### Translation Updates
 
