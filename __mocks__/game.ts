@@ -142,6 +142,9 @@ const game = {
     },
     world: {
         id: 'worldId'
+    },
+    release: {
+        generation: 11
     }
 };
 

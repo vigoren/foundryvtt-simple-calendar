@@ -1,9 +1,19 @@
 # Change Log
 
-# 2.1.82 - Quality of Life Updates & Bug Fixes
+# 2.2.0 - Foundry Version 11 Update, Quality of Life Updates & Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-May%2022%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.82/module.zip)
+![](https://img.shields.io/badge/release%20date-May%2024%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.0/module.zip)
+
+### Foundry Version 11 Update
+
+Updated Simple Calendar to be functional with FoundryVTT version 10 and 11.
+
+Fixes Include:
+
+- Fixed when moving the application window to a new location, releasing the mouse would not stop the dragging action.
+- Fixed switching into compact mode would fail to stay in compact mode.
+- Fixed the icon for the button under "Journal Notes" not displaying correctly.
 
 ### Quality of Life Updates
 
@@ -13,6 +23,7 @@
 
 - Fixed a bug where system specific themes would not load images properly if a routePrefix was set in Foundry's configuration.
 - Fixed an issue where if the setting [Show Clock](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) was disabled and a user was using the [Quick Increment](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options) Compact view layout no buttons would appear to adjust the date.
+- Fixed a bug where a macro could not be selected from the macro list in a note.
 
 ### Translation Updates
 

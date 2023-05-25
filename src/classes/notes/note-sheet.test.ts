@@ -182,6 +182,8 @@ describe('Note Sheet Class Tests', () => {
         nd.endDate.day = 1;
         nd.categories.push('asd');
         //@ts-ignore
+        ns.journalData.flags['foundryvtt-simple-calendar'] = {noteData:{repeats: 0, macro: "none"}};
+        //@ts-ignore
         jest.spyOn(NManager, 'getNoteStub').mockReturnValueOnce({title: 'Journal', noteData: null, ownership: {}}).mockReturnValue({title: 'Journal', noteData: nd, ownership: je.ownership});
         //@ts-ignore
         ns.editMode = true;
@@ -192,18 +194,26 @@ describe('Note Sheet Class Tests', () => {
         je.pages.contents[0].text.content = '';
         je.pages.contents[0].video.timestamp = 666;
         ns.copyData();
+        //@ts-ignore
+        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "none"}}};
         expect(await ns.getData()).toBeDefined();
         //Image page
         je.pages.contents[0].type = 'image';
         ns.copyData();
+        //@ts-ignore
+        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "none"}}};
         expect(await ns.getData()).toBeDefined();
         //PDF page
         je.pages.contents[0].type = 'pdf';
         ns.copyData();
+        //@ts-ignore
+        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "none"}}};
         expect(await ns.getData()).toBeDefined();
         //Video page
         je.pages.contents[0].type = 'video';
         ns.copyData();
+        //@ts-ignore
+        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: ""}}};
         expect(await ns.getData()).toBeDefined();
 
         //@ts-ignore

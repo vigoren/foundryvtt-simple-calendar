@@ -157,6 +157,13 @@ describe('Main App Class Tests', () => {
     test('maximize', async () => {
         await ma.maximize();
         expect(ma.uiElementStates.compactView).toBe(false);
+        //@ts-ignore
+        game.release.generation = 10;
+        await ma.maximize();
+        expect(ma.uiElementStates.compactView).toBe(false);
+
+        //@ts-ignore
+        game.release.generation = 11;
     });
 
     test('Set Width Height', () => {
@@ -264,6 +271,11 @@ describe('Main App Class Tests', () => {
 
     test('App Drag Move', () => {
         ma.appDragMove(new Event('drag'));
+        //@ts-ignore
+        game.release.generation = 10;
+        ma.appDragMove(new Event('drag'));
+        //@ts-ignore
+        game.release.generation = 11;
     });
 
     test('App Drag End', () => {

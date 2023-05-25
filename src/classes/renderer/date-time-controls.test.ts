@@ -40,5 +40,11 @@ describe('Renderer DateTimeControls Class Tests', () => {
         options.largerSteps = true;
         options.reverseTime = true;
         expect(DateTimeControls.Render(options)).toContain('fsc-control-group');
+        options.showTimeControls = false;
+        options.showDateControls = true;
+        expect(DateTimeControls.Render(options)).toContain('fsc-control-group');
+        options.largerSteps = false;
+        options.reverseTime = false;
+        expect(DateTimeControls.Render(options)).toContain('fsc-control-group');
     });
 });
