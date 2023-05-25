@@ -545,5 +545,6 @@
 	"FSC.Configuration.Client.PersistentOpen.Title": "Ouverture persistante",
 	"FSC.Configuration.Client.PersistentOpen.Description": "Lorsqu'il est activé, ce paramètre retirera le bouton fermer de la fenêtre de calendrier et empêchera la clé Esc de le fermer. Le bouton en dessous des notes de journaux dans la barre d'outil à gauche deviennent alors un bouton pour ouvrir et fermer le calendrier.",
 	"FSC.Configuration.Client.CompactViewScale.Title": "Échelle de vue compacte",
-	"FSC.Configuration.Client.CompactViewScale.Description": "Ce réglage vous permet de modifier l'échelle à laquelle la vue compacte est affichée. Vous pouvez l'utiliser pour faire apparaître la vue compacte plus ou moins grande. Le nombre représente le pourcentage de la taille de l'échelle par rapport à la taille par défaut, 100 %."
+	"FSC.Configuration.Client.CompactViewScale.Description": "Ce réglage vous permet de modifier l'échelle à laquelle la vue compacte est affichée. Vous pouvez l'utiliser pour faire apparaître la vue compacte plus ou moins grande. Le nombre représente le pourcentage de la taille de l'échelle par rapport à la taille par défaut, 100 %.",
+	"FSC.Predefined.Exalted": "Exalted"
 }

@@ -492,6 +492,6 @@
 	"FSC.Configuration.Display.DateTimeFormat": "Format daty i czasu",
 	"FSC.Configuration.Display.CompactControls.Description": "Wybierz układ przycisków używanych do zmiany daty/godziny w widoku kompaktowym.",
 	"FSC.FullControls": "Pełna kontrola",
-	"FSC.Configuration.Client.PersistentOpen.Description": "Włączenie tego ustawienia spowoduje usunięcie przycisku zamykania z okna kalendarza i uniemożliwi zamknięcie go za pomocą klawisza escape. Przycisk pod Journal Notes na lewym pasku narzędziowym stanie się wtedy przełącznikiem do otwierania i zamykania kalendarza."
+	"FSC.Configuration.Client.PersistentOpen.Description": "Włączenie tego ustawienia spowoduje usunięcie przycisku zamykania z okna kalendarza i uniemożliwi zamknięcie go za pomocą klawisza escape. Przycisk pod Journal Notes na lewym pasku narzędziowym stanie się wtedy przełącznikiem do otwierania i zamykania kalendarza.",
+	"FSC.Predefined.Exalted": "Wywyższony"
 }
-
