@@ -2,7 +2,7 @@
 
 # 2.2.0 - Foundry Version 11 Update, Quality of Life Updates & Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-May%2026%2C%202023-blue)
+![](https://img.shields.io/badge/release%20date-May%2024%2C%202023-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.0/module.zip)
 
 ### Foundry Version 11 Update
