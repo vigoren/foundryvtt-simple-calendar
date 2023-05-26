@@ -1,5 +1,6 @@
 import "./application";
 import "./chat-message";
+import "./const";
 import "./crypto";
 import "./document-sheet";
 import "./dialog";

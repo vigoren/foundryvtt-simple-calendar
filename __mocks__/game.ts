@@ -145,6 +145,9 @@ const game = {
     },
     release: {
         generation: 11
+    },
+    keybindings: {
+        register: () => {}
     }
 };
 

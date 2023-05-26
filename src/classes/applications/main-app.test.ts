@@ -988,4 +988,20 @@ describe('Main App Class Tests', () => {
         ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
         expect(ma.updateApp).toHaveBeenCalledTimes(1);
     });
+
+    test('toggleWindow', () => {
+        jest.spyOn(ma, "render").mockImplementation(() => {});
+
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(1);
+
+        SC.clientSettings.persistentOpen = true;
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        jest.spyOn(ma, "rendered", "get").mockReturnValue(false);
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(2);
+    });
 });
