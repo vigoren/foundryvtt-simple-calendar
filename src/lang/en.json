@@ -493,5 +493,7 @@
 	"FSC.Warn.Time.ActiveCombats": "There is an active combat/combats running, please resolve them before starting the real time clock.",
 	"FSC.Warn.Macros.GMUpdate": "Only the GM can update the calendar date!",
 	"FSC.Warn.Calendar.NotGM": "There is no GM present in the game, a GM needs to be logged in for players to change the date/time.",
-	"FSC.Error.Calendar.GMCurrent": "You need to be a GM to change the current date."
+	"FSC.Error.Calendar.GMCurrent": "You need to be a GM to change the current date.",
+	"FSC.KeyBinding.Toggle.Title": "Toggle Calendar",
+	"FSC.KeyBinding.Toggle.Hint": "This key will open or close the calendar window when pressed."
 }

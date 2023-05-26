@@ -248,11 +248,7 @@ export default class MainApp extends FormApplication{
      */
     public sceneControlButtonClick(){
         if(SC.clientSettings.persistentOpen){
-            if(this.rendered){
-                super.close().catch(Logger.error);
-            } else {
-                this.render();
-            }
+            this.toggleWindow();
         } else {
             this.render();
         }
@@ -1213,6 +1209,17 @@ export default class MainApp extends FormApplication{
             this.uiElementStates.cvLargerSteps = event.shiftKey;
             this.uiElementStates.cvReverseTime = event.ctrlKey;
             this.updateApp();
+        }
+    }
+
+    /**
+     * Toggles the window open or closed based on its current state
+     */
+    toggleWindow(){
+        if(this.rendered){
+            super.close().catch(Logger.error);
+        } else {
+            this.render();
         }
     }
 }

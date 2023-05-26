@@ -26,6 +26,7 @@ import {NoteSheet} from "./classes/notes/note-sheet";
 import PF2E from "./classes/systems/pf2e";
 import {CheckRemScaling} from "./classes/utilities/visual";
 import {Hook} from "./classes/api/hook";
+import KeyBindings from "./classes/key-bindings";
 
 updateCalManager(new CalendarManager());
 updateSC(new SCController());
@@ -55,6 +56,7 @@ Hooks.on('init', async () => {
     SC.load();
     //Initialize the main application (Pre-set values before render)
     MainApplication.initialize();
+    KeyBindings.register();
 });
 Hooks.on('ready',async () => {
     if(PF2E.isPF2E){
