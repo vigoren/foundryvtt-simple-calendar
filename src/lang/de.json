@@ -75,7 +75,7 @@
 	"FSC.Predefined.DSA-TDE5e": "Das Schwarze Auge",
 	"FSC.Predefined.Eberron": "Eberron",
 	"FSC.Predefined.Exandrian": "Exandrian",
-	"FSC.Predefined.ForbiddenLands": "Forbidden Lands",
+	"FSC.Predefined.ForbiddenLands": "Die Verbotenen Lande",
 	"FSC.Predefined.Harptos": "Forgotten Realms: Harptos",
 	"FSC.Predefined.GolarianPF1E": "Golarian: Pathfinder 1E",
 	"FSC.Predefined.GolarianPF2E": "Golarian: Pathfinder 2E",
@@ -492,5 +492,6 @@
 	"FSC.Configuration.Client.PersistentOpen.Title": "Dauerhaft offen",
 	"FSC.Configuration.Client.PersistentOpen.Description": "Diese Einstellung entfernt den Schließen-Knopf vom Kalenderfenster und verhindert, dass es mit der Escape-Taste geschlossen werden kann. Der Knopf unter den Notizen in der linken Toolbar kann dann benutzt werden, um den Kalender zu öffnen und zu schließen.",
 	"FSC.Configuration.Display.DateTimeFormat": "Format Datum/Uhrzeit",
-	"FSC.Configuration.Display.Compact": "Kompaktansichtsoptionen"
+	"FSC.Configuration.Display.Compact": "Kompaktansichtsoptionen",
+	"FSC.Predefined.Exalted": "Die Hohen"
 }
