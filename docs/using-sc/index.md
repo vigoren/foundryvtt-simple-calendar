@@ -17,6 +17,8 @@ Simple Calendar can also be opened through the Configure Settings dialog of Foun
 
 Each player can also {@page ../global-configuration/settings.md choose if Simple Calendar opens by default} when FoundryVTT is loaded
 
+Simple Calendar also has a configurable keybinding for opening/closing the calendar window. By default, the key used is `Z` but this can be customized under [FoundryVTT's Configure Controls](https://foundryvtt.com/article/keybinds/) menu.
+
 ## Calendar View
 
 The calendar view is the main way of interacting with Simple Calendar. The image below breaks the view into 3 main sections which will be further broken down individually. This will give you the best understanding of how to use Simple Calendar!
