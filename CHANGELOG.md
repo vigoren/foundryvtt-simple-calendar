@@ -1,13 +1,17 @@
 # Change Log
 
-# 2.2.1 - Quality of LIfe Updates
+# 2.2.2 - Quality of LIfe Updates & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-May%2024%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.1/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.2/module.zip)
 
 ### Quality of Life Updates
 
-- Added a keybinding to toggle if the calendar is visible or hidden. The binding can be edited to any key but by default uses the `Z` key.
+- Added a keybinding to toggle if the calendar is visible or hidden. The binding can be edited to any key but by default uses the `Z` key. ([#478](https://github.com/vigoren/foundryvtt-simple-calendar/issues/478))
+
+### Bug Fixes
+
+- Fixed a bug when using the compact view and using the Quick Increment layout where hitting the `Shift` or `Control` keys would cause the entire compact view to change widths. ([#499](https://github.com/vigoren/foundryvtt-simple-calendar/issues/499))
 
 <hr/>
 

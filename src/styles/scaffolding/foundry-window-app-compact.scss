@@ -257,6 +257,12 @@
               }
             }
           }
+          .fsc-adjustable-controls{
+            .fsc-control{
+              width: calc(5ch + (0.48rem * 2));
+              flex: 1;
+            }
+          }
         }
         .fsc-side-drawer{
           top: pxToRem(10);
