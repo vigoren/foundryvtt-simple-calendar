@@ -1,13 +1,14 @@
 # Change Log
 
-# 2.2.2 - Quality of LIfe Updates & Bug Fixes
+# 2.2.3 - Quality of LIfe Updates & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-May%2024%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.2/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.3/module.zip)
 
 ### Quality of Life Updates
 
 - Added a keybinding to toggle if the calendar is visible or hidden. The binding can be edited to any key but by default uses the `Z` key. ([#478](https://github.com/vigoren/foundryvtt-simple-calendar/issues/478))
+- Added an option when editing a note to set if you want to be reminded of the note. ([#484](https://github.com/vigoren/foundryvtt-simple-calendar/issues/484))
 
 ### Bug Fixes
 

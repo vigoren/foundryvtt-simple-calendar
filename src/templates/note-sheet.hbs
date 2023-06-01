@@ -41,6 +41,11 @@
                     <label for="scNoteMacro_{{data._id}}">{{localize 'FSC.Notes.Macro'}}</label>
                     <div class="fsc-form-group-help" data-tooltip="{{localize 'FSC.Notes.MacroHelp'}}"><span class="fa-solid fa-circle-question"></span></div>
                 </div>
+                <div class="fsc-compact-form-group fsc-check-group fsc-quarter">
+                    <input type="checkbox" class="fsc-toggle" id="scRemindMe_{{data._id}}" {{checked edit.reminder}}>
+                    <label for="scRemindMe_{{data._id}}"><span class="fa fa-bell"></span> {{localize 'FSC.Notes.Reminder'}}</label>
+                    <div class="fsc-form-group-help" data-tooltip="{{localize 'FSC.Notes.ReminderHelp'}}"><span class="fa-solid fa-circle-question"></span></div>
+                </div>
             </div>
         </div>
         <div class="fsc-page-details">
