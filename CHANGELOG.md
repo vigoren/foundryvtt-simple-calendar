@@ -1,9 +1,9 @@
 # Change Log
 
-# 2.2.3 - Quality of LIfe Updates & Bug Fixes
+# 2.2.4 - Quality of LIfe Updates & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-May%2024%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.3/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.4/module.zip)
 
 ### Quality of Life Updates
 
@@ -13,6 +13,7 @@
 ### Bug Fixes
 
 - Fixed a bug when using the compact view and using the Quick Increment layout where hitting the `Shift` or `Control` keys would cause the entire compact view to change widths. ([#499](https://github.com/vigoren/foundryvtt-simple-calendar/issues/499))
+- Fixed a bug where the calendar would not always remember the last position it was moved to.
 
 <hr/>
 

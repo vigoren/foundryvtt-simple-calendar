@@ -498,8 +498,10 @@ export default class MainApp extends FormApplication{
              const header = appWindow.querySelector('header');
              if(header){
                  const drag = new Draggable(this, jQuery(appWindow), header, this.options.resizable);
-                 drag.handlers["dragMove"] = ["mousemove", this.appDragMove.bind(drag), false];
-                 drag.handlers["dragUp"] = ["mouseup", this.appDragEnd.bind(drag), false];
+                 //@ts-ignore
+                 drag.handlers["dragMove"] = [(<Game>game).release.generation < 11? "mousemove" : "pointermove", this.appDragMove.bind(drag), false];
+                 //@ts-ignore
+                 drag.handlers["dragUp"] = [(<Game>game).release.generation < 11? "mouseup" : "pointerup", this.appDragEnd.bind(drag), false];
              }
             // Click anywhere in the app
             appWindow.addEventListener('click', this.toggleUnitSelector.bind(this, true));

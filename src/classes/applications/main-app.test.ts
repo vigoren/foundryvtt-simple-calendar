@@ -306,6 +306,13 @@ describe('Main App Class Tests', () => {
         ma.uiElementStates.compactView = true;
         ma.activateListeners();
         expect(mainApp.classList.contains('fsc-compact-view')).toBe(true);
+
+        //@ts-ignore
+        game.release.generation = 10;
+        ma.activateListeners();
+        expect(mainApp.classList.contains('fsc-compact-view')).toBe(true);
+        //@ts-ignore
+        game.release.generation = 11;
     });
 
     test('Addon Button Click', () => {
