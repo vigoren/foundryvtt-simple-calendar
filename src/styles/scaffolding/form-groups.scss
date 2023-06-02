@@ -106,7 +106,8 @@
             padding-top: $spacer-half;
             padding-bottom: $spacer-half;
             label{
-              display: inline-block;
+              display: flex;
+              align-items: center;
               position: relative;
               padding: 0 ($spacer-half * 0.5) 0 0;
             }
