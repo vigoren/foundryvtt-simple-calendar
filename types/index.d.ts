@@ -1901,7 +1901,7 @@ declare global{
              */
             export interface Data {
                 type: SocketTypes;
-                data: Partial<MainAppUpdate> | DateTimeChange | TimeKeeperStatus | Partial<Primary> | Partial<NoteUpdate> | Partial<EmitHook> | Partial<SetActiveCalendar>;
+                data: boolean | Partial<MainAppUpdate> | DateTimeChange | TimeKeeperStatus | Partial<Primary> | Partial<NoteUpdate> | Partial<EmitHook> | Partial<SetActiveCalendar>;
             }
 
             type MainAppUpdate = {
@@ -2237,6 +2237,8 @@ declare global{
                 time: string;
                 /** The format string used to display the month and year at the top of a calendar display */
                 monthYear: string;
+                /** Date and time format used when displaying the in game timestamp on chat messages */
+                chatTime: string;
             };
             /** The different display options tied to the compact view. */
             compactViewOptions: {
@@ -2266,6 +2268,8 @@ declare global{
             syncCalendars: boolean;
             /** If to show the notes folder in the journal entries tab. */
             showNotesFolder: boolean;
+            /** If to replace the timestamps on chat messages with the date/time they were said in world time rather than real time. */
+            inGameChatTimestamp: boolean;
         }
 
         /**

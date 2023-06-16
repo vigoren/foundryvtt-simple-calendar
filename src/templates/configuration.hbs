@@ -86,6 +86,13 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.Global.ShowNoteFolder.Description'}}</p>
                 </div>
+                <div class="form-group fsc-open">
+                    <label for="scInGameChatTimestamp">{{localize 'FSC.Configuration.Global.InGameChatTimestamp.Title'}}</label>
+                    <div class="form-fields">
+                        <input class="fsc-toggle" value="{{globalConfiguration.inGameChatTimestamp}}" type="checkbox" id="scInGameChatTimestamp" {{checked globalConfiguration.inGameChatTimestamp}} />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.Global.InGameChatTimestamp.Description'}}</p>
+                </div>
             </div>
             {{/if}}
             <div class="fsc-section fsc-open">
@@ -641,6 +648,14 @@
                     </div>
                     <div class="fsc-example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.monthYearFormatExample}}</div>
                     <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.MonthYearHelp'}}</p>
+                </div>
+                <div class="form-group fsc-open">
+                    <label for="scDateFormatsChatTime">{{localize 'FSC.Configuration.General.Display.DateFormat.ChatTime'}}</label>
+                    <div class="form-fields">
+                        <input value="{{generalSettings.dateFormat.chatTime}}" id="scDateFormatsChatTime" type="text" />
+                    </div>
+                    <div class="fsc-example"><strong>{{localize 'FSC.Example'}}</strong>: {{uiElementStates.chatFormatExample}}</div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.Display.DateFormat.ChatTimeHelp'}}</p>
                 </div>
             </div>
             <div class="settings-group fsc-open">

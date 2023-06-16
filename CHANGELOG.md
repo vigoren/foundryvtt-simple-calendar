@@ -1,9 +1,18 @@
 # Change Log
 
-# 2.2.4 - Quality of LIfe Updates & Bug Fixes
+# 2.2.6 - Chat Message Timestamps, Quality of LIfe Updates & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-May%2024%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.4/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.6/module.zip)
+
+### Chat Message Timestamps
+
+Simple Calendar can now be configured to change chat message timestamps from using the real life timestamps to using the date and time from SC (in game timestamps). ([#490](https://github.com/vigoren/foundryvtt-simple-calendar/issues/490))
+
+**IMPORTANT:** Only chat messages created after this version of SC is installed will show timestamps using in game timestamps. Chat messages created before do not contain the required metadata for displaying the in game time they were created.
+
+ - New setting under the `Global Configuration` called "[Use Game Time For Chat Message Timestamps](https://simplecalendar.info/pages/global-configuration/index/settings.html)" that is used to enable or disable this feature. This will re-render the entire chat log for every player when changed.
+ - New setting under the `Display Options -> Date/Time Formatting` for each calendar called "[Chat Message Timestamp Format](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#datetime-formatting)" that allows you to specify how the chat message timestamp is displayed.
 
 ### Quality of Life Updates
 
@@ -14,6 +23,7 @@
 
 - Fixed a bug when using the compact view and using the Quick Increment layout where hitting the `Shift` or `Control` keys would cause the entire compact view to change widths. ([#499](https://github.com/vigoren/foundryvtt-simple-calendar/issues/499))
 - Fixed a bug where the calendar would not always remember the last position it was moved to.
+- Improved how custom themes look when system specific images fail to load. ([#503](https://github.com/vigoren/foundryvtt-simple-calendar/issues/503))
 
 <hr/>
 

@@ -72,7 +72,8 @@ export default class ConfigurationApp extends FormApplication {
         permissions: new UserPermissions(),
         secondsInCombatRound: 6,
         syncCalendars: false,
-        showNotesFolder: false
+        showNotesFolder: false,
+        inGameChatTimestamp: false
     };
     /**
      * A copy of the client settings to be edited in the configuration dialog.
@@ -97,6 +98,7 @@ export default class ConfigurationApp extends FormApplication {
      * @private
      */
     private uiElementStates = {
+        chatFormatExample: '',
         dateFormatExample: '',
         dateFormatTableExpanded: false,
         monthYearFormatExample: '',
@@ -141,6 +143,7 @@ export default class ConfigurationApp extends FormApplication {
         this.globalConfiguration.syncCalendars = SC.globalConfiguration.syncCalendars;
         this.globalConfiguration.showNotesFolder = SC.globalConfiguration.showNotesFolder;
         this.globalConfiguration.combatPauseRule = SC.globalConfiguration.combatPauseRule;
+        this.globalConfiguration.inGameChatTimestamp = SC.globalConfiguration.inGameChatTimestamp;
         this.clientSettings = deepMerge({}, SC.clientSettings);
         this._tabs[0].active = "globalSettings";
 
@@ -222,6 +225,7 @@ export default class ConfigurationApp extends FormApplication {
         this.uiElementStates.dateFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.date, <Calendar>this.object);
         this.uiElementStates.timeFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.time, <Calendar>this.object);
         this.uiElementStates.monthYearFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.monthYear, <Calendar>this.object);
+        this.uiElementStates.chatFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.chatTime, <Calendar>this.object);
 
         this.uiElementStates.disabledControls.pf2e = PF2E.isPF2E && (<Calendar>this.object).generalSettings.pf2eSync;
 
@@ -666,6 +670,7 @@ export default class ConfigurationApp extends FormApplication {
             this.globalConfiguration.calendarsSameTimestamp = getCheckBoxInputValue('#scCalendarsSameTimestamp', false, this.appWindow);
             this.globalConfiguration.syncCalendars = getCheckBoxInputValue('#scSyncCalendars', false, this.appWindow);
             this.globalConfiguration.showNotesFolder = getCheckBoxInputValue('#scShowNoteFolder', false, this.appWindow);
+            this.globalConfiguration.inGameChatTimestamp = getCheckBoxInputValue('#scInGameChatTimestamp', false, this.appWindow);
 
             //----------------------------------
             // Global Config: Client Settings
@@ -718,6 +723,7 @@ export default class ConfigurationApp extends FormApplication {
             (<Calendar>this.object).generalSettings.dateFormat.date = getTextInputValue('#scDateFormatsDate', 'MMMM DD, YYYY', this.appWindow);
             (<Calendar>this.object).generalSettings.dateFormat.time = getTextInputValue('#scDateFormatsTime', 'HH:mm:ss', this.appWindow);
             (<Calendar>this.object).generalSettings.dateFormat.monthYear = getTextInputValue('#scDateFormatsMonthYear', 'MMMM YAYYYYYZ', this.appWindow);
+            (<Calendar>this.object).generalSettings.dateFormat.chatTime = getTextInputValue('#scDateFormatsChatTime', 'MMM DD, YYYY HH:mm', this.appWindow);
             (<Calendar>this.object).generalSettings.compactViewOptions.controlLayout = <CompactViewDateTimeControlDisplay>(getCheckBoxGroupValues('scCompactControlLayout', this.appWindow)[0] || 'full');
 
             //----------------------------------
@@ -894,6 +900,7 @@ export default class ConfigurationApp extends FormApplication {
             this.uiElementStates.dateFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.date, <Calendar>this.object);
             this.uiElementStates.timeFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.time, <Calendar>this.object);
             this.uiElementStates.monthYearFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.monthYear, <Calendar>this.object);
+            this.uiElementStates.chatFormatExample = FormatDateTime({year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42}, (<Calendar>this.object).generalSettings.dateFormat.chatTime, <Calendar>this.object);
 
             let df = this.appWindow.querySelector(`#scDateFormatsDate`)?.closest('.form-group')?.querySelector('.fsc-example');
             if(df){
@@ -906,6 +913,10 @@ export default class ConfigurationApp extends FormApplication {
             df = this.appWindow.querySelector(`#scDateFormatsMonthYear`)?.closest('.form-group')?.querySelector('.fsc-example');
             if(df){
                 (<HTMLElement>df).innerHTML = `<strong>${GameSettings.Localize('FSC.Example')}</strong>: ${this.uiElementStates.monthYearFormatExample}`;
+            }
+            df = this.appWindow.querySelector(`#scDateFormatsChatTime`)?.closest('.form-group')?.querySelector('.fsc-example');
+            if(df){
+                (<HTMLElement>df).innerHTML = `<strong>${GameSettings.Localize('FSC.Example')}</strong>: ${this.uiElementStates.chatFormatExample}`;
             }
             //----------------------------------
             // Calendar Config: Year
