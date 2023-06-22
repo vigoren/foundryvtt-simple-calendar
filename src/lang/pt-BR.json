@@ -544,5 +544,6 @@
 	"FSC.Configuration.Display.Compact": "Opções de visualização compacta",
 	"FSC.Configuration.Display.CompactControls.Title": "Layout de controle de data/hora de visualização compacta",
 	"FSC.Configuration.Display.CompactControls.Description": "Escolha o layout dos botões usados para alterar a data/hora do calendário na exibição compacta.",
-	"FSC.Configuration.Client.PersistentOpen.Title": "Abertura constante"
+	"FSC.Configuration.Client.PersistentOpen.Title": "Abertura constante",
+	"FSC.Predefined.Exalted": "Exalted"
 }
