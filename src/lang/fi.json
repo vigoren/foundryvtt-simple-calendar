@@ -214,7 +214,7 @@
 	"FSC.Configuration.Save": "Tallenna määritykset",
 	"FSC.Configuration.General.Title": "Yleiset asetukset",
 	"FSC.Configuration.General.ShowClock": "Näytä kello",
-	"FSC.Configuration.General.ShowClockHelp": "Jos haluat näyttää kellonajan kalenterin alapuolella. Näyttää myös tuntien, minuuttien ja sekuntien vaihtamisen säätimet.",
+	"FSC.Configuration.General.ShowClockHelp": "Näytetäänkö kello kalenterin alapuolella, näyttää myös säätimet tuntien, minuuttien ja sekuntien vaihtamiseen.",
 	"FSC.Configuration.General.QuickSetup": "Pika-asennus",
 	"FSC.Configuration.General.ImportExport.Title": "Tuo/vie",
 	"FSC.Configuration.General.PlayersChangeDateTime": "Päivämäärän ja kellonajan muuttaminen",
@@ -393,7 +393,7 @@
 	"FSC.Notes.SearchPages": "Hae sivuilta",
 	"FSC.Save": "Tallenna",
 	"FSC.DateFormat.Year.Short": "Vuoden lyhenne",
-	"FSC.DateFormat.Month.Number": "Kuukauden numero",
+	"FSC.DateFormat.Month.Number": "Kuukauden numero.",
 	"FSC.SearchNotes": "Etsi merkinnöistä",
 	"FSC.ImportInto": "Tuo kalenteriin",
 	"FSC.Notes.UserPermissionTitle": "Ketä voi katsella",
@@ -403,5 +403,9 @@
 	"FSC.Configuration.Time.GameTimeRatio": "Pelisekunteja per oikeita sekunteja",
 	"FSC.Configuration.Time.GameTimeRatioHelp": "Kuinka monta sekuntia kuluu pelissä jokaista oikeaa sekuntia kohti.",
 	"FSC.HideAdvanced": "Piilota edistyneet asetukset",
-	"FSC.Notes.Macro": "Automaattisesti suoritettava makro"
+	"FSC.Notes.Macro": "Automaattisesti suoritettava makro",
+	"FSC.Configuration.Month.DayOffset": "Päivän poikkeama",
+	"FSC.Configuration.DefaultNoteVisibilityHint": "Uusien muistiinpanojen osalta, onko näkyvyys pelaajille oletusarvoisesti valittuna vai ei.",
+	"FSC.Configuration.Month.DayOffsetHelp": "Numero, joka lisätään tai vähennetään päivän numerosta. Hyödyllinen, jos kuukausi halutaan esimerkiksi aloittaa numerosta 2 eikä numerosta 1.",
+	"FSC.ChangePreviousMonth": "Edellinen kuukausi"
 }
