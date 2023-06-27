@@ -58,10 +58,7 @@ module.exports = {
                 { context: './src/', from : '**/*.(hbs|html)', to : '[path][name].html' },
                 { context: './', from : 'README.md', to : './' },
                 { context: './', from : 'LICENSE', to : './' },
-                { context: './docs/images', from: 'logo.png', to: './assets/'},
-                { context: './docs/images', from: 'setup-cover.png', to: './assets/'},
-                { context: './docs/images', from: 'sc-v2-theme-dark-comp-qi.png', to: './assets/'},
-                { context: './docs/images', from: 'sc-v2-theme-dark-comp.png', to: './assets/'}
+                { context: './src/assets', from: '**/*.png', to: './assets/'}
             ]
         }),
         new MangleCssClassPlugin({

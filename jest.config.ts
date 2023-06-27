@@ -12,7 +12,7 @@ const config: Config.InitialOptions = {
         "^.+\\.svg$": "jest-transform-stub"
     },
     collectCoverage: true,
-    coverageDirectory: './docs/coverage',
+    coverageDirectory: './coverage',
     resetMocks: true,
     restoreMocks: true
 };
