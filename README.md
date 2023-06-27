@@ -12,7 +12,7 @@
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dvigorator%26type%3Dpatrons&style=flat)](https://patreon.com/vigorator)
 [![ko-fi](https://img.shields.io/badge/%20-Support%20me%20on%20Ko--fi-%23FF5E5B?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/A0A546HOX)
 
-![](./docs/images/logo.svg)
+
 ![](media://logo.svg)
 # Simple Calendar 
 
@@ -66,7 +66,7 @@ Get started and create the perfect calendar to enrich your world for your player
 
 There are many ways to customize your calendar and how it interacts with FoundryVTT and other systems and modules. Be sure to check out the full documentation to learn all the way!
 
-![](./docs/images/sc-v2-themes.gif)
+
 ![](media://sc-v2-themes.gif)
 
 ## Documentation
