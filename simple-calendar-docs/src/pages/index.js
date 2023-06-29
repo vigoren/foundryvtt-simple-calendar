@@ -19,9 +19,9 @@ function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <img className={styles.heroBannerBackground} src="https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-theme-dark.png" alt="Screenshot of a calendar in Simple Clandar" />
+      <img className={styles.heroBannerBackground} src="/img/sc-v2-theme-dark.png" alt="Screenshot of a calendar in Simple Clandar" />
       <div className={clsx("container", styles.heroBannerContainer)}>
-        <img className={styles.herBannerLogo} src="https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.svg" alt="Simple Clanedar Logo" />
+        <img className={styles.herBannerLogo} src="/img/logo.svg" alt="Simple Clanedar Logo" />
         <h1 className={clsx("hero__title", styles.heroBannerTitle)}>{siteConfig.title}</h1>
         <p className={clsx("hero__subtitle", styles.heroBannerTitle)}>{siteConfig.tagline}</p>
         <div className={styles.buttons}>

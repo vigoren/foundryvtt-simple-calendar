@@ -27,6 +27,14 @@ Choose when the real time clock will be paused when combats are running on scene
 
 If to show the folder that all calendar notes are saved under in the Journal Entries tab. This requires a refresh to take effect. 
 
+## Use Game Time For Chat Message Timestamps
+
+If to use the current date and time set in Simple Calendar as the visible timestamp for chat messages instead of the real world timestamp
+
+:::caution Important
+Only chat messages created after version 2.3.0 of Simple Calendar is installed will show timestamps using in game timestamps. Chat messages created before do not contain the required metadata for displaying the in game time they were created.
+:::
+
 ## Client Settings
 
 Please see the [Client Settings](../using-sc/client-settings) documentation under the `How To Use` section for full details.

@@ -21,7 +21,8 @@
   "scripts": {
     "build": "webpack",
     "test": "jest",
-    "unusedI18N": "i18n-unused display-unused"
+    "unusedI18N": "i18n-unused display-unused",
+    "writedocs": "cd simple-calendar-docs && npm run build"
   },
   "devDependencies": {
     "@league-of-foundry-developers/foundry-vtt-types": "^9.280.0",

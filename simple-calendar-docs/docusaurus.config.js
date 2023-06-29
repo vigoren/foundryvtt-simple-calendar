@@ -35,7 +35,7 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          //includeCurrentVersion: false
+          includeCurrentVersion: false
         },
         blog: false,
         theme: {

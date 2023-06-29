@@ -13,6 +13,7 @@ A date time format is text containing special tokens. These tokens are replaced 
 | Date Format                   | This format text is used when displaying a date anywhere in Simple Calendar.                                                         | MMMM DD, YYYY      |
 | Time Format                   | This format text is used when displaying a time anywhere in Simple Calendar.                                                         | HH:mm:ss           |
 | Month/Year Format             | This format text is used when displaying just the month and year that appears at the top of a calendar view, above the list of days. | MMMM YAYYYYYZ      |
+| Chat Message Timestamp Format | This format text is used when displaying text for a chat messages timestamp.                                                         | MMM DD, YYYY HH:mm |
 
 Below are the tokens used in the above settings fields to configure the date and time to display how you want it to.
 

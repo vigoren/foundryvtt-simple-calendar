@@ -1,5 +1,644 @@
 # Change Log
 
+## 2.3.0 - Chat Message Timestamps, Quality of LIfe Updates & Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-June%2030%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.0/module.zip)
+
+### Chat Message Timestamps
+
+Simple Calendar can now be configured to change chat message timestamps from using the real life timestamps to using the date and time from SC (in game timestamps). ([#490](https://github.com/vigoren/foundryvtt-simple-calendar/issues/490))
+
+**IMPORTANT:** Only chat messages created after this version of SC is installed will show timestamps using in game timestamps. Chat messages created before do not contain the required metadata for displaying the in game time they were created.
+
+ - New setting under the `Global Configuration` called "[Use Game Time For Chat Message Timestamps](https://simplecalendar.info/docs/global-configuration/settings#use-game-time-for-chat-message-timestamps)" that is used to enable or disable this feature. This will re-render the entire chat log for every player when changed.
+ - New setting under the `Display Options -> Date/Time Formatting` for each calendar called "[Chat Message Timestamp Format](https://simplecalendar.info/docs/calendar-configuration/display-options#datetime-formatting)" that allows you to specify how the chat message timestamp is displayed.
+
+### Quality of Life Updates
+
+- Added a keybinding to toggle if the calendar is visible or hidden. The binding can be edited to any key but by default uses the `Z` key. ([#478](https://github.com/vigoren/foundryvtt-simple-calendar/issues/478))
+- Added an option when editing a note to set if you want to be reminded of the note. ([#484](https://github.com/vigoren/foundryvtt-simple-calendar/issues/484))
+
+### Bug Fixes
+
+- Fixed a bug when using the compact view and using the Quick Increment layout where hitting the `Shift` or `Control` keys would cause the entire compact view to change widths. ([#499](https://github.com/vigoren/foundryvtt-simple-calendar/issues/499))
+- Fixed a bug where the calendar would not always remember the last position it was moved to.
+- Improved how custom themes look when system specific images fail to load. ([#503](https://github.com/vigoren/foundryvtt-simple-calendar/issues/503))
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Sven Hesse](https://weblate.foundryvtt-hub.com/user/DrMcCoy/) (German)
+- [Lucas](https://weblate.foundryvtt-hub.com/user/lucasts/) (Portuguese (Brazil))
+- [Demian Wright](https://weblate.foundryvtt-hub.com/user/Demian/) (Finnish)
+
+### Documentation Changes
+
+The documentation site has been completely re-done. The new site makes it easier to find information about how to configure and use Simple Calendar as well as develop for it using the API. 
+
+The new site also contains documentation for past versions of Simple Calendar so users can get help they need no matter the version they are using!
+
+Be sure to check it out! [https://simplecalendar.info](https://simplecalendar.info)
+
+
+<hr/>
+
+## 2.2.0 - Foundry Version 11 Update, Quality of Life Updates & Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-May%2024%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.2.0/module.zip)
+
+### Foundry Version 11 Update
+
+Updated Simple Calendar to be functional with FoundryVTT version 10 and 11.
+
+Fixes Include:
+
+- Fixed when moving the application window to a new location, releasing the mouse would not stop the dragging action.
+- Fixed switching into compact mode would fail to stay in compact mode.
+- Fixed the icon for the button under "Journal Notes" not displaying correctly.
+
+### Quality of Life Updates
+
+- Added a new predefined calendar for White Wolf's Exalted setting (Thanks [Aliharu](https://github.com/Aliharu)!)
+
+### Bug Fixes
+
+- Fixed a bug where system specific themes would not load images properly if a routePrefix was set in Foundry's configuration.
+- Fixed an issue where if the setting [Show Clock](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) was disabled and a user was using the [Quick Increment](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options) Compact view layout no buttons would appear to adjust the date.
+- Fixed a bug where a macro could not be selected from the macro list in a note.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Sven Hesse](https://weblate.foundryvtt-hub.com/user/DrMcCoy/) (German)
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Jakub](https://weblate.foundryvtt-hub.com/user/Lioheart/) (Polish)
+- [SwedishRabbit](https://github.com/SwedishRabbit) (Swedish)
+
+<hr/>
+
+## 2.1.80 - Quality of Life Updates && Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-February%2004%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.80/module.zip)
+
+### Quality of Life Updates
+
+- Changed the [Update Frequency](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) setting so that it can support decimals. This can allow you to set an "Update Frequency" of 0.5 and a "Game Seconds Per Real Life Seconds" of 2 to get the game to move at twice the speed but have the clock still update for every game second.
+- Updated the compact view to show up to 5 moons before collapsing them into a hover-over view.
+- Added a new client setting "Compact View Scale" that allows you to change the scale at which the compact view is displayed at. You can use this to make the compact view appear larger or smaller. The number represents the percentage of the scale size when compared to the default size, 100%. The range goes in increments of 10 from 70% to 200%.
+- Added support for keyboard key modifiers when in compact view with [Time Control Layout](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options) set to `Quick Increment`:
+  - **Shift Key**: When the shift key is held down the amount of time that is changed for each increment is increased from `1 round, 1 minute, 5 minutes, 15 minutes, 1 hour` to `5 rounds, 5 minutes, 20 minutes, 45 minutes, 5 hours`.
+  - **Control Key**: When the control key is held down each increment will be subtracted from the current time, this can be combined with the shift key for going back in time by larger amounts.
+
+### Bug Fixes
+
+- Fixed an issue where the hook `SimpleCalendar.Hooks.DateTimeChange` would fire twice when the time changed while the clock was running. It should now only fire once for every time increment.
+- Fixed an issue where on the full calendar view the preset time of day buttons would sometimes get bumped down to a second row.
+- Fixed an issue where when in the compact view with the [Time Control Layout](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options) set to `Full Controls` the unit selector would open up when near the top of the page potentially making some options inaccessible.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+
+### Documentation Changes
+
+- Improved the wording of the "Persistent Open" client setting to be more clear on where the toggle button is.
+- Updated the [Update Frequency](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) documentation to note it supports decimals.
+- Updated the [Client Setting](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings) documentation to include information about the new "Compact View Scale" setting.
+
+<hr/>
+
+## 2.1.73 - Refreshed Compact Display, Quality of Life Updates and Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-January%2026%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.73/module.zip)
+
+### Refreshed Compact Display
+
+The compact display has been updated to make it a little cleaner and utilize the unused space to keep it nice and compact without losing any functionality.
+
+![](images/sc-v2-theme-dark-comp.png)
+
+Changes include:
+
+- If seasons are configured the current season will be shown by just its icon (or the first 2 letters of its name if no icon is chosen) in the top left of the header. Hovering over the icon will show the full season name.
+- If moons are configured they are shown next to the season in the top left of the header. The current phase of the moon(s) are shown. If 1-2 moons are configured they will be shown beside each-other, if 3 or more  moons are configured the first moon will be shown with an indicator that hovering over that icon will show a dialog will all the moons current phases.
+- The note indicators (Notes for that day and notes you want to be reminded of) are shown in the top right of the header next to the close button.
+- If the player has permissions to add notes the add note button is displayed next to the note indicators in the top right of the header.
+- The main body of the display contains the current date and time. The primary GM will see the buttons to start/pause/stop the real time clock next to the time.
+- If the player has permissions to change the current date and time at the bottom the buttons used to change the date and time as well as the dawn/midday/dusk/midnight buttons.
+- All the themes have been updated to take advantage of this new layout.
+
+Overall these changes have helped reduce the height and width of the compact display making it easier to keep on the screen while playing.
+
+A preview of all themes for the new compact mode:
+
+![](images/sc-v2-theme-dark-comp.png)
+![](images/sc-v2-theme-light-comp.png)
+![](images/sc-v2-theme-classic-comp.png)
+![](images/sc-v2-theme-eclipsephase-comp.png)
+![](images/sc-v2-theme-sfrpg-comp.png)
+![](images/sc-v2-theme-dsa5-comp.png)
+![](images/sc-v2-theme-forbidden-lands-comp.png)
+![](images/sc-v2-theme-wfrp4e-comp.png)
+![](images/sc-v2-theme-wrath-and-glory-comp.png)
+
+#### Time Control Button Options
+
+The compact display also now lets you choose from 2 button layouts for changing the time!
+
+- **Full**: This is the current layout and allows you to change any time unit forward or back.<br/>![](images/sc-v2-theme-dark-comp.png)<br/><br/>
+- **Quick Increment**: This layout offers 5 options (1 Round, 1 Minute, 5 Minutes, 15 Minutes, 1 Hour) and allows users to quickly advance the time by those amounts.<br/>![](images/sc-v2-theme-dark-comp-qi.png)
+
+The setting for this can be found under the calendars [Display Options](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html) configuration section.
+
+### Quality of Life Updates
+
+- Added a new client setting, [Persistent Open](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings), that when enabled will remove the close button from the calendar window and prevent the escape key from closing it. The button under the scene control then becomes a toggle to open and close the calendar.
+
+### Bug Fixes
+
+- Fixed an issue when changing the [Update Frequency](https://simplecalendar.info/pages/calendar-configuration/index/time-settings.html#clock-settings) setting while the clock was running that would result in the time updating incorrectly.
+- Fixed an issue when reloading the page would not properly recognise any active combats and in certain cases the clock could be started.
+- Fixed a few style issues with the Forbidden Lands theme.
+- Fixed an issue with the Eclipse Phase system where note pages couldn't be added (Style change hide the interface).
+- Fixed an issue where "When Leap Years Happen" could be set to 0 or a negative value, which doesn't make sense and would cause issues. If the value is set to something not valid the leap year rule will be set to None.
+- Fixed a bug where loading of corrupt calendar configurations would prevent the module from working at all.
+- Fixed an issue where some systems would break the displaying of icons within Simple Calendar.
+
+### API Changes
+
+- Added a new function [`SimpleCalendar.api.isOpen()`](https://simplecalendar.info/functions/SimpleCalendar.api.isOpen.html) that will return a boolean if the calendar is open or closed.
+- Added a new hook [`SimpleCalendar.Hooks.Init`](https://simplecalendar.info/variables/SimpleCalendar.Hooks.Init.html). This hook fires as Simple Calendar is initializing but before the module is fully ready to use.
+- Added a new function, [`SimpleCalendar.api.addSidebarButton`](https://simplecalendar.info/functions/SimpleCalendar.api.addSidebarButton.html), for adding custom buttons to the right of the calendar.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+- [Farevell](https://weblate.foundryvtt-hub.com/user/Farevell/) (Chinese (Simplified))
+- [Sir Motte](https://weblate.foundryvtt-hub.com/user/SirMotte/) (German)
+- [Chris76J](https://weblate.foundryvtt-hub.com/user/Chris76J/) (German)
+- [Novella Locritani](https://weblate.foundryvtt-hub.com/user/Nuvvola/) (Italian)
+- [Davide Lamberti](https://weblate.foundryvtt-hub.com/user/leWebslinger/) (Italian)
+
+### Documentation Changes
+
+- Added a new [FAQ](https://simplecalendar.info/pages/site/docs/faq.html) page to help answer some commonly asked questions!
+- Added documentation for the new [client setting Persistent Open](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings).
+- Added documentation for the new [compact view options](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#compact-view-options).
+- Updated the [client settings](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings) documentation for the new Persistent Open setting.
+- Updated images of the compact view.
+- Updated image for the client settings.
+- Updated the image for the date/time formatting section of the display options.
+- Added an image for the compact view options section of the display options.
+
+<hr/>
+
+## 2.1.60 - Bug Fix and Translation Updates
+
+![](https://img.shields.io/badge/release%20date-November%2017%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.60/module.zip)
+
+### Bug Fixes
+
+- Fixed broken help links in the configuration dialog.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Marc Feuillen](https://weblate.foundryvtt-hub.com/user/Elfenduil/) (French)
+- [Raul Castaño](https://weblate.foundryvtt-hub.com/user/ZRAAA78/) (Spanish)
+- [Farevell](https://weblate.foundryvtt-hub.com/user/Farevell/) (Chinese (Simplified))
+- [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+- [Michał Gołaszewski](https://github.com/MichalGolaszewski) (Polish)
+
+<hr/>
+
+## 2.1.58 - Bug Fixes and API Changes
+
+![](https://img.shields.io/badge/release%20date-November%2004%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.58/module.zip)
+
+### Bug Fixes
+
+- Fixed an issue where if the `Remember Position` option was enabled and the `Remember Compact Position` option was disabled the compact view would snap back to the full view's position when the time was changed.
+
+### Predefined Calendar
+
+- Added a predefined calendar for the Ambrian Calendar from the Symbaroum system (Thanks [bithir](https://github.com/bithir)!)
+
+### API Changes
+
+- Added a new function [`SimpleCalendar.api.currentDateTime()`](https://simplecalendar.info/functions/SimpleCalendar.api.currentDateTime.html) that returns a [DateTime](https://simplecalendar.info/types/SimpleCalendar.DateTime.html) object with the current date and time of the active calendar, or calendar with the passed in ID.
+- Added a new function [`SimpleCalendar.api.currentDateTimeDisplay()`](https://simplecalendar.info/functions/SimpleCalendar.api.currentDateTimeDisplay.html) that returns a [DateDisplayData](https://simplecalendar.info/interfaces/SimpleCalendar.DateDisplayData.html) object for the current date and time of the active calendar, or the calendar with the passed in ID.
+- Added a new function [`SimpleCalendar.api.formatTimestamp()`](https://simplecalendar.info/functions/SimpleCalendar.api.formatTimestamp.html) that functions just like the [formatDateTime](https://simplecalendar.info/functions/SimpleCalendar.api.formatDateTime.html) function but instead takes in a timestamp instead of a [DateTimeParts](https://simplecalendar.info/types/SimpleCalendar.DateTimeParts.html) object.
+- Added a new function [`SimpleCalendar.api.getAllThemes()`](https://simplecalendar.info/functions/SimpleCalendar.api.getAllThemes.html) that returns a list of all available themes for players to choose from.
+- Added a new function [`SimpleCalendar.api.getCurrentTheme()`](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentTheme.html) that returns the ID of the theme being used by the player.
+- Added a new function [`SimpleCalendar.api.setTheme()`](https://simplecalendar.info/functions/SimpleCalendar.api.setTheme.html) that takes in a theme ID and will set Simple Calendars theme to that ID for the player. An information notification will be shown to the player if the theme was changed to let them know it has been changed programmatically.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [eunaumtenhoid](https://weblate.foundryvtt-hub.com/user/eunaumtenhoid/) (Portuguese (Brazil))
+- [ricdark](https://weblate.foundryvtt-hub.com/user/ricdark/) (German)
+
+<hr/>
+
+## 2.1.50 - Quality of Life Improvements, Bug Fixes and a New Theme
+
+![](https://img.shields.io/badge/release%20date-October%2024%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.50/module.zip)
+
+### Quality of Life Improvements
+
+- A new client setting [Always Show Note List](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings) has been added. This setting will make it so the note list will always be visible and can not be closed. The only exception is if the calendar list or note search are opened they will open over top of the note list, but when closed the note list will remain visible.
+
+### Bug Fixes
+
+- Fixed an issue with the DSA/TDE 5 system theme that would cause the dialog background not to load properly.
+- Fixed an issue with the DSA/TDE 5 system theme that cause the compact view dialog header to display incorrectly.
+- Fixed an issue with the DSA/TDE 5 system theme where the clock would have a background color in compact view.
+- Fixed an issue with the Warhammer 40,000: Wrath & Glory system theme where the clock would have a background color in compact view.
+- Fixed an issue with the Warhammer Fantasy Roleplay system theme that would cause the dialog borders to not load correctly.
+- Fixed a bug where the context menu for the note list would not appear in the correct location when the list expanded to the left or bottom of the calendar.
+- Fixed a bug where if the side drawers were set to open below the calendar, the note list would not fully open in the compact view.
+
+### New Themes
+
+- **New** [Eclipse Phase 2E](https://foundryvtt.com/packages/eclipsephase) System Theme<br/>![](images/sc-theme-eclipsephase.png)
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [eunaumtenhoid](https://weblate.foundryvtt-hub.com/user/eunaumtenhoid/) (Portuguese (Brazil))
+
+<hr/>
+
+## 2.1.40 - Theming, Quality of Life Improvements, Bug Fixes & API Updates
+
+![](https://img.shields.io/badge/release%20date-October%2022%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.40/module.zip)
+
+### Theming
+
+I have done a lot of work around making theming Simple Calendar as easy as possible. This allows me to add new themes easier and quicker. It also opens up the ability of third party modules or individuals to easily customize the look of Simple Calendar. For more details on how to theme Simple Calendar check out the [theming](https://simplecalendar.info//pages/docs/developing-with-sc/index/theming.html) documentation!
+
+Changes that has been done to enable easy theming:
+
+- Changed all sizes to use REM instead of PX so that the entire interface can scale easily with any changes to the root REM size.
+- The addition of many CSS variables to quickly change how Simple Calendar looks. All the included themes use these variables to style SC.
+
+#### Themes
+
+To go along with these changes I have updated all the existing themes and added a couple of new themes to Simple Calendar!
+
+|                                                                                                                                   |                                                                                                                                                             |
+|-----------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dark Theme ![](images/sc-theme-dark.png)                                                                                          | Light Theme ![](images/sc-theme-light.png)                                                                                                                  |
+| Classic Theme ![](images/sc-theme-classic.png)                                                                                    | [Warhammer Fantasy Roleplay 4th Edition](https://foundryvtt.com/packages/wfrp4e) System Theme ![](images/sc-theme-wfrp4e.png)                               |
+| **NEW** [Forbidden Lands](https://foundryvtt.com/packages/forbidden-lands) System Theme  ![](images/sc-theme-forbidden-lands.png) | **NEW** [Das Schwarze Auge / The Dark Eye (5th Edition)](https://foundryvtt.com/packages/dsa5) System Theme ![](images/sc-theme-dsa5.png)                   |
+| **NEW** [Starfinder](https://foundryvtt.com/packages/sfrpg) System Theme ![](images/sc-theme-sfrpg.png)                           | **NEW** [Warhammer 40,000 Roleplay: Wrath and Glory](https://foundryvtt.com/packages/wrath-and-glory) System Theme ![](images/sc-theme-wrath-and-glory.png) |
+
+
+### Quality of Life Improvements
+
+- Added a new client setting [Remember Compact Position](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings). When enabled Simple Calendar will remember where the compact view is on the screen separate from where the full view is. This allows users to place the compact view in a corner, switch to full view and have the full view in the middle of the screen, then switch back to compact view, and it will return to the corner.
+- Added a new client setting [Side Drawer Open Direction](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings). This allows users to choose which direction from the calendar side drawers like the note list will open. The current options are Right, Left and Down that will open the side drawers to the right, to the left and below the main calendar.
+
+### Bug Fixes
+
+- Fixed a few instances where the notes dialog would not be sized correctly.
+- Fixed an issue where deleting a note after starting an edit would spawn several "Discard current changes" dialogs.
+- Fixed a bug where notes shown in the search result list would not properly show who had access to view the note.
+- Fixed a bug where the compact view would not have the correct height set.
+- Fixed a bug with the `Unify Clock Start/Pause With Game Pause` setting that would make it so the game always started paused. (Fixes a compatibility error with the [Koboldworkds - Pause Control](https://foundryvtt.com/packages/koboldworks-pause-control) module).
+
+### API Updates
+
+- Changed the [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/functions/SimpleCalendar.api.addNote.html) function so that the `repeats` and `categories` parameters are now optional.
+- Changed the [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/functions/SimpleCalendar.api.addNote.html) function so that the start and end dates are now [DateTimeParts](https://simplecalendar.info/types/SimpleCalendar.DateTimeParts.html) and any missing date/time properties on them will be filled out with the current date/time equivalent.
+- Added a new optional parameter to the [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/functions/SimpleCalendar.api.addNote.html) function, `userVisibility` that takes in an array of user ID's. These users will be able to view the note.
+- Added a new optional parameter to the [`SimpleCalendar.api.addNote()`](https://simplecalendar.info/functions/SimpleCalendar.api.addNote.html) function, `remindUsers` that takes in an array of user ID's. These users will be reminded of the note.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Bextia](https://weblate.foundryvtt-hub.com/user/bext1a/) (Spanish)
+- [DragonHale](https://weblate.foundryvtt-hub.com/user/DragonHale/) (Spanish)
+- [Marc Feuillen](https://weblate.foundryvtt-hub.com/user/Elfenduil/) (French)
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Sir Motte](https://weblate.foundryvtt-hub.com/user/SirMotte/) (German)
+- [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+- [Damian Wodziński](https://weblate.foundryvtt-hub.com/user/waaldii/) (Polish)
+- [eunaumtenhoid](https://weblate.foundryvtt-hub.com/user/eunaumtenhoid/) (Portuguese (Brazil))
+- [benwater12](https://weblate.foundryvtt-hub.com/user/benwater12/) (Chinese Traditional)
+
+### Documentation Changes
+
+- Added a link to the GitHub page for the module in the header of the documentation site.
+- Added documentation for [customizing the themes](https://simplecalendar.info/developing-with-sc/index/theming.html) of Simple Calendar.
+- Added documentation for [contributing](https://github.com/vigoren/foundryvtt-simple-calendar/blob/main/CONTRIBUTING.md#themes) a new theme to Simple Calendar.
+- Added documentation that outlines all the [available themes](https://simplecalendar.info/pages/docs/using-sc/index/themes.html) within Simple Calendar.
+- Updated the [client settings](https://simplecalendar.info/pages/global-configuration/index/settings.html#client-settings) documentation to include the new settings `Remember Compact Position` and `Side Drawer Open Direction`.
+- Fixed some typos in the example of the [setDate API function](https://simplecalendar.info/functions/SimpleCalendar.api.setDate.html)
+- Fixed typos in the API documentation when referencing a `second` property when it should be `seconds`.
+- Updated the example for the [timestampToDate](https://simplecalendar.info/functions/SimpleCalendar.api.timestampToDate.html) API function. 
+- Updated the example for the [DateTimeChange](https://simplecalendar.info/variables/SimpleCalendar.Hooks.DateTimeChange.html) hook.
+- Updated the example for the [getAllSeasons](https://simplecalendar.info/functions/SimpleCalendar.api.getAllSeasons.html) API function.
+- Updated the example for the [getCurrentSeason](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentSeason.html) API function.
+- Updated the example for the [getAllMonths](https://simplecalendar.info/functions/SimpleCalendar.api.getAllMonths.html) API function.
+- Updated the example for the [getCurrentMonth](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentMonth.html) API function.
+- Updated the example for the [getAllWeekdays](https://simplecalendar.info/functions/SimpleCalendar.api.getAllWeekdays.html) API function.
+- Updated the example for the [getCurrentWeekday](https://simplecalendar.info/functions/SimpleCalendar.api.getCurrentWeekday.html) API function.
+
+<hr/>
+
+## v2.1.27 - Improved Note Permissions, Note List Context Menu and Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-September%2024%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.27/module.zip)
+
+### Improved Note Permissions
+
+Assigning permissions to notes has been improved!
+
+- Renamed the `Player Viewable` field on notes to `Who Can See` to clearly indicate what that setting is for.
+- Added an `All Players` option to the `Who Can See` field for setting note permissions. This setting will:
+  - Select all players in the drop-down and not allow you to unselect them while the `All Players` option is selected.
+  - Sets it so all current and future players will be able to see this note. GM's will no longer have to add new players to notes everyone should be able to see!
+- Updated all predefined notes so that when created they are set so All Players (current and future) can view them. **This is not retroactive**.
+- Updated the `Player Visible` icon on the notes list that GM's see:
+  - It now has 3 states instead of 2
+    - `Green Eye`![](images/note-list-player-visible.png): All players can view this note.
+    - `Yellow Partial Eye`![](images/note-list-partial-player-visible.png): Some players can view this note.
+    - `Red Eye Slash`![](images/note-list-not-player-visible.png): Only the author of this note can view it.
+  - The tooltip for the `Player Visible` icon now shows a list of players that can view the note.<br/>![](images/note-list-who-can-see-tooltip.png)
+- Added the `Show Players` button in the header of the note dialog so any note can be shown to the players. This works just like the Journal Show Players button.
+
+The `All Players` option for `Who Can See` a note is not retroactive, so older notes shared with everyone will not have this set.
+
+### Note List Context Menu (Right Click)
+
+You can now right-click on notes under the notes list to show different actions that can be done. The list of actions available will change depending on if you are the GM or own the note being right-clicked on.
+
+![](images/note-list-context-menu.png)
+
+- All players will be shown the `Remind Me`/`Don't Remind Me` option as a quick way to toggle being reminded about the note.
+- GM's will be shown the `Show Players` option. This functions the exact same as the `Show Players` button in the header of a Journal Entry and allow you to show this note to the specified players regardless of if they can see it or not.
+- If you added the note, or are the GM you will see another 2 options:
+  - `Edit` will open the note directly into the edit mode.
+  - `Delete` will allow you to delete the note. A confirmation dialog is still shown to help make sure no accidental deletions happen.
+
+
+### Bug Fixes
+
+- Fixed a bug where the checked indicator of a multiple select dropdown would not select the item when clicked.
+- Fixed an issue where, in some instances, the calendar would be drawn wider than needed and slowly shrink as time was changed.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+* [vt-tom](https://weblate.foundryvtt-hub.com/user/vt-tom/) (German)
+* [Pierre Revat](https://weblate.foundryvtt-hub.com/user/Dolgren/) (French)
+* [benwater12](https://weblate.foundryvtt-hub.com/user/benwater12/) (Chinese Traditional)
+
+### Documentation Updates
+
+- Added better styling for tables in the new look.
+- Updated the [note editing documentation](https://simplecalendar.info/pages/docs/using-sc/index/notes/index/adding-editing-removing.html#editing-notes) to account for the new `All Players` option in the `Who Can View` setting.
+- Updated the [notes documentation](https://simplecalendar.info/pages/docs/using-sc/index/notes/index/index.html) to account for the changes to the Player Visible option
+- Updated the [notes documentation](https://simplecalendar.info/pages/docs/using-sc/index/notes/index/index.html) to account for the new context menu in the note list.
+
+<hr/>
+
+## v2.1.19 - Bug Fix... Oops
+
+![](https://img.shields.io/badge/release%20date-September%2016%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.19/module.zip)
+
+- Fixed showing all months at once (experimental year view).
+
+<hr/>
+
+## v2.1.18 - Rest Day Highlighting, Descriptions, Day Context Menu, Bug Fixes, QoL Improvements
+
+![](https://img.shields.io/badge/release%20date-September%2016%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.18/module.zip)
+
+### Rest Day Highlighting
+
+Weekdays now have a new setting that let you specify if that weekday is a rest day. Rest days are highlighted on the calendar.
+
+![](images/weekend-example.png)
+
+### Descriptions
+
+GM's can now add descriptions to months, weekdays and seasons! Descriptions can help give more detail or lore to your calendars. If a description is added to a month, weekday or season users can click on the name of that item and have an informational popup appear showing the description.
+
+The descriptions do support HTML to help with formatting the text!
+
+![](images/description-example.png)
+
+### Day Context Menu (Right Click)
+
+Right-clicking on a day will now bring up a menu that shows additional information about that day and potentially some actions! 
+
+The sunrise and sunset times are shown for the day clicked.
+
+If you are able to change the date of the calendar you will also see an option to set this day to the current date. This functions just like the set to current date button that appears when you select a day.
+
+If you are able to add notes you will also see an option to add a new note to that day. This functions just like adding a note to a selected day.
+
+![](images/day-context-gif.gif)
+
+### Bug Fixes
+
+- Fixed some performance issues in the Pathfinder 2E system.
+- Fixed a styling issue with the "Search Notes" search box.
+- Fixed an issue with the Simplified Chinese translation that would cause an error on loading in PF2E systems.
+
+### Quality of Life Improvements
+
+- Update anything that used the browser tooltip to use the new v10 Tooltips.
+- A few improvements to accessibility within the configuration dialog.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+* [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+
+### API Changes
+
+- Updated the [`sc-full-calendar`](https://simplecalendar.info/enums/HandlebarHelpers.html#sc_full_calendar) Handlebar Helper to accept a new parameter `showDescriptions` to choose if you want the descriptions for months, weekdays and seasons to be able to show or not.
+- The `description` property has been added to the [MonthData](https://simplecalendar.info/interfaces/SimpleCalendar.MonthData.html) object. All functions that return  month data will now include the description, if set.
+- The `description` property has been added to the [SeasonData](https://simplecalendar.info/interfaces/SimpleCalendar.SeasonData.html) object. All functions that return  season data will now include the description, if set.
+- The `description` property has been added to the [WeekdayData](https://simplecalendar.info/interfaces/SimpleCalendar.WeekdayData.html) object. All functions that return  weekday data will now include the description, if set.
+- The `restday` property has been added to the [WeekdayData](https://simplecalendar.info/interfaces/SimpleCalendar.WeekdayData.html) object. All functions that return  weekday data will now include if the weekday is considered a rest day or not.
+
+
+### Documentation Updates
+
+- Upgraded to the latest version of Typedoc which brings a host of usability and visual improvements.
+- Updated the [month settings](https://simplecalendar.info/pages/docs/calendar-configuration/month-settings.html) documentation to reflect the new description setting.
+- Updated the [season settings](https://simplecalendar.info/pages/docs/calendar-configuration/season-settings.html) documentation to reflect the new description setting.
+- Updated the [weekday settings](https://simplecalendar.info/pages/docs/calendar-configuration/weekday-settings.html) documentation to reflect the new rest day and description settings.
+- Updated the [using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) documentation to include information about the description popups and show example images.
+- Updated the [using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) documentation to include information about the new context menu for days.
+
+<hr/>
+
+## v2.1.10 - Bug Fixes, QoL Improvements and Translation Updates
+
+![](https://img.shields.io/badge/release%20date-September%208%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.10/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where months with a day offset would go back a day while the clock was running.
+- Changed the "PF2E World Clock Sync" setting so that it uses the switch styling rather than the checkbox styling.
+- Fixed an issue with the migration from Simple Calendar version 1.x to version 2.x in FoundryVTT v10.
+- Fixed some depreciation warnings on the PF2E system.
+
+### Quality of Life Improvements
+
+- Improved the strictness of the CSS for Simple Calendar themes to have a more consistent look when FoundryVTT UI/Theme modules are installed. I tested the following UI modules: Ernie's Modern UI, Minimal UI, Polished UI.
+
+### Translations
+
+Simple Calendar translations are now done on Foundry Hub Weblate, you can check it out (and help out) [here](https://weblate.foundryvtt-hub.com/engage/simple-calendar/)!
+
+Many people have contributed on Weblate all ready to update and add translations! Thank you to the following people:
+
+* [Demian Wright](https://weblate.foundryvtt-hub.com/user/Demian/) (Finnish, English)
+* [TonyTheBaloney](https://weblate.foundryvtt-hub.com/user/TonyTheBaloney/) (Spanish)
+* [Cristina Ibañez](https://weblate.foundryvtt-hub.com/user/bolsacris/) (Spanish)
+* [JDW](https://weblate.foundryvtt-hub.com/user/JDW/) (French)
+* [EldritchTranslator](https://weblate.foundryvtt-hub.com/user/EldritchTranslator/) (Italian)
+* [Greg R.](https://weblate.foundryvtt-hub.com/user/gbursson/) (Polish)
+* [moinen](https://weblate.foundryvtt-hub.com/user/moinen/) (Polish)
+* [Mateusz Sałasiński](https://weblate.foundryvtt-hub.com/user/matejss/) (Polish)
+* [eduardopato41](https://weblate.foundryvtt-hub.com/user/eduardopato41/) (Portuguese (Brazil))
+* [Matheus Clemente](https://weblate.foundryvtt-hub.com/user/mclemente/) (Portuguese (Brazil))
+* [Bruno Eiras](https://weblate.foundryvtt-hub.com/user/Beur1998/) (Portuguese (Brazil))
+* [Farevell](https://github.com/Farevell) (Simplified Chinese)
+
+### Documentation Updates
+
+- Updated the configuration documentation to reflect some improvements to the English language made while being translated.
+
+<hr/>
+
+## v2.1.4 - QoL Updates and Bug Fixes 
+
+![](https://img.shields.io/badge/release%20date-September%202%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.4/module.zip)
+
+### Quality of Life Updates
+
+- When the [Pathfinder 2E: World Clock Sync](https://simplecalendar.info/pages/docs/calendar-configuration/general-settings.html#pathfinder-2e-world-clock-sync) is enabled the settings that it disables will now appear disabled in the configuration dialog with a message letting users know why.
+
+### Bug Fixes
+
+- Fixed a bug that was making it not possible to update a notes title.
+- Added validation for the time settings ("Hours in a Day", "Minutes in an Hour", "Seconds in a Minute" and "Update Frequency") to ensure that they can not be set to 0 or a negative value.
+- Fixed a holiday for the Das Schwarze Auge/The Dark Eye 5th Edition Predefined Calendar that was on the wrong day.
+
+<hr/>
+
+## v2.1.0 - FoundryVTT V10 Support, Note Pages, System Specific Themes, QoL Improvements, Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-August%2031%2C%202022-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.1.0/module.zip)
+
+### FoundryVTT Version 10 Support
+
+Updated Simple Calendar so that it supports these changes in version 10 of FoundryVTT:
+
+- Updated manifest to work with the new manifest options.
+- Ensured the styles work with the new Font Awesome update.
+- Updated the journal interactions to be compatible with FoundryVTTs Journals V2.
+
+### Note Pages
+
+With the new Journals in FoundryVTT version 10 Simple calendar has been updated so notes can take advantage of these changes. Notes in Simple Calendar can now:
+
+- Have multiple pages with a collapsible panel when switching between pages being viewed.
+- Supports the different page types (Text, Images, PDFs and Videos).
+- The interface has been updated so the fields are more condensed for an easier editing experience.
+- Switched to using the new Prosemirror editor for notes over TinyMCE.
+
+Existing notes will be automatically migrated by Foundry over to Journals with a single text page.
+
+### System Specific Themes
+
+Simple Calendar can now have themes specific to the system the module is being used in. 
+These themes will only appear in the Theme selector as an option for players when playing a game in the system they are built for and are intended to keep the experience of the module more cohesive with the systems.
+
+The first system to get a dedicated theme is Warhammer Fantasy Roleplay 4th Edition! (Thanks to [ZwS](https://github.com/ZwS) for getting this started with updates to the classic theme)
+
+![](images/sc-v2-theme-wfrp.png)
+
+Other systems will get their own specific themes as time goes on
+
+### Quality of Life Improvements
+
+- Moved the icon for opening Simple Calendar from the `Token Controls` tab to the `Journal Notes` tab as this makes way more sense for Simple Calendar to live.
+- Added a button to open Simple Calendar from the "Configure Settings" dialog.
+- The date selector for notes now allows you to enter the year instead of having to scroll through months to change the year the note takes place.
+- Changed some setting checkboxes in the configuration dialog to use a switch where it made sense.
+- Added a close button to the header of the compact view.
+- Changed the Reminder chat whisper to show a link to the note instead of the notes content.
+- Added a new client setting for each player to choose how note reminders notify them. The options are:
+  - Have a whisper sent in the chat to the player with some details about the note and a link to open the note. This is the default option.
+  - Have the note automatically open.
+- When editing a Scenes configuration, if the setting `Show Notes Folder` is set to off then all Calendar notes are removed from the Journal Entry field under the Ambience tab.
+- Themes are now saved as client settings specific to worlds, so if you have more than one world on your server having different themes for the calendar will work.
+- Improved the strictness of the CSS for themes to have a more consistent look across systems.
+
+### Bug Fixes
+
+- Fixed several bugs on the note edit view where buttons wouldn't always respond to the first click.
+- Fixed a bug where positioning the calendar, with the remember position setting turned on, in the very top or very left of the screen would fail to place it back in that location on reloads.
+- Fixed a bug where when stopping the real time clock would cause the resulting time that is saved to be a few seconds (< 5) behind what it should be.
+
+### Documentation Changes
+
+- Updated the [Client Settings](https://simplecalendar.info/pages/docs/global-configuration/settings.html#client-settings) docs to include details about the new note reminder setting.
+- Updated the [Using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html) docs to reflect the change in location of the buttons to open Simple Calendar.
+- Updated the [Notes](https://simplecalendar.info/pages/docs/using-sc/notes/index.html) docs to reflect all the changes to the notes interface.
+- Added a new page [Notes: Adding / Editing / Removing](https://simplecalendar.info/pages/docs/using-sc/notes/adding-editing-removing.html) for detailing how to add, edit and remove notes with a section specific to the new pages functionality.
+- Updated several images to properly reflect the changes in this update.
+
+### API Changes
+
+To go along with the release of FoundryVTT version 10 some depreciated options within simple calendar have been removed.
+
+- `SimpleCalendar.api.MoonIcons` has been removed. Please use `SimpleCalendar.api.Icons` instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `day` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `month` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `season` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `time` property has been removed. Please use the options under the `date` property instead.
+- From the [Date Time Change Hook Response](https://simplecalendar.info/interfaces/SimpleCalendar.Hooks.DateChangeResponse.html) data the `year` property has been removed. Please use the options under the `date` property instead.
+
+<hr/>
+
 ## v2.0.30 - Combat Detection Changes & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%204%2C%202022-blue)

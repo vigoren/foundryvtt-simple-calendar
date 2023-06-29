@@ -48,6 +48,10 @@ The option `All Players` is always at the top of the list. Clicking this will se
 
 Choose a macro that will be automatically executed when the in game time meets or passes the time of the note.
 
+### Remind Me
+
+This can be toggled if the current user wants to be reminded about this note.
+
 ## Pages
 
 Each calendar note can have different pages of information, if that makes sense for the note. This leverages the built-in FoundryVTT journal pages that were added in v10. By default, each note will have a single text page.
