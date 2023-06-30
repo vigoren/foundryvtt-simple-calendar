@@ -18,19 +18,19 @@
 
 Simple Calendar is the ultimate timekeeping module for [FoundryVTT](https://foundryvtt.com/) that works with all game systems!
 
-It comes prepackaged with many [preset calendars](https://simplecalendar.info/pages/docs/calendar-configuration/quick-setup.html) to get your world up and running quickly. Or if you have a completely custom-built calendering system for your world, Simple Calendar can handle that as well!
+It comes prepackaged with many [preset calendars](https://simplecalendar.info/docs/calendar-configuration/quick-setup#choose-a-predefined-calendar) to get your world up and running quickly. Or if you have a completely custom-built calendering system for your world, Simple Calendar can handle that as well!
 
 Get started and create the perfect calendar to enrich your world for your players!
 
 ### Months your way
 
 * Your world can have as many months as it needs!.
-* [Customize](https://simplecalendar.info/pages/docs/calendar-configuration/month-settings.html) each month to specify everything from how many days it has, its name to if the month is considered intercalary (falls outside normal months) or not.
+* [Customize](https://simplecalendar.info/docs/calendar-configuration/month-settings) each month to specify everything from how many days it has, its name to if the month is considered intercalary (falls outside normal months) or not.
 
 ### Custom Years
 
 * Set the current year or add a prefix/postfix.
-* You can also [name each year](https://simplecalendar.info/pages/docs/calendar-configuration/year-settings.html#year-names) to give your world a unique touch!
+* You can also [name each year](https://simplecalendar.info/docs/calendar-configuration/year-settings#year-names) to give your world a unique touch!
 
 ### Unique Weekdays
 
@@ -38,28 +38,28 @@ Get started and create the perfect calendar to enrich your world for your player
 
 ### Set Your Own Leap Year Rules
 
-* Customize if your world has [leap years](https://simplecalendar.info/pages/docs/calendar-configuration/leap-year-settings.html) and if so how often they occur.
+* Customize if your world has [leap years](https://simplecalendar.info/docs/calendar-configuration/leap-year-settings) and if so how often they occur.
 * Set how many days a month has during a leap year. You can even have months only appear or disappear during leap years!
 
 ### Seasons
 
-* Determine how many [seasons](https://simplecalendar.info/pages/docs/calendar-configuration/season-settings.html) there are in your world.
-* [Customize](https://simplecalendar.info/pages/docs/calendar-configuration/season-settings.html) their names, when the season starts, and assign an icon and color to make each season unique.
+* Determine how many [seasons](https://simplecalendar.info/docs/calendar-configuration/season-settings) there are in your world.
+* [Customize](https://simplecalendar.info/docs/calendar-configuration/season-settings) their names, when the season starts, and assign an icon and color to make each season unique.
 * You can also specify Sunrise and Sunset times for each season and Simple Calendar will do the math to gradually shift those times between season!
 
 ### Create Custom Moons
 
-* [Set up](https://simplecalendar.info/pages/docs/calendar-configuration/moon-settings.html) as many moons as your world needs and give it a unique name, cycle length and color.
-* Go deeper into the settings and [customize each phase](https://simplecalendar.info/pages/docs/calendar-configuration/moon-settings.html#phases) of the moon!
+* [Set up](https://simplecalendar.info/docs/calendar-configuration/moon-settings) as many moons as your world needs and give it a unique name, cycle length and color.
+* Go deeper into the settings and [customize each phase](https://simplecalendar.info/docs/calendar-configuration/moon-settings#phases) of the moon!
 
 ### Unique Time? No Problem
 
-* [Customize](https://simplecalendar.info/pages/docs/calendar-configuration/time-settings.html) the number hours in a day, minutes in an hour and seconds in a minute.
+* [Customize](https://simplecalendar.info/docs/calendar-configuration/time-settings) the number hours in a day, minutes in an hour and seconds in a minute.
 * Configure how the real time clock interacts with your world, so as seconds pass in the real world time passes in your world!
 
 ### Notes and Events
 
-* Add [notes](https://simplecalendar.info/pages/docs/using-sc/notes.html) and events to your calendar so that you never forget an event again.
+* Add [notes](https://simplecalendar.info/docs/using-sc/notes/) and events to your calendar so that you never forget an event again.
 * Specify how often notes can repeat, categorize your notes for easy identification and select who can view each note.
 
 ### And much more!
@@ -73,12 +73,12 @@ There are many ways to customize your calendar and how it interacts with Foundry
 
 Simple Calendar has a dedicated site for everything from how to use the module as a player, to configure the module as a game master to how to interact with the API for use with other modules / systems. Check out the links below!
 
-- [Documentation](https://simplecalendar.info/index.html)
-- [Using Simple Calendar](https://simplecalendar.info/pages/docs/using-sc/index/index.html)
-- [Configuring your Calendar](https://simplecalendar.info/pages/docs/calendar-configuration/index/index.html)
-- [Notes](https://simplecalendar.info/pages/docs/using-sc/notes.html)
-- [Hooks](https://simplecalendar.info/modules/SimpleCalendar.Hooks.html)
-- [API (For use by other modules, systems or macros)](https://simplecalendar.info/modules/SimpleCalendar.api.html)
+- [Documentation](https://simplecalendar.info/)
+- [Using Simple Calendar](https://simplecalendar.info/docs/category/using-simple-calendar)
+- [Configuring your Calendar](https://simplecalendar.info/docs/category/calendar-configuration)
+- [Notes](https://simplecalendar.info/docs/using-sc/notes/)
+- [Hooks](https://simplecalendar.info/docs/developing-with-sc/api/namespaces/SimpleCalendar.Hooks)
+- [API (For use by other modules, systems or macros)](https://simplecalendar.info/docs/developing-with-sc/api/namespaces/SimpleCalendar.api)
 
 ### Installing The Module
 
