@@ -18,7 +18,7 @@
 	"FSC.Configuration.Client.OpenCompact.Description": "Wenn der Kalender geöffnet wird, öffnet er sich standartmäßig in kompakter Ansicht.",
 	"FSC.Configuration.Client.RememberPosition.Title": "Position beibehalten",
 	"FSC.Configuration.Client.RememberPosition.Description": "Simple Calendar wird sich die letzte Position merken und wieder dort öffnen.",
-	"FSC.Configuration.Display.Description": "Diese Einstellungen erlauben dir wie Datum und Zeit des Kalenders dargestellt werden. Für Information zum Einstellen des Datums und der Zeit besuche die <a target=\"_blank\" href=\"https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#datetime-formatting\">Dokumentation</a> oder öffne die untere Tabelle.",
+	"FSC.Configuration.Display.Description": "Diese Einstellungen erlauben dir wie Datum und Zeit des Kalenders dargestellt werden. Für Information zum Einstellen des Datums und der Zeit besuche die <a target=\"_blank\" href=\"https://simplecalendar./docs/calendar-configuration/display-options#datetime-formatting\">Dokumentation</a> oder öffne die untere Tabelle.",
 	"FSC.Configuration.General.CalendarNameHelp": "Der Name des Kalenders um ihn von anderen zu unterscheiden.",
 	"FSC.Configuration.General.Description": "Diese Einstellungen erlauben dir allgemeine Optionen des ausgewählten Kalenders zu konfigurieren.",
 	"FSC.Configuration.General.PlayersChangeActiveCalendar": "Ändere den aktiven Kalender",

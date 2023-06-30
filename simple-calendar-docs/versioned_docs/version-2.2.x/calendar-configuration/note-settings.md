@@ -12,7 +12,7 @@ For new notes, if by default the note is visible to all players.
 
 When a player first logs into foundry, or refreshes the page, if any note reminders on the current day will be sent to them.
 
-# Note Categories
+## Note Categories
 
 This section is used to specify any custom categories for notes.
 
