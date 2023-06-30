@@ -66,6 +66,7 @@ const config = {
     [
       '@docusaurus/plugin-client-redirects',
       {
+        fromExtensions: ['html', 'htm'],
         redirects: [
           { to: '/docs/faq', from: '/pages/site/docs/faq' },
           { to: '/docs/changelog', from: '/pages/site/CHANGELOG' },
