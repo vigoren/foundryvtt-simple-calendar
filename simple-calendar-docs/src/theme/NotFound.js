@@ -4,7 +4,7 @@ import NotFound from '@theme-original/NotFound';
 export default function NotFoundWrapper(props) {
 
     useEffect(() => {
-        const currentURL = window.location.href;
+        const currentURL = window.location.href.replace('.html', '');
 
         //Global Config Index Page
         if(currentURL.endsWith('/pages/global-configuration')){

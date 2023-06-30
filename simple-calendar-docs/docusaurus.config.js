@@ -72,14 +72,17 @@ const config = {
           { to: '/docs/changelog', from: ['/pages/site/CHANGELOG', '/pages/site/CHANGELOG.html'] },
           //Global Config
           {to: '/docs/category/global-configuration', from: ['/pages/global-configuration/index/index','/pages/global-configuration/index/index.html']},
+          //Calendar Config
+          {to: '/docs/category/calendar-configuration', from: ['/pages/calendar-configuration/index/index','/pages/calendar-configuration/index/index.html']},
           //Using SC
+          {to: '/docs/category/using-simple-calendar', from: ['/pages/docs/using-sc/index/index','/pages/docs/using-sc/index/index.html']},
           {to: '/docs/using-sc/changing-date-time', from: ['/pages/docs/using-sc/index/changing-date-time', '/pages/docs/using-sc/index/changing-date-time.html'] },
           {to: '/docs/using-sc/switching-calendars', from: ['/pages/docs/using-sc/index/switching-calendars', '/pages/docs/using-sc/index/switching-calendars.html'] },
           {to: '/docs/using-sc/themes', from: ['/pages/docs/using-sc/index/themes', '/pages/docs/using-sc/index/themes.html'] },
-          {to: '/docs/using-sc/notes/', from: ['/pages/docs/using-sc/index/notes', '/pages/docs/using-sc/index/notes.html'] },
+          {to: '/docs/using-sc/notes/', from: ['/pages/docs/using-sc/index/notes', '/pages/docs/using-sc/index/notes.html', '/pages/docs/using-sc/index/notes/index/index', '/pages/docs/using-sc/index/notes/index/index.html'] },
           {to: '/docs/using-sc/notes/adding', from: ['/pages/docs/using-sc/index/notes/index/adding-editing-removing', '/pages/docs/using-sc/index/notes/index/adding-editing-removing.html']},
           //Developing with SC
-          {to: '/docs/developing-with-sc/', from: ['/pages/docs/developing-with-sc', '/pages/docs/developing-with-sc.html']},
+          {to: '/docs/developing-with-sc/', from: ['/pages/docs/developing-with-sc', '/pages/docs/developing-with-sc.html', '/pages/docs/developing-with-sc/index/index', '/pages/docs/developing-with-sc/index/index.html']},
           {to: '/docs/developing-with-sc/theming', from: ['/pages/docs/developing-with-sc/index/theming', '/pages/docs/developing-with-sc/index/theming.html']},
           //API Docs
           {to: '/docs/developing-with-sc/api/namespaces/SimpleCalendar', from: ['/modules/SimpleCalendar', '/modules/SimpleCalendar.html']},
