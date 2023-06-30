@@ -11,14 +11,6 @@ export default function NotFoundWrapper(props) {
             const hashRegex = new RegExp(`${hash}$`);
             window.location.href = currentURL.replace('/types/', `/docs/developing-with-sc/api/namespaces/`).replace(hashRegex, '') + hash.replace('.', '#').toLowerCase();
         }
-        //API Enums
-        if(currentURL.includes('/enums/')){
-            //window.location.href = currentURL.replace('/enums/', '/docs/developing-with-sc/api/enums/');
-        }
-        //API interfaces
-        if(currentURL.includes('/interfaces/')){
-            window.location.href = currentURL.replace('/interfaces/', '/docs/developing-with-sc/api/interfaces/');
-        }
         //API Functions
         if(currentURL.includes('/functions/')){
             const hash = currentURL.substring(currentURL.lastIndexOf('.'));

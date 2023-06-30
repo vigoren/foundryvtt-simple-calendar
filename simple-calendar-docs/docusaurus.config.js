@@ -105,10 +105,17 @@ const config = {
             ];
           }
           //API Enums
-          if(path.includes('/enums/')){
+          if(path.includes('/docs/developing-with-sc/api/enums/')){
             return [
-              path.replace('/enums/', '/docs/developing-with-sc/api/enums/'),
-              path.replace('/enums/', '/docs/developing-with-sc/api/enums/') + '.html'
+              path.replace('/docs/developing-with-sc/api/enums/', '/enums/'),
+              path.replace('/docs/developing-with-sc/api/enums/', '/enums/') + '.html'
+            ];
+          }
+          //API Interfaces
+          if(path.includes('/docs/developing-with-sc/api/interfaces/')){
+            return [
+              path.replace('/docs/developing-with-sc/api/interfaces/', '/interfaces/'),
+              path.replace('/docs/developing-with-sc/api/interfaces/', '/interfaces/') + '.html'
             ];
           }
           return undefined;
