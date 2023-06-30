@@ -74,10 +74,10 @@ const config = {
           {to: '/docs/using-sc/changing-date-time', from: '/pages/docs/using-sc/index/changing-date-time' },
           {to: '/docs/using-sc/switching-calendars', from: '/pages/docs/using-sc/index/switching-calendars' },
           {to: '/docs/using-sc/themes', from: '/pages/docs/using-sc/index/themes' },
-          {to: '/docs/using-sc/notes', from: '/pages/docs/using-sc/index/notes' },
+          {to: '/docs/using-sc/notes/', from: '/pages/docs/using-sc/index/notes' },
           {to: '/docs/using-sc/notes/adding', from: '/pages/docs/using-sc/index/notes/index/adding-editing-removing'},
           //Developing with SC
-          {to: '/docs/developing-with-sc', from: '/pages/docs/developing-with-sc'},
+          {to: '/docs/developing-with-sc/', from: '/pages/docs/developing-with-sc'},
           {to: '/docs/developing-with-sc/theming', from: '/pages/docs/developing-with-sc/index/theming'},
           //API Docs
           {to: '/docs/developing-with-sc/api/namespaces/SimpleCalendar', from: '/modules/SimpleCalendar'},
