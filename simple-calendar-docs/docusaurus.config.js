@@ -70,6 +70,8 @@ const config = {
         redirects: [
           { to: '/docs/faq', from: ['/pages/site/docs/faq', '/pages/site/docs/faq.html'] },
           { to: '/docs/changelog', from: ['/pages/site/CHANGELOG', '/pages/site/CHANGELOG.html'] },
+          //Global Config
+          {to: '/docs/category/global-configuration', from: ['/pages/global-configuration/index/index','/pages/global-configuration/index/index.html']},
           //Using SC
           {to: '/docs/using-sc/changing-date-time', from: ['/pages/docs/using-sc/index/changing-date-time', '/pages/docs/using-sc/index/changing-date-time.html'] },
           {to: '/docs/using-sc/switching-calendars', from: ['/pages/docs/using-sc/index/switching-calendars', '/pages/docs/using-sc/index/switching-calendars.html'] },
