@@ -6,21 +6,9 @@ export default function NotFoundWrapper(props) {
     useEffect(() => {
         const currentURL = window.location.href.replace('.html', '');
 
-        //Global Config Index Page
-        if(currentURL.endsWith('/pages/global-configuration')){
-            window.location.href = '/docs/category/global-configuration/' + window.location.search + window.location.hash;
-        }
-        //Calendar Config Index Page
-        if(currentURL.endsWith('/pages/calendar-configuration')){
-            window.location.href = '/docs/category/calendar-configuration/' + window.location.search + window.location.hash;
-        }
-        //Using SC Index Page
-        if(currentURL.endsWith('/pages/docs/using-sc')){
-            window.location.href = '/docs/category/using-simple-calendar/' + window.location.search + window.location.hash;
-        }
         //API
         if(currentURL.endsWith('/modules/SimpleCalendar.Hooks')){
-            window.location.href = '/docs/developing-with-sc/api/namespaces/SimpleCalendar.Hooks' + window.location.search + window.location.hash;
+            //window.location.href = '/docs/developing-with-sc/api/namespaces/SimpleCalendar.Hooks' + window.location.search + window.location.hash;
         }
         if(currentURL.endsWith('/modules/SimpleCalendar.api')){
             window.location.href = '/docs/developing-with-sc/api/namespaces/SimpleCalendar.api' + window.location.search + window.location.hash;

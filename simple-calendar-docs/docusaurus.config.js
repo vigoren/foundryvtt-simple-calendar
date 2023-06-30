@@ -86,6 +86,7 @@ const config = {
           {to: '/docs/developing-with-sc/theming', from: ['/pages/docs/developing-with-sc/index/theming', '/pages/docs/developing-with-sc/index/theming.html']},
           //API Docs
           {to: '/docs/developing-with-sc/api/namespaces/SimpleCalendar', from: ['/modules/SimpleCalendar', '/modules/SimpleCalendar.html']},
+          {to: '/docs/developing-with-sc/api/namespaces/SimpleCalendar.Hooks', from: ['/modules/SimpleCalendar.Hooks', '/modules/SimpleCalendar.Hooks.html']},
         ],
         createRedirects(path) {
           // Global Config
