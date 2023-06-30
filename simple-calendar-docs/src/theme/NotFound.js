@@ -5,14 +5,6 @@ export default function NotFoundWrapper(props) {
 
     useEffect(() => {
         const currentURL = window.location.href.replace('.html', '');
-
-        //API
-        if(currentURL.endsWith('/modules/SimpleCalendar.Hooks')){
-            //window.location.href = '/docs/developing-with-sc/api/namespaces/SimpleCalendar.Hooks' + window.location.search + window.location.hash;
-        }
-        if(currentURL.endsWith('/modules/SimpleCalendar.api')){
-            window.location.href = '/docs/developing-with-sc/api/namespaces/SimpleCalendar.api' + window.location.search + window.location.hash;
-        }
         //API Types
         if(currentURL.includes('/types/')){
             const hash = currentURL.substring(currentURL.lastIndexOf('.'));
@@ -21,7 +13,7 @@ export default function NotFoundWrapper(props) {
         }
         //API Enums
         if(currentURL.includes('/enums/')){
-            window.location.href = currentURL.replace('/enums/', '/docs/developing-with-sc/api/enums/');
+            //window.location.href = currentURL.replace('/enums/', '/docs/developing-with-sc/api/enums/');
         }
         //API interfaces
         if(currentURL.includes('/interfaces/')){

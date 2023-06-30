@@ -87,6 +87,7 @@ const config = {
           //API Docs
           {to: '/docs/developing-with-sc/api/namespaces/SimpleCalendar', from: ['/modules/SimpleCalendar', '/modules/SimpleCalendar.html']},
           {to: '/docs/developing-with-sc/api/namespaces/SimpleCalendar.Hooks', from: ['/modules/SimpleCalendar.Hooks', '/modules/SimpleCalendar.Hooks.html']},
+          {to: '/docs/developing-with-sc/api/namespaces/SimpleCalendar.api', from: ['/modules/SimpleCalendar.api', '/modules/SimpleCalendar.api.html']},
         ],
         createRedirects(path) {
           // Global Config
@@ -101,6 +102,13 @@ const config = {
             return [
               path.replace('/docs/calendar-configuration', '/pages/calendar-configuration/index'),
               path.replace('/docs/calendar-configuration', '/pages/calendar-configuration/index') + '.html'
+            ];
+          }
+          //API Enums
+          if(path.includes('/enums/')){
+            return [
+              path.replace('/enums/', '/docs/developing-with-sc/api/enums/'),
+              path.replace('/enums/', '/docs/developing-with-sc/api/enums/') + '.html'
             ];
           }
           return undefined;
