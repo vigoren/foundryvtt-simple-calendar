@@ -192,6 +192,10 @@ const config = {
               {
                 label: 'GitHub',
                 href: 'https://github.com/vigoren/foundryvtt-simple-calendar',
+              },
+              {
+                label: 'Foundry Hub - Weblate',
+                href: 'https://weblate.foundryvtt-hub.com/projects/simple-calendar/'
               }
             ],
           },
@@ -212,7 +216,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Simple Calendar`,
+        copyright: `Copyright © ${new Date().getFullYear()} Simple Calendar. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,

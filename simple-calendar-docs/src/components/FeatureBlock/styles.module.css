@@ -4,6 +4,7 @@
     background-color: #00000012;
     margin: 1rem;
     box-shadow: 5px 5px 10px 0 #00000036;
+    border-radius: var(--ifm-card-border-radius);
 }
 
 [data-theme='dark'] .featureBlock{
