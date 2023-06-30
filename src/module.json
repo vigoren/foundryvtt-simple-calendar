@@ -113,23 +113,23 @@
 		},
 		{
 			"type": "cover",
-			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/logo.png"
+			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/src/assets/setup-cover.png"
 		},
 		{
 			"type": "screenshot",
-			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-themes.gif"
+			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/simple-calendar-docs/docs/images/sc-v2-themes.gif"
 		},
 		{
 			"type": "screenshot",
-			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-themes-comp.gif"
+			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/simple-calendar-docs/docs/images/sc-v2-themes-comp.gif"
 		},
 		{
 			"type": "screenshot",
-			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-theme-dark-config.png"
+			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/simple-calendar-docs/docs/images/sc-v2-theme-dark-config.png"
 		},
 		{
 			"type": "screenshot",
-			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/docs/images/sc-v2-theme-dark-note.png"
+			"url": "https://raw.githubusercontent.com/vigoren/foundryvtt-simple-calendar/main/simple-calendar-docs/docs/images/sc-v2-theme-dark-note.png"
 		}
 	],
 	"flags": {
