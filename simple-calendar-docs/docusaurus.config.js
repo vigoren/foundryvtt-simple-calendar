@@ -69,7 +69,7 @@ const config = {
         fromExtensions: ['html', 'htm'],
         redirects: [
           { to: '/docs/faq', from: '/pages/site/docs/faq' },
-          { to: '/docs/changelog', from: '/pages/site/CHANGELOG' },
+          { to: '/docs/changelog', from: ['/pages/site/CHANGELOG', '/pages/site/CHANGELOG.html'] },
           //Using SC
           {to: '/docs/using-sc/changing-date-time', from: '/pages/docs/using-sc/index/changing-date-time' },
           {to: '/docs/using-sc/switching-calendars', from: '/pages/docs/using-sc/index/switching-calendars' },
