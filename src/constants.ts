@@ -182,7 +182,8 @@ export enum SocketTypes {
     dateTimeChange = 'date-time-change',
     noteUpdate = 'note-update',
     emitHook = 'emit-hook',
-    setActiveCalendar = 'set-calendar'
+    setActiveCalendar = 'set-calendar',
+    renderChatLog = 'render-chat-log'
 }
 
 /**

@@ -31,7 +31,9 @@ export default class GeneralSettings extends ConfigurationItemBase{
         /** Time format (hour, minute, second) and how to display it. Used in the compact view, the clock, Notes that have a specific time set and Date Selector for time*/
         time: 'HH:mm:ss',
         /** Format for displaying just the month and year. Used at the top of any calendar month display */
-        monthYear: 'MMMM YAYYYYYZ'
+        monthYear: 'MMMM YAYYYYYZ',
+        /** Date and time format used when displaying the in game timestamp on chat messages */
+        chatTime: 'MMM DD, YYYY HH:mm'
     };
     /**
      * The different display options tied to the compact view.
@@ -59,6 +61,7 @@ export default class GeneralSettings extends ConfigurationItemBase{
         gs.dateFormat.date = this.dateFormat.date;
         gs.dateFormat.time = this.dateFormat.time;
         gs.dateFormat.monthYear = this.dateFormat.monthYear;
+        gs.dateFormat.chatTime = this.dateFormat.chatTime;
         gs.compactViewOptions.controlLayout = this.compactViewOptions.controlLayout;
         return gs;
     }
@@ -112,6 +115,9 @@ export default class GeneralSettings extends ConfigurationItemBase{
 
             if(config.hasOwnProperty('dateFormat')){
                 this.dateFormat = config.dateFormat;
+                if(!config.dateFormat.hasOwnProperty('chatTime')){
+                    this.dateFormat.chatTime = 'MMM DD, YYYY HH:mm';
+                }
             }
 
             if(config.hasOwnProperty('compactViewOptions')){

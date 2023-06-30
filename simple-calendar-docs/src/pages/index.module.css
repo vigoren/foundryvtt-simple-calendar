@@ -1,0 +1,120 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.sectionAlt{
+  background-color: var(--ifm-color-emphasis-100);
+  padding: 2rem 0;
+  margin: 1rem 0;
+}
+
+.card{
+  background-color: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-global-shadow-lw);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.card .cardHead{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--ifm-card-vertical-spacing) var(--ifm-card-horizontal-spacing);
+}
+
+.card .cardHead svg{
+  height: 2em;
+  fill: var(--ifm-font-color-base);
+}
+
+.card .cardBody{
+  padding: 0 var(--ifm-card-horizontal-spacing) var(--ifm-card-vertical-spacing);
+}
+.card .cardBody:not(:last-child){
+  padding-bottom: 0;
+}
+
+.helpItem {
+  text-align: center;
+  padding: 1rem;
+}
+
+.helpItem svg {
+  height: 3rem;
+  fill: var(--ifm-font-color-base);
+}
+
+.helpItem h3{
+  margin-top: 0.5rem;
+}
+
+.heroBanner {
+  padding: 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  height: 500px;
+  margin-bottom: 2rem;
+}
+
+.heroBannerBackground{
+  width: 100%;
+  position: relative;
+  top: 20%;
+  filter: blur(5px);
+}
+
+.heroBannerContainer{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: unset !important;
+  background-image: linear-gradient(transparent, transparent, #FFFFFF);
+}
+[data-theme='dark'] .heroBannerContainer {
+  background-image: linear-gradient(transparent, transparent, var(--ifm-background-color));
+}
+
+.herBannerLogo{
+  margin-top: 2rem;
+  height: 200px;
+  width: 182px;
+  filter: drop-shadow(0 0 10px white);
+}
+
+.heroBannerTitle{
+  text-shadow: 2px 2px 0 black;
+}
+[data-theme='dark'] .heroBannerTitle{
+  color: var(--ifm-color-content);
+}
+
+@media screen and (max-width: 996px) {
+  .heroBannerBackground{
+    width: 250%;
+    max-width: unset;
+    top: unset;
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttons a{
+  margin-right: 1rem;
+}
+
+.buttons a:last-child{
+  margin-right: 0;
+}

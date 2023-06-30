@@ -4,7 +4,8 @@ import {
     CombatPauseRules,
     ModuleName,
     NoteReminderNotificationType,
-    SettingNames, SimpleCalendarHooks,
+    SettingNames,
+    SimpleCalendarHooks,
     SocketTypes,
     Themes,
     TimeKeeperStatus
@@ -21,6 +22,7 @@ import MultiSelect from "./renderer/multi-select";
 import {GetThemeName} from "./utilities/visual";
 import {FoundryVTTGameData} from "./foundry-interfacing/game-data";
 import {Hook} from "./api/hook";
+import Ui from "./foundry-interfacing/ui";
 
 /**
  * The global Simple Calendar Controller class
@@ -73,7 +75,8 @@ export default class SCController {
             permissions: new UserPermissions(),
             secondsInCombatRound: 6,
             syncCalendars: false,
-            showNotesFolder: false
+            showNotesFolder: false,
+            inGameChatTimestamp: false
         };
     }
 
@@ -184,6 +187,9 @@ export default class SCController {
         if(globalConfiguration.hasOwnProperty('combatPauseRule')){
             this.globalConfiguration.combatPauseRule = globalConfiguration.combatPauseRule;
         }
+        if(globalConfiguration.hasOwnProperty('inGameChatTimestamp')){
+            this.globalConfiguration.inGameChatTimestamp = globalConfiguration.inGameChatTimestamp;
+        }
         this.clientSettings.theme = GetThemeName();
         this.clientSettings.openOnLoad = GameSettings.GetBooleanSettings(SettingNames.OpenOnLoad);
         this.clientSettings.openCompact = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
@@ -220,7 +226,8 @@ export default class SCController {
                 calendarsSameTimestamp: globalConfig.calendarsSameTimestamp,
                 syncCalendars: globalConfig.syncCalendars,
                 showNotesFolder: globalConfig.showNotesFolder,
-                combatPauseRule: globalConfig.combatPauseRule
+                combatPauseRule: globalConfig.combatPauseRule,
+                inGameChatTimestamp: globalConfig.inGameChatTimestamp
             };
             //Save the client settings
             GameSettings.SaveStringSetting(`${FoundryVTTGameData.worldId}.${SettingNames.Theme}`, clientConfig.theme, false).then(this.reload.bind(this)).catch(Logger.error);
@@ -236,7 +243,13 @@ export default class SCController {
             GameSettings.SaveNumericSetting(SettingNames.CompactViewScale, clientConfig.compactViewScale, false).catch(Logger.error);
             //Save the global configuration (triggers the load function)
             GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc)
-                .then(() => GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}}))
+                .then(((renderChatLog: boolean) => {
+                    if(renderChatLog){
+                        Ui.renderChatLog();
+                        GameSockets.emit({type: SocketTypes.renderChatLog, data: renderChatLog}).catch(Logger.error);
+                    }
+                    return GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}});
+                }).bind(this, this.globalConfiguration.inGameChatTimestamp !== globalConfig.inGameChatTimestamp))
                 .catch(Logger.error);
         }
     }

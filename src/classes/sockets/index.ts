@@ -1,5 +1,4 @@
 import GameSockets from "../foundry-interfacing/game-sockets";
-import {SimpleCalendarHooks} from "../../constants";
 import {Logger} from "../logging";
 import ClockSocket from "./clock-socket";
 import SocketBase from "./socket-base";
@@ -8,10 +7,10 @@ import DateTimeChangeSocket from "./date-time-change-socket";
 import EmitHookSocket from "./emit-hook-socket"
 import NoteUpdateSocket from "./note-update-socket";
 import PrimarySocket from "./primary-socket";
-import {Hook} from "../api/hook";
-import {CalManager, MainApplication} from "../index";
+import {CalManager} from "../index";
 import MainAppUpdateSocket from "./main-app-update";
 import SetActiveCalendar from "./set-active-calendar";
+import RenderChatLogSocket from "./render-chat-log-socket";
 
 export default class Sockets {
 
@@ -30,6 +29,7 @@ export default class Sockets {
         this.sockets.push(new EmitHookSocket());
         this.sockets.push(new NoteUpdateSocket());
         this.sockets.push(new SetActiveCalendar());
+        this.sockets.push(new RenderChatLogSocket());
     }
 
     /**

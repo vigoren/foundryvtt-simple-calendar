@@ -182,7 +182,7 @@ describe('Note Sheet Class Tests', () => {
         nd.endDate.day = 1;
         nd.categories.push('asd');
         //@ts-ignore
-        ns.journalData.flags['foundryvtt-simple-calendar'] = {noteData:{repeats: 0, macro: "none"}};
+        ns.journalData.flags['foundryvtt-simple-calendar'] = {noteData:{repeats: 0, macro: "none", remindUsers: []}};
         //@ts-ignore
         jest.spyOn(NManager, 'getNoteStub').mockReturnValueOnce({title: 'Journal', noteData: null, ownership: {}}).mockReturnValue({title: 'Journal', noteData: nd, ownership: je.ownership});
         //@ts-ignore
@@ -195,25 +195,25 @@ describe('Note Sheet Class Tests', () => {
         je.pages.contents[0].video.timestamp = 666;
         ns.copyData();
         //@ts-ignore
-        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "none"}}};
+        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "none", remindUsers: []}}};
         expect(await ns.getData()).toBeDefined();
         //Image page
         je.pages.contents[0].type = 'image';
         ns.copyData();
         //@ts-ignore
-        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "none"}}};
+        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "none", remindUsers: []}}};
         expect(await ns.getData()).toBeDefined();
         //PDF page
         je.pages.contents[0].type = 'pdf';
         ns.copyData();
         //@ts-ignore
-        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "none"}}};
+        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "none", remindUsers: []}}};
         expect(await ns.getData()).toBeDefined();
         //Video page
         je.pages.contents[0].type = 'video';
         ns.copyData();
         //@ts-ignore
-        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: ""}}};
+        ns.journalData.flags = {'foundryvtt-simple-calendar': {noteData:{repeats: 0, macro: "", remindUsers: []}}};
         expect(await ns.getData()).toBeDefined();
 
         //@ts-ignore
@@ -578,7 +578,7 @@ describe('Note Sheet Class Tests', () => {
         //@ts-ignore
         ns.appWindow = document.createElement('div');
         //@ts-ignore
-        ns.journalData.flags[ModuleName] = {noteData:{}};
+        ns.journalData.flags[ModuleName] = {noteData:{remindUsers:[]}};
         //@ts-ignore
         ns.journalData.ownership['a'] = 3;
         //@ts-ignore
@@ -592,6 +592,7 @@ describe('Note Sheet Class Tests', () => {
         expect(ns.journalData.flags[ModuleName].noteData.repeats).toBe(0);
 
         jest.spyOn(Utilities, 'getTextInputValue').mockReturnValue('image');
+        jest.spyOn(Utilities, 'getCheckBoxInputValue').mockReturnValueOnce(true);
         await ns.writeInputValuesToObjects();
         //@ts-ignore
         expect(ns.journalPages[0].src).toBe('image');

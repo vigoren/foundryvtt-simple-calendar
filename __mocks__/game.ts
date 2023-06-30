@@ -145,6 +145,9 @@ const game = {
     },
     release: {
         generation: 11
+    },
+    keybindings: {
+        register: () => {}
     }
 };
 
@@ -153,6 +156,11 @@ global.game = game;
 
 // @ts-ignore
 global.ui = {
+    chat:{
+        _lastId: '',
+        _state: 0,
+        render: jest.fn((force: boolean) => {})
+    },
     notifications: {
         info: jest.fn((message: string) => {}),
         warn: jest.fn((message: string) => {}),

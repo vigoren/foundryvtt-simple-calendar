@@ -26,6 +26,8 @@ import {NoteSheet} from "./classes/notes/note-sheet";
 import PF2E from "./classes/systems/pf2e";
 import {CheckRemScaling} from "./classes/utilities/visual";
 import {Hook} from "./classes/api/hook";
+import KeyBindings from "./classes/key-bindings";
+import {Chat} from "./classes/chat";
 
 updateCalManager(new CalendarManager());
 updateSC(new SCController());
@@ -55,6 +57,7 @@ Hooks.on('init', async () => {
     SC.load();
     //Initialize the main application (Pre-set values before render)
     MainApplication.initialize();
+    KeyBindings.register();
 });
 Hooks.on('ready',async () => {
     if(PF2E.isPF2E){
@@ -89,8 +92,8 @@ Hooks.on('createCombatant', SC.createCombatant.bind(SC));
 Hooks.on("updateCombat", SC.combatUpdate.bind(SC));
 Hooks.on("deleteCombat", SC.combatDelete.bind(SC));
 Hooks.on("pauseGame", SC.gamePaused.bind(SC));
-//Hooks.on('chatMessage', SC.onChatMessage.bind(SC));
-//Hooks.on('renderChatMessage', SC.onRenderChatMessage.bind(SC));
+Hooks.on('createChatMessage', Chat.createChatMessage);
+Hooks.on('renderChatMessage', Chat.onRenderChatMessage);
 Hooks.on('renderMainApp', MainApp.setWidthHeight);
 Hooks.on('renderNoteSheet', NoteSheet.SetHeight);
 Hooks.on('createJournalEntry', NManager.journalEntryUpdate.bind(NManager, 0));

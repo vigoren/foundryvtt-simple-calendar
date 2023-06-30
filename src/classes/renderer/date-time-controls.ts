@@ -98,7 +98,7 @@ export class DateTimeControls {
                     }
                 ];
             }
-            html += `<div class="fsc-control-group">`;
+            html += `<div class="fsc-control-group fsc-adjustable-controls">`;
             for(let i = 0; i < btn.length; i++){
                 html += `<button class="fsc-control fsc-primary" data-tooltip="${btn[i].amount} ${btn[i].tooltip}" data-type="${btn[i].type}" data-amount="${btn[i].amount}">${btn[i].amount}&nbsp;${btn[i].text}</button>`;
             }

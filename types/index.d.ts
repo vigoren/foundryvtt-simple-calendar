@@ -319,7 +319,7 @@ declare global{
 
             /**
              * Converts the passed in date to a timestamp.
-             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that should be converted to a timestamp. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that should be converted to a timestamp. Any missing parameters will default to the current date value for that parameter.<br/>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
              * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a timestamp. If not provided the current active calendar will be used.
              *
              * @returns The timestamp for that date.
@@ -340,13 +340,13 @@ declare global{
              * - If the date/time parameters are negative, their value will be set to 0. The exception to this is the year parameter, it can be negative.
              * - If the date/time parameters are set to a value greater than possible (eg. the 20th month in a calendar that only has 12 months, or the 34th hour when a day can only have 24 hours) the max value will be used.
              *
-             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date and time that should be formatted.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date and time that should be formatted.<br/>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
              * @param format Optional format string to return custom formats for the passed in date and time.
              * @param calendarId Optional parameter to specify the ID of the calendar to use when converting a date to a formatted string. If not provided the current active calendar will be used.
              *
              * @returns If no format string is provided an object with the date and time formatted strings, as set in the configuration, will be returned. If a format is provided then a formatted string will be returned.
              *
-             * @examples
+             * @example
              * ```javascript
              * // Assuming that the default date and time formats are in place
              * // Date: Full Month Name Day, Year
@@ -376,7 +376,7 @@ declare global{
              *
              * @returns If no format string is provided an object with the date and time formatted strings, as set in the configuration, will be returned. If a format is provided then a formatted string will be returned.
              *
-             * @examples
+             * @example
              * ```javascript
              * // Assuming that the default date and time formats are in place
              * // Date: Full Month Name Day, Year
@@ -1147,7 +1147,7 @@ declare global{
              * Will set the current date of the specified calendar to match the passed in date.
              * **Important**: This function can only be run by users who have permission to change the date in Simple Calendar.
              *
-             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that the calendar should be set to. Any missing parameters will default to the current date value for that parameter.<br>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
+             * @param date A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that the calendar should be set to. Any missing parameters will default to the current date value for that parameter.<br/>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0.
              * @param calendarId Optional parameter to specify the ID of the calendar to set the date of. If not provided the current active calendar will be used.
              *
              * @returns True if the date was set successfully, false otherwise.
@@ -1190,7 +1190,7 @@ declare global{
             /**
              * Will open up Simple Calendar to the current date, or the passed in date.
              *
-             * @param date A date object (eg `{year:2021, month: 4, day: 12}`) with the year, month and day set to the date to be visible when the calendar is opened.<br>**Important**: The month is index based so January would be 0.
+             * @param date A date object (eg `{year:2021, month: 4, day: 12}`) with the year, month and day set to the date to be visible when the calendar is opened.<br/>**Important**: The month is index based so January would be 0.
              * @param compact If to open the calendar in compact mode or not.
              * @param calendarId Optional parameter to specify the ID of the calendar to focus when the calendar view is opened. If not provided the current active calendar will be used.
              *
@@ -1317,208 +1317,10 @@ declare global{
         }
 
         /**
-         * The `SimpleCalendar.Hooks` property contains a list of all hooks that the Simple Calendar module can emit, when they are emitted and what information they pass along.
-         */
-        namespace Hooks {
-            /**
-             * This hook is emitted any time the current date is updated. The current date can be updated by several means:
-             *
-             * - When the GM clicks on the "Set Current Date" button after adjusting the current date.
-             * - When the clock is running every interval update.
-             * - When the {@link SimpleCalendar.api.setDate} function is called.
-             * - When the {@link SimpleCalendar.api.changeDate} function is called.
-             * - When the game world time changed and Simple Calendar is configured to update when that changes.
-             *
-             * **What is passed**: When this hook is emitted it will pass a {@link SimpleCalendar.Hooks.DateChangeResponse | DateChangeResponse} object.
-             *
-             * **Examples:**
-             *
-             * @example How to listen for the hook:
-             *   ```javascript
-             * Hooks.on(SimpleCalendar.Hooks.DateTimeChange, (data) => {
-             *      console.log(data);
-             *  });
-             * ```
-             *
-             * @example Response Data:
-             * ```json
-             * {
-             *   "date": {
-             *     "year": 2021,
-             *     "month": 6,
-             *     "dayOffset": 0,
-             *     "day": 8,
-             *     "dayOfTheWeek": 5,
-             *     "hour": 0,
-             *     "minute": 15,
-             *     "second": 30,
-             *     "yearZero": 1970,
-             *     "sunrise": 1622527200,
-             *     "sunset": 1622570400,
-             *     "midday": 1622548800,
-             *     "weekdays": [
-             *       "Sunday",
-             *       "Monday",
-             *       "Tuesday",
-             *       "Wednesday",
-             *       "Thursday",
-             *       "Friday",
-             *       "Saturday"
-             *     ],
-             *     "showWeekdayHeadings": true,
-             *     "currentSeason": {
-             *       "color": "#f3fff3",
-             *       "startingMonth": 5,
-             *       "startingDay": 19,
-             *       "name": "Summer"
-             *     },
-             *     "isLeapYear": false,
-             *     "display": {
-             *       "day": "9",
-             *       "daySuffix": "th",
-             *       "weekday": "Friday",
-             *       "monthName": "July",
-             *       "month": "7",
-             *       "year": "2021",
-             *       "yearName": "",
-             *       "yearPrefix": "",
-             *       "yearPostfix": "",
-             *       "time": "00:15:30"
-             *     }
-             *   },
-             *   "diff": 1,
-             *   "moons": [
-             *     {
-             *       "name": "Moon",
-             *       "color": "#ffffff",
-             *       "cycleLength": 29.53059,
-             *       "cycleDayAdjust": 0.5,
-             *       "currentPhase": {
-             *         "name": "New Moon",
-             *         "length": 1,
-             *         "icon": "new",
-             *         "singleDay": true
-             *       }
-             *     }
-             *   ]
-             * }
-             * ```
-             */
-            const DateTimeChange = 'simple-calendar-date-time-change';
-            /**
-             * This hook is emitted in the following cases:
-             *
-             * - When the clock is started.
-             * - When the clock is stopped.
-             * - When the game is paused or unpaused.
-             * - When a combat is started or ended in the active scene
-             * - When a combat round is advanced.
-             *
-             * **What is passed**: When this hook is emitted it will pass a {@link SimpleCalendar.ClockStatus | ClockStatus} object.
-             *
-             * **Examples:**
-             *
-             * @example How to listen for the hook:
-             *   ```javascript
-             * Hooks.on(SimpleCalendar.Hooks.ClockStartStop, (data) => {
-             *      console.log(data);
-             *  });
-             * ```
-             *
-             * @example Response Data:
-             * ```json
-             * {
-             *   "started": false,
-             *   "stopped": true,
-             *   "paused": false
-             * }
-             * ```
-             */
-            const ClockStartStop = 'simple-calendar-clock-start-stop';
-            /**
-             * This hook is emitted when the current users is promoted to the primary GM role.
-             *
-             * This will happen 5 seconds after loading the game if no other GM is currently in the primary role.
-             *
-             * **What is passed**: When this hook is emitted it will pass a {@link SimpleCalendar.Hooks.IsPrimaryGmResponse | IsPrimaryGmResponse} object.
-             *
-             * **Examples:**
-             *
-             * @example How to listen for the hook:
-             *   ```javascript
-             * Hooks.on(SimpleCalendar.Hooks.PrimaryGM, (data) => {
-             *      console.log(data);
-             *  });
-             * ```
-             *
-             * @example Response Data:
-             * ```json
-             * {
-             *   "isPrimaryGM": true
-             * }
-             * ```
-             */
-            const PrimaryGM = 'simple-calendar-primary-gm';
-            /**
-             * This hook is emitted while Simple Calendar is initializing, before the module is ready to use.
-             *
-             * **What is passed**: No data is passed when this hook is fired.
-             *
-             * **Examples:**
-             *
-             * @example How to listen for the hook:
-             *   ```javascript
-             * Hooks.on(SimpleCalendar.Hooks.Init, () => {
-             *      console.log(`Simple Calendar is initializing!`);
-             *  });
-             * ```
-             */
-            const Init = 'simple-calendar-init';
-            /**
-             * This hook is emitted when Simple Calendar is fully initialized and ready to use.
-             *
-             * For GMs this will happen up to 5 seconds after loading the game as additional checks are done to see which GM is to be considered the primary GM.
-             *
-             * **What is passed**: No data is passed when this hook is fired.
-             *
-             * **Examples:**
-             *
-             * @example How to listen for the hook:
-             *   ```javascript
-             * Hooks.on(SimpleCalendar.Hooks.Ready, () => {
-             *      console.log(`Simple Calendar is ready!`);
-             *  });
-             * ```
-             */
-            const Ready = 'simple-calendar-ready';
-
-
-            /**
-             * The structure of the object passed when the Simple Calendar module emits a {@link SimpleCalendar.Hooks.DateTimeChange} hook
-             */
-            interface DateChangeResponse {
-                /** This contains all information about the current date. */
-                date: DateData;
-                /** This contains the difference in seconds from the previous date and time to this new date and time. */
-                diff: number;
-                moons: MoonData[];
-            }
-
-            /**
-             * The structure of the object passed when the Simple Calendar module emits a {@link SimpleCalendar.Hooks.PrimaryGM} hook
-             */
-            interface IsPrimaryGmResponse {
-                /** If the user is the primary gm (true). */
-                isPrimaryGM: boolean;
-            }
-        }
-
-        /**
          * Contains the interfaces associated with data that is used by any Handlebar template
          * @internal
          */
         namespace HandlebarTemplateData{
-
             interface Calendar extends IDataItemBase {
                 calendarDisplayId: string;
                 clockDisplayId: string;
@@ -1753,36 +1555,36 @@ declare global{
                 allowChangeMonth?: boolean;
                 /** If to allow for the selecting of more than 1 day */
                 allowSelectDateRange?: boolean;
-                 /** If to color the background to match the current seasons color */
+                /** If to color the background to match the current seasons color */
                 colorToMatchSeason?: boolean;
-                 /** Any custom css classes to add to the containing div */
+                /** Any custom css classes to add to the containing div */
                 cssClasses?: string;
-                 /** The currently visible date */
+                /** The currently visible date */
                 date?: SimpleCalendar.Date;
-                 /** If the year is a number input that can be changed */
+                /** If the year is a number input that can be changed */
                 editYear?: boolean;
-                 /** The ID of the HTML element being added */
+                /** The ID of the HTML element being added */
                 id: string;
-                 /** The dates that are currently selected, if just single date mode use start */
+                /** The dates that are currently selected, if just single date mode use start */
                 selectedDates?: {
                     /** The selected starting date */
                     start: SimpleCalendar.Date,
-                     /** The selected ending date */
+                    /** The selected ending date */
                     end: SimpleCalendar.Date
                 };
-                 /** If to highlight the current date for the calendar */
+                /** If to highlight the current date for the calendar */
                 showCurrentDate?: boolean;
                 /** If to show more details about the day when it is right-clicked on */
                 showDayDetails?:boolean;
                 /** If to show the description popups */
                 showDescriptions?: boolean;
-                 /** If to show the different moon phases on the calendar */
+                /** If to show the different moon phases on the calendar */
                 showMoonPhases?: boolean;
-                 /** If to show any note counts on the calendar */
+                /** If to show any note counts on the calendar */
                 showNoteCount?: boolean;
-                 /** If to show the season name */
+                /** If to show the season name */
                 showSeasonName?: boolean;
-                 /** If to show the year */
+                /** If to show the year */
                 showYear?: boolean;
                 /** The theme to use for rendering the calendar */
                 theme?: string;
@@ -1796,7 +1598,7 @@ declare global{
             export interface ClockOptions {
                 /** The ID of the HTML element being added */
                 id: string;
-                 /** Any custom css classes to add to the containing div */
+                /** Any custom css classes to add to the containing div */
                 cssClasses?: string;
                 /** The theme to use for rendering this clock */
                 theme?: string;
@@ -1808,18 +1610,18 @@ declare global{
             export interface TimeSelectorOptions {
                 /** The ID of the HTML element being added */
                 id: string;
-                 /** If to allow the selection of a range of time */
+                /** If to allow the selection of a range of time */
                 allowTimeRange?: boolean;
-                 /** This will disable the renderer's self updating after change. Will require the time selector to be updated externally to view changes. */
+                /** This will disable the renderer's self updating after change. Will require the time selector to be updated externally to view changes. */
                 disableSelfUpdate?: boolean;
-                 /** The selected time to show, if not using the time range just use the start */
+                /** The selected time to show, if not using the time range just use the start */
                 selectedTime?: {
-                     /** The selected starting time */
+                    /** The selected starting time */
                     start: SimpleCalendar.Time,
-                     /** The selected ending time */
+                    /** The selected ending time */
                     end: SimpleCalendar.Time
                 }
-                 /** The custom string to use as the delimiter between the time range inputs and display */
+                /** The custom string to use as the delimiter between the time range inputs and display */
                 timeDelimiter?: string;
                 /** If to use clones of the calendars to pull data for the time selector, used in the configuration dialog */
                 useCalendarClones?: boolean
@@ -1901,7 +1703,7 @@ declare global{
              */
             export interface Data {
                 type: SocketTypes;
-                data: Partial<MainAppUpdate> | DateTimeChange | TimeKeeperStatus | Partial<Primary> | Partial<NoteUpdate> | Partial<EmitHook> | Partial<SetActiveCalendar>;
+                data: boolean | Partial<MainAppUpdate> | DateTimeChange | TimeKeeperStatus | Partial<Primary> | Partial<NoteUpdate> | Partial<EmitHook> | Partial<SetActiveCalendar>;
             }
 
             type MainAppUpdate = {
@@ -1975,6 +1777,9 @@ declare global{
             module: boolean;
         }
 
+        /**
+         * @internal
+         */
         type AddonButton = {
             title: string;
             iconClass: string;
@@ -2237,6 +2042,8 @@ declare global{
                 time: string;
                 /** The format string used to display the month and year at the top of a calendar display */
                 monthYear: string;
+                /** Date and time format used when displaying the in game timestamp on chat messages */
+                chatTime: string;
             };
             /** The different display options tied to the compact view. */
             compactViewOptions: {
@@ -2266,6 +2073,8 @@ declare global{
             syncCalendars: boolean;
             /** If to show the notes folder in the journal entries tab. */
             showNotesFolder: boolean;
+            /** If to replace the timestamps on chat messages with the date/time they were said in world time rather than real time. */
+            inGameChatTimestamp: boolean;
         }
 
         /**
@@ -2525,6 +2334,9 @@ declare global{
          */
         type DateTimeParts = Partial<Date> & Partial<Time>;
 
+        /**
+         * @internal
+         */
         type DateChangeOptions = {
             showWarning?: boolean;
             updateMonth?: boolean;

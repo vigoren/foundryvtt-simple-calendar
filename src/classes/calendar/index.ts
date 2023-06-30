@@ -1,9 +1,4 @@
-import {
-    GameWorldTimeIntegrations,
-    LeapYearRules,
-    SimpleCalendarHooks,
-    TimeKeeperStatus
-} from "../../constants";
+import {GameWorldTimeIntegrations, LeapYearRules, SimpleCalendarHooks, TimeKeeperStatus} from "../../constants";
 import Year from "./year";
 import Month from "./month";
 import {Logger} from "../logging";

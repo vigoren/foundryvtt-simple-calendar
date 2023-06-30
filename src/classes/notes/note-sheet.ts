@@ -269,6 +269,7 @@ export class NoteSheet extends JournalSheet{
                 selectedMacro: '',
                 categoryMultiSelectId: this.categoryMultiSelectId,
                 playerMultiSelectId: this.playerMultiSelectId,
+                reminder: false,
                 pageTypes: {'text': 'JOURNALENTRYPAGE.TypeText', 'image': 'JOURNALENTRYPAGE.TypeImage', 'pdf': 'JOURNALENTRYPAGE.TypePDF', 'video': 'JOURNALENTRYPAGE.TypeVideo'},
                 page: {
                     name: '',
@@ -355,7 +356,10 @@ export class NoteSheet extends JournalSheet{
                             }
                         });
                     }
+                    //Reminders
+                    newOptions.edit.reminder = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.indexOf((<Game>game).user?.id || '') > -1 || noteStub.userReminderRegistered;
                 }
+
                 //Macros
                 (<Game>game).macros?.forEach(m => {
                     if(m.canExecute && m.name){
@@ -727,6 +731,19 @@ export class NoteSheet extends JournalSheet{
             this.journalData.name = getTextInputValue('.fsc-note-title', 'New Note', this.appWindow);
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats = <NoteRepeat>getNumericInputValue(`#scNoteRepeats_${this.object.id}`, NoteRepeat.Never, false, this.appWindow);
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).macro = getTextInputValue(`#scNoteMacro_${this.object.id}`, 'none', this.appWindow);
+
+            const remindMe = getCheckBoxInputValue(`#scRemindMe_${this.object.id}`, false, this.appWindow);
+            const user = (<Game>game).user;
+            if(user){
+                const userReminded = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.indexOf(user.id) > -1;
+                if(remindMe && !userReminded){
+                    (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.push(user.id)
+                } else if(!remindMe && userReminded){
+                    const index = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.indexOf(user.id);
+                    (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.splice(index, 1)
+                }
+            }
+
 
             this.journalPages[this.uiElementStates.selectedPageIndex].name = getTextInputValue(`#scPageName_${this.object.id}`, 'New Page', this.appWindow);
             const nType = getTextInputValue(`#scPageType_${this.object.id}`, 'text', this.appWindow);

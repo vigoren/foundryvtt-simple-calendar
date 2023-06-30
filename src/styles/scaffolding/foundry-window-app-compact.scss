@@ -257,6 +257,14 @@
               }
             }
           }
+          .fsc-adjustable-controls{
+            .fsc-control{
+              padding-left: 0.2rem;
+              padding-right: 0.2rem;
+              width: calc(5ch + (0.2rem * 2));
+              flex: 1;
+            }
+          }
         }
         .fsc-side-drawer{
           top: pxToRem(10);

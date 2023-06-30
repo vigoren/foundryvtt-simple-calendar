@@ -1,5 +1,48 @@
 # Change Log
 
+## 2.3.0 - Chat Message Timestamps, Quality of LIfe Updates & Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-June%2030%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.0/module.zip)
+
+### Chat Message Timestamps
+
+Simple Calendar can now be configured to change chat message timestamps from using the real life timestamps to using the date and time from SC (in game timestamps). ([#490](https://github.com/vigoren/foundryvtt-simple-calendar/issues/490))
+
+**IMPORTANT:** Only chat messages created after this version of SC is installed will show timestamps using in game timestamps. Chat messages created before do not contain the required metadata for displaying the in game time they were created.
+
+- New setting under the `Global Configuration` called "[Use Game Time For Chat Message Timestamps](https://simplecalendar.info/docs/global-configuration/settings#use-game-time-for-chat-message-timestamps)" that is used to enable or disable this feature. This will re-render the entire chat log for every player when changed.
+- New setting under the `Display Options -> Date/Time Formatting` for each calendar called "[Chat Message Timestamp Format](https://simplecalendar.info/docs/calendar-configuration/display-options#datetime-formatting)" that allows you to specify how the chat message timestamp is displayed.
+
+### Quality of Life Updates
+
+- Added a keybinding to toggle if the calendar is visible or hidden. The binding can be edited to any key but by default uses the `Z` key. ([#478](https://github.com/vigoren/foundryvtt-simple-calendar/issues/478))
+- Added an option when editing a note to set if you want to be reminded of the note. ([#484](https://github.com/vigoren/foundryvtt-simple-calendar/issues/484))
+
+### Bug Fixes
+
+- Fixed a bug when using the compact view and using the Quick Increment layout where hitting the `Shift` or `Control` keys would cause the entire compact view to change widths. ([#499](https://github.com/vigoren/foundryvtt-simple-calendar/issues/499))
+- Fixed a bug where the calendar would not always remember the last position it was moved to.
+- Improved how custom themes look when system specific images fail to load. ([#503](https://github.com/vigoren/foundryvtt-simple-calendar/issues/503))
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Sven Hesse](https://weblate.foundryvtt-hub.com/user/DrMcCoy/) (German)
+- [Lucas](https://weblate.foundryvtt-hub.com/user/lucasts/) (Portuguese (Brazil))
+- [Demian Wright](https://weblate.foundryvtt-hub.com/user/Demian/) (Finnish)
+
+### Documentation Changes
+
+The documentation site has been completely re-done. The new site makes it easier to find information about how to configure and use Simple Calendar as well as develop for it using the API.
+
+The new site also contains documentation for past versions of Simple Calendar so users can get help they need no matter the version they are using!
+
+Be sure to check it out! [https://simplecalendar.info](https://simplecalendar.info)
+
+<hr/>
+
 # 2.2.0 - Foundry Version 11 Update, Quality of Life Updates & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-May%2024%2C%202023-blue)

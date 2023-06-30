@@ -151,7 +151,8 @@ describe('SCController Tests', () => {
             calendarsSameTimestamp: false,
             syncCalendars: true,
             showNotesFolder: true,
-            combatPauseRule: 'active'
+            combatPauseRule: 'active',
+            inGameChatTimestamp: false
         });
         jest.spyOn(GameSettings, 'GetStringSettings').mockReturnValue('test');
         jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(false);
@@ -193,7 +194,8 @@ describe('SCController Tests', () => {
             calendarsSameTimestamp: false,
             syncCalendars: false,
             showNotesFolder: false,
-            combatPauseRule: CombatPauseRules.Active
+            combatPauseRule: CombatPauseRules.Active,
+            inGameChatTimestamp: true
         }, {
             id: '',
             theme: `dark`,
@@ -212,6 +214,7 @@ describe('SCController Tests', () => {
         expect(GameSettings.SaveStringSetting).toHaveBeenCalledTimes(3);
         expect(GameSettings.SaveBooleanSetting).toHaveBeenCalledTimes(6);
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
+
     });
 
     test('Hide Context Menus', () => {

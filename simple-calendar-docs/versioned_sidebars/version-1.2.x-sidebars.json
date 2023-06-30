@@ -1,0 +1,16 @@
+{
+  "configSidebar": [
+    "installing",
+    "Configuration"
+  ],
+  "usingSidebar": [
+    "UsingTheCalendar",
+    "UpdatingDateTime",
+    "Notes"
+  ],
+  "devSidebar": [
+    "API",
+    "Hooks",
+    "Macros"
+  ]
+}

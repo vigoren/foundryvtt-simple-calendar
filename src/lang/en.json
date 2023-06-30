@@ -40,7 +40,7 @@
 	"FSC.Configuration.CombatPauseRule.Active": "Pause Only on the Active Scene",
 	"FSC.Configuration.CombatPauseRule.Current": "Pause on the Scene the GM is Currently Viewing",
 	"FSC.Configuration.Display.DateTimeFormat": "Date/Time Formatting",
-	"FSC.Configuration.Display.Description": "These settings allow you to change how the date and time are displayed for the selected calendar. For more details about configuring date formats please check out the <a target=\"_blank\" href=\"https://simplecalendar.info/pages/calendar-configuration/index/display-options.html#datetime-formatting\">documentation</a> or expand the table below.",
+	"FSC.Configuration.Display.Description": "These settings allow you to change how the date and time are displayed for the selected calendar. For more details about configuring date formats please check out the <a target=\"_blank\" href=\"https://simplecalendar.info/docs/calendar-configuration/display-options#datetime-formatting\">documentation</a> or expand the table below.",
 	"FSC.Configuration.Display.Compact": "Compact View Options",
 	"FSC.Configuration.Display.CompactControls.Title": "Compact View Date/Time Control Layout",
 	"FSC.Configuration.Display.CompactControls.Description": "Choose the layout for the buttons used to change the date/time of the calendar while in compact view.",
@@ -56,6 +56,8 @@
 	"FSC.Configuration.Global.SyncCalendars.Description": "When checked this option will cause all calendars to change their date/time when using the controls to change the date/time forward or backwards.",
 	"FSC.Configuration.Global.ShowNoteFolder.Title": "Show Notes Folder",
 	"FSC.Configuration.Global.ShowNoteFolder.Description": "Whether to show the note folder in the Journal Entries tab. This requires a refresh to take effect.",
+	"FSC.Configuration.Global.InGameChatTimestamp.Title": "Use Game Time For Chat Message Timestamps",
+	"FSC.Configuration.Global.InGameChatTimestamp.Description": "If to use the current date and time set in Simple Calendar as the visible timestamp for messages instead of the real world timestamp.",
 	"FSC.Configuration.ImportExport.ExportDescription": "Choose which settings and calendar settings to be exported out. These exports can be shared and imported into other worlds.",
 	"FSC.Configuration.ImportExport.ImportDescription": "Choose an exported file that contains configuration settings for Simple Calendar to import into this world.",
 	"FSC.Configuration.ImportExport.ImportDetailsText": "These configuration settings have been found in the selected file. Choose which settings to apply and to which Calendar to apply them to.",
@@ -341,6 +343,8 @@
 	"FSC.Configuration.General.Display.DateFormat.TimeHelp": "The format text used to put together the display text for a time.",
 	"FSC.Configuration.General.Display.DateFormat.MonthYear": "Month/Year Format",
 	"FSC.Configuration.General.Display.DateFormat.MonthYearHelp": "The format text used to put together the display text for just the month and year that appears at the top of the calendar view.",
+	"FSC.Configuration.General.Display.DateFormat.ChatTime": "Chat Message Timestamp Format",
+	"FSC.Configuration.General.Display.DateFormat.ChatTimeHelp": "The format text used to put together the display text for a chat messages timestamp.",
 	"FSC.Configuration.Notes.Title": "Note Settings",
 	"FSC.Configuration.Notes.NoteCategories": "Note Categories",
 	"FSC.Configuration.NoteCategories.Name": "Note Category Name",
@@ -493,5 +497,7 @@
 	"FSC.Warn.Time.ActiveCombats": "There is an active combat/combats running, please resolve them before starting the real time clock.",
 	"FSC.Warn.Macros.GMUpdate": "Only the GM can update the calendar date!",
 	"FSC.Warn.Calendar.NotGM": "There is no GM present in the game, a GM needs to be logged in for players to change the date/time.",
-	"FSC.Error.Calendar.GMCurrent": "You need to be a GM to change the current date."
+	"FSC.Error.Calendar.GMCurrent": "You need to be a GM to change the current date.",
+	"FSC.KeyBinding.Toggle.Title": "Toggle Calendar",
+	"FSC.KeyBinding.Toggle.Hint": "This key will open or close the calendar window when pressed."
 }

@@ -306,6 +306,13 @@ describe('Main App Class Tests', () => {
         ma.uiElementStates.compactView = true;
         ma.activateListeners();
         expect(mainApp.classList.contains('fsc-compact-view')).toBe(true);
+
+        //@ts-ignore
+        game.release.generation = 10;
+        ma.activateListeners();
+        expect(mainApp.classList.contains('fsc-compact-view')).toBe(true);
+        //@ts-ignore
+        game.release.generation = 11;
     });
 
     test('Addon Button Click', () => {
@@ -987,5 +994,21 @@ describe('Main App Class Tests', () => {
         //@ts-ignore
         ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
         expect(ma.updateApp).toHaveBeenCalledTimes(1);
+    });
+
+    test('toggleWindow', () => {
+        jest.spyOn(ma, "render").mockImplementation(() => {});
+
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(1);
+
+        SC.clientSettings.persistentOpen = true;
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(1);
+
+        //@ts-ignore
+        jest.spyOn(ma, "rendered", "get").mockReturnValue(false);
+        ma.sceneControlButtonClick();
+        expect(ma.render).toHaveBeenCalledTimes(2);
     });
 });

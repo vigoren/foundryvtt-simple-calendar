@@ -1,0 +1,32 @@
+.featureBlock{
+    height: calc(100% - 2rem);
+    padding: 1rem;
+    background-color: #00000012;
+    margin: 1rem;
+    box-shadow: 5px 5px 10px 0 #00000036;
+    border-radius: var(--ifm-card-border-radius);
+}
+
+[data-theme='dark'] .featureBlock{
+    background-color: #ffffff12;
+    box-shadow: 5px 5px 10px 0 #000000a3;
+}
+.featureBlock h3 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.featureBlock svg{
+    height: 1.5rem;
+    margin-right: 0.25rem;
+    fill: var(--ifm-color-primary);
+}
+
+@media screen and (max-width: 996px) {
+    .featureBlock{
+        margin: 1rem 0;
+    }
+}

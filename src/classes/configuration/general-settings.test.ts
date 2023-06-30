@@ -51,7 +51,7 @@ describe('General Settings Class Tests', () => {
         gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, playersAddNotes: true });
         expect(gs.id).toBe('a');
 
-        gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, dateFormat:{date: '', time: '', monthYear: ''}, playersAddNotes: true, noteDefaultVisibility: true, postNoteRemindersOnFoundryLoad: true, compactViewOptions:{controlLayout: CompactViewDateTimeControlDisplay.Full} });
+        gs.loadFromSettings({ id: 'a', gameWorldTimeIntegration: GameWorldTimeIntegrations.Mixed, showClock: true, pf2eSync: true, dateFormat:{date: '', time: '', monthYear: '', chatTime: ''}, playersAddNotes: true, noteDefaultVisibility: true, postNoteRemindersOnFoundryLoad: true, compactViewOptions:{controlLayout: CompactViewDateTimeControlDisplay.Full} });
         expect(gs.id).toBe('a');
         expect(gs.showClock).toBe(true);
         expect(gs.pf2eSync).toBe(true);
