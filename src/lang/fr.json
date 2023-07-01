@@ -546,5 +546,11 @@
 	"FSC.Configuration.Client.PersistentOpen.Description": "Lorsqu'il est activé, ce paramètre retirera le bouton fermer de la fenêtre de calendrier et empêchera la clé Esc de le fermer. Le bouton en dessous des notes de journaux dans la barre d'outil à gauche deviennent alors un bouton pour ouvrir et fermer le calendrier.",
 	"FSC.Configuration.Client.CompactViewScale.Title": "Échelle de vue compacte",
 	"FSC.Configuration.Client.CompactViewScale.Description": "Ce réglage vous permet de modifier l'échelle à laquelle la vue compacte est affichée. Vous pouvez l'utiliser pour faire apparaître la vue compacte plus ou moins grande. Le nombre représente le pourcentage de la taille de l'échelle par rapport à la taille par défaut, 100 %.",
-	"FSC.Predefined.Exalted": "Exalted"
+	"FSC.Predefined.Exalted": "Exalted",
+	"FSC.Configuration.Global.InGameChatTimestamp.Description": "Si l'on veut utiliser la date et l'heure actuelles définies dans Simple Calendar comme horodatage visible pour les messages au lieu de l'horodatage du monde réel.",
+	"FSC.Configuration.General.Display.DateFormat.ChatTime": "Format de l'horodatage des messages de la conversation",
+	"FSC.KeyBinding.Toggle.Hint": "Presser cette touche permet d'ouvrir ou de fermer la fenêtre du calendrier.",
+	"FSC.Configuration.Global.InGameChatTimestamp.Title": "Utiliser le Temps de la partie pour horodater les messages de conversation",
+	"FSC.Configuration.General.Display.DateFormat.ChatTimeHelp": "Le format du texte utilisé pour composer l'affichage de l'horodatage d'un message de la conversation.",
+	"FSC.KeyBinding.Toggle.Title": "Activer le calendrier"
 }
