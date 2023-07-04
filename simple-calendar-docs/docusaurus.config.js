@@ -46,6 +46,13 @@ const config = {
   ],
   plugins: [
     [
+      '@docusaurus/plugin-google-gtag',
+      {
+        trackingID: 'G-6RRCV322PE',
+        anonymizeIP: true,
+      },
+    ],
+    [
       'docusaurus-plugin-typedoc',
 
       // Plugin / TypeDoc options
