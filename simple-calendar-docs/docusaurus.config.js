@@ -130,6 +130,7 @@ const config = {
       }
     ]
   ],
+  //themes: ['@docusaurus/theme-search-algolia'],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -252,6 +253,24 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+      },
+      algolia: {
+        // The application ID provided by Algolia
+        appId: 'YOC07F3IBT',
+
+        // Public API key: it is safe to commit it
+        apiKey: 'f9285396e823a8b923b266b0d243a81d',
+
+        indexName: 'simplecalendar',
+
+        // Optional: see doc section below
+        contextualSearch: true,
+
+        // Optional: Algolia search parameters
+        searchParameters: {},
+
+        // Optional: path for search page that enabled by default (`false` to disable it)
+        searchPagePath: 'search',
       },
     }),
 };
