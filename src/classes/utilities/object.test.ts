@@ -1,4 +1,5 @@
 import {deepMerge, isObject, isObjectEmpty} from "./object";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 
 describe('Utilities Object Tests', () => {
 

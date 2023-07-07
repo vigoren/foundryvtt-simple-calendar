@@ -18,7 +18,7 @@ export class ChatTimestamp {
         //@ts-ignore
         chatMessage.flags[ModuleName]['sc-timestamps'] = flagData;
         //@ts-ignore
-        chatMessage.updateSource({ flags: chatMessage.flags, export: () => {return "no"} });
+        chatMessage.updateSource({ flags: chatMessage.flags });
     }
 
     public static getFormattedChatTimestamp(chatMessage: ChatMessage){

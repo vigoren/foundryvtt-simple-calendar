@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import Calendar from "../calendar";
 import ConfigurationApp from "./configuration-app";
 import {
@@ -29,7 +30,6 @@ import * as ObjectUtilities from "../utilities/object";
 import Month from "../calendar/month";
 import {saveAs} from "file-saver";
 import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
-import {Weekday} from "../calendar/weekday";
 
 jest.mock('file-saver');
 

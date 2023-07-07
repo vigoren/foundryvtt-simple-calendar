@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import Calendar from "../calendar";
 import MainApp from "./main-app";
 import {
@@ -938,7 +939,7 @@ describe('Main App Class Tests', () => {
 
         const fEvent = {target: target};
 
-        document.elementFromPoint = jest.fn().mockReturnValueOnce(null).mockReturnValue(sibling);
+        document.elementFromPoint = jest.fn<(x: number, y: number) => Element | null>().mockReturnValueOnce(null).mockReturnValue(sibling);
 
         //@ts-ignore
         ma.noteDrag(fEvent);

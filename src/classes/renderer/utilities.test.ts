@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 
 import RendererUtilities from "./utilities";
 import NoteStub from "../notes/note-stub";

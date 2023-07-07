@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import Calendar from "../calendar";
 import {CalManager, SC, updateCalManager, updateNManager, updateSC} from "../index";
 import CalendarManager from "../calendar/calendar-manager";
@@ -37,14 +38,30 @@ describe('Chat Timestamp Tests', () => {
                 cm.flags[key] = data;
                 return Promise.resolve();
             }),
-            flags: <Record<string, any>>{}
+            flags: <Record<string, any>>{},
+            updateSource: jest.fn((obj: Record<string, any>) => {
+                cm.flags = obj['flags'];
+            })
         };
 
         //@ts-ignore
         ChatTimestamp.addGameTimeToMessage(cm);
 
-        expect(cm.setFlag).toHaveBeenCalledTimes(1);
-        expect(cm.flags['sc-timestamps']).toEqual({id: 'a', timestamp: tCal.toSeconds()});
+        expect(cm.updateSource).toHaveBeenCalledTimes(1);
+        expect(cm.flags['foundryvtt-simple-calendar']['sc-timestamps']).toEqual({id: 'a', timestamp: tCal.toSeconds()});
+    });
+
+    test('Get Formatted Chat Timestamp', () => {
+        const cm = {
+            getFlag: jest.fn(() => {
+                return {id: 'a', timestamp: tCal.toSeconds()};
+            })
+        };
+
+        //@ts-ignore
+        const displayDate = ChatTimestamp.getFormattedChatTimestamp(cm);
+        expect(displayDate).not.toBe('');
+        expect(cm.getFlag).toHaveBeenCalledTimes(1);
     });
 
     test('Render Timestamp', () => {

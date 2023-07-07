@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import {compareSemanticVersions, generateUniqueId, ordinalSuffix, PadNumber, randomHash} from "./string";
 
 describe('Utilities String Tests', () => {

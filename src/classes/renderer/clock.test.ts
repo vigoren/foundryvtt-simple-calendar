@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import Calendar from "../calendar";
 import {CalManager, updateCalManager, updateNManager, updateSC} from "../index";
 import CalendarManager from "../calendar/calendar-manager";

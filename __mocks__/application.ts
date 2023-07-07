@@ -1,4 +1,4 @@
-
+import {jest} from '@jest/globals';
 // @ts-ignore
 class Application {
     constructor() {

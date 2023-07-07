@@ -1,4 +1,4 @@
-
+import {jest} from '@jest/globals';
 const renderer = jest.fn((force: boolean, options: any)=>{});
 
 // @ts-ignore

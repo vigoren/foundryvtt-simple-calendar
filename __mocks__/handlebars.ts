@@ -1,4 +1,4 @@
-
+import {jest} from '@jest/globals';
 class ss{
     v: string;
     constructor(v: string) {

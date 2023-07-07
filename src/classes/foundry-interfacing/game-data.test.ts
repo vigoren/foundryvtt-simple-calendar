@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import {FoundryVTTGameData} from "./game-data";
 
 describe('FoundryVTT Game Data Class Tests', () => {

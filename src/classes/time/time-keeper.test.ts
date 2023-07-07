@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 
 import TimeKeeper from "./time-keeper";
 import {GameWorldTimeIntegrations, TimeKeeperStatus} from "../../constants";
@@ -16,7 +17,7 @@ describe('Time Keeper Class Tests', () => {
     let tk: TimeKeeper
 
     beforeEach(() => {
-        jest.spyOn(console, 'error').mockImplementation();
+        jest.spyOn(console, 'error').mockImplementation(()=>{});
         updateCalManager(new CalendarManager());
         updateSC(new SCController());
         tk = new TimeKeeper('test',1);

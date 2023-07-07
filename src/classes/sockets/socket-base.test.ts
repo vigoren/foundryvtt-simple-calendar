@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import SocketBase from "./socket-base";
 import {SocketTypes} from "../../constants";
 import Calendar from "../calendar";

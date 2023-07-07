@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 
 import {DateSelector} from "./index";
 import {CalendarClickEvents, DateSelectorPositions} from "../../constants";
@@ -200,7 +201,7 @@ describe('Date Selector Class Tests', () => {
     test('Calendar Click', () => {
         const wrapElm = document.createElement('div');
         const ddElm = document.createElement('div');
-        jest.spyOn(Renderer.TimeSelector, 'HideTimeDropdown').mockImplementation();
+        jest.spyOn(Renderer.TimeSelector, 'HideTimeDropdown').mockImplementation(()=>{});
         const gebiSpy = jest.spyOn(document, 'getElementById').mockReturnValue(wrapElm);
         //@ts-ignore
         jest.spyOn(wrapElm, 'getElementsByClassName').mockReturnValue([ddElm]);
@@ -295,14 +296,14 @@ describe('Date Selector Class Tests', () => {
     });
 
     test('Add Time Click', () => {
-        const updateSpy = jest.spyOn(ds, 'update').mockImplementation();
+        const updateSpy = jest.spyOn(ds, 'update').mockImplementation(()=>{});
         ds.addTimeClick(new Event('click'));
         expect(ds.addTime).toBe(true);
         expect(updateSpy).toHaveBeenCalledTimes(1);
     });
 
     test('Remove Time Click', () => {
-        const updateSpy = jest.spyOn(ds, 'update').mockImplementation();
+        const updateSpy = jest.spyOn(ds, 'update').mockImplementation(()=>{});
         ds.removeTimeClick(new Event('click'));
         expect(ds.addTime).toBe(false);
         expect(updateSpy).toHaveBeenCalledTimes(1);

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import Moon from "./moon";
 import {Icons, MoonYearResetOptions, PredefinedCalendars} from "../../constants";
 import {CalManager, updateCalManager, updateNManager} from "../index";
