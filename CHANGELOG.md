@@ -1,14 +1,15 @@
 # Change Log
 
-## 2.3.2 - Bug Fixes
+## 2.3.3 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%2030%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.2/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.3/module.zip)
 
 ### Bug Fixes
 
 - Fixed a bug where certain chat messages would appear twice if the [Use Game Time For Chat Message Timestamps](https://simplecalendar.info/docs/global-configuration/settings#use-game-time-for-chat-message-timestamps) setting is enabled. ([#515](https://github.com/vigoren/foundryvtt-simple-calendar/issues/515))
 - Fixed a bug where the game time would not be included when the chat log was exported. ([514](https://github.com/vigoren/foundryvtt-simple-calendar/issues/514))
+- Fixed a bug when players saved their client settings through Simple Calendars configuration dialog the date of the calendar would change to a year of 0.
 
 ### Translation Updates
 
