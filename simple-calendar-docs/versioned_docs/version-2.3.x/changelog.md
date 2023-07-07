@@ -295,7 +295,7 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 
 ### Theming
 
-I have done a lot of work around making theming Simple Calendar as easy as possible. This allows me to add new themes easier and quicker. It also opens up the ability of third party modules or individuals to easily customize the look of Simple Calendar. For more details on how to theme Simple Calendar check out the [theming](https://simplecalendar.info//pages/docs/developing-with-sc/index/theming.html) documentation!
+I have done a lot of work around making theming Simple Calendar as easy as possible. This allows me to add new themes easier and quicker. It also opens up the ability of third party modules or individuals to easily customize the look of Simple Calendar. For more details on how to theme Simple Calendar check out the [theming](https://simplecalendar.info/pages/docs/developing-with-sc/index/theming.html) documentation!
 
 Changes that has been done to enable easy theming:
 

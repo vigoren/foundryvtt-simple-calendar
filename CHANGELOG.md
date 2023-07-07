@@ -1,5 +1,30 @@
 # Change Log
 
+## 2.3.2 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-July%2030%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.2/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where certain chat messages would appear twice if the [Use Game Time For Chat Message Timestamps](https://simplecalendar.info/docs/global-configuration/settings#use-game-time-for-chat-message-timestamps) setting is enabled. ([#515](https://github.com/vigoren/foundryvtt-simple-calendar/issues/515))
+- Fixed a bug where the game time would not be included when the chat log was exported. ([514](https://github.com/vigoren/foundryvtt-simple-calendar/issues/514))
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Jakub](https://weblate.foundryvtt-hub.com/user/Lioheart/) (Polish)
+- [TravelingK](https://weblate.foundryvtt-hub.com/user/TravelingK/) (Chinese (Simplified))
+
+### Documentation Changes
+
+- Added search to the [documentation site](https://simplecalendar.info). This search is quite robust and is powered by [algolia](https://www.algolia.com/).
+- Fixed several redirects that were not working.
+
+<hr/>
+
 ## 2.3.0 - Chat Message Timestamps, Quality of LIfe Updates & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-June%2030%2C%202023-blue)
@@ -294,7 +319,7 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 
 ### Theming
 
-I have done a lot of work around making theming Simple Calendar as easy as possible. This allows me to add new themes easier and quicker. It also opens up the ability of third party modules or individuals to easily customize the look of Simple Calendar. For more details on how to theme Simple Calendar check out the [theming](https://simplecalendar.info//pages/docs/developing-with-sc/index/theming.html) documentation!
+I have done a lot of work around making theming Simple Calendar as easy as possible. This allows me to add new themes easier and quicker. It also opens up the ability of third party modules or individuals to easily customize the look of Simple Calendar. For more details on how to theme Simple Calendar check out the [theming](https://simplecalendar.info/pages/docs/developing-with-sc/index/theming.html) documentation!
 
 Changes that has been done to enable easy theming:
 
