@@ -10,7 +10,16 @@ export class ChatTimestamp {
             id: cal.id,
             timestamp: cal.toSeconds()
         };
-        chatMessage.setFlag(ModuleName, 'sc-timestamps', flagData).catch(Logger.error);
+        //Updating the message flags then updating the source with its own flags ensures what we do not wright over another modules message settings.
+        //@ts-ignore
+        if(!chatMessage.flags.hasOwnProperty(ModuleName)){
+            //@ts-ignore
+            chatMessage.flags[ModuleName] = {};
+        }
+        //@ts-ignore
+        chatMessage.flags[ModuleName]['sc-timestamps'] = flagData;
+        //@ts-ignore
+        chatMessage.updateSource({ flags: chatMessage.flags, export: () => {return "no"} });
     }
 
     public static renderTimestamp(chatMessage: ChatMessage, html: JQuery){
