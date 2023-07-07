@@ -82,7 +82,7 @@ export default class ConfigurationApp extends FormApplication {
     private clientSettings: SimpleCalendar.ClientSettingsData = {
         id: '',
         theme: Themes[0].key,
-        openOnLoad: true,
+        openOnLoad: false,
         openCompact: false,
         rememberPosition: true,
         rememberCompactPosition: false,

@@ -167,7 +167,7 @@ export default class MigrationApp extends Application{
         SC.save(SC.globalConfiguration, {
             id: '',
             theme: Themes[0].key,
-            openOnLoad: true,
+            openOnLoad: false,
             openCompact: false,
             rememberPosition: true,
             rememberCompactPosition: false,
