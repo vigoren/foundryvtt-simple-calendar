@@ -1,6 +1,5 @@
 import {ModuleName} from "../../constants";
 import {CalManager, SC} from "../index";
-import {Logger} from "../logging";
 import {FormatDateTime} from "../utilities/date-time";
 
 export class ChatTimestamp {
@@ -22,22 +21,30 @@ export class ChatTimestamp {
         chatMessage.updateSource({ flags: chatMessage.flags, export: () => {return "no"} });
     }
 
+    public static getFormattedChatTimestamp(chatMessage: ChatMessage){
+        const timestamps = <{id: string, timestamp: number;}>chatMessage.getFlag(ModuleName, 'sc-timestamps');
+        let formattedDateTime = "";
+        if(timestamps){
+            const cal = CalManager.getCalendar(timestamps['id']);
+            if(cal){
+                const dateTime = cal.secondsToDate(timestamps['timestamp']);
+                formattedDateTime = FormatDateTime(dateTime, `${cal.generalSettings.dateFormat.chatTime}`, cal);
+            }
+        }
+        return formattedDateTime;
+    }
+
     public static renderTimestamp(chatMessage: ChatMessage, html: JQuery){
         if (SC.globalConfiguration.inGameChatTimestamp) {
-            const timestamps = <{id: string, timestamp: number;}>chatMessage.getFlag(ModuleName, 'sc-timestamps');
-            if(timestamps){
-                const cal = CalManager.getCalendar(timestamps['id']);
-                if(cal){
-                    const dateTime = cal.secondsToDate(timestamps['timestamp']);
-                    const formattedDateTime = FormatDateTime(dateTime, `${cal.generalSettings.dateFormat.chatTime}`, cal);
-                    const foundryTime = html[0].querySelector('.message-header .message-metadata .message-timestamp');
-                    if(foundryTime){
-                        (<HTMLElement>foundryTime).style.display = 'none';
-                        const newTime = document.createElement('time');
-                        newTime.classList.add('sc-timestamp');
-                        newTime.innerText = formattedDateTime;
-                        foundryTime.after(newTime);
-                    }
+            const formattedDateTime = this.getFormattedChatTimestamp(chatMessage);
+            if(formattedDateTime){
+                const foundryTime = html[0].querySelector('.message-header .message-metadata .message-timestamp');
+                if(foundryTime){
+                    (<HTMLElement>foundryTime).style.display = 'none';
+                    const newTime = document.createElement('time');
+                    newTime.classList.add('sc-timestamp');
+                    newTime.innerText = formattedDateTime;
+                    foundryTime.after(newTime);
                 }
             }
         }
