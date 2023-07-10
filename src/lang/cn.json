@@ -415,5 +415,8 @@
 	"FSC.Configuration.Client.Description": "这些设定仅影响该浏览器的Simple Calendar，不会影响到其他玩家。这些设定也能在模组设置中找到。",
 	"FSC.Configuration.Client.OpenOnLoad.Title": "载入时打开",
 	"FSC.Configuration.Client.OpenOnLoad.Description": "Foundry VTT载入时会打开Simple Calendar。",
-	"FSC.Configuration.Client.OpenCompact.Title": "以紧凑模式打开"
+	"FSC.Configuration.Client.OpenCompact.Title": "以紧凑模式打开",
+	"FSC.Configuration.Client.RememberPosition.Description": "Simple Calendar 将记忆上次关闭时所处的位置，并在该位置打开。",
+	"FSC.Configuration.Client.RememberPosition.Title": "记忆位置",
+	"FSC.Configuration.Client.RememberCompactPosition.Description": "Simple Calendar 将会记忆上次在紧凑模式下关闭的位置。再次以紧凑模式打开时，Simple Calendar 会在该位置打开。该选项与完整模式的位置互相独立。"
 }

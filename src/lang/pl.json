@@ -493,5 +493,11 @@
 	"FSC.Configuration.Display.CompactControls.Description": "Wybierz układ przycisków używanych do zmiany daty/godziny w widoku kompaktowym.",
 	"FSC.FullControls": "Pełna kontrola",
 	"FSC.Configuration.Client.PersistentOpen.Description": "Włączenie tego ustawienia spowoduje usunięcie przycisku zamykania z okna kalendarza i uniemożliwi zamknięcie go za pomocą klawisza escape. Przycisk pod Journal Notes na lewym pasku narzędziowym stanie się wtedy przełącznikiem do otwierania i zamykania kalendarza.",
-	"FSC.Predefined.Exalted": "Wywyższony"
+	"FSC.Predefined.Exalted": "Wywyższony",
+	"FSC.Configuration.Global.InGameChatTimestamp.Title": "Używanie czasu gry do oznaczania wiadomości na czacie",
+	"FSC.Configuration.Global.InGameChatTimestamp.Description": "Jeśli ma być używana bieżąca data i godzina ustawiona w Simple Calendar jako widoczny znacznik czasu dla wiadomości zamiast rzeczywistego znacznika czasu.",
+	"FSC.Configuration.General.Display.DateFormat.ChatTimeHelp": "Tekst formatu używany do łączenia tekstu wyświetlanego dla znacznika czasu wiadomości czatu.",
+	"FSC.KeyBinding.Toggle.Title": "Przełączanie kalendarza",
+	"FSC.KeyBinding.Toggle.Hint": "Naciśnięcie tego przycisku spowoduje otwarcie lub zamknięcie okna kalendarza.",
+	"FSC.Configuration.General.Display.DateFormat.ChatTime": "Format znacznika czasu wiadomości czatu"
 }
