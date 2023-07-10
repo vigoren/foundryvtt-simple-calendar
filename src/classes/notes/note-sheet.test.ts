@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, beforeAll, afterAll, describe, expect, test} from '@jest/globals';
 
 import Calendar from "../calendar";
 import {
@@ -321,7 +322,7 @@ describe('Note Sheet Class Tests', () => {
 
         //@ts-ignore
         ns.editMode = true;
-        jest.spyOn(ns, 'updateNoteRepeatDropdown').mockImplementation();
+        jest.spyOn(ns, 'updateNoteRepeatDropdown').mockImplementation(()=>{});
         jest.spyOn(appWindow, 'querySelector').mockReturnValue(document.createElement('div'));
         //@ts-ignore
         jest.spyOn(appWindow, 'querySelectorAll').mockReturnValue([document.createElement('div')]);
@@ -489,7 +490,7 @@ describe('Note Sheet Class Tests', () => {
     });
 
     test('Date Selector Select', async () => {
-        jest.spyOn(ns, 'updateNoteRepeatDropdown').mockImplementation();
+        jest.spyOn(ns, 'updateNoteRepeatDropdown').mockImplementation(()=>{});
         //@ts-ignore
         ns.journalData.flags[ModuleName] = {noteData:{}};
         await ns.dateSelectorSelect({timeSelected: false, startDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}, endDate: {year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0}});

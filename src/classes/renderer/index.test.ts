@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import Renderer from "./index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 
 describe('Renderer Class Tests', () => {
     test('Renderer', () => {

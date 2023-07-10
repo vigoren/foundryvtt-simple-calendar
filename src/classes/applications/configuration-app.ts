@@ -1351,9 +1351,14 @@ export default class ConfigurationApp extends FormApplication {
         if(updateFromForm){
             this.writeInputValuesToObjects();
         }
-        CalManager.mergeClonedCalendars();
-        SC.save(this.globalConfiguration, this.clientSettings);
-        await CalManager.getActiveCalendar().syncTime(true);
+        if(GameSettings.IsGm()){
+            CalManager.mergeClonedCalendars();
+            SC.save(this.globalConfiguration, this.clientSettings);
+            await CalManager.getActiveCalendar().syncTime(true);
+        } else {
+            SC.save(null, this.clientSettings);
+        }
+
         if(close){
             this.closeApp();
         } else {

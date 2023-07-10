@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, afterEach, describe, expect, test} from '@jest/globals';
 import {Icons, Themes} from "../../constants";
 import {
     animateElement,

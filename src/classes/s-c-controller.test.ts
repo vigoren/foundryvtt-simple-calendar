@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import SCController from "./s-c-controller";
 import {
     CalManager, MainApplication,
@@ -18,14 +19,13 @@ import CalendarManager from "./calendar/calendar-manager";
 import MainApp from "./applications/main-app";
 import ConfigurationApp from "./applications/configuration-app";
 import {GameSettings} from "./foundry-interfacing/game-settings";
-import {CombatPauseRules, NoteReminderNotificationType, Themes} from "../constants";
+import {CombatPauseRules, NoteReminderNotificationType} from "../constants";
 import MigrationApp from "./applications/migration-app";
 import NoteManager from "./notes/note-manager";
 import Calendar from "./calendar";
 import * as PermUtils from "./utilities/permissions";
 import GameSockets from "./foundry-interfacing/game-sockets";
 import UserPermissions from "./configuration/user-permissions";
-import spyOn = jest.spyOn;
 
 describe('SCController Tests', () => {
 
@@ -251,7 +251,7 @@ describe('SCController Tests', () => {
 
     test('Get Scene Control Buttons', () => {
         const controls: any[] = [{name:'test', tools:[]}];
-        const canUserSpy = spyOn(PermUtils, 'canUser').mockReturnValue(true);
+        const canUserSpy = jest.spyOn(PermUtils, 'canUser').mockReturnValue(true);
         SC.getSceneControlButtons(controls);
         expect(controls.length).toBe(1);
         expect(controls[0].tools.length).toBe(0);

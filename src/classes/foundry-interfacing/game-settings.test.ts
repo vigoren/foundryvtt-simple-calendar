@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 
 import {GameSettings} from "./game-settings";
 import {CombatPauseRules, SettingNames} from "../../constants";
@@ -152,7 +153,7 @@ describe('Game Settings Class Tests', () => {
         //@ts-ignore
         expect(ui.notifications.error).toHaveBeenCalledTimes(1);
 
-        jest.spyOn(console, 'error').mockImplementation();
+        jest.spyOn(console, 'error').mockImplementation(()=>{});
         const origUi = ui.notifications;
         ui.notifications = undefined;
         GameSettings.UiNotification('');

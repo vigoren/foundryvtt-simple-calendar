@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import GameSockets from "../foundry-interfacing/game-sockets";
 import CheckClockRunningSocket from "./check-clock-running-socket";
 import {SocketTypes} from "../../constants";

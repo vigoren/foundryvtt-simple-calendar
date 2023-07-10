@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import Calendar from "../calendar";
 import ConfigurationApp from "./configuration-app";
 import {
@@ -29,7 +30,6 @@ import * as ObjectUtilities from "../utilities/object";
 import Month from "../calendar/month";
 import {saveAs} from "file-saver";
 import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
-import {Weekday} from "../calendar/weekday";
 
 jest.mock('file-saver');
 
@@ -754,6 +754,9 @@ describe('Configuration App Class Tests', () => {
         jest.spyOn(CalManager, 'mergeClonedCalendars').mockImplementation(() => {});
         jest.spyOn(SC, 'save').mockImplementation(() => {});
 
+        //@ts-ignore
+        game.user.isGM = true;
+
         await ca.save(false);
         //@ts-ignore
         expect(ca.writeInputValuesToObjects).toHaveBeenCalledTimes(1);
@@ -762,10 +765,13 @@ describe('Configuration App Class Tests', () => {
         //@ts-ignore
         expect(ca.updateApp).toHaveBeenCalledTimes(1);
 
+        //@ts-ignore
+        game.user.isGM = false;
+
         await ca.save(true);
         //@ts-ignore
         expect(ca.writeInputValuesToObjects).toHaveBeenCalledTimes(2);
-        expect(CalManager.mergeClonedCalendars).toHaveBeenCalledTimes(2);
+        expect(CalManager.mergeClonedCalendars).toHaveBeenCalledTimes(1);
         expect(SC.save).toHaveBeenCalledTimes(2);
         expect(ca.closeApp).toHaveBeenCalledTimes(1);
     });

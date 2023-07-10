@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import Calendar from "../calendar";
 import {
     AdvanceTimeToPreset,
@@ -71,9 +72,19 @@ describe('Utilities Date/Time Tests', () => {
         //Text
         expect(FormatDateTime({year: 2021, month: 11, day: 24, hour: 11, minute: 22, seconds: 33}, "[Text]", tCal)).toBe('Text');
 
-        //Error
+        //Invalid Month
+        expect(FormatDateTime({year: 2021, month: 12, day: 24, hour: 11, minute: 22, seconds: 33}, "M MM MMM MMMM", tCal)).toBe('0 00  ');
+        //Invalid Day
+        expect(FormatDateTime({year: 2021, month: 0, day: 33, hour: 11, minute: 22, seconds: 33}, "D DD DO", tCal)).toBe('0 00 0');
+        //Invalid Week
+        tCal.weekdays = [];
+        expect(FormatDateTime({year: 2021, month: 12, day: 33, hour: 11, minute: 22, seconds: 33}, "d dd ddd dddd", tCal)).toBe('0 00  ');
+
+        //Thrown Error
         jest.spyOn(Logger,'error').mockImplementation(() => {});
-        expect(FormatDateTime({year: 2021, month: 12, day: 24, hour: 11, minute: 22, seconds: 33}, "M MM MMM MMMM", tCal)).toBe('');
+        //@ts-ignore
+        tCal.year = null;
+        expect(FormatDateTime({year: 2021, month: 12, day: 33, hour: 11, minute: 22, seconds: 33}, "YA", tCal)).toBe('');
         expect(Logger.error).toHaveBeenCalled();
     });
 

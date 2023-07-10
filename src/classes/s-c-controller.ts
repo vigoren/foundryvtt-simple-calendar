@@ -216,19 +216,8 @@ export default class SCController {
      */
     public save(globalConfig: SimpleCalendar.GlobalConfigurationData | null = null, clientConfig: SimpleCalendar.ClientSettingsData | null = null){
         CalManager.saveCalendars().catch(Logger.error);
-        if(globalConfig && clientConfig){
 
-            const gc: SimpleCalendar.GlobalConfigurationData = {
-                id: '',
-                version: GameSettings.GetModuleVersion(),
-                permissions: globalConfig.permissions,
-                secondsInCombatRound: globalConfig.secondsInCombatRound,
-                calendarsSameTimestamp: globalConfig.calendarsSameTimestamp,
-                syncCalendars: globalConfig.syncCalendars,
-                showNotesFolder: globalConfig.showNotesFolder,
-                combatPauseRule: globalConfig.combatPauseRule,
-                inGameChatTimestamp: globalConfig.inGameChatTimestamp
-            };
+        if(clientConfig){
             //Save the client settings
             GameSettings.SaveStringSetting(`${FoundryVTTGameData.worldId}.${SettingNames.Theme}`, clientConfig.theme, false).then(this.reload.bind(this)).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.OpenOnLoad, clientConfig.openOnLoad, false).catch(Logger.error);
@@ -241,6 +230,20 @@ export default class SCController {
             GameSettings.SaveBooleanSetting(SettingNames.AlwaysShowNoteList, clientConfig.alwaysShowNoteList, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.PersistentOpen, clientConfig.persistentOpen, false).catch(Logger.error);
             GameSettings.SaveNumericSetting(SettingNames.CompactViewScale, clientConfig.compactViewScale, false).catch(Logger.error);
+        }
+
+        if(globalConfig){
+            const gc: SimpleCalendar.GlobalConfigurationData = {
+                id: '',
+                version: GameSettings.GetModuleVersion(),
+                permissions: globalConfig.permissions,
+                secondsInCombatRound: globalConfig.secondsInCombatRound,
+                calendarsSameTimestamp: globalConfig.calendarsSameTimestamp,
+                syncCalendars: globalConfig.syncCalendars,
+                showNotesFolder: globalConfig.showNotesFolder,
+                combatPauseRule: globalConfig.combatPauseRule,
+                inGameChatTimestamp: globalConfig.inGameChatTimestamp
+            };
             //Save the global configuration (triggers the load function)
             GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc)
                 .then(((renderChatLog: boolean) => {

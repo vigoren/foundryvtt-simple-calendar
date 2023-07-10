@@ -1,4 +1,4 @@
-
+import {jest} from '@jest/globals';
 import "./application";
 
 // @ts-ignore

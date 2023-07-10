@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import GameSettingsRegistration from "./game-settings-registration";
 import Calendar from "../calendar";
 import CalendarManager from "../calendar/calendar-manager";

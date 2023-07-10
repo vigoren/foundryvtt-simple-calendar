@@ -1,4 +1,5 @@
 import {BM25Levenshtein} from "./search";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 
 describe('Utility Search Tests', () => {
     const docs = [

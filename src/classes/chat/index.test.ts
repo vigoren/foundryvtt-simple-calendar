@@ -2,10 +2,18 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import {Chat} from "./index";
 import {ChatTimestamp} from "./chat-timestamp";
 
 describe('Chat Tests', () => {
+
+    test('init', ()=>{
+        jest.spyOn(ChatTimestamp, 'getFormattedChatTimestamp').mockImplementation(() => {return 'Game Time:'});
+        Chat.init();
+        const message = ChatMessage.prototype.export();
+        expect(message).toContain('Game Time:');
+    });
 
     test('Create Chat Message', () => {
         let cm = {};

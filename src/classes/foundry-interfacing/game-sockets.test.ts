@@ -2,13 +2,14 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
+import {jest, beforeEach, describe, expect, test} from '@jest/globals';
 import GameSockets from "./game-sockets";
 import {SocketTypes} from "../../constants";
 
 describe('Game Sockets Class Tests', () => {
 
     test('on', () => {
-        const test = jest.fn();
+        const test = jest.fn<()=>{}>();
         const orig = (<Game>game).socket;
         (<Game>game).socket = null;
         GameSockets.on(test);

@@ -1,3 +1,4 @@
+import {jest} from '@jest/globals';
 const ioe = jest.fn();
 
 // @ts-ignore

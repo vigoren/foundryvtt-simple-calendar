@@ -1,8 +1,7 @@
 /**
  * This file mocks the FoundryVTT game global so that it can be used in testing
  */
-import {GameWorldTimeIntegrations, SettingNames} from "../src/constants";
-
+import {jest} from '@jest/globals';
 //@ts-ignore
 const local: Localization = {
     lang: '',
@@ -37,6 +36,7 @@ const user: User = {
     isRole: jest.fn((role: string) => {return false;}),
     // @ts-ignore
     setPermission: jest.fn((premission: string, allowed: boolean) => {}),
+    // @ts-ignore
     assignHotbarMacro: jest.fn((macro: Macro | null, slot: string | number, {fromSlot}: { fromSlot: number }): Promise<User> => { return Promise.resolve(user);}),
     // @ts-ignore
     getHotbarMacros: jest.fn((page?: number): Macro[] => {return [];})
@@ -65,7 +65,7 @@ const game = {
     },
     combats: {
         size: 0,
-        find: jest.fn((v)=>{
+        find: jest.fn((v:Function)=>{
             return v.call(undefined, {started: true});
         }),
         filter: (v: any) => {
