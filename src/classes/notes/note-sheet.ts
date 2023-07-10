@@ -52,7 +52,7 @@ export class NoteSheet extends JournalSheet{
     private inputChangeRedrawNames = ['src', 'image.caption', 'video.width', 'video.height'];
 
     public static SetHeight(ns: NoteSheet){
-        if(ns.appWindow){
+        if(ns.appWindow && ns.appWindow instanceof Element){
             const pseudoAfter = window.getComputedStyle(ns.appWindow, ':after');
             if(!ns.resized){
                 const form = ns.appWindow.getElementsByTagName('form');

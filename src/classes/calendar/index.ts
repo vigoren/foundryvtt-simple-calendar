@@ -199,6 +199,9 @@ export default class Calendar extends ConfigurationItemBase{
                 newMonth.loadFromSettings(configMonths[i]);
                 this.months.push(newMonth);
             }
+            if(this.months.length === 0){
+                this.months.push(new Month('New Month', 1, 0, 30));
+            }
         }
         const configWeekdays: SimpleCalendar.WeekdayData[] | undefined = config.weekdays || config.weekdaySettings;
         if(Array.isArray(configWeekdays)){

@@ -119,7 +119,7 @@ describe('Calendar Class Tests', () => {
         tCal.loadFromSettings({ id: 'a', name: 'tCal', year: {id:''}, months: [], weekdays: [], leapYear: {}, time: {}, seasons: [], moons: [], general: {}, noteCategories: [] });
         expect(tCal.id).toBe('a');
         expect(tCal.name).toBe('tCal');
-        expect(tCal.months.length).toBe(0);
+        expect(tCal.months.length).toBe(1);
         expect(tCal.weekdays.length).toBe(0);
         expect(tCal.seasons.length).toBe(0);
         expect(tCal.moons.length).toBe(0);
@@ -128,7 +128,7 @@ describe('Calendar Class Tests', () => {
         expect(tCal.year.leapYearRule.loadFromSettings).toHaveBeenCalledTimes(1);
         expect(tCal.time.loadFromSettings).toHaveBeenCalledTimes(1);
         expect(tCal.generalSettings.loadFromSettings).toHaveBeenCalledTimes(1);
-        expect(console.error).toHaveBeenCalledTimes(1);
+        expect(console.error).toHaveBeenCalledTimes(0);
 
         //@ts-ignore
         tCal.loadFromSettings({yearSettings:{}, monthSettings:[{"name":"January","abbreviation":"Jan","numericRepresentation":1,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null}], weekdaySettings:{}, leapYearSettings:{}, timeSettings:{}, seasonSettings:[], moonSettings:[], generalSettings:{}, currentDate: {year: 2022, month: 0, day: 1}});
@@ -150,7 +150,7 @@ describe('Calendar Class Tests', () => {
         //@ts-ignore
         tCal.loadFromSettings({currentDate: {year: 2022, month: 0, day: 41}});
         expect(tCal.getMonthAndDayIndex()).toEqual({month: 0, day: 0});
-        expect(console.warn).toHaveBeenCalledTimes(6);
+        expect(console.warn).toHaveBeenCalledTimes(7);
     });
 
     test('Get Current Date', () => {

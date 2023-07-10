@@ -1,5 +1,34 @@
 # Change Log
 
+## 2.3.6 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-July%2010%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.6/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where certain chat messages would appear twice if the [Use Game Time For Chat Message Timestamps](https://simplecalendar.info/docs/global-configuration/settings#use-game-time-for-chat-message-timestamps) setting is enabled. ([#515](https://github.com/vigoren/foundryvtt-simple-calendar/issues/515))
+- Fixed a bug where the game time would not be included when the chat log was exported. ([514](https://github.com/vigoren/foundryvtt-simple-calendar/issues/514))
+- Fixed a bug when players saved their client settings through Simple Calendars configuration dialog the date of the calendar would change to a year of 0.
+- Fixed an error that would get logged in certain circumstances when using the configuration dialog. ([424](https://github.com/vigoren/foundryvtt-simple-calendar/issues/424))
+- Fixed a bug when importing from an invalid source that could result in a calendar with 0 months. ([502](https://github.com/vigoren/foundryvtt-simple-calendar/issues/502))
+- Fixed an issue where occasionally notes would not open. ([468](https://github.com/vigoren/foundryvtt-simple-calendar/issues/468))
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Jakub](https://weblate.foundryvtt-hub.com/user/Lioheart/) (Polish)
+- [TravelingK](https://weblate.foundryvtt-hub.com/user/TravelingK/) (Chinese (Simplified))
+
+### Documentation Changes
+
+- Added search to the [documentation site](https://simplecalendar.info). This search is quite robust and is powered by [algolia](https://www.algolia.com/).
+- Fixed several redirects that were not working.
+
+<hr/>
+
 ## 2.3.0 - Chat Message Timestamps, Quality of LIfe Updates & Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-June%2030%2C%202023-blue)
