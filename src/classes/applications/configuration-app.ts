@@ -1599,10 +1599,7 @@ export default class ConfigurationApp extends FormApplication {
                             journalEntryData.flags[ModuleName].noteData.calendarId = calendarId;
                             journalEntryData.folder = NManager.noteDirectory?.id;
                             if(noteImportedIntoDifferentCalendar || !(<Game>game).journal?.has(journalEntryData._id)){
-                                const je = await JournalEntry.create(journalEntryData, {keepId: !noteImportedIntoDifferentCalendar});
-                                if(je){
-                                    NManager.addNoteStub(je, calendarId);
-                                }
+                                await JournalEntry.create(journalEntryData, {keepId: !noteImportedIntoDifferentCalendar});
                             } else {
                                 (<Game>game).journal?.get(journalEntryData._id)?.update(journalEntryData);
                             }
