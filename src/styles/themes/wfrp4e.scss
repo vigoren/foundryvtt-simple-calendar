@@ -1,4 +1,26 @@
 @import "../variables";
+
+$wfrpBlackBackground: #000000e8;
+$wfrpInputBackground: #352516;
+$wfrpBorderColor: #736953a6;
+$wfrpTextColor: #efefef;
+$wfrpInputTextColor: #d6d6d6;
+
+$wfrpAppHeader: var(--wfrp4e-window-app-header-blank);
+$wfrpAppBackground: var(--wfrp4e-window-app-background-bookshelf);
+$wfrpAppBorder: var(--wfrp4e-window-app-dialog-content);
+$wfrpParchmentTexture: var(--wfrp4e-parchment-texture);
+$wfrpChatMessageBorderPrivate: var(--wfrp4e-chat-message-border-private);
+$wfrpFooterButton: var(--wfrp4e-footer-button);
+$wfrpCloseButton: var(--wfrp4e-button-close);
+$wfrpConfigureButton: var(--wfrp4e-button-configure-sheet);
+$wfrpShareButton: var(--wfrp4e-button-show-players);
+$wfrpPlayerBorder: var(--wfrp4e-players-border);
+$wfrpBlankButton: var(--wfrp4e-button-blank);
+$wfrpButtonGrey: var(--wfrp4e-sidebar_button-background_grey);
+$wfrpButtonRed: var(--wfrp4e-sidebar_button-background_red);
+$wfrpJournalSheetContent: var(--wfrp4e-window-app-journal-sheet-content);
+
 $theme: (
   //Font
         font-family: CaslonPro,
@@ -25,12 +47,12 @@ $theme: (
         app-header-bg-image: unset,
         app-header-color: #d6d6d6,
         app-header-border: 1px solid transparent,
-        app-header-border-image: url($wfrpAppHeader) 19 21 19 21 fill / 19px 21px 21px 21px / 0 repeat,
+        app-header-border-image: $wfrpAppHeader 19 21 19 21 fill / 19px 21px 21px 21px / 0 repeat,
         app-header-height: pxToRem(45),
         app-bg-color: $wfrpBlackBackground,
-        app-bg-image: url($wfrpAppBackground),
+        app-bg-image: $wfrpAppBackground,
         app-border: 10px solid transparent,
-        app-border-image: url($wfrpAppBorder) 10 13 13 13 / 10px 13px 13px 13px / 0 repeat,
+        app-border-image: $wfrpAppBorder 10 13 13 13 / 10px 13px 13px 13px / 0 repeat,
         app-color: $white,
 
   // Compact Coloring
@@ -47,9 +69,9 @@ $theme: (
   //Side Drawer Coloring
         side-drawer-color: #000000,
         side-drawer-bg-color: #fff,
-        side-drawer-bg-image: url($wfrpParchmentTexture),
+        side-drawer-bg-image: $wfrpParchmentTexture,
         side-drawer-border-color: #000000,
-        side-drawer-border-image: url($wfrpChatMessageBorderPrivate) 21 / 10px / 8px repeat,
+        side-drawer-border-image: $wfrpChatMessageBorderPrivate 21 / 10px / 8px repeat,
 
   // Scrollbar Coloring
         scrollbar-background-color: $wfrpInputBackground,
@@ -112,7 +134,7 @@ $theme: (
   //Controls
         btn-bg-image: unset,
         btn-border: 4px solid,
-        btn-border-image: url($wfrpFooterButton) 10 / 4px / 0 repeat,
+        btn-border-image: $wfrpFooterButton 10 / 4px / 0 repeat,
         btn-grey-border-color: $gray-600,
         btn-grey-bg-color: $gray-600,
         btn-grey-color: $white,
@@ -252,7 +274,7 @@ body.game{
         &.fsc-compact-view {
           .window-content {
             border: 2px solid #540e0ec2 !important;
-            border-image: url($wfrpPlayerBorder) 24 20 19 17 / 20px / 17px 14px 13px 14px repeat !important;
+            border-image: $wfrpPlayerBorder 24 20 19 17 / 20px / 17px 14px 13px 14px repeat !important;
             .fsc-main-wrapper{
               .fsc-header-add-right{
                 .fsc-note-buttons{
@@ -263,7 +285,7 @@ body.game{
                       width: 30px;
                       margin-top: -7px;
                       margin-left: -3px;
-                      background: url($wfrpBlankButton);
+                      background: $wfrpBlankButton;
                       filter: unset;
                     }
                     &:hover{
@@ -322,13 +344,13 @@ body.game{
             }
           }
           a.header-button.close{
-            background: url($wfrpCloseButton);
+            background: $wfrpCloseButton;
           }
           a.header-button.configure-sheet{
-            background: url($wfrpConfigureButton);
+            background: $wfrpConfigureButton;
           }
           a.header-button.share-image{
-            background: url($wfrpShareButton);
+            background: $wfrpShareButton;
           }
         }
         //Calendar
@@ -372,12 +394,12 @@ body.game{
           }
           &.fsc-grey{
             &:before{
-              background: url($wfrpButtonGrey) repeat;
+              background: $wfrpButtonGrey repeat;
             }
           }
           &.fsc-primary {
             &:before{
-              background: url($wfrpButtonGrey) repeat;
+              background: $wfrpButtonGrey repeat;
               filter: sepia(22%) saturate(1240%) hue-rotate(162deg) brightness(87%) contrast(81%);
             }
             &:hover, &.active, &:focus {
@@ -389,24 +411,24 @@ body.game{
           }
           &.fsc-secondary {
             &:before{
-              background: url($wfrpButtonGrey) repeat;
+              background: $wfrpButtonGrey repeat;
               filter: sepia(45%) saturate(673%) hue-rotate(3deg) brightness(220%) contrast(93%);
             }
           }
           &.fsc-tertiary{
             &:before{
-              background: url($wfrpButtonGrey) repeat;
+              background: $wfrpButtonGrey repeat;
               filter: sepia(1) brightness(.75) saturate(4) hue-rotate(235deg);
             }
           }
           &.fsc-delete {
             &:before{
-              background: url($wfrpButtonRed) repeat;
+              background: $wfrpButtonRed repeat;
             }
           }
           &.fsc-save {
             &:before{
-              background: url($wfrpButtonGrey) repeat;
+              background: $wfrpButtonGrey repeat;
               filter: sepia(20%) saturate(1630%) hue-rotate(109deg) brightness(93%) contrast(83%);
             }
           }
@@ -450,10 +472,10 @@ body.game{
         //Note Sheet
         &.journal-sheet {
           .fsc-content, .editor{
-            background: url($wfrpParchmentTexture);
+            background: $wfrpParchmentTexture;
             padding: 20px;
             border: 10px solid transparent;
-            border-image: url($wfrpJopurnalSheetContent) 25 / 25px / 0 repeat;
+            border-image: $wfrpJournalSheetContent 25 / 25px / 0 repeat;
             color: #000000;
           }
         }

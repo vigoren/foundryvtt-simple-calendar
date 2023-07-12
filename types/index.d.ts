@@ -1775,6 +1775,7 @@ declare global{
             name: string;
             system: boolean;
             module: boolean;
+            images?: Record<string, string>;
         }
 
         /**

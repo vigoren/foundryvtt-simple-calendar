@@ -108,10 +108,10 @@ export default class SCController {
 
     /**
      * Loads any extra css files required for the specified theme
-     * This is required for all themes other than Light and Dark
      */
     public static LoadThemeCSS(setTheme: string = ''){
         const theme = setTheme? setTheme : GetThemeName();
+        this.addCSSImageURLPaths(theme);
         const cssExists = document.head.querySelector(`#theme-${theme}`);
         if(cssExists === null){
             const newStyle = document.createElement('link');
@@ -120,6 +120,33 @@ export default class SCController {
             newStyle.setAttribute('type', 'text/css');
             newStyle.setAttribute('href', getRoute(`modules/${ModuleName}/styles/themes/${theme}.css`));
             document.head.append(newStyle);
+        }
+    }
+
+    /**
+     * Adds a style tag to the header that includes borrowed image path variables for themes to use
+     * @param theme The theme to add image paths for
+     */
+    public static addCSSImageURLPaths(theme: string){
+        const styleTagExists = document.head.querySelector(`#sc-image-urls`);
+        const cssVars = [
+            `--ui-denim075: url("${getRoute('/ui/denim075.png')}");`,
+            `--ui-parchment: url("${getRoute('/ui/parchment.jpg')}");`
+        ];
+        const themeData = Themes.find(t => t.key === theme);
+        if(themeData && themeData.images){
+            for (const [key, value] of Object.entries(themeData.images)) {
+                cssVars.push(`${key}: url("${getRoute(value)}");`);
+            }
+        }
+        const styles = `.simple-calendar {${cssVars.join('')}`;
+        if(styleTagExists){
+            styleTagExists.textContent = styles;
+        } else {
+            const styleTag = document.createElement('style');
+            styleTag.setAttribute('id', `sc-image-urls`);
+            styleTag.appendChild(document.createTextNode(styles));
+            document.head.append(styleTag);
         }
     }
 

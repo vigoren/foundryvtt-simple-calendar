@@ -232,6 +232,10 @@ export default class ConfigurationApp extends FormApplication {
         let data = {
             ...super.getData(options),
             activeCalendarId: (<Calendar>this.object).id,
+            images: {
+                compactViewLayoutFull: getRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp.png"),
+                compactViewLayoutQuickIncrement: getRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp-qi.png")
+            },
             calendars: this.calendars,
             clientSettings: {
                 openOnLoad: this.clientSettings.openOnLoad,

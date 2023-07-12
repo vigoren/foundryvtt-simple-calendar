@@ -664,12 +664,12 @@
                     <label>{{localize 'FSC.Configuration.Display.CompactControls.Title'}}</label>
                     <div class="form-fields">
                         <label class="fsc-radio-group">
-                            <img src="/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp.png" alt="{{localize 'FSC.FullControls'}}" />
+                            <img src="{{images.compactViewLayoutFull}}" alt="{{localize 'FSC.FullControls'}}" />
                             <input value="full" name="scCompactControlLayout" type="radio" {{#if (eq generalSettings.compactViewOptions.controlLayout 'full')}} checked{{/if}} />
                             {{localize 'FSC.FullControls'}}
                         </label>
                         <label class="fsc-radio-group">
-                            <img src="/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp-qi.png" alt="{{localize 'FSC.QuickIncrement'}}" />
+                            <img src="{{images.compactViewLayoutQuickIncrement}}" alt="{{localize 'FSC.QuickIncrement'}}" />
                             <input value="quick-increment" name="scCompactControlLayout" type="radio" {{#if (eq generalSettings.compactViewOptions.controlLayout 'quick-increment')}} checked{{/if}} />
                             {{localize 'FSC.QuickIncrement'}}
                         </label>
