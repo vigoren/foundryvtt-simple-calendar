@@ -1,4 +1,16 @@
 @import "../variables";
+
+$w40kwgTextColor: #efefef;
+$w40kwgBlackBackground: #000000e8;
+
+$w40kwgFontFamily: "Signika", sans-serif;
+$w40kwgHeaderImage: var(--wrath-and-glory-header);
+$w40kwgBodyBorder: var(--wrath-and-glory-journal-border);
+$w40kwgBodyBackground: var(--wrath-and-glory-background);
+$w40kwgAltBorder: var(--wrath-and-glory-border);
+$w40kwgInputBackground: var(--wrath-and-glory-input);
+$w40kwgButtonImage: var(--wrath-and-glory-button);
+
 $theme: (
   //Font
         font-family: $w40kwgFontFamily,
@@ -25,12 +37,12 @@ $theme: (
         app-header-bg-image: unset,
         app-header-color: var(--color-text-light-highlight),
         app-header-border: 1px solid var(--color-border-dark),
-        app-header-border-image: url($w40kwgHeaderImage) 8 8 7 7 fill / 0px 0px 2px 2px,
+        app-header-border-image: $w40kwgHeaderImage 8 8 7 7 fill / 0px 0px 2px 2px,
         app-header-height: pxToRem(30),
         app-bg-color: #f2f2f2,
-        app-bg-image: url($w40kwgBodyBackground),
+        app-bg-image: $w40kwgBodyBackground,
         app-border: pxToRem(30) solid transparent,
-        app-border-image: url($w40kwgBodyBorder) 0 80 60 repeat,
+        app-border-image: $w40kwgBodyBorder 0 80 60 repeat,
         app-color: #000,
 
   // Compact Coloring
@@ -47,9 +59,9 @@ $theme: (
   //Side Drawer Coloring
         side-drawer-color: #000,
         side-drawer-bg-color: #f2f2f2,
-        side-drawer-bg-image: url($w40kwgBodyBackground),
+        side-drawer-bg-image: $w40kwgBodyBackground,
         side-drawer-border-color: transparent,
-        side-drawer-border-image: url($w40kwgAltBorder) 8 8 8 8 repeat repeat,
+        side-drawer-border-image: $w40kwgAltBorder 8 8 8 8 repeat repeat,
 
   // Scrollbar Coloring
         scrollbar-background-color: #782e22,
@@ -91,9 +103,9 @@ $theme: (
         clock-paused-color: #daa32a,
 
   //Context Menu
-        context-menu-color: $wfrpTextColor,
+        context-menu-color: $w40kwgTextColor,
         context-menu-border-color: $secondary-800,
-        context-menu-bg-color: $wfrpBlackBackground,
+        context-menu-bg-color: $w40kwgBlackBackground,
         context-menu-action-hover-color: #b98132,
         context-menu-divider-color: $gray-600,
 
@@ -256,7 +268,7 @@ body.game{
           }
         }
         input, select, option{
-          background: url($w40kwgInputBackground) repeat;
+          background: $w40kwgInputBackground repeat;
         }
         .window-content{
           border-top: 0;
@@ -310,13 +322,13 @@ body.game{
           }
           &.fsc-grey{
             &:before{
-              background: url($w40kwgButtonImage) repeat;
+              background: $w40kwgButtonImage repeat;
               filter: grayscale(1);
             }
           }
           &.fsc-primary {
             &:before{
-              background: url($w40kwgButtonImage) repeat;
+              background: $w40kwgButtonImage repeat;
               filter: grayscale(1) sepia(22%) saturate(1240%) hue-rotate(162deg) brightness(87%) contrast(81%);
             }
             &:hover, &.active, &:focus {
@@ -328,24 +340,24 @@ body.game{
           }
           &.fsc-secondary {
             &:before{
-              background: url($w40kwgButtonImage) repeat;
+              background: $w40kwgButtonImage repeat;
               filter: grayscale(1) sepia(45%) saturate(673%) hue-rotate(3deg) brightness(220%) contrast(93%);
             }
           }
           &.fsc-tertiary{
             &:before{
-              background: url($w40kwgButtonImage) repeat;
+              background: $w40kwgButtonImage repeat;
               filter: grayscale(1) sepia(1) brightness(.75) saturate(4) hue-rotate(235deg);
             }
           }
           &.fsc-delete {
             &:before{
-              background: url($w40kwgButtonImage) repeat;
+              background: $w40kwgButtonImage repeat;
             }
           }
           &.fsc-save {
             &:before{
-              background: url($w40kwgButtonImage) repeat;
+              background: $w40kwgButtonImage repeat;
               filter: grayscale(1) sepia(20%) saturate(1630%) hue-rotate(109deg) brightness(93%) contrast(83%);
             }
           }
@@ -353,24 +365,24 @@ body.game{
 
         form{
           .fsc-compact-form-group{
-            background: url($w40kwgInputBackground) repeat;
+            background: $w40kwgInputBackground repeat;
           }
         }
 
         .fsc-multiselect{
           button{
-            background: url($w40kwgInputBackground) repeat;
+            background: $w40kwgInputBackground repeat;
           }
           .fsc-multi-select-options{
-            background: url($w40kwgInputBackground) repeat;
+            background: $w40kwgInputBackground repeat;
           }
         }
 
         .fsc-time-selector{
           .fsc-ts-inputs{
-            background: url($w40kwgInputBackground) repeat;
+            background: $w40kwgInputBackground repeat;
             .fsc-dropdown{
-              background: url($w40kwgInputBackground) repeat;
+              background: $w40kwgInputBackground repeat;
             }
           }
         }

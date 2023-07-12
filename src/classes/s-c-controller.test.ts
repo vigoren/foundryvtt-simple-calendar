@@ -69,6 +69,7 @@ describe('SCController Tests', () => {
         const gsGSSSpy = jest.spyOn(GameSettings, 'GetStringSettings');
         const docHeadQS = jest.spyOn(document.head, 'querySelector');
         const docHeadA = jest.spyOn(document.head, 'append');
+        jest.spyOn(SCController, "addCSSImageURLPaths").mockImplementation(() => {});
         gsGSSSpy.mockReturnValueOnce(`dark`);
         SCController.LoadThemeCSS();
         expect(gsGSSSpy).toHaveBeenCalledTimes(1);
@@ -93,6 +94,22 @@ describe('SCController Tests', () => {
         expect(gsGSSSpy).toHaveBeenCalledTimes(3);
         expect(docHeadQS).toHaveBeenCalledTimes(4);
         expect(docHeadA).toHaveBeenCalledTimes(3);
+    });
+
+    test("Add CSS Image URL Paths", () => {
+        const docHeadQS = jest.spyOn(document.head, 'querySelector');
+        const docHeadA = jest.spyOn(document.head, 'append');
+
+        docHeadQS.mockReturnValueOnce(null);
+
+        SCController.addCSSImageURLPaths('dsa5');
+        expect(docHeadQS).toHaveBeenCalledTimes(1);
+        expect(docHeadA).toHaveBeenCalledTimes(1);
+
+        docHeadQS.mockReturnValueOnce(document.createElement('style'));
+        SCController.addCSSImageURLPaths('dsa5');
+        expect(docHeadQS).toHaveBeenCalledTimes(2);
+        expect(docHeadA).toHaveBeenCalledTimes(1);
     });
 
     test("Persistence Change", () => {

@@ -1,4 +1,7 @@
 @import "../variables";
+
+$eclipsePhaseBackground: var(--eclipsephase-background2);
+
 $theme: (
   //Font
         font-family: $font-family,
@@ -28,7 +31,7 @@ $theme: (
         app-header-border-image: unset,
         app-header-height: pxToRem(30),
         app-bg-color: #1f1f1f,
-        app-bg-image: url($eclipsePhaseBackground),
+        app-bg-image: $eclipsePhaseBackground,
         app-border: 0,
         app-border-image: unset,
         app-color: var(--mainText),
@@ -47,7 +50,7 @@ $theme: (
   //Side Drawer Coloring
         side-drawer-color: var(--mainText),
         side-drawer-bg-color: #1f1f1f,
-        side-drawer-bg-image: url($eclipsePhaseBackground),
+        side-drawer-bg-image: $eclipsePhaseBackground,
         side-drawer-border-color: #1f1f1f,
         side-drawer-border-image: unset,
 

@@ -173,6 +173,7 @@
         .fsc-date{
           flex-basis: 100%;
           margin-bottom: $spacer-quarter;
+          white-space: nowrap;
           .fsc-date-text{
             width: fit-content;
             margin: 0 auto;
@@ -236,6 +237,7 @@
           flex-wrap: nowrap;
           padding-top: $spacer-quarter;
           margin: 0 ($spacer-quarter * -1) ($spacer-quarter * -1);
+          justify-content: center;
           .fsc-control-group{
             margin: 0 ($spacer-half - pxToRem(1)) 0 0;
             &:first-child{

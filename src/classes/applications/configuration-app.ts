@@ -232,6 +232,10 @@ export default class ConfigurationApp extends FormApplication {
         let data = {
             ...super.getData(options),
             activeCalendarId: (<Calendar>this.object).id,
+            images: {
+                compactViewLayoutFull: getRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp.png"),
+                compactViewLayoutQuickIncrement: getRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp-qi.png")
+            },
             calendars: this.calendars,
             clientSettings: {
                 openOnLoad: this.clientSettings.openOnLoad,
@@ -1595,10 +1599,7 @@ export default class ConfigurationApp extends FormApplication {
                             journalEntryData.flags[ModuleName].noteData.calendarId = calendarId;
                             journalEntryData.folder = NManager.noteDirectory?.id;
                             if(noteImportedIntoDifferentCalendar || !(<Game>game).journal?.has(journalEntryData._id)){
-                                const je = await JournalEntry.create(journalEntryData, {keepId: !noteImportedIntoDifferentCalendar});
-                                if(je){
-                                    NManager.addNoteStub(je, calendarId);
-                                }
+                                await JournalEntry.create(journalEntryData, {keepId: !noteImportedIntoDifferentCalendar});
                             } else {
                                 (<Game>game).journal?.get(journalEntryData._id)?.update(journalEntryData);
                             }

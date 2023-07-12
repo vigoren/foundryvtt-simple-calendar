@@ -1,4 +1,8 @@
 @import "../variables";
+
+$starfinderFontFamily: "Exo 2", sans-serif;
+$starfinderHexellence: var(--sfrpg-hexellence);
+
 $theme: (
   //Font
         font-family: $starfinderFontFamily,
@@ -28,7 +32,7 @@ $theme: (
         app-header-border-image: unset,
         app-header-height: pxToRem(30),
         app-bg-color: #f2f2f2,
-        app-bg-image: url($starfinderHexellence),
+        app-bg-image: $starfinderHexellence,
         app-border: 0,
         app-border-image: unset,
         app-color: var(--color-text-dark-primary),
@@ -47,7 +51,7 @@ $theme: (
   //Side Drawer Coloring
         side-drawer-color: var(--color-text-dark-primary),
         side-drawer-bg-color: #f2f2f2,
-        side-drawer-bg-image: url($starfinderHexellence),
+        side-drawer-bg-image: $starfinderHexellence,
         side-drawer-border-color: #7096bf,
         side-drawer-border-image: unset,
 
@@ -256,13 +260,13 @@ body.game{
           }
         }
         .fsc-calendar{
-          background-image: url($starfinderHexellence);
+          background-image: $starfinderHexellence;
           .fsc-calendar-header{
-            background-image: url($starfinderHexellence);
+            background-image: $starfinderHexellence;
           }
         }
         .fsc-clock{
-          background-image: url($starfinderHexellence);
+          background-image: $starfinderHexellence;
         }
       }
     }

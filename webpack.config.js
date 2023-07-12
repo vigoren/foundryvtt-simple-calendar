@@ -86,7 +86,7 @@ module.exports = {
                     {
                         loader: 'css-loader',
                         options: {
-                            url: { filter: (url, resourcePath) => {return url.indexOf('../../../../systems') !== 0 && !url.startsWith('/ui');}}
+                            url: { filter: (url, resourcePath) => {return !(url.indexOf('/ui/') > -1);}}
                         }
                     },
                     // Compiles Sass to CSS

@@ -1,4 +1,8 @@
 @import "../variables";
+
+$flFontFamily: Poppins,sans-serif;
+$flAppBorder: var(--forbidden-lands-box-border-large);
+
 $theme: (
   //Font
         font-family: $font-family,
@@ -49,7 +53,7 @@ $theme: (
         side-drawer-bg-color: $white,
         side-drawer-bg-image: unset,
         side-drawer-border-color: transparent,
-        side-drawer-border-image: url($flAppBorder) 100 100 100 100/10px 10px 10px 10px repeat,
+        side-drawer-border-image: $flAppBorder 100 100 100 100/10px 10px 10px 10px repeat,
 
   // Scrollbar Coloring
         scrollbar-background-color: #999,
@@ -248,7 +252,7 @@ body.game{
     &.forbidden-lands{
       &.window-app {
         border: 9px solid transparent;
-        border-image: url($flAppBorder) 108/3 repeat;
+        border-image: $flAppBorder 108/3 repeat;
         box-shadow: unset;
         padding: 0 4px 4px;
         .window-content{

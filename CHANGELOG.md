@@ -1,5 +1,22 @@
 # Change Log
 
+## 2.3.13 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-July%2011%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.12/module.zip)
+
+### Bug Fixes
+
+- Fixed an issue loading images related to system specific themes on The Forge. ([#517](https://github.com/vigoren/foundryvtt-simple-calendar/issues/517))
+- Fixed a few issues with the classic theme when used in the Warhammer Fantasy Roleplay 4th Edition System.
+- Fixed an issue loading images related to system specific themes when a `routePrefix` is set for FoundryVTT.
+- Fixed an issue displaying the Compact View Date/Time Control Layout images in the configuration when a `routePrefix` is set for FoundryVTT.
+- Fixed an issue with the Compact Display where very long date text would wrap. ([#518](https://github.com/vigoren/foundryvtt-simple-calendar/issues/518))
+- Fixed an alignment issue in the Compact Display with the date control buttons when the date text was wider than the buttons.
+- Fixed a visual bug when importing from a configuration with notes. Each note would be counted twice until the page was refreshed.
+
+<hr/>
+
 ## 2.3.6 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%2010%2C%202023-blue)

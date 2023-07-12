@@ -22,13 +22,13 @@ $theme: (
 
   //Dialog Coloring
         app-header-bg-color: $white,
-        app-header-bg-image: url($classicDenim),
+        app-header-bg-image: $classicDenim,
         app-header-color: var(--app-header-color),
         app-header-border: 0,
         app-header-border-image: unset,
         app-header-height: pxToRem(30),
         app-bg-color: $white,
-        app-bg-image: url($classicParchment),
+        app-bg-image: $classicParchment,
         app-border: 0,
         app-border-image: unset,
         app-color: var(--color-text-dark-primary),
@@ -241,26 +241,23 @@ $theme: (
     @each $prop, $value in $theme {
       --#{$prop}: #{$value};
     }
+    --color-text-dark-primary: #{$fontColor};
   }
 }
 
 body.game{
   .simple-calendar {
-    &.classic {
-     &.window-app{
-       //Dialog Header
-       .window-content{
-         --color-text-dark-primary: #{$fontColor};
-       }
+    &.window-app{
+      &.classic {
        //Links
        a:hover{
          text-shadow: 0 0 8px var(--color-shadow-primary);
        }
        //Note List Styling
        .fsc-side-drawer {
-         background: url($classicDenim);
+         background: $classicDenim;
        }
-     }
+      }
     }
   }
 }

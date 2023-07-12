@@ -1,4 +1,11 @@
 @import "../variables";
+
+$dsa5FontFamily: Signika;
+$dsa5AppHeader: var(--dsa5-blackhat);
+$dsa5AppFooter: var(--dsa5-blackbook);
+$dsa5AppBackground: var(--dsa5-journalentry);
+$dsa5ActorBorder: var(--dsa5-actor);
+
 $theme: (
   //Font
         font-family: $dsa5FontFamily,
@@ -23,13 +30,13 @@ $theme: (
 
   //Application Coloring
         app-header-bg-color: transparent,
-        app-header-bg-image: url($dsa5AppHeader),
+        app-header-bg-image: $dsa5AppHeader,
         app-header-color: $white,
         app-header-border: 0,
         app-header-border-image: unset,
         app-header-height: pxToRem(40),
         app-bg-color: transparent,
-        app-bg-image: url($dsa5AppBackground),
+        app-bg-image: $dsa5AppBackground,
         app-border: 0,
         app-border-image: unset,
         app-color: var(--color-text-dark-primary),
@@ -48,9 +55,9 @@ $theme: (
   //Side Drawer Coloring
         side-drawer-color: var(--color-text-dark-primary),
         side-drawer-bg-color: transparent,
-        side-drawer-bg-image: url($classicParchment),
+        side-drawer-bg-image: $classicParchment,
         side-drawer-border-color: transparent,
-        side-drawer-border-image: url($dsa5ActorBorder) 27 28 28 28,
+        side-drawer-border-image: $dsa5ActorBorder 27 28 28 28,
 
   // Scrollbar Coloring
         scrollbar-background-color: #782e22,
@@ -338,7 +345,7 @@ body.game{
           }
         }
         &:after{
-          background-image: url($dsa5AppFooter);
+          background-image: $dsa5AppFooter;
           bottom: 12px;
           content: "";
         }
@@ -362,13 +369,13 @@ body.game{
           }
         }
         .fsc-calendar{
-          background-image: url($classicParchment);
+          background-image: $classicParchment;
           .fsc-calendar-header{
-            background-image: url($classicParchment);
+            background-image: $classicParchment;
           }
         }
         .fsc-clock{
-          background-image: url($classicParchment);
+          background-image: $classicParchment;
         }
         &.journal-sheet{
           form{

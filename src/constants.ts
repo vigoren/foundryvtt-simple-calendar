@@ -54,15 +54,99 @@ export enum SettingNames {
  * @internal
  */
 export const Themes: SimpleCalendar.Theme[] = [
-    {key: 'dark', name: 'FSC.Configuration.Theme.Dark', system: false, module: false},
-    {key: 'light', name: 'FSC.Configuration.Theme.Light', system: false, module: false},
-    {key: 'classic', name: 'FSC.Configuration.Theme.Classic', system: false, module: false},
-    {key: 'wfrp4e', name: 'FSC.Configuration.Theme.WFRP4E', system: true, module: false},
-    {key: 'forbidden-lands', name: 'FSC.Predefined.ForbiddenLands', system: true, module: false},
-    {key: 'dsa5', name: 'FSC.Predefined.DSA-TDE5e', system: true, module: false},
-    {key: 'sfrpg', name: 'FSC.Predefined.Starfinder', system: true, module: false},
-    {key: 'wrath-and-glory', name: 'FSC.Predefined.Warhammer40kWG', system: true, module: false},
-    {key: 'eclipsephase', name: 'FSC.Predefined.EclipsePhase', system: true, module: false},
+    {
+        key: 'dark',
+        name: 'FSC.Configuration.Theme.Dark',
+        system: false,
+        module: false
+    },
+    {
+        key: 'light',
+        name: 'FSC.Configuration.Theme.Light',
+        system: false,
+        module: false
+    },
+    {
+        key: 'classic',
+        name: 'FSC.Configuration.Theme.Classic',
+        system: false,
+        module: false
+    },
+    {
+        key: 'wfrp4e',
+        name: 'FSC.Configuration.Theme.WFRP4E',
+        system: true,
+        module: false,
+        images: {
+            "--wfrp4e-window-app-header-blank": "/systems/wfrp4e/ui/frames/window-app-header-blank.webp",
+            "--wfrp4e-window-app-background-bookshelf": "/systems/wfrp4e/ui/frames/window-app-background-bookshelf.webp",
+            "--wfrp4e-window-app-dialog-content": "/systems/wfrp4e/ui/window-app-dialog-content.webp",
+            "--wfrp4e-parchment-texture": "/systems/wfrp4e/ui/frames/parchment-texture.webp",
+            "--wfrp4e-chat-message-border-private": "/systems/wfrp4e/ui/frames/chat-message-border-private.webp",
+            "--wfrp4e-footer-button": "/systems/wfrp4e/ui/footer-button.webp",
+            "--wfrp4e-button-close": "/systems/wfrp4e/ui/buttons/button-close.webp",
+            "--wfrp4e-button-configure-sheet": "/systems/wfrp4e/ui/buttons/button-configure-sheet.webp",
+            "--wfrp4e-button-show-players": "/systems/wfrp4e/ui/buttons/button-show-players.webp",
+            "--wfrp4e-players-border": "/systems/wfrp4e/ui/players-border.webp",
+            "--wfrp4e-button-blank": "/systems/wfrp4e/ui/buttons/button-blank.webp",
+            "--wfrp4e-sidebar_button-background_grey": "/systems/wfrp4e/ui/sidebar_button-background_grey.webp",
+            "--wfrp4e-sidebar_button-background_red": "/systems/wfrp4e/ui/sidebar_button-background_red.webp",
+            "--wfrp4e-window-app-journal-sheet-content": "/systems/wfrp4e/ui/frames/window-app-journal-sheet-content.webp"
+        }
+    },
+    {
+        key: 'forbidden-lands',
+        name: 'FSC.Predefined.ForbiddenLands',
+        system: true,
+        module: false,
+        images:{
+            "--forbidden-lands-box-border-large": "/systems/forbidden-lands/assets/journal-art/box-border-large.webp"
+        }
+    },
+    {
+        key: 'dsa5',
+        name: 'FSC.Predefined.DSA-TDE5e',
+        system: true,
+        module: false,
+        images: {
+            "--dsa5-blackhat": "/systems/dsa5/icons/backgrounds/blackhat.webp",
+            "--dsa5-blackbook":"/systems/dsa5/icons/backgrounds/blackbook.webp",
+            "--dsa5-journalentry":"/systems/dsa5/icons/backgrounds/journalentry.webp",
+            "--dsa5-actor":"/systems/dsa5/icons/backgrounds/actor.webp",
+        }
+    },
+    {
+        key: 'sfrpg',
+        name: 'FSC.Predefined.Starfinder',
+        system: true,
+        module: false,
+        images: {
+            "--sfrpg-hexellence": "/systems/sfrpg/images/hexellence.webp"
+        }
+    },
+    {
+        key: 'wrath-and-glory',
+        name: 'FSC.Predefined.Warhammer40kWG',
+        system: true,
+        module: false,
+        images: {
+            "--wrath-and-glory-header": "/systems/wrath-and-glory/asset/image/header.webp",
+            "--wrath-and-glory-journal-border": "/systems/wrath-and-glory/asset/image/journal-border.webp",
+            "--wrath-and-glory-background": "/systems/wrath-and-glory/asset/image/background.webp",
+            "--wrath-and-glory-border": "/systems/wrath-and-glory/asset/image/border.webp",
+            "--wrath-and-glory-input": "/systems/wrath-and-glory/asset/image/input.webp",
+            "--wrath-and-glory-button": "/systems/wrath-and-glory/asset/image/button.webp"
+        }
+    },
+    {
+        key: 'eclipsephase',
+        name: 'FSC.Predefined.EclipsePhase',
+        system: true,
+        module: false,
+        images: {
+            "--eclipsephase-background2": "/systems/eclipsephase/resources/img/background2.jpg"
+        }
+    },
     //key: "ernies-modern-layout", name: "Ernie's Modern UI", system: false, module: true}
 ];
 
