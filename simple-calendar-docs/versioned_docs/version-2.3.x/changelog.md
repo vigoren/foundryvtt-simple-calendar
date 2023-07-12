@@ -3,7 +3,7 @@
 ## 2.3.13 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%2011%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.12/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.13/module.zip)
 
 ### Bug Fixes
 
