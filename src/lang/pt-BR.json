@@ -545,5 +545,11 @@
 	"FSC.Configuration.Display.CompactControls.Title": "Layout de controle de data/hora de visualização compacta",
 	"FSC.Configuration.Display.CompactControls.Description": "Escolha o layout dos botões usados para alterar a data/hora do calendário na exibição compacta.",
 	"FSC.Configuration.Client.PersistentOpen.Title": "Abertura constante",
-	"FSC.Predefined.Exalted": "Exalted"
+	"FSC.Predefined.Exalted": "Exalted",
+	"FSC.Configuration.Global.InGameChatTimestamp.Title": "Usar Tempo de Jogo para os carimbos de data e hora das mensagens no chat",
+	"FSC.Configuration.Global.InGameChatTimestamp.Description": "Usar a data e hora atual definida no Calendário Simples como o carimbo de data e hora visível para as mensagens, em vez do carimbo de data e hora do mundo real.",
+	"FSC.Configuration.General.Display.DateFormat.ChatTime": "Formato do Carimbo de Data e Hora das Mensagens no Chat",
+	"FSC.Configuration.General.Display.DateFormat.ChatTimeHelp": "O formato de texto usado para compor o texto de exibição do carimbo de data e hora das mensagens no chat.",
+	"FSC.KeyBinding.Toggle.Title": "Alternar Calendário",
+	"FSC.KeyBinding.Toggle.Hint": "Esta tecla abrirá ou fechará a janela do calendário quando pressionada."
 }
