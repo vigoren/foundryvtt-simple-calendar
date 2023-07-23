@@ -1,5 +1,24 @@
 # Change Log
 
+## 2.3.16 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-July%2022%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.16/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug in Foundry v11 where when typing the compact view would pop above all other windows. ([#525](https://github.com/vigoren/foundryvtt-simple-calendar/issues/525))
+- Fixed a bug in Foundry v11 where side panels would close when interacting with the calendar. ([#526](https://github.com/vigoren/foundryvtt-simple-calendar/issues/526))
+- Fixed an issue where side panels would sometimes get stuck open. ([#472](https://github.com/vigoren/foundryvtt-simple-calendar/issues/472))
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Lucas](https://weblate.foundryvtt-hub.com/user/lucasts/) (Portuguese (Brazil))
+
+<hr/>
+
 ## 2.3.13 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%2011%2C%202023-blue)

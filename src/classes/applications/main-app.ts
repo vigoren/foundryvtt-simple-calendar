@@ -17,6 +17,7 @@ import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
+import {deepMerge} from "../utilities/object";
 
 
 /**
@@ -193,7 +194,7 @@ export default class MainApp extends FormApplication{
                     if(this.uiElementStates[`fsc-addon-button-side-drawer-${i}`] === undefined){
                         this.uiElementStates[`fsc-addon-button-side-drawer-${i}`] = false;
                     }
-                    data.mainViewDisplay.addonButtonSidePanels += `<div class="fsc-side-drawer fsc-addon-button-side-drawer fsc-addon-button-side-drawer-${i} ${data.sideDrawerDirection} ${this.uiElementStates[`fsc-addon-button-side-drawer-${i}`]? 'fsc-open' : 'fsc-closed' }" data-sc-abi="${i}"></div>`;
+                    data.mainViewDisplay.addonButtonSidePanels += `<div class="fsc-side-drawer fsc-addon-button-side-drawer-${i} fsc-addon-button-side-drawer ${data.sideDrawerDirection} ${this.uiElementStates[`fsc-addon-button-side-drawer-${i}`]? 'fsc-open' : 'fsc-closed' }" data-sc-abi="${i}"></div>`;
                 }
             }
             data.mainViewDisplay.showChangeCalendarControls = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeActiveCalendar);
@@ -209,7 +210,6 @@ export default class MainApp extends FormApplication{
                 };
             });
         }
-
         return data;
     }
 
@@ -219,11 +219,14 @@ export default class MainApp extends FormApplication{
      * @param options
      */
     render(force?: boolean, options?: Application.RenderOptions<FormApplicationOptions>): unknown {
+        if(typeof force === 'undefined'){
+            force = true;
+        }
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)){
             if(this.visibleCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
                 //this.visibleCalendar.setCurrentToVisible();
             }
-            const options:  Application.RenderOptions = {}
+            const mergedOptions:  Application.RenderOptions = deepMerge({}, options);
             if(this.opening){
                 this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
 
@@ -237,8 +240,8 @@ export default class MainApp extends FormApplication{
                 scaleClass = `sc-scale-${SC.clientSettings.compactViewScale}`;
             }
 
-            options.classes = ["simple-calendar", GetThemeName(), persistentClass, scaleClass];
-            return super.render(true, options);
+            mergedOptions.classes = ["simple-calendar", GetThemeName(), persistentClass, scaleClass];
+            return super.render(force, mergedOptions);
         }
         return;
     }
@@ -278,12 +281,14 @@ export default class MainApp extends FormApplication{
      * Overwrite the maximize function to set the calendar to its full form
      */
     async maximize(){
+        if ( !this.popOut || [false, null].includes(this._minimized) ) return;
         //@ts-ignore
         if((<Game>game).release.generation < 11){
             this.uiElementStates.compactView = false;
         }
         this.hideDrawers();
         this.render(true);
+        return Promise.resolve();
     }
 
     /**
@@ -695,8 +700,19 @@ export default class MainApp extends FormApplication{
             }
             if(hide){
                 animateElement(e, 500, true);
-                const member = e.classList[1].toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search';
-                this.uiElementStates[member] = false;
+                let member = '';
+                let memberClasses = ['fsc-calendar-list', 'fsc-note-list', 'fsc-note-search'];
+                for(let i = 0; i < this.addonButtons.length; i++){
+                    memberClasses.push(`fsc-addon-button-side-drawer-${i}`);
+                }
+                e.classList.forEach((value: string) => {
+                    if(memberClasses.includes(value)){
+                        member = value;
+                    }
+                });
+                if(member){
+                    this.uiElementStates[member] = false;
+                }
             }
         });
     }
@@ -1210,7 +1226,7 @@ export default class MainApp extends FormApplication{
         if(this.rendered && this.uiElementStates.compactView && !event.repeat){
             this.uiElementStates.cvLargerSteps = event.shiftKey;
             this.uiElementStates.cvReverseTime = event.ctrlKey;
-            this.updateApp();
+            this.render(false);
         }
     }
 
