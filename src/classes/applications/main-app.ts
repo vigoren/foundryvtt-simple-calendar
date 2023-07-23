@@ -194,7 +194,7 @@ export default class MainApp extends FormApplication{
                     if(this.uiElementStates[`fsc-addon-button-side-drawer-${i}`] === undefined){
                         this.uiElementStates[`fsc-addon-button-side-drawer-${i}`] = false;
                     }
-                    data.mainViewDisplay.addonButtonSidePanels += `<div class="fsc-side-drawer fsc-addon-button-side-drawer fsc-addon-button-side-drawer-${i} ${data.sideDrawerDirection} ${this.uiElementStates[`fsc-addon-button-side-drawer-${i}`]? 'fsc-open' : 'fsc-closed' }" data-sc-abi="${i}"></div>`;
+                    data.mainViewDisplay.addonButtonSidePanels += `<div class="fsc-side-drawer fsc-addon-button-side-drawer-${i} fsc-addon-button-side-drawer ${data.sideDrawerDirection} ${this.uiElementStates[`fsc-addon-button-side-drawer-${i}`]? 'fsc-open' : 'fsc-closed' }" data-sc-abi="${i}"></div>`;
                 }
             }
             data.mainViewDisplay.showChangeCalendarControls = canUser((<Game>game).user, SC.globalConfiguration.permissions.changeActiveCalendar);
@@ -700,8 +700,19 @@ export default class MainApp extends FormApplication{
             }
             if(hide){
                 animateElement(e, 500, true);
-                const member = e.classList[1].toLowerCase() as 'fsc-calendar-list' | 'fsc-note-list' | 'fsc-note-search';
-                this.uiElementStates[member] = false;
+                let member = '';
+                let memberClasses = ['fsc-calendar-list', 'fsc-note-list', 'fsc-note-search'];
+                for(let i = 0; i < this.addonButtons.length; i++){
+                    memberClasses.push(`fsc-addon-button-side-drawer-${i}`);
+                }
+                e.classList.forEach((value: string) => {
+                    if(memberClasses.includes(value)){
+                        member = value;
+                    }
+                });
+                if(member){
+                    this.uiElementStates[member] = false;
+                }
             }
         });
     }
