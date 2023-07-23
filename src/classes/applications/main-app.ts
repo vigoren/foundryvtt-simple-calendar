@@ -210,7 +210,6 @@ export default class MainApp extends FormApplication{
                 };
             });
         }
-
         return data;
     }
 
@@ -282,12 +281,14 @@ export default class MainApp extends FormApplication{
      * Overwrite the maximize function to set the calendar to its full form
      */
     async maximize(){
+        if ( !this.popOut || [false, null].includes(this._minimized) ) return;
         //@ts-ignore
         if((<Game>game).release.generation < 11){
             this.uiElementStates.compactView = false;
         }
         this.hideDrawers();
         this.render(true);
+        return Promise.resolve();
     }
 
     /**
