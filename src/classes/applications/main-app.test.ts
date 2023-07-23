@@ -156,6 +156,7 @@ describe('Main App Class Tests', () => {
     });
 
     test('maximize', async () => {
+        ma.options.popOut = true;
         await ma.maximize();
         expect(ma.uiElementStates.compactView).toBe(false);
         //@ts-ignore
@@ -165,6 +166,10 @@ describe('Main App Class Tests', () => {
 
         //@ts-ignore
         game.release.generation = 11;
+
+        ma.options.popOut = false;
+        await ma.maximize();
+        expect(ma.uiElementStates.compactView).toBe(false);
     });
 
     test('Set Width Height', () => {
@@ -398,11 +403,13 @@ describe('Main App Class Tests', () => {
         const clElm = document.createElement('div');
         const nlElm = document.createElement('div');
         const nsElm = document.createElement('div');
+        const abElm = document.createElement('div');
         //@ts-ignore
-        jest.spyOn(document,'querySelectorAll').mockReturnValue([clElm,nlElm,nsElm]);
+        jest.spyOn(document,'querySelectorAll').mockReturnValue([clElm,nlElm,nsElm,abElm]);
         clElm.classList.add('fsc-side-drawer','fsc-calendar-list');
         nlElm.classList.add('fsc-side-drawer','fsc-note-list');
         nsElm.classList.add('fsc-side-drawer','fsc-note-search');
+        abElm.classList.add('fsc-side-drawer','fsc-addon-button-side-drawer-0');
         ma.uiElementStates["fsc-calendar-list"] = true;
         ma.uiElementStates["fsc-note-list"] = true;
         ma.uiElementStates["fsc-note-search"] = true;
@@ -419,6 +426,17 @@ describe('Main App Class Tests', () => {
         expect(ma.uiElementStates["fsc-calendar-list"]).toBe(false);
         expect(ma.uiElementStates["fsc-note-list"]).toBe(false);
         expect(ma.uiElementStates["fsc-note-search"]).toBe(false);
+
+        ma.addonButtons.push({
+            title: 'Test',
+            iconClass: '',
+            customClass: '',
+            showSidePanel: true,
+            onRender: () => {}
+        });
+        ma.uiElementStates["fsc-addon-button-side-drawer-0"] = true;
+        ma.hideDrawers();
+        expect(ma.uiElementStates["fsc-addon-button-side-drawer-0"]).toBe(false);
     });
 
     test('Toggle Unit Selector', () => {
@@ -985,16 +1003,16 @@ describe('Main App Class Tests', () => {
     });
 
     test('keyClick', () => {
-        jest.spyOn(ma, 'updateApp').mockImplementation(() => {});
+        jest.spyOn(ma, 'render').mockImplementation(() => {});
 
         //@ts-ignore
         ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
-        expect(ma.updateApp).not.toHaveBeenCalled();
+        expect(ma.render).not.toHaveBeenCalled();
 
         ma.uiElementStates.compactView = true;
         //@ts-ignore
         ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
-        expect(ma.updateApp).toHaveBeenCalledTimes(1);
+        expect(ma.render).toHaveBeenCalledTimes(1);
     });
 
     test('toggleWindow', () => {

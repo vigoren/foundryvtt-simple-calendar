@@ -44,6 +44,11 @@ class Application {
     _onDragMouseUp(){};
 
     _onDragMouseMove(){};
+
+    get popOut() {
+        //@ts-ignore
+        return this.options.popOut;
+    }
 }
 
 
