@@ -17,6 +17,7 @@ import {CalManager, ConfigurationApplication, NManager, SC} from "../index";
 import {AdvanceTimeToPreset, FormatDateTime} from "../utilities/date-time";
 import {canUser} from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
+import {deepMerge} from "../utilities/object";
 
 
 /**
@@ -219,11 +220,14 @@ export default class MainApp extends FormApplication{
      * @param options
      */
     render(force?: boolean, options?: Application.RenderOptions<FormApplicationOptions>): unknown {
+        if(typeof force === 'undefined'){
+            force = true;
+        }
         if(canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)){
             if(this.visibleCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
                 //this.visibleCalendar.setCurrentToVisible();
             }
-            const options:  Application.RenderOptions = {}
+            const mergedOptions:  Application.RenderOptions = deepMerge({}, options);
             if(this.opening){
                 this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
 
@@ -237,8 +241,8 @@ export default class MainApp extends FormApplication{
                 scaleClass = `sc-scale-${SC.clientSettings.compactViewScale}`;
             }
 
-            options.classes = ["simple-calendar", GetThemeName(), persistentClass, scaleClass];
-            return super.render(true, options);
+            mergedOptions.classes = ["simple-calendar", GetThemeName(), persistentClass, scaleClass];
+            return super.render(force, mergedOptions);
         }
         return;
     }
@@ -1210,7 +1214,7 @@ export default class MainApp extends FormApplication{
         if(this.rendered && this.uiElementStates.compactView && !event.repeat){
             this.uiElementStates.cvLargerSteps = event.shiftKey;
             this.uiElementStates.cvReverseTime = event.ctrlKey;
-            this.updateApp();
+            this.render(false);
         }
     }
 
