@@ -1,5 +1,16 @@
 # Change Log
 
+## 2.3.17 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-July%2022%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.17/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug when the [Sync Date/Time Changes Across Calendars](https://simplecalendar.info/docs/global-configuration/settings#sync-datetime-changes-across-calendars) setting is enabled and multiple calendars are configured that would cause all calendars to emit the [DateTimeChange](https://simplecalendar.info/docs/developing-with-sc/api/namespaces/SimpleCalendar.Hooks#datetimechange) hook instead of just the active calendar.
+
+<hr/>
+
 ## 2.3.16 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%2022%2C%202023-blue)
@@ -187,7 +198,7 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 
 The compact display has been updated to make it a little cleaner and utilize the unused space to keep it nice and compact without losing any functionality.
 
-![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
 
 Changes include:
 
@@ -203,22 +214,22 @@ Overall these changes have helped reduce the height and width of the compact dis
 
 A preview of all themes for the new compact mode:
 
-![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
-![](./docs/images/sc-v2-theme-light-comp.png) ![](media://sc-v2-theme-light-comp.png)
-![](./docs/images/sc-v2-theme-classic-comp.png) ![](media://sc-v2-theme-classic-comp.png)
-![](./docs/images/sc-v2-theme-eclipsephase-comp.png) ![](media://sc-v2-theme-eclipsephase-comp.png)
-![](./docs/images/sc-v2-theme-sfrpg-comp.png) ![](media://sc-v2-theme-sfrpg-comp.png)
-![](./docs/images/sc-v2-theme-dsa5-comp.png) ![](media://sc-v2-theme-dsa5-comp.png)
-![](./docs/images/sc-v2-theme-forbidden-lands-comp.png) ![](media://sc-v2-theme-forbidden-lands-comp.png)
-![](./docs/images/sc-v2-theme-wfrp4e-comp.png) ![](media://sc-v2-theme-wfrp4e-comp.png)
-![](./docs/images/sc-v2-theme-wrath-and-glory-comp.png) ![](media://sc-v2-theme-wrath-and-glory-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-light-comp.png) ![](media://sc-v2-theme-light-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-classic-comp.png) ![](media://sc-v2-theme-classic-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-eclipsephase-comp.png) ![](media://sc-v2-theme-eclipsephase-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-sfrpg-comp.png) ![](media://sc-v2-theme-sfrpg-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-dsa5-comp.png) ![](media://sc-v2-theme-dsa5-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-forbidden-lands-comp.png) ![](media://sc-v2-theme-forbidden-lands-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-wfrp4e-comp.png) ![](media://sc-v2-theme-wfrp4e-comp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-wrath-and-glory-comp.png) ![](media://sc-v2-theme-wrath-and-glory-comp.png)
 
 #### Time Control Button Options
 
 The compact display also now lets you choose from 2 button layouts for changing the time!
 
-- **Full**: This is the current layout and allows you to change any time unit forward or back.<br/>![](./docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)<br/><br/>
-- **Quick Increment**: This layout offers 5 options (1 Round, 1 Minute, 5 Minutes, 15 Minutes, 1 Hour) and allows users to quickly advance the time by those amounts.<br/>![](./docs/images/sc-v2-theme-dark-comp-qi.png) ![](media://sc-v2-theme-dark-comp-qi.png)
+- **Full**: This is the current layout and allows you to change any time unit forward or back.<br/>![](./simple-calendar-docs/docs/images/sc-v2-theme-dark-comp.png) ![](media://sc-v2-theme-dark-comp.png)<br/><br/>
+- **Quick Increment**: This layout offers 5 options (1 Round, 1 Minute, 5 Minutes, 15 Minutes, 1 Hour) and allows users to quickly advance the time by those amounts.<br/>![](./simple-calendar-docs/docs/images/sc-v2-theme-dark-comp-qi.png) ![](media://sc-v2-theme-dark-comp-qi.png)
 
 The setting for this can be found under the calendars [Display Options](https://simplecalendar.info/pages/calendar-configuration/index/display-options.html) configuration section.
 
@@ -341,7 +352,7 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 
 ### New Themes
 
-- **New** [Eclipse Phase 2E](https://foundryvtt.com/packages/eclipsephase) System Theme<br/>![](./docs/images/sc-theme-eclipsephase.png) ![](media://sc-theme-eclipsephase.png)
+- **New** [Eclipse Phase 2E](https://foundryvtt.com/packages/eclipsephase) System Theme<br/>![](./simple-calendar-docs/docs/images/sc-theme-eclipsephase.png) ![](media://sc-theme-eclipsephase.png)
 
 ### Translation Updates
 
@@ -370,12 +381,12 @@ Changes that has been done to enable easy theming:
 
 To go along with these changes I have updated all the existing themes and added a couple of new themes to Simple Calendar!
 
-|                                                                                                                                                                                    |                                                                                                                                                                                                              |
-|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Dark Theme ![](./docs/images/sc-theme-dark.png) ![](media://sc-theme-dark.png)                                                                                                     | Light Theme ![](./docs/images/sc-theme-light.png) ![](media://sc-theme-light.png)                                                                                                                            |
-| Classic Theme ![](./docs/images/sc-theme-classic.png) ![](media://sc-theme-classic.png)                                                                                            | [Warhammer Fantasy Roleplay 4th Edition](https://foundryvtt.com/packages/wfrp4e) System Theme ![](./docs/images/sc-theme-wfrp4e.png) ![](media://sc-theme-wfrp4e.png)                                        |
-| **NEW** [Forbidden Lands](https://foundryvtt.com/packages/forbidden-lands) System Theme  ![](./docs/images/sc-theme-forbidden-lands.png) ![](media://sc-theme-forbidden-lands.png) | **NEW** [Das Schwarze Auge / The Dark Eye (5th Edition)](https://foundryvtt.com/packages/dsa5) System Theme ![](./docs/images/sc-theme-dsa5.png) ![](media://sc-theme-dsa5.png)                              |
-| **NEW** [Starfinder](https://foundryvtt.com/packages/sfrpg) System Theme ![](./docs/images/sc-theme-sfrpg.png) ![](media://sc-theme-sfrpg.png)                                     | **NEW** [Warhammer 40,000 Roleplay: Wrath and Glory](https://foundryvtt.com/packages/wrath-and-glory) System Theme ![](./docs/images/sc-theme-wrath-and-glory.png) ![](media://sc-theme-wrath-and-glory.png) |
+|                                                                                                                                                                                                         |                                                                                                                                                                                                                                   |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dark Theme ![](./simple-calendar-docs/docs/images/sc-theme-dark.png) ![](media://sc-theme-dark.png)                                                                                                     | Light Theme ![](./simple-calendar-docs/docs/images/sc-theme-light.png) ![](media://sc-theme-light.png)                                                                                                                            |
+| Classic Theme ![](./simple-calendar-docs/docs/images/sc-theme-classic.png) ![](media://sc-theme-classic.png)                                                                                            | [Warhammer Fantasy Roleplay 4th Edition](https://foundryvtt.com/packages/wfrp4e) System Theme ![](./simple-calendar-docs/docs/images/sc-theme-wfrp4e.png) ![](media://sc-theme-wfrp4e.png)                                        |
+| **NEW** [Forbidden Lands](https://foundryvtt.com/packages/forbidden-lands) System Theme  ![](./simple-calendar-docs/docs/images/sc-theme-forbidden-lands.png) ![](media://sc-theme-forbidden-lands.png) | **NEW** [Das Schwarze Auge / The Dark Eye (5th Edition)](https://foundryvtt.com/packages/dsa5) System Theme ![](./simple-calendar-docs/docs/images/sc-theme-dsa5.png) ![](media://sc-theme-dsa5.png)                              |
+| **NEW** [Starfinder](https://foundryvtt.com/packages/sfrpg) System Theme ![](./simple-calendar-docs/docs/images/sc-theme-sfrpg.png) ![](media://sc-theme-sfrpg.png)                                     | **NEW** [Warhammer 40,000 Roleplay: Wrath and Glory](https://foundryvtt.com/packages/wrath-and-glory) System Theme ![](./simple-calendar-docs/docs/images/sc-theme-wrath-and-glory.png) ![](media://sc-theme-wrath-and-glory.png) |
 
 
 ### Quality of Life Improvements
@@ -448,10 +459,10 @@ Assigning permissions to notes has been improved!
 - Updated all predefined notes so that when created they are set so All Players (current and future) can view them. **This is not retroactive**.
 - Updated the `Player Visible` icon on the notes list that GM's see:
   - It now has 3 states instead of 2
-    - `Green Eye`![](./docs/images/note-list-player-visible.png) ![](media://note-list-player-visible.png): All players can view this note.
-    - `Yellow Partial Eye`![](./docs/images/note-list-partial-player-visible.png) ![](media://note-list-partial-player-visible.png): Some players can view this note.
-    - `Red Eye Slash`![](./docs/images/note-list-not-player-visible.png) ![](media://note-list-not-player-visible.png): Only the author of this note can view it.
-  - The tooltip for the `Player Visible` icon now shows a list of players that can view the note.<br/>![](./docs/images/note-list-who-can-see-tooltip.png)![](media://note-list-who-can-see-tooltip.png)
+    - `Green Eye`![](./simple-calendar-docs/docs/images/note-list-player-visible.png) ![](media://note-list-player-visible.png): All players can view this note.
+    - `Yellow Partial Eye`![](./simple-calendar-docs/docs/images/note-list-partial-player-visible.png) ![](media://note-list-partial-player-visible.png): Some players can view this note.
+    - `Red Eye Slash`![](./simple-calendar-docs/docs/images/note-list-not-player-visible.png) ![](media://note-list-not-player-visible.png): Only the author of this note can view it.
+  - The tooltip for the `Player Visible` icon now shows a list of players that can view the note.<br/>![](./simple-calendar-docs/docs/images/note-list-who-can-see-tooltip.png)![](media://note-list-who-can-see-tooltip.png)
 - Added the `Show Players` button in the header of the note dialog so any note can be shown to the players. This works just like the Journal Show Players button.
 
 The `All Players` option for `Who Can See` a note is not retroactive, so older notes shared with everyone will not have this set.
@@ -460,7 +471,7 @@ The `All Players` option for `Who Can See` a note is not retroactive, so older n
 
 You can now right-click on notes under the notes list to show different actions that can be done. The list of actions available will change depending on if you are the GM or own the note being right-clicked on.
 
-![](./docs/images/note-list-context-menu.png)
+![](./simple-calendar-docs/docs/images/note-list-context-menu.png)
 ![](media://note-list-context-menu.png)
 
 - All players will be shown the `Remind Me`/`Don't Remind Me` option as a quick way to toggle being reminded about the note.
@@ -510,7 +521,7 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 
 Weekdays now have a new setting that let you specify if that weekday is a rest day. Rest days are highlighted on the calendar.
 
-![](./docs/images/weekend-example.png)
+![](./simple-calendar-docs/docs/images/weekend-example.png)
 ![](media://weekend-example.png)
 
 ### Descriptions
@@ -519,7 +530,7 @@ GM's can now add descriptions to months, weekdays and seasons! Descriptions can 
 
 The descriptions do support HTML to help with formatting the text!
 
-![](./docs/images/description-example.png)
+![](./simple-calendar-docs/docs/images/description-example.png)
 ![](media://description-example.png)
 
 ### Day Context Menu (Right Click)
@@ -532,7 +543,7 @@ If you are able to change the date of the calendar you will also see an option t
 
 If you are able to add notes you will also see an option to add a new note to that day. This functions just like adding a note to a selected day.
 
-![](./docs/images/day-context-gif.gif)
+![](./simple-calendar-docs/docs/images/day-context-gif.gif)
 ![](media://day-context-gif.gif)
 
 ### Bug Fixes
@@ -661,7 +672,7 @@ These themes will only appear in the Theme selector as an option for players whe
 
 The first system to get a dedicated theme is Warhammer Fantasy Roleplay 4th Edition! (Thanks to [ZwS](https://github.com/ZwS) for getting this started with updates to the classic theme)
 
-![](./docs/images/sc-v2-theme-wfrp.png)
+![](./simple-calendar-docs/docs/images/sc-v2-theme-wfrp.png)
 ![](media://sc-v2-theme-wfrp.png)
 
 Other systems will get their own specific themes as time goes on
@@ -869,7 +880,7 @@ I have tried to make sure that the light and dark themes are still easily usable
 
 #### Main Calendar
 
-![](./docs/images/sc-v2-themes.gif)
+![](./simple-calendar-docs/docs/images/sc-v2-themes.gif)
 ![](media://sc-v2-themes.gif)
 
 This section of the module has been 100% redesigned so that the full version is much more compact and easy to use. It features:
@@ -887,7 +898,7 @@ This section of the module has been 100% redesigned so that the full version is 
 
 #### Compact View
 
-![](./docs/images/sc-v2-themes-comp.gif)
+![](./simple-calendar-docs/docs/images/sc-v2-themes-comp.gif)
 ![](media://sc-v2-themes-comp.gif)
 
 The compact view has also been completely redesigned to be more compact while still showing the same amount of information and functionality as before. It is now just slightly larger than the old calendar/weather widget.
@@ -896,7 +907,7 @@ The button in the header to switch between compact and full views has been remov
 
 #### Configuration Dialog
 
-![](./docs/images/sc-v2-themes-config.gif)
+![](./simple-calendar-docs/docs/images/sc-v2-themes-config.gif)
 ![](media://sc-v2-themes-config.gif)
 
 The configuration dialog has also been completely redesigned to support multiple calendars and hopefully reduce some confusion around configuring a calendar. It features:
@@ -908,7 +919,7 @@ The configuration dialog has also been completely redesigned to support multiple
 
 #### Notes Dialog
 
-![](./docs/images/sc-v2-themes-notes.gif)
+![](./simple-calendar-docs/docs/images/sc-v2-themes-notes.gif)
 ![](media://sc-v2-themes-notes.gif)
 
 The note dialog has been redesigned as well to match the look and feel of the other dialogs!

@@ -104,6 +104,14 @@ export default class CalendarManager {
     }
 
     /**
+     * Checks the passed in ID to see if it is the same as the current active calendars ID
+     * @param id The ID of the calendar to check.
+     */
+    public isActiveCalendar(id: string){
+        return id === this.activeId;
+    }
+
+    /**
      * Adds a new calendar
      * @param {string} id The ID to assign to this calendar, if an empty string is passed in an ID will be generated
      * @param {string} name The name of this calendar

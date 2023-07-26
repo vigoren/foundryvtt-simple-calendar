@@ -1018,12 +1018,15 @@ export default class Calendar extends ConfigurationItemBase{
             }
 
             if(change){
-                let changeInSeconds = this.toSeconds() - initialTimestamp;
-                Hook.emit(SimpleCalendarHooks.DateTimeChange, this, changeInSeconds);
+                if(CalManager.isActiveCalendar(this.id)){
+                    let changeInSeconds = this.toSeconds() - initialTimestamp;
+                    Hook.emit(SimpleCalendarHooks.DateTimeChange, this, changeInSeconds);
 
-                if(!options.fromCalSync && CalManager.syncWithAllCalendars && !isNaN(initialTimestamp)){
-                    CalManager.syncWithCalendars({seconds: changeInSeconds});
+                    if(!options.fromCalSync && CalManager.syncWithAllCalendars && !isNaN(initialTimestamp)){
+                        CalManager.syncWithCalendars({seconds: changeInSeconds});
+                    }
                 }
+
                 if(options.save){
                     CalManager.saveCalendars().catch(Logger.error);
                 }
@@ -1070,7 +1073,10 @@ export default class Calendar extends ConfigurationItemBase{
             this.updateTime(processedDate);
 
             let changeInSeconds = this.toSeconds() - initialTimestamp;
-            Hook.emit(SimpleCalendarHooks.DateTimeChange, this, changeInSeconds);
+
+            if(CalManager.isActiveCalendar(this.id)){
+                Hook.emit(SimpleCalendarHooks.DateTimeChange, this, changeInSeconds);
+            }
 
             if(!options.fromCalSync && CalManager.syncWithAllCalendars && !isNaN(initialTimestamp)){
                 CalManager.syncWithCalendars({seconds: changeInSeconds});
