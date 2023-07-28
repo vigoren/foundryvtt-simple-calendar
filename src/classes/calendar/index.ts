@@ -19,6 +19,7 @@ import NoteStub from "../notes/note-stub";
 import Time from "../time";
 import { deepMerge } from "../utilities/object";
 import { Hook } from "../api/hook";
+import PF1E from "../systems/pf1e";
 
 export default class Calendar extends ConfigurationItemBase {
     /**
@@ -1266,6 +1267,8 @@ export default class Calendar extends ConfigurationItemBase {
 
         if (Object.prototype.hasOwnProperty.call(combat, "previous") && combat["previous"].round) {
             roundsPassed = combat.round - combat["previous"].round;
+        } else if (PF1E.isPF1E) {
+            roundsPassed = 0;
         }
         if (roundSeconds !== 0 && roundsPassed !== 0) {
             // If the current player is the GM then we need to save this new value to the database
