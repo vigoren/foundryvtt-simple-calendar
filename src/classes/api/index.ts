@@ -5,36 +5,32 @@
  * Simple Calendar exposes a variable called `SimpleCalendar`, all of these API functions exist the property api on that variable `SimpleCalendar.api`
  * @module API
  */
-import {Logger} from "../logging";
-import {GameSettings} from "../foundry-interfacing/game-settings";
+import { Logger } from "../logging";
+import { GameSettings } from "../foundry-interfacing/game-settings";
 import {
+    CalendarClickEvents,
     DateSelectorPositions,
     Icons,
     LeapYearRules,
     MoonYearResetOptions,
     NoteRepeat,
     PredefinedCalendars,
-    PresetTimeOfDay, SettingNames,
+    PresetTimeOfDay,
+    SettingNames,
     SocketTypes,
     TimeKeeperStatus,
     YearNamingRules
 } from "../../constants";
 import PF2E from "../systems/pf2e";
-import {
-    AdvanceTimeToPreset,
-    DateToTimestamp,
-    FormatDateTime,
-    MergeDateTimeObject,
-    TimestampToDateData
-} from "../utilities/date-time";
-import DateSelectorManager from "../date-selector/date-selector-manager"
+import { AdvanceTimeToPreset, DateToTimestamp, FormatDateTime, MergeDateTimeObject, TimestampToDateData } from "../utilities/date-time";
+import DateSelectorManager from "../date-selector/date-selector-manager";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import Renderer from "../renderer";
-import {CalManager, MainApplication, MigrationApplication, NManager, SC} from "../index";
-import {canUser} from "../utilities/permissions";
+import { CalManager, MainApplication, MigrationApplication, NManager, SC } from "../index";
+import { canUser } from "../utilities/permissions";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import {ordinalSuffix} from "../utilities/string";
-import {GetThemeList, GetThemeName} from "../utilities/visual";
+import { ordinalSuffix } from "../utilities/string";
+import { GetThemeList, GetThemeName } from "../utilities/visual";
 
 /**
  * The Date selector class used to create date selector inputs based on the calendar
@@ -47,35 +43,35 @@ export const DateSelector = {
 /**
  * The different date selector positions available
  */
-export {DateSelectorPositions};
+export { DateSelectorPositions };
 /**
  * The predefined calendars packaged with the calendar
  */
-export {PredefinedCalendars as Calendars};
+export { PredefinedCalendars as Calendars };
 /**
  * The leap year rules
  */
-export {LeapYearRules};
+export { LeapYearRules };
 /**
  * The Moon Icons
  */
-export {Icons};
+export { Icons };
 /**
  * The moon year reset options
  */
-export {MoonYearResetOptions};
+export { MoonYearResetOptions };
 /**
  * The year naming rules
  */
-export {YearNamingRules};
+export { YearNamingRules };
 /**
  * The sun positions
  */
-export {PresetTimeOfDay};
+export { PresetTimeOfDay };
 /**
  * The options for note repeating
  */
-export{NoteRepeat}
+export { NoteRepeat };
 
 /**
  * This function is used to activate event listeners for calendars displayed with the [sc-full-calendar](#sc-full-calendar) Handlebar helper.
@@ -90,7 +86,13 @@ export{NoteRepeat}
  * SimpleCalendar.api.activateFullCalendarListeners('example_1');
  * ```
  */
-export function activateFullCalendarListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null): void{
+export function activateFullCalendarListeners(
+    calendarId: string,
+    onMonthChange:
+        | ((clickType: CalendarClickEvents.previous | CalendarClickEvents.next, options: SimpleCalendar.Renderer.CalendarOptions) => void)
+        | null = null,
+    onDayClick: ((options: SimpleCalendar.Renderer.CalendarOptions) => void) | null = null
+): void {
     Renderer.CalendarFull.ActivateListeners(calendarId, onMonthChange, onDayClick);
 }
 
@@ -117,10 +119,25 @@ export function activateFullCalendarListeners(calendarId: string, onMonthChange:
  * // Will create a new note on Christmas day of 2022 that lasts all day and repeats yearly.
  * ```
  */
-export async function addNote(title: string, content: string, startDate: SimpleCalendar.DateTimeParts, endDate: SimpleCalendar.DateTimeParts, allDay: boolean, repeats: NoteRepeat = NoteRepeat.Never, categories: string[] = [], calendarId: string = 'active', macro: string | null = null, userVisibility: string[] = [], remindUsers: string[] = []): Promise<StoredDocument<JournalEntry> | null>{
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(activeCalendar){
-        const je =  await NManager.createNote( title, content, {
+export async function addNote(
+    title: string,
+    content: string,
+    startDate: SimpleCalendar.DateTimeParts,
+    endDate: SimpleCalendar.DateTimeParts,
+    allDay: boolean,
+    repeats: NoteRepeat = NoteRepeat.Never,
+    categories: string[] = [],
+    calendarId: string = "active",
+    macro: string | null = null,
+    userVisibility: string[] = [],
+    remindUsers: string[] = []
+): Promise<StoredDocument<JournalEntry> | null> {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (activeCalendar) {
+        const je = await NManager.createNote(
+            title,
+            content,
+            {
                 calendarId: activeCalendar.id,
                 startDate: MergeDateTimeObject(startDate, null, activeCalendar),
                 endDate: MergeDateTimeObject(endDate, null, activeCalendar),
@@ -128,19 +145,26 @@ export async function addNote(title: string, content: string, startDate: SimpleC
                 order: 0,
                 categories: categories,
                 repeats: repeats,
-                remindUsers: Array.isArray(remindUsers)? remindUsers : [],
-                macro: macro? macro : 'none'
-            }, activeCalendar, false );
+                remindUsers: Array.isArray(remindUsers) ? remindUsers : [],
+                macro: macro ? macro : "none"
+            },
+            activeCalendar,
+            false
+        );
 
-        if(je && Array.isArray(userVisibility) && userVisibility.length){
+        if (je && Array.isArray(userVisibility) && userVisibility.length) {
             const perms: Partial<Record<string, 0 | 1 | 2 | 3>> = {};
-            if(userVisibility.indexOf('default') > -1){
-                (<Game>game).users?.forEach(u => perms[u.id] = (<Game>game).user?.id === u.id? 3 : 2);
-                perms['default'] = 2;
+            if (userVisibility.indexOf("default") > -1) {
+                (<Game>game).users?.forEach((u) => {
+                    return (perms[u.id] = (<Game>game).user?.id === u.id ? 3 : 2);
+                });
+                perms["default"] = 2;
             } else {
-                userVisibility.forEach(o => perms[o] = (<Game>game).user?.id === o? 3 : 2)
+                userVisibility.forEach((o) => {
+                    return (perms[o] = (<Game>game).user?.id === o ? 3 : 2);
+                });
             }
-            await je.update({ownership: perms}, {render:false, renderSheet: false});
+            await je.update({ ownership: perms }, { render: false, renderSheet: false });
         }
         return je;
     }
@@ -205,7 +229,13 @@ export async function addNote(title: string, content: string, startDate: SimpleC
  *
  * ```
  */
-export function addSidebarButton(buttonTitle: string, iconClass: string, customClass: string, showSidePanel: boolean, onRender: (event: Event | null, renderTarget: HTMLElement | null | undefined) => void){
+export function addSidebarButton(
+    buttonTitle: string,
+    iconClass: string,
+    customClass: string,
+    showSidePanel: boolean,
+    onRender: (event: Event | null, renderTarget: HTMLElement | null | undefined) => void
+) {
     MainApplication.addonButtons.push({
         title: buttonTitle,
         iconClass: iconClass,
@@ -236,15 +266,14 @@ export function addSidebarButton(buttonTitle: string, iconClass: string, customC
  * SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunrise);
  * ```
  */
-export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string = 'active'): boolean{
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(activeCalendar){
-        if(canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)) {
+export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string = "active"): boolean {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (activeCalendar) {
+        if (canUser((<Game>game).user, SC.globalConfiguration.permissions.changeDateTime)) {
             AdvanceTimeToPreset(preset, activeCalendar).catch(Logger.error);
             return true;
         }
-    }
-    else {
+    } else {
         Logger.error(`SimpleCalendar.api.advanceTimeToPreset - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
     return false;
@@ -273,10 +302,10 @@ export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string 
  * SimpleCalendar.api.changeDate({seconds: 3600}); // Will set the new date to June 1, 2021 11:00:00
  * ```
  */
-export function changeDate(interval: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean{
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(activeCalendar){
-        return activeCalendar.changeDateTime(interval, {updateMonth: false, showWarning: true});
+export function changeDate(interval: SimpleCalendar.DateTimeParts, calendarId: string = "active"): boolean {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (activeCalendar) {
+        return activeCalendar.changeDateTime(interval, { updateMonth: false, showWarning: true });
     } else {
         Logger.error(`SimpleCalendar.api.changeDate - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
@@ -325,19 +354,28 @@ export function changeDate(interval: SimpleCalendar.DateTimeParts, calendarId: s
  * // }
  * ```
  */
-export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}, endingDate: SimpleCalendar.DateTimeParts = {}, calendarId: string = 'active'): SimpleCalendar.DateTime {
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    let year = 0, month = 0, day = 0, hour = 0, minute = 0, second = 0;
+export function chooseRandomDate(
+    startingDate: SimpleCalendar.DateTimeParts = {},
+    endingDate: SimpleCalendar.DateTimeParts = {},
+    calendarId: string = "active"
+): SimpleCalendar.DateTime {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    let year = 0,
+        month = 0,
+        day = 0,
+        hour = 0,
+        minute = 0,
+        second = 0;
 
-    if(activeCalendar){
+    if (activeCalendar) {
         /**
          * Choose a random year
          *      If the starting and ending year are the same, use that year
          *      If they are different random choose a year between them (they are included)
          *      If no years are provided, random choose a year between 0 and 10,000
          */
-        if(startingDate.year !== undefined && endingDate.year !== undefined){
-            if(startingDate.year === endingDate.year){
+        if (startingDate.year !== undefined && endingDate.year !== undefined) {
+            if (startingDate.year === endingDate.year) {
                 year = startingDate.year;
             } else {
                 year = Math.floor(Math.random() * (endingDate.year - startingDate.year + 1)) + startingDate.year;
@@ -352,8 +390,8 @@ export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}
          *      If they are different randomly choose a month between them (they are included)
          *      If no months are provided randomly choose a month between 0 and the number of months in a year
          */
-        if(startingDate.month !== undefined && endingDate.month !== undefined){
-            if(startingDate.month === endingDate.month){
+        if (startingDate.month !== undefined && endingDate.month !== undefined) {
+            if (startingDate.month === endingDate.month) {
                 month = startingDate.month;
             } else {
                 month = Math.floor(Math.random() * (endingDate.month - startingDate.month + 1)) + startingDate.month;
@@ -362,19 +400,19 @@ export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}
             month = Math.floor(Math.random() * activeCalendar.months.length);
         }
 
-        if(month < 0 || month >= activeCalendar.months.length){
+        if (month < 0 || month >= activeCalendar.months.length) {
             month = activeCalendar.months.length - 1;
         }
 
-        let monthObject = activeCalendar.months[month];
+        const monthObject = activeCalendar.months[month];
         /**
          * Chose a random day
          *      If the starting and ending day are the same use that day
          *      If they are different randomly choose a day between them (they are included)
          *      If no days are provided randomly choose a day between 0 and the number of days in the month selected above
          */
-        if(startingDate.day !== undefined && endingDate.day !== undefined){
-            if(startingDate.day === endingDate.day){
+        if (startingDate.day !== undefined && endingDate.day !== undefined) {
+            if (startingDate.day === endingDate.day) {
                 day = startingDate.day;
             } else {
                 day = Math.floor(Math.random() * (endingDate.day - startingDate.day + 1)) + startingDate.day;
@@ -383,12 +421,12 @@ export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}
             day = Math.floor(Math.random() * monthObject.days.length);
         }
 
-        if(day < 0 || day >= monthObject.days.length){
+        if (day < 0 || day >= monthObject.days.length) {
             day = monthObject.days.length - 1;
         }
 
-        if(startingDate.hour !== undefined && endingDate.hour !== undefined){
-            if(startingDate.hour === endingDate.hour){
+        if (startingDate.hour !== undefined && endingDate.hour !== undefined) {
+            if (startingDate.hour === endingDate.hour) {
                 hour = startingDate.hour;
             } else {
                 hour = Math.floor(Math.random() * (endingDate.hour - startingDate.hour + 1)) + startingDate.hour;
@@ -397,8 +435,8 @@ export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}
             hour = Math.floor(Math.random() * activeCalendar.time.hoursInDay);
         }
 
-        if(startingDate.minute !== undefined && endingDate.minute !== undefined){
-            if(startingDate.minute === endingDate.minute){
+        if (startingDate.minute !== undefined && endingDate.minute !== undefined) {
+            if (startingDate.minute === endingDate.minute) {
                 minute = startingDate.minute;
             } else {
                 minute = Math.floor(Math.random() * (endingDate.minute - startingDate.minute + 1)) + startingDate.minute;
@@ -407,8 +445,8 @@ export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}
             minute = Math.floor(Math.random() * activeCalendar.time.minutesInHour);
         }
 
-        if(startingDate.seconds !== undefined && endingDate.seconds !== undefined){
-            if(startingDate.seconds === endingDate.seconds){
+        if (startingDate.seconds !== undefined && endingDate.seconds !== undefined) {
+            if (startingDate.seconds === endingDate.seconds) {
                 second = startingDate.seconds;
             } else {
                 second = Math.floor(Math.random() * (endingDate.seconds - startingDate.seconds + 1)) + startingDate.seconds;
@@ -442,9 +480,9 @@ export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}
  * console.log(status); // {started: false, stopped: true, paused: false}
  * ```
  */
-export function clockStatus(calendarId: string = 'active'): SimpleCalendar.ClockStatus{
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function clockStatus(calendarId: string = "active"): SimpleCalendar.ClockStatus {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         const status = cal.timeKeeper.getStatus();
         return {
             started: status === TimeKeeperStatus.Started,
@@ -459,7 +497,6 @@ export function clockStatus(calendarId: string = 'active'): SimpleCalendar.Clock
             paused: false
         };
     }
-
 }
 
 /**
@@ -481,14 +518,17 @@ export function clockStatus(calendarId: string = 'active'): SimpleCalendar.Clock
  * const result = await SimpleCalendar.api.configureCalendar(custom);
  * ```
  */
-export async function configureCalendar(calendarData: PredefinedCalendars | SimpleCalendar.CalendarData, calendarId: string = 'active'): Promise<boolean> {
+export async function configureCalendar(
+    calendarData: PredefinedCalendars | SimpleCalendar.CalendarData,
+    calendarId: string = "active"
+): Promise<boolean> {
     let res = false;
-    if(GameSettings.IsGm()){
-        const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-        if(activeCalendar){
-            if(typeof calendarData === "string"){
+    if (GameSettings.IsGm()) {
+        const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+        if (activeCalendar) {
+            if (typeof calendarData === "string") {
                 res = await PredefinedCalendar.setToPredefined(activeCalendar, <PredefinedCalendars>calendarData);
-            } else if(Object.keys(calendarData).length) {
+            } else if (Object.keys(calendarData).length) {
                 activeCalendar.loadFromSettings(calendarData);
                 res = true;
             }
@@ -521,9 +561,9 @@ export async function configureCalendar(calendarData: PredefinedCalendars | Simp
  * // }
  * ```
  */
-export function currentDateTime(calendarId: string = 'active'): SimpleCalendar.DateTime | null {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function currentDateTime(calendarId: string = "active"): SimpleCalendar.DateTime | null {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         const monthDayIndex = cal.getMonthAndDayIndex();
         const time = cal.time.getCurrentTime();
         return {
@@ -564,27 +604,49 @@ export function currentDateTime(calendarId: string = 'active'): SimpleCalendar.D
  * // }
  * ```
  */
-export function currentDateTimeDisplay(calendarId: string = 'active'): SimpleCalendar.DateDisplayData | null {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function currentDateTimeDisplay(calendarId: string = "active"): SimpleCalendar.DateDisplayData | null {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         const monthDayIndex = cal.getMonthAndDayIndex();
         const month = cal.months[monthDayIndex.month || 0];
         const day = month.days[monthDayIndex.day || 0];
-        const dayOfTheWeek = cal.dayOfTheWeek(cal.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0)
+        const dayOfTheWeek = cal.dayOfTheWeek(cal.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0);
         const time = cal.time.getCurrentTime();
 
         return {
-            date: FormatDateTime({year: cal.year.numericRepresentation, month: monthDayIndex.month || 0, day: monthDayIndex.day || 0, hour: time.hour, minute: time.minute, seconds: time.seconds}, cal.generalSettings.dateFormat.date, cal),
+            date: FormatDateTime(
+                {
+                    year: cal.year.numericRepresentation,
+                    month: monthDayIndex.month || 0,
+                    day: monthDayIndex.day || 0,
+                    hour: time.hour,
+                    minute: time.minute,
+                    seconds: time.seconds
+                },
+                cal.generalSettings.dateFormat.date,
+                cal
+            ),
             day: day.numericRepresentation.toString(),
             daySuffix: ordinalSuffix(day.numericRepresentation),
-            weekday: cal.weekdays.length > dayOfTheWeek? cal.weekdays[dayOfTheWeek].name : '',
+            weekday: cal.weekdays.length > dayOfTheWeek ? cal.weekdays[dayOfTheWeek].name : "",
             monthName: month.name,
             month: month.numericRepresentation.toString(),
             year: cal.year.numericRepresentation.toString(),
             yearName: cal.year.getYearName(cal.year.numericRepresentation),
             yearPrefix: cal.year.prefix,
             yearPostfix: cal.year.postfix,
-            time: FormatDateTime({year: cal.year.numericRepresentation, month: monthDayIndex.month || 0, day: monthDayIndex.day || 0, hour: time.hour, minute: time.minute, seconds: time.seconds}, cal.generalSettings.dateFormat.time, cal)
+            time: FormatDateTime(
+                {
+                    year: cal.year.numericRepresentation,
+                    month: monthDayIndex.month || 0,
+                    day: monthDayIndex.day || 0,
+                    hour: time.hour,
+                    minute: time.minute,
+                    seconds: time.seconds
+                },
+                cal.generalSettings.dateFormat.time,
+                cal
+            )
         };
     }
     return null;
@@ -604,9 +666,9 @@ export function currentDateTimeDisplay(calendarId: string = 'active'): SimpleCal
  * SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, seconds: 0}); //Returns 1609462860
  * ```
  */
-export function dateToTimestamp(date: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): number{
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function dateToTimestamp(date: SimpleCalendar.DateTimeParts, calendarId: string = "active"): number {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         return DateToTimestamp(date, cal);
     } else {
         Logger.error(`SimpleCalendar.api.dateToTimestamp - Unable to find a calendar with the passed in ID of "${calendarId}"`);
@@ -646,42 +708,58 @@ export function dateToTimestamp(date: SimpleCalendar.DateTimeParts, calendarId: 
  * // Returns '31/12/2021 23:59:59 PM'
  * ```
  */
-export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: string = '', calendarId: string = 'active'): string | {date: string, time: string} {
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(activeCalendar){
-        const year = date.year? date.year : 0;
-        let monthIndex = date.month && date.month >= 0? date.month : 0;
-        if(monthIndex >= activeCalendar.months.length){
+export function formatDateTime(
+    date: SimpleCalendar.DateTimeParts,
+    format: string = "",
+    calendarId: string = "active"
+): string | { date: string; time: string } {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (activeCalendar) {
+        const year = date.year ? date.year : 0;
+        let monthIndex = date.month && date.month >= 0 ? date.month : 0;
+        if (monthIndex >= activeCalendar.months.length) {
             monthIndex = activeCalendar.months.length - 1;
         }
         const month = activeCalendar.months[monthIndex];
-        let dayIndex = date.day && date.day >= 0? date.day : 0;
-        if(dayIndex >= month.days.length){
+        let dayIndex = date.day && date.day >= 0 ? date.day : 0;
+        if (dayIndex >= month.days.length) {
             dayIndex = month.days.length - 1;
         }
-        let hour = date.hour && date.hour >= 0? date.hour : 0;
-        if(hour >= activeCalendar.time.hoursInDay){
+        let hour = date.hour && date.hour >= 0 ? date.hour : 0;
+        if (hour >= activeCalendar.time.hoursInDay) {
             hour = activeCalendar.time.hoursInDay - 1;
         }
-        let minute = date.minute && date.minute >= 0? date.minute : 0;
-        if(minute >= activeCalendar.time.minutesInHour){
+        let minute = date.minute && date.minute >= 0 ? date.minute : 0;
+        if (minute >= activeCalendar.time.minutesInHour) {
             minute = activeCalendar.time.minutesInHour - 1;
         }
-        let second = date.seconds && date.seconds >= 0? date.seconds : 0;
-        if(second >= activeCalendar.time.secondsInMinute){
+        let second = date.seconds && date.seconds >= 0 ? date.seconds : 0;
+        if (second >= activeCalendar.time.secondsInMinute) {
             second = activeCalendar.time.secondsInMinute - 1;
         }
-        if(format){
-            return FormatDateTime({year: year, month: monthIndex, day: dayIndex, hour: hour, minute: minute, seconds: second}, format, activeCalendar);
+        if (format) {
+            return FormatDateTime(
+                { year: year, month: monthIndex, day: dayIndex, hour: hour, minute: minute, seconds: second },
+                format,
+                activeCalendar
+            );
         } else {
             return {
-                date: FormatDateTime({year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, seconds:0}, activeCalendar.generalSettings.dateFormat.date, activeCalendar),
-                time: FormatDateTime({year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds:second}, activeCalendar.generalSettings.dateFormat.time, activeCalendar)
+                date: FormatDateTime(
+                    { year: year, month: monthIndex, day: dayIndex, hour: 0, minute: 0, seconds: 0 },
+                    activeCalendar.generalSettings.dateFormat.date,
+                    activeCalendar
+                ),
+                time: FormatDateTime(
+                    { year: 0, month: 0, day: 0, hour: hour, minute: minute, seconds: second },
+                    activeCalendar.generalSettings.dateFormat.time,
+                    activeCalendar
+                )
             };
         }
     } else {
         Logger.error(`SimpleCalendar.api.formatDateTime - Unable to find a calendar with the passed in ID of "${calendarId}"`);
-        return '';
+        return "";
     }
 }
 
@@ -707,15 +785,15 @@ export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: strin
  * // Returns '25/12/2021 12:13:14 PM'
  * ```
  */
-export function formatTimestamp(timestamp: number, format: string = '', calendarId: string = 'active'): string | {date: string, time: string} {
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(activeCalendar){
+export function formatTimestamp(timestamp: number, format: string = "", calendarId: string = "active"): string | { date: string; time: string } {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (activeCalendar) {
         // If this is a Pathfinder 2E game, add the world creation seconds
-        if(PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync){
+        if (PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync) {
             timestamp += PF2E.getWorldCreateSeconds(activeCalendar);
         }
         const date = activeCalendar.secondsToDate(timestamp);
-        if(format){
+        if (format) {
             return FormatDateTime(date, format, activeCalendar);
         } else {
             return {
@@ -725,7 +803,7 @@ export function formatTimestamp(timestamp: number, format: string = '', calendar
         }
     } else {
         Logger.error(`SimpleCalendar.api.formatTimestamp - Unable to find a calendar with the passed in ID of "${calendarId}"`);
-        return '';
+        return "";
     }
 }
 
@@ -743,7 +821,7 @@ export function formatTimestamp(timestamp: number, format: string = '', calendar
 export function getAllCalendars(): SimpleCalendar.CalendarData[] {
     const calendars = CalManager.getAllCalendars();
     const data: SimpleCalendar.CalendarData[] = [];
-    for(let i = 0; i < calendars.length; i++){
+    for (let i = 0; i < calendars.length; i++) {
         data.push(calendars[i].toConfig());
     }
     return data;
@@ -920,10 +998,12 @@ export function getAllCalendars(): SimpleCalendar.CalendarData[] {
  * // ]
  * ```
  */
-export function getAllMonths(calendarId: string = 'active'): SimpleCalendar.MonthData[] {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
-        return cal.months.map(m => m.toConfig());
+export function getAllMonths(calendarId: string = "active"): SimpleCalendar.MonthData[] {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
+        return cal.months.map((m) => {
+            return m.toConfig();
+        });
     } else {
         Logger.error(`SimpleCalendar.api.getAllMonths - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return [];
@@ -1015,10 +1095,10 @@ export function getAllMonths(calendarId: string = 'active'): SimpleCalendar.Mont
  * // ]
  * ```
  */
-export function getAllMoons(calendarId: string = 'active'): SimpleCalendar.MoonData[] {
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(activeCalendar){
-        return activeCalendar.moons.map(m => {
+export function getAllMoons(calendarId: string = "active"): SimpleCalendar.MoonData[] {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (activeCalendar) {
+        return activeCalendar.moons.map((m) => {
             const c = m.toConfig();
             c.currentPhase = m.getMoonPhase(activeCalendar);
             return c;
@@ -1027,7 +1107,6 @@ export function getAllMoons(calendarId: string = 'active'): SimpleCalendar.MoonD
         Logger.error(`SimpleCalendar.api.getAllMoons - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return [];
     }
-
 }
 
 /**
@@ -1089,10 +1168,12 @@ export function getAllMoons(calendarId: string = 'active'): SimpleCalendar.MoonD
  * // ]
  * ```
  */
-export function getAllSeasons(calendarId: string = 'active'): SimpleCalendar.SeasonData[] {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
-        return cal.seasons.map(s => s.toConfig());
+export function getAllSeasons(calendarId: string = "active"): SimpleCalendar.SeasonData[] {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
+        return cal.seasons.map((s) => {
+            return s.toConfig();
+        });
     } else {
         Logger.error(`SimpleCalendar.api.getAllSeasons - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return [];
@@ -1114,9 +1195,9 @@ export function getAllSeasons(calendarId: string = 'active'): SimpleCalendar.Sea
  * // }
  * ```
  */
-export function getAllThemes(): {[themeId: string]: string}{
+export function getAllThemes(): { [themeId: string]: string } {
     const themes = GetThemeList();
-    for(let key in themes){
+    for (const key in themes) {
         themes[key] = GameSettings.Localize(themes[key]);
     }
     return themes;
@@ -1186,10 +1267,12 @@ export function getAllThemes(): {[themeId: string]: string}{
  * // ]
  * ```
  */
-export function getAllWeekdays(calendarId: string = 'active'): SimpleCalendar.WeekdayData[] {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
-        return cal.weekdays.map(w => w.toConfig());
+export function getAllWeekdays(calendarId: string = "active"): SimpleCalendar.WeekdayData[] {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
+        return cal.weekdays.map((w) => {
+            return w.toConfig();
+        });
     } else {
         Logger.error(`SimpleCalendar.api.getAllWeekdays - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return [];
@@ -1229,13 +1312,13 @@ export function getCurrentCalendar(): SimpleCalendar.CalendarData {
  * // }
  * ```
  */
-export function getCurrentDay(calendarId: string = 'active'): SimpleCalendar.DayData | null {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function getCurrentDay(calendarId: string = "active"): SimpleCalendar.DayData | null {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         const month = cal.getMonth();
-        if(month){
+        if (month) {
             const day = month.getDay();
-            if(day){
+            if (day) {
                 return day.toConfig();
             }
         }
@@ -1271,11 +1354,11 @@ export function getCurrentDay(calendarId: string = 'active'): SimpleCalendar.Day
  * // }
  * ```
  */
-export function getCurrentMonth(calendarId: string = 'active'): SimpleCalendar.MonthData | null{
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function getCurrentMonth(calendarId: string = "active"): SimpleCalendar.MonthData | null {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         const month = cal.getMonth();
-        if(month){
+        if (month) {
             return month.toConfig();
         }
     } else {
@@ -1308,15 +1391,15 @@ export function getCurrentMonth(calendarId: string = 'active'): SimpleCalendar.M
  * // }
  * ```
  */
-export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.SeasonData{
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function getCurrentSeason(calendarId: string = "active"): SimpleCalendar.SeasonData {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         const monthDayIndex = cal.getMonthAndDayIndex();
         return cal.getSeason(monthDayIndex.month || 0, monthDayIndex.day || 0).toConfig();
     } else {
         Logger.error(`SimpleCalendar.api.getCurrentSeason - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
-    return {id:'', name: '', description: '', icon: Icons.None, color: '', startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0};
+    return { id: "", name: "", description: "", icon: Icons.None, color: "", startingMonth: 0, startingDay: 0, sunriseTime: 0, sunsetTime: 0 };
 }
 
 /**
@@ -1330,7 +1413,7 @@ export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.
  * // Returns "dark"
  * ```
  */
-export function getCurrentTheme(): string{
+export function getCurrentTheme(): string {
     return GetThemeName();
 }
 
@@ -1355,9 +1438,9 @@ export function getCurrentTheme(): string{
  * // }
  * ```
  */
-export function getCurrentWeekday(calendarId: string = 'active'): SimpleCalendar.WeekdayData | null{
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(activeCalendar){
+export function getCurrentWeekday(calendarId: string = "active"): SimpleCalendar.WeekdayData | null {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (activeCalendar) {
         const monthDayIndex = activeCalendar.getMonthAndDayIndex();
         const weekdayIndex = activeCalendar.dayOfTheWeek(activeCalendar.year.numericRepresentation, monthDayIndex.month || 0, monthDayIndex.day || 0);
         return activeCalendar.weekdays[weekdayIndex].toConfig();
@@ -1393,9 +1476,9 @@ export function getCurrentWeekday(calendarId: string = 'active'): SimpleCalendar
  * // }
  * ```
  */
-export function getCurrentYear(calendarId: string = 'active'): SimpleCalendar.YearData | null{
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function getCurrentYear(calendarId: string = "active"): SimpleCalendar.YearData | null {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         return cal.year.toConfig();
     } else {
         Logger.error(`SimpleCalendar.api.getCurrentYear - Unable to find a calendar with the passed in ID of "${calendarId}"`);
@@ -1421,9 +1504,9 @@ export function getCurrentYear(calendarId: string = 'active'): SimpleCalendar.Ye
  * }
  * ```
  */
-export function getLeapYearConfiguration(calendarId: string = 'active'): SimpleCalendar.LeapYearData | null {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function getLeapYearConfiguration(calendarId: string = "active"): SimpleCalendar.LeapYearData | null {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         return cal.year.leapYearRule.toConfig();
     } else {
         Logger.error(`SimpleCalendar.api.getLeapYearConfiguration - Unable to find a calendar with the passed in ID of "${calendarId}"`);
@@ -1444,9 +1527,11 @@ export function getLeapYearConfiguration(calendarId: string = 'active'): SimpleC
  * SimpleCalendar.api.getNotes();
  *```
  */
-export function getNotes(calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[]{
-    calendarId = calendarId === 'active'? CalManager.getActiveCalendar().id : calendarId;
-    return NManager.getNotes(calendarId).map(n => (<Game>game).journal?.get(n.entryId));
+export function getNotes(calendarId: string = "active"): (StoredDocument<JournalEntry> | undefined)[] {
+    calendarId = calendarId === "active" ? CalManager.getActiveCalendar().id : calendarId;
+    return NManager.getNotes(calendarId).map((n) => {
+        return (<Game>game).journal?.get(n.entryId);
+    });
 }
 
 /**
@@ -1464,9 +1549,16 @@ export function getNotes(calendarId: string = 'active'): (StoredDocument<Journal
  * SimpleCalendar.api.getNotesForDay(2022, 11, 24);
  * ```
  */
-export function getNotesForDay(year: number, month: number, day: number, calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[]{
-    calendarId = calendarId === 'active'? CalManager.getActiveCalendar().id : calendarId;
-    return NManager.getNotesForDay(calendarId, year, month, day).map(n => (<Game>game).journal?.get(n.entryId));
+export function getNotesForDay(
+    year: number,
+    month: number,
+    day: number,
+    calendarId: string = "active"
+): (StoredDocument<JournalEntry> | undefined)[] {
+    calendarId = calendarId === "active" ? CalManager.getActiveCalendar().id : calendarId;
+    return NManager.getNotesForDay(calendarId, year, month, day).map((n) => {
+        return (<Game>game).journal?.get(n.entryId);
+    });
 }
 
 /**
@@ -1492,9 +1584,9 @@ export function getNotesForDay(year: number, month: number, day: number, calenda
  * // }
  * ```
  */
-export function getTimeConfiguration(calendarId: string = 'active'): SimpleCalendar.TimeData | null {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function getTimeConfiguration(calendarId: string = "active"): SimpleCalendar.TimeData | null {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         return cal.time.toConfig();
     } else {
         Logger.error(`SimpleCalendar.api.getTimeConfiguration - Unable to find a calendar with the passed in ID of "${calendarId}"`);
@@ -1544,15 +1636,16 @@ export function isPrimaryGM(): boolean {
  * SimpleCalendar.api.pauseClock();
  * ```
  */
-export function pauseClock(calendarId: string = 'active'): boolean {
-    if(SC.primary){
-        const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);3
-        if(cal){
+export function pauseClock(calendarId: string = "active"): boolean {
+    if (SC.primary) {
+        const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+        3;
+        if (cal) {
             const status = cal.timeKeeper.getStatus();
-            if(status === TimeKeeperStatus.Started){
+            if (status === TimeKeeperStatus.Started) {
                 cal.timeKeeper.start();
                 return cal.timeKeeper.getStatus() === TimeKeeperStatus.Paused;
-            } else if(status === TimeKeeperStatus.Paused){
+            } else if (status === TimeKeeperStatus.Paused) {
                 return true;
             }
         } else {
@@ -1576,13 +1669,13 @@ export function pauseClock(calendarId: string = 'active'): boolean {
  */
 export async function removeNote(journalEntryId: string): Promise<boolean> {
     const je = (<Game>game).journal?.get(journalEntryId);
-    if(je){
+    if (je) {
         const ns = NManager.getNoteStub(je);
-        if(ns?.isVisible){
+        if (ns?.isVisible) {
             NManager.removeNoteStub(je);
             MainApplication.updateApp();
             await je.delete();
-            await GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}});
+            await GameSockets.emit({ type: SocketTypes.mainAppUpdate, data: {} });
             return true;
         }
     } else {
@@ -1603,22 +1696,22 @@ export async function removeNote(journalEntryId: string): Promise<boolean> {
  * ```
  */
 export function runMigration(): void {
-    if(GameSettings.IsGm() && SC.primary){
+    if (GameSettings.IsGm() && SC.primary) {
         const d = new Dialog({
-            title: GameSettings.Localize('FSC.Migration.APIDialog.Title'),
-            content: GameSettings.Localize('FSC.Migration.APIDialog.Content'),
+            title: GameSettings.Localize("FSC.Migration.APIDialog.Title"),
+            content: GameSettings.Localize("FSC.Migration.APIDialog.Content"),
             buttons: {
                 yes: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: GameSettings.Localize('FSC.Confirm'),
+                    label: GameSettings.Localize("FSC.Confirm"),
                     callback: MigrationApplication.run.bind(MigrationApplication, true)
                 },
                 no: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: GameSettings.Localize('FSC.Cancel')
+                    label: GameSettings.Localize("FSC.Cancel")
                 }
             },
-            default: 'no'
+            default: "no"
         });
         d.render(true);
     }
@@ -1642,11 +1735,17 @@ export function runMigration(): void {
  * SimpleCalendar.api.searchNotes("Gamemaster", {author: true}); // Will return a list of notes that were written by the gamemaster.
  * ```
  */
-export function searchNotes(term: string, options = {date: true, title: true, details: true, categories: true, author: true}, calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[] {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+export function searchNotes(
+    term: string,
+    options = { date: true, title: true, details: true, categories: true, author: true },
+    calendarId: string = "active"
+): (StoredDocument<JournalEntry> | undefined)[] {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     let results: (StoredDocument<JournalEntry> | undefined)[] = [];
-    if(cal){
-        results = NManager.searchNotes(cal.id, term, options).map(n => (<Game>game).journal?.get(n.entryId));
+    if (cal) {
+        results = NManager.searchNotes(cal.id, term, options).map((n) => {
+            return (<Game>game).journal?.get(n.entryId);
+        });
     } else {
         Logger.error(`SimpleCalendar.api.searchNotes - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
@@ -1672,9 +1771,9 @@ export function searchNotes(term: string, options = {date: true, title: true, de
  * SimpleCalendar.api.secondsToInterval(31556926); //Returns {year: 1, month: 0, day: 0, hour: 5, minute: 48, seconds: 46}
  * ```
  */
-export function secondsToInterval(seconds: number, calendarId: string = 'active'): SimpleCalendar.DateTimeParts{
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function secondsToInterval(seconds: number, calendarId: string = "active"): SimpleCalendar.DateTimeParts {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         return cal.secondsToInterval(seconds);
     } else {
         Logger.error(`SimpleCalendar.api.secondsToInterval - Unable to find a calendar with the passed in ID of "${calendarId}"`);
@@ -1700,10 +1799,10 @@ export function secondsToInterval(seconds: number, calendarId: string = 'active'
  * SimpleCalendar.api.setDate({year: 1999, month: 11, day: 30, hour: 23, minute: 59, seconds: 59});
  * ```
  */
-export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean{
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(activeCalendar){
-        return activeCalendar.setDateTime(date, {showWarning: true});
+export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string = "active"): boolean {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (activeCalendar) {
+        return activeCalendar.setDateTime(date, { showWarning: true });
     } else {
         Logger.error(`SimpleCalendar.api.setDate - Unable to find a calendar with the passed in ID of "${calendarId}"`);
     }
@@ -1732,14 +1831,18 @@ export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string =
  * //Will return false and log an error to the console.
  * ```
  */
-export async function setTheme(themeId: string): Promise<boolean>{
+export async function setTheme(themeId: string): Promise<boolean> {
     themeId = themeId.toLowerCase();
     const availableThemes = GetThemeList();
-    if(availableThemes[themeId] !== undefined){
+    if (availableThemes[themeId] !== undefined) {
         //If the passed in theme is the same as the current theme being used don't apply the changes
-        if(themeId !== GetThemeName()){
+        if (themeId !== GetThemeName()) {
             await GameSettings.SaveStringSetting(`${(<Game>game).world.id}.${SettingNames.Theme}`, themeId, false);
-            GameSettings.UiNotification(GameSettings.Localize('FSC.Info.ThemeChange').replace('{THEME}', GameSettings.Localize(availableThemes[themeId])), 'info', true);
+            GameSettings.UiNotification(
+                GameSettings.Localize("FSC.Info.ThemeChange").replace("{THEME}", GameSettings.Localize(availableThemes[themeId])),
+                "info",
+                true
+            );
         }
         return true;
     } else {
@@ -1763,33 +1866,35 @@ export async function setTheme(themeId: string): Promise<boolean>{
  * SimpleCalendar.api.showCalendar(null, true); // Will open the calendar to the current date in compact mode.
  * ```
  */
-export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, compact: boolean = false, calendarId: string = 'active'): void {
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, compact: boolean = false, calendarId: string = "active"): void {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
 
-    if(activeCalendar){
+    if (activeCalendar) {
         CalManager.setVisibleCalendar(activeCalendar.id);
-        if(date !== null){
+        if (date !== null) {
             const finalDate = MergeDateTimeObject(date, null, activeCalendar);
 
-            if(Number.isInteger(finalDate.year) && Number.isInteger(finalDate.month) && Number.isInteger(finalDate.day)){
+            if (Number.isInteger(finalDate.year) && Number.isInteger(finalDate.month) && Number.isInteger(finalDate.day)) {
                 const isLeapYear = activeCalendar.year.leapYearRule.isLeapYear(finalDate.year);
                 activeCalendar.year.visibleYear = finalDate.year;
-                if(finalDate.month === -1 || finalDate.month > activeCalendar.months.length){
+                if (finalDate.month === -1 || finalDate.month > activeCalendar.months.length) {
                     finalDate.month = activeCalendar.months.length - 1;
                 }
-                activeCalendar.resetMonths('visible');
+                activeCalendar.resetMonths("visible");
                 activeCalendar.months[finalDate.month].visible = true;
 
-                const numberOfDays = isLeapYear? activeCalendar.months[finalDate.month].numberOfLeapYearDays : activeCalendar.months[finalDate.month].numberOfDays;
-                if(finalDate.day == -1 || finalDate.day > numberOfDays){
+                const numberOfDays = isLeapYear
+                    ? activeCalendar.months[finalDate.month].numberOfLeapYearDays
+                    : activeCalendar.months[finalDate.month].numberOfDays;
+                if (finalDate.day === -1 || finalDate.day > numberOfDays) {
                     finalDate.day = numberOfDays - 1;
                 }
-                activeCalendar.resetMonths('selected');
+                activeCalendar.resetMonths("selected");
                 activeCalendar.months[finalDate.month].days[finalDate.day].selected = true;
                 activeCalendar.months[finalDate.month].selected = true;
                 activeCalendar.year.selectedYear = activeCalendar.year.visibleYear;
             } else {
-                Logger.error('Main.api.showCalendar: Invalid date passed in.');
+                Logger.error("Main.api.showCalendar: Invalid date passed in.");
             }
         }
     } else {
@@ -1797,7 +1902,7 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
     }
 
     MainApplication.uiElementStates.compactView = compact;
-    if(MainApplication.rendered){
+    if (MainApplication.rendered) {
         MainApplication.updateApp();
     } else {
         MainApplication.render();
@@ -1816,10 +1921,10 @@ export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, c
  * SimpleCalendar.api.startClock();
  * ```
  */
-export function startClock(calendarId: string = 'active'): boolean {
-    if(SC.primary){
-        const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-        if(cal){
+export function startClock(calendarId: string = "active"): boolean {
+    if (SC.primary) {
+        const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+        if (cal) {
             cal.timeKeeper.start();
             return true;
         } else {
@@ -1841,10 +1946,10 @@ export function startClock(calendarId: string = 'active'): boolean {
  * SimpleCalendar.api.stopClock();
  * ```
  */
-export function stopClock(calendarId: string = 'active'): boolean {
-    if(SC.primary){
-        const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-        if(cal){
+export function stopClock(calendarId: string = "active"): boolean {
+    if (SC.primary) {
+        const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+        if (cal) {
             cal.timeKeeper.stop();
             return true;
         } else {
@@ -1867,9 +1972,9 @@ export function stopClock(calendarId: string = 'active'): boolean {
  * console.log(timestamp); // This will be a number representing the current number of seconds passed in the calendar.
  * ```
  */
-export function timestamp(calendarId: string = 'active'): number {
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function timestamp(calendarId: string = "active"): number {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         return cal.toSeconds();
     } else {
         Logger.error(`SimpleCalendar.api.timestamp - Unable to find a calendar with the passed in ID of "${calendarId}"`);
@@ -1895,49 +2000,49 @@ export function timestamp(calendarId: string = 'active'): number {
  * console.log(newTime); // This will be the number of seconds that equal July 2nd 2021
  * ```
  */
-export function timestampPlusInterval(currentSeconds: number, interval: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): number{
-    const activeCalendar = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(activeCalendar){
+export function timestampPlusInterval(currentSeconds: number, interval: SimpleCalendar.DateTimeParts, calendarId: string = "active"): number {
+    const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (activeCalendar) {
         const clone = activeCalendar.clone(false);
         // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
-        if(PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync){
+        if (PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync) {
             currentSeconds += PF2E.getWorldCreateSeconds(activeCalendar);
         }
 
         const dateTime = clone.secondsToDate(currentSeconds);
         clone.updateTime(dateTime);
-        if(interval.year){
-            clone.changeYear(interval.year, false, 'current');
+        if (interval.year) {
+            clone.changeYear(interval.year, false, "current");
         }
-        if(interval.month){
+        if (interval.month) {
             //If a large number of months are passed in then
-            if(interval.month > clone.months.length){
-                let years = Math.floor(interval.month/clone.months.length);
-                interval.month = interval.month - (years * clone.months.length);
-                clone.changeYear(years, false, 'current');
+            if (interval.month > clone.months.length) {
+                const years = Math.floor(interval.month / clone.months.length);
+                interval.month = interval.month - years * clone.months.length;
+                clone.changeYear(years, false, "current");
             }
-            clone.changeMonth(interval.month, 'current');
+            clone.changeMonth(interval.month, "current");
         }
-        if(interval.day){
+        if (interval.day) {
             clone.changeDayBulk(interval.day);
         }
-        if(interval.hour && interval.hour > clone.time.hoursInDay){
+        if (interval.hour && interval.hour > clone.time.hoursInDay) {
             const days = Math.floor(interval.hour / clone.time.hoursInDay);
-            interval.hour = interval.hour - (days * clone.time.hoursInDay);
+            interval.hour = interval.hour - days * clone.time.hoursInDay;
             clone.changeDayBulk(days);
         }
-        if(interval.minute && interval.minute > (clone.time.hoursInDay * clone.time.minutesInHour)){
+        if (interval.minute && interval.minute > clone.time.hoursInDay * clone.time.minutesInHour) {
             const days = Math.floor(interval.minute / (clone.time.hoursInDay * clone.time.minutesInHour));
-            interval.minute = interval.minute - (days * (clone.time.hoursInDay * clone.time.minutesInHour));
+            interval.minute = interval.minute - days * (clone.time.hoursInDay * clone.time.minutesInHour);
             clone.changeDayBulk(days);
         }
-        if(interval.seconds && interval.seconds > clone.time.secondsPerDay){
+        if (interval.seconds && interval.seconds > clone.time.secondsPerDay) {
             const days = Math.floor(interval.seconds / clone.time.secondsPerDay);
-            interval.seconds = interval.seconds - (days * clone.time.secondsPerDay);
+            interval.seconds = interval.seconds - days * clone.time.secondsPerDay;
             clone.changeDayBulk(days);
         }
         const dayChange = clone.time.changeTime(interval.hour, interval.minute, interval.seconds);
-        if(dayChange !== 0){
+        if (dayChange !== 0) {
             clone.changeDay(dayChange);
         }
         return clone.toSeconds();
@@ -1993,13 +2098,12 @@ export function timestampPlusInterval(currentSeconds: number, interval: SimpleCa
  * // }
  * ```
  */
-export function timestampToDate(seconds: number, calendarId: string = 'active'): SimpleCalendar.DateData | null{
-    const cal = calendarId === 'active'? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    if(cal){
+export function timestampToDate(seconds: number, calendarId: string = "active"): SimpleCalendar.DateData | null {
+    const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
+    if (cal) {
         return TimestampToDateData(seconds, cal);
     } else {
         Logger.error(`SimpleCalendar.api.stopClock - Unable to find a calendar with the passed in ID of "${calendarId}"`);
         return null;
     }
-
 }

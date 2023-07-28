@@ -2,15 +2,17 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
-import {jest, beforeEach, describe, expect, test} from '@jest/globals';
+import { jest, beforeEach, describe, expect, test } from "@jest/globals";
 import Calendar from "../calendar";
 import MainApp from "./main-app";
 import {
     CalManager,
-    ConfigurationApplication, MainApplication,
+    ConfigurationApplication,
+    MainApplication,
     NManager,
     SC,
-    updateCalManager, updateConfigurationApplication,
+    updateCalManager,
+    updateConfigurationApplication,
     updateMainApplication,
     updateNManager,
     updateSC
@@ -20,17 +22,17 @@ import SCController from "../s-c-controller";
 import NoteManager from "../notes/note-manager";
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
-import {CalendarClickEvents, DateTimeUnits, Icons, PredefinedCalendars} from "../../constants";
+import { CalendarClickEvents, DateTimeUnits, Icons, PredefinedCalendars } from "../../constants";
 import * as PermUtilities from "../utilities/permissions";
 import * as VisualUtilities from "../utilities/visual";
 import * as DateUtilities from "../utilities/date-time";
-import {GameSettings} from "../foundry-interfacing/game-settings";
+import { GameSettings } from "../foundry-interfacing/game-settings";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import ConfigurationApp from "./configuration-app";
 import NoteStub from "../notes/note-stub";
 
 fetchMock.enableMocks();
-describe('Main App Class Tests', () => {
+describe("Main App Class Tests", () => {
     let tCal: Calendar;
     let vCal: Calendar;
     let ma: MainApp;
@@ -42,15 +44,23 @@ describe('Main App Class Tests', () => {
         updateNManager(new NoteManager());
         updateConfigurationApplication(new ConfigurationApp());
 
-        tCal = new Calendar('a','');
-        vCal = new Calendar('b','');
+        tCal = new Calendar("a", "");
+        vCal = new Calendar("b", "");
 
-        jest.spyOn(CalManager, 'getActiveCalendar').mockImplementation(() => {return tCal;});
-        jest.spyOn(CalManager, 'getVisibleCalendar').mockImplementation(() => {return tCal;});
-        jest.spyOn(CalManager, 'getAllCalendars').mockImplementation(() => {return [tCal];});
+        jest.spyOn(CalManager, "getActiveCalendar").mockImplementation(() => {
+            return tCal;
+        });
+        jest.spyOn(CalManager, "getVisibleCalendar").mockImplementation(() => {
+            return tCal;
+        });
+        jest.spyOn(CalManager, "getAllCalendars").mockImplementation(() => {
+            return [tCal];
+        });
 
         fetchMock.resetMocks();
-        fetchMock.mockOnce(`{"calendar":{"currentDate":{"year":2022,"month":2,"day":28,"seconds":0},"general":{"gameWorldTimeIntegration":"mixed","showClock":true,"noteDefaultVisibility":false,"postNoteRemindersOnFoundryLoad":true,"pf2eSync":true,"dateFormat":{"date":"MMMM DD, YYYY","time":"HH:mm:ss","monthYear":"MMMM YAYYYYYZ"}},"leapYear":{"rule":"gregorian","customMod":0},"months":[{"name":"January","abbreviation":"Jan","numericRepresentation":1,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"February","abbreviation":"Feb","numericRepresentation":2,"numericRepresentationOffset":0,"numberOfDays":28,"numberOfLeapYearDays":29,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"March","abbreviation":"Mar","numericRepresentation":3,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"April","abbreviation":"Apr","numericRepresentation":4,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"May","abbreviation":"May","numericRepresentation":5,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"June","abbreviation":"Jun","numericRepresentation":6,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"July","abbreviation":"Jul","numericRepresentation":7,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"August","abbreviation":"Aug","numericRepresentation":8,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"September","abbreviation":"Sep","numericRepresentation":9,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"October","abbreviation":"Oct","numericRepresentation":10,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"November","abbreviation":"Nov","numericRepresentation":11,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"December","abbreviation":"Dec","numericRepresentation":12,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null}],"moons":[{"name":"Moon","cycleLength":29.53059,"firstNewMoon":{"yearReset":"none","yearX":0,"year":2000,"month":1,"day":5},"phases":[{"name":"New Moon","length":1,"icon":"new","singleDay":true},{"name":"Waxing Crescent","length":6.38265,"icon":"waxing-crescent","singleDay":false},{"name":"First Quarter","length":1,"icon":"first-quarter","singleDay":true},{"name":"Waxing Gibbous","length":6.38265,"icon":"waxing-gibbous","singleDay":false},{"name":"Full Moon","length":1,"icon":"full","singleDay":true},{"name":"Waning Gibbous","length":6.38265,"icon":"waning-gibbous","singleDay":false},{"name":"Last Quarter","length":1,"icon":"last-quarter","singleDay":true},{"name":"Waning Crescent","length":6.38265,"icon":"waning-crescent","singleDay":false}],"color":"#ffffff","cycleDayAdjust":0.5}],"noteCategories":[{"name":"Holiday","textColor":"#FFFFFF","color":"#148e94"}],"seasons":[{"name":"Spring","startingMonth":2,"startingDay":19,"color":"#46b946","icon":"spring","sunriseTime":21600,"sunsetTime":64800},{"name":"Summer","startingMonth":5,"startingDay":19,"color":"#e0c40b","icon":"summer","sunriseTime":21600,"sunsetTime":64800},{"name":"Fall","startingMonth":8,"startingDay":21,"color":"#ff8e47","icon":"fall","sunriseTime":21600,"sunsetTime":64800},{"name":"Winter","startingMonth":11,"startingDay":20,"color":"#479dff","icon":"winter","sunriseTime":21600,"sunsetTime":64800}],"time":{"hoursInDay":24,"minutesInHour":60,"secondsInMinute":60,"gameTimeRatio":1,"unifyGameAndClockPause":false,"updateFrequency":1},"weekdays":[{"abbreviation":"Su","name":"Sunday","numericRepresentation":1},{"abbreviation":"Mo","name":"Monday","numericRepresentation":2},{"abbreviation":"Tu","name":"Tuesday","numericRepresentation":3},{"abbreviation":"We","name":"Wednesday","numericRepresentation":4},{"abbreviation":"Th","name":"Thursday","numericRepresentation":5},{"abbreviation":"Fr","name":"Friday","numericRepresentation":6},{"abbreviation":"Sa","name":"Saturday","numericRepresentation":7}],"year":{"numericRepresentation":2022,"prefix":"","postfix":"","showWeekdayHeadings":true,"firstWeekday":4,"yearZero":1970,"yearNames":[],"yearNamingRule":"default","yearNamesStart":0}}}`);
+        fetchMock.mockOnce(
+            `{"calendar":{"currentDate":{"year":2022,"month":2,"day":28,"seconds":0},"general":{"gameWorldTimeIntegration":"mixed","showClock":true,"noteDefaultVisibility":false,"postNoteRemindersOnFoundryLoad":true,"pf2eSync":true,"dateFormat":{"date":"MMMM DD, YYYY","time":"HH:mm:ss","monthYear":"MMMM YAYYYYYZ"}},"leapYear":{"rule":"gregorian","customMod":0},"months":[{"name":"January","abbreviation":"Jan","numericRepresentation":1,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"February","abbreviation":"Feb","numericRepresentation":2,"numericRepresentationOffset":0,"numberOfDays":28,"numberOfLeapYearDays":29,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"March","abbreviation":"Mar","numericRepresentation":3,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"April","abbreviation":"Apr","numericRepresentation":4,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"May","abbreviation":"May","numericRepresentation":5,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"June","abbreviation":"Jun","numericRepresentation":6,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"July","abbreviation":"Jul","numericRepresentation":7,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"August","abbreviation":"Aug","numericRepresentation":8,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"September","abbreviation":"Sep","numericRepresentation":9,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"October","abbreviation":"Oct","numericRepresentation":10,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"November","abbreviation":"Nov","numericRepresentation":11,"numericRepresentationOffset":0,"numberOfDays":30,"numberOfLeapYearDays":30,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null},{"name":"December","abbreviation":"Dec","numericRepresentation":12,"numericRepresentationOffset":0,"numberOfDays":31,"numberOfLeapYearDays":31,"intercalary":false,"intercalaryInclude":false,"startingWeekday":null}],"moons":[{"name":"Moon","cycleLength":29.53059,"firstNewMoon":{"yearReset":"none","yearX":0,"year":2000,"month":1,"day":5},"phases":[{"name":"New Moon","length":1,"icon":"new","singleDay":true},{"name":"Waxing Crescent","length":6.38265,"icon":"waxing-crescent","singleDay":false},{"name":"First Quarter","length":1,"icon":"first-quarter","singleDay":true},{"name":"Waxing Gibbous","length":6.38265,"icon":"waxing-gibbous","singleDay":false},{"name":"Full Moon","length":1,"icon":"full","singleDay":true},{"name":"Waning Gibbous","length":6.38265,"icon":"waning-gibbous","singleDay":false},{"name":"Last Quarter","length":1,"icon":"last-quarter","singleDay":true},{"name":"Waning Crescent","length":6.38265,"icon":"waning-crescent","singleDay":false}],"color":"#ffffff","cycleDayAdjust":0.5}],"noteCategories":[{"name":"Holiday","textColor":"#FFFFFF","color":"#148e94"}],"seasons":[{"name":"Spring","startingMonth":2,"startingDay":19,"color":"#46b946","icon":"spring","sunriseTime":21600,"sunsetTime":64800},{"name":"Summer","startingMonth":5,"startingDay":19,"color":"#e0c40b","icon":"summer","sunriseTime":21600,"sunsetTime":64800},{"name":"Fall","startingMonth":8,"startingDay":21,"color":"#ff8e47","icon":"fall","sunriseTime":21600,"sunsetTime":64800},{"name":"Winter","startingMonth":11,"startingDay":20,"color":"#479dff","icon":"winter","sunriseTime":21600,"sunsetTime":64800}],"time":{"hoursInDay":24,"minutesInHour":60,"secondsInMinute":60,"gameTimeRatio":1,"unifyGameAndClockPause":false,"updateFrequency":1},"weekdays":[{"abbreviation":"Su","name":"Sunday","numericRepresentation":1},{"abbreviation":"Mo","name":"Monday","numericRepresentation":2},{"abbreviation":"Tu","name":"Tuesday","numericRepresentation":3},{"abbreviation":"We","name":"Wednesday","numericRepresentation":4},{"abbreviation":"Th","name":"Thursday","numericRepresentation":5},{"abbreviation":"Fr","name":"Friday","numericRepresentation":6},{"abbreviation":"Sa","name":"Saturday","numericRepresentation":7}],"year":{"numericRepresentation":2022,"prefix":"","postfix":"","showWeekdayHeadings":true,"firstWeekday":4,"yearZero":1970,"yearNames":[],"yearNamingRule":"default","yearNamesStart":0}}}`
+        );
         await PredefinedCalendar.setToPredefined(tCal, PredefinedCalendars.Gregorian);
 
         ma = new MainApp();
@@ -60,27 +70,27 @@ describe('Main App Class Tests', () => {
         SC.primary = false;
     });
 
-    test('Active Calendar', () => {
+    test("Active Calendar", () => {
         //@ts-ignore
         expect(ma.activeCalendar).toEqual(tCal);
     });
 
-    test('Visible Calendar', () => {
+    test("Visible Calendar", () => {
         //@ts-ignore
         expect(ma.visibleCalendar).toEqual(tCal);
     });
 
-    test('Default Options', () => {
+    test("Default Options", () => {
         expect(MainApp.defaultOptions).toBeDefined();
     });
 
-    test('Initialize', () => {
-        jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
+    test("Initialize", () => {
+        jest.spyOn(GameSettings, "GetBooleanSettings").mockReturnValue(true);
         ma.initialize();
-        expect(ma.uiElementStates['fsc-note-list']).toBe(true);
+        expect(ma.uiElementStates["fsc-note-list"]).toBe(true);
     });
 
-    test('Get Data', () => {
+    test("Get Data", () => {
         expect(ma.getData()).toBeDefined();
 
         tCal.months[0].selected = true;
@@ -90,12 +100,14 @@ describe('Main App Class Tests', () => {
         tCal.generalSettings.showClock = false;
         expect(ma.getData()).toBeDefined();
 
-        jest.spyOn(PermUtilities, 'canUser').mockReturnValue(true);
-        jest.spyOn(CalManager, 'getActiveCalendar').mockImplementation(() => {return vCal;});
+        jest.spyOn(PermUtilities, "canUser").mockReturnValue(true);
+        jest.spyOn(CalManager, "getActiveCalendar").mockImplementation(() => {
+            return vCal;
+        });
         ma.uiElementStates.compactView = true;
         expect(ma.getData()).toBeDefined();
 
-        jest.spyOn(tCal, "getCurrentSeason").mockReturnValue({name: "Summer", icon: Icons.None, color: "red"});
+        jest.spyOn(tCal, "getCurrentSeason").mockReturnValue({ name: "Summer", icon: Icons.None, color: "red" });
         ma.uiElementStates.compactView = true;
         expect(ma.getData()).toBeDefined();
 
@@ -109,17 +121,16 @@ describe('Main App Class Tests', () => {
         });
         expect(ma.getData()).toBeDefined();
 
-        ma.uiElementStates['fsc-addon-button-side-drawer-0'] = true;
+        ma.uiElementStates["fsc-addon-button-side-drawer-0"] = true;
         expect(ma.getData()).toBeDefined();
-
     });
 
-    test('Render', () => {
+    test("Render", () => {
         ma.render();
 
-        jest.spyOn(PermUtilities, 'canUser').mockReturnValue(true);
-        jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
-        jest.spyOn(GameSettings, 'GetObjectSettings').mockReturnValue({top:1, left: 1});
+        jest.spyOn(PermUtilities, "canUser").mockReturnValue(true);
+        jest.spyOn(GameSettings, "GetBooleanSettings").mockReturnValue(true);
+        jest.spyOn(GameSettings, "GetObjectSettings").mockReturnValue({ top: 1, left: 1 });
         SC.clientSettings.persistentOpen = true;
         ma.render();
 
@@ -127,7 +138,7 @@ describe('Main App Class Tests', () => {
         ma.render();
     });
 
-    test('Scene Control Button Click', () => {
+    test("Scene Control Button Click", () => {
         jest.spyOn(ma, "render").mockImplementation(() => {});
 
         ma.sceneControlButtonClick();
@@ -143,19 +154,19 @@ describe('Main App Class Tests', () => {
         expect(ma.render).toHaveBeenCalledTimes(2);
     });
 
-    test('close', () => {
+    test("close", () => {
         ma.close();
         expect(ma.opening).toBe(true);
         SC.clientSettings.persistentOpen = true;
         ma.close();
     });
 
-    test('minimize', async () => {
+    test("minimize", async () => {
         await ma.minimize();
         expect(ma.uiElementStates.compactView).toBe(true);
     });
 
-    test('maximize', async () => {
+    test("maximize", async () => {
         ma.options.popOut = true;
         await ma.maximize();
         expect(ma.uiElementStates.compactView).toBe(false);
@@ -172,33 +183,33 @@ describe('Main App Class Tests', () => {
         expect(ma.uiElementStates.compactView).toBe(false);
     });
 
-    test('Set Width Height', () => {
-        const mainApp = document.createElement('div');
-        const header = document.createElement('div');
-        const windowContent = document.createElement('div');
-        const wrapper = document.createElement('div');
-        const calendarSections = document.createElement('div');
-        const clockSections = document.createElement('div');
-        const yearView = document.createElement('div');
-        const calendarHeader = document.createElement('div');
-        const calendarHeaderCurDate = document.createElement('div');
-        const calendarHeaderCurDateChild = document.createElement('div');
-        const calendarDays = document.createElement('div');
-        const calendarWeek = document.createElement('div');
-        const clock = document.createElement('div');
-        const clockChild = document.createElement('div');
+    test("Set Width Height", () => {
+        const mainApp = document.createElement("div");
+        const header = document.createElement("div");
+        const windowContent = document.createElement("div");
+        const wrapper = document.createElement("div");
+        const calendarSections = document.createElement("div");
+        const clockSections = document.createElement("div");
+        const yearView = document.createElement("div");
+        const calendarHeader = document.createElement("div");
+        const calendarHeaderCurDate = document.createElement("div");
+        const calendarHeaderCurDateChild = document.createElement("div");
+        const calendarDays = document.createElement("div");
+        const calendarWeek = document.createElement("div");
+        const clock = document.createElement("div");
+        const clockChild = document.createElement("div");
 
-        header.classList.add('window-header');
-        windowContent.classList.add('window-content');
-        wrapper.classList.add('fsc-main-wrapper');
-        calendarSections.classList.add('fsc-section', 'fsc-calendar');
-        clockSections.classList.add('fsc-section', 'fsc-clock-display');
-        yearView.classList.add('fsc-year-view');
-        calendarHeader.classList.add('fsc-calendar-header');
-        calendarHeaderCurDate.classList.add('fsc-current-date');
-        calendarDays.classList.add('fsc-days');
-        calendarWeek.classList.add('fsc-week');
-        clock.classList.add('fsc-clock');
+        header.classList.add("window-header");
+        windowContent.classList.add("window-content");
+        wrapper.classList.add("fsc-main-wrapper");
+        calendarSections.classList.add("fsc-section", "fsc-calendar");
+        clockSections.classList.add("fsc-section", "fsc-clock-display");
+        yearView.classList.add("fsc-year-view");
+        calendarHeader.classList.add("fsc-calendar-header");
+        calendarHeaderCurDate.classList.add("fsc-current-date");
+        calendarDays.classList.add("fsc-days");
+        calendarWeek.classList.add("fsc-week");
+        clock.classList.add("fsc-clock");
 
         mainApp.append(header, windowContent);
         windowContent.append(wrapper);
@@ -212,38 +223,38 @@ describe('Main App Class Tests', () => {
 
         mainApp.style.borderWidth = "5px";
 
-        jest.spyOn(document, 'querySelector').mockReturnValue(mainApp);
+        jest.spyOn(document, "querySelector").mockReturnValue(mainApp);
 
         //@ts-ignore
-        jest.spyOn(ma, 'setPosition').mockImplementation(() => {});
+        jest.spyOn(ma, "setPosition").mockImplementation(() => {});
 
         MainApp.setWidthHeight(ma);
         //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(1);
 
-        jest.spyOn(calendarWeek, 'offsetWidth', 'get').mockReturnValue(300);
+        jest.spyOn(calendarWeek, "offsetWidth", "get").mockReturnValue(300);
         MainApp.setWidthHeight(ma);
         //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(2);
 
         calendarSections.removeChild(calendarDays);
-        jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
-        jest.spyOn(GameSettings, 'GetObjectSettings').mockReturnValue({top:1, left: 1});
+        jest.spyOn(GameSettings, "GetBooleanSettings").mockReturnValue(true);
+        jest.spyOn(GameSettings, "GetObjectSettings").mockReturnValue({ top: 1, left: 1 });
 
         MainApp.setWidthHeight(ma);
         //@ts-ignore
         expect(ma.setPosition).toHaveBeenCalledTimes(4);
 
         ma.uiElementStates.compactView = true;
-        const date = document.createElement('div');
-        const dateText = document.createElement('div');
-        const unitControls = document.createElement('div');
-        const controlGroup = document.createElement('div');
+        const date = document.createElement("div");
+        const dateText = document.createElement("div");
+        const unitControls = document.createElement("div");
+        const controlGroup = document.createElement("div");
 
-        date.classList.add('fsc-date');
-        dateText.classList.add('fsc-date-text');
-        unitControls.classList.add('fsc-unit-controls');
-        controlGroup.classList.add('fsc-control-group');
+        date.classList.add("fsc-date");
+        dateText.classList.add("fsc-date-text");
+        unitControls.classList.add("fsc-unit-controls");
+        controlGroup.classList.add("fsc-control-group");
 
         date.append(dateText);
         unitControls.append(controlGroup);
@@ -255,86 +266,126 @@ describe('Main App Class Tests', () => {
         expect(ma.setPosition).toHaveBeenCalledTimes(6);
     });
 
-    test('Ensure Current Date Is Visible', () => {
-        const mainApp = document.createElement('div');
-        const currentDay = document.createElement('div');
-        const selectedDay = document.createElement('div');
-        jest.spyOn(document, 'querySelector').mockReturnValue(mainApp);
-        jest.spyOn(mainApp, 'querySelector').mockReturnValueOnce(currentDay);
-        jest.spyOn(mainApp, 'offsetHeight', 'get').mockReturnValue(600);
-        jest.spyOn(mainApp, 'getBoundingClientRect').mockReturnValue({top: 50, left: 50, bottom: 650, right: 250, height: 600, width: 200, x: 50, y: 50, toJSON: () => {return ''}});
-        jest.spyOn(currentDay, 'getBoundingClientRect').mockReturnValue({top: 50, left: 50, bottom: 650, right: 350, height: 600, width: 300, x: 50, y: 50, toJSON: () => {return ''}});
-        jest.spyOn(selectedDay, 'getBoundingClientRect').mockReturnValue({top: 50, left: 50, bottom: 650, right: 250, height: 600, width: 200, x: 50, y: 50, toJSON: () => {return ''}});
+    test("Ensure Current Date Is Visible", () => {
+        const mainApp = document.createElement("div");
+        const currentDay = document.createElement("div");
+        const selectedDay = document.createElement("div");
+        jest.spyOn(document, "querySelector").mockReturnValue(mainApp);
+        jest.spyOn(mainApp, "querySelector").mockReturnValueOnce(currentDay);
+        jest.spyOn(mainApp, "offsetHeight", "get").mockReturnValue(600);
+        jest.spyOn(mainApp, "getBoundingClientRect").mockReturnValue({
+            top: 50,
+            left: 50,
+            bottom: 650,
+            right: 250,
+            height: 600,
+            width: 200,
+            x: 50,
+            y: 50,
+            toJSON: () => {
+                return "";
+            }
+        });
+        jest.spyOn(currentDay, "getBoundingClientRect").mockReturnValue({
+            top: 50,
+            left: 50,
+            bottom: 650,
+            right: 350,
+            height: 600,
+            width: 300,
+            x: 50,
+            y: 50,
+            toJSON: () => {
+                return "";
+            }
+        });
+        jest.spyOn(selectedDay, "getBoundingClientRect").mockReturnValue({
+            top: 50,
+            left: 50,
+            bottom: 650,
+            right: 250,
+            height: 600,
+            width: 200,
+            x: 50,
+            y: 50,
+            toJSON: () => {
+                return "";
+            }
+        });
 
         ma.ensureCurrentDateIsVisible(); //Current day
         expect(mainApp.scrollTop).toBe(-300);
 
         mainApp.scrollTop = 0;
-        jest.spyOn(mainApp, 'querySelector').mockReturnValueOnce(currentDay).mockReturnValueOnce(selectedDay);
+        jest.spyOn(mainApp, "querySelector").mockReturnValueOnce(currentDay).mockReturnValueOnce(selectedDay);
         ma.ensureCurrentDateIsVisible(); //Selected day
         expect(mainApp.scrollTop).toBe(0);
     });
 
-    test('App Drag Move', () => {
-        ma.appDragMove(new Event('drag'));
+    test("App Drag Move", () => {
+        ma.appDragMove(new Event("drag"));
         //@ts-ignore
         game.release.generation = 10;
-        ma.appDragMove(new Event('drag'));
+        ma.appDragMove(new Event("drag"));
         //@ts-ignore
         game.release.generation = 11;
     });
 
-    test('App Drag End', () => {
-        const mainApp = document.createElement('div');
-        jest.spyOn(document, 'getElementById').mockReturnValue(mainApp);
-        jest.spyOn(GameSettings, 'SaveObjectSetting').mockImplementation(async () => {return true;});
-        ma.appDragEnd(new Event('drag'));
+    test("App Drag End", () => {
+        const mainApp = document.createElement("div");
+        jest.spyOn(document, "getElementById").mockReturnValue(mainApp);
+        jest.spyOn(GameSettings, "SaveObjectSetting").mockImplementation(async () => {
+            return true;
+        });
+        ma.appDragEnd(new Event("drag"));
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(1);
 
-        mainApp.classList.add('fsc-compact-view');
-        ma.appDragEnd(new Event('drag'));
+        mainApp.classList.add("fsc-compact-view");
+        ma.appDragEnd(new Event("drag"));
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
     });
 
-    test('Activate Listeners', () => {
-        const mainApp = document.createElement('div');
-        const elm = document.createElement('div');
-        jest.spyOn(document, 'getElementById').mockReturnValue(mainApp);
-        jest.spyOn(mainApp, 'querySelector').mockReturnValue(elm);
+    test("Activate Listeners", () => {
+        const mainApp = document.createElement("div");
+        const elm = document.createElement("div");
+        jest.spyOn(document, "getElementById").mockReturnValue(mainApp);
+        jest.spyOn(mainApp, "querySelector").mockReturnValue(elm);
         //@ts-ignore
-        jest.spyOn(mainApp, 'querySelectorAll').mockReturnValue([elm]);
-        jest.spyOn(MainApp, 'setWidthHeight').mockImplementation(() => {});
-        jest.spyOn(ma, 'ensureCurrentDateIsVisible').mockImplementation(() => {});
+        jest.spyOn(mainApp, "querySelectorAll").mockReturnValue([elm]);
+        jest.spyOn(MainApp, "setWidthHeight").mockImplementation(() => {});
+        jest.spyOn(ma, "ensureCurrentDateIsVisible").mockImplementation(() => {});
 
         ma.activateListeners();
-        expect(mainApp.classList.contains('fsc-compact-view')).toBe(false);
+        expect(mainApp.classList.contains("fsc-compact-view")).toBe(false);
 
         ma.uiElementStates.compactView = true;
         ma.activateListeners();
-        expect(mainApp.classList.contains('fsc-compact-view')).toBe(true);
+        expect(mainApp.classList.contains("fsc-compact-view")).toBe(true);
 
         //@ts-ignore
         game.release.generation = 10;
         ma.activateListeners();
-        expect(mainApp.classList.contains('fsc-compact-view')).toBe(true);
+        expect(mainApp.classList.contains("fsc-compact-view")).toBe(true);
         //@ts-ignore
         game.release.generation = 11;
     });
 
-    test('Addon Button Click', () => {
-        const button = document.createElement('button');
-        button.setAttribute('data-sc-abi', '0');
+    test("Addon Button Click", () => {
+        const button = document.createElement("button");
+        button.setAttribute("data-sc-abi", "0");
 
         MainApplication.addonButtons.push({
             title: "title",
             iconClass: "icon",
             customClass: "class",
             showSidePanel: false,
-            onRender: jest.fn().mockImplementationOnce(() => {throw "no";})
+            onRender: jest.fn().mockImplementationOnce(() => {
+                throw "no";
+            })
         });
         jest.spyOn(console, "error").mockImplementation(() => {});
 
-        const fEvent = {target: button};
+        const fEvent = { target: button };
 
         //@ts-ignore
         MainApplication.addonButtonClick(fEvent);
@@ -353,12 +404,12 @@ describe('Main App Class Tests', () => {
         expect(MainApplication.toggleDrawer).toHaveBeenCalledTimes(1);
     });
 
-    test('Addon Button Side Panel Content Render', () => {
-        const mainApp = document.createElement('div');
-        const sideDrawer = document.createElement('div');
+    test("Addon Button Side Panel Content Render", () => {
+        const mainApp = document.createElement("div");
+        const sideDrawer = document.createElement("div");
 
-        sideDrawer.classList.add('fsc-addon-button-side-drawer');
-        sideDrawer.setAttribute('data-sc-abi', '0');
+        sideDrawer.classList.add("fsc-addon-button-side-drawer");
+        sideDrawer.setAttribute("data-sc-abi", "0");
 
         mainApp.append(sideDrawer);
 
@@ -367,7 +418,9 @@ describe('Main App Class Tests', () => {
             iconClass: "icon",
             customClass: "class",
             showSidePanel: true,
-            onRender: jest.fn().mockImplementationOnce(() => {throw "no";})
+            onRender: jest.fn().mockImplementationOnce(() => {
+                throw "no";
+            })
         });
         jest.spyOn(console, "error").mockImplementation(() => {});
 
@@ -377,44 +430,43 @@ describe('Main App Class Tests', () => {
 
         MainApplication.addonButtonSidePanelContentRender(mainApp);
         expect(MainApplication.addonButtons[0].onRender).toHaveBeenCalledTimes(2);
-
     });
 
-    test('Toggle Drawers', () => {
-        const elm = document.createElement('div');
-        jest.spyOn(ma, 'hideDrawers').mockImplementation(() => {});
-        jest.spyOn(ma, 'searchOptionsToggle').mockImplementation(() => {});
-        jest.spyOn(VisualUtilities, 'animateElement').mockReturnValueOnce(true).mockReturnValueOnce(false).mockReturnValueOnce(true);
-        jest.spyOn(document, 'querySelector').mockReturnValue(elm);
+    test("Toggle Drawers", () => {
+        const elm = document.createElement("div");
+        jest.spyOn(ma, "hideDrawers").mockImplementation(() => {});
+        jest.spyOn(ma, "searchOptionsToggle").mockImplementation(() => {});
+        jest.spyOn(VisualUtilities, "animateElement").mockReturnValueOnce(true).mockReturnValueOnce(false).mockReturnValueOnce(true);
+        jest.spyOn(document, "querySelector").mockReturnValue(elm);
 
-        ma.toggleDrawer('fsc-calendar-list');
+        ma.toggleDrawer("fsc-calendar-list");
         expect(ma.uiElementStates["fsc-calendar-list"]).toBe(true);
 
-        jest.spyOn(GameSettings, 'GetBooleanSettings').mockReturnValue(true);
-        ma.toggleDrawer('fsc-calendar-list');
+        jest.spyOn(GameSettings, "GetBooleanSettings").mockReturnValue(true);
+        ma.toggleDrawer("fsc-calendar-list");
         expect(ma.uiElementStates["fsc-calendar-list"]).toBe(false);
 
         ma.uiElementStates["fsc-note-list"] = false;
-        ma.toggleDrawer('fsc-note-list');
+        ma.toggleDrawer("fsc-note-list");
         expect(ma.uiElementStates["fsc-note-list"]).toBe(true);
     });
 
-    test('Hide Drawers', () => {
-        const clElm = document.createElement('div');
-        const nlElm = document.createElement('div');
-        const nsElm = document.createElement('div');
-        const abElm = document.createElement('div');
+    test("Hide Drawers", () => {
+        const clElm = document.createElement("div");
+        const nlElm = document.createElement("div");
+        const nsElm = document.createElement("div");
+        const abElm = document.createElement("div");
         //@ts-ignore
-        jest.spyOn(document,'querySelectorAll').mockReturnValue([clElm,nlElm,nsElm,abElm]);
-        clElm.classList.add('fsc-side-drawer','fsc-calendar-list');
-        nlElm.classList.add('fsc-side-drawer','fsc-note-list');
-        nsElm.classList.add('fsc-side-drawer','fsc-note-search');
-        abElm.classList.add('fsc-side-drawer','fsc-addon-button-side-drawer-0');
+        jest.spyOn(document, "querySelectorAll").mockReturnValue([clElm, nlElm, nsElm, abElm]);
+        clElm.classList.add("fsc-side-drawer", "fsc-calendar-list");
+        nlElm.classList.add("fsc-side-drawer", "fsc-note-list");
+        nsElm.classList.add("fsc-side-drawer", "fsc-note-search");
+        abElm.classList.add("fsc-side-drawer", "fsc-addon-button-side-drawer-0");
         ma.uiElementStates["fsc-calendar-list"] = true;
         ma.uiElementStates["fsc-note-list"] = true;
         ma.uiElementStates["fsc-note-search"] = true;
 
-        ma.hideDrawers(['fsc-note-search']);
+        ma.hideDrawers(["fsc-note-search"]);
         expect(ma.uiElementStates["fsc-calendar-list"]).toBe(false);
         expect(ma.uiElementStates["fsc-note-list"]).toBe(false);
         expect(ma.uiElementStates["fsc-note-search"]).toBe(true);
@@ -428,9 +480,9 @@ describe('Main App Class Tests', () => {
         expect(ma.uiElementStates["fsc-note-search"]).toBe(false);
 
         ma.addonButtons.push({
-            title: 'Test',
-            iconClass: '',
-            customClass: '',
+            title: "Test",
+            iconClass: "",
+            customClass: "",
             showSidePanel: true,
             onRender: () => {}
         });
@@ -439,10 +491,12 @@ describe('Main App Class Tests', () => {
         expect(ma.uiElementStates["fsc-addon-button-side-drawer-0"]).toBe(false);
     });
 
-    test('Toggle Unit Selector', () => {
-        const elm = document.createElement('div');
-        jest.spyOn(document, 'querySelector').mockReturnValue(elm);
-        jest.spyOn(VisualUtilities, 'animateElement').mockImplementation(() => {return true;});
+    test("Toggle Unit Selector", () => {
+        const elm = document.createElement("div");
+        jest.spyOn(document, "querySelector").mockReturnValue(elm);
+        jest.spyOn(VisualUtilities, "animateElement").mockImplementation(() => {
+            return true;
+        });
         ma.toggleUnitSelector();
         expect(ma.uiElementStates.dateTimeUnitOpen).toBe(true);
 
@@ -450,16 +504,26 @@ describe('Main App Class Tests', () => {
         ma.toggleUnitSelector();
         expect(ma.uiElementStates.dateTimeUnitOpen).toBe(true);
 
-        jest.spyOn(elm, "getBoundingClientRect").mockReturnValue({top: 5000, bottom: 0, left: 0, right: 0, x: 0, y: 0, height: 100, width: 100, toJSON: ()=>{}});
+        jest.spyOn(elm, "getBoundingClientRect").mockReturnValue({
+            top: 5000,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            x: 0,
+            y: 0,
+            height: 100,
+            width: 100,
+            toJSON: () => {}
+        });
         ma.toggleUnitSelector();
         expect(ma.uiElementStates.dateTimeUnitOpen).toBe(true);
     });
 
-    test('Change Unit', () => {
-        const target = document.createElement('div');
-        target.setAttribute('data-unit', 'year');
+    test("Change Unit", () => {
+        const target = document.createElement("div");
+        target.setAttribute("data-unit", "year");
 
-        const fEvent = {currentTarget: target};
+        const fEvent = { currentTarget: target };
         jest.spyOn(ma, "updateApp").mockImplementation(() => {});
 
         //@ts-ignore
@@ -467,57 +531,59 @@ describe('Main App Class Tests', () => {
         expect(ma.uiElementStates.dateTimeUnit).toBe(DateTimeUnits.Year);
         expect(ma.updateApp).toHaveBeenCalledTimes(1);
 
-        target.setAttribute('data-unit', 'month');
+        target.setAttribute("data-unit", "month");
         //@ts-ignore
         ma.changeUnit(fEvent);
         expect(ma.uiElementStates.dateTimeUnit).toBe(DateTimeUnits.Month);
         expect(ma.updateApp).toHaveBeenCalledTimes(2);
 
-        target.setAttribute('data-unit', 'day');
+        target.setAttribute("data-unit", "day");
         //@ts-ignore
         ma.changeUnit(fEvent);
         expect(ma.uiElementStates.dateTimeUnit).toBe(DateTimeUnits.Day);
         expect(ma.updateApp).toHaveBeenCalledTimes(3);
 
-        target.setAttribute('data-unit', 'hour');
+        target.setAttribute("data-unit", "hour");
         //@ts-ignore
         ma.changeUnit(fEvent);
         expect(ma.uiElementStates.dateTimeUnit).toBe(DateTimeUnits.Hour);
         expect(ma.updateApp).toHaveBeenCalledTimes(4);
 
-        target.setAttribute('data-unit', 'minute');
+        target.setAttribute("data-unit", "minute");
         //@ts-ignore
         ma.changeUnit(fEvent);
         expect(ma.uiElementStates.dateTimeUnit).toBe(DateTimeUnits.Minute);
         expect(ma.updateApp).toHaveBeenCalledTimes(5);
 
-        target.setAttribute('data-unit', 'round');
+        target.setAttribute("data-unit", "round");
         //@ts-ignore
         ma.changeUnit(fEvent);
         expect(ma.uiElementStates.dateTimeUnit).toBe(DateTimeUnits.Round);
         expect(ma.updateApp).toHaveBeenCalledTimes(6);
 
-        target.setAttribute('data-unit', 'seconds');
+        target.setAttribute("data-unit", "seconds");
         //@ts-ignore
         ma.changeUnit(fEvent);
         expect(ma.uiElementStates.dateTimeUnit).toBe(DateTimeUnits.Second);
         expect(ma.updateApp).toHaveBeenCalledTimes(7);
     });
 
-    test('Change Calendar', () => {
-        const target = document.createElement('div');
-        const wrapper = document.createElement('div');
+    test("Change Calendar", () => {
+        const target = document.createElement("div");
+        const wrapper = document.createElement("div");
         const fEvent = {
             currentTarget: target
         };
 
-        wrapper.setAttribute('data-calid', '123');
+        wrapper.setAttribute("data-calid", "123");
 
-        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
-        jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true});
-        jest.spyOn(target, 'closest').mockReturnValue(wrapper);
-        jest.spyOn(CalManager, 'setActiveCalendar').mockImplementation(() => {});
-        jest.spyOn(CalManager, 'setVisibleCalendar').mockImplementation(() => {});
+        jest.spyOn(GameSettings, "UiNotification").mockImplementation(() => {});
+        jest.spyOn(GameSockets, "emit").mockImplementation(async () => {
+            return true;
+        });
+        jest.spyOn(target, "closest").mockReturnValue(wrapper);
+        jest.spyOn(CalManager, "setActiveCalendar").mockImplementation(() => {});
+        jest.spyOn(CalManager, "setVisibleCalendar").mockImplementation(() => {});
 
         //@ts-ignore
         game.user.isGM = true;
@@ -527,7 +593,9 @@ describe('Main App Class Tests', () => {
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        jest.spyOn(game.users, 'find').mockImplementation((v: any)=>{return v.call(undefined, {isGM: true, active: true})});
+        jest.spyOn(game.users, "find").mockImplementation((v: any) => {
+            return v.call(undefined, { isGM: true, active: true });
+        });
         //@ts-ignore
         ma.changeCalendar(false, fEvent);
         expect(GameSockets.emit).toHaveBeenCalledTimes(1);
@@ -542,38 +610,38 @@ describe('Main App Class Tests', () => {
         expect(CalManager.setVisibleCalendar).toHaveBeenCalledTimes(1);
     });
 
-    test('Change Month', () => {
-        jest.spyOn(ma, 'toggleUnitSelector').mockImplementation(() => {});
-        jest.spyOn(MainApp, 'setWidthHeight').mockImplementation(() => {});
-        jest.spyOn(tCal, 'changeMonth').mockImplementation(() => {});
+    test("Change Month", () => {
+        jest.spyOn(ma, "toggleUnitSelector").mockImplementation(() => {});
+        jest.spyOn(MainApp, "setWidthHeight").mockImplementation(() => {});
+        jest.spyOn(tCal, "changeMonth").mockImplementation(() => {});
 
-        ma.changeMonth(CalendarClickEvents.next, {id: ''});
+        ma.changeMonth(CalendarClickEvents.next);
         expect(ma.toggleUnitSelector).toHaveBeenCalledTimes(1);
         expect(MainApp.setWidthHeight).toHaveBeenCalledTimes(1);
         expect(tCal.changeMonth).toHaveBeenCalledTimes(1);
 
-        ma.changeMonth(CalendarClickEvents.previous, {id: ''});
+        ma.changeMonth(CalendarClickEvents.previous);
         expect(ma.toggleUnitSelector).toHaveBeenCalledTimes(2);
         expect(MainApp.setWidthHeight).toHaveBeenCalledTimes(2);
         expect(tCal.changeMonth).toHaveBeenCalledTimes(2);
     });
 
-    test('Day Click', () => {
-        jest.spyOn(ma, 'toggleUnitSelector').mockImplementation(() => {});
-        jest.spyOn(ma, 'updateApp').mockImplementation(() => {});
+    test("Day Click", () => {
+        jest.spyOn(ma, "toggleUnitSelector").mockImplementation(() => {});
+        jest.spyOn(ma, "updateApp").mockImplementation(() => {});
 
         tCal.months[0].selected = true;
         tCal.months[0].days[0].selected = true;
 
         ma.dayClick({
-            id: '',
-            selectedDates:{
-                start:{
+            id: "",
+            selectedDates: {
+                start: {
                     day: 0,
                     month: 0,
                     year: 2000
                 },
-                end:{
+                end: {
                     day: 0,
                     month: 0,
                     year: 2000
@@ -583,26 +651,30 @@ describe('Main App Class Tests', () => {
         expect(ma.updateApp).toHaveBeenCalledTimes(1);
     });
 
-    test('Today Click', () => {
-        jest.spyOn(ma, 'updateApp').mockImplementation(() => {});
-        ma.todayClick(new Event('click'));
+    test("Today Click", () => {
+        jest.spyOn(ma, "updateApp").mockImplementation(() => {});
+        ma.todayClick();
         expect(ma.updateApp).toHaveBeenCalledTimes(1);
     });
 
-    test('Time Unit Click', () => {
-        const target = document.createElement('div');
+    test("Time Unit Click", () => {
+        const target = document.createElement("div");
         const fEvent = {
             currentTarget: target,
             stopPropagation: jest.fn()
         };
 
-        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
-        jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true});
-        jest.spyOn(tCal, 'changeDateTime').mockImplementation(() => {return true});
-        jest.spyOn(DateUtilities, 'AdvanceTimeToPreset').mockImplementation(async () => {});
+        jest.spyOn(GameSettings, "UiNotification").mockImplementation(() => {});
+        jest.spyOn(GameSockets, "emit").mockImplementation(async () => {
+            return true;
+        });
+        jest.spyOn(tCal, "changeDateTime").mockImplementation(() => {
+            return true;
+        });
+        jest.spyOn(DateUtilities, "AdvanceTimeToPreset").mockImplementation(async () => {});
 
-        target.setAttribute('data-type', 'round');
-        target.setAttribute('data-amount', '1');
+        target.setAttribute("data-type", "round");
+        target.setAttribute("data-amount", "1");
 
         //@ts-ignore
         game.user.isGM = true;
@@ -612,29 +684,33 @@ describe('Main App Class Tests', () => {
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        jest.spyOn(game.users, 'find').mockImplementation((v: any)=>{return v.call(undefined, {isGM: true, active: true})});
-        target.setAttribute('data-type', 'year');
+        jest.spyOn(game.users, "find").mockImplementation((v: any) => {
+            return v.call(undefined, { isGM: true, active: true });
+        });
+        target.setAttribute("data-type", "year");
         //@ts-ignore
         ma.timeUnitClick(fEvent);
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
         expect(GameSockets.emit).toHaveBeenCalledTimes(1);
 
-        target.setAttribute('data-type', 'midnight');
-        target.setAttribute('data-amount', '');
+        target.setAttribute("data-type", "midnight");
+        target.setAttribute("data-amount", "");
         //@ts-ignore
         ma.timeUnitClick(fEvent);
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
         expect(GameSockets.emit).toHaveBeenCalledTimes(2);
 
         //@ts-ignore
-        jest.spyOn(game.users, 'find').mockImplementation((v: any)=>{return v.call(undefined, {isGM: false, active: true})});
+        jest.spyOn(game.users, "find").mockImplementation((v: any) => {
+            return v.call(undefined, { isGM: false, active: true });
+        });
         //@ts-ignore
         ma.timeUnitClick(fEvent);
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
         expect(GameSockets.emit).toHaveBeenCalledTimes(2);
 
-        target.setAttribute('data-type', 'year');
-        target.setAttribute('data-amount', '1');
+        target.setAttribute("data-type", "year");
+        target.setAttribute("data-amount", "1");
         SC.primary = true;
         //@ts-ignore
         ma.timeUnitClick(fEvent);
@@ -642,8 +718,8 @@ describe('Main App Class Tests', () => {
         expect(GameSockets.emit).toHaveBeenCalledTimes(2);
         expect(tCal.changeDateTime).toHaveBeenCalledTimes(1);
 
-        target.setAttribute('data-type', 'midnight');
-        target.setAttribute('data-amount', '');
+        target.setAttribute("data-type", "midnight");
+        target.setAttribute("data-amount", "");
         //@ts-ignore
         ma.timeUnitClick(fEvent);
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
@@ -652,110 +728,119 @@ describe('Main App Class Tests', () => {
         expect(DateUtilities.AdvanceTimeToPreset).toHaveBeenCalledTimes(1);
     });
 
-    test('Date Control Apply', () => {
-        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
-        ma.dateControlApply(new Event('click'));
+    test("Date Control Apply", () => {
+        jest.spyOn(GameSettings, "UiNotification").mockImplementation(() => {});
+        ma.dateControlApply();
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
 
         const d = new Date();
-        jest.spyOn(PermUtilities, 'canUser').mockReturnValue(true);
+        jest.spyOn(PermUtilities, "canUser").mockReturnValue(true);
         jest.spyOn(ma, "setCurrentDate").mockImplementation(() => {});
         tCal.months[d.getMonth()].selected = true;
         tCal.months[d.getMonth()].days[0].selected = true;
-        ma.dateControlApply(new Event('click'));
+        ma.dateControlApply();
         expect(ma.setCurrentDate).toHaveBeenCalledTimes(1);
 
-        tCal.resetMonths('selected');
+        tCal.resetMonths("selected");
         tCal.year.selectedYear = d.getFullYear() + 1;
         tCal.months[0].selected = true;
         tCal.months[0].days[0].selected = true;
-        ma.dateControlApply(new Event('click'));
+        ma.dateControlApply();
         //@ts-ignore
         expect(global.DialogRenderer).toHaveBeenCalledTimes(1);
 
-
-        tCal.resetMonths('visible');
+        tCal.resetMonths("visible");
         tCal.year.visibleYear = tCal.year.selectedYear;
         tCal.months[0].visible = true;
-        ma.dateControlApply(new Event('click'));
+        ma.dateControlApply();
         expect(ma.setCurrentDate).toHaveBeenCalledTimes(2);
     });
 
-    test('Set Current Date', () => {
-        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
-        jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true});
-        jest.spyOn(tCal, "setDateTime").mockImplementation(() => {return true});
+    test("Set Current Date", () => {
+        jest.spyOn(GameSettings, "UiNotification").mockImplementation(() => {});
+        jest.spyOn(GameSockets, "emit").mockImplementation(async () => {
+            return true;
+        });
+        jest.spyOn(tCal, "setDateTime").mockImplementation(() => {
+            return true;
+        });
 
-        ma.setCurrentDate(0,0,0);
+        ma.setCurrentDate(0, 0, 0);
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        jest.spyOn(game.users, 'find').mockImplementation((v: any)=>{return v.call(undefined, {isGM: true, active: true})});
-        ma.setCurrentDate(0,0,0);
+        jest.spyOn(game.users, "find").mockImplementation((v: any) => {
+            return v.call(undefined, { isGM: true, active: true });
+        });
+        ma.setCurrentDate(0, 0, 0);
         expect(GameSockets.emit).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         game.user.isGM = true;
         SC.primary = true;
-        ma.setCurrentDate(0,0,0);
+        ma.setCurrentDate(0, 0, 0);
         expect(tCal.setDateTime).toHaveBeenCalledTimes(1);
     });
 
-    test('Search Click', () => {
-        const sb = document.createElement('input');
-        sb.value = 'test';
-        jest.spyOn(document, 'getElementById').mockReturnValue(sb);
-        jest.spyOn(NManager, 'searchNotes').mockImplementation(() => {return []});
-        jest.spyOn(ma, 'updateApp').mockImplementation(() => {});
+    test("Search Click", () => {
+        const sb = document.createElement("input");
+        sb.value = "test";
+        jest.spyOn(document, "getElementById").mockReturnValue(sb);
+        jest.spyOn(NManager, "searchNotes").mockImplementation(() => {
+            return [];
+        });
+        jest.spyOn(ma, "updateApp").mockImplementation(() => {});
 
         ma.searchClick();
-        expect(ma.search.term).toBe('test');
+        expect(ma.search.term).toBe("test");
         expect(NManager.searchNotes).toHaveBeenCalledTimes(1);
         expect(ma.updateApp).toHaveBeenCalledTimes(1);
     });
 
-    test('Search Clear Click', () => {
-        ma.search.term = 'test';
-        jest.spyOn(ma, 'updateApp').mockImplementation(() => {});
+    test("Search Clear Click", () => {
+        ma.search.term = "test";
+        jest.spyOn(ma, "updateApp").mockImplementation(() => {});
 
         ma.searchClearClick();
-        expect(ma.search.term).toBe('');
+        expect(ma.search.term).toBe("");
         expect(ma.updateApp).toHaveBeenCalledTimes(1);
     });
 
-    test('Search Box Change', () => {
-        const sb = document.createElement('input');
-        sb.value = 'test';
-        const fEvent = {target: sb, key: ''};
-        jest.spyOn(ma, 'searchClick').mockImplementation(() => {});
+    test("Search Box Change", () => {
+        const sb = document.createElement("input");
+        sb.value = "test";
+        const fEvent = { target: sb, key: "" };
+        jest.spyOn(ma, "searchClick").mockImplementation(() => {});
 
         //@ts-ignore
         ma.searchBoxChange(fEvent);
-        expect(ma.search.term).toBe('test');
+        expect(ma.search.term).toBe("test");
         expect(ma.searchClick).toHaveBeenCalledTimes(0);
 
         fEvent.key = "Enter";
         //@ts-ignore
         ma.searchBoxChange(fEvent);
-        expect(ma.search.term).toBe('test');
+        expect(ma.search.term).toBe("test");
         expect(ma.searchClick).toHaveBeenCalledTimes(1);
     });
 
-    test('Search Option Toggle', () => {
-        const elm = document.createElement('div');
+    test("Search Option Toggle", () => {
+        const elm = document.createElement("div");
 
-        jest.spyOn(document,'querySelector').mockReturnValue(elm);
-        jest.spyOn(VisualUtilities, 'animateElement').mockImplementation(() => {return true;});
+        jest.spyOn(document, "querySelector").mockReturnValue(elm);
+        jest.spyOn(VisualUtilities, "animateElement").mockImplementation(() => {
+            return true;
+        });
 
         ma.searchOptionsToggle();
         expect(ma.uiElementStates.searchOptionsOpen).toBe(true);
     });
 
-    test('Search Option Fields Change', () => {
-        const target = document.createElement('input');
-        const fEvent = {target: target};
+    test("Search Option Fields Change", () => {
+        const target = document.createElement("input");
+        const fEvent = { target: target };
 
-        target.setAttribute('data-field', 'author');
+        target.setAttribute("data-field", "author");
         target.checked = true;
 
         //@ts-ignore
@@ -763,55 +848,55 @@ describe('Main App Class Tests', () => {
         expect(ma.search.options.fields.author).toBe(true);
     });
 
-    test('Configuration Click', () => {
-        jest.spyOn(ConfigurationApplication, 'initializeAndShowDialog').mockImplementation(async () => {});
-        ma.configurationClick(new Event('click'));
+    test("Configuration Click", () => {
+        jest.spyOn(ConfigurationApplication, "initializeAndShowDialog").mockImplementation(async () => {});
+        ma.configurationClick();
         expect(ConfigurationApplication.initializeAndShowDialog).toHaveBeenCalledTimes(1);
     });
 
-    test('Add Note', () => {
-        jest.spyOn(NManager, 'addNewNote').mockImplementation(async () => {});
-        const fEvent = {stopPropagation: jest.fn()};
+    test("Add Note", () => {
+        jest.spyOn(NManager, "addNewNote").mockImplementation(async () => {});
+        const fEvent = { stopPropagation: jest.fn() };
         //@ts-ignore
         ma.addNote(fEvent);
         expect(NManager.addNewNote).toHaveBeenCalledTimes(1);
     });
 
-    test('View Note', () => {
-        jest.spyOn(NManager, 'showNote').mockImplementation(() => {});
-        jest.spyOn(console, 'error').mockImplementation(() => {});
-        const target = document.createElement('div');
-        const fEvent = {stopPropagation: jest.fn(), currentTarget: target};
+    test("View Note", () => {
+        jest.spyOn(NManager, "showNote").mockImplementation(() => {});
+        jest.spyOn(console, "error").mockImplementation(() => {});
+        const target = document.createElement("div");
+        const fEvent = { stopPropagation: jest.fn(), currentTarget: target };
 
         //@ts-ignore
         ma.viewNote(fEvent);
         expect(console.error).toHaveBeenCalledTimes(1);
 
-        target.setAttribute('data-index', '123');
+        target.setAttribute("data-index", "123");
         //@ts-ignore
         ma.viewNote(fEvent);
         expect(NManager.showNote).toHaveBeenCalledTimes(1);
     });
 
-    test('Note Context', () => {
-        const appWindow = document.createElement('div');
-        const section = document.createElement('div');
-        const contextMenu = document.createElement('div');
-        const note = document.createElement('div');
-        const editAction = document.createElement('div');
-        const contextList = document.createElement('div');
-        const visibleAction = document.createElement('div');
+    test("Note Context", () => {
+        const appWindow = document.createElement("div");
+        const section = document.createElement("div");
+        const contextMenu = document.createElement("div");
+        const note = document.createElement("div");
+        const editAction = document.createElement("div");
+        const contextList = document.createElement("div");
+        const visibleAction = document.createElement("div");
 
-        note.classList.add('fsc-note');
-        section.classList.add('fsc-section');
-        contextMenu.classList.add('fsc-context-menu');
-        contextList.classList.add('fsc-day-context-list');
-        visibleAction.classList.add('fsc-context-list-action')
+        note.classList.add("fsc-note");
+        section.classList.add("fsc-section");
+        contextMenu.classList.add("fsc-context-menu");
+        contextList.classList.add("fsc-day-context-list");
+        visibleAction.classList.add("fsc-context-list-action");
 
         appWindow.id = MainApp.appWindowId;
-        note.setAttribute('data-index', 'asd');
-        editAction.setAttribute('data-action', 'edit');
-        visibleAction.setAttribute('data-action', 'remind');
+        note.setAttribute("data-index", "asd");
+        editAction.setAttribute("data-action", "edit");
+        visibleAction.setAttribute("data-action", "remind");
 
         contextList.append(visibleAction);
         contextList.append(editAction);
@@ -821,11 +906,10 @@ describe('Main App Class Tests', () => {
         appWindow.append(section);
         document.body.append(appWindow);
 
-        const noteStub = new NoteStub('asd');
-        jest.spyOn(NManager, 'getNoteStub').mockReturnValue(noteStub);
-        jest.spyOn(noteStub, 'userReminderRegistered', 'get').mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValue(false);
-        jest.spyOn(noteStub, 'canEdit', 'get').mockReturnValueOnce(true).mockReturnValue(false);
-
+        const noteStub = new NoteStub("asd");
+        jest.spyOn(NManager, "getNoteStub").mockReturnValue(noteStub);
+        jest.spyOn(noteStub, "userReminderRegistered", "get").mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValue(false);
+        jest.spyOn(noteStub, "canEdit", "get").mockReturnValueOnce(true).mockReturnValue(false);
 
         const fEvent = {
             target: note
@@ -833,28 +917,28 @@ describe('Main App Class Tests', () => {
 
         //@ts-ignore
         ma.noteContext(fEvent);
-        expect(contextMenu.getAttribute('data-id')).toBe('asd');
+        expect(contextMenu.getAttribute("data-id")).toBe("asd");
 
         //@ts-ignore
         ma.noteContext(fEvent);
-        expect(contextMenu.getAttribute('data-id')).toBe('asd');
+        expect(contextMenu.getAttribute("data-id")).toBe("asd");
     });
 
-    test('Note Context Click', () => {
-        const contextMenu = document.createElement('div');
-        const action = document.createElement('div');
+    test("Note Context Click", () => {
+        const contextMenu = document.createElement("div");
+        const action = document.createElement("div");
 
-        contextMenu.classList.add('fsc-context-menu');
-        action.classList.add('fsc-context-list-action');
+        contextMenu.classList.add("fsc-context-menu");
+        action.classList.add("fsc-context-list-action");
 
-        contextMenu.setAttribute('data-id', 'asd');
-        action.setAttribute('data-action', 'showPlayers');
+        contextMenu.setAttribute("data-id", "asd");
+        action.setAttribute("data-action", "showPlayers");
 
         contextMenu.append(action);
 
-        jest.spyOn(console, 'error').mockImplementation(() => {});
+        jest.spyOn(console, "error").mockImplementation(() => {});
         //@ts-ignore
-        jest.spyOn(Journal, 'showDialog').mockImplementation(async () => {});
+        jest.spyOn(Journal, "showDialog").mockImplementation(async () => {});
 
         const fEvent = {
             target: action
@@ -865,7 +949,7 @@ describe('Main App Class Tests', () => {
         expect(Journal.showDialog).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        jest.spyOn(Journal, 'showDialog').mockRejectedValue('E');
+        jest.spyOn(Journal, "showDialog").mockRejectedValue("E");
         //@ts-ignore
         ma.noteContextClick(fEvent);
         //@ts-ignore
@@ -879,39 +963,39 @@ describe('Main App Class Tests', () => {
             }
         };
         //@ts-ignore
-        jest.spyOn(game.journal, 'get').mockReturnValue(je);
+        jest.spyOn(game.journal, "get").mockReturnValue(je);
 
-        action.setAttribute('data-action', 'delete');
+        action.setAttribute("data-action", "delete");
         //@ts-ignore
         ma.noteContextClick(fEvent);
         expect(je.sheet.delete).toHaveBeenCalledTimes(1);
 
-        action.setAttribute('data-action', 'edit');
+        action.setAttribute("data-action", "edit");
         //@ts-ignore
         ma.noteContextClick(fEvent);
         expect(je.sheet.render).toHaveBeenCalledTimes(1);
 
-        action.setAttribute('data-action', 'remind');
+        action.setAttribute("data-action", "remind");
         //@ts-ignore
         ma.noteContextClick(fEvent);
         expect(je.sheet.reminderChange).toHaveBeenCalledTimes(1);
 
-        je.sheet.reminderChange.mockRejectedValue('E');
+        je.sheet.reminderChange.mockRejectedValue("E");
         //@ts-ignore
         ma.noteContextClick(fEvent);
         expect(je.sheet.reminderChange).toHaveBeenCalledTimes(2);
     });
 
-    test('Update App', () => {
-        jest.spyOn(ma, 'render').mockImplementation(() => {});
+    test("Update App", () => {
+        jest.spyOn(ma, "render").mockImplementation(() => {});
         ma.updateApp();
         expect(ma.render).toHaveBeenCalledTimes(1);
     });
 
-    test('Start Time', () => {
-        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
-        jest.spyOn(ma, 'updateApp').mockImplementation(() => {});
-        jest.spyOn(tCal.timeKeeper, 'start').mockImplementation(() => {});
+    test("Start Time", () => {
+        jest.spyOn(GameSettings, "UiNotification").mockImplementation(() => {});
+        jest.spyOn(ma, "updateApp").mockImplementation(() => {});
+        jest.spyOn(tCal.timeKeeper, "start").mockImplementation(() => {});
 
         ma.startTime();
         expect(ma.updateApp).toHaveBeenCalledTimes(1);
@@ -920,42 +1004,47 @@ describe('Main App Class Tests', () => {
         //@ts-ignore
         game.scenes = {};
         //@ts-ignore
-        game.combats = {size: 1, find:(v: any)=>{return v.call(undefined, {started: true, scene: {id: 's1'}});}};
+        game.combats = {
+            size: 1,
+            find: (v: any) => {
+                return v.call(undefined, { started: true, scene: { id: "s1" } });
+            }
+        };
         ma.startTime();
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        game.scenes = {active:{id:'s1'}};
+        game.scenes = { active: { id: "s1" } };
         ma.startTime();
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
     });
 
-    test('Stop Time', () => {
-        jest.spyOn(tCal.timeKeeper, 'stop').mockImplementation(() => {});
-        jest.spyOn(ma, 'updateApp').mockImplementation(() => {});
+    test("Stop Time", () => {
+        jest.spyOn(tCal.timeKeeper, "stop").mockImplementation(() => {});
+        jest.spyOn(ma, "updateApp").mockImplementation(() => {});
         ma.stopTime();
         expect(ma.updateApp).toHaveBeenCalledTimes(1);
         expect(tCal.timeKeeper.stop).toHaveBeenCalledTimes(1);
     });
 
-    test('Time Keeping Check', async () => {
+    test("Time Keeping Check", async () => {
         //@ts-ignore
         game.user.isGM = true;
-        jest.spyOn(tCal, 'syncTime').mockImplementation(async () => {});
+        jest.spyOn(tCal, "syncTime").mockImplementation(async () => {});
 
         await ma.timeKeepingCheck();
         expect(tCal.syncTime).toHaveBeenCalledTimes(1);
     });
 
-    test('Note Drag', () => {
-        const target = document.createElement('div');
-        const sibling = document.createElement('div');
-        const targetParent = document.createElement('div');
+    test("Note Drag", () => {
+        const target = document.createElement("div");
+        const sibling = document.createElement("div");
+        const targetParent = document.createElement("div");
         targetParent.append(target);
         targetParent.append(sibling);
-        targetParent.classList.add('drag-active');
+        targetParent.classList.add("drag-active");
 
-        const fEvent = {target: target};
+        const fEvent = { target: target };
 
         document.elementFromPoint = jest.fn<(x: number, y: number) => Element | null>().mockReturnValueOnce(null).mockReturnValue(sibling);
 
@@ -968,23 +1057,27 @@ describe('Main App Class Tests', () => {
         expect(targetParent.childNodes[0]).toEqual(sibling);
     });
 
-    test('Note Drag End', () => {
-        const target = document.createElement('div');
-        const targetParent = document.createElement('div');
+    test("Note Drag End", () => {
+        const target = document.createElement("div");
+        const targetParent = document.createElement("div");
         targetParent.append(target);
-        target.setAttribute('data-index', 'asd');
-        const fEvent = {target: target};
+        target.setAttribute("data-index", "asd");
+        const fEvent = { target: target };
 
-        jest.spyOn(GameSettings, 'UiNotification').mockImplementation(() => {});
-        jest.spyOn(GameSockets, 'emit').mockImplementation(async () => {return true});
-        jest.spyOn(NManager, 'orderNotesOnDay').mockImplementation(async () => {});
+        jest.spyOn(GameSettings, "UiNotification").mockImplementation(() => {});
+        jest.spyOn(GameSockets, "emit").mockImplementation(async () => {
+            return true;
+        });
+        jest.spyOn(NManager, "orderNotesOnDay").mockImplementation(async () => {});
 
         //@ts-ignore
         ma.noteDragEnd(fEvent);
         expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        jest.spyOn(game.users, 'find').mockImplementation((v: any)=>{return v.call(undefined, {isGM: true, active: true})});
+        jest.spyOn(game.users, "find").mockImplementation((v: any) => {
+            return v.call(undefined, { isGM: true, active: true });
+        });
         //@ts-ignore
         ma.noteDragEnd(fEvent);
         expect(GameSockets.emit).toHaveBeenCalledTimes(1);
@@ -997,25 +1090,25 @@ describe('Main App Class Tests', () => {
         expect(NManager.orderNotesOnDay).toHaveBeenCalledTimes(1);
     });
 
-    test('Update Object', () => {
+    test("Update Object", () => {
         //@ts-ignore
         ma._updateObject();
     });
 
-    test('keyClick', () => {
-        jest.spyOn(ma, 'render').mockImplementation(() => {});
+    test("keyClick", () => {
+        jest.spyOn(ma, "render").mockImplementation(() => {});
 
         //@ts-ignore
-        ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
+        ma.keyClick({ repeat: false, shiftKey: false, ctrlKey: false });
         expect(ma.render).not.toHaveBeenCalled();
 
         ma.uiElementStates.compactView = true;
         //@ts-ignore
-        ma.keyClick({repeat: false, shiftKey: false, ctrlKey: false});
+        ma.keyClick({ repeat: false, shiftKey: false, ctrlKey: false });
         expect(ma.render).toHaveBeenCalledTimes(1);
     });
 
-    test('toggleWindow', () => {
+    test("toggleWindow", () => {
         jest.spyOn(ma, "render").mockImplementation(() => {});
 
         ma.sceneControlButtonClick();

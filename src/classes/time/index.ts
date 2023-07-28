@@ -1,11 +1,11 @@
 import ConfigurationItemBase from "../configuration/configuration-item-base";
-import {FormatDateTime} from "../utilities/date-time";
-import {CalManager} from "../index";
+import { FormatDateTime } from "../utilities/date-time";
+import { CalManager } from "../index";
 
 /**
  * Class representing the time of day
  */
-export default class Time extends ConfigurationItemBase{
+export default class Time extends ConfigurationItemBase {
     /**
      * How many hours are in a day
      * @type {number}
@@ -99,8 +99,8 @@ export default class Time extends ConfigurationItemBase{
      * @param {TimeData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.TimeData) {
-        if(config && Object.keys(config).length){
-            if(config.hasOwnProperty('id')){
+        if (config && Object.keys(config).length) {
+            if (Object.prototype.hasOwnProperty.call(config, "id")) {
                 this.id = config.id;
             }
             this.hoursInDay = config.hoursInDay;
@@ -109,11 +109,11 @@ export default class Time extends ConfigurationItemBase{
             this.gameTimeRatio = config.gameTimeRatio;
             this.secondsPerDay = this.hoursInDay * this.minutesInHour * this.secondsInMinute;
 
-            if(config.hasOwnProperty('unifyGameAndClockPause')){
+            if (Object.prototype.hasOwnProperty.call(config, "unifyGameAndClockPause")) {
                 this.unifyGameAndClockPause = config.unifyGameAndClockPause;
             }
 
-            if(config.hasOwnProperty('updateFrequency')){
+            if (Object.prototype.hasOwnProperty.call(config, "updateFrequency")) {
                 this.updateFrequency = config.updateFrequency;
             }
         }
@@ -123,15 +123,17 @@ export default class Time extends ConfigurationItemBase{
      * Returns the current time as string parts
      * @return {Time}
      */
-    getCurrentTime(): SimpleCalendar.Time{
-        let s = this.seconds, m = 0, h = 0;
-        if(s >= this.secondsInMinute){
+    getCurrentTime(): SimpleCalendar.Time {
+        let s = this.seconds,
+            m = 0,
+            h = 0;
+        if (s >= this.secondsInMinute) {
             m = Math.floor(s / this.secondsInMinute);
-            s = s - (m * this.secondsInMinute);
+            s = s - m * this.secondsInMinute;
         }
-        if(m >= this.minutesInHour){
+        if (m >= this.minutesInHour) {
             h = Math.floor(m / this.minutesInHour);
-            m = m - (h * this.minutesInHour);
+            m = m - h * this.minutesInHour;
         }
         s = Math.floor(s);
         return {
@@ -144,11 +146,15 @@ export default class Time extends ConfigurationItemBase{
     /**
      * Returns the current time as a string
      */
-    toString(): string{
+    toString(): string {
         const t = this.getCurrentTime();
         const activeCalendar = CalManager.getActiveCalendar();
-        let mdIndex = activeCalendar.getMonthAndDayIndex();
-        return FormatDateTime({year: activeCalendar.year.numericRepresentation, month: mdIndex.month || 0, day: mdIndex.day || 0, ...t}, activeCalendar.generalSettings.dateFormat.time, activeCalendar);
+        const mdIndex = activeCalendar.getMonthAndDayIndex();
+        return FormatDateTime(
+            { year: activeCalendar.year.numericRepresentation, month: mdIndex.month || 0, day: mdIndex.day || 0, ...t },
+            activeCalendar.generalSettings.dateFormat.time,
+            activeCalendar
+        );
     }
 
     /**
@@ -157,8 +163,8 @@ export default class Time extends ConfigurationItemBase{
      * @param {number} [minute=0] The minute of the day
      * @param {number} [second=0] The seconds of the day
      */
-    setTime(hour: number = 0, minute: number = 0, second: number = 0){
-        this.seconds = (hour * this.minutesInHour * this.secondsInMinute) + (minute * this.secondsInMinute) + second;
+    setTime(hour: number = 0, minute: number = 0, second: number = 0) {
+        this.seconds = hour * this.minutesInHour * this.secondsInMinute + minute * this.secondsInMinute + second;
     }
 
     /**
@@ -168,19 +174,19 @@ export default class Time extends ConfigurationItemBase{
      * @param {number} [second=0] The number of seconds to change the time by
      * @return {number} The number of days that have changed as a result of the time change
      */
-    changeTime(hour: number = 0, minute: number = 0, second: number = 0): number{
+    changeTime(hour: number = 0, minute: number = 0, second: number = 0): number {
         second = +second.toFixed(3);
-        const changeAmount  = (hour * this.minutesInHour * this.secondsInMinute) + (minute * this.secondsInMinute) + second;
+        const changeAmount = hour * this.minutesInHour * this.secondsInMinute + minute * this.secondsInMinute + second;
         const newAmount = this.seconds + changeAmount;
-        if(newAmount >= this.secondsPerDay) {
+        if (newAmount >= this.secondsPerDay) {
             //If the new time is more seconds than there are in a day, change to the next day
             this.seconds = 0;
-            const dayChange = this.changeTime(0,0, newAmount - this.secondsPerDay);
+            const dayChange = this.changeTime(0, 0, newAmount - this.secondsPerDay);
             return dayChange + 1;
-        } else if( newAmount < 0){
+        } else if (newAmount < 0) {
             // Going back to a previous day
             this.seconds = this.secondsPerDay;
-            const dayChange = this.changeTime(0,0, newAmount);
+            const dayChange = this.changeTime(0, 0, newAmount);
             return dayChange + -1;
         }
         this.seconds = newAmount;
@@ -192,17 +198,17 @@ export default class Time extends ConfigurationItemBase{
      * @param {number} totalDays The number of days to turn into seconds
      * @param {number} [includeToday=true] If to include todays time
      */
-    getTotalSeconds(totalDays: number, includeToday: boolean = true){
-        return (totalDays * this.hoursInDay * this.minutesInHour * this.secondsInMinute) + (includeToday? this.seconds : 0);
+    getTotalSeconds(totalDays: number, includeToday: boolean = true) {
+        return totalDays * this.hoursInDay * this.minutesInHour * this.secondsInMinute + (includeToday ? this.seconds : 0);
     }
 
     /**
      * Sets the world time to the passed in number of seconds
      * @param {number} seconds The number of seconds to set the world time too
      */
-    async setWorldTime(seconds: number){
+    async setWorldTime(seconds: number) {
         const currentWorldTime = (<Game>game).time.worldTime;
-        let diff = seconds - currentWorldTime;
-        const newTime = await (<Game>game).time.advance(diff);
+        const diff = seconds - currentWorldTime;
+        await (<Game>game).time.advance(diff);
     }
 }

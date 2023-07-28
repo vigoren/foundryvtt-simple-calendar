@@ -3,7 +3,7 @@
  * @param item
  */
 export function isObject(item: any): boolean {
-    return (item && typeof item === 'object' && !Array.isArray(item));
+    return item && typeof item === "object" && !Array.isArray(item);
 }
 
 /**
@@ -19,7 +19,7 @@ export function isObjectEmpty(item: any): boolean {
  * @param target
  * @param sources
  */
-export function deepMerge(target: any, ...sources: any): any{
+export function deepMerge(target: any, ...sources: any): any {
     if (!sources.length) return target;
     const source = sources.shift();
 

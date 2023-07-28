@@ -1,5 +1,5 @@
 import Sockets from "./sockets";
-import {GameSettings} from "./foundry-interfacing/game-settings";
+import { GameSettings } from "./foundry-interfacing/game-settings";
 import {
     CombatPauseRules,
     ModuleName,
@@ -10,18 +10,18 @@ import {
     Themes,
     TimeKeeperStatus
 } from "../constants";
-import {Logger} from "./logging";
-import {CalManager, MainApplication, NManager, SC} from "./index";
+import { Logger } from "./logging";
+import { CalManager, MainApplication, NManager, SC } from "./index";
 import ConfigurationApp from "./applications/configuration-app";
 import MainApp from "./applications/main-app";
 import UserPermissions from "./configuration/user-permissions";
-import {canUser} from "./utilities/permissions";
+import { canUser } from "./utilities/permissions";
 import GameSockets from "./foundry-interfacing/game-sockets";
-import {RoundData} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/combat";
+import { RoundData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/combat";
 import MultiSelect from "./renderer/multi-select";
-import {GetThemeName} from "./utilities/visual";
-import {FoundryVTTGameData} from "./foundry-interfacing/game-data";
-import {Hook} from "./api/hook";
+import { GetThemeName } from "./utilities/visual";
+import { FoundryVTTGameData } from "./foundry-interfacing/game-data";
+import { Hook } from "./api/hook";
 import Ui from "./foundry-interfacing/ui";
 
 /**
@@ -35,7 +35,7 @@ export default class SCController {
     /**
      * Gets the current active calendar
      */
-    public get activeCalendar(){
+    public get activeCalendar() {
         return CalManager.getActiveCalendar();
     }
     /**
@@ -54,7 +54,7 @@ export default class SCController {
     constructor() {
         this.sockets = new Sockets();
         this.clientSettings = {
-            id: '',
+            id: "",
             theme: Themes[0].key,
             openOnLoad: true,
             openCompact: false,
@@ -62,14 +62,14 @@ export default class SCController {
             rememberCompactPosition: false,
             appPosition: {},
             noteReminderNotification: NoteReminderNotificationType.whisper,
-            sideDrawerDirection: 'sc-right',
+            sideDrawerDirection: "sc-right",
             alwaysShowNoteList: false,
             persistentOpen: false,
             compactViewScale: 100
         };
         this.globalConfiguration = {
-            id: '',
-            version: '',
+            id: "",
+            version: "",
             calendarsSameTimestamp: false,
             combatPauseRule: CombatPauseRules.Active,
             permissions: new UserPermissions(),
@@ -83,24 +83,26 @@ export default class SCController {
     /**
      * Called when the theme being used has changed and all currently open dialogs need to be updated to the new theme
      */
-    public static ThemeChange(){
+    public static ThemeChange() {
         this.LoadThemeCSS();
         const newTheme = GetThemeName();
-        const themes = Themes.map(t => t.key);
+        const themes = Themes.map((t) => {
+            return t.key;
+        });
         //Update the main app
         const mainApp = document.getElementById(MainApp.appWindowId);
-        if(mainApp){
+        if (mainApp) {
             mainApp.classList.remove(...themes);
             mainApp.classList.add(newTheme);
         }
         //Update the configuration (if open)
         const configApp = document.getElementById(ConfigurationApp.appWindowId);
-        if(configApp){
+        if (configApp) {
             configApp.classList.remove(...themes);
             configApp.classList.add(newTheme);
         }
         //Update Open Journals
-        document.querySelectorAll('.journal-sheet.simple-calendar').forEach(j => {
+        document.querySelectorAll(".journal-sheet.simple-calendar").forEach((j) => {
             j.classList.remove(...themes);
             j.classList.add(newTheme);
         });
@@ -109,16 +111,16 @@ export default class SCController {
     /**
      * Loads any extra css files required for the specified theme
      */
-    public static LoadThemeCSS(setTheme: string = ''){
-        const theme = setTheme? setTheme : GetThemeName();
+    public static LoadThemeCSS(setTheme: string = "") {
+        const theme = setTheme ? setTheme : GetThemeName();
         this.addCSSImageURLPaths(theme);
         const cssExists = document.head.querySelector(`#theme-${theme}`);
-        if(cssExists === null){
-            const newStyle = document.createElement('link');
-            newStyle.setAttribute('id', `theme-${theme}`);
-            newStyle.setAttribute('rel', 'stylesheet');
-            newStyle.setAttribute('type', 'text/css');
-            newStyle.setAttribute('href', getRoute(`modules/${ModuleName}/styles/themes/${theme}.css`));
+        if (cssExists === null) {
+            const newStyle = document.createElement("link");
+            newStyle.setAttribute("id", `theme-${theme}`);
+            newStyle.setAttribute("rel", "stylesheet");
+            newStyle.setAttribute("type", "text/css");
+            newStyle.setAttribute("href", getRoute(`modules/${ModuleName}/styles/themes/${theme}.css`));
             document.head.append(newStyle);
         }
     }
@@ -127,24 +129,23 @@ export default class SCController {
      * Adds a style tag to the header that includes borrowed image path variables for themes to use
      * @param theme The theme to add image paths for
      */
-    public static addCSSImageURLPaths(theme: string){
+    public static addCSSImageURLPaths(theme: string) {
         const styleTagExists = document.head.querySelector(`#sc-image-urls`);
-        const cssVars = [
-            `--ui-denim075: url("${getRoute('/ui/denim075.png')}");`,
-            `--ui-parchment: url("${getRoute('/ui/parchment.jpg')}");`
-        ];
-        const themeData = Themes.find(t => t.key === theme);
-        if(themeData && themeData.images){
+        const cssVars = [`--ui-denim075: url("${getRoute("/ui/denim075.png")}");`, `--ui-parchment: url("${getRoute("/ui/parchment.jpg")}");`];
+        const themeData = Themes.find((t) => {
+            return t.key === theme;
+        });
+        if (themeData && themeData.images) {
             for (const [key, value] of Object.entries(themeData.images)) {
                 cssVars.push(`${key}: url("${getRoute(value)}");`);
             }
         }
-        const styles = `.simple-calendar {${cssVars.join('')}`;
-        if(styleTagExists){
+        const styles = `.simple-calendar {${cssVars.join("")}`;
+        if (styleTagExists) {
             styleTagExists.textContent = styles;
         } else {
-            const styleTag = document.createElement('style');
-            styleTag.setAttribute('id', `sc-image-urls`);
+            const styleTag = document.createElement("style");
+            styleTag.setAttribute("id", `sc-image-urls`);
             styleTag.appendChild(document.createTextNode(styles));
             document.head.append(styleTag);
         }
@@ -153,11 +154,11 @@ export default class SCController {
     public PersistenceChange() {
         this.clientSettings.persistentOpen = GameSettings.GetBooleanSettings(SettingNames.PersistentOpen);
         const mainApp = document.getElementById(MainApp.appWindowId);
-        if(mainApp){
-            if(this.clientSettings.persistentOpen){
-                mainApp.classList.add('fsc-persistent');
+        if (mainApp) {
+            if (this.clientSettings.persistentOpen) {
+                mainApp.classList.add("fsc-persistent");
             } else {
-                mainApp.classList.remove('fsc-persistent');
+                mainApp.classList.remove("fsc-persistent");
             }
         }
     }
@@ -165,9 +166,9 @@ export default class SCController {
     public CompactScaleChange() {
         this.clientSettings.compactViewScale = GameSettings.GetNumericSettings(SettingNames.CompactViewScale);
         const mainApp = document.getElementById(MainApp.appWindowId);
-        if(mainApp){
-            for(let i = mainApp.classList.length - 1; i >= 0; i--){
-                if(mainApp.classList[i].startsWith('sc-scale')){
+        if (mainApp) {
+            for (let i = mainApp.classList.length - 1; i >= 0; i--) {
+                if (mainApp.classList[i].startsWith("sc-scale")) {
                     mainApp.classList.remove(mainApp.classList[i]);
                 }
             }
@@ -178,11 +179,11 @@ export default class SCController {
     /**
      * When the side drawer direction client setting has changed re-render the main application.
      */
-    public static SideDrawerDirectionChange(){
+    public static SideDrawerDirectionChange() {
         MainApplication.updateApp();
     }
 
-    public static AlwaysShowNoteListChange(){
+    public static AlwaysShowNoteListChange() {
         MainApplication.initialize();
         MainApplication.updateApp();
     }
@@ -191,11 +192,11 @@ export default class SCController {
      * Initialize the sockets
      * Check for note reminders
      */
-    public initialize(){
+    public initialize() {
         this.sockets.initialize();
         NManager.checkNoteTriggers(this.activeCalendar.id, true);
         //Close all open multi selects except the one being interacted with
-        document.body.addEventListener('click', MultiSelect.BodyEventListener);
+        document.body.addEventListener("click", MultiSelect.BodyEventListener);
         this.checkCombatActive();
         Hook.emit(SimpleCalendarHooks.Init, CalManager.getActiveCalendar());
     }
@@ -203,7 +204,7 @@ export default class SCController {
     /**
      * Load the global configuration and apply it
      */
-    public load(){
+    public load() {
         SCController.LoadThemeCSS();
         const globalConfiguration = <SimpleCalendar.GlobalConfigurationData>GameSettings.GetObjectSettings(SettingNames.GlobalConfiguration);
         this.globalConfiguration.permissions.loadFromSettings(globalConfiguration.permissions);
@@ -211,10 +212,10 @@ export default class SCController {
         this.globalConfiguration.calendarsSameTimestamp = globalConfiguration.calendarsSameTimestamp;
         this.globalConfiguration.syncCalendars = globalConfiguration.syncCalendars;
         this.globalConfiguration.showNotesFolder = globalConfiguration.showNotesFolder;
-        if(globalConfiguration.hasOwnProperty('combatPauseRule')){
+        if (Object.prototype.hasOwnProperty.call(globalConfiguration, "combatPauseRule")) {
             this.globalConfiguration.combatPauseRule = globalConfiguration.combatPauseRule;
         }
-        if(globalConfiguration.hasOwnProperty('inGameChatTimestamp')){
+        if (Object.prototype.hasOwnProperty.call(globalConfiguration, "inGameChatTimestamp")) {
             this.globalConfiguration.inGameChatTimestamp = globalConfiguration.inGameChatTimestamp;
         }
         this.clientSettings.theme = GetThemeName();
@@ -223,7 +224,9 @@ export default class SCController {
         this.clientSettings.rememberPosition = GameSettings.GetBooleanSettings(SettingNames.RememberPosition);
         this.clientSettings.rememberCompactPosition = GameSettings.GetBooleanSettings(SettingNames.RememberCompactPosition);
         this.clientSettings.appPosition = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
-        this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>GameSettings.GetStringSettings(SettingNames.NoteReminderNotification);
+        this.clientSettings.noteReminderNotification = <NoteReminderNotificationType>(
+            GameSettings.GetStringSettings(SettingNames.NoteReminderNotification)
+        );
         this.clientSettings.sideDrawerDirection = GameSettings.GetStringSettings(SettingNames.NoteListOpenDirection);
         this.clientSettings.alwaysShowNoteList = GameSettings.GetBooleanSettings(SettingNames.AlwaysShowNoteList);
         this.clientSettings.persistentOpen = GameSettings.GetBooleanSettings(SettingNames.PersistentOpen);
@@ -233,7 +236,7 @@ export default class SCController {
     /**
      * Reloads certain portions of the client and global configuration after a change has been made.
      */
-    public reload(){
+    public reload() {
         SCController.LoadThemeCSS();
         this.clientSettings.theme = GetThemeName();
     }
@@ -241,12 +244,14 @@ export default class SCController {
     /**
      * Save the global configuration and the calendar configuration
      */
-    public save(globalConfig: SimpleCalendar.GlobalConfigurationData | null = null, clientConfig: SimpleCalendar.ClientSettingsData | null = null){
+    public save(globalConfig: SimpleCalendar.GlobalConfigurationData | null = null, clientConfig: SimpleCalendar.ClientSettingsData | null = null) {
         CalManager.saveCalendars().catch(Logger.error);
 
-        if(clientConfig){
+        if (clientConfig) {
             //Save the client settings
-            GameSettings.SaveStringSetting(`${FoundryVTTGameData.worldId}.${SettingNames.Theme}`, clientConfig.theme, false).then(this.reload.bind(this)).catch(Logger.error);
+            GameSettings.SaveStringSetting(`${FoundryVTTGameData.worldId}.${SettingNames.Theme}`, clientConfig.theme, false)
+                .then(this.reload.bind(this))
+                .catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.OpenOnLoad, clientConfig.openOnLoad, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.OpenCompact, clientConfig.openCompact, false).catch(Logger.error);
             GameSettings.SaveBooleanSetting(SettingNames.RememberPosition, clientConfig.rememberPosition, false).catch(Logger.error);
@@ -259,9 +264,9 @@ export default class SCController {
             GameSettings.SaveNumericSetting(SettingNames.CompactViewScale, clientConfig.compactViewScale, false).catch(Logger.error);
         }
 
-        if(globalConfig){
+        if (globalConfig) {
             const gc: SimpleCalendar.GlobalConfigurationData = {
-                id: '',
+                id: "",
                 version: GameSettings.GetModuleVersion(),
                 permissions: globalConfig.permissions,
                 secondsInCombatRound: globalConfig.secondsInCombatRound,
@@ -273,13 +278,15 @@ export default class SCController {
             };
             //Save the global configuration (triggers the load function)
             GameSettings.SaveObjectSetting(SettingNames.GlobalConfiguration, gc)
-                .then(((renderChatLog: boolean) => {
-                    if(renderChatLog){
-                        Ui.renderChatLog();
-                        GameSockets.emit({type: SocketTypes.renderChatLog, data: renderChatLog}).catch(Logger.error);
-                    }
-                    return GameSockets.emit({type: SocketTypes.mainAppUpdate, data: {}});
-                }).bind(this, this.globalConfiguration.inGameChatTimestamp !== globalConfig.inGameChatTimestamp))
+                .then(
+                    ((renderChatLog: boolean) => {
+                        if (renderChatLog) {
+                            Ui.renderChatLog();
+                            GameSockets.emit({ type: SocketTypes.renderChatLog, data: renderChatLog }).catch(Logger.error);
+                        }
+                        return GameSockets.emit({ type: SocketTypes.mainAppUpdate, data: {} });
+                    }).bind(this, this.globalConfiguration.inGameChatTimestamp !== globalConfig.inGameChatTimestamp)
+                )
                 .catch(Logger.error);
         }
     }
@@ -287,21 +294,21 @@ export default class SCController {
     /**
      * Hides any open context menus
      */
-    public static HideContextMenus(){
-        document.querySelectorAll('.fsc-context-menu').forEach(e => {
-            e.classList.add('fsc-hide');
+    public static HideContextMenus() {
+        document.querySelectorAll(".fsc-context-menu").forEach((e) => {
+            e.classList.add("fsc-hide");
         });
     }
 
-    private checkCombatActive(){
+    private checkCombatActive() {
         const activeScene = GameSettings.GetSceneForCombatCheck();
         const combat = (<Game>game).combats?.find((c: Combat) => {
-            if(c.scene && activeScene){
+            if (c.scene && activeScene) {
                 return c.scene.id === activeScene.id;
             }
             return false;
         });
-        if(combat && combat.started){
+        if (combat && combat.started) {
             this.activeCalendar.time.combatRunning = true;
         }
     }
@@ -313,10 +320,12 @@ export default class SCController {
      * Adds the calendar button to the token button list
      * @param controls
      */
-    public getSceneControlButtons(controls: any[]){
-        if(canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)){
-            let tokenControls = controls.find(c => c.name === "notes" );
-            if(tokenControls && tokenControls.hasOwnProperty('tools')){
+    public getSceneControlButtons(controls: any[]) {
+        if (canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)) {
+            const tokenControls = controls.find((c) => {
+                return c.name === "notes";
+            });
+            if (tokenControls && Object.prototype.hasOwnProperty.call(tokenControls, "tools")) {
                 tokenControls.tools.push({
                     name: "calendar",
                     title: "FSC.Title",
@@ -331,11 +340,11 @@ export default class SCController {
     /**
      * Checks settings to see if the note directory should be shown or hidden from the journal directory
      */
-    public async renderJournalDirectory(tab: JournalDirectory, jquery: JQuery){
+    public async renderJournalDirectory(tab: JournalDirectory, jquery: JQuery) {
         await NManager.createJournalDirectory();
-        if(!this.globalConfiguration.showNotesFolder && NManager.noteDirectory){
+        if (!this.globalConfiguration.showNotesFolder && NManager.noteDirectory) {
             const folder = jquery.find(`.folder[data-folder-id='${NManager.noteDirectory.id}']`);
-            if(folder){
+            if (folder) {
                 folder.remove();
             }
         }
@@ -344,10 +353,10 @@ export default class SCController {
     /**
      * Checks settings to see if the note directory should be shown or hidden from the journal sheet directory dropdown
      */
-    public renderJournalSheet(sheet: JournalSheet, jquery:JQuery){
-        if(!this.globalConfiguration.showNotesFolder && NManager.noteDirectory){
+    public renderJournalSheet(sheet: JournalSheet, jquery: JQuery) {
+        if (!this.globalConfiguration.showNotesFolder && NManager.noteDirectory) {
             const option = jquery.find(`option[value='${NManager.noteDirectory.id}']`);
-            if(option){
+            if (option) {
                 option.remove();
             }
         }
@@ -359,17 +368,19 @@ export default class SCController {
      * @param jquery
      * @param data
      */
-    public renderSceneConfig(config: SceneConfig, jquery: JQuery, data: SceneConfig.Data){
-        if(!this.globalConfiguration.showNotesFolder && data.journals){
-            for(let i = 0; i < data.journals.length; i++){
+    public renderSceneConfig(config: SceneConfig, jquery: JQuery, data: SceneConfig.Data) {
+        if (!this.globalConfiguration.showNotesFolder && data.journals) {
+            for (let i = 0; i < data.journals.length; i++) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
                 const je = (<Game>game).journal?.get(data.journals[i].id);
-                if(je){
+                if (je) {
                     const nd = <SimpleCalendar.NoteData>je.getFlag(ModuleName, "noteData");
-                    if(nd){
+                    if (nd) {
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         //@ts-ignore
                         const option = jquery.find(`option[value='${data.journals[i].id}']`);
-                        if(option){
+                        if (option) {
                             option.remove();
                         }
                     }
@@ -378,14 +389,12 @@ export default class SCController {
         }
     }
 
-
     /**
      * Triggered when the games pause state is changed.
-     * @param paused
      */
-    public gamePaused(paused: boolean){
-        if(this.activeCalendar.time.unifyGameAndClockPause){
-            if(!(<Game>game).paused){
+    public gamePaused() {
+        if (this.activeCalendar.time.unifyGameAndClockPause) {
+            if (!(<Game>game).paused) {
                 this.activeCalendar.timeKeeper.start(true);
             } else {
                 this.activeCalendar.timeKeeper.setStatus(TimeKeeperStatus.Paused);
@@ -398,24 +407,24 @@ export default class SCController {
      * @param {number} newTime The total time in seconds
      * @param {number} delta How much the newTime has changed from the old time in seconds
      */
-    public worldTimeUpdate(newTime: number, delta: number){
+    public worldTimeUpdate(newTime: number, delta: number) {
         this.activeCalendar.setFromTime(newTime, delta);
     }
 
     /**
      * Triggered when a combatant is added to a combat.
      * @param combatant The combatant details
-     * @param options Options associated with creating the combatant
-     * @param id The ID of the creation
      */
-    public createCombatant(combatant: Combatant, options: any, id: string){
+    public createCombatant(combatant: Combatant) {
         const combatList = (<Game>game).combats;
         //If combat is running or if the combat list is undefined, skip this check
-        if(!this.activeCalendar.time.combatRunning && combatList){
-            const combat = combatList.find(c => c.id === combatant.parent?.id);
+        if (!this.activeCalendar.time.combatRunning && combatList) {
+            const combat = combatList.find((c) => {
+                return c.id === combatant.parent?.id;
+            });
             const activeScene = GameSettings.GetSceneForCombatCheck();
             //If the combat has started and the current active scene is the scene for the combat then set that there is a combat running.
-            if(combat && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene.id) || activeScene === null)){
+            if (combat && combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene.id) || activeScene === null)) {
                 this.activeCalendar.time.combatRunning = true;
             }
         }
@@ -427,14 +436,14 @@ export default class SCController {
      * @param round The current turns data
      * @param time The amount of time that has advanced
      */
-    public combatUpdate(combat: Combat, round: RoundData, time: any){
+    public combatUpdate(combat: Combat, round: RoundData, time: any) {
         const activeScene = GameSettings.GetSceneForCombatCheck();
-        if(combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene.id) || activeScene === null)){
+        if (combat.started && ((activeScene !== null && combat.scene && combat.scene.id === activeScene.id) || activeScene === null)) {
             this.activeCalendar.time.combatRunning = true;
 
             //If time does not have the advanceTime property the combat was just started
-            if(time && time.hasOwnProperty('advanceTime')){
-                if(time.advanceTime !== 0){
+            if (time && Object.prototype.hasOwnProperty.call(time, "advanceTime")) {
+                if (time.advanceTime !== 0) {
                     this.activeCalendar.combatChangeTriggered = true;
                 } else {
                     // System does not advance time when combat rounds change, check our own settings
@@ -448,9 +457,9 @@ export default class SCController {
      * Triggered when a combat is finished and removed
      * @param combat The specific combat data
      */
-    public combatDelete(combat: Combat){
+    public combatDelete(combat: Combat) {
         const activeScene = GameSettings.GetSceneForCombatCheck();
-        if(activeScene !== null && combat.scene && combat.scene.id === activeScene.id){
+        if (activeScene !== null && combat.scene && combat.scene.id === activeScene.id) {
             this.activeCalendar.time.combatRunning = false;
         }
     }
@@ -460,10 +469,12 @@ export default class SCController {
      * Using this to check if the user has changed Scenes.
      * @param canvas The canvas data
      */
-    public canvasInit(canvas: Canvas){
-        if(GameSettings.IsGm() && this.primary && this.globalConfiguration.combatPauseRule === CombatPauseRules.Current){
-            const activeScene = canvas.scene? canvas.scene.id : null;
-            const combatsInCurrent = (<Game>game).combats?.filter(combat => combat.started && combat.scene?.id === activeScene);
+    public canvasInit(canvas: Canvas) {
+        if (GameSettings.IsGm() && this.primary && this.globalConfiguration.combatPauseRule === CombatPauseRules.Current) {
+            const activeScene = canvas.scene ? canvas.scene.id : null;
+            const combatsInCurrent = (<Game>game).combats?.filter((combat) => {
+                return combat.started && combat.scene?.id === activeScene;
+            });
             this.activeCalendar.time.combatRunning = !!(combatsInCurrent && combatsInCurrent.length);
         }
     }

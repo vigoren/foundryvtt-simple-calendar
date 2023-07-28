@@ -1,7 +1,7 @@
-import {CompactViewDateTimeControlDisplay, GameWorldTimeIntegrations} from "../../constants";
+import { CompactViewDateTimeControlDisplay, GameWorldTimeIntegrations } from "../../constants";
 import ConfigurationItemBase from "./configuration-item-base";
 
-export default class GeneralSettings extends ConfigurationItemBase{
+export default class GeneralSettings extends ConfigurationItemBase {
     /**
      * How the calendar integrates with the game world time
      */
@@ -27,13 +27,13 @@ export default class GeneralSettings extends ConfigurationItemBase{
      */
     dateFormat = {
         /** Date format (year, month, day) and how to display it. Used in the compact view, Notes for <Date>, Date of Notes in display of notes and the Date Selector for notes */
-        date: 'MMMM DD, YYYY',
+        date: "MMMM DD, YYYY",
         /** Time format (hour, minute, second) and how to display it. Used in the compact view, the clock, Notes that have a specific time set and Date Selector for time*/
-        time: 'HH:mm:ss',
+        time: "HH:mm:ss",
         /** Format for displaying just the month and year. Used at the top of any calendar month display */
-        monthYear: 'MMMM YAYYYYYZ',
+        monthYear: "MMMM YAYYYYYZ",
         /** Date and time format used when displaying the in game timestamp on chat messages */
-        chatTime: 'MMM DD, YYYY HH:mm'
+        chatTime: "MMM DD, YYYY HH:mm"
     };
     /**
      * The different display options tied to the compact view.
@@ -79,7 +79,7 @@ export default class GeneralSettings extends ConfigurationItemBase{
             pf2eSync: this.pf2eSync,
             dateFormat: this.dateFormat,
             compactViewOptions: this.compactViewOptions
-        }
+        };
     }
 
     /**
@@ -103,28 +103,28 @@ export default class GeneralSettings extends ConfigurationItemBase{
      * @param {GeneralSettingsData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.GeneralSettingsData) {
-        if(config && Object.keys(config).length){
+        if (config && Object.keys(config).length) {
             this.id = config.id;
             this.gameWorldTimeIntegration = config.gameWorldTimeIntegration;
             this.showClock = config.showClock;
             this.noteDefaultVisibility = config.noteDefaultVisibility;
 
-            if(config.hasOwnProperty('pf2eSync')){
+            if (Object.prototype.hasOwnProperty.call(config, "pf2eSync")) {
                 this.pf2eSync = config.pf2eSync;
             }
 
-            if(config.hasOwnProperty('dateFormat')){
+            if (Object.prototype.hasOwnProperty.call(config, "dateFormat")) {
                 this.dateFormat = config.dateFormat;
-                if(!config.dateFormat.hasOwnProperty('chatTime')){
-                    this.dateFormat.chatTime = 'MMM DD, YYYY HH:mm';
+                if (!Object.prototype.hasOwnProperty.call(config.dateFormat, "chatTime")) {
+                    this.dateFormat.chatTime = "MMM DD, YYYY HH:mm";
                 }
             }
 
-            if(config.hasOwnProperty('compactViewOptions')){
+            if (Object.prototype.hasOwnProperty.call(config, "compactViewOptions")) {
                 this.compactViewOptions = config.compactViewOptions;
             }
 
-            if(config.hasOwnProperty('postNoteRemindersOnFoundryLoad')){
+            if (Object.prototype.hasOwnProperty.call(config, "postNoteRemindersOnFoundryLoad")) {
                 this.postNoteRemindersOnFoundryLoad = config.postNoteRemindersOnFoundryLoad;
             }
         }

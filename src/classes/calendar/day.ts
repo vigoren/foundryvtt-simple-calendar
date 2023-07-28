@@ -18,9 +18,9 @@ export default class Day extends ConfigurationItemBase {
      * @param {number} num The numeric representation of the day
      * @param {string} [name=''] Optional name for the day
      */
-    constructor(num: number, name: string = '') {
+    constructor(num: number, name: string = "") {
         super(name, num);
-        if(this.name === '' && this.numericRepresentation){
+        if (this.name === "" && this.numericRepresentation) {
             this.name = this.numericRepresentation.toString();
         }
     }
@@ -30,17 +30,17 @@ export default class Day extends ConfigurationItemBase {
      */
     toConfig(): SimpleCalendar.DayData {
         return {
-            ... super.toTemplate(),
+            ...super.toTemplate(),
             name: this.name,
             numericRepresentation: this.numericRepresentation
-        }
+        };
     }
 
     /**
      * Creates a day template to be used when rendering the day in HTML
      * @return {DayTemplate}
      */
-    toTemplate() : SimpleCalendar.HandlebarTemplateData.Day{
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.Day {
         return {
             ...super.toTemplate(),
             name: this.name,
@@ -61,5 +61,4 @@ export default class Day extends ConfigurationItemBase {
         d.selected = this.selected;
         return d;
     }
-
 }

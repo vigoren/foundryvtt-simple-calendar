@@ -1,14 +1,14 @@
-import {Logger} from "../logging";
-import {GameWorldTimeIntegrations, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus} from "../../constants";
-import {Hook} from "../api/hook";
-import {GameSettings} from "../foundry-interfacing/game-settings";
+import { Logger } from "../logging";
+import { GameWorldTimeIntegrations, SimpleCalendarHooks, SocketTypes, TimeKeeperStatus } from "../../constants";
+import { Hook } from "../api/hook";
+import { GameSettings } from "../foundry-interfacing/game-settings";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import {CalManager, SC} from "../index";
+import { CalManager, SC } from "../index";
 
 /**
  * The timekeeper class used by the built-in Simple Calendar Clock to keep real time
  */
-export default class TimeKeeper{
+export default class TimeKeeper {
     /**
      * The ID of the calendar the TimeKeeper is associated with
      * @type {string}
@@ -46,7 +46,7 @@ export default class TimeKeeper{
      * A list of functions that listen for intervals or status changes from the timekeeper and are then called.
      * @private
      */
-    private updateListeners: {key: string, func: Function}[] = [];
+    private updateListeners: { key: string; func: (status: TimeKeeperStatus) => void }[] = [];
 
     constructor(calendarId: string, updateFrequency: number) {
         this.calendarId = calendarId;
@@ -67,7 +67,7 @@ export default class TimeKeeper{
      */
     set updateFrequency(freq: number) {
         this.uf = freq;
-        if(this.intervalNumber !== undefined){
+        if (this.intervalNumber !== undefined) {
             window.clearInterval(this.intervalNumber);
             this.intervalNumber = window.setInterval(this.interval.bind(this), 1000 * this.updateFrequency);
         }
@@ -75,16 +75,16 @@ export default class TimeKeeper{
     /**
      * Starts the timekeeper interval and save interval
      */
-    public start(fromPause: boolean = false){
+    public start(fromPause: boolean = false) {
         this.pauseClicked = false;
         const activeCalendar = CalManager.getCalendar(this.calendarId);
-        if(activeCalendar){
-            if(this.status !== TimeKeeperStatus.Started ){
+        if (activeCalendar) {
+            if (this.status !== TimeKeeperStatus.Started) {
                 this.pauseClicked = false;
-                if(activeCalendar.time.unifyGameAndClockPause && !fromPause){
+                if (activeCalendar.time.unifyGameAndClockPause && !fromPause) {
                     (<Game>game).togglePause(false, true);
                 }
-                if(this.intervalNumber === undefined) {
+                if (this.intervalNumber === undefined) {
                     this.intervalNumber = window.setInterval(this.interval.bind(this), 1000 * this.updateFrequency);
                     this.updateStatus();
                     if (GameSettings.IsGm() && SC.primary) {
@@ -97,7 +97,7 @@ export default class TimeKeeper{
             } else {
                 this.pauseClicked = true;
                 this.updateStatus(TimeKeeperStatus.Paused);
-                if(activeCalendar.time.unifyGameAndClockPause){
+                if (activeCalendar.time.unifyGameAndClockPause) {
                     (<Game>game).togglePause(true, true);
                 }
             }
@@ -107,17 +107,17 @@ export default class TimeKeeper{
     /**
      * Stops the timekeeper interval and save interval
      */
-    public stop(){
+    public stop() {
         this.pauseClicked = false;
-        if(this.intervalNumber !== undefined){
+        if (this.intervalNumber !== undefined) {
             window.clearInterval(this.intervalNumber);
             window.clearInterval(this.saveIntervalNumber);
             const activeCalendar = CalManager.getCalendar(this.calendarId);
-            if(activeCalendar && activeCalendar.time.unifyGameAndClockPause){
+            if (activeCalendar && activeCalendar.time.unifyGameAndClockPause) {
                 (<Game>game).togglePause(true, true);
             }
-            if(GameSettings.IsGm() && SC.primary){
-                this.saveInterval(true);
+            if (GameSettings.IsGm() && SC.primary) {
+                this.saveInterval();
             }
             this.intervalNumber = undefined;
             this.saveIntervalNumber = undefined;
@@ -125,8 +125,8 @@ export default class TimeKeeper{
         }
     }
 
-    public pause(){
-        if(this.status === TimeKeeperStatus.Started){
+    public pause() {
+        if (this.status === TimeKeeperStatus.Started) {
             this.pauseClicked = true;
             this.status = TimeKeeperStatus.Paused;
         }
@@ -135,7 +135,7 @@ export default class TimeKeeper{
     /**
      * Returns the current status of the timekeeper
      */
-    public getStatus(){
+    public getStatus() {
         return this.status;
     }
 
@@ -143,7 +143,7 @@ export default class TimeKeeper{
      * Sets a new status for the timekeeper and updates the clock display
      * @param {TimeKeeperStatus} newStatus
      */
-    public setStatus(newStatus: TimeKeeperStatus){
+    public setStatus(newStatus: TimeKeeperStatus) {
         this.updateStatus(newStatus);
     }
 
@@ -151,13 +151,13 @@ export default class TimeKeeper{
      * The interval function that is called every second. Responsible for updating the clock display
      * @private
      */
-    private interval(){
+    private interval() {
         this.updateStatus();
-        if(this.status === TimeKeeperStatus.Started){
+        if (this.status === TimeKeeperStatus.Started) {
             const activeCalendar = CalManager.getCalendar(this.calendarId);
-            if(activeCalendar){
+            if (activeCalendar) {
                 const changeAmount = activeCalendar.time.gameTimeRatio * this.updateFrequency;
-                activeCalendar.changeDateTime({seconds: changeAmount}, {updateApp: false, save: false});
+                activeCalendar.changeDateTime({ seconds: changeAmount }, { updateApp: false, save: false });
                 if (GameSettings.IsGm() && SC.primary && activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None) {
                     GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: this.status }).catch(Logger.error);
                 }
@@ -168,14 +168,13 @@ export default class TimeKeeper{
 
     /**
      * The save interval function that is called every 10 seconds to save the current time
-     * @param {boolean} [emitHook=false]
      * @private
      */
-    private saveInterval(emitHook: boolean = false){
-        if(this.status === TimeKeeperStatus.Started){
+    private saveInterval() {
+        if (this.status === TimeKeeperStatus.Started) {
             const activeCalendar = CalManager.getCalendar(this.calendarId);
             if (activeCalendar && GameSettings.IsGm() && SC.primary) {
-                if(activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None){
+                if (activeCalendar.generalSettings.gameWorldTimeIntegration === GameWorldTimeIntegrations.None) {
                     GameSockets.emit(<SimpleCalendar.SimpleCalendarSocket.Data>{ type: SocketTypes.clock, data: this.status }).catch(Logger.error);
                 } else {
                     activeCalendar.syncTime().catch(Logger.error);
@@ -190,14 +189,14 @@ export default class TimeKeeper{
      * If the status has changed, emits the socket and hook calls to update all players, modules, systems and macros
      * @private
      */
-    private updateStatus(newStatus: TimeKeeperStatus | null = null){
+    private updateStatus(newStatus: TimeKeeperStatus | null = null) {
         const activeCalendar = CalManager.getCalendar(this.calendarId);
-        if(activeCalendar){
+        if (activeCalendar) {
             const oldStatus = this.status;
-            if(newStatus !== null){
+            if (newStatus !== null) {
                 this.status = newStatus;
-            } else if(this.intervalNumber !== undefined){
-                if(this.pauseClicked || (<Game>game).paused || activeCalendar.time.combatRunning){
+            } else if (this.intervalNumber !== undefined) {
+                if (this.pauseClicked || (<Game>game).paused || activeCalendar.time.combatRunning) {
                     this.status = TimeKeeperStatus.Paused;
                 } else {
                     this.status = TimeKeeperStatus.Started;
@@ -206,7 +205,7 @@ export default class TimeKeeper{
                 this.status = TimeKeeperStatus.Stopped;
             }
             //If the status has changed, emit that change
-            if(oldStatus !== this.status){
+            if (oldStatus !== this.status) {
                 Hook.emit(SimpleCalendarHooks.ClockStartStop, activeCalendar);
                 this.callListeners();
                 this.emitSocket();
@@ -218,8 +217,8 @@ export default class TimeKeeper{
      * Creates the socket data package and emits on the socket to all connected players.
      * @private
      */
-    private emitSocket(){
-        if(GameSettings.IsGm() && SC.primary){
+    private emitSocket() {
+        if (GameSettings.IsGm() && SC.primary) {
             const socketData = <SimpleCalendar.SimpleCalendarSocket.Data>{
                 type: SocketTypes.clock,
                 data: this.status
@@ -233,10 +232,12 @@ export default class TimeKeeper{
      * @param key
      * @param func
      */
-    public registerUpdateListener(key: string, func: Function){
-        const existing = this.updateListeners.findIndex(l => l.key === key);
-        if(existing === -1){
-            this.updateListeners.push({key: key, func: func});
+    public registerUpdateListener(key: string, func: (status: TimeKeeperStatus) => void) {
+        const existing = this.updateListeners.findIndex((l) => {
+            return l.key === key;
+        });
+        if (existing === -1) {
+            this.updateListeners.push({ key: key, func: func });
         } else {
             this.updateListeners[existing].func = func;
         }
@@ -246,8 +247,8 @@ export default class TimeKeeper{
      * Calls all registered update listeners
      * @private
      */
-    private callListeners(){
-        for(let i = 0; i < this.updateListeners.length; i++){
+    private callListeners() {
+        for (let i = 0; i < this.updateListeners.length; i++) {
             this.updateListeners[i].func(this.status);
         }
     }

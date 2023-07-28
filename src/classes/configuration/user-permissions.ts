@@ -1,7 +1,7 @@
 import ConfigurationItemBase from "./configuration-item-base";
-import {isObject} from "../utilities/object";
+import { isObject } from "../utilities/object";
 
-export default class UserPermissions extends ConfigurationItemBase{
+export default class UserPermissions extends ConfigurationItemBase {
     /**
      * Which users can view the calendar
      */
@@ -26,11 +26,11 @@ export default class UserPermissions extends ConfigurationItemBase{
     constructor() {
         super();
 
-        this.viewCalendar = {player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined};
-        this.addNotes = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
-        this.reorderNotes = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
-        this.changeDateTime = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
-        this.changeActiveCalendar = {player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined};
+        this.viewCalendar = { player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined };
+        this.addNotes = { player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined };
+        this.reorderNotes = { player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined };
+        this.changeDateTime = { player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined };
+        this.changeActiveCalendar = { player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined };
     }
 
     /**
@@ -38,7 +38,7 @@ export default class UserPermissions extends ConfigurationItemBase{
      * @param {PermissionMatrix} p The permission matrix to copy
      * @private
      */
-    private static clonePermissions(p: SimpleCalendar.PermissionMatrix): SimpleCalendar.PermissionMatrix{
+    private static clonePermissions(p: SimpleCalendar.PermissionMatrix): SimpleCalendar.PermissionMatrix {
         return {
             player: p.player,
             trustedPlayer: p.trustedPlayer,
@@ -94,21 +94,24 @@ export default class UserPermissions extends ConfigurationItemBase{
      * @param {UserPermissionsData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.UserPermissionsData) {
-        if(config && Object.keys(config).length){
-            if(config.hasOwnProperty('viewCalendar') && this.validateUserPermissionMatrix(config.viewCalendar)){
-                this.viewCalendar = config.viewCalendar
+        if (config && Object.keys(config).length) {
+            if (Object.prototype.hasOwnProperty.call(config, "viewCalendar") && this.validateUserPermissionMatrix(config.viewCalendar)) {
+                this.viewCalendar = config.viewCalendar;
             }
-            if(config.hasOwnProperty('addNotes') && this.validateUserPermissionMatrix(config.addNotes)){
-                this.addNotes = config.addNotes
+            if (Object.prototype.hasOwnProperty.call(config, "addNotes") && this.validateUserPermissionMatrix(config.addNotes)) {
+                this.addNotes = config.addNotes;
             }
-            if(config.hasOwnProperty('changeDateTime') && this.validateUserPermissionMatrix(config.changeDateTime)){
-                this.changeDateTime = config.changeDateTime
+            if (Object.prototype.hasOwnProperty.call(config, "changeDateTime") && this.validateUserPermissionMatrix(config.changeDateTime)) {
+                this.changeDateTime = config.changeDateTime;
             }
-            if(config.hasOwnProperty('reorderNotes') && this.validateUserPermissionMatrix(config.reorderNotes)){
-                this.reorderNotes = config.reorderNotes
+            if (Object.prototype.hasOwnProperty.call(config, "reorderNotes") && this.validateUserPermissionMatrix(config.reorderNotes)) {
+                this.reorderNotes = config.reorderNotes;
             }
-            if(config.hasOwnProperty('changeActiveCalendar') && this.validateUserPermissionMatrix(config.changeActiveCalendar)){
-                this.changeActiveCalendar = config.changeActiveCalendar
+            if (
+                Object.prototype.hasOwnProperty.call(config, "changeActiveCalendar") &&
+                this.validateUserPermissionMatrix(config.changeActiveCalendar)
+            ) {
+                this.changeActiveCalendar = config.changeActiveCalendar;
             }
         }
     }
@@ -117,7 +120,13 @@ export default class UserPermissions extends ConfigurationItemBase{
      * Checks to make sure the Permission Matrix object contains all the required properties
      * @param obj The item to check if is a valid permission matrix
      */
-    validateUserPermissionMatrix(obj: any){
-        return !!(obj && isObject(obj) && obj.hasOwnProperty('player') && obj.hasOwnProperty('trustedPlayer') && obj.hasOwnProperty('assistantGameMaster'));
+    validateUserPermissionMatrix(obj: any) {
+        return !!(
+            obj &&
+            isObject(obj) &&
+            Object.prototype.hasOwnProperty.call(obj, "player") &&
+            Object.prototype.hasOwnProperty.call(obj, "trustedPlayer") &&
+            Object.prototype.hasOwnProperty.call(obj, "assistantGameMaster")
+        );
     }
 }

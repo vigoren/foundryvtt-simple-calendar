@@ -1,8 +1,6 @@
-import {generateUniqueId} from "../utilities/string";
-import Calendar from "../calendar";
+import { generateUniqueId } from "../utilities/string";
 
-export default class ConfigurationItemBase{
-
+export default class ConfigurationItemBase {
     /**
      * A unique ID for this configuration item
      */
@@ -28,12 +26,12 @@ export default class ConfigurationItemBase{
      */
     showAdvanced: boolean = false;
 
-    constructor(name: string = '', numericRepresentation: number = NaN) {
+    constructor(name: string = "", numericRepresentation: number = NaN) {
         this.id = generateUniqueId();
         this.name = name;
         this.numericRepresentation = numericRepresentation;
-        this.description = '';
-        this.abbreviation = '';
+        this.description = "";
+        this.abbreviation = "";
     }
 
     /**
@@ -46,27 +44,25 @@ export default class ConfigurationItemBase{
         cib.abbreviation = this.abbreviation;
         cib.showAdvanced = this.showAdvanced;
         return cib;
-
     }
 
     /**
      * Creates a configuration object for the item base
      */
-    toConfig(): SimpleCalendar.IDataItemBase{
+    toConfig(): SimpleCalendar.IDataItemBase {
         return {
             id: this.id,
             name: this.name,
             numericRepresentation: this.numericRepresentation,
             description: this.description,
             abbreviation: this.abbreviation
-        }
+        };
     }
 
     /**
      * Creates a template for the configuration item base
-     * @param calendar
      */
-    toTemplate(calendar: Calendar | null = null): SimpleCalendar.IDataItemBase {
+    toTemplate(): SimpleCalendar.IDataItemBase {
         return {
             id: this.id,
             name: this.name,
@@ -81,20 +77,20 @@ export default class ConfigurationItemBase{
      * Sets the properties for this class to options set in the passed in configuration object
      * @param config The configuration object for this class
      */
-    loadFromSettings(config: SimpleCalendar.IDataItemBase): void{
-        if(config.hasOwnProperty('id')){
+    loadFromSettings(config: SimpleCalendar.IDataItemBase): void {
+        if (Object.prototype.hasOwnProperty.call(config, "id")) {
             this.id = config.id;
         }
-        if(config.hasOwnProperty('name') && config.name){
+        if (Object.prototype.hasOwnProperty.call(config, "name") && config.name) {
             this.name = config.name;
         }
-        if(config.hasOwnProperty('numericRepresentation') && config.numericRepresentation){
+        if (Object.prototype.hasOwnProperty.call(config, "numericRepresentation") && config.numericRepresentation) {
             this.numericRepresentation = config.numericRepresentation;
         }
-        if(config.hasOwnProperty('description') && config.description){
+        if (Object.prototype.hasOwnProperty.call(config, "description") && config.description) {
             this.description = config.description;
         }
-        if(config.hasOwnProperty('abbreviation') && config.abbreviation){
+        if (Object.prototype.hasOwnProperty.call(config, "abbreviation") && config.abbreviation) {
             this.abbreviation = config.abbreviation;
         }
     }

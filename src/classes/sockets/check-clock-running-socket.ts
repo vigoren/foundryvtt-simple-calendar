@@ -1,9 +1,9 @@
 import SocketBase from "./socket-base";
-import {SocketTypes} from "../../constants";
-import {GameSettings} from "../foundry-interfacing/game-settings";
+import { SocketTypes } from "../../constants";
+import { GameSettings } from "../foundry-interfacing/game-settings";
 import GameSockets from "../foundry-interfacing/game-sockets";
 import type Calendar from "../calendar";
-import {SC} from "../index";
+import { SC } from "../index";
 
 /**
  * Socket type used by connecting clients to see if the clock is currently running
@@ -17,7 +17,7 @@ export default class CheckClockRunningSocket extends SocketBase {
      * When initializing this socket type, emit asking if the clock is running or not.
      */
     public async initialize(): Promise<boolean> {
-        return GameSockets.emit({type: SocketTypes.checkClockRunning, data: {}});
+        return GameSockets.emit({ type: SocketTypes.checkClockRunning, data: {} });
     }
 
     /**
@@ -26,7 +26,7 @@ export default class CheckClockRunningSocket extends SocketBase {
      * @param {Calendar} calendar
      */
     public async process(data: SimpleCalendar.SimpleCalendarSocket.Data, calendar: Calendar): Promise<boolean> {
-        if (data.type === SocketTypes.checkClockRunning && GameSettings.IsGm() && SC.primary){
+        if (data.type === SocketTypes.checkClockRunning && GameSettings.IsGm() && SC.primary) {
             return GameSockets.emit({ type: SocketTypes.clock, data: calendar.timeKeeper.getStatus() });
         }
         return false;

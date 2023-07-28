@@ -1,16 +1,16 @@
-import {ModuleName, SettingNames} from "../../constants";
+import { ModuleName, SettingNames } from "../../constants";
 import ConfigurationApp from "../applications/configuration-app";
-import {CalManager, SC} from "../index"
-import {GameSettings} from "./game-settings";
+import { CalManager, SC } from "../index";
+import { GameSettings } from "./game-settings";
 import SCController from "../s-c-controller";
 import MainApp from "../applications/main-app";
-import {GetThemeList} from "../utilities/visual";
+import { GetThemeList } from "../utilities/visual";
 
-export default class GameSettingsRegistration{
+export default class GameSettingsRegistration {
     /**
      * Register the settings this module needs to use with the game
      */
-    static Register(){
+    static Register() {
         // -------------------
         // Client Settings
         // -------------------
@@ -20,9 +20,10 @@ export default class GameSettingsRegistration{
             scope: "client",
             config: true,
             type: String,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             choices: GetThemeList(),
-            default: '',
+            default: "",
             onChange: SCController.ThemeChange.bind(SCController)
         });
         (<Game>game).settings.register(ModuleName, SettingNames.Theme, {
@@ -31,7 +32,7 @@ export default class GameSettingsRegistration{
             scope: "client",
             config: false,
             type: String,
-            default: 'dark'
+            default: "dark"
         });
         (<Game>game).settings.register(ModuleName, SettingNames.OpenOnLoad, {
             name: "FSC.Configuration.Client.OpenOnLoad.Title",
@@ -87,12 +88,13 @@ export default class GameSettingsRegistration{
             scope: "client",
             config: true,
             type: String,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             choices: {
-                'whisper': GameSettings.Localize("FSC.Configuration.Client.NoteReminderNotification.Whisper"),
-                'render': GameSettings.Localize("FSC.Configuration.Client.NoteReminderNotification.Render")
+                whisper: GameSettings.Localize("FSC.Configuration.Client.NoteReminderNotification.Whisper"),
+                render: GameSettings.Localize("FSC.Configuration.Client.NoteReminderNotification.Render")
             },
-            default: 'whisper'
+            default: "whisper"
         });
         (<Game>game).settings.register(ModuleName, SettingNames.NoteListOpenDirection, {
             name: "FSC.Configuration.Client.NoteListOpenDirection.Title",
@@ -100,13 +102,14 @@ export default class GameSettingsRegistration{
             scope: "client",
             config: true,
             type: String,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             choices: {
-                'sc-right': GameSettings.Localize("FSC.Right"),
-                'sc-left': GameSettings.Localize("FSC.Left"),
-                'sc-down': GameSettings.Localize("FSC.Down")
+                "sc-right": GameSettings.Localize("FSC.Right"),
+                "sc-left": GameSettings.Localize("FSC.Left"),
+                "sc-down": GameSettings.Localize("FSC.Down")
             },
-            default: 'sc-right',
+            default: "sc-right",
             onChange: SCController.SideDrawerDirectionChange.bind(SCController)
         });
         (<Game>game).settings.register(ModuleName, SettingNames.AlwaysShowNoteList, {
@@ -133,6 +136,7 @@ export default class GameSettingsRegistration{
             scope: "client",
             config: true,
             type: Number,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             range: {
                 min: 70,
@@ -176,7 +180,7 @@ export default class GameSettingsRegistration{
             scope: "world",
             config: false,
             type: String,
-            default: 'default',
+            default: "default",
             onChange: CalManager.loadActiveCalendar.bind(CalManager)
         });
         (<Game>game).settings.register(ModuleName, SettingNames.GlobalConfiguration, {
@@ -187,7 +191,6 @@ export default class GameSettingsRegistration{
             default: {},
             onChange: SC.load.bind(SC)
         });
-
 
         // -------------------
         // Legacy Settings
@@ -274,7 +277,7 @@ export default class GameSettingsRegistration{
             scope: "world",
             config: false,
             type: Array,
-            default: [{name: "Holiday", color: "#148e94", textColor: "#FFFFFF"}]
+            default: [{ name: "Holiday", color: "#148e94", textColor: "#FFFFFF" }]
         });
     }
 }

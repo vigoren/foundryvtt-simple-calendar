@@ -3,7 +3,7 @@ import ConfigurationItemBase from "../configuration/configuration-item-base";
 /**
  * Class for representing a weekday
  */
-export class Weekday extends ConfigurationItemBase{
+export class Weekday extends ConfigurationItemBase {
     /**
      * If the weekday is part of the weekend (rest day)
      */
@@ -13,7 +13,7 @@ export class Weekday extends ConfigurationItemBase{
      * @param {number} numericRepresentation he numeric representation of this weekday
      * @param {string} name The name of the weekday
      */
-    constructor(numericRepresentation: number = NaN, name: string = '') {
+    constructor(numericRepresentation: number = NaN, name: string = "") {
         super(name, numericRepresentation);
         this.abbreviation = name.substring(0, 2);
         this.restday = false;
@@ -30,13 +30,13 @@ export class Weekday extends ConfigurationItemBase{
             description: this.description,
             numericRepresentation: this.numericRepresentation,
             restday: this.restday
-        }
+        };
     }
 
     /**
      * Returns an object that is used to display the weekday in the HTML template
      */
-    toTemplate(): SimpleCalendar.HandlebarTemplateData.Weekday{
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.Weekday {
         return {
             ...super.toTemplate(),
             abbreviation: this.abbreviation,
@@ -44,7 +44,7 @@ export class Weekday extends ConfigurationItemBase{
             numericRepresentation: this.numericRepresentation,
             showAdvanced: this.showAdvanced,
             restday: this.restday
-        }
+        };
     }
 
     /**
@@ -66,14 +66,14 @@ export class Weekday extends ConfigurationItemBase{
      * @param {WeekdayData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.WeekdayData) {
-        if(config && Object.keys(config).length){
+        if (config && Object.keys(config).length) {
             super.loadFromSettings(config);
-            if(config.hasOwnProperty('abbreviation')){
+            if (Object.prototype.hasOwnProperty.call(config, "abbreviation")) {
                 this.abbreviation = config.abbreviation;
             } else {
                 this.abbreviation = this.name.substring(0, 2);
             }
-            if(config.hasOwnProperty('restday')){
+            if (Object.prototype.hasOwnProperty.call(config, "restday")) {
                 this.restday = config.restday;
             }
         }

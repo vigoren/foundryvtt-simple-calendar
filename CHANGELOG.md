@@ -1,13 +1,15 @@
 # Change Log
 
-## 2.3.17 - Bug Fixes
+## 2.3.19 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%2022%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.17/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.19/module.zip)
 
 ### Bug Fixes
 
 - Fixed a bug when the [Sync Date/Time Changes Across Calendars](https://simplecalendar.info/docs/global-configuration/settings#sync-datetime-changes-across-calendars) setting is enabled and multiple calendars are configured that would cause all calendars to emit the [DateTimeChange](https://simplecalendar.info/docs/developing-with-sc/api/namespaces/SimpleCalendar.Hooks#datetimechange) hook instead of just the active calendar.
+- Fixed a rare issue where calling the `SimpleCalendar.api.showCalendar` API function with an invalid day set could cause the calendar to display incorrectly.
+- Fixed a very rare issue when comparing 2 dates months could be considered the same when they shouldn't.
 
 <hr/>
 
