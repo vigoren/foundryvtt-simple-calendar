@@ -1,0 +1,32 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ],
+  "rules": {
+    "eqeqeq": "error",
+    "no-duplicate-imports": "error",
+    "arrow-body-style": ["error", "always"],
+    "default-case": "error",
+    "default-case-last": "warn",
+    "no-extra-bind": "error",
+    "no-var": "error",
+    "prettier/prettier": ["error"],
+    "@typescript-eslint/no-explicit-any": "off"
+  },
+  "ignorePatterns": ["*.test.*", "*config.*", "webpack.*", "package.json", "package-lock.json"]
+}

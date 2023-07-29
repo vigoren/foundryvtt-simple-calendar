@@ -55,16 +55,22 @@ export default class Month extends ConfigurationItemBase {
      * @param numberOfDays The number of days in this month
      * @param numberOfLeapYearDays The number of days in this month on a leap year
      */
-    constructor(name: string = '', numericRepresentation: number = NaN, numericRepresentationOffset: number = 0, numberOfDays: number = 0, numberOfLeapYearDays: number | null = null) {
+    constructor(
+        name: string = "",
+        numericRepresentation: number = NaN,
+        numericRepresentationOffset: number = 0,
+        numberOfDays: number = 0,
+        numberOfLeapYearDays: number | null = null
+    ) {
         super(name, numericRepresentation);
         this.numericRepresentationOffset = numericRepresentationOffset;
-        if(this.name === ''){
+        if (this.name === "") {
             this.name = numericRepresentation.toString();
         }
-        this.abbreviation = this.name.substring(0,3);
-        this.numberOfLeapYearDays = numberOfLeapYearDays === null? numberOfDays : numberOfLeapYearDays;
+        this.abbreviation = this.name.substring(0, 3);
+        this.numberOfLeapYearDays = numberOfLeapYearDays === null ? numberOfDays : numberOfLeapYearDays;
         this.numberOfDays = numberOfDays;
-        this.populateDays(this.numberOfLeapYearDays > this.numberOfDays? this.numberOfLeapYearDays : this.numberOfDays);
+        this.populateDays(this.numberOfLeapYearDays > this.numberOfDays ? this.numberOfLeapYearDays : this.numberOfDays);
     }
 
     /**
@@ -72,10 +78,10 @@ export default class Month extends ConfigurationItemBase {
      * @param {number} numberOfDays The number of days to create
      * @param {number|null} currentDay The currently selected day
      */
-    public populateDays(numberOfDays: number, currentDay: number | null = null): void{
-        for(let i = 1; i <= numberOfDays; i++){
+    public populateDays(numberOfDays: number, currentDay: number | null = null): void {
+        for (let i = 1; i <= numberOfDays; i++) {
             const d = new Day(i + this.numericRepresentationOffset);
-            if(i === currentDay){
+            if (i === currentDay) {
                 d.current = true;
             }
             this.days.push(d);
@@ -85,7 +91,7 @@ export default class Month extends ConfigurationItemBase {
     /**
      * Returns the configuration data for the month
      */
-    toConfig(): SimpleCalendar.MonthData{
+    toConfig(): SimpleCalendar.MonthData {
         return {
             id: this.id,
             name: this.name,
@@ -107,7 +113,7 @@ export default class Month extends ConfigurationItemBase {
      */
     toTemplate(calendar: Calendar | null = null): SimpleCalendar.HandlebarTemplateData.Month {
         let isLeapYear = false;
-        if(calendar){
+        if (calendar) {
             isLeapYear = calendar.year.leapYearRule.isLeapYear(calendar.year.visibleYear);
         }
         return {
@@ -142,7 +148,9 @@ export default class Month extends ConfigurationItemBase {
         m.current = this.current;
         m.selected = this.selected;
         m.visible = this.visible;
-        m.days = this.days.map(d => d.clone());
+        m.days = this.days.map((d) => {
+            return d.clone();
+        });
         m.numberOfDays = this.numberOfDays;
         m.numberOfLeapYearDays = this.numberOfLeapYearDays;
         m.intercalary = this.intercalary;
@@ -157,31 +165,31 @@ export default class Month extends ConfigurationItemBase {
      * @param {MonthData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.MonthData) {
-        if(config && Object.keys(config).length){
+        if (config && Object.keys(config).length) {
             super.loadFromSettings(config);
             this.numericRepresentationOffset = config.numericRepresentationOffset;
             let numDays = parseInt(config.numberOfDays.toString());
-            let numLeapDays = config.numberOfLeapYearDays === undefined? 0 : parseInt(config.numberOfLeapYearDays.toString());
-            if(isNaN(numDays)){
+            let numLeapDays = config.numberOfLeapYearDays === undefined ? 0 : parseInt(config.numberOfLeapYearDays.toString());
+            if (isNaN(numDays)) {
                 numDays = 1;
             }
-            if(isNaN(numLeapDays)){
+            if (isNaN(numLeapDays)) {
                 numLeapDays = 1;
             }
             this.numberOfDays = numDays;
             this.numberOfLeapYearDays = numLeapDays;
             this.intercalary = config.intercalary;
             this.intercalaryInclude = config.intercalaryInclude;
-            if(config.hasOwnProperty('startingWeekday')){
+            if (Object.prototype.hasOwnProperty.call(config, "startingWeekday")) {
                 this.startingWeekday = config.startingWeekday;
             }
-            if(config.hasOwnProperty('abbreviation')){
+            if (Object.prototype.hasOwnProperty.call(config, "abbreviation")) {
                 this.abbreviation = config.abbreviation;
             } else {
                 this.abbreviation = this.name.substring(0, 3);
             }
             this.days = [];
-            this.populateDays(this.numberOfLeapYearDays > this.numberOfDays? this.numberOfLeapYearDays : this.numberOfDays);
+            this.populateDays(this.numberOfLeapYearDays > this.numberOfDays ? this.numberOfLeapYearDays : this.numberOfDays);
         }
     }
 
@@ -189,14 +197,18 @@ export default class Month extends ConfigurationItemBase {
      * Gets the day that represents that passed in setting, or undefined if no day represents the setting
      * @param {string} [setting='current'] The day setting to check against. Valid options are 'current' or 'selected'
      */
-    getDay(setting: string = 'current'): Day | undefined{
-        const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
-        return this.days.find(d => d[verifiedSetting]);
+    getDay(setting: string = "current"): Day | undefined {
+        const verifiedSetting = setting.toLowerCase() as "current" | "selected";
+        return this.days.find((d) => {
+            return d[verifiedSetting];
+        });
     }
 
-    getDayIndex(setting: string = 'current'): number{
-        const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
-        return this.days.findIndex(d => d[verifiedSetting]);
+    getDayIndex(setting: string = "current"): number {
+        const verifiedSetting = setting.toLowerCase() as "current" | "selected";
+        return this.days.findIndex((d) => {
+            return d[verifiedSetting];
+        });
     }
 
     /**
@@ -204,16 +216,18 @@ export default class Month extends ConfigurationItemBase {
      * @param {boolean} [isLeapYear=false] If the year is a leap year
      */
     getDaysForTemplate(isLeapYear: boolean = false): SimpleCalendar.HandlebarTemplateData.Day[] {
-        let dt = this.days.map(d => d.toTemplate());
-        if(this.numberOfDays !== this.numberOfLeapYearDays){
+        const dt = this.days.map((d) => {
+            return d.toTemplate();
+        });
+        if (this.numberOfDays !== this.numberOfLeapYearDays) {
             const diff = this.numberOfLeapYearDays - this.numberOfDays;
-            if(diff > 0 && !isLeapYear){
+            if (diff > 0 && !isLeapYear) {
                 return dt.slice(0, dt.length - diff);
-            } else if(diff < 0 && isLeapYear){
+            } else if (diff < 0 && isLeapYear) {
                 return dt.slice(0, dt.length - Math.abs(diff));
             }
         }
-        return  dt;
+        return dt;
     }
 
     /**
@@ -222,15 +236,15 @@ export default class Month extends ConfigurationItemBase {
      * @param {boolean} [isLeapYear=false] If the year this month is apart of is a leap year
      * @param {string} [setting='current'] What setting on the day object to change
      */
-    changeDay(amount: number, isLeapYear: boolean = false, setting: string = 'current'){
+    changeDay(amount: number, isLeapYear: boolean = false, setting: string = "current") {
         const targetDayIndex = this.getDayIndex(setting);
         let changeAmount = 0;
-        const numberOfDays = isLeapYear? this.numberOfLeapYearDays : this.numberOfDays;
-        if(targetDayIndex > -1){
-            let newIndex = targetDayIndex + amount;
-            if((amount > 0 && newIndex >= numberOfDays) || (amount < 0 && newIndex < 0) || newIndex < 0){
+        const numberOfDays = isLeapYear ? this.numberOfLeapYearDays : this.numberOfDays;
+        if (targetDayIndex > -1) {
+            const newIndex = targetDayIndex + amount;
+            if ((amount > 0 && newIndex >= numberOfDays) || (amount < 0 && newIndex < 0) || newIndex < 0) {
                 this.resetDays(setting);
-                changeAmount = amount > 0? 1 : -1;
+                changeAmount = amount > 0 ? 1 : -1;
             } else {
                 this.updateDay(newIndex, isLeapYear, setting);
             }
@@ -242,9 +256,11 @@ export default class Month extends ConfigurationItemBase {
      * Resets the passed in setting for all days of the month
      * @param {string} [setting='current'] The setting on the day to reset. Can be either current or selected
      */
-    resetDays(setting: string = 'current'){
-        const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
-        this.days.forEach((d) => {d[verifiedSetting] = false;});
+    resetDays(setting: string = "current") {
+        const verifiedSetting = setting.toLowerCase() as "current" | "selected";
+        this.days.forEach((d) => {
+            d[verifiedSetting] = false;
+        });
     }
 
     /**
@@ -253,16 +269,14 @@ export default class Month extends ConfigurationItemBase {
      * @param {boolean} [isLeapYear=false] If the year is a leap year
      * @param {string} [setting='current'] The setting on the day to update. Can be either current or selected
      */
-    updateDay(dayIndex: number, isLeapYear: boolean = false, setting: string = 'current'){
-        const verifiedSetting = setting.toLowerCase() as 'current' | 'selected';
-        const numberOfDays = isLeapYear? this.numberOfLeapYearDays : this.numberOfDays;
+    updateDay(dayIndex: number, isLeapYear: boolean = false, setting: string = "current") {
+        const verifiedSetting = setting.toLowerCase() as "current" | "selected";
+        const numberOfDays = isLeapYear ? this.numberOfLeapYearDays : this.numberOfDays;
         this.resetDays(setting);
-        if(dayIndex < 0 || dayIndex >= numberOfDays){
+        if (dayIndex < 0 || dayIndex >= numberOfDays) {
             this.days[numberOfDays - 1][verifiedSetting] = true;
-        } else if(this.days[dayIndex]){
+        } else if (this.days[dayIndex]) {
             this.days[dayIndex][verifiedSetting] = true;
         }
     }
 }
-
-

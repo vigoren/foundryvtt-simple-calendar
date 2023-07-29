@@ -3,7 +3,7 @@ import NoteStub from "./note-stub";
 /**
  * An event that can be triggered when a note is considered active
  */
-export class NoteTrigger{
+export class NoteTrigger {
     /**
      * If this trigger should only be fired once
      */
@@ -15,14 +15,14 @@ export class NoteTrigger{
     /**
      * The function to call when the trigger is fired
      */
-    onFire: Function;
+    onFire: (note: NoteStub, initialLoad: boolean) => boolean;
 
     /**
      * An event that can be triggered when a note is considered active
      * @param onFire The function to call when the trigger is fired
      * @param fireOnce If this trigger should only be fired once
      */
-    constructor(onFire: Function, fireOnce: boolean) {
+    constructor(onFire: (note: NoteStub, initialLoad: boolean) => boolean, fireOnce: boolean) {
         this.fireOnce = fireOnce;
         this.onFire = onFire;
     }
@@ -32,8 +32,8 @@ export class NoteTrigger{
      * @param note The note stub this trigger is for
      * @param initialLoad If this is the initial load of foundry or not
      */
-    fire(note: NoteStub, initialLoad: boolean = false){
-        if(!this.fireOnce || (this.fireOnce && !this.fired)){
+    fire(note: NoteStub, initialLoad: boolean = false) {
+        if (!this.fireOnce || (this.fireOnce && !this.fired)) {
             this.fired = this.onFire(note, initialLoad);
         }
     }

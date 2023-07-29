@@ -16,7 +16,7 @@ export let NManager: NoteManager;
  * Updates the global calendar manager to the passed in value, should only be called once
  * @param {CalendarManager} manager
  */
-export function updateCalManager(manager: CalendarManager){
+export function updateCalManager(manager: CalendarManager) {
     CalManager = manager;
 }
 
@@ -24,7 +24,7 @@ export function updateCalManager(manager: CalendarManager){
  * Updates the global main application to the passed in value, should only be called once
  * @param {MainApp} app
  */
-export function updateMainApplication(app: MainApp){
+export function updateMainApplication(app: MainApp) {
     MainApplication = app;
 }
 
@@ -32,7 +32,7 @@ export function updateMainApplication(app: MainApp){
  * Updates the global configuration application to the passed in value, should only be called once
  * @param {MainApp} app
  */
-export function updateConfigurationApplication(app: ConfigurationApp){
+export function updateConfigurationApplication(app: ConfigurationApp) {
     ConfigurationApplication = app;
 }
 
@@ -40,7 +40,7 @@ export function updateConfigurationApplication(app: ConfigurationApp){
  * Updates the global migration application to the passed in value, should only be called once
  * @param app
  */
-export function updateMigrationApplication(app: MigrationApp){
+export function updateMigrationApplication(app: MigrationApp) {
     MigrationApplication = app;
 }
 
@@ -48,7 +48,7 @@ export function updateMigrationApplication(app: MigrationApp){
  * Updates the global simple calendar to the passed in value, should only be called once
  * @param {SCController} sc
  */
-export function updateSC(sc: SCController){
+export function updateSC(sc: SCController) {
     SC = sc;
 }
 
@@ -56,6 +56,6 @@ export function updateSC(sc: SCController){
  * Updates the global note manager to the passed in value, should only be called once
  * @param manager
  */
-export function updateNManager(manager: NoteManager){
+export function updateNManager(manager: NoteManager) {
     NManager = manager;
 }

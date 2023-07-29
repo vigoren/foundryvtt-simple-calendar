@@ -1,15 +1,19 @@
-export import SimpleCalendar = globalThis.SimpleCalendar
-export import HandlebarHelpers = globalThis.HandlebarHelpers
-import {DateSelector} from "../src/classes/date-selector";
+export import SimpleCalendar = globalThis.SimpleCalendar;
+export import HandlebarHelpers = globalThis.HandlebarHelpers;
+import { DateSelector } from "../src/classes/date-selector";
 import Calendar from "../src/classes/calendar";
 import UserPermissions from "../src/classes/configuration/user-permissions";
 import {
-    CalendarViews, CombatPauseRules, CompactViewDateTimeControlDisplay,
-    DateSelectorPositions, DateTimeChangeSocketTypes,
+    CalendarViews,
+    CombatPauseRules,
+    CompactViewDateTimeControlDisplay,
+    DateSelectorPositions,
+    DateTimeChangeSocketTypes,
     GameWorldTimeIntegrations,
     Icons,
     LeapYearRules,
-    MoonYearResetOptions, NoteReminderNotificationType,
+    MoonYearResetOptions,
+    NoteReminderNotificationType,
     NoteRepeat,
     PredefinedCalendars,
     PresetTimeOfDay,
@@ -20,25 +24,25 @@ import {
 } from "../src/constants";
 import NoteStub from "../src/classes/notes/note-stub";
 
-declare global{
+declare global {
     /**
      * The `SimpleCalendar` namespace is used to house all functionality that other modules, systems and macros can access for interacting with the Simple Calendar module.
      */
-    namespace SimpleCalendar{
+    namespace SimpleCalendar {
         /**
          * The `SimpleCalendar.api` namespace contains functions and properties used to update the Simple Calendar module or get information from it.
          */
         namespace api {
-            export {DateSelectorPositions};
-            export {LeapYearRules};
-            export {PredefinedCalendars as Calendars};
-            export {Icons}
-            export {MoonYearResetOptions};
-            export {YearNamingRules};
-            export {PresetTimeOfDay};
-            export {GameWorldTimeIntegrations};
-            export {NoteRepeat};
-            export {CompactViewDateTimeControlDisplay}
+            export { DateSelectorPositions };
+            export { LeapYearRules };
+            export { PredefinedCalendars as Calendars };
+            export { Icons };
+            export { MoonYearResetOptions };
+            export { YearNamingRules };
+            export { PresetTimeOfDay };
+            export { GameWorldTimeIntegrations };
+            export { NoteRepeat };
+            export { CompactViewDateTimeControlDisplay };
 
             /**
              * This function is used to activate event listeners for calendars displayed with the {@link HandlebarHelpers.sc-full-calendar}.
@@ -53,7 +57,11 @@ declare global{
              * SimpleCalendar.api.activateFullCalendarListeners('example_1');
              * ```
              */
-            export function activateFullCalendarListeners(calendarId: string, onMonthChange: Function | null = null, onDayClick: Function | null = null): void
+            export function activateFullCalendarListeners(
+                calendarId: string,
+                onMonthChange: Function | null = null,
+                onDayClick: Function | null = null
+            ): void;
 
             /**
              * This function adds a new note to the calendar
@@ -78,7 +86,19 @@ declare global{
              * // Will create a new note on Christmas day of 2022 that lasts all day and repeats yearly.
              * ```
              */
-            export async function addNote(title: string, content: string, startDate: SimpleCalendar.DateTimeParts, endDate: SimpleCalendar.DateTimeParts, allDay: boolean, repeats: NoteRepeat = NoteRepeat.Never, categories: string[] = [], calendarId: string = 'active', macro: string | null = null, userVisibility: string[] = [], remindUsers: string[] = []): Promise<StoredDocument<JournalEntry> | null>
+            export async function addNote(
+                title: string,
+                content: string,
+                startDate: SimpleCalendar.DateTimeParts,
+                endDate: SimpleCalendar.DateTimeParts,
+                allDay: boolean,
+                repeats: NoteRepeat = NoteRepeat.Never,
+                categories: string[] = [],
+                calendarId: string = "active",
+                macro: string | null = null,
+                userVisibility: string[] = [],
+                remindUsers: string[] = []
+            ): Promise<StoredDocument<JournalEntry> | null>;
 
             /**
              * Add a custom button to the right side of the calendar (When in full view). The button will be added below the Note Search button.
@@ -138,7 +158,13 @@ declare global{
              *
              * ```
              */
-            export function addSidebarButton(buttonTitle: string, iconClass: string, customClass: string, showSidePanel: boolean, onRender: (event: Event | null, renderTarget: HTMLElement | null | undefined) => void)
+            export function addSidebarButton(
+                buttonTitle: string,
+                iconClass: string,
+                customClass: string,
+                showSidePanel: boolean,
+                onRender: (event: Event | null, renderTarget: HTMLElement | null | undefined) => void
+            );
 
             /**
              * Advance the date and time to match the next preset time.
@@ -160,7 +186,7 @@ declare global{
              * SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunrise);
              * ```
              */
-            export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string = 'active'): boolean
+            export function advanceTimeToPreset(preset: PresetTimeOfDay, calendarId: string = "active"): boolean;
 
             /**
              * Changes the current date of Simple Calendar.
@@ -185,7 +211,7 @@ declare global{
              * SimpleCalendar.api.changeDate({seconds: 3600}); // Will set the new date to June 1, 2021 11:00:00
              * ```
              */
-            export function changeDate(interval: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean
+            export function changeDate(interval: SimpleCalendar.DateTimeParts, calendarId: string = "active"): boolean;
 
             /**
              * Will choose a random date between the 2 passed in dates, or if no dates are passed in will choose a random date.
@@ -229,7 +255,11 @@ declare global{
              * // }
              * ```
              */
-            export function chooseRandomDate(startingDate: SimpleCalendar.DateTimeParts = {}, endingDate: SimpleCalendar.DateTimeParts = {}, calendarId: string = 'active'): SimpleCalendar.DateTime
+            export function chooseRandomDate(
+                startingDate: SimpleCalendar.DateTimeParts = {},
+                endingDate: SimpleCalendar.DateTimeParts = {},
+                calendarId: string = "active"
+            ): SimpleCalendar.DateTime;
 
             /**
              * Get the current status of the built-in clock for the specified calendar in Simple Calendar
@@ -243,7 +273,7 @@ declare global{
              * console.log(status); // {started: false, stopped: true, paused: false}
              * ```
              */
-            export function clockStatus(calendarId: string = 'active'): SimpleCalendar.ClockStatus
+            export function clockStatus(calendarId: string = "active"): SimpleCalendar.ClockStatus;
 
             /**
              * Sets up the current calendar to match the passed in configuration. This function can only be run by GMs.
@@ -264,7 +294,10 @@ declare global{
              * const result = await SimpleCalendar.api.configureCalendar(custom);
              * ```
              */
-            export async function configureCalendar(calendarData: PredefinedCalendars | SimpleCalendar.CalendarData, calendarId: string = 'active'): Promise<boolean>
+            export async function configureCalendar(
+                calendarData: PredefinedCalendars | SimpleCalendar.CalendarData,
+                calendarId: string = "active"
+            ): Promise<boolean>;
 
             /**
              * Gets the current date and time for the current calendar or the passed in calendar.
@@ -287,7 +320,7 @@ declare global{
              * // }
              * ```
              */
-            export function currentDateTime(calendarId: string = 'active'): SimpleCalendar.DateTime | null
+            export function currentDateTime(calendarId: string = "active"): SimpleCalendar.DateTime | null;
 
             /**
              * Gets the formatted display data for the current date and time of the active calendar, or the calendar with the passed in ID.
@@ -315,7 +348,7 @@ declare global{
              * // }
              * ```
              */
-            export function currentDateTimeDisplay(calendarId: string = 'active'): SimpleCalendar.DateDisplayData | null
+            export function currentDateTimeDisplay(calendarId: string = "active"): SimpleCalendar.DateDisplayData | null;
 
             /**
              * Converts the passed in date to a timestamp.
@@ -331,7 +364,7 @@ declare global{
              * SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minute: 1, seconds: 0}); //Returns 1609462860
              * ```
              */
-            export function dateToTimestamp(date: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): number
+            export function dateToTimestamp(date: SimpleCalendar.DateTimeParts, calendarId: string = "active"): number;
 
             /**
              * Converts the passed in date/time into formatted date and time strings that match the configured date and time formats or the passed in format string.
@@ -365,7 +398,11 @@ declare global{
              * // Returns "31/12/2021 23:59:00 PM"
              * ```
              */
-            export function formatDateTime(date: SimpleCalendar.DateTimeParts, format: string = '', calendarId: string = 'active'): string | {date: string, time: string}
+            export function formatDateTime(
+                date: SimpleCalendar.DateTimeParts,
+                format: string = "",
+                calendarId: string = "active"
+            ): string | { date: string; time: string };
 
             /**
              * Converts the passed in timestamp into formatted date and time strings that match the configured date and time formats or the passed in format string.
@@ -389,7 +426,11 @@ declare global{
              * // Returns '25/12/2021 12:13:14 PM'
              * ```
              */
-            export function formatTimestamp(timestamp: number, format: string = '', calendarId: string = 'active'): string | {date: string, time: string}
+            export function formatTimestamp(
+                timestamp: number,
+                format: string = "",
+                calendarId: string = "active"
+            ): string | { date: string; time: string };
 
             /**
              * Gets the details of all calendars that have been configured in Simple Calendar
@@ -402,7 +443,7 @@ declare global{
              * console.log(c); // Will contain a list of all calendars and their data
              * ```
              */
-            export function getAllCalendars(): SimpleCalendar.CalendarData[]
+            export function getAllCalendars(): SimpleCalendar.CalendarData[];
 
             /**
              * Gets the details for all the months of the specified calendar.
@@ -575,7 +616,7 @@ declare global{
              * // ]
              * ```
              */
-            export function getAllMonths(calendarId: string = 'active'): SimpleCalendar.MonthData[]
+            export function getAllMonths(calendarId: string = "active"): SimpleCalendar.MonthData[];
 
             /**
              * Gets the details for all the moons of the specified calendar.
@@ -662,7 +703,7 @@ declare global{
              * // ]
              * ```
              */
-            export function getAllMoons(calendarId: string = 'active'): SimpleCalendar.MoonData[]
+            export function getAllMoons(calendarId: string = "active"): SimpleCalendar.MoonData[];
 
             /**
              * Gets the details for all the seasons for the specified calendar.
@@ -723,7 +764,7 @@ declare global{
              * // ]
              * ```
              */
-            export function getAllSeasons(calendarId: string = 'active'): SimpleCalendar.SeasonData[]
+            export function getAllSeasons(calendarId: string = "active"): SimpleCalendar.SeasonData[];
 
             /**
              * Gets a list of all available themes a user can choose from. System specific themes that do not match the current system will be excluded. Module specific themes whos modules are not installed and enabled will be excluded.
@@ -740,7 +781,7 @@ declare global{
              * // }
              * ```
              */
-            export function getAllThemes(): {[themeId: string]: string}
+            export function getAllThemes(): { [themeId: string]: string };
 
             /**
              * Gets the details about all the weekdays for the specified calendar.
@@ -806,7 +847,7 @@ declare global{
              * // ]
              * ```
              */
-            export function getAllWeekdays(calendarId: string = 'active'): SimpleCalendar.WeekdayData[]
+            export function getAllWeekdays(calendarId: string = "active"): SimpleCalendar.WeekdayData[];
 
             /**
              * Gets the details about the current active calendar.
@@ -819,7 +860,7 @@ declare global{
              * console.log(c); // Will contain all the configuration data for the current calendar.
              * ```
              */
-            export function getCurrentCalendar(): SimpleCalendar.CalendarData
+            export function getCurrentCalendar(): SimpleCalendar.CalendarData;
 
             /**
              * Gets the details about the current day for the specified calendar.
@@ -839,7 +880,7 @@ declare global{
              * // }
              * ```
              */
-            export function getCurrentDay(calendarId: string = 'active'): SimpleCalendar.DayData | null
+            export function getCurrentDay(calendarId: string = "active"): SimpleCalendar.DayData | null;
 
             /**
              * Gets the details about the current month for the specified calendar.
@@ -867,7 +908,7 @@ declare global{
              * // }
              * ```
              */
-            export function getCurrentMonth(calendarId: string = 'active'): SimpleCalendar.MonthData | null
+            export function getCurrentMonth(calendarId: string = "active"): SimpleCalendar.MonthData | null;
 
             /**
              * Gets the details about the season for the current date of the specified calendar.
@@ -893,7 +934,7 @@ declare global{
              * // }
              * ```
              */
-            export function getCurrentSeason(calendarId: string = 'active'): SimpleCalendar.SeasonData
+            export function getCurrentSeason(calendarId: string = "active"): SimpleCalendar.SeasonData;
 
             /**
              * Gets the ID of the theme being used by the player.
@@ -906,7 +947,7 @@ declare global{
              * // Returns "dark"
              * ```
              */
-            export function getCurrentTheme(): string
+            export function getCurrentTheme(): string;
 
             /**
              * Gets the details about the current weekday.
@@ -929,7 +970,7 @@ declare global{
              * // }
              * ```
              */
-            export function getCurrentWeekday(calendarId: string = 'active'): SimpleCalendar.WeekdayData | null
+            export function getCurrentWeekday(calendarId: string = "active"): SimpleCalendar.WeekdayData | null;
 
             /**
              * Gets the details about the current year for the specified calendar.
@@ -956,7 +997,7 @@ declare global{
              * // }
              * ```
              */
-            export function getCurrentYear(calendarId: string = 'active'): SimpleCalendar.YearData | null
+            export function getCurrentYear(calendarId: string = "active"): SimpleCalendar.YearData | null;
 
             /**
              * Gets the details about how leap years are configured for the specified calendar.
@@ -976,7 +1017,7 @@ declare global{
              * }
              * ```
              */
-            export function getLeapYearConfiguration(calendarId: string = 'active'): SimpleCalendar.LeapYearData | null
+            export function getLeapYearConfiguration(calendarId: string = "active"): SimpleCalendar.LeapYearData | null;
 
             /**
              * Gets all notes that the current user is able to see for the specified calendar.
@@ -991,7 +1032,7 @@ declare global{
              * SimpleCalendar.api.getNotes();
              *```
              */
-            export function getNotes(calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[]
+            export function getNotes(calendarId: string = "active"): (StoredDocument<JournalEntry> | undefined)[];
 
             /**
              * Gets all notes that the current user is able to see for the specified date from the specified calendar.
@@ -1008,7 +1049,12 @@ declare global{
              * SimpleCalendar.api.getNotesForDay(2022, 11, 24);
              * ```
              */
-            export function getNotesForDay(year: number, month: number, day: number, calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[]
+            export function getNotesForDay(
+                year: number,
+                month: number,
+                day: number,
+                calendarId: string = "active"
+            ): (StoredDocument<JournalEntry> | undefined)[];
 
             /**
              * Get the details about how time is configured for the specified calendar.
@@ -1033,7 +1079,7 @@ declare global{
              * // }
              * ```
              */
-            export function getTimeConfiguration(calendarId: string = 'active'): SimpleCalendar.TimeData | null
+            export function getTimeConfiguration(calendarId: string = "active"): SimpleCalendar.TimeData | null;
 
             /**
              * If the calendar is open or not.
@@ -1045,7 +1091,7 @@ declare global{
              * SimpleCalendar.api.isOpen(); // True or false depending on if the calendar is open or closed.
              * ```
              */
-            export function isOpen(): boolean
+            export function isOpen(): boolean;
 
             /**
              * Get if the current user is considered the primary GM or not.
@@ -1059,7 +1105,7 @@ declare global{
              *
              * ```
              */
-            export function isPrimaryGM(): boolean
+            export function isPrimaryGM(): boolean;
 
             /**
              * Pauses the real time clock for the specified calendar. Only the primary GM can pause a clock.
@@ -1073,7 +1119,7 @@ declare global{
              * SimpleCalendar.api.pauseClock();
              * ```
              */
-            export function pauseClock(calendarId: string = 'active'): boolean
+            export function pauseClock(calendarId: string = "active"): boolean;
 
             /**
              * This function removes the specified note from Simple Calendar.
@@ -1087,7 +1133,7 @@ declare global{
              * SimpleCalendar.api.removeNote("asd123").then(...).catch(console.error);
              * ```
              */
-            export async function removeNote(journalEntryId: string): Promise<boolean>
+            export async function removeNote(journalEntryId: string): Promise<boolean>;
 
             /**
              * Run the migration from Simple Calendar version 1 to version 2.
@@ -1100,7 +1146,7 @@ declare global{
              * SimpleCalendar.api.runMigration();
              * ```
              */
-            export function runMigration(): void
+            export function runMigration(): void;
 
             /**
              * Search the notes in Simple Calendar for a specific term. Only notes that the user can see are returned.
@@ -1120,7 +1166,11 @@ declare global{
              * SimpleCalendar.api.searchNotes("Gamemaster", {author: true}); // Will return a list of notes that were written by the gamemaster.
              * ```
              */
-            export function searchNotes(term: string, options = {date: true, title: true, details: true, categories: true, author: true}, calendarId: string = 'active'): (StoredDocument<JournalEntry> | undefined)[]
+            export function searchNotes(
+                term: string,
+                options = { date: true, title: true, details: true, categories: true, author: true },
+                calendarId: string = "active"
+            ): (StoredDocument<JournalEntry> | undefined)[];
 
             /**
              * Will attempt to parse the passed in seconds into larger time intervals.
@@ -1141,7 +1191,7 @@ declare global{
              * SimpleCalendar.api.secondsToInterval(31556926); //Returns {year: 1, month: 0, day: 0, hour: 5, minute: 48, seconds: 46}
              * ```
              */
-            export function secondsToInterval(seconds: number, calendarId: string = 'active'): SimpleCalendar.DateTimeParts
+            export function secondsToInterval(seconds: number, calendarId: string = "active"): SimpleCalendar.DateTimeParts;
 
             /**
              * Will set the current date of the specified calendar to match the passed in date.
@@ -1161,7 +1211,7 @@ declare global{
              * SimpleCalendar.api.setDate({year: 1999, month: 11, day: 30, hour: 23, minute: 59, seconds: 59});
              * ```
              */
-            export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): boolean
+            export function setDate(date: SimpleCalendar.DateTimeParts, calendarId: string = "active"): boolean;
 
             /**
              * Will set the players Simple Calendar theme that matches the passed in theme ID.
@@ -1185,7 +1235,7 @@ declare global{
              * //Will return false and log an error to the console.
              * ```
              */
-            export async function setTheme(themeId: string): Promise<boolean>
+            export async function setTheme(themeId: string): Promise<boolean>;
 
             /**
              * Will open up Simple Calendar to the current date, or the passed in date.
@@ -1202,7 +1252,11 @@ declare global{
              * SimpleCalendar.api.showCalendar(null, true); // Will open the calendar to the current date in compact mode.
              * ```
              */
-            export function showCalendar(date: SimpleCalendar.DateTimeParts | null = null, compact: boolean = false, calendarId: string = 'active'): void
+            export function showCalendar(
+                date: SimpleCalendar.DateTimeParts | null = null,
+                compact: boolean = false,
+                calendarId: string = "active"
+            ): void;
 
             /**
              * Starts the real time clock for the specified calendar. Only the primary GM can start a clock.
@@ -1216,7 +1270,7 @@ declare global{
              * SimpleCalendar.api.startClock();
              * ```
              */
-            export function startClock(calendarId: string = 'active'): boolean
+            export function startClock(calendarId: string = "active"): boolean;
 
             /**
              * Stops the real time clock for the specified calendar. Only the primary GM can stop a clock.
@@ -1230,7 +1284,7 @@ declare global{
              * SimpleCalendar.api.stopClock();
              * ```
              */
-            export function stopClock(calendarId: string = 'active'): boolean
+            export function stopClock(calendarId: string = "active"): boolean;
 
             /**
              * Get the timestamp (in seconds) of the specified calendars currently set date.
@@ -1245,7 +1299,7 @@ declare global{
              * console.log(timestamp); // This will be a number representing the current number of seconds passed in the calendar.
              * ```
              */
-            export function timestamp(calendarId: string = 'active'): number
+            export function timestamp(calendarId: string = "active"): number;
 
             /**
              * Calculates a new timestamp from the passed in timestamp plus the passed in interval amount.
@@ -1265,7 +1319,11 @@ declare global{
              * console.log(newTime); // This will be the number of seconds that equal July 2nd 2021
              * ```
              */
-            export function timestampPlusInterval(currentSeconds: number, interval: SimpleCalendar.DateTimeParts, calendarId: string = 'active'): number
+            export function timestampPlusInterval(
+                currentSeconds: number,
+                interval: SimpleCalendar.DateTimeParts,
+                calendarId: string = "active"
+            ): number;
 
             /**
              * Converts a timestamp (in seconds) into a {@link SimpleCalendar.DateData} objet from the specified calendar
@@ -1313,14 +1371,14 @@ declare global{
              * // }
              * ```
              */
-            export function timestampToDate(seconds: number, calendarId: string = 'active'): SimpleCalendar.DateData | null
+            export function timestampToDate(seconds: number, calendarId: string = "active"): SimpleCalendar.DateData | null;
         }
 
         /**
          * Contains the interfaces associated with data that is used by any Handlebar template
          * @internal
          */
-        namespace HandlebarTemplateData{
+        namespace HandlebarTemplateData {
             interface Calendar extends IDataItemBase {
                 calendarDisplayId: string;
                 clockDisplayId: string;
@@ -1333,7 +1391,7 @@ declare global{
                     notes: NoteStub[];
                 };
                 currentYear: Year;
-                visibleDate: {year: number, month: number};
+                visibleDate: { year: number; month: number };
             }
 
             /**
@@ -1350,7 +1408,7 @@ declare global{
                 selected: boolean;
             }
 
-            interface GeneralSettings extends IDataItemBase{
+            interface GeneralSettings extends IDataItemBase {
                 /** How Simple Calendar interacts with the game world time */
                 gameWorldTimeIntegration: GameWorldTimeIntegrations;
                 /** If to show the clock below the calendar */
@@ -1366,13 +1424,13 @@ declare global{
                     monthYear: string;
                 };
                 /** The different display options tied to the compact view. */
-                compactViewOptions:{
+                compactViewOptions: {
                     /** How to display the date/time control buttons. */
                     controlLayout: CompactViewDateTimeControlDisplay;
-                }
+                };
             }
 
-            interface LeapYearTemplate extends IDataItemBase{
+            interface LeapYearTemplate extends IDataItemBase {
                 rule: LeapYearRules;
                 customMod: number;
             }
@@ -1425,8 +1483,8 @@ declare global{
                 startDateSelectedDate: DateTime;
                 sunriseSelectorId: string;
                 sunriseSelectorSelectedDates: {
-                    start: DateTime,
-                    end: DateTime
+                    start: DateTime;
+                    end: DateTime;
                 };
             }
 
@@ -1446,7 +1504,7 @@ declare global{
             /**
              * Interface for the weekday template that is passed to the HTML for rendering
              */
-            interface Weekday extends IDataItemBase{
+            interface Weekday extends IDataItemBase {
                 abbreviation: string;
                 name: string;
                 numericRepresentation: number;
@@ -1487,7 +1545,7 @@ declare global{
                 /** The calendar to use for generating the date selector */
                 calendar?: Calendar;
                 /** Function to be called when a date or dates have been selected */
-                onDateSelect?: Function;
+                onDateSelect?: (selectedDates: SimpleCalendar.DateTimeSelector.SelectedDates) => void;
                 /** Allow a range of dates to be selected */
                 allowDateRangeSelection?: boolean;
                 /** All for a range of time to be selected */
@@ -1503,9 +1561,9 @@ declare global{
                 /** Show the time selector position of the date/time selector */
                 showTimeSelector?: boolean;
                 /** The selected starting date */
-                selectedStartDate?: DateTime,
+                selectedStartDate?: DateTime;
                 /** The selected ending date */
-                selectedEndDate?: DateTime,
+                selectedEndDate?: DateTime;
                 /** If a time has been selected */
                 timeSelected?: boolean;
                 /** The string to use as a delimiter between the date and time */
@@ -1568,14 +1626,14 @@ declare global{
                 /** The dates that are currently selected, if just single date mode use start */
                 selectedDates?: {
                     /** The selected starting date */
-                    start: SimpleCalendar.Date,
+                    start: SimpleCalendar.Date;
                     /** The selected ending date */
-                    end: SimpleCalendar.Date
+                    end: SimpleCalendar.Date;
                 };
                 /** If to highlight the current date for the calendar */
                 showCurrentDate?: boolean;
                 /** If to show more details about the day when it is right-clicked on */
-                showDayDetails?:boolean;
+                showDayDetails?: boolean;
                 /** If to show the description popups */
                 showDescriptions?: boolean;
                 /** If to show the different moon phases on the calendar */
@@ -1617,14 +1675,14 @@ declare global{
                 /** The selected time to show, if not using the time range just use the start */
                 selectedTime?: {
                     /** The selected starting time */
-                    start: SimpleCalendar.Time,
+                    start: SimpleCalendar.Time;
                     /** The selected ending time */
-                    end: SimpleCalendar.Time
-                }
+                    end: SimpleCalendar.Time;
+                };
                 /** The custom string to use as the delimiter between the time range inputs and display */
                 timeDelimiter?: string;
                 /** If to use clones of the calendars to pull data for the time selector, used in the configuration dialog */
-                useCalendarClones?: boolean
+                useCalendarClones?: boolean;
             }
 
             export interface MultiSelectOptions {
@@ -1634,7 +1692,7 @@ declare global{
                 options: MultiSelectOption[];
             }
 
-            export interface MultiSelectOption{
+            export interface MultiSelectOption {
                 value: string;
                 text: string;
                 selected: boolean;
@@ -1643,7 +1701,7 @@ declare global{
                 makeOthersMatch?: boolean;
             }
 
-            export interface DateTimeControlOptions{
+            export interface DateTimeControlOptions {
                 showDateControls?: boolean;
                 showTimeControls?: boolean;
                 displayType?: CompactViewDateTimeControlDisplay;
@@ -1652,7 +1710,7 @@ declare global{
                     unit: string;
                     unitText: string;
                     dateTimeUnitOpen: boolean;
-                }
+                };
 
                 largerSteps?: boolean;
                 reverseTime?: boolean;
@@ -1663,7 +1721,7 @@ declare global{
          * Contains the interfaces associated with the note search options
          * @internal
          */
-        namespace Search{
+        namespace Search {
             type Document = {
                 id: string;
                 content: string | string[];
@@ -1674,7 +1732,7 @@ declare global{
             };
             type DocumentTerm = {
                 count: number;
-                freq:number;
+                freq: number;
             };
             type ProcessedDocument = Document & {
                 terms: Record<string, DocumentTerm>;
@@ -1696,30 +1754,37 @@ declare global{
          * Contains the interfaces associated with the Simple Calendar sockets
          * @internal
          */
-        namespace SimpleCalendarSocket{
-
+        namespace SimpleCalendarSocket {
             /**
              * Interface for the data that is sent with each socket
              */
             export interface Data {
                 type: SocketTypes;
-                data: boolean | Partial<MainAppUpdate> | DateTimeChange | TimeKeeperStatus | Partial<Primary> | Partial<NoteUpdate> | Partial<EmitHook> | Partial<SetActiveCalendar>;
+                data:
+                    | boolean
+                    | Partial<MainAppUpdate>
+                    | DateTimeChange
+                    | TimeKeeperStatus
+                    | Partial<Primary>
+                    | Partial<NoteUpdate>
+                    | Partial<EmitHook>
+                    | Partial<SetActiveCalendar>;
             }
 
             type MainAppUpdate = {
-                userId: string
-            }
+                userId: string;
+            };
 
             type DateTimeChange = {
-                type: DateTimeChangeSocketTypes,
-                interval: DateTimeParts,
-                presetTimeOfDay?: PresetTimeOfDay
+                type: DateTimeChangeSocketTypes;
+                interval: DateTimeParts;
+                presetTimeOfDay?: PresetTimeOfDay;
             };
 
             type Primary = {
                 primaryCheck: boolean;
                 amPrimary: boolean;
-            }
+            };
 
             type NoteUpdate = {
                 journalId: string;
@@ -1727,18 +1792,17 @@ declare global{
                 calendarId: string;
                 date: DateTime;
                 newOrder: string[];
-            }
+            };
 
             type EmitHook = {
                 hook: SimpleCalendarHooks;
                 param: any;
-            }
+            };
 
             type SetActiveCalendar = {
                 calendarId: string;
-            }
+            };
         }
-
 
         /**
          * Interface base for all data items
@@ -1757,7 +1821,7 @@ declare global{
             abbreviation?: string;
             /** If to show the advanced options, this is not saved */
             showAdvanced?: boolean;
-        }
+        };
 
         /**
          * Interface for information about the app windows position
@@ -1793,14 +1857,14 @@ declare global{
          * Interface for Journal page data
          * @internal
          */
-        interface JournalPageData{
+        interface JournalPageData {
             show: boolean;
             _id: string;
             name: string;
             type: string;
-            text?: {content: string};
+            text?: { content: string };
             src?: string;
-            image?: {caption:string};
+            image?: { caption: string };
             video?: {
                 autoplay: boolean;
                 controls: boolean;
@@ -1922,7 +1986,7 @@ declare global{
             /** The current month */
             month: number;
             /** The current day */
-            day: number
+            day: number;
             /** The current time of day in seconds */
             seconds: number;
         }
@@ -1964,7 +2028,7 @@ declare global{
             /** If this date falls on a leap year. */
             isLeapYear: boolean;
             /** All the formatted strings for displaying this date */
-            display: DateDisplayData
+            display: DateDisplayData;
         }
 
         /**
@@ -2024,7 +2088,7 @@ declare global{
         /**
          * Interface for all general settings for a calendar in the Simple Calendar module
          */
-        interface GeneralSettingsData extends IDataItemBase{
+        interface GeneralSettingsData extends IDataItemBase {
             /** How Simple Calendar interacts with the game world time */
             gameWorldTimeIntegration: GameWorldTimeIntegrations;
             /** If to show the clock below the calendar */
@@ -2049,8 +2113,8 @@ declare global{
             /** The different display options tied to the compact view. */
             compactViewOptions: {
                 /** How to display the date/time control buttons. */
-                controlLayout: CompactViewDateTimeControlDisplay
-            }
+                controlLayout: CompactViewDateTimeControlDisplay;
+            };
             /** @deprecated Old 'Players Can Add Notes' permission setting, only used for very old setting files */
             playersAddNotes?: boolean;
         }
@@ -2081,7 +2145,7 @@ declare global{
         /**
          * Interface for all information about how leap years are set up
          */
-        interface LeapYearData extends IDataItemBase{
+        interface LeapYearData extends IDataItemBase {
             /** This is the leap year rule to follow. */
             rule: LeapYearRules;
             /** The number of years that a leap year happens when the rule is set to 'custom'. */
@@ -2202,7 +2266,7 @@ declare global{
             /** Users set as assistant game masters */
             assistantGameMaster: boolean;
             /** A list of specific user ID's */
-            users?: string[]
+            users?: string[];
         }
 
         /**
@@ -2235,7 +2299,7 @@ declare global{
         /**
          * Interface for all information about time
          */
-        interface TimeData extends IDataItemBase{
+        interface TimeData extends IDataItemBase {
             /** The number of hours in a single day. */
             hoursInDay: number;
             /** The number of minutes in a single hour. */
@@ -2253,7 +2317,7 @@ declare global{
         /**
          * Interface for all information about a weekday
          */
-        interface WeekdayData extends IDataItemBase{
+        interface WeekdayData extends IDataItemBase {
             /** The abbreviated name of the weekday. */
             abbreviation: string;
             /** The name of the weekday. */
@@ -2287,18 +2351,18 @@ declare global{
             /** The year to start applying the year names. */
             yearNamesStart: number;
             /** How to calculate what year name to give to a year. */
-            yearNamingRule: YearNamingRules
+            yearNamingRule: YearNamingRules;
         }
 
         /**
          * @internal
          */
         interface NoteRepeats {
-            [index: number]: string,
-            0: string,
-            1?: string,
-            2?: string,
-            3?: string
+            [index: number]: string;
+            0: string;
+            1?: string;
+            2?: string;
+            3?: string;
         }
 
         /**
@@ -2345,15 +2409,14 @@ declare global{
             sync?: boolean;
             updateApp?: boolean;
             fromCalSync?: boolean;
-            bypassPermissionCheck?:boolean;
+            bypassPermissionCheck?: boolean;
         };
-
     }
 
     /**
      * The Simple Calendar module comes with some built in Handlebar helpers that can be used by other modules/systems to display information in areas other than in the Simple Calendar module.
      */
-    enum HandlebarHelpers{
+    enum HandlebarHelpers {
         /**
          * This handlebar helper is used to generate the HTML for displaying a full calendar view for the current date or a passed in date.
          *
@@ -2507,7 +2570,3 @@ declare global{
         "sc-icon"
     }
 }
-
-
-
-

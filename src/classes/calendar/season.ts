@@ -1,17 +1,16 @@
 import ConfigurationItemBase from "../configuration/configuration-item-base";
-import {CalManager} from "../index";
-import {Icons} from "../../constants";
+import { CalManager } from "../index";
+import { Icons } from "../../constants";
 
 /**
  * All content around a season
  */
-export default class Season extends ConfigurationItemBase{
-
+export default class Season extends ConfigurationItemBase {
     /**
      * The color of the season
      * @type{string}
      */
-    color: string = '#ffffff';
+    color: string = "#ffffff";
     /**
      * The month this season starts on
      * @type{number}
@@ -43,7 +42,7 @@ export default class Season extends ConfigurationItemBase{
      * @param {number} startingMonth The month this season starts on
      * @param {number} startingDay The day of the starting month this season starts on
      */
-    constructor(name: string = '', startingMonth: number = 0, startingDay: number = 0) {
+    constructor(name: string = "", startingMonth: number = 0, startingDay: number = 0) {
         super(name);
         this.startingMonth = startingMonth;
         this.startingDay = startingDay;
@@ -78,27 +77,30 @@ export default class Season extends ConfigurationItemBase{
             icon: this.icon,
             sunriseTime: this.sunriseTime,
             sunsetTime: this.sunsetTime
-        }
+        };
     }
 
     /**
      * Creates a template of the season used to render its information
      */
-    toTemplate(): SimpleCalendar.HandlebarTemplateData.Season{
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.Season {
         const startDateSelectorId = `sc_season_start_date_${this.id}`;
         const sunriseSelectorId = `sc_season_sunrise_time_${this.id}`;
 
-        let sunriseHour = 0, sunriseMinute = 0, sunsetHour = 0, sunsetMinute = 0;
+        let sunriseHour = 0,
+            sunriseMinute = 0,
+            sunsetHour = 0,
+            sunsetMinute = 0;
         const activeCalendar = CalManager.getActiveCalendar();
         sunriseMinute = Math.floor(this.sunriseTime / activeCalendar.time.secondsInMinute);
         sunsetMinute = Math.floor(this.sunsetTime / activeCalendar.time.secondsInMinute);
-        if(sunriseMinute >= activeCalendar.time.minutesInHour){
+        if (sunriseMinute >= activeCalendar.time.minutesInHour) {
             sunriseHour = Math.floor(sunriseMinute / activeCalendar.time.minutesInHour);
-            sunriseMinute = sunriseMinute - (sunriseHour * activeCalendar.time.minutesInHour);
+            sunriseMinute = sunriseMinute - sunriseHour * activeCalendar.time.minutesInHour;
         }
-        if(sunsetMinute >= activeCalendar.time.minutesInHour){
+        if (sunsetMinute >= activeCalendar.time.minutesInHour) {
             sunsetHour = Math.floor(sunsetMinute / activeCalendar.time.minutesInHour);
-            sunsetMinute = sunsetMinute - (sunsetHour * activeCalendar.time.minutesInHour);
+            sunsetMinute = sunsetMinute - sunsetHour * activeCalendar.time.minutesInHour;
         }
 
         return {
@@ -120,8 +122,8 @@ export default class Season extends ConfigurationItemBase{
             },
             sunriseSelectorId: sunriseSelectorId,
             sunriseSelectorSelectedDates: {
-                start: {year: 0, month: 0, day: 0, hour: sunriseHour, minute: sunriseMinute, seconds: 0},
-                end: {year: 0, month: 0, day: 0, hour: sunsetHour, minute: sunsetMinute, seconds: 0}
+                start: { year: 0, month: 0, day: 0, hour: sunriseHour, minute: sunriseMinute, seconds: 0 },
+                end: { year: 0, month: 0, day: 0, hour: sunsetHour, minute: sunsetMinute, seconds: 0 }
             }
         };
     }
@@ -131,19 +133,19 @@ export default class Season extends ConfigurationItemBase{
      * @param {SeasonData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.SeasonData) {
-        if(config && Object.keys(config).length){
+        if (config && Object.keys(config).length) {
             super.loadFromSettings(config);
             this.startingMonth = config.startingMonth;
             this.startingDay = config.startingDay;
             const sCustColor = config.customColor;
-            this.color = config.color === 'custom' && sCustColor? sCustColor : config.color;
-            if(config.hasOwnProperty('sunriseTime')){
+            this.color = config.color === "custom" && sCustColor ? sCustColor : config.color;
+            if (Object.prototype.hasOwnProperty.call(config, "sunriseTime")) {
                 this.sunriseTime = config.sunriseTime;
             }
-            if(config.hasOwnProperty('sunsetTime')){
+            if (Object.prototype.hasOwnProperty.call(config, "sunsetTime")) {
                 this.sunsetTime = config.sunsetTime;
             }
-            if(config.hasOwnProperty('icon')){
+            if (Object.prototype.hasOwnProperty.call(config, "icon")) {
                 this.icon = config.icon;
             }
         }

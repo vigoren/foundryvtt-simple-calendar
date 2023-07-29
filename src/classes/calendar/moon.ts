@@ -1,12 +1,12 @@
-import {Icons, MoonYearResetOptions} from "../../constants";
-import {GameSettings} from "../foundry-interfacing/game-settings";
+import { Icons, MoonYearResetOptions } from "../../constants";
+import { GameSettings } from "../foundry-interfacing/game-settings";
 import ConfigurationItemBase from "../configuration/configuration-item-base";
 import Calendar from "./index";
 
 /**
  * Class for representing a moon
  */
-export default class Moon extends ConfigurationItemBase{
+export default class Moon extends ConfigurationItemBase {
     /**
      * How long in calendar days the moon takes to do 1 revolution
      * @type {number}
@@ -50,7 +50,7 @@ export default class Moon extends ConfigurationItemBase{
     /**
      * A color to associate with the moon when displaying it on the calendar
      */
-    color: string = '#ffffff';
+    color: string = "#ffffff";
     /**
      * The amount of days to adjust the current cycle day by
      * @type {number}
@@ -62,12 +62,12 @@ export default class Moon extends ConfigurationItemBase{
      * @param {string} name The name of the moon
      * @param {number} cycleLength The length of the moons cycle
      */
-    constructor(name: string = '', cycleLength: number = 0) {
+    constructor(name: string = "", cycleLength: number = 0) {
         super(name);
         this.cycleLength = cycleLength;
 
         this.phases.push({
-            name: GameSettings.Localize('FSC.Moon.Phase.New'),
+            name: GameSettings.Localize("FSC.Moon.Phase.New"),
             length: 3.69,
             icon: Icons.NewMoon,
             singleDay: true
@@ -81,7 +81,9 @@ export default class Moon extends ConfigurationItemBase{
     clone(): Moon {
         const c = new Moon(this.name, this.cycleLength);
         c.id = this.id;
-        c.phases = this.phases.map(p => { return { name: p.name, length: p.length, icon: p.icon, singleDay: p.singleDay };});
+        c.phases = this.phases.map((p) => {
+            return { name: p.name, length: p.length, icon: p.icon, singleDay: p.singleDay };
+        });
         c.firstNewMoon.yearReset = this.firstNewMoon.yearReset;
         c.firstNewMoon.yearX = this.firstNewMoon.yearX;
         c.firstNewMoon.year = this.firstNewMoon.year;
@@ -100,8 +102,16 @@ export default class Moon extends ConfigurationItemBase{
             id: this.id,
             name: this.name,
             cycleLength: this.cycleLength,
-            firstNewMoon: {yearReset: this.firstNewMoon.yearReset, yearX: this.firstNewMoon.yearX, year: this.firstNewMoon.year, month: this.firstNewMoon.month, day: this.firstNewMoon.day, },
-            phases: this.phases.map(p => { return { name: p.name, length: p.length, icon: p.icon, singleDay: p.singleDay };}),
+            firstNewMoon: {
+                yearReset: this.firstNewMoon.yearReset,
+                yearX: this.firstNewMoon.yearX,
+                year: this.firstNewMoon.year,
+                month: this.firstNewMoon.month,
+                day: this.firstNewMoon.day
+            },
+            phases: this.phases.map((p) => {
+                return { name: p.name, length: p.length, icon: p.icon, singleDay: p.singleDay };
+            }),
             color: this.color,
             cycleDayAdjust: this.cycleDayAdjust
         };
@@ -109,9 +119,8 @@ export default class Moon extends ConfigurationItemBase{
 
     /**
      * Converts this moon into a template used for displaying the moon in HTML
-     * @param calendar
      */
-    toTemplate(calendar: Calendar): SimpleCalendar.HandlebarTemplateData.Moon {
+    toTemplate(): SimpleCalendar.HandlebarTemplateData.Moon {
         const data: SimpleCalendar.HandlebarTemplateData.Moon = {
             ...super.toTemplate(),
             name: this.name,
@@ -121,7 +130,7 @@ export default class Moon extends ConfigurationItemBase{
             color: this.color,
             cycleDayAdjust: this.cycleDayAdjust,
             firstNewMoonDateSelectorId: `sc_first_new_moon_date_${this.id}`,
-            firstNewMoonSelectedDate: {year: 0, month: this.firstNewMoon.month, day: this.firstNewMoon.day, hour: 0, minute: 0, seconds: 0}
+            firstNewMoonSelectedDate: { year: 0, month: this.firstNewMoon.month, day: this.firstNewMoon.day, hour: 0, minute: 0, seconds: 0 }
         };
         return data;
     }
@@ -131,7 +140,7 @@ export default class Moon extends ConfigurationItemBase{
      * @param {MoonData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.MoonData) {
-        if(config && Object.keys(config).length){
+        if (config && Object.keys(config).length) {
             super.loadFromSettings(config);
             this.cycleLength = config.cycleLength;
             this.phases = config.phases;
@@ -150,19 +159,20 @@ export default class Moon extends ConfigurationItemBase{
     /**
      * Updates each phases length in days so the total length of all phases matches the cycle length
      */
-    updatePhaseLength(){
-        let pLength = 0, singleDays = 0;
-        for(let i = 0; i < this.phases.length; i++){
-            if(this.phases[i].singleDay){
-               singleDays++;
+    updatePhaseLength() {
+        let pLength = 0,
+            singleDays = 0;
+        for (let i = 0; i < this.phases.length; i++) {
+            if (this.phases[i].singleDay) {
+                singleDays++;
             } else {
                 pLength++;
             }
         }
         const phaseLength = Number(((this.cycleLength - singleDays) / pLength).toPrecision(6));
 
-        this.phases.forEach(p => {
-            if(p.singleDay){
+        this.phases.forEach((p) => {
+            if (p.singleDay) {
                 p.length = 1;
             } else {
                 p.length = phaseLength;
@@ -178,44 +188,44 @@ export default class Moon extends ConfigurationItemBase{
      * @param {number} monthIndex The month to use
      * @param {number} dayIndex The day to use
      */
-    getDateMoonPhase(calendar: Calendar, yearNum: number, monthIndex: number, dayIndex: number): SimpleCalendar.MoonPhase{
-        let firstNewMoonDays = calendar.dateToDays(this.firstNewMoon.year, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
+    getDateMoonPhase(calendar: Calendar, yearNum: number, monthIndex: number, dayIndex: number): SimpleCalendar.MoonPhase {
+        let firstNewMoonDays = calendar.dateToDays(this.firstNewMoon.year, this.firstNewMoon.month, this.firstNewMoon.day, true);
         let resetYearAdjustment = 0;
-        if(this.firstNewMoon.yearReset === MoonYearResetOptions.LeapYear){
-            let lyYear = calendar.year.leapYearRule.previousLeapYear(yearNum);
-            if(lyYear !== null){
-                firstNewMoonDays = calendar.dateToDays(lyYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
-                if(yearNum !== lyYear){
+        if (this.firstNewMoon.yearReset === MoonYearResetOptions.LeapYear) {
+            const lyYear = calendar.year.leapYearRule.previousLeapYear(yearNum);
+            if (lyYear !== null) {
+                firstNewMoonDays = calendar.dateToDays(lyYear, this.firstNewMoon.month, this.firstNewMoon.day, true);
+                if (yearNum !== lyYear) {
                     resetYearAdjustment += calendar.year.leapYearRule.fraction(yearNum);
                 }
             }
-        } else if(this.firstNewMoon.yearReset === MoonYearResetOptions.XYears){
+        } else if (this.firstNewMoon.yearReset === MoonYearResetOptions.XYears) {
             const resetMod = yearNum % this.firstNewMoon.yearX;
-            if(resetMod !== 0){
-                let resetYear = yearNum - resetMod;
-                firstNewMoonDays = calendar.dateToDays(resetYear, this.firstNewMoon.month, this.firstNewMoon.day, true, true);
+            if (resetMod !== 0) {
+                const resetYear = yearNum - resetMod;
+                firstNewMoonDays = calendar.dateToDays(resetYear, this.firstNewMoon.month, this.firstNewMoon.day, true);
                 resetYearAdjustment += resetMod / this.firstNewMoon.yearX;
             }
         }
 
-        const daysSoFar = calendar.dateToDays(yearNum, monthIndex, dayIndex, true, true);
+        const daysSoFar = calendar.dateToDays(yearNum, monthIndex, dayIndex, true);
         const daysSinceReferenceMoon = daysSoFar - firstNewMoonDays + resetYearAdjustment;
         const moonCycles = daysSinceReferenceMoon / this.cycleLength;
-        let daysIntoCycle = ((moonCycles - Math.floor(moonCycles)) * this.cycleLength) + this.cycleDayAdjust;
+        const daysIntoCycle = (moonCycles - Math.floor(moonCycles)) * this.cycleLength + this.cycleDayAdjust;
 
         let phaseDays = 0;
         let phase: SimpleCalendar.MoonPhase | null = null;
-        for(let i = 0; i < this.phases.length; i++){
+        for (let i = 0; i < this.phases.length; i++) {
             const newPhaseDays = phaseDays + this.phases[i].length;
-            if(daysIntoCycle >= phaseDays && daysIntoCycle < newPhaseDays){
+            if (daysIntoCycle >= phaseDays && daysIntoCycle < newPhaseDays) {
                 phase = this.phases[i];
                 break;
             }
             phaseDays = newPhaseDays;
         }
-        if(phase !== null){
+        if (phase !== null) {
             return phase;
-        }else {
+        } else {
             return this.phases[0];
         }
     }
@@ -226,15 +236,19 @@ export default class Moon extends ConfigurationItemBase{
      * @param property Which property to use when getting the year, month and day. Can be current, selected or visible
      * @param dayToUse The day to use instead of the day associated with the property
      */
-    getMoonPhase(calendar: Calendar, property: string = 'current', dayToUse: number = 0): SimpleCalendar.MoonPhase{
-        property = property.toLowerCase() as 'current' | 'selected' | 'visible';
-        let yearNum = property === 'current'? calendar.year.numericRepresentation : property === 'selected'? calendar.year.selectedYear : calendar.year.visibleYear;
+    getMoonPhase(calendar: Calendar, property: string = "current", dayToUse: number = 0): SimpleCalendar.MoonPhase {
+        property = property.toLowerCase() as "current" | "selected" | "visible";
+        const yearNum =
+            property === "current"
+                ? calendar.year.numericRepresentation
+                : property === "selected"
+                ? calendar.year.selectedYear
+                : calendar.year.visibleYear;
         const monthIndex = calendar.getMonthIndex(property);
-        if(monthIndex > -1){
-            const dayIndex = property !== 'visible'? calendar.months[monthIndex].getDayIndex(property) : dayToUse;
+        if (monthIndex > -1) {
+            const dayIndex = property !== "visible" ? calendar.months[monthIndex].getDayIndex(property) : dayToUse;
             return this.getDateMoonPhase(calendar, yearNum, monthIndex, dayIndex);
         }
         return this.phases[0];
     }
-
 }

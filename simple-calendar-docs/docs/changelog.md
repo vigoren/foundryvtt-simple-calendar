@@ -1,5 +1,19 @@
 # Change Log
 
+## 2.3.20 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-July%2029%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.20/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug when the [Sync Date/Time Changes Across Calendars](https://simplecalendar.info/docs/global-configuration/settings#sync-datetime-changes-across-calendars) setting is enabled and multiple calendars are configured that would cause all calendars to emit the [DateTimeChange](https://simplecalendar.info/docs/developing-with-sc/api/namespaces/SimpleCalendar.Hooks#datetimechange) hook instead of just the active calendar.
+- Fixed a bug in the Pathfinder 1e system where every turn in a combat would advance the calendars time instead of just advancing the time at the end of the round. ([#528](https://github.com/vigoren/foundryvtt-simple-calendar/issues/528))
+- Fixed a rare issue where calling the `SimpleCalendar.api.showCalendar` API function with an invalid day set could cause the calendar to display incorrectly.
+- Fixed a very rare issue when comparing 2 dates the months could be considered the same when they shouldn't.
+
+<hr/>
+
 ## 2.3.16 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-July%2022%2C%202023-blue)
