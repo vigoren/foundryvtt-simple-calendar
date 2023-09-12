@@ -107,12 +107,12 @@ export default class LeapYear extends ConfigurationItemBase {
      * @param {number} year
      */
     howManyLeapYears(year: number): number {
-        year = year - this.startingYear;
+        let testYear = year - this.startingYear;
         let num = 0;
         if (this.rule === LeapYearRules.Gregorian) {
-            num = Math.floor(year / 4) - Math.floor(year / 100) + Math.floor(year / 400);
+            num = Math.floor(testYear / 4) - Math.floor(testYear / 100) + Math.floor(testYear / 400);
         } else if (this.rule === LeapYearRules.Custom && this.customMod !== 0) {
-            num = Math.floor(year / this.customMod);
+            num = Math.floor(testYear / this.customMod);
         }
         if (this.isLeapYear(year) && num > 0) {
             num = num - 1;
