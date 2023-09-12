@@ -1,6 +1,7 @@
 import { ModuleName } from "../../constants";
 import { CalManager, SC } from "../index";
 import { FormatDateTime } from "../utilities/date-time";
+import PF2E from "../systems/pf2e";
 
 export class ChatTimestamp {
     public static addGameTimeToMessage(chatMessage: ChatMessage) {
@@ -28,7 +29,12 @@ export class ChatTimestamp {
         if (timestamps) {
             const cal = CalManager.getCalendar(timestamps["id"]);
             if (cal) {
-                const dateTime = cal.secondsToDate(timestamps["timestamp"]);
+                let seconds = timestamps["timestamp"];
+                // If this is a Pathfinder 2E game, add the world creation seconds to the interval seconds
+                if (PF2E.isPF2E && cal.generalSettings.pf2eSync) {
+                    seconds += PF2E.getWorldCreateSeconds(cal);
+                }
+                const dateTime = cal.secondsToDate(seconds);
                 formattedDateTime = FormatDateTime(dateTime, `${cal.generalSettings.dateFormat.chatTime}`, cal);
             }
         }

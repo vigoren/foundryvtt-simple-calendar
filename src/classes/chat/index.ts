@@ -1,5 +1,4 @@
 import { ChatTimestamp } from "./chat-timestamp";
-import { GameSettings } from "../foundry-interfacing/game-settings";
 
 export class Chat {
     public static init() {
@@ -13,9 +12,7 @@ export class Chat {
         ChatMessage.prototype.export = new Proxy(ChatMessage.prototype.export, handler);
     }
     public static createChatMessage(chatMessage: ChatMessage) {
-        if (GameSettings.IsGm()) {
-            ChatTimestamp.addGameTimeToMessage(chatMessage);
-        }
+        ChatTimestamp.addGameTimeToMessage(chatMessage);
         return true;
     }
 
