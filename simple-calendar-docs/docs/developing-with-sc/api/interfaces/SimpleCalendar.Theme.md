@@ -11,6 +11,12 @@ pagination_prev: null
 
 ## Properties
 
+### images
+
+• `Optional` **images**: `Record`<`string`, `string`\>
+
+___
+
 ### key
 
 • **key**: `string`

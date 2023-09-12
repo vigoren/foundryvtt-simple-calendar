@@ -77,7 +77,7 @@ const newJournal = await SimpleCalendar.api.addNote('Christmas Day','Presents!',
 | `allDay` | `boolean` | `undefined` | If the note lasts all day or if it has a specific time duration. Whether to ignore the time portion of the start and end dates. |
 | `repeats` | [`NoteRepeat`](../enums/SimpleCalendar.api.NoteRepeat.md) | `NoteRepeat.Never` | If the note repeats and how often it does |
 | `categories` | `string`[] | `[]` | A list of note categories to assign to this note |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to add the note too. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to add the note too. If not provided the current active calendar will be used. |
 | `macro` | ``null`` \| `string` | `null` | The ID of the macro that this note should execute when the in game time meets or exceeds the note time. Or null if no macro should be executed. |
 | `userVisibility` | `string`[] | `[]` | Optional parameter to specify an array of user ID's who will have permission to view the note. The creator of the note will always have permission. Use `['default']` if you want all users to be able to view it. |
 | `remindUsers` | `string`[] | `[]` | Optional parameter to provide an array of user ID's who will be reminded of the note. |
@@ -176,7 +176,7 @@ SimpleCalendar.api.advanceTimeToPreset(SimpleCalendar.api.PresetTimeOfDay.Sunris
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `preset` | [`PresetTimeOfDay`](../enums/SimpleCalendar.api.PresetTimeOfDay.md) | `undefined` | The preset time that is used to set the time of day. |
-| `calendarId` | `string` | `'active'` | Optional parameter specify the ID of the calendar to advance the time and date for. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter specify the ID of the calendar to advance the time and date for. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -214,7 +214,7 @@ SimpleCalendar.api.changeDate({seconds: 3600}); // Will set the new date to June
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `interval` | [`DateTimeParts`](SimpleCalendar.md#datetimeparts) | `undefined` | The interval objects properties are all optional so only those that are needed have to be set.<br/>Where each property is how many of that interval to change the current date by. |
-| `calendarId` | `string` | `'active'` | Optional parameter specify the ID of the calendar to change the date on. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter specify the ID of the calendar to change the date on. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -271,7 +271,7 @@ SimpleCalendar.api.chooseRandomDate();
 | :------ | :------ | :------ | :------ |
 | `startingDate` | [`DateTimeParts`](SimpleCalendar.md#datetimeparts) | `{}` | The start date objects properties are all optional so only those needed have to be set.<br/>Where each property is the earliest date to be chosen when randomly selecting a date.<br/>The month and day properties are both index's so January would be 0 and the first day of the month is also 0. |
 | `endingDate` | [`DateTimeParts`](SimpleCalendar.md#datetimeparts) | `{}` | The end date objects properties are all optional so only those needed have to be set.<br/>Where each property is the latest date to be chosen when randomly selecting a date.<br/>The month and day properties are both index's so January would be 0 and the first day of the month is also 0. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to choose the random date from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to choose the random date from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -298,7 +298,7 @@ console.log(status); // {started: false, stopped: true, paused: false}
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to check its clock status. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to check its clock status. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -332,7 +332,7 @@ const result = await SimpleCalendar.api.configureCalendar(custom);
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `calendarData` | [`Calendars`](../enums/SimpleCalendar.api.Calendars.md) \| [`CalendarData`](../interfaces/SimpleCalendar.CalendarData.md) | `undefined` | The configuration to set the calendar to. It can be one of the predefined calendars or a [CalendarData](../interfaces/SimpleCalendar.CalendarData.md) object representing a custom calendar. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to configure. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to configure. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -368,7 +368,7 @@ SimpleCalendar.api.currentDateTime();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -409,7 +409,7 @@ SimpleCalendar.api.currentDateTimeDisplay();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -438,7 +438,7 @@ SimpleCalendar.api.dateToTimestamp({year: 2021, month: 0, day: 0, hour: 1, minut
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `date` | [`DateTimeParts`](SimpleCalendar.md#datetimeparts) | `undefined` | A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that should be converted to a timestamp. Any missing parameters will default to the current date value for that parameter.<br/>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to use when converting a date to a timestamp. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to use when converting a date to a timestamp. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -483,8 +483,8 @@ SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, m
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `date` | [`DateTimeParts`](SimpleCalendar.md#datetimeparts) | `undefined` | A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date and time that should be formatted.<br/>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0. |
-| `format` | `string` | `''` | Optional format string to return custom formats for the passed in date and time. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to use when converting a date to a formatted string. If not provided the current active calendar will be used. |
+| `format` | `string` | `""` | Optional format string to return custom formats for the passed in date and time. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to use when converting a date to a formatted string. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -519,8 +519,8 @@ SimpleCalendar.api.formatTimestamp(1640434394,"DD/MM/YYYY HH:mm:ss A");
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `timestamp` | `number` | `undefined` | The timestamp (in seconds) of the date to format. |
-| `format` | `string` | `''` | Optional format string to return custom formats for the passed in date and time. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to use when converting a date to a formatted string. If not provided the current active calendar will be used. |
+| `format` | `string` | `""` | Optional format string to return custom formats for the passed in date and time. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to use when converting a date to a formatted string. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -726,7 +726,7 @@ SimpleCalendar.api.getAllMonths();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the list of months from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the list of months from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -825,7 +825,7 @@ SimpleCalendar.api.getAllMoons();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the list of moons from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the list of moons from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -898,7 +898,7 @@ SimpleCalendar.api.getAllSeasons();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the list of seasons from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the list of seasons from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1001,7 +1001,7 @@ SimpleCalendar.api.getAllWeekdays();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the list of weekdays from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the list of weekdays from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1054,7 +1054,7 @@ SimpleCalendar.api.getCurrentDay();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the current day from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1094,7 +1094,7 @@ SimpleCalendar.api.getCurrentMonth();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the current month from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the current month from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1132,7 +1132,7 @@ SimpleCalendar.api.getCurrentSeason();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the current season from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the current season from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1188,7 +1188,7 @@ SimpleCalendar.api.getCurrentWeekday();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the current weekday from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the current weekday from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1227,7 +1227,7 @@ SimpleCalendar.api.getCurrentYear();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the current year from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the current year from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1259,7 +1259,7 @@ SimpleCalendar.api.getLeapYearConfiguration();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the leap year configuration from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the leap year configuration from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1286,7 +1286,7 @@ SimpleCalendar.api.getNotes();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the notes from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the notes from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1316,7 +1316,7 @@ SimpleCalendar.api.getNotesForDay(2022, 11, 24);
 | `year` | `number` | `undefined` | The year of the date to get the notes for. |
 | `month` | `number` | `undefined` | The index of the month to get the notes for. |
 | `day` | `number` | `undefined` | The index of the day to get the notes for. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the notes from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the notes from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1353,7 +1353,7 @@ SimpleCalendar.api.getTimeConfiguration();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the time configuration from. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the time configuration from. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1421,7 +1421,7 @@ SimpleCalendar.api.pauseClock();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to pause the real time clock for. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to pause the real time clock for. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1505,7 +1505,7 @@ SimpleCalendar.api.searchNotes("Gamemaster", {author: true}); // Will return a l
 | `options.date` | `boolean` | `true` | - |
 | `options.details` | `boolean` | `true` | - |
 | `options.title` | `boolean` | `true` | - |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar whose notes to search against. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar whose notes to search against. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1538,7 +1538,7 @@ SimpleCalendar.api.secondsToInterval(31556926); //Returns {year: 1, month: 0, da
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `seconds` | `number` | `undefined` | The number of seconds to convert to different intervals. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to use when calculating the intervals. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to use when calculating the intervals. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1570,7 +1570,7 @@ SimpleCalendar.api.setDate({year: 1999, month: 11, day: 30, hour: 23, minute: 59
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `date` | [`DateTimeParts`](SimpleCalendar.md#datetimeparts) | `undefined` | A date object (eg `{year:2021, month: 4, day: 12, hour: 0, minute: 0, seconds: 0}`) with the parameters set to the date that the calendar should be set to. Any missing parameters will default to the current date value for that parameter.<br/>**Important**: The month and day are index based so January would be 0 and the first day of the month will also be 0. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to set the date of. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to set the date of. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1637,7 +1637,7 @@ SimpleCalendar.api.showCalendar(null, true); // Will open the calendar to the cu
 | :------ | :------ | :------ | :------ |
 | `date` | ``null`` \| [`DateTimeParts`](SimpleCalendar.md#datetimeparts) | `null` | A date object (eg `{year:2021, month: 4, day: 12}`) with the year, month and day set to the date to be visible when the calendar is opened.<br/>**Important**: The month is index based so January would be 0. |
 | `compact` | `boolean` | `false` | If to open the calendar in compact mode or not. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to focus when the calendar view is opened. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to focus when the calendar view is opened. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1661,7 +1661,7 @@ SimpleCalendar.api.startClock();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to start the real time clock for. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to start the real time clock for. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1687,7 +1687,7 @@ SimpleCalendar.api.stopClock();
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to stop the real time clock for. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to stop the real time clock for. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1714,7 +1714,7 @@ console.log(timestamp); // This will be a number representing the current number
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to get the timestamp for. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to get the timestamp for. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1747,7 +1747,7 @@ console.log(newTime); // This will be the number of seconds that equal July 2nd 
 | :------ | :------ | :------ | :------ |
 | `currentSeconds` | `number` | `undefined` | The timestamp (in seconds) to have the interval added too. |
 | `interval` | [`DateTimeParts`](SimpleCalendar.md#datetimeparts) | `undefined` | The interval objects properties are all optional so only those needed have to be set.<br/>Where each property is how many of that interval to increase the passed in timestamp by. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to use to calculate the new timestamp. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to use to calculate the new timestamp. If not provided the current active calendar will be used. |
 
 #### Returns
 
@@ -1808,7 +1808,7 @@ console.log(scDate);
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `seconds` | `number` | `undefined` | The timestamp (in seconds) to convert into a date object. |
-| `calendarId` | `string` | `'active'` | Optional parameter to specify the ID of the calendar to use to calculate the [DateData](../interfaces/SimpleCalendar.DateData.md) objet. If not provided the current active calendar will be used. |
+| `calendarId` | `string` | `"active"` | Optional parameter to specify the ID of the calendar to use to calculate the [DateData](../interfaces/SimpleCalendar.DateData.md) objet. If not provided the current active calendar will be used. |
 
 #### Returns
 

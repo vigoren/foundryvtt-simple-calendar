@@ -41,9 +41,9 @@ Listed below are some other modules and systems that get asked about:
 
 ### Pathfinder 2E
 
-Pathfinder 2E implements its own calendaring solution that is not easily integrated with. In most instances Simple Calendar will sync correctly with the PF2E world clock, provided the configuration setting ["Pathfinder 2E: World Time Sync"](https://simplecalendar.info/pages/calendar-configuration/index/general-settings.html#pathfinder-2e-world-clock-sync) is enabled in Simple Calendar.
+Simple Calendar will sync properly with Pathfinder 2E's world clock in 99% of cases, provided the ["Pathfinder 2E: World Time Sync"](https://simplecalendar.info/pages/calendar-configuration/index/general-settings.html#pathfinder-2e-world-clock-sync) setting is enabled in Simple Calendar.
 
-There are a few edge cases where time in Simple Calendar will be off by a day from the PF2E World Clock. This has to do with how each addresses leap years and is not easily fixed from the side of PF2E.
+There are a few edge cases where time in Simple Calendar will be off by a day from the PF2E World Clock. This has to do with how [each addresses leap years and is not easily fixed from the side of PF2E](https://github.com/foundryvtt/pf2e/issues/1772).
 
 ### SmallTime
 
@@ -51,7 +51,7 @@ Simple Calendar and SmallTime should work together correctly. If Simple Calendar
 
 ### SmallTime and Pathfinder 2E
 
-If the time takes place before the Pathfinder 2E's epoch (The date the world was created, resetting the world clock will show the exact date). Simple Calendar and SmallTime will be off by 1 minute. This is a known issue with SmallTime.
+If the time takes place before the Pathfinder 2E's epoch (The date the world was created, resetting the world clock will show the exact date). SmallTime will be off by 1 minute. This is a known issue with SmallTime. Simple Calendar will still show the correct date and time.
 
 <hr/>
 
@@ -65,3 +65,31 @@ For a quick setting to a 12-hour clock though you can follow these steps:
 2. Navigate to the calendar's "Display Options" settings.
 3. In the field called "Time Format" replace with this `hh:mm:ss A`.
 4. Save the configuration, now the clock will be displayed in a 12-hour format!
+
+<hr/>
+
+## Simple Calendar Says "There is an active combat/combats running" but there are no combats running
+
+This message will appear depends on what you have set for the setting ["Pause Real Time Clock on Combat Rule"](https://simplecalendar.info/docs/global-configuration/settings#pause-real-time-clock-on-combat-rule).
+
+If the setting is set to "**Pause Only on the Active Scene**":
+
+- Check to make sure the current scene you are on is the active scene (indicated with a target icon in the scene list).
+    - If it is not make the current scene the active scene.
+    - Or go to the active scene and see if there is a combat running and end that combat.
+
+If the setting is set to "**Pause on the Scene the GM is Currently Viewing**":
+
+- Double check to see if there is a combat running on the scene you are viewing.
+
+If none of the above options help then there could be a stuck combat. Occasionally in Foundry combats are not properly ended and can still report they are active.
+
+You can check this by opening up the developer console (F12) and putting this command in `game.combats.size`. That will show how many combats Foundry thinks is running.
+
+If there are combats that shouldn't be there you can run this command `game.combats.forEach(c => {c.delete()})` to remove all combats.
+
+:::caution
+
+This will delete all combats on all scenes, so it is better to wait until you are done with any combats in progress before running that command.
+
+:::
