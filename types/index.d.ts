@@ -1433,6 +1433,7 @@ declare global {
             interface LeapYearTemplate extends IDataItemBase {
                 rule: LeapYearRules;
                 customMod: number;
+                startingYear: number;
             }
 
             /**
@@ -2150,6 +2151,8 @@ declare global {
             rule: LeapYearRules;
             /** The number of years that a leap year happens when the rule is set to 'custom'. */
             customMod: number;
+            /** The year to start calculating leap years from. */
+            startingYear: number;
         }
 
         /**

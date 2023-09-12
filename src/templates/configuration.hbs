@@ -947,6 +947,13 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.LeapYear.CustomModHelp'}}</p>
                 </div>
+                <div class="form-group fsc-open">
+                    <label for="scLeapStartingYear">{{localize 'FSC.Configuration.LeapYear.StartingYear'}}</label>
+                    <div class="form-fields">
+                        <input value="{{leapYearRule.startingYear}}" type="number" id="scLeapStartingYear" />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.LeapYear.StartingYearHelp'}}</p>
+                </div>
             </div>
             <div class="fsc-settings-group {{#if showLeapYearMonths}} fsc-open{{else}} fsc-closed{{/if}}" id="scLeapYearMonthList">
                 <h2>{{localize 'FSC.Configuration.Months'}} <a href="https://simplecalendar.info/docs/calendar-configuration/leap-year-settings#months" data-tooltip="{{localize 'FSC.Help'}}" target="_blank" class="fa fa-question-circle"></a></h2>

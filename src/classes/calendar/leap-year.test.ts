@@ -2,55 +2,58 @@
  * @jest-environment jsdom
  */
 import "../../../__mocks__/index";
-import {jest, beforeEach, describe, expect, test} from '@jest/globals';
+import { jest, beforeEach, describe, expect, test } from "@jest/globals";
 
 import LeapYear from "./leap-year";
-import {LeapYearRules} from "../../constants";
-import {SimpleCalendar} from "../../../types";
+import { LeapYearRules } from "../../constants";
+import { SimpleCalendar } from "../../../types";
 import Calendar from "./index";
-import {CalManager, updateCalManager} from "../index";
+import { CalManager, updateCalManager } from "../index";
 import CalendarManager from "./calendar-manager";
-import {FoundryVTTGameData} from "../foundry-interfacing/game-data";
+import { FoundryVTTGameData } from "../foundry-interfacing/game-data";
 
-describe('Leap Year Tests', () => {
+describe("Leap Year Tests", () => {
     let lr: LeapYear;
     let tCal: Calendar;
 
     beforeEach(() => {
         lr = new LeapYear();
         updateCalManager(new CalendarManager());
-        tCal = new Calendar('','');
-        jest.spyOn(CalManager, 'getActiveCalendar').mockImplementation(() => {return tCal;});
+        tCal = new Calendar("", "");
+        jest.spyOn(CalManager, "getActiveCalendar").mockImplementation(() => {
+            return tCal;
+        });
     });
 
-    test('Properties', () => {
+    test("Properties", () => {
         expect(Object.keys(lr).length).toBe(8); //Make sure no new properties have been added
         expect(lr.rule).toBe(LeapYearRules.None);
         expect(lr.customMod).toBe(1);
     });
 
-    test('Clone', () => {
+    test("Clone", () => {
         expect(lr.clone()).toStrictEqual(lr);
     });
 
-    test('To Config', () => {
+    test("To Config", () => {
         const lyc = lr.toConfig();
         expect(lyc.id).toBeDefined();
         expect(lyc.rule).toBe(LeapYearRules.None);
         expect(lyc.customMod).toBe(1);
     });
 
-    test('To Template', () => {
+    test("To Template", () => {
         const lyt = lr.toTemplate();
         expect(lyt.rule).toBe(LeapYearRules.None);
         expect(lyt.customMod).toBe(1);
     });
 
-    test('Load From Settings', () => {
+    test("Load From Settings", () => {
         const config: SimpleCalendar.LeapYearData = {
-            id: '',
+            id: "",
             rule: LeapYearRules.Custom,
-            customMod: 10
+            customMod: 10,
+            startingYear: 0
         };
 
         //@ts-ignore
@@ -72,7 +75,7 @@ describe('Leap Year Tests', () => {
         expect(lr.customMod).toBe(0);
     });
 
-    test('Is Leap Year', () => {
+    test("Is Leap Year", () => {
         expect(lr.isLeapYear(2020)).toBe(false);
 
         lr.rule = LeapYearRules.Gregorian;
@@ -92,14 +95,14 @@ describe('Leap Year Tests', () => {
         expect(lr.isLeapYear(5)).toBe(true);
         expect(lr.isLeapYear(8)).toBe(false);
 
-        jest.spyOn(FoundryVTTGameData, 'systemID', 'get').mockReturnValue('pf2e');
+        jest.spyOn(FoundryVTTGameData, "systemID", "get").mockReturnValue("pf2e");
         tCal.generalSettings.pf2eSync = true;
         //@ts-ignore
-        game.pf2e = {worldClock: {dateTheme: "AD", worldCreatedOn: 10000}};
+        game.pf2e = { worldClock: { dateTheme: "AD", worldCreatedOn: 10000 } };
         expect(lr.isLeapYear(2020)).toBe(true);
     });
 
-    test('How Many Leap Years', () => {
+    test("How Many Leap Years", () => {
         expect(lr.howManyLeapYears(2020)).toBe(0);
 
         lr.rule = LeapYearRules.Gregorian;
@@ -126,13 +129,13 @@ describe('Leap Year Tests', () => {
         expect(lr.howManyLeapYears(2021)).toBe(404);
     });
 
-    test('Previous Leap Year', () => {
+    test("Previous Leap Year", () => {
         expect(lr.previousLeapYear(1990)).toBe(null);
         lr.rule = LeapYearRules.Gregorian;
         expect(lr.previousLeapYear(1990)).toBe(1988);
     });
 
-    test('Fraction', () => {
+    test("Fraction", () => {
         expect(lr.fraction(1990)).toBe(0);
         lr.rule = LeapYearRules.Gregorian;
         expect(lr.fraction(1990)).toBe(0.5);

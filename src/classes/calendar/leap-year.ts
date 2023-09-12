@@ -14,6 +14,10 @@ export default class LeapYear extends ConfigurationItemBase {
      * @type {number}
      */
     customMod: number = 1;
+    /**
+     * The year to start calculating leap years from.
+     */
+    startingYear: number = 0;
 
     constructor() {
         super();
@@ -28,6 +32,7 @@ export default class LeapYear extends ConfigurationItemBase {
         ly.id = this.id;
         ly.rule = this.rule;
         ly.customMod = this.customMod;
+        ly.startingYear = this.startingYear;
         return ly;
     }
 
@@ -38,7 +43,8 @@ export default class LeapYear extends ConfigurationItemBase {
         return {
             id: this.id,
             rule: this.rule,
-            customMod: this.customMod
+            customMod: this.customMod,
+            startingYear: this.startingYear
         };
     }
 
@@ -50,7 +56,8 @@ export default class LeapYear extends ConfigurationItemBase {
         return {
             ...super.toTemplate(),
             rule: this.rule,
-            customMod: this.customMod
+            customMod: this.customMod,
+            startingYear: this.startingYear
         };
     }
 
@@ -67,6 +74,9 @@ export default class LeapYear extends ConfigurationItemBase {
             if (Object.prototype.hasOwnProperty.call(config, "customMod")) {
                 this.customMod = config.customMod;
             }
+            if (Object.prototype.hasOwnProperty.call(config, "startingYear")) {
+                this.startingYear = config.startingYear;
+            }
 
             if (this.rule === LeapYearRules.Custom && this.customMod <= 0) {
                 this.rule = LeapYearRules.None;
@@ -80,6 +90,7 @@ export default class LeapYear extends ConfigurationItemBase {
      */
     isLeapYear(year: number): boolean {
         const activeCalendar = CalManager.getActiveCalendar();
+        year = year - this.startingYear;
         if (PF2E.isPF2E && activeCalendar.generalSettings.pf2eSync) {
             PF2E.checkLeapYearRules(this);
         }
@@ -96,6 +107,7 @@ export default class LeapYear extends ConfigurationItemBase {
      * @param {number} year
      */
     howManyLeapYears(year: number): number {
+        year = year - this.startingYear;
         let num = 0;
         if (this.rule === LeapYearRules.Gregorian) {
             num = Math.floor(year / 4) - Math.floor(year / 100) + Math.floor(year / 400);
@@ -114,7 +126,7 @@ export default class LeapYear extends ConfigurationItemBase {
      */
     previousLeapYear(year: number): number | null {
         if (this.rule === LeapYearRules.Gregorian || (this.rule === LeapYearRules.Custom && this.customMod !== 0)) {
-            let testYear = year;
+            let testYear = year - this.startingYear;
             while (Number.isInteger(testYear)) {
                 if (this.isLeapYear(testYear)) {
                     break;
@@ -134,7 +146,7 @@ export default class LeapYear extends ConfigurationItemBase {
     fraction(year: number) {
         const previousLeapYear = this.previousLeapYear(year);
         if (previousLeapYear !== null && previousLeapYear !== 0) {
-            const yearInto = year % previousLeapYear;
+            const yearInto = (year - this.startingYear) % previousLeapYear;
             if (this.rule === LeapYearRules.Gregorian) {
                 return yearInto / 4;
             } else {
