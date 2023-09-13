@@ -15,6 +15,7 @@ An example of this would a calendar that has a leap year every 4 years but the f
 
 - Fixed a bug when the [Use Game Time For Chat Message Timestamps](https://simplecalendar.info/docs/global-configuration/settings#use-game-time-for-chat-message-timestamps) setting is enable, messages by non GM players would not have an in game time associated with it. ([#531](https://github.com/vigoren/foundryvtt-simple-calendar/issues/531))
 - Fixed a bug in the PF2E system when using the [Use Game Time For Chat Message Timestamps](https://simplecalendar.info/docs/global-configuration/settings#use-game-time-for-chat-message-timestamps) setting the timestamps would be the incorrect time. ([#534](https://github.com/vigoren/foundryvtt-simple-calendar/issues/534), [#539](https://github.com/vigoren/foundryvtt-simple-calendar/discussions/539))
+- Fixed an issue with the migration script when migrating from a Foundry v9 world to a Foundry v11 world.
 
 
 ### Translation Updates
@@ -25,7 +26,7 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 
 ### Documentation Changes
 
-- Added documentation for the new [Leap Year Starting Year](https://simplecalendar.info/docs/calendar-configuration/leap-year-settings#leap-year-starting-year) setting.
+- Added documentation for the new [Leap Year Starting Year](https://simplecalendar.info/docs/calendar-configuration/leap-year-settings#starting-year) setting.
 - Updated the FAQ section [Why Is Simple Calendar not in Sync with X module/system?](https://simplecalendar.info/docs/faq#why-is-simple-calendar-not-in-sync-with-x-modulesystem) to better word any issues with specific systems or modules.
 - Added a new FAQ [Simple Calendar Says "There is an active combat/combats running" but there are no combats running](https://simplecalendar.info/docs/faq#simple-calendar-says-there-is-an-active-combatcombats-running-but-there-are-no-combats-running).
 
