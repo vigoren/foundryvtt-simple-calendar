@@ -24,6 +24,12 @@ This setting only appears if the [Leap Year Rule](#leap-year-rule) is set to **C
 
 The number of years when a leap year occurs. Example a value of 5 would mean every 5th year is a leap year.
 
+## Starting Year
+
+The year that the first leap year happened.
+
+An example of this would a calendar that has a leap year every 4 years but the first leap year should be on year 1 and the next on year 5 etc. Setting this option to 1 would allow for this scenario.
+
 ## Months
 
 :::info

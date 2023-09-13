@@ -104,3 +104,11 @@ If to show the advanced options, this is not saved
 #### Inherited from
 
 IDataItemBase.showAdvanced
+
+___
+
+### startingYear
+
+• **startingYear**: `number`
+
+The year to start calculating leap years from.

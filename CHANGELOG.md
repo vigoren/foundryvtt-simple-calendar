@@ -1,9 +1,15 @@
 # Change Log
 
-## 2.3.22 - Bug Fixes
+## 2.4.0 - Leap Year Starting Year and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-September%2012%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.3.22/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.0/module.zip)
+
+### Leap Year Starting Year
+
+A new setting has been added to the leap year settings that allows you to set the year that leap years start on. 
+
+An example of this would a calendar that has a leap year every 4 years but the first leap year should be on year 1 and the next on year 5 etc. Setting this option to 1 would allow for this scenario.
 
 ### Bug Fixes
 
@@ -19,6 +25,7 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 
 ### Documentation Changes
 
+- Added documentation for the new [Leap Year Starting Year](https://simplecalendar.info/docs/calendar-configuration/leap-year-settings#leap-year-starting-year) setting.
 - Updated the FAQ section [Why Is Simple Calendar not in Sync with X module/system?](https://simplecalendar.info/docs/faq#why-is-simple-calendar-not-in-sync-with-x-modulesystem) to better word any issues with specific systems or modules.
 - Added a new FAQ [Simple Calendar Says "There is an active combat/combats running" but there are no combats running](https://simplecalendar.info/docs/faq#simple-calendar-says-there-is-an-active-combatcombats-running-but-there-are-no-combats-running).
 
