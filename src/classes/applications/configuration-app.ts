@@ -885,6 +885,7 @@ export default class ConfigurationApp extends FormApplication {
             //----------------------------------
             (<Calendar>this.object).year.leapYearRule.rule = <LeapYearRules>getTextInputValue("#scLeapYearRule", "none", this.appWindow);
             (<Calendar>this.object).year.leapYearRule.customMod = <number>getNumericInputValue("#scLeapYearCustomMod", 0, false, this.appWindow);
+            (<Calendar>this.object).year.leapYearRule.startingYear = <number>getNumericInputValue("#scLeapStartingYear", 0, false, this.appWindow);
             this.appWindow.querySelectorAll(".fsc-leapyear-settings .fsc-months>.fsc-row:not(.fsc-head)").forEach((e) => {
                 const index = parseInt((<HTMLElement>e).getAttribute("data-index") || "");
                 if (!isNaN(index) && index >= 0 && index < (<Calendar>this.object).months.length) {

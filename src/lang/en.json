@@ -437,6 +437,8 @@
 	"FSC.Configuration.LeapYear.RuleHelp": "The rules to follow when determining leap years.",
 	"FSC.Configuration.LeapYear.CustomMod": "When Leap Years Happen",
 	"FSC.Configuration.LeapYear.CustomModHelp": "Every x number of years is a leap year.",
+	"FSC.Configuration.LeapYear.StartingYear": "Starting Year",
+	"FSC.Configuration.LeapYear.StartingYearHelp": "The year that the first leap year happened. Most calendars will use 0.",
 	"FSC.Configuration.LeapYear.Rules.None": "None",
 	"FSC.Configuration.LeapYear.Rules.Gregorian": "Gregorian",
 	"FSC.Configuration.LeapYear.Rules.Custom": "Custom",

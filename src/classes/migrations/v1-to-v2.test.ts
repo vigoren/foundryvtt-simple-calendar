@@ -112,7 +112,7 @@ describe("V1 to V2 Class Tests", () => {
         (<Mock>(<Game>game).settings.get).mockReturnValueOnce([]); //Notes
         expect(await V1ToV2.runNoteMigration()).toBe(true);
 
-        const je = { data: { permission: { asd: 1 } }, update: jest.fn() };
+        const je = { ownership: { asd: 1 }, update: jest.fn() };
         //@ts-ignore
         jest.spyOn(NManager, "createNote").mockImplementation(async () => {
             return je;
