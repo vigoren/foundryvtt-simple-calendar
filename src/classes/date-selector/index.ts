@@ -296,9 +296,9 @@ export class DateSelector {
             this.showCalendarYear,
             this.timeDelimiter
         );
-        returnHtml = `<input class="fsc-display-input" value="${displayDate}" tabindex="0" type="text" readonly="readonly"><div class="fsc-date-selector-calendar-wrapper${
-            this.showTimeSelector && !this.showDateSelector ? " fsc-just-time" : ""
-        }" style="display:${hideCalendar ? "none" : "block"};">${calendar}${timeSelectors}</div>`;
+        returnHtml = `<input class="fsc-display-input" value="${displayDate}" tabindex="0" type="text" readonly="readonly"><div class="fsc-date-selector-calendar-wrapper" style="display:${
+            hideCalendar ? "none" : "block"
+        };">${calendar}${timeSelectors}</div>`;
         if (includeWrapper) {
             returnHtml = `${wrapper}${returnHtml}</div>`;
         }
@@ -375,7 +375,7 @@ export class DateSelector {
         }
         if (html) {
             if (activateDomListener) {
-                document.addEventListener("click", this.hideCalendar.bind(this, html));
+                document.addEventListener("click", this.hideCalendar);
             }
             if (activateCalendarListeners && activateTimeListeners) {
                 const di = <HTMLElement>html.querySelector(".fsc-display-input");
@@ -413,6 +413,10 @@ export class DateSelector {
                 }
             }
         }
+    }
+
+    deactivateListeners() {
+        document.removeEventListener("click", this.hideCalendar);
     }
 
     /**
@@ -463,14 +467,17 @@ export class DateSelector {
      * Hides the calendar portion of the input
      * @param {HTMLElement} html The HTMLElement for the calendar
      */
-    hideCalendar(html: HTMLElement) {
+    hideCalendar = () => {
         this.secondDaySelect = false;
-        const cal = <HTMLElement>html.querySelector(".fsc-date-selector-calendar-wrapper");
-        if (cal && !!(cal.offsetWidth || cal.offsetHeight || cal.getClientRects().length)) {
-            cal.style.display = "none";
-            this.callOnDateSelect();
+        const html = document.getElementById(this.id);
+        if (html) {
+            const cal = <HTMLElement>html.querySelector(".fsc-date-selector-calendar-wrapper");
+            if (cal) {
+                cal.style.display = "none";
+                this.callOnDateSelect();
+            }
         }
-    }
+    };
 
     /**
      * If the calendar container div is clicked

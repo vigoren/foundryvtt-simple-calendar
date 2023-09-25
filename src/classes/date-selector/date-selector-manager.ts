@@ -29,6 +29,7 @@ export default class DateSelectorManager {
      */
     static RemoveSelector(id: string) {
         if (Object.prototype.hasOwnProperty.call(this.Selectors, id)) {
+            this.Selectors[id].deactivateListeners();
             delete this.Selectors[id];
         }
     }
@@ -40,6 +41,12 @@ export default class DateSelectorManager {
     static ActivateSelector(id: string) {
         if (Object.prototype.hasOwnProperty.call(this.Selectors, id)) {
             this.Selectors[id].activateListeners();
+        }
+    }
+
+    static DeactivateSelector(id: string) {
+        if (Object.prototype.hasOwnProperty.call(this.Selectors, id)) {
+            this.Selectors[id].deactivateListeners();
         }
     }
 }
