@@ -499,5 +499,7 @@
 	"FSC.Configuration.General.Display.DateFormat.ChatTimeHelp": "Tekst formatu używany do łączenia tekstu wyświetlanego dla znacznika czasu wiadomości czatu.",
 	"FSC.KeyBinding.Toggle.Title": "Przełączanie kalendarza",
 	"FSC.KeyBinding.Toggle.Hint": "Naciśnięcie tego przycisku spowoduje otwarcie lub zamknięcie okna kalendarza.",
-	"FSC.Configuration.General.Display.DateFormat.ChatTime": "Format znacznika czasu wiadomości czatu"
+	"FSC.Configuration.General.Display.DateFormat.ChatTime": "Format znacznika czasu wiadomości czatu",
+	"FSC.Configuration.LeapYear.StartingYear": "Rok początkowy",
+	"FSC.Configuration.LeapYear.StartingYearHelp": "Rok, w którym wystąpił pierwszy rok przestępny. Większość kalendarzy używa wartości 0."
 }

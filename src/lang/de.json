@@ -493,5 +493,13 @@
 	"FSC.Configuration.Client.PersistentOpen.Description": "Diese Einstellung entfernt den Schließen-Knopf vom Kalenderfenster und verhindert, dass es mit der Escape-Taste geschlossen werden kann. Der Knopf unter den Notizen in der linken Toolbar kann dann benutzt werden, um den Kalender zu öffnen und zu schließen.",
 	"FSC.Configuration.Display.DateTimeFormat": "Format Datum/Uhrzeit",
 	"FSC.Configuration.Display.Compact": "Kompaktansichtsoptionen",
-	"FSC.Predefined.Exalted": "Die Hohen"
+	"FSC.Predefined.Exalted": "Die Hohen",
+	"FSC.Configuration.Global.InGameChatTimestamp.Title": "Benutze Spielzeit für Zeitstempel in Chatnachrichten",
+	"FSC.Configuration.Global.InGameChatTimestamp.Description": "Ob die aktuelle Zeit der Spielwelt im Simple Calendar anstatt der Zeit in der echten Welt als sichtbare Zeitstempel in Chatnachrichten erscheinen sollen.",
+	"FSC.Configuration.General.Display.DateFormat.ChatTime": "Zeitstempel-Format in Chatnachrichten",
+	"FSC.Configuration.General.Display.DateFormat.ChatTimeHelp": "Der Format-Text mit dem die Zeitstempel in Chatnachrichten generiert werden.",
+	"FSC.Configuration.LeapYear.StartingYear": "Anfangsjahr",
+	"FSC.Configuration.LeapYear.StartingYearHelp": "Das Jahr in dem das erste Schaltjahr stattfand. Das meisten Kalender werden 0 verwenden.",
+	"FSC.KeyBinding.Toggle.Title": "Kalender an-/ausschalten",
+	"FSC.KeyBinding.Toggle.Hint": "Die Taste, die den Kalender öffnet und schließt."
 }
