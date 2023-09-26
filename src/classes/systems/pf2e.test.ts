@@ -6,10 +6,6 @@ import { jest, beforeEach, describe, expect, test } from "@jest/globals";
 import PF2E from "./pf2e";
 import { LeapYearRules } from "../../constants";
 import Calendar from "../calendar";
-import Ui from "../foundry-interfacing/ui";
-import { SC, updateCalManager, updateSC } from "../index";
-import CalendarManager from "../calendar/calendar-manager";
-import SCController from "../s-c-controller";
 
 describe("Systems/PF2E Class Tests", () => {
     test("Update PF2E Variables", () => {
@@ -144,14 +140,5 @@ describe("Systems/PF2E Class Tests", () => {
         (<Game>game).system.data.version = "3.1.2";
         PF2E.updatePF2EVariables(true);
         expect(PF2E.weekdayAdjust()).toBe(6);
-    });
-
-    test("Update Chat Message Timestamps", () => {
-        updateCalManager(new CalendarManager());
-        updateSC(new SCController());
-        SC.globalConfiguration.inGameChatTimestamp = true;
-        jest.spyOn(Ui, "renderChatLog").mockImplementation(() => {});
-        PF2E.updateChatMessageTimestamps();
-        expect(Ui.renderChatLog).toHaveBeenCalledTimes(1);
     });
 });

@@ -56,4 +56,37 @@ export class ChatTimestamp {
             }
         }
     }
+
+    public static updateChatMessageTimestamps() {
+        const chat = document.getElementById("chat");
+        if (chat) {
+            chat.querySelectorAll("#chat-log .message").forEach((li) => {
+                const message = (<Game>game).messages?.get((<HTMLElement>li).dataset.messageId || "");
+                if (message) {
+                    const formattedDateTime = this.getFormattedChatTimestamp(message);
+                    const foundryTime = li.querySelector(".message-header .message-metadata .message-timestamp");
+                    const stamp = <HTMLElement>li.querySelector(".sc-timestamp");
+                    if (formattedDateTime && foundryTime) {
+                        if (SC.globalConfiguration.inGameChatTimestamp) {
+                            (<HTMLElement>foundryTime).style.display = "none";
+                            if (stamp) {
+                                stamp.innerText = formattedDateTime;
+                            } else {
+                                const newTime = document.createElement("time");
+                                newTime.classList.add("sc-timestamp");
+                                newTime.innerText = formattedDateTime;
+                                foundryTime.after(newTime);
+                            }
+                        } else {
+                            (<HTMLElement>foundryTime).style.display = "";
+                            stamp?.remove();
+                        }
+                    }
+                    if (formattedDateTime && stamp) {
+                        stamp.innerText = formattedDateTime;
+                    }
+                }
+            });
+        }
+    }
 }
