@@ -117,7 +117,7 @@
 	"FSC.Moon.Phase.WaningGibbous": "Lune gibbeuse décroissante",
 	"FSC.Moon.Phase.LastQuarter": "Dernier trimestre",
 	"FSC.Moon.Phase.WaningCrescent": "Lune décroissante",
-	"FSC.Configuration.Title": "Configuration du calendrier",
+	"FSC.Configuration.Title": "Configuration de Simple Calendar",
 	"FSC.Configuration.Description": "Ce formulaire vous permet de personnaliser votre calendrier de jeux en précisant l'année en cours, le nombre de mois, le nom de chaque mois et le nombre de jours de chaque mois.",
 	"FSC.Configuration.Help": "Pour obtenir de l'aide sur la configuration du calendrier, assurez-vous de consulter la <a href='https://github.com/vigoren/foundryvtt-simple-calendar/tree/main/docs/Configuration.md ' target='_blank'>documentation!</a>",
 	"FSC.Configuration.Save": "Enregistrer la configuration",
@@ -203,7 +203,7 @@
 	"FSC.Configuration.Month.NumberHelp": "La représentation numérique de ce mois.",
 	"FSC.Configuration.Month.StartingWeekDay": "Démarre le jour de la semaine",
 	"FSC.Configuration.Month.StartingWeekDayHelp": "Choisissez par quel jour de la semaine ce mois commencera toujours, ou laissez par défaut pour laisser le calendrier déterminer le jour de la semaine approprié.",
-	"FSC.Configuration.Month.Remove": "Supprimer",
+	"FSC.Configuration.Month.Remove": "Retirer",
 	"FSC.Configuration.Month.RemoveAll": "Supprimer tous les mois",
 	"FSC.Configuration.Month.Add": "Ajouter un nouveau mois",
 	"FSC.Configuration.Months": "Mois",
@@ -517,7 +517,7 @@
 	"FSC.Predefined.Exandrian": "Exandrien",
 	"FSC.Predefined.ForbiddenLands": "Terres interdites",
 	"FSC.Configuration.Month.DescriptionField": "Description du mois",
-	"FSC.Configuration.Month.DescriptionHelp": "Une description de la saison pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom de la saison dans la vue principale du calendrier.",
+	"FSC.Configuration.Month.DescriptionHelp": "Une description du mois pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom du mois dans la vue principale du calendrier.",
 	"FSC.Configuration.Season.DescriptionField": "Description de la saison",
 	"FSC.Configuration.Season.DescriptionHelp": "Une description de la saison pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom de la saison dans la vue principale du calendrier.",
 	"FSC.Configuration.Weekday.DescriptionHelp": "Une description du jour de la semaine pour donner plus de saveur à votre calendrier. Ces informations sont visibles lorsqu'un utilisateur clique sur le nom d'un jour de la semaine dans la vue principale du calendrier.",
@@ -552,5 +552,7 @@
 	"FSC.KeyBinding.Toggle.Hint": "Presser cette touche permet d'ouvrir ou de fermer la fenêtre du calendrier.",
 	"FSC.Configuration.Global.InGameChatTimestamp.Title": "Utiliser le Temps de la partie pour horodater les messages de conversation",
 	"FSC.Configuration.General.Display.DateFormat.ChatTimeHelp": "Le format du texte utilisé pour composer l'affichage de l'horodatage d'un message de la conversation.",
-	"FSC.KeyBinding.Toggle.Title": "Activer le calendrier"
+	"FSC.KeyBinding.Toggle.Title": "Activer le calendrier",
+	"FSC.Configuration.LeapYear.StartingYearHelp": "L'année de la première année bissextile. La plupart des calendriers utiliseront 0.",
+	"FSC.Configuration.LeapYear.StartingYear": "Année de démarrage"
 }
