@@ -11,6 +11,15 @@
 - Improved how chat message timestamps are updated for better compatibility with other modules. ([#542](https://github.com/vigoren/foundryvtt-simple-calendar/issues/542))
 - Improved how chat message timestamps are displayed for better compatibility with other modules.([#545](https://github.com/vigoren/foundryvtt-simple-calendar/issues/545))
 
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Jakub](https://weblate.foundryvtt-hub.com/user/Lioheart/) (Polish)
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Martin Matoška](https://weblate.foundryvtt-hub.com/user/Mortan/) (Czech)
+- [Sven Hesse](https://weblate.foundryvtt-hub.com/user/DrMcCoy/) (German)
+
 <hr/>
 
 ## 2.4.0 - Leap Year Starting Year and Bug Fixes
