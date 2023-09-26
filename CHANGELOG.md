@@ -1,13 +1,14 @@
 # Change Log
 
-## 2.4.1 - Bug Fixes
+## 2.4.2 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-September%2025%2C%202023-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.1/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.2/module.zip)
 
 ### Bug Fixes
 
 - Fixed an issue where selecting a date range across multiple months would close the select dialog before the second date could be chosen. ([#547](https://github.com/vigoren/foundryvtt-simple-calendar/issues/547))
+- Improved how chat message timestamps are updated for better compatibility with other modules. ([#542](https://github.com/vigoren/foundryvtt-simple-calendar/issues/542))
 
 <hr/>
 

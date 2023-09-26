@@ -81,8 +81,7 @@ export class ChatTimestamp {
                             (<HTMLElement>foundryTime).style.display = "";
                             stamp?.remove();
                         }
-                    }
-                    if (formattedDateTime && stamp) {
+                    } else if (formattedDateTime && stamp) {
                         stamp.innerText = formattedDateTime;
                     }
                 }
