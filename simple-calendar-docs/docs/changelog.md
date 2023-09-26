@@ -1,5 +1,27 @@
 # Change Log
 
+## 2.4.3 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-September%2025%2C%202023-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.3/module.zip)
+
+### Bug Fixes
+
+- Fixed an issue where selecting a date range across multiple months would close the select dialog before the second date could be chosen. ([#547](https://github.com/vigoren/foundryvtt-simple-calendar/issues/547))
+- Improved how chat message timestamps are updated for better compatibility with other modules. ([#542](https://github.com/vigoren/foundryvtt-simple-calendar/issues/542))
+- Improved how chat message timestamps are displayed for better compatibility with other modules.([#545](https://github.com/vigoren/foundryvtt-simple-calendar/issues/545))
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Jakub](https://weblate.foundryvtt-hub.com/user/Lioheart/) (Polish)
+- [vincent](https://weblate.foundryvtt-hub.com/user/rectulo/) (French)
+- [Martin Matoška](https://weblate.foundryvtt-hub.com/user/Mortan/) (Czech)
+- [Sven Hesse](https://weblate.foundryvtt-hub.com/user/DrMcCoy/) (German)
+
+<hr/>
+
 ## 2.4.0 - Leap Year Starting Year and Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-September%2012%2C%202023-blue)
