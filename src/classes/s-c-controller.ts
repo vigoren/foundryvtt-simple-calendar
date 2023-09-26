@@ -22,7 +22,7 @@ import MultiSelect from "./renderer/multi-select";
 import { GetThemeName } from "./utilities/visual";
 import { FoundryVTTGameData } from "./foundry-interfacing/game-data";
 import { Hook } from "./api/hook";
-import Ui from "./foundry-interfacing/ui";
+import { ChatTimestamp } from "./chat/chat-timestamp";
 
 /**
  * The global Simple Calendar Controller class
@@ -281,7 +281,8 @@ export default class SCController {
                 .then(
                     ((renderChatLog: boolean) => {
                         if (renderChatLog) {
-                            Ui.renderChatLog();
+                            ChatTimestamp.updateChatMessageTimestamps();
+                            //Ui.renderChatLog();
                             GameSockets.emit({ type: SocketTypes.renderChatLog, data: renderChatLog }).catch(Logger.error);
                         }
                         return GameSockets.emit({ type: SocketTypes.mainAppUpdate, data: {} });

@@ -439,7 +439,7 @@ export default class CalendarFull {
         },
         event: Event
     ) {
-        //event.stopPropagation();
+        event.stopPropagation();
         event.preventDefault();
         const calendarElement = document.getElementById(calendarId);
         if (calendarElement) {

@@ -100,4 +100,63 @@ describe("Chat Timestamp Tests", () => {
         expect(cm.getFlag).toHaveBeenCalledTimes(1);
         expect(ts.style.display).toBe("none");
     });
+
+    test("Update Chat Message Timestamps", () => {
+        const chat = document.createElement("div");
+        chat.id = "chat";
+        document.body.append(chat);
+
+        const li = document.createElement("li");
+        li.dataset.messageId = "a";
+        chat.append(li);
+
+        const fTime = document.createElement("time");
+        const scTime = document.createElement("span");
+
+        //@ts-ignore
+        const cqsa = jest.spyOn(chat, "querySelectorAll").mockReturnValue([li]);
+        const liqsa = jest.spyOn(li, "querySelector").mockReturnValue(fTime);
+        //@ts-ignore
+        game.messages = {
+            get: jest.fn((id: string) => {
+                return { id: id };
+            })
+        };
+        jest.spyOn(ChatTimestamp, "getFormattedChatTimestamp").mockReturnValue("test");
+
+        // Show Foundries timestamp
+        ChatTimestamp.updateChatMessageTimestamps();
+        expect(cqsa).toHaveBeenCalledTimes(1);
+        expect(liqsa).toHaveBeenCalledTimes(2);
+        expect(fTime.style.display).toBe("");
+
+        // Create SC timestamp
+        liqsa.mockReturnValueOnce(fTime).mockReturnValueOnce(null);
+        SC.globalConfiguration.inGameChatTimestamp = true;
+        ChatTimestamp.updateChatMessageTimestamps();
+        expect(cqsa).toHaveBeenCalledTimes(2);
+        expect(liqsa).toHaveBeenCalledTimes(4);
+        expect(fTime.style.display).toBe("none");
+
+        // Update SC timestamp
+        liqsa.mockReturnValueOnce(fTime).mockReturnValueOnce(scTime);
+        ChatTimestamp.updateChatMessageTimestamps();
+        expect(cqsa).toHaveBeenCalledTimes(3);
+        expect(liqsa).toHaveBeenCalledTimes(6);
+        expect(fTime.style.display).toBe("none");
+        expect(scTime.innerText).toBe("test");
+
+        // FTime doesn't exist
+        liqsa.mockReturnValueOnce(null).mockReturnValueOnce(scTime);
+        ChatTimestamp.updateChatMessageTimestamps();
+        expect(cqsa).toHaveBeenCalledTimes(4);
+        expect(liqsa).toHaveBeenCalledTimes(8);
+        expect(scTime.innerText).toBe("test");
+
+        //No dataset id
+        li.dataset.messageId = "";
+        ChatTimestamp.updateChatMessageTimestamps();
+        expect(cqsa).toHaveBeenCalledTimes(5);
+        expect(liqsa).toHaveBeenCalledTimes(10);
+    });
 });

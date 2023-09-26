@@ -194,6 +194,7 @@ export default class ConfigurationApp extends FormApplication {
             DateSelectorManager.RemoveSelector(`sc_season_start_date_${s.id}`);
             DateSelectorManager.RemoveSelector(`sc_season_sunrise_time_${s.id}`);
         });
+        DateSelectorManager.DeactivateSelector("quick-setup-predefined-calendar");
         this.appWindow = null;
         return super.close(options);
     }

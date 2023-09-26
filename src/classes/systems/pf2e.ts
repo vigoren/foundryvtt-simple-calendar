@@ -4,7 +4,7 @@ import Calendar from "../calendar";
 import { compareSemanticVersions } from "../utilities/string";
 import { FoundryVTTGameData } from "../foundry-interfacing/game-data";
 import { SC } from "../index";
-import Ui from "../foundry-interfacing/ui";
+import { Chat } from "../chat";
 
 /**
  * System specific functionality for Pathfinder 2E
@@ -145,15 +145,5 @@ export default class PF2E {
             }
         }
         return adjust;
-    }
-
-    /**
-     * For every chat message update the timestamp if the Use Game Time For Chat Message Timestamps setting is enabled
-     * This is because chat messages are created before the PF2E world clock is initialized so we need to update them after the fact
-     */
-    public static updateChatMessageTimestamps() {
-        if (SC.globalConfiguration.inGameChatTimestamp) {
-            Ui.renderChatLog();
-        }
     }
 }

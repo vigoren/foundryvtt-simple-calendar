@@ -1,6 +1,6 @@
 import SocketBase from "./socket-base";
 import { SocketTypes } from "../../constants";
-import Ui from "../foundry-interfacing/ui";
+import { ChatTimestamp } from "../chat/chat-timestamp";
 
 export default class RenderChatLogSocket extends SocketBase {
     constructor() {
@@ -10,7 +10,7 @@ export default class RenderChatLogSocket extends SocketBase {
     async process(data: SimpleCalendar.SimpleCalendarSocket.Data): Promise<boolean> {
         if (data.type === SocketTypes.renderChatLog) {
             if (<boolean>data.data) {
-                Ui.renderChatLog();
+                ChatTimestamp.updateChatMessageTimestamps();
             }
             return true;
         }

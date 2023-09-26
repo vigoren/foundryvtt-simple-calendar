@@ -28,6 +28,7 @@ import { CheckRemScaling } from "./classes/utilities/visual";
 import { Hook } from "./classes/api/hook";
 import KeyBindings from "./classes/key-bindings";
 import { Chat } from "./classes/chat";
+import { ChatTimestamp } from "./classes/chat/chat-timestamp";
 
 updateCalManager(new CalendarManager());
 updateSC(new SCController());
@@ -63,7 +64,7 @@ Hooks.on("init", async () => {
 Hooks.on("ready", async () => {
     if (PF2E.isPF2E) {
         PF2E.updatePF2EVariables(true);
-        PF2E.updateChatMessageTimestamps();
+        ChatTimestamp.updateChatMessageTimestamps();
     }
     MigrationApplication.initialize();
     //Check to see if we need to run a migration, if we do show the migration dialog otherwise show the main app
