@@ -1,6 +1,6 @@
 {
 	"FSC.Configuration.Global.SyncCalendars.Description": "Zaznaczenie tej opcji spowoduje, że przy użyciu przycisków zmiany daty/czasu do przodu lub do tyłu zmiana dotknie wszystkich wszystkie kalendarzy.",
-	"FSC.AddNewCalendar": "Dodaj Nowy Kalendarz",
+	"FSC.AddNewCalendar": "Dodaj nowy kalendarz",
 	"FSC.ApplyPredefined": "Zastosować Predefiniowaną Konfigurację?",
 	"FSC.Calendar": "Kalendarz",
 	"FSC.CalendarConfiguration": "Konfiguracja Kalendarza",
