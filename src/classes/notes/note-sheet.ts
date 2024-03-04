@@ -507,7 +507,7 @@ export class NoteSheet extends JournalSheet {
                 //---------------------
                 // Input Changes
                 //---------------------
-                this.appWindow.querySelectorAll("input, select").forEach((e) => {
+                this.appWindow.querySelectorAll("input:not(.fsc-dont-select), select:not(.fsc-dont-select)").forEach((e) => {
                     e.addEventListener("change", this.inputChange.bind(this));
                 });
                 //---------------------
