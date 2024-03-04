@@ -522,6 +522,7 @@ describe("Calendar Class Tests", () => {
         expect(tCal.months[1].days[0].selected).toBe(false);
         expect(tCal.months[1].days[1].selected).toBe(true);
 
+        tCal.year.numericRepresentation = 2021;
         tCal.changeDay(27);
         expect(tCal.months[1].days[1].current).toBe(false);
         expect(tCal.months[2].days[0].current).toBe(true);
@@ -537,10 +538,11 @@ describe("Calendar Class Tests", () => {
     });
 
     test("Change Day Bulk", () => {
-        const d = new Date();
+        const d = new Date(2021, 0, 1, 0, 0, 0, 0);
         tCal.resetMonths();
         tCal.months[0].current = true;
         tCal.months[0].days[0].current = true;
+        tCal.year.numericRepresentation = 2021;
 
         tCal.changeDayBulk(1);
         expect(tCal.months[0].days[1].current).toBe(true);
@@ -550,7 +552,7 @@ describe("Calendar Class Tests", () => {
         expect(tCal.months[0].days[1].current).toBe(true);
         expect(tCal.year.numericRepresentation).toBe(d.getFullYear() + 1);
 
-        tCal.changeDayBulk(367);
+        tCal.changeDayBulk(366);
         expect(tCal.months[0].days[2].current).toBe(true);
         expect(tCal.year.numericRepresentation).toBe(d.getFullYear() + 2);
     });
