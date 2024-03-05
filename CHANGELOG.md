@@ -1,15 +1,16 @@
 # Change Log
 
-## 2.4.6 - Bug Fixes
+## 2.4.7 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-March%2008%2C%202024-blue)
-![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.6/module.zip)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.7/module.zip)
 
 ### Bug Fixes
 
 - Fixed an issue with scrollbars not displaying as intended on newer browsers.
 - Fixed a bug where opening the calendar interface through the Foundry Module Settings window would not update the date/time when advanced. ([#576](https://github.com/vigoren/foundryvtt-simple-calendar/issues/576))
 - Fixed a bug where changing the year in the date selector for notes would do nothing. ([#569](https://github.com/vigoren/foundryvtt-simple-calendar/issues/569))
+- Fixed a bug in certain systems errors would be thrown when setting the timestamp of chat messages. ([#582](https://github.com/vigoren/foundryvtt-simple-calendar/issues/582))
 
 ### Translation Updates
 
