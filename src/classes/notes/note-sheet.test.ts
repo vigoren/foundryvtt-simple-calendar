@@ -93,7 +93,7 @@ describe("Note Sheet Class Tests", () => {
         //@ts-ignore
         ns.journalData.flags = {};
         //@ts-ignore
-        ns.journalData.ownership = {};
+        ns.journalData.ownership = { "": 3, a: 0, default: 0 };
     });
 
     beforeAll(() => {
@@ -221,11 +221,15 @@ describe("Note Sheet Class Tests", () => {
         je.pages.contents[0].video.timestamp = 666;
         ns.copyData();
         //@ts-ignore
+        ns.journalData.ownership = { "": 3, a: 0, default: 0 };
+        //@ts-ignore
         ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [] } } };
         expect(await ns.getData()).toBeDefined();
         //Image page
         je.pages.contents[0].type = "image";
         ns.copyData();
+        //@ts-ignore
+        ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
         ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [] } } };
         expect(await ns.getData()).toBeDefined();
@@ -233,11 +237,15 @@ describe("Note Sheet Class Tests", () => {
         je.pages.contents[0].type = "pdf";
         ns.copyData();
         //@ts-ignore
+        ns.journalData.ownership = { "": 3, a: 0, default: 0 };
+        //@ts-ignore
         ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [] } } };
         expect(await ns.getData()).toBeDefined();
         //Video page
         je.pages.contents[0].type = "video";
         ns.copyData();
+        //@ts-ignore
+        ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
         ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "", remindUsers: [] } } };
         expect(await ns.getData()).toBeDefined();
@@ -594,6 +602,11 @@ describe("Note Sheet Class Tests", () => {
         expect(ns.journalData.ownership["default"]).toBe(2);
         //@ts-ignore
         expect(ns.journalData.ownership[""]).toBe(2);
+
+        jest.spyOn(ns, "writeInputValuesToObjects").mockImplementation(async () => {
+            return Promise.reject();
+        });
+        ns.multiSelectOptionChange("scUserPermissions_undefined", "default", true);
     });
 
     test("Update Note Repeat Dropdown", () => {
