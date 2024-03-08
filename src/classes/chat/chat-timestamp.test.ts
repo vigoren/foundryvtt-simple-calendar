@@ -40,6 +40,7 @@ describe("Chat Timestamp Tests", () => {
 
     test("Add Game Time To Message", () => {
         const cm = {
+            isOwner: true,
             setFlag: jest.fn((mn: string, key: string, data: any) => {
                 cm.flags[mn] = {};
                 cm.flags[mn][key] = data;
@@ -61,6 +62,11 @@ describe("Chat Timestamp Tests", () => {
             return Promise.reject();
         });
 
+        //@ts-ignore
+        ChatTimestamp.addGameTimeToMessage(cm);
+        expect(cm.setFlag).toHaveBeenCalledTimes(1);
+
+        cm.isOwner = false;
         //@ts-ignore
         ChatTimestamp.addGameTimeToMessage(cm);
         expect(cm.setFlag).toHaveBeenCalledTimes(1);

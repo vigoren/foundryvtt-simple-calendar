@@ -1,5 +1,22 @@
 # Change Log
 
+## 2.4.9 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-March%2008%2C%202024-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.9/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where other players would see an error message when a new message was sent in chat. ([#584](https://github.com/vigoren/foundryvtt-simple-calendar/issues/584))
+
+### Translation Updates
+
+- [Martin Matoška](https://weblate.foundryvtt-hub.com/user/Mortan/) (Czech)
+- [Michal Kolodziejczyk](https://weblate.foundryvtt-hub.com/user/wujewski/) (Polish)
+- [Lucas](https://weblate.foundryvtt-hub.com/user/lucasts/) (Portuguese (Brazil))
+
+<hr/>
+
 ## 2.4.8 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-March%2007%2C%202024-blue)
