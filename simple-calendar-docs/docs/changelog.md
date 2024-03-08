@@ -21,6 +21,8 @@ Thank you to the follow people for making updates to Simple Calendars translatio
 - [Michal Kolodziejczyk](https://weblate.foundryvtt-hub.com/user/wujewski/) (Polish)
 - [Lucas](https://weblate.foundryvtt-hub.com/user/lucasts/) (Portuguese (Brazil))
 
+<hr/>
+
 ## 2.4.3 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-September%2025%2C%202023-blue)
