@@ -595,9 +595,13 @@ describe("API Class Tests", () => {
         expect(MainApplication.render).toHaveBeenCalledTimes(1);
         expect(MainApplication.updateApp).toHaveBeenCalledTimes(4);
 
-        API.showCalendar({ year: 2020, month: -1, day: -1 });
+        API.showCalendar({ year: 2021, month: -1, day: -1 });
         expect(MainApplication.render).toHaveBeenCalledTimes(1);
         expect(MainApplication.updateApp).toHaveBeenCalledTimes(6);
+
+        API.showCalendar({ year: 2020, month: -1, day: -1 });
+        expect(MainApplication.render).toHaveBeenCalledTimes(1);
+        expect(MainApplication.updateApp).toHaveBeenCalledTimes(8);
     });
 
     test("Start Clock", () => {

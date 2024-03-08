@@ -365,16 +365,18 @@ export class NoteSheet extends JournalSheet {
                         return {
                             text: u.name || "",
                             value: u.id,
-                            selected: noteStub.ownership[u.id] !== 0 && this.object.testUserPermission(u, 2),
+                            selected: this.journalData.ownership[u.id] !== 0,
                             static: u.id === (<Game>game).user?.id,
-                            disabled: u.id === (<Game>game).user?.id || noteStub.ownership["default"] >= 2
+                            disabled:
+                                u.id === (<Game>game).user?.id ||
+                                (this.journalData.ownership["default"] !== undefined && this.journalData.ownership["default"] >= 2)
                         };
                     });
                     newOptions.edit.users.unshift({
                         text: GameSettings.Localize("FSC.Notes.Permissions.AllPlayers"),
                         value: "default",
                         makeOthersMatch: true,
-                        selected: noteStub.ownership["default"] !== undefined && noteStub.ownership["default"] !== 0,
+                        selected: this.journalData.ownership["default"] !== undefined && this.journalData.ownership["default"] !== 0,
                         disabled: false
                     });
                 }
@@ -507,7 +509,7 @@ export class NoteSheet extends JournalSheet {
                 //---------------------
                 // Input Changes
                 //---------------------
-                this.appWindow.querySelectorAll("input, select").forEach((e) => {
+                this.appWindow.querySelectorAll("input:not(.fsc-dont-select), select:not(.fsc-dont-select)").forEach((e) => {
                     e.addEventListener("change", this.inputChange.bind(this));
                 });
                 //---------------------
@@ -780,6 +782,7 @@ export class NoteSheet extends JournalSheet {
                 }
                 this.dirty = true;
             }
+            this.writeInputValuesToObjects().catch((e) => console.error(e));
         }
     }
 
@@ -822,6 +825,7 @@ export class NoteSheet extends JournalSheet {
     async writeInputValuesToObjects() {
         let render = false;
         if (this.appWindow) {
+            console.log("writeInputValuesToObjects");
             this.journalData.name = getTextInputValue(".fsc-note-title", "New Note", this.appWindow);
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats = <NoteRepeat>(
                 getNumericInputValue(`#scNoteRepeats_${this.object.id}`, NoteRepeat.Never, false, this.appWindow)

@@ -41,7 +41,8 @@ describe("Chat Timestamp Tests", () => {
     test("Add Game Time To Message", () => {
         const cm = {
             setFlag: jest.fn((mn: string, key: string, data: any) => {
-                cm.flags[key] = data;
+                cm.flags[mn] = {};
+                cm.flags[mn][key] = data;
                 return Promise.resolve();
             }),
             flags: <Record<string, any>>{},
@@ -53,8 +54,16 @@ describe("Chat Timestamp Tests", () => {
         //@ts-ignore
         ChatTimestamp.addGameTimeToMessage(cm);
 
-        expect(cm.updateSource).toHaveBeenCalledTimes(1);
+        expect(cm.setFlag).toHaveBeenCalledTimes(1);
         expect(cm.flags["foundryvtt-simple-calendar"]["sc-timestamps"]).toEqual({ id: "a", timestamp: tCal.toSeconds() });
+
+        cm.setFlag = jest.fn(() => {
+            return Promise.reject();
+        });
+
+        //@ts-ignore
+        ChatTimestamp.addGameTimeToMessage(cm);
+        expect(cm.setFlag).toHaveBeenCalledTimes(1);
     });
 
     test("Get Formatted Chat Timestamp", () => {

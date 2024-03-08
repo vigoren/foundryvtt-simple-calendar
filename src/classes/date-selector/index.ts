@@ -541,7 +541,7 @@ export class DateSelector {
             this.selectedDate.visible.year = options.date.year;
             this.selectedDate.visible.month = options.date.month;
         }
-        this.activateListeners(null, false, false);
+        this.update(false);
         if (this.showTimeSelector) {
             Renderer.TimeSelector.HideTimeDropdown(this.timeSelectorId);
         }
@@ -555,7 +555,7 @@ export class DateSelector {
         if (options.date) {
             this.selectedDate.visible.year = options.date.year;
         }
-        this.activateListeners(null, false, false);
+        this.update(false);
         if (this.showTimeSelector) {
             Renderer.TimeSelector.HideTimeDropdown(this.timeSelectorId);
         }

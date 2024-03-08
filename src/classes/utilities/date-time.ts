@@ -63,12 +63,12 @@ export function FormatDateTime(date: SimpleCalendar.DateTime, mask: string, cale
         },
         YY: (dateObj: SimpleCalendar.DateTime) => {
             return inputs.year
-                ? `<input type="number" style="width:4ch;" value="${PadNumber(dateObj.year, 2).substring(2)}" />`
+                ? `<input type="number" class="fsc-dont-select" style="width:4ch;" value="${PadNumber(dateObj.year, 2).substring(2)}" />`
                 : PadNumber(dateObj.year, 2).substring(2);
         },
         YYYY: (dateObj: SimpleCalendar.DateTime) => {
             return inputs.year
-                ? `<input type="number" style="width:${String(dateObj.year).length + 2}ch;" value="${dateObj.year}" />`
+                ? `<input type="number" class="fsc-dont-select" style="width:${String(dateObj.year).length + 2}ch;" value="${dateObj.year}" />`
                 : String(dateObj.year);
         },
         H: (dateObj: SimpleCalendar.DateTime) => {

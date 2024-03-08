@@ -1,5 +1,6 @@
 @mixin scrollbar(){
-  scrollbar-color: var(--scrollbar-background-color), var(--scrollbar-track-bg-color);
+  scrollbar-color: var(--scrollbar-background-color) var(--scrollbar-track-bg-color);
+  scrollbar-width: thin;
 
   &::-webkit-scrollbar{
     width: 6px;

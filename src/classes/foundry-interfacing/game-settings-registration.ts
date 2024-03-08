@@ -3,8 +3,8 @@ import ConfigurationApp from "../applications/configuration-app";
 import { CalManager, SC } from "../index";
 import { GameSettings } from "./game-settings";
 import SCController from "../s-c-controller";
-import MainApp from "../applications/main-app";
 import { GetThemeList } from "../utilities/visual";
+import MainAppConfigWrapper from "../applications/main-app-config-wrapper";
 
 export default class GameSettingsRegistration {
     /**
@@ -155,7 +155,7 @@ export default class GameSettingsRegistration {
             label: "FSC.Title",
             hint: "",
             icon: "fa fa-calendar",
-            type: MainApp
+            type: MainAppConfigWrapper
         });
         (<Game>game).settings.registerMenu(ModuleName, SettingNames.CalendarConfigurationMenu, {
             name: "",

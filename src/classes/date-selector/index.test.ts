@@ -302,30 +302,30 @@ describe("Date Selector Class Tests", () => {
     });
 
     test("Change Month Click", () => {
-        jest.spyOn(ds, "activateListeners").mockImplementation(() => {});
+        jest.spyOn(ds, "update").mockImplementation(() => {});
         jest.spyOn(Renderer.TimeSelector, "HideTimeDropdown").mockImplementation(() => {});
 
         ds.changeMonthClick(CalendarClickEvents.next, { id: "", date: { year: 0, month: 0, day: 0 } });
-        expect(ds.activateListeners).toHaveBeenCalledTimes(1);
+        expect(ds.update).toHaveBeenCalledTimes(1);
         expect(Renderer.TimeSelector.HideTimeDropdown).not.toHaveBeenCalled();
 
         ds.showTimeSelector = true;
         ds.changeMonthClick(CalendarClickEvents.next, { id: "", date: { year: 0, month: 0, day: 0 } });
-        expect(ds.activateListeners).toHaveBeenCalledTimes(2);
+        expect(ds.update).toHaveBeenCalledTimes(2);
         expect(Renderer.TimeSelector.HideTimeDropdown).toHaveBeenCalledTimes(1);
     });
 
     test("Change Year", () => {
-        jest.spyOn(ds, "activateListeners").mockImplementation(() => {});
+        jest.spyOn(ds, "update").mockImplementation(() => {});
         jest.spyOn(Renderer.TimeSelector, "HideTimeDropdown").mockImplementation(() => {});
 
         ds.changeYear({ id: "", date: { year: 0, month: 0, day: 0 } });
-        expect(ds.activateListeners).toHaveBeenCalledTimes(1);
+        expect(ds.update).toHaveBeenCalledTimes(1);
         expect(Renderer.TimeSelector.HideTimeDropdown).not.toHaveBeenCalled();
 
         ds.showTimeSelector = true;
         ds.changeYear({ id: "", date: { year: 0, month: 0, day: 0 } });
-        expect(ds.activateListeners).toHaveBeenCalledTimes(2);
+        expect(ds.update).toHaveBeenCalledTimes(2);
         expect(Renderer.TimeSelector.HideTimeDropdown).toHaveBeenCalledTimes(1);
     });
 
