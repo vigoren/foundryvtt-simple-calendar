@@ -2,7 +2,7 @@
 
 ## 2.4.8 - Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-March%2008%2C%202024-blue)
+![](https://img.shields.io/badge/release%20date-March%2007%2C%202024-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.8/module.zip)
 
 ### Bug Fixes
