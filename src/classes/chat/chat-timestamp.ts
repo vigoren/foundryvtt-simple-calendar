@@ -5,7 +5,7 @@ import PF2E from "../systems/pf2e";
 
 export class ChatTimestamp {
     public static addGameTimeToMessage(chatMessage: ChatMessage) {
-        if (chatMessage.isOwner) {
+        if (chatMessage.isAuthor) {
             const cal = CalManager.getActiveCalendar();
             const flagData: { id: string; timestamp: number } = {
                 id: cal.id,

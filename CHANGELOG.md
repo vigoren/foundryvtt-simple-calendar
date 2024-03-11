@@ -1,5 +1,20 @@
 # Change Log
 
+## 2.4.11 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-March%2009%2C%202024-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.11/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where the in game timestamp would not be applied to chat messages if a GM was not logged in.
+
+### API Changes
+
+- Adjusted how Simple Calendar toggles between the compact and full view. Before the minimize/maximize functionality was hijacked to toggle between the two views. This caused issues where other modules would want to minimize all windows for a user to perform an action then maximize all windows back. This change allows the minimize/maximize functions to work as intended. Users are still able to double click on the application header to toggle between the compact and full views. ([#577](https://github.com/vigoren/foundryvtt-simple-calendar/issues/577))
+
+<hr/>
+
 ## 2.4.9 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-March%2008%2C%202024-blue)

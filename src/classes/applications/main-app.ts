@@ -276,31 +276,79 @@ export default class MainApp extends FormApplication {
         return Promise.resolve();
     }
 
-    /**
-     * Overwrite the minimization function to reduce the calendar down to the compact form
-     * If the calendar is already in the compact form, restore to the full form
-     */
-    async minimize() {
+    toggleCompactView(event: Event) {
+        event.preventDefault();
+        event.stopPropagation();
         this.uiElementStates.compactView = !this.uiElementStates.compactView;
         this.visibleCalendar.resetMonths("selected");
         this.hideDrawers();
         this.render(true);
-        return Promise.resolve();
     }
 
-    /**
-     * Overwrite the maximize function to set the calendar to its full form
-     */
-    async maximize() {
-        if (!this.popOut || [false, null].includes(this._minimized)) return;
+    _activateHeaderButtons(
+        html: JQuery,
+        windowData: { id: string; classes: string; appId: number; title: string; headerButtons: Application.HeaderButton[] }
+    ) {
+        // FoundryUpdate: This is ripped from foundry's code and will need to be updated if foundry changes it. This is a nested function from _renderOuter not its own function
+        html[0].querySelectorAll(".header-button").forEach((b) => {
+            b.addEventListener("click", (event) => {
+                event.preventDefault();
+                const currentTarget = <HTMLElement>event.currentTarget;
+                if (currentTarget) {
+                    const button = windowData.headerButtons.find((b) => currentTarget.classList.contains(b.class));
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    //@ts-ignore
+                    button?.onclick(event);
+                }
+            });
+        });
+    }
+
+    protected async _renderOuter(): Promise<JQuery> {
+        // FoundryUpdate: This is ripped from foundry's code and will need to be updated if foundry changes it
+        // Gather basic application data
+        const classes = this.options.classes;
+        const windowData = {
+            id: this.id,
+            classes: classes.join(" "),
+            appId: this.appId,
+            title: this.title,
+            headerButtons: this._getHeaderButtons()
+        };
+
+        // Render the template and return the promise
+        const template = await renderTemplate("templates/app-window.html", windowData);
+        let html = $(template);
+
+        // Activate header button click listeners after a slight timeout to prevent immediate interaction
+        setTimeout(this._activateHeaderButtons.bind(this, html, windowData), 500);
+
+        // Make the outer window draggable
+        const header = html.find("header")[0];
+        new Draggable(this, html, header, this.options.resizable);
+        const drag = new Draggable(this, html, header, this.options.resizable);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        if ((<Game>game).release.generation < 11) {
-            this.uiElementStates.compactView = false;
+        drag.handlers["dragMove"] = [(<Game>game).release.generation < 11 ? "mousemove" : "pointermove", this.appDragMove.bind(drag), false];
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        drag.handlers["dragUp"] = [(<Game>game).release.generation < 11 ? "mouseup" : "pointerup", this.appDragEnd.bind(drag), false];
+
+        // Make the outer window minimizable
+        if (this.options.minimizable) {
+            header.addEventListener("dblclick", this.toggleCompactView.bind(this));
         }
-        this.hideDrawers();
-        this.render(true);
-        return Promise.resolve();
+
+        // Set the outer frame z-index
+        if (Object.keys(ui.windows).length === 0) _maxZ = 100 - 1;
+        this.position.zIndex = Math.min(++_maxZ, 9999);
+        html.css({ zIndex: this.position.zIndex });
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        ui.activeWindow = this;
+
+        // Return the outer frame
+        return html;
     }
 
     /**
@@ -521,17 +569,6 @@ export default class MainApp extends FormApplication {
 
         const appWindow = document.getElementById(MainApp.appWindowId);
         if (appWindow) {
-            //Window Drag Listener
-            const header = appWindow.querySelector("header");
-            if (header) {
-                const drag = new Draggable(this, jQuery(appWindow), header, this.options.resizable);
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-ignore
-                drag.handlers["dragMove"] = [(<Game>game).release.generation < 11 ? "mousemove" : "pointermove", this.appDragMove.bind(drag), false];
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-ignore
-                drag.handlers["dragUp"] = [(<Game>game).release.generation < 11 ? "mouseup" : "pointerup", this.appDragEnd.bind(drag), false];
-            }
             // Click anywhere in the app
             appWindow.addEventListener("click", this.toggleUnitSelector.bind(this, true));
             if (this.uiElementStates.compactView) {
