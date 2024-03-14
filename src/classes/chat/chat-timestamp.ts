@@ -5,16 +5,15 @@ import PF2E from "../systems/pf2e";
 
 export class ChatTimestamp {
     public static addGameTimeToMessage(chatMessage: ChatMessage) {
-        if (chatMessage.isOwner) {
+        if (chatMessage.isAuthor) {
             const cal = CalManager.getActiveCalendar();
             const flagData: { id: string; timestamp: number } = {
                 id: cal.id,
                 timestamp: cal.toSeconds()
             };
-            chatMessage.setFlag(ModuleName, "sc-timestamps", flagData).catch((e) => {
-                console.error(e);
-            });
+            return chatMessage.setFlag(ModuleName, "sc-timestamps", flagData);
         }
+        return Promise.resolve();
     }
 
     public static getFormattedChatTimestamp(chatMessage: ChatMessage) {
@@ -49,6 +48,7 @@ export class ChatTimestamp {
                 }
             }
         }
+        return Promise.resolve();
     }
 
     public static updateChatMessageTimestamps() {

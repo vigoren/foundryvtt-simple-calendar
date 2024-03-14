@@ -161,26 +161,58 @@ describe("Main App Class Tests", () => {
         ma.close();
     });
 
-    test("minimize", async () => {
-        await ma.minimize();
+    test("Toggle Compact View", () => {
+        const event = new Event("click");
+        ma.toggleCompactView(event);
         expect(ma.uiElementStates.compactView).toBe(true);
+        ma.toggleCompactView(event);
+        expect(ma.uiElementStates.compactView).toBe(false);
     });
 
-    test("maximize", async () => {
-        ma.options.popOut = true;
-        await ma.maximize();
-        expect(ma.uiElementStates.compactView).toBe(false);
+    test("_ Activate Header Buttons", () => {
+        const button = document.createElement("a");
+        const jquery = [
+            {
+                querySelectorAll: jest.fn().mockReturnValue([button])
+            }
+        ];
+        //@ts-ignore
+        ma._activateHeaderButtons(jquery, { headerButtons: ["test"] });
+        expect(jquery[0].querySelectorAll).toHaveBeenCalledTimes(1);
+        //@ts-ignore
+        button.click();
+    });
+
+    test("_ Render Outer", async () => {
+        const header = document.createElement("div");
+        const jquery = {
+            find: () => {
+                return [header];
+            },
+            css: jest.fn()
+        };
+        //@ts-ignore
+        global.$ = jest.fn().mockReturnValue(jquery);
+        //@ts-ignore
+        global.renderTemplate = jest.fn().mockReturnValue(null);
+
+        ma.options["classes"] = [];
+        //@ts-ignore
+        ma.position = { zIndex: 1 };
+        //@ts-ignore
+        await ma._renderOuter();
+        //@ts-ignore
+        expect(global.$).toHaveBeenCalledTimes(1);
+        expect(global.renderTemplate).toHaveBeenCalledTimes(1);
+        expect(jquery.css).toHaveBeenCalledTimes(1);
+
         //@ts-ignore
         game.release.generation = 10;
-        await ma.maximize();
-        expect(ma.uiElementStates.compactView).toBe(false);
-
+        ma.options["minimizable"] = true;
+        //@ts-ignore
+        await ma._renderOuter();
         //@ts-ignore
         game.release.generation = 11;
-
-        ma.options.popOut = false;
-        await ma.maximize();
-        expect(ma.uiElementStates.compactView).toBe(false);
     });
 
     test("Set Width Height", () => {

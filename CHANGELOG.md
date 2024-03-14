@@ -1,5 +1,27 @@
 # Change Log
 
+## 2.4.12 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-March%2009%2C%202024-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.12/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where the in game timestamp would not be applied to chat messages if a GM was not logged in.
+- Fixed a bug where chat messages would be duplicated in some instances. ([#588](https://github.com/vigoren/foundryvtt-simple-calendar/issues/588))
+
+### API Changes
+
+- Adjusted how Simple Calendar toggles between the compact and full view. Before the minimize/maximize functionality was hijacked to toggle between the two views. This caused issues where other modules would want to minimize all windows for a user to perform an action then maximize all windows back. This change allows the minimize/maximize functions to work as intended. Users are still able to double click on the application header to toggle between the compact and full views. ([#577](https://github.com/vigoren/foundryvtt-simple-calendar/issues/577))
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [hmqgg](https://weblate.foundryvtt-hub.com/user/hmqgg/) (Chinese (Simplified))
+
+<hr/>
+
 ## 2.4.9 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-March%2008%2C%202024-blue)
@@ -10,6 +32,8 @@
 - Fixed a bug where other players would see an error message when a new message was sent in chat. ([#584](https://github.com/vigoren/foundryvtt-simple-calendar/issues/584))
 
 ### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
 
 - [Martin Matoška](https://weblate.foundryvtt-hub.com/user/Mortan/) (Czech)
 - [Michal Kolodziejczyk](https://weblate.foundryvtt-hub.com/user/wujewski/) (Polish)

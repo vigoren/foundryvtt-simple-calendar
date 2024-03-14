@@ -12,11 +12,10 @@ export class Chat {
         ChatMessage.prototype.export = new Proxy(ChatMessage.prototype.export, handler);
     }
     public static createChatMessage(chatMessage: ChatMessage) {
-        ChatTimestamp.addGameTimeToMessage(chatMessage);
-        return true;
+        return ChatTimestamp.addGameTimeToMessage(chatMessage);
     }
 
     public static onRenderChatMessage(chatMessage: ChatMessage, html: JQuery) {
-        ChatTimestamp.renderTimestamp(chatMessage, html);
+        return ChatTimestamp.renderTimestamp(chatMessage, html);
     }
 }
