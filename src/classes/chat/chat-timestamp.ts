@@ -11,10 +11,9 @@ export class ChatTimestamp {
                 id: cal.id,
                 timestamp: cal.toSeconds()
             };
-            chatMessage.setFlag(ModuleName, "sc-timestamps", flagData).catch((e) => {
-                console.error(e);
-            });
+            return chatMessage.setFlag(ModuleName, "sc-timestamps", flagData);
         }
+        return Promise.resolve();
     }
 
     public static getFormattedChatTimestamp(chatMessage: ChatMessage) {
@@ -49,6 +48,7 @@ export class ChatTimestamp {
                 }
             }
         }
+        return Promise.resolve();
     }
 
     public static updateChatMessageTimestamps() {

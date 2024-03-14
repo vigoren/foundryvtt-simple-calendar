@@ -16,28 +16,32 @@ describe("Chat Tests", () => {
         expect(message).toContain("Game Time:");
     });
 
-    test("Create Chat Message", () => {
+    test("Create Chat Message", async () => {
         let cm = {};
-        jest.spyOn(ChatTimestamp, "addGameTimeToMessage").mockImplementation(() => {});
-
+        jest.spyOn(ChatTimestamp, "addGameTimeToMessage").mockImplementation(async () => {
+            return <ChatMessage>cm;
+        });
         //@ts-ignore
-        expect(Chat.createChatMessage(cm, {}, "")).toBe(true);
+        let rcm = await Chat.createChatMessage(cm);
+        //@ts-ignore
+        expect(rcm).toBe(cm);
         expect(ChatTimestamp.addGameTimeToMessage).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         game.user.isGM = true;
         //@ts-ignore
-        expect(Chat.createChatMessage(cm, {}, "")).toBe(true);
+        rcm = await Chat.createChatMessage(cm, {}, "");
+        expect(rcm).toBe(cm);
         expect(ChatTimestamp.addGameTimeToMessage).toHaveBeenCalledTimes(2);
     });
 
-    test("On Render Chat Message", () => {
+    test("On Render Chat Message", async () => {
         const fQuery = {};
         let cm = {};
-        jest.spyOn(ChatTimestamp, "renderTimestamp").mockImplementation(() => {});
+        jest.spyOn(ChatTimestamp, "renderTimestamp").mockImplementation(async () => {});
 
         //@ts-ignore
-        Chat.onRenderChatMessage(cm, fQuery, {});
+        await Chat.onRenderChatMessage(cm, fQuery, {});
         expect(ChatTimestamp.renderTimestamp).toHaveBeenCalledTimes(1);
     });
 });

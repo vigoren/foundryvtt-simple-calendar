@@ -38,7 +38,7 @@ describe("Chat Timestamp Tests", () => {
         await PredefinedCalendar.setToPredefined(tCal, PredefinedCalendars.Gregorian);
     });
 
-    test("Add Game Time To Message", () => {
+    test("Add Game Time To Message", async () => {
         const cm = {
             isAuthor: true,
             setFlag: jest.fn((mn: string, key: string, data: any) => {
@@ -53,22 +53,14 @@ describe("Chat Timestamp Tests", () => {
         };
 
         //@ts-ignore
-        ChatTimestamp.addGameTimeToMessage(cm);
+        await ChatTimestamp.addGameTimeToMessage(cm);
 
         expect(cm.setFlag).toHaveBeenCalledTimes(1);
         expect(cm.flags["foundryvtt-simple-calendar"]["sc-timestamps"]).toEqual({ id: "a", timestamp: tCal.toSeconds() });
 
-        cm.setFlag = jest.fn(() => {
-            return Promise.reject();
-        });
-
-        //@ts-ignore
-        ChatTimestamp.addGameTimeToMessage(cm);
-        expect(cm.setFlag).toHaveBeenCalledTimes(1);
-
         cm.isAuthor = false;
         //@ts-ignore
-        ChatTimestamp.addGameTimeToMessage(cm);
+        await ChatTimestamp.addGameTimeToMessage(cm);
         expect(cm.setFlag).toHaveBeenCalledTimes(1);
     });
 
@@ -92,7 +84,7 @@ describe("Chat Timestamp Tests", () => {
         expect(cm.getFlag).toHaveBeenCalledTimes(2);
     });
 
-    test("Render Timestamp", () => {
+    test("Render Timestamp", async () => {
         const cm = {
             setFlag: jest.fn((mn: string, key: string, data: any) => {
                 cm.flags[key] = data;
@@ -111,7 +103,7 @@ describe("Chat Timestamp Tests", () => {
 
         SC.globalConfiguration.inGameChatTimestamp = true;
         //@ts-ignore
-        ChatTimestamp.renderTimestamp(cm, [tsc]);
+        await ChatTimestamp.renderTimestamp(cm, [tsc]);
         expect(cm.getFlag).toHaveBeenCalledTimes(1);
         expect(ts.style.display).toBe("none");
     });
