@@ -40,28 +40,30 @@ describe("Chat Timestamp Tests", () => {
 
     test("Add Game Time To Message", async () => {
         const cm = {
-            isAuthor: true,
             setFlag: jest.fn((mn: string, key: string, data: any) => {
-                cm.flags[mn] = {};
-                cm.flags[mn][key] = data;
+                cm.flags[key] = data;
                 return Promise.resolve();
             }),
             flags: <Record<string, any>>{},
             updateSource: jest.fn((obj: Record<string, any>) => {
                 cm.flags = obj["flags"];
-            })
+            }),
+            _source: {
+                flags: <Record<string, any>>{}
+            }
         };
 
         //@ts-ignore
-        await ChatTimestamp.addGameTimeToMessage(cm);
+        ChatTimestamp.addGameTimeToMessage(cm);
 
-        expect(cm.setFlag).toHaveBeenCalledTimes(1);
+        expect(cm.updateSource).toHaveBeenCalledTimes(1);
         expect(cm.flags["foundryvtt-simple-calendar"]["sc-timestamps"]).toEqual({ id: "a", timestamp: tCal.toSeconds() });
 
-        cm.isAuthor = false;
         //@ts-ignore
-        await ChatTimestamp.addGameTimeToMessage(cm);
-        expect(cm.setFlag).toHaveBeenCalledTimes(1);
+        game.system.id = "D35E";
+        //@ts-ignore
+        ChatTimestamp.addGameTimeToMessage(cm);
+        expect(cm._source.flags["foundryvtt-simple-calendar"]["sc-timestamps"]).toEqual({ id: "a", timestamp: tCal.toSeconds() });
     });
 
     test("Get Formatted Chat Timestamp", () => {

@@ -2,18 +2,34 @@ import { ModuleName } from "../../constants";
 import { CalManager, SC } from "../index";
 import { FormatDateTime } from "../utilities/date-time";
 import PF2E from "../systems/pf2e";
+import D35E from "../systems/D35E";
 
 export class ChatTimestamp {
     public static addGameTimeToMessage(chatMessage: ChatMessage) {
-        if (chatMessage.isAuthor) {
-            const cal = CalManager.getActiveCalendar();
-            const flagData: { id: string; timestamp: number } = {
-                id: cal.id,
-                timestamp: cal.toSeconds()
-            };
-            return chatMessage.setFlag(ModuleName, "sc-timestamps", flagData);
+        console.log("ChatTimestamp.addGameTimeToMessage");
+        const cal = CalManager.getActiveCalendar();
+        const flagData: { id: string; timestamp: number } = {
+            id: cal.id,
+            timestamp: cal.toSeconds()
+        };
+        if (D35E.isD35E) {
+            // the updateSource function call creates an infinite loop in D35E so we just need to update the source directly, which isn't as safe.
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            chatMessage._source.flags[ModuleName] = { "sc-timestamps": flagData };
+        } else {
+            //Updating the message flags then updating the source with its own flags ensures what we do not wright over another modules message settings.
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            const messageFlags = chatMessage.flags;
+            if (!Object.prototype.hasOwnProperty.call(messageFlags, ModuleName)) {
+                messageFlags[ModuleName] = {};
+            }
+            messageFlags[ModuleName]["sc-timestamps"] = flagData;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            chatMessage.updateSource({ flags: messageFlags });
         }
-        return Promise.resolve();
     }
 
     public static getFormattedChatTimestamp(chatMessage: ChatMessage) {

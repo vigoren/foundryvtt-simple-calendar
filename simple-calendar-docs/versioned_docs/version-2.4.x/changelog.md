@@ -1,8 +1,25 @@
 # Change Log
 
+## 2.4.13 - Chat Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-March%2016%2C%202024-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.13/module.zip)
+
+### Chat Bug Fixes
+
+Due to a change to support a bug in the DnD 3.5E system a bug was introduced for other systems that caused chat messages to occasionally duplicate (just the display) or have certain interactive elements missing.
+
+Trying to get that change to work has been unsuccessful, so I have reverted the  chat message changes to what they were in version 2.4.3 of Simple Calendar. This should address the issues with the duplicated chat messages and missing interactive elements.
+
+I have approached the bug in the DnD 3.5E system in a different way that fixes the issue without causing issues for other systems.
+
+Sorry for the inconvenience, and thank you for your patience while I worked to resolve this issue.
+
+<hr/>
+
 ## 2.4.12 - Bug Fixes
 
-![](https://img.shields.io/badge/release%20date-March%2009%2C%202024-blue)
+![](https://img.shields.io/badge/release%20date-March%2013%2C%202024-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.12/module.zip)
 
 ### Bug Fixes
