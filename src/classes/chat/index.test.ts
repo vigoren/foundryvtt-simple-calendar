@@ -18,20 +18,16 @@ describe("Chat Tests", () => {
 
     test("Create Chat Message", async () => {
         let cm = {};
-        jest.spyOn(ChatTimestamp, "addGameTimeToMessage").mockImplementation(async () => {
-            return <ChatMessage>cm;
-        });
+        jest.spyOn(ChatTimestamp, "addGameTimeToMessage").mockImplementation(() => {});
+
         //@ts-ignore
-        let rcm = await Chat.createChatMessage(cm);
-        //@ts-ignore
-        expect(rcm).toBe(cm);
+        expect(Chat.createChatMessage(cm, {}, "")).toBe(true);
         expect(ChatTimestamp.addGameTimeToMessage).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         game.user.isGM = true;
         //@ts-ignore
-        rcm = await Chat.createChatMessage(cm, {}, "");
-        expect(rcm).toBe(cm);
+        expect(Chat.createChatMessage(cm, {}, "")).toBe(true);
         expect(ChatTimestamp.addGameTimeToMessage).toHaveBeenCalledTimes(2);
     });
 
