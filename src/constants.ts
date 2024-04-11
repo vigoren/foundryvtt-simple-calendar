@@ -147,6 +147,12 @@ export const Themes: SimpleCalendar.Theme[] = [
             "--eclipsephase-background2": "/systems/eclipsephase/resources/img/background2.jpg"
         }
     }
+    {
+        key: "cyberpunk-red-core",
+        name: "FSC.Configuration.Theme.Cyberpunk-Red",
+        system: true,
+        module: false
+    }
     //key: "ernies-modern-layout", name: "Ernie's Modern UI", system: false, module: true}
 ];
 
