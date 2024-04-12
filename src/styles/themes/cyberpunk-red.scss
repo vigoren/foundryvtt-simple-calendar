@@ -1,8 +1,8 @@
 @import "../variables";
 $theme: (
   //Font
-        font-family: Jost,
-        heading-font-family: Jost,
+        font-family: var(--cpr-font-primary),
+        heading-font-family: var(--cpr-font-hero),
   //Input Colors
         input-bg-color: var(--cpr-background-box),
         input-border-color: var(--cpr-background-border),
