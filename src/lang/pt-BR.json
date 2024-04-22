@@ -551,5 +551,7 @@
 	"FSC.Configuration.General.Display.DateFormat.ChatTime": "Formato do Carimbo de Data e Hora das Mensagens no Chat",
 	"FSC.Configuration.General.Display.DateFormat.ChatTimeHelp": "O formato de texto usado para compor o texto de exibição do carimbo de data e hora das mensagens no chat.",
 	"FSC.KeyBinding.Toggle.Title": "Alternar Calendário",
-	"FSC.KeyBinding.Toggle.Hint": "Esta tecla abrirá ou fechará a janela do calendário quando pressionada."
+	"FSC.KeyBinding.Toggle.Hint": "Esta tecla abrirá ou fechará a janela do calendário quando pressionada.",
+	"FSC.Configuration.LeapYear.StartingYear": "Ano Inicial",
+	"FSC.Configuration.LeapYear.StartingYearHelp": "O ano em que aconteceu o primeiro ano bissexto. A maioria dos calendários usará 0."
 }
