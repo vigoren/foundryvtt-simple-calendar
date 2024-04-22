@@ -1,5 +1,20 @@
 # Change Log
 
+## 2.4.14 - Foundry V12 Support, Cyberpunk Red Theme and Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-April%2022%2C%202024-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.14/module.zip)
+
+### Foundry V12 Support
+
+Simple Calendar has been updated to support Foundry V12. It does not yet take advantage of the Application v2 but does remain backwards compatible with Foundry V10 and V11.
+
+### Cyberpunk Red Theme
+
+A new theme has been added to Simple Calendar for the Cyberpunk Red system. Big thank you to [RassilonMonk](https://github.com/RassilonMonk) for creating this theme!
+
+### Bug Fixes
+
 ## 2.4.13 - Chat Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-March%2016%2C%202024-blue)

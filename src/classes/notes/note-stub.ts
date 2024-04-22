@@ -196,10 +196,11 @@ export default class NoteStub {
                     if (own[k] === 3) {
                         const author = (<Game>game).users?.get(k);
                         if (author) {
+                            let color = author.color?.toString() || "";
                             return {
                                 name: author.name || "",
-                                color: author.color || "",
-                                colorText: GetContrastColor(author.color || "")
+                                color: color || "",
+                                colorText: GetContrastColor(color || "")
                             };
                         }
                     }

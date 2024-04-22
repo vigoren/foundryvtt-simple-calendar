@@ -91,7 +91,7 @@ $theme: (
         clock-paused-color: var(--cpr-background-tab-underlay),
 
   //Context Menu
-        context-menu-color: $var(--cpr-background-box),
+        context-menu-color: var(--cpr-background-box),
         context-menu-border-color: var(--cpr-background-border),
         context-menu-bg-color: rgba(0, 0, 0, 0.85),
         context-menu-action-hover-color: var(--cpr-background-border),
