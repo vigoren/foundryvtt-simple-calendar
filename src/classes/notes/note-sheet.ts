@@ -8,6 +8,7 @@ import { getCheckBoxInputValue, getNumericInputValue, getTextInputValue } from "
 import GameSockets from "../foundry-interfacing/game-sockets";
 import { ConcreteJournalEntry } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/apps/forms/journal-sheet";
 import MultiSelect from "../renderer/multi-select";
+import { foundryMergeObject } from "../foundry-interfacing/utilities";
 
 export class NoteSheet extends JournalSheet {
     private dirty: boolean = false;
@@ -155,10 +156,10 @@ export class NoteSheet extends JournalSheet {
         this.journalData.name = this.object.name || "";
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        this.journalData.flags = mergeObject({}, this.object.flags);
+        this.journalData.flags = foundryMergeObject({}, this.object.flags);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        this.journalData.ownership = mergeObject({}, this.object.ownership);
+        this.journalData.ownership = foundryMergeObject({}, this.object.ownership);
         this.journalPages = [];
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
@@ -393,7 +394,7 @@ export class NoteSheet extends JournalSheet {
                                 text: nc.name,
                                 value: nc.name,
                                 selected:
-                                    noteData.categories.find((c) => {
+                                    this.journalData.flags[ModuleName].noteData.categories.find((c: string) => {
                                         return c === nc.name;
                                     }) !== undefined
                             };
@@ -825,7 +826,6 @@ export class NoteSheet extends JournalSheet {
     async writeInputValuesToObjects() {
         let render = false;
         if (this.appWindow) {
-            console.log("writeInputValuesToObjects");
             this.journalData.name = getTextInputValue(".fsc-note-title", "New Note", this.appWindow);
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats = <NoteRepeat>(
                 getNumericInputValue(`#scNoteRepeats_${this.object.id}`, NoteRepeat.Never, false, this.appWindow)

@@ -1,12 +1,13 @@
 import { ModuleName, PredefinedCalendars } from "../../constants";
 import Calendar from "../calendar";
 import { NManager } from "../index";
+import { foundryGetRoute } from "../foundry-interfacing/utilities";
 
 export default class PredefinedCalendar {
     public static async setToPredefined(calendar: Calendar, calendarType: PredefinedCalendars, addNotes: boolean = true) {
         let updated = false;
         //Attempt to load the predefined calendar settings from the server
-        const res = await fetch(getRoute(`modules/${ModuleName}/predefined-calendars/${calendarType}.json`));
+        const res = await fetch(foundryGetRoute(`modules/${ModuleName}/predefined-calendars/${calendarType}.json`));
         const data = await res.json();
         if (data && data.calendar) {
             const calendarId = calendar.id.replace("_temp", "");
