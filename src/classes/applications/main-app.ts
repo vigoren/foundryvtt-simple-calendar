@@ -272,6 +272,39 @@ export default class MainApp extends FormApplication {
         if (!SC.clientSettings.persistentOpen) {
             this.opening = true;
             return super.close(options);
+        } else {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            if ((<Game>game).release.generation < 12) {
+                // Case 3 - close open UI windows
+                if (Object.keys(ui.windows).length > 1) {
+                    Object.values(ui.windows).forEach((app) => {
+                        if (app.id !== this.id) {
+                            app.close();
+                        }
+                    });
+                    return Promise.resolve();
+                }
+                // Case 4 (GM) - release controlled objects (if not in a preview)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
+                if (GameSettings.IsGm() && (<Canvas>canvas).activeLayer && (<Canvas>canvas).activeLayer?.controlled.length) {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    //@ts-ignore
+                    if (!(<Canvas>canvas).activeLayer?.preview?.children.length) {
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        //@ts-ignore
+                        (<Canvas>canvas).activeLayer?.releaseAll();
+                    }
+                    return Promise.resolve();
+                }
+                // Case 5 - toggle the main menu
+                ui.menu?.toggle();
+                // Save the fog immediately rather than waiting for the 3s debounced save as part of commitFog.
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
+                if ((<Canvas>canvas).ready) (<Canvas>canvas).fog.save();
+            }
         }
         return Promise.resolve();
     }

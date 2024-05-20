@@ -719,8 +719,8 @@ export class NoteSheet extends JournalSheet {
         if (calendar) {
             const sMonthIndex = !selectedDate.startDate.month || selectedDate.startDate.month < 0 ? 0 : selectedDate.startDate.month;
             const sDayIndex = !selectedDate.startDate.day || selectedDate.startDate.day < 0 ? 0 : selectedDate.startDate.day;
-            const eMonthIndex = !selectedDate.endDate.month || selectedDate.endDate.month < 0 ? 0 : selectedDate.endDate.month;
-            const eDayIndex = !selectedDate.endDate.day || selectedDate.endDate.day < 0 ? 0 : selectedDate.endDate.day;
+            let eMonthIndex = !selectedDate.endDate.month || selectedDate.endDate.month < 0 ? 0 : selectedDate.endDate.month;
+            let eDayIndex = !selectedDate.endDate.day || selectedDate.endDate.day < 0 ? 0 : selectedDate.endDate.day;
 
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).allDay = !selectedDate.timeSelected;
 

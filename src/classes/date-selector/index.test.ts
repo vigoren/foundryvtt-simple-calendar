@@ -105,6 +105,13 @@ describe("Date Selector Class Tests", () => {
         expect(Renderer.CalendarFull.Render).toHaveBeenCalledTimes(3);
         expect(Renderer.TimeSelector.Render).toHaveBeenCalledTimes(2);
         expect(DateUtils.GetDisplayDate).toHaveBeenCalledTimes(4);
+
+        ds.showDateSelector = true;
+        ds.selectedDate.end.year = NaN;
+        expect(ds.build()).toBeDefined();
+        expect(Renderer.CalendarFull.Render).toHaveBeenCalledTimes(4);
+        expect(Renderer.TimeSelector.Render).toHaveBeenCalledTimes(3);
+        expect(DateUtils.GetDisplayDate).toHaveBeenCalledTimes(5);
     });
 
     test("Set Position", () => {
@@ -191,6 +198,11 @@ describe("Date Selector Class Tests", () => {
         ds.onDateSelect = jest.fn();
         ds.callOnDateSelect();
         expect(ds.onDateSelect).toHaveBeenCalledTimes(1);
+
+        ds.selectedDate.end.year = NaN;
+        ds.callOnDateSelect();
+        expect(ds.onDateSelect).toHaveBeenCalledTimes(2);
+        expect(ds.selectedDate.end).toEqual(ds.selectedDate.start);
     });
 
     test("Toggle Calendar", () => {
@@ -298,6 +310,19 @@ describe("Date Selector Class Tests", () => {
         });
         expect(ds.update).toHaveBeenCalledTimes(2);
         expect(ds.callOnDateSelect).toHaveBeenCalledTimes(2);
+        expect(Renderer.TimeSelector.HideTimeDropdown).toHaveBeenCalledTimes(1);
+
+        ds.secondDaySelect = false;
+        ds.allowDateRangeSelection = false;
+        ds.dayClick({
+            id: "",
+            selectedDates: {
+                start: { year: 0, month: 0, day: 0 },
+                end: { year: 0, month: 0, day: 0 }
+            }
+        });
+        expect(ds.update).toHaveBeenCalledTimes(3);
+        expect(ds.callOnDateSelect).toHaveBeenCalledTimes(3);
         expect(Renderer.TimeSelector.HideTimeDropdown).toHaveBeenCalledTimes(1);
     });
 

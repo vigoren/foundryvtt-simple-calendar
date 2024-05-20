@@ -159,6 +159,21 @@ describe("Main App Class Tests", () => {
         expect(ma.opening).toBe(true);
         SC.clientSettings.persistentOpen = true;
         ma.close();
+
+        //@ts-ignore
+        game.user.isGM = true;
+        ma.close();
+
+        ui.windows = {
+            //@ts-ignore
+            1: { id: "fsc-simple-calendar-application", close: jest.fn() },
+            //@ts-ignore
+            2: { id: "", close: jest.fn() }
+        };
+        ma.close();
+        expect(ui.windows[2].close).toHaveBeenCalledTimes(1);
+
+        ui.windows = {};
     });
 
     test("Toggle Compact View", () => {

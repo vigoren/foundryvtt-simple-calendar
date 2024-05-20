@@ -1746,6 +1746,29 @@ export default class ConfigurationApp extends FormApplication {
                         }
                     }
                 }
+                if (Object.hasOwn(res, "notes")) {
+                    for (const key in res.notes) {
+                        if (Object.hasOwn(res.notes, key)) {
+                            html += `<li><label><input type="checkbox" data-id="${key}-notes" checked /><strong><span class="fa fa-sticky-note"></span> ${
+                                this.calendars.find((c) => {
+                                    return c.id.indexOf(key) === 0;
+                                })?.name || key
+                            }</strong>: ${GameSettings.Localize("FSC.CalendarNotes")}</label></label>`;
+
+                            html += `<label>${GameSettings.Localize("FSC.ImportInto")}:&nbsp;<select data-for-cal="">`;
+                            const selectedIndex = this.calendars.findIndex((c) => {
+                                return c.id.indexOf(key) === 0;
+                            });
+                            //html += `<option value="new" ${selectedIndex === -1 ? "selected" : ""}>${GameSettings.Localize("FSC.SameAsCalendarConfig")}</option>`;
+                            for (let i = 0; i < this.calendars.length; i++) {
+                                html += `<option value="${this.calendars[i].id}" ${selectedIndex === i ? "selected" : ""}>${
+                                    this.calendars[i].name
+                                }</option>`;
+                            }
+                            html += `</select></label></li>`;
+                        }
+                    }
+                }
                 html += `</ul><button class="fsc-control fsc-save" id="importCalendar"><i class="fa fa-file-import"></i> ${GameSettings.Localize(
                     "FSC.Import"
                 )}</button>`;

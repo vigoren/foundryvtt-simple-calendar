@@ -1,4 +1,5 @@
 import "./application";
+import "./canvas";
 import "./chat-message";
 import "./const";
 import "./crypto";
@@ -13,7 +14,7 @@ import "./game";
 import "./handlebars";
 import "./hooks";
 import "./journal";
-import "./journal-sheet"
+import "./journal-sheet";
 import "./journal-entry";
 import "./merge-object";
 import "./is-object-empty";
