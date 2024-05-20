@@ -31,6 +31,7 @@ import { FormatDateTime } from "../utilities/date-time";
 import { generateUniqueId } from "../utilities/string";
 import PF2E from "../systems/pf2e";
 import { FoundryVTTGameData } from "../foundry-interfacing/game-data";
+import { foundryGetRoute } from "../foundry-interfacing/utilities";
 
 export default class ConfigurationApp extends FormApplication {
     /**
@@ -138,7 +139,7 @@ export default class ConfigurationApp extends FormApplication {
 
         if (this.predefindCalendars.length === 0) {
             try {
-                const prefRes = await fetch(getRoute(`modules/${ModuleName}/predefined-calendars/calendar-list.json`));
+                const prefRes = await fetch(foundryGetRoute(`modules/${ModuleName}/predefined-calendars/calendar-list.json`));
                 this.predefindCalendars = await prefRes.json();
             } catch (e: any) {
                 Logger.error(e);
@@ -239,8 +240,8 @@ export default class ConfigurationApp extends FormApplication {
             ...super.getData(options),
             activeCalendarId: (<Calendar>this.object).id,
             images: {
-                compactViewLayoutFull: getRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp.png"),
-                compactViewLayoutQuickIncrement: getRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp-qi.png")
+                compactViewLayoutFull: foundryGetRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp.png"),
+                compactViewLayoutQuickIncrement: foundryGetRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp-qi.png")
             },
             calendars: this.calendars,
             clientSettings: {
@@ -1742,6 +1743,29 @@ export default class ConfigurationApp extends FormApplication {
                             }-notes" checked /><strong><span class="fa fa-sticky-note"></span> ${
                                 res.calendars[i].name
                             }</strong>: ${GameSettings.Localize("FSC.CalendarNotes")}</label></label></li>`;
+                        }
+                    }
+                }
+                if (Object.hasOwn(res, "notes")) {
+                    for (const key in res.notes) {
+                        if (Object.hasOwn(res.notes, key)) {
+                            html += `<li><label><input type="checkbox" data-id="${key}-notes" checked /><strong><span class="fa fa-sticky-note"></span> ${
+                                this.calendars.find((c) => {
+                                    return c.id.indexOf(key) === 0;
+                                })?.name || key
+                            }</strong>: ${GameSettings.Localize("FSC.CalendarNotes")}</label></label>`;
+
+                            html += `<label>${GameSettings.Localize("FSC.ImportInto")}:&nbsp;<select data-for-cal="">`;
+                            const selectedIndex = this.calendars.findIndex((c) => {
+                                return c.id.indexOf(key) === 0;
+                            });
+                            //html += `<option value="new" ${selectedIndex === -1 ? "selected" : ""}>${GameSettings.Localize("FSC.SameAsCalendarConfig")}</option>`;
+                            for (let i = 0; i < this.calendars.length; i++) {
+                                html += `<option value="${this.calendars[i].id}" ${selectedIndex === i ? "selected" : ""}>${
+                                    this.calendars[i].name
+                                }</option>`;
+                            }
+                            html += `</select></label></li>`;
                         }
                     }
                 }

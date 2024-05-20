@@ -287,10 +287,35 @@ export class DateSelector {
             }
             timeSelectors += `</div>`;
         }
+        let selectedEndDate: SimpleCalendar.DateTime = {
+            year: this.selectedDate.end.year,
+            month: this.selectedDate.end.month,
+            day: this.selectedDate.end.day,
+            hour: this.selectedDate.end.hour,
+            minute: this.selectedDate.end.minute,
+            seconds: this.selectedDate.end.seconds
+        };
+        if (
+            isNaN(selectedEndDate.year) ||
+            isNaN(selectedEndDate.month) ||
+            isNaN(selectedEndDate.day) ||
+            isNaN(selectedEndDate.hour) ||
+            isNaN(selectedEndDate.minute) ||
+            isNaN(selectedEndDate.seconds)
+        ) {
+            selectedEndDate = {
+                year: this.selectedDate.start.year,
+                month: this.selectedDate.start.month,
+                day: this.selectedDate.start.day,
+                hour: this.selectedDate.start.hour,
+                minute: this.selectedDate.start.minute,
+                seconds: this.selectedDate.start.seconds
+            };
+        }
         const displayDate = GetDisplayDate(
             this.calendar,
             this.selectedDate.start,
-            this.selectedDate.end,
+            selectedEndDate,
             this.selectedDate.allDay,
             this.showTimeSelector && !this.showDateSelector,
             this.showCalendarYear,
@@ -424,6 +449,15 @@ export class DateSelector {
      */
     callOnDateSelect() {
         if (this.onDateSelect) {
+            if (isNaN(this.selectedDate.end.year)) {
+                this.selectedDate.end.year = this.selectedDate.start.year;
+                this.selectedDate.end.month = this.selectedDate.start.month;
+                this.selectedDate.end.day = this.selectedDate.start.day;
+                this.selectedDate.end.hour = this.selectedDate.start.hour;
+                this.selectedDate.end.minute = this.selectedDate.start.minute;
+                this.selectedDate.end.seconds = this.selectedDate.start.seconds;
+            }
+
             const returnValue: SimpleCalendar.DateTimeSelector.SelectedDates = {
                 startDate: {
                     year: this.selectedDate.start.year,
@@ -504,13 +538,20 @@ export class DateSelector {
     dayClick(options: SimpleCalendar.Renderer.CalendarOptions) {
         if (options.selectedDates) {
             let hideCalendar = true;
+
             if (!this.secondDaySelect) {
                 this.selectedDate.start.year = options.selectedDates.start.year;
                 this.selectedDate.start.month = options.selectedDates.start.month;
                 this.selectedDate.start.day = options.selectedDates.start.day || 0;
-                this.selectedDate.end.year = options.selectedDates.start.year;
-                this.selectedDate.end.month = options.selectedDates.start.month;
-                this.selectedDate.end.day = options.selectedDates.start.day || 0;
+                if (this.allowDateRangeSelection) {
+                    this.selectedDate.end.year = options.selectedDates.end.year;
+                    this.selectedDate.end.month = options.selectedDates.end.month;
+                    this.selectedDate.end.day = options.selectedDates.end.day;
+                } else {
+                    this.selectedDate.start.year = options.selectedDates.start.year;
+                    this.selectedDate.start.month = options.selectedDates.start.month;
+                    this.selectedDate.start.day = options.selectedDates.start.day || 0;
+                }
                 this.secondDaySelect = true;
                 hideCalendar = !this.allowDateRangeSelection;
             } else {

@@ -1,0 +1,244 @@
+@import "../variables";
+$theme: (
+  //Font
+        font-family: var(--cpr-font-primary),
+        heading-font-family: var(--cpr-font-hero),
+  //Input Colors
+        input-bg-color: var(--cpr-background-box),
+        input-border-color: var(--cpr-background-border),
+        input-color: var(--cpr-text-chat-normal),
+
+  //Link Color
+        link-color: var(--cpr-background-border),
+        link-hover-color: var(--cpr-background-row-odd),
+        entity-link-bg-color: #2E638C,
+        entity-link-border-color: #598BAD,
+        entity-link-icon-color: #E1B438,
+        entity-link-icon-hover-color: var(--cpr-background-border),
+
+  //Headings
+        heading-border-color: var(--cpr-background-border),
+        about-heading-border-color: var(--cpr-background-border),
+
+  //Dialog Coloring
+        app-header-bg-color: var(--cpr-background-header),
+        app-header-bg-image: unset,
+        app-header-color: var(--cpr-text-header),
+        app-header-border: 0,
+        app-header-border-image: unset,
+        app-header-height: 1.875rem,
+        app-bg-color: var(--cpr-background-box),
+        app-bg-image: unset,
+        app-border: 0,
+        app-border-image: unset,
+        app-color: var(--cpr-text-window),
+
+  // Compact Coloring
+        comapct-header-control-grey: #adb5bd,
+        comapct-header-control-secondary: var(--cpr-background-row-odd),
+        comapct-header-control-tertiary: var(--cpr-background-border),
+        comapct-header-control-save: var(--cpr-text-chat-normal),
+
+  // Dialog section coloring
+        section-bg-color: var(--cpr-background-box),
+        section-border-color: var(--cpr-background-border),
+        section-color: var(--cpr-text-chat-normal),
+
+  //Side Drawer Coloring
+        side-drawer-color: var(--cpr-text-chat-normal),
+        side-drawer-bg-color: var(--cpr-background-row-odd),
+        side-drawer-bg-image: unset,
+        side-drawer-border-color: var(--cpr-background-chat-border),
+        side-drawer-border-image: unset,
+
+  // Scrollbar Coloring
+        scrollbar-background-color: var(--cpr-background-border),
+        scrollbar-border-color: var(--cpr-text-chat-normal),
+        scrollbar-track-bg-color: transparent,
+        scrollbar-track-border: unset,
+        scrollbar-button-height: 0,
+        scrollbar-button-bg-color: unset,
+        scrollbar-button-border: unset,
+
+  //Calendar Coloring
+        cal-weekend-bg-color: rgba(0, 0, 0, 0.25),
+        cal-day-border-color: var(--cpr-background-border),
+        cal-day-hover-color: #9e9f9f,
+        cal-day-current-bg-color: var(--cpr-background-border),
+        cal-day-current-box-shadow-color: var(--cpr-background-border),
+        cal-day-current-hover-bg-color: var(--cpr-background-row-odd),
+        cal-day-selected-bg-color: #444444,
+        cal-day-selected-box-shadow-color: var(--cpr-text-chat-normal),
+        cal-day-selected-hover-bg-color: #666666,
+        cal-note-indicator-bg-color: var(--cpr-background-row-odd),
+        cal-note-reminder-indicator-bg-color: var(--cpr-background-border),
+        cal-note-indicator-color: var(--cpr-text-chat-normal),
+        cal-moon-group-bg-color: #162B39,
+        cal-moon-group-border-color: #366E96,
+        cal-moon-group-box-shadow-color: rgba(122, 122, 122, 0.7098039216),
+        cal-moon-text-shadow: rgba(0, 0, 0, 0.5),
+
+  //Calendar List Coloring
+        cal-list-color: var(--cpr-background-box),
+        cal-list-active-border-color: var(--cpr-background-border),
+        cal-list-active-bg-color: var(--cpr-text-chat-normal),
+        cal-list-visible-bg-color: var(--cpr-text-chat-normal),
+        cal-list-bg-hover-color: #9e9f9f,
+
+  //Clock Coloring
+        clock-started-color: #59AD97,
+        clock-stopped-color: var(--cpr-background-border),
+        clock-paused-color: var(--cpr-background-tab-underlay),
+
+  //Context Menu
+        context-menu-color: var(--cpr-background-box),
+        context-menu-border-color: var(--cpr-background-border),
+        context-menu-bg-color: rgba(0, 0, 0, 0.85),
+        context-menu-action-hover-color: var(--cpr-background-border),
+        context-menu-divider-color: #6c757d,
+
+  //Configuration Menu
+        config-menu-heading-color: var(--cpr-text-chat-normal),
+        config-menu-item-border-color: #495057,
+        config-menu-item-color: var(--cpr-text-chat-normal),
+        config-menu-item-hover-color: #2b292a,
+        config-menu-item-hover-bg-color: var(--cpr-background-border),
+        config-menu-cal-settings-bg-color: var(--cpr-background-box),
+        config-menu-cal-selector-bg-color: #0D1A22,
+        config-menu-cal-selector-hover-bg-color: var(--cpr-text-chat-normal),
+        config-menu-cal-selector-color: #ffffff,
+        config-menu-cal-selector-hover-color: #ffffff,
+
+  //Controls
+        btn-bg-image: unset,
+        btn-border: 1px solid,
+        btn-border-image: unset,
+        btn-grey-border-color: $gray-500,
+        btn-grey-bg-color: var(--cpr-text-icon-dimmed),
+        btn-grey-color: var(--cpr-text-chat-normal),
+        btn-grey-bg-hover-color: #adb5bd,
+        btn-grey-disabled-bg-color: #dee2e6,
+        btn-primary-border-color: var(--cpr-background-border),
+        btn-primary-bg-color: var(--cpr-background-box),
+        btn-primary-color: var(--cpr-text-chat-normal),
+        btn-primary-bg-hover-color: var(--cpr-background-chat-border),
+        btn-primary-disabled-bg-color: #5C717F,
+        btn-secondary-border-color: var(--cpr-background-border),
+        btn-secondary-bg-color: var(--cpr-background-border),
+        btn-secondary-color: var(--cpr-text-chat-normal),
+        btn-secondary-bg-hover-color: var(--cpr-background-row-odd),
+        btn-secondary-disabled-bg-color:  #AB9A6E,
+        btn-tertiary-border-color: var(--cpr-background-border),
+        btn-tertiary-bg-color: var(--cpr-background-editor-button),
+        btn-tertiary-color: var(--cpr-text-normal),
+        btn-tertiary-bg-hover-color: var(--cpr-background-row-odd),
+        btn-tertiary-disabled-bg-color: #5E5C7F,
+        btn-delete-border-color: var(--cpr-background-border),
+        btn-delete-bg-color: var(--cpr-background-border),
+        btn-delete-color: #ffffff,
+        btn-delete-bg-hover-color: #E14337,
+        btn-delete-disabled-bg-color: #AB726E,
+        btn-save-border-color: var(--cpr-text-chat-normal),
+        btn-save-bg-color: var(--cpr-text-chat-normal),
+        btn-save-color: var(--cpr-background-box),
+        btn-save-bg-hover-color: #9e9f9f,
+        btn-save-disabled-bg-color: #5C7F76,
+
+  //Form Groups
+        form-group-bg-color: var(--cpr-background-box),
+        form-group-bg-hover-color: var(--cpr-background-border),
+        form-group-border-color: var(--cpr-background-border),
+        form-group-label-color: var(--cpr-text-chat-normal),
+        form-group-help-color: #E8EFF3,
+        form-group-input-bg-color: #495057,
+        form-group-input-border-color: #adb5bd,
+        form-group-input-color: var(--cpr-text-chat-normal),
+        form-group-help-icon-color: var(--cpr-background-border),
+
+
+  //Messages
+        message-color: var(--cpr-background-box),
+        message-warn-bg-color: #695110,
+        message-warn-border-color: #CD8C17,
+        message-success-bg-color: #1A4439,
+        message-success-border-color: #1A7255,
+        message-info-bg-color: #1A3344,
+        message-info-border-color: #1A4670,
+        message-danger-bg-color: #9D2017,
+        message-danger-border-color: var(--cpr-background-border),
+
+
+  //Multi Select
+        multi-select-option-bg-color: var(--cpr-background-box),
+        multi-select-option-bg-hover-color: var(--cpr-background-border),
+        multi-select-option-border-color: #6c757d,
+        multi-select-option-color: var(--cpr-text-chat-normal),
+        multi-select-disabled-bg-color: var(--cpr-background-row-odd),
+        multi-select-disabled-color: var(--cpr-background-border),
+
+  //Note Category
+        note-cat-color: var(--cpr-text-chat-normal),
+        note-cat-bg-color: var(--cpr-background-chat-border),
+        note-cat-box-shadow-color: var(--cpr-background-chat),
+        note-cat-secondary-bg-color: var(--cpr-text-chat-failure),
+        note-cat-secondary-color: var(--cpr-text-chat-normal),
+        note-cat-success-bg-color: #1A7255,
+        note-cat-success-color: #ffffff,
+        note-cat-danger-bg-color: var(--cpr-background-border),
+        note-cat-danger-color: var(--cpr-background-box),
+        note-cat-reminder-bg-color: var(--cpr-background-border),
+        note-cat-reminder-color: var(--cpr-text-chat-normal),
+
+  //Note List
+        note-list-note-border-color: #9EBBCF,
+        note-list-note-bg-hover-color: #666666,
+        note-list-note-hover-color: #ffffff,
+        note-list-note-dragger-bg-color: #6c757d,
+        note-list-note-dragger-box-shadow-color: #2b292a,
+
+  //Note Sheet
+        note-sheet-page-list-border-color: var(--cpr-background-border),
+        note-sheet-page-list-page-hover-bg-color: #666666,
+
+  //Predefined Calendar Colors
+        pre-cal-color: #9e9f9f,
+        pre-cal-border-color: #444444,
+        pre-cal-border-hover-color: var(--cpr-background-row-odd),
+        precal-hover-color: var(--cpr-background-border),
+
+  //Progress Bar
+        progress-bar-bg-color: #495057,
+        progress-bar-border-color: #adb5bd,
+        progress-bar-fill-color: #7B77BC,
+
+  //Prose Mirror
+        editor-color: var(--cpr-text-chat-normal),
+        editor-menu-bg-color: var(--cpr-background-box),
+        editor-menu-control-bg-color: #9e9f9f,
+        editor-menu-control-bg-hover-color: #666666,
+
+  //Search Box
+        search-box-placeholder-color: #ced4da,
+        search-box-color: var(--cpr-text-chat-normal),
+
+  //Time Selector
+        time-selector-color: var(--cpr-background-box),
+        time-selector-input-bg-color: #495057,
+        time-selector-input-border-color: #adb5bd,
+        time-selector-option-bg-even-color: #6c757d,
+        time-selector-option-hover-bg-color: var(--cpr-background-border),
+
+  //Toggle
+        toggle-unchecked-image: url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27rgba%28185, 2, 2, 1%29%27/%3e%3c/svg%3e"),
+        toggle-checked-image: url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27rgba%28185, 2, 2, 1%29%27/%3e%3c/svg%3e"),
+        toggle-border-color: var(--cpr-background-border),
+        toggle-checked-bg-color: var(--cpr-text-chat-normal),
+
+);
+.simple-calendar{
+  &.cyberpunk-red-core{
+    @each $prop, $value in $theme {
+      --#{$prop}: #{$value};
+    }
+  }
+}

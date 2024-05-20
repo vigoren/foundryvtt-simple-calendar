@@ -199,7 +199,7 @@ describe("Note Sheet Class Tests", () => {
         nd.endDate.day = 1;
         nd.categories.push("asd");
         //@ts-ignore
-        ns.journalData.flags["foundryvtt-simple-calendar"] = { noteData: { repeats: 0, macro: "none", remindUsers: [] } };
+        ns.journalData.flags["foundryvtt-simple-calendar"] = { noteData: { repeats: 0, macro: "none", remindUsers: [], categories: ["Holiday"] } };
         jest.spyOn(NManager, "getNoteStub")
             //@ts-ignore
             .mockReturnValueOnce({ title: "Journal", noteData: null, ownership: {} })
@@ -223,7 +223,9 @@ describe("Note Sheet Class Tests", () => {
         //@ts-ignore
         ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
-        ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [] } } };
+        ns.journalData.flags = {
+            "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [], categories: ["Holiday"] } }
+        };
         expect(await ns.getData()).toBeDefined();
         //Image page
         je.pages.contents[0].type = "image";
@@ -231,7 +233,7 @@ describe("Note Sheet Class Tests", () => {
         //@ts-ignore
         ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
-        ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [] } } };
+        ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [], categories: [] } } };
         expect(await ns.getData()).toBeDefined();
         //PDF page
         je.pages.contents[0].type = "pdf";
@@ -239,7 +241,7 @@ describe("Note Sheet Class Tests", () => {
         //@ts-ignore
         ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
-        ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [] } } };
+        ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [], categories: [] } } };
         expect(await ns.getData()).toBeDefined();
         //Video page
         je.pages.contents[0].type = "video";
@@ -247,7 +249,7 @@ describe("Note Sheet Class Tests", () => {
         //@ts-ignore
         ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
-        ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "", remindUsers: [] } } };
+        ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "", remindUsers: [], categories: [] } } };
         expect(await ns.getData()).toBeDefined();
 
         //@ts-ignore

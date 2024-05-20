@@ -216,7 +216,10 @@ global.ui = {
         error: jest.fn((message: string) => {})
     },
     windows: {},
-    activeWindow: null
+    activeWindow: null,
+    menu: {
+        toggle: jest.fn()
+    }
 };
 
 // @ts-ignore

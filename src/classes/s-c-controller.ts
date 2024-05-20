@@ -23,6 +23,7 @@ import { GetThemeName } from "./utilities/visual";
 import { FoundryVTTGameData } from "./foundry-interfacing/game-data";
 import { Hook } from "./api/hook";
 import { ChatTimestamp } from "./chat/chat-timestamp";
+import { foundryGetRoute } from "./foundry-interfacing/utilities";
 
 /**
  * The global Simple Calendar Controller class
@@ -120,7 +121,7 @@ export default class SCController {
             newStyle.setAttribute("id", `theme-${theme}`);
             newStyle.setAttribute("rel", "stylesheet");
             newStyle.setAttribute("type", "text/css");
-            newStyle.setAttribute("href", getRoute(`modules/${ModuleName}/styles/themes/${theme}.css`));
+            newStyle.setAttribute("href", foundryGetRoute(`modules/${ModuleName}/styles/themes/${theme}.css`));
             document.head.append(newStyle);
         }
     }
@@ -131,13 +132,16 @@ export default class SCController {
      */
     public static addCSSImageURLPaths(theme: string) {
         const styleTagExists = document.head.querySelector(`#sc-image-urls`);
-        const cssVars = [`--ui-denim075: url("${getRoute("/ui/denim075.png")}");`, `--ui-parchment: url("${getRoute("/ui/parchment.jpg")}");`];
+        const cssVars = [
+            `--ui-denim075: url("${foundryGetRoute("/ui/denim075.png")}");`,
+            `--ui-parchment: url("${foundryGetRoute("/ui/parchment.jpg")}");`
+        ];
         const themeData = Themes.find((t) => {
             return t.key === theme;
         });
         if (themeData && themeData.images) {
             for (const [key, value] of Object.entries(themeData.images)) {
-                cssVars.push(`${key}: url("${getRoute(value)}");`);
+                cssVars.push(`${key}: url("${foundryGetRoute(value)}");`);
             }
         }
         const styles = `.simple-calendar {${cssVars.join("")}`;
