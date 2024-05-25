@@ -35,16 +35,16 @@ This hook is emitted any time the current date is updated. The current date can 
 
 When this hook is emitted it will pass a data object that contains information about the new current day. The object will have these top level properties:
 
-Property Name|Type|Default Value|Description
--------------|----|---------|------------
-date|[Date Object](API.md#date-object)|`{}`|This contains information about the current date of the calendar.
-diff|Number|0|This contains the difference in seconds from the previous date and time to this new date and time.
-moons|Array<[Moon Object](API.md#moon-object)>|`[]`|This contains information about the moon(s) phases for the current date.
-year|[Year Object](#year-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
-month|[Month Object](#month-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
-day|[Day Object](#day-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
-time|[Time Object](#time-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
-season|[Season Object](#season-properties)|`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+Property Name| Type                                      |Default Value|Description
+-------------|-------------------------------------------|---------|------------
+date| [Date Object](API.md#date-object)         |`{}`|This contains information about the current date of the calendar.
+diff| Number                                    |0|This contains the difference in seconds from the previous date and time to this new date and time.
+moons| Array\<[Moon Object](API.md#moon-object)> |`[]`|This contains information about the moon(s) phases for the current date.
+year| [Year Object](#year-properties)           |`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+month| [Month Object](#month-properties)         |`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+day| [Day Object](#day-properties)             |`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+time| [Time Object](#time-properties)           |`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
+season| [Season Object](#season-properties)       |`{}`|**Depreciated** Please use the date property. This will be removed when Foundry v10 stable is released.
 
 
 

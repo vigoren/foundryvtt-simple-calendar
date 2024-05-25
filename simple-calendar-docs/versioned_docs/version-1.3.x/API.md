@@ -1120,17 +1120,17 @@ console.log(scDate);
 
 This type contains all information for configuring a calendar.
 
-Property|Type|Optional|Default|Description
---------|-----|-------|------|-----------
-currentDate|[Current Date Object](#current-date-object)|Yes|{}|The current date of the calendar.
-leapYearSettings|[Leap Year Object](#leap-year-object)|Yes|{}| The leap year settings for the calendar.
-monthSettings|Array<[Month Object](#month-object)>|Yes|[]| An array of month settings for the calendar.
-moonSettings|Array<[Moon Object](#moon-object)>|Yes|[]| An array of moon settings for the calendar.
-noteCategories|Array<[Note Cateogry Object](#note-category-object)>|Yes|[]| An array of note categories for the calendar.
-seasonSettings|Array<[Season Object](#season-object)>|Yes|[]|An array of season for the calendar.
-timeSettings|[Time Object](#time-object)|Yes|{}| The time settings for the calendar.
-weekdaySettings|Array<[Weekday Object](#weekday-object)>|Yes|[]| An array of weekday settings for the calendar.
-yearSettings|[Year Object](#year-object)|Yes|{}| The year settings for the calendar.
+Property| Type                                                  |Optional| Default |Description
+--------|-------------------------------------------------------|-------|---------|-----------
+currentDate| [Current Date Object](#current-date-object)           |Yes| {}      |The current date of the calendar.
+leapYearSettings| [Leap Year Object](#leap-year-object)                 |Yes| {}      | The leap year settings for the calendar.
+monthSettings| Array\<[Month Object](#month-object)>                 |Yes| []     | An array of month settings for the calendar.
+moonSettings| Array\<[Moon Object](#moon-object)>                   |Yes| []      | An array of moon settings for the calendar.
+noteCategories| Array\<[Note Cateogry Object](#note-category-object)> |Yes| []      | An array of note categories for the calendar.
+seasonSettings| Array\<[Season Object](#season-object)>               |Yes| []      |An array of season for the calendar.
+timeSettings| [Time Object](#time-object)                           |Yes| {}      | The time settings for the calendar.
+weekdaySettings| Array\<[Weekday Object](#weekday-object)>             |Yes| []      | An array of weekday settings for the calendar.
+yearSettings| [Year Object](#year-object)                           |Yes| {}      | The year settings for the calendar.
 
 ## Current Date Object
 
@@ -1270,16 +1270,16 @@ startingWeekday|Number or Null|No|Null|The day of the week this month should alw
 
 This type contains information about a moon.
 
-Property|Type|Optional|Default|Description
---------|-----|-------|------|-----------
-id|String|Yes|""|The unique ID associated with this season.
-color|String|No|"#FFFFFF"|The color associated with the moon.
-currentPhase|[Moon Phase Object](#moon-phase-object)|Yes|{}|The moon phase for the current date.
-cycleDayAdjust|Number|No|0|A way to nudge the cycle calculations to align with correct dates.
-cycleLength|Number|No|0|How many days it takes the moon to complete 1 cycle.
-firstNewMoon|[First New Moon Object](#first-new-moon-object)|Yes|{}|When the first new moon was. This is used to calculate the current phase for a given day.
-name|String|No|""|The name of the moon.
-phases|Array<[Moon Phase Object](#moon-phase-object)>|Yes|[]|The different phases of the moon.
+Property| Type                                            |Optional|Default|Description
+--------|-------------------------------------------------|-------|------|-----------
+id| String                                          |Yes|""|The unique ID associated with this season.
+color| String                                          |No|"#FFFFFF"|The color associated with the moon.
+currentPhase| [Moon Phase Object](#moon-phase-object)         |Yes|{}|The moon phase for the current date.
+cycleDayAdjust| Number                                          |No|0|A way to nudge the cycle calculations to align with correct dates.
+cycleLength| Number                                          |No|0|How many days it takes the moon to complete 1 cycle.
+firstNewMoon| [First New Moon Object](#first-new-moon-object) |Yes|{}|When the first new moon was. This is used to calculate the current phase for a given day.
+name| String                                          |No|""|The name of the moon.
+phases| Array\<[Moon Phase Object](#moon-phase-object)> |Yes|[]|The different phases of the moon.
 
 ## Moon Phase Object
 
