@@ -551,6 +551,9 @@ export class DateSelector {
                     this.selectedDate.start.year = options.selectedDates.start.year;
                     this.selectedDate.start.month = options.selectedDates.start.month;
                     this.selectedDate.start.day = options.selectedDates.start.day || 0;
+                    this.selectedDate.end.year = options.selectedDates.end.year;
+                    this.selectedDate.end.month = options.selectedDates.end.month;
+                    this.selectedDate.end.day = options.selectedDates.end.day || 0;
                 }
                 this.secondDaySelect = true;
                 hideCalendar = !this.allowDateRangeSelection;

@@ -1,5 +1,23 @@
 # Change Log
 
+## 2.4.18 - Bug Fixes
+
+![](https://img.shields.io/badge/release%20date-May%2024%2C%202024-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/vigoren/foundryvtt-simple-calendar/v2.4.18/module.zip)
+
+### Bug Fixes
+
+- Fixed a bug where a date selector for picking a single date (Season start date and moon start date) would end up selecting a range with the initial date as the end date.
+
+### Translation Updates
+
+Thank you to the follow people for making updates to Simple Calendars translations:
+
+- [Kharmans](https://github.com/Kharmans) (Portuguese (Brazil))
+- [Jakub](https://weblate.foundryvtt-hub.com/user/Lioheart/) (Polish)
+
+<hr/>
+
 ## 2.4.17 - Bug Fixes
 
 ![](https://img.shields.io/badge/release%20date-May%2019%2C%202024-blue)
@@ -26,6 +44,8 @@ Simple Calendar has been updated to support Foundry V12. It does not yet take ad
 - Fixed a bug where note categories wouldn't properly unselect after being selected while editing a note.
 - Fixed a bug when setting a multi day event that spanned 2 or more months, the end date would appear as NaN. ([#603](https://github.com/vigoren/foundryvtt-simple-calendar/issues/603))
 - Fixed a bug when persistent open is set to true and the calendar is open, users could not deselect canvas items or open the main menu. ([#592](https://github.com/vigoren/foundryvtt-simple-calendar/issues/592))
+
+<hr/>
 
 ## 2.4.13 - Chat Bug Fixes
 
