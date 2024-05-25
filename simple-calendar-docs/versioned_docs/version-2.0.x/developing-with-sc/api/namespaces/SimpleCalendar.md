@@ -82,7 +82,7 @@ ___
 
 ### DateTimeParts
 
-Ƭ **DateTimeParts**: `Partial`<[`Date`](SimpleCalendar.md#date)\> & `Partial`<[`Time`](SimpleCalendar.md#time)\>
+Ƭ **DateTimeParts**: `Partial`\<[`Date`](SimpleCalendar.md#date)\> & `Partial`\<[`Time`](SimpleCalendar.md#time)\>
 
 Type representing a date and time with optional parameters
 

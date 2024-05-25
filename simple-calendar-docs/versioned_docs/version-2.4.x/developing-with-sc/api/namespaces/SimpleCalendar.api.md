@@ -55,7 +55,7 @@ ___
 
 ### addNote
 
-▸ **addNote**(`title`, `content`, `startDate`, `endDate`, `allDay`, `repeats?`, `categories?`, `calendarId?`, `macro?`, `userVisibility?`, `remindUsers?`): `Promise`<`StoredDocument`<`JournalEntry`\> \| ``null``\>
+▸ **addNote**(`title`, `content`, `startDate`, `endDate`, `allDay`, `repeats?`, `categories?`, `calendarId?`, `macro?`, `userVisibility?`, `remindUsers?`): `Promise`\<`StoredDocument`\<`JournalEntry`\> \| ``null``\>
 
 This function adds a new note to the calendar
 
@@ -84,7 +84,7 @@ const newJournal = await SimpleCalendar.api.addNote('Christmas Day','Presents!',
 
 #### Returns
 
-`Promise`<`StoredDocument`<`JournalEntry`\> \| ``null``\>
+`Promise`\<`StoredDocument`\<`JournalEntry`\> \| ``null``\>
 
 The newly created JournalEntry that contains the note data, or null if there was an error encountered.
 
@@ -310,7 +310,7 @@ ___
 
 ### configureCalendar
 
-▸ **configureCalendar**(`calendarData`, `calendarId?`): `Promise`<`boolean`\>
+▸ **configureCalendar**(`calendarData`, `calendarId?`): `Promise`\<`boolean`\>
 
 Sets up the current calendar to match the passed in configuration. This function can only be run by GMs.
 
@@ -336,7 +336,7 @@ const result = await SimpleCalendar.api.configureCalendar(custom);
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 A promise that resolves to a boolean value, true if the change was successful and false if it was not.
 
@@ -450,7 +450,7 @@ ___
 
 ### formatDateTime
 
-▸ **formatDateTime**(`date`, `format?`, `calendarId?`): `string` \| { `date`: `string` ; `time`: `string`  }
+▸ **formatDateTime**(`date`, `format?`, `calendarId?`): `string` \| \{ `date`: `string` ; `time`: `string`  }
 
 Converts the passed in date/time into formatted date and time strings that match the configured date and time formats or the passed in format string.
 
@@ -488,7 +488,7 @@ SimpleCalendar.api.formatDateTime({year: 2021, month: 111, day: 224, hour: 44, m
 
 #### Returns
 
-`string` \| { `date`: `string` ; `time`: `string`  }
+`string` \| \{ `date`: `string` ; `time`: `string`  }
 
 If no format string is provided an object with the date and time formatted strings, as set in the configuration, will be returned. If a format is provided then a formatted string will be returned.
 
@@ -496,7 +496,7 @@ ___
 
 ### formatTimestamp
 
-▸ **formatTimestamp**(`timestamp`, `format?`, `calendarId?`): `string` \| { `date`: `string` ; `time`: `string`  }
+▸ **formatTimestamp**(`timestamp`, `format?`, `calendarId?`): `string` \| \{ `date`: `string` ; `time`: `string`  }
 
 Converts the passed in timestamp into formatted date and time strings that match the configured date and time formats or the passed in format string.
 
@@ -524,7 +524,7 @@ SimpleCalendar.api.formatTimestamp(1640434394,"DD/MM/YYYY HH:mm:ss A");
 
 #### Returns
 
-`string` \| { `date`: `string` ; `time`: `string`  }
+`string` \| \{ `date`: `string` ; `time`: `string`  }
 
 If no format string is provided an object with the date and time formatted strings, as set in the configuration, will be returned. If a format is provided then a formatted string will be returned.
 
@@ -1271,7 +1271,7 @@ ___
 
 ### getNotes
 
-▸ **getNotes**(`calendarId?`): (`StoredDocument`<`JournalEntry`\> \| `undefined`)[]
+▸ **getNotes**(`calendarId?`): (`StoredDocument`\<`JournalEntry`\> \| `undefined`)[]
 
 Gets all notes that the current user is able to see for the specified calendar.
 
@@ -1290,7 +1290,7 @@ SimpleCalendar.api.getNotes();
 
 #### Returns
 
-(`StoredDocument`<`JournalEntry`\> \| `undefined`)[]
+(`StoredDocument`\<`JournalEntry`\> \| `undefined`)[]
 
 A list of [JournalEntries](https://foundryvtt.com/api/JournalEntry.html) that contain the note data.
 
@@ -1298,7 +1298,7 @@ ___
 
 ### getNotesForDay
 
-▸ **getNotesForDay**(`year`, `month`, `day`, `calendarId?`): (`StoredDocument`<`JournalEntry`\> \| `undefined`)[]
+▸ **getNotesForDay**(`year`, `month`, `day`, `calendarId?`): (`StoredDocument`\<`JournalEntry`\> \| `undefined`)[]
 
 Gets all notes that the current user is able to see for the specified date from the specified calendar.
 
@@ -1320,7 +1320,7 @@ SimpleCalendar.api.getNotesForDay(2022, 11, 24);
 
 #### Returns
 
-(`StoredDocument`<`JournalEntry`\> \| `undefined`)[]
+(`StoredDocument`\<`JournalEntry`\> \| `undefined`)[]
 
 A list of [JournalEntries](https://foundryvtt.com/api/JournalEntry.html)  that contain the note data.
 
@@ -1433,7 +1433,7 @@ ___
 
 ### removeNote
 
-▸ **removeNote**(`journalEntryId`): `Promise`<`boolean`\>
+▸ **removeNote**(`journalEntryId`): `Promise`\<`boolean`\>
 
 This function removes the specified note from Simple Calendar.
 
@@ -1451,7 +1451,7 @@ SimpleCalendar.api.removeNote("asd123").then(...).catch(console.error);
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 True if the note was removed or false if it was not.
 
@@ -1480,7 +1480,7 @@ ___
 
 ### searchNotes
 
-▸ **searchNotes**(`term`, `options?`, `calendarId?`): (`StoredDocument`<`JournalEntry`\> \| `undefined`)[]
+▸ **searchNotes**(`term`, `options?`, `calendarId?`): (`StoredDocument`\<`JournalEntry`\> \| `undefined`)[]
 
 Search the notes in Simple Calendar for a specific term. Only notes that the user can see are returned.
 
@@ -1509,7 +1509,7 @@ SimpleCalendar.api.searchNotes("Gamemaster", {author: true}); // Will return a l
 
 #### Returns
 
-(`StoredDocument`<`JournalEntry`\> \| `undefined`)[]
+(`StoredDocument`\<`JournalEntry`\> \| `undefined`)[]
 
 A list of [JournalEntry](https://foundryvtt.com/api/JournalEntry.html) that matched the term being searched.
 
@@ -1582,7 +1582,7 @@ ___
 
 ### setTheme
 
-▸ **setTheme**(`themeId`): `Promise`<`boolean`\>
+▸ **setTheme**(`themeId`): `Promise`\<`boolean`\>
 
 Will set the players Simple Calendar theme that matches the passed in theme ID.
 
@@ -1610,7 +1610,7 @@ await SimpleCalendar.api.setTheme('themeDoesNotExist');
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
 A promise that resolves to True if the theme is valid and was applied successfully, or it was the theme already being used. The promise will resolve to False if a theme with that ID could not be found.
 

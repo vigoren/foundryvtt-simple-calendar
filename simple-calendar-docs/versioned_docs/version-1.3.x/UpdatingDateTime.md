@@ -9,7 +9,7 @@ The above image helps shows the controls, they are detailed out below.
 
 These controls are specific to controlling the time of the current day. As well as starting/stopping the built-in clock.
 
-**Important**: These controls will not display if the [Simple Calendar's game world time integration](./Configuration.md#game-world-time-integration) is configured to set to "Third Party" OR if the [Show Clock setting](./Configuration.md#show-clock) is unchecked.
+**Important**: These controls will not display if the [Simple Calendar's game world time integration](./Configuration.md#game-world-time-integration) is configured to set to "Third Party" OR if the [Show Clock setting](./Configuration.md#clock-settings) is unchecked.
 
 The top controls are used to select a unit of time (second, minute or hour) that will be changed by the buttons below.
 

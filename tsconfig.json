@@ -88,6 +88,7 @@
     "disableSources": true,
     "hideGenerator": true,
     "excludeInternal": true,
-    "readme": "none"
+    "readme": "none",
+    "hideBreadcrumbs": true
   }
 }

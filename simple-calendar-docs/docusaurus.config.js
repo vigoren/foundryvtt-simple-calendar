@@ -2,8 +2,9 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const path = require("path");
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+const { themes } = require("prism-react-renderer");
+const lightTheme = themes.github;
+const darkTheme = themes.dracula;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -60,14 +61,7 @@ const config = {
                 entryPoints: ["../types/index.d.ts"],
                 out: "developing-with-sc/api",
                 tsconfig: "../tsconfig.json",
-                media: "./static/img",
-                frontmatter: {
-                    pagination_next: null,
-                    pagination_prev: null
-                },
-                sidebar: {
-                    //fullNames: true
-                }
+                media: "./static/img"
             }
         ],
         [
@@ -313,8 +307,9 @@ const config = {
                 copyright: `Copyright © ${new Date().getFullYear()} Simple Calendar. Built with Docusaurus.`
             },
             prism: {
-                theme: lightCodeTheme,
-                darkTheme: darkCodeTheme
+                theme: lightTheme,
+                darkTheme: darkTheme,
+                additionalLanguages: ["bash", "diff", "json"]
             },
             algolia: {
                 // The application ID provided by Algolia

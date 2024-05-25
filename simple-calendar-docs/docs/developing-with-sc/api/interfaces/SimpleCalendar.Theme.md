@@ -13,7 +13,7 @@ pagination_prev: null
 
 ### images
 
-• `Optional` **images**: `Record`<`string`, `string`\>
+• `Optional` **images**: `Record`\<`string`, `string`\>
 
 ___
 
