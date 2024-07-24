@@ -80,11 +80,11 @@
 		},
 		{
 			"lang": "sv",
-            "name": "Svenska",
-            "path": "lang/sv.json"
-        },
-        {
-            "lang": "it",
+			"name": "Svenska",
+			"path": "lang/sv.json"
+		},
+		{
+			"lang": "it",
 			"name": "Italiano",
 			"path": "lang/it.json"
 		},
@@ -102,6 +102,11 @@
 			"lang": "ceb",
 			"name": "Cebuano",
 			"path": "lang/ceb.json"
+		},
+		{
+			"lang": "nl",
+			"name": "Nederlands",
+			"path": "lang/nl.json"
 		}
 	],
 	"socket": true,
