@@ -75,7 +75,7 @@ export const Themes: SimpleCalendar.Theme[] = [
     {
         key: "wfrp4e",
         name: "FSC.Configuration.Theme.WFRP4E",
-        system: true,
+        system: false,
         module: false,
         images: {
             "--wfrp4e-window-app-header-blank": "/systems/wfrp4e/ui/frames/window-app-header-blank.webp",
@@ -106,7 +106,7 @@ export const Themes: SimpleCalendar.Theme[] = [
     {
         key: "dsa5",
         name: "FSC.Predefined.DSA-TDE5e",
-        system: true,
+        system: false,
         module: false,
         images: {
             "--dsa5-blackhat": "/systems/dsa5/icons/backgrounds/blackhat.webp",
