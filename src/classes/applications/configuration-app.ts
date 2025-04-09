@@ -771,6 +771,13 @@ export default class ConfigurationApp extends FormApplication {
                 false,
                 this.appWindow
             );
+            this.globalConfiguration.permissions.viewExactTime.player = getCheckBoxInputValue("#scViewExactTimeP", true, this.appWindow);
+            this.globalConfiguration.permissions.viewExactTime.trustedPlayer = getCheckBoxInputValue("#scViewExactTimeTP", true, this.appWindow);
+            this.globalConfiguration.permissions.viewExactTime.assistantGameMaster = getCheckBoxInputValue(
+                "#scViewExactTimeAGM",
+                true,
+                this.appWindow
+            );
 
             //----------------------------------
             // Calendar: Quick Setup

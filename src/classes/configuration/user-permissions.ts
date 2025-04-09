@@ -22,6 +22,10 @@ export default class UserPermissions extends ConfigurationItemBase {
      * Which users can change the active calendar
      */
     changeActiveCalendar: SimpleCalendar.PermissionMatrix;
+    /**
+     * Which users can see the detailed time
+     */
+    viewExactTime: SimpleCalendar.PermissionMatrix;
 
     constructor() {
         super();
@@ -31,6 +35,7 @@ export default class UserPermissions extends ConfigurationItemBase {
         this.reorderNotes = { player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined };
         this.changeDateTime = { player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined };
         this.changeActiveCalendar = { player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined };
+        this.viewExactTime = { player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined };
     }
 
     /**
@@ -58,6 +63,7 @@ export default class UserPermissions extends ConfigurationItemBase {
         up.reorderNotes = UserPermissions.clonePermissions(this.reorderNotes);
         up.changeDateTime = UserPermissions.clonePermissions(this.changeDateTime);
         up.changeActiveCalendar = UserPermissions.clonePermissions(this.changeActiveCalendar);
+        up.viewExactTime = UserPermissions.clonePermissions(this.viewExactTime);
         return up;
     }
 
@@ -71,7 +77,8 @@ export default class UserPermissions extends ConfigurationItemBase {
             addNotes: this.addNotes,
             reorderNotes: this.reorderNotes,
             changeDateTime: this.changeDateTime,
-            changeActiveCalendar: this.changeActiveCalendar
+            changeActiveCalendar: this.changeActiveCalendar,
+            viewExactTime: this.viewExactTime
         };
     }
 
@@ -85,7 +92,8 @@ export default class UserPermissions extends ConfigurationItemBase {
             changeDateTime: this.changeDateTime,
             reorderNotes: this.reorderNotes,
             viewCalendar: this.viewCalendar,
-            changeActiveCalendar: this.changeActiveCalendar
+            changeActiveCalendar: this.changeActiveCalendar,
+            viewExactTime: this.viewExactTime
         };
     }
 
@@ -94,25 +102,16 @@ export default class UserPermissions extends ConfigurationItemBase {
      * @param {UserPermissionsData} config The configuration object for this class
      */
     loadFromSettings(config: SimpleCalendar.UserPermissionsData) {
+        const configurableProperties = ["viewCalendar", "addNotes", "changeDateTime", "reorderNotes", "changeActiveCalendar", "viewExactTime"];
+
+        type ConfigurableProperty = keyof SimpleCalendar.UserPermissionsData & keyof UserPermissions & keyof typeof configurableProperties;
+
         if (config && Object.keys(config).length) {
-            if (Object.prototype.hasOwnProperty.call(config, "viewCalendar") && this.validateUserPermissionMatrix(config.viewCalendar)) {
-                this.viewCalendar = config.viewCalendar;
-            }
-            if (Object.prototype.hasOwnProperty.call(config, "addNotes") && this.validateUserPermissionMatrix(config.addNotes)) {
-                this.addNotes = config.addNotes;
-            }
-            if (Object.prototype.hasOwnProperty.call(config, "changeDateTime") && this.validateUserPermissionMatrix(config.changeDateTime)) {
-                this.changeDateTime = config.changeDateTime;
-            }
-            if (Object.prototype.hasOwnProperty.call(config, "reorderNotes") && this.validateUserPermissionMatrix(config.reorderNotes)) {
-                this.reorderNotes = config.reorderNotes;
-            }
-            if (
-                Object.prototype.hasOwnProperty.call(config, "changeActiveCalendar") &&
-                this.validateUserPermissionMatrix(config.changeActiveCalendar)
-            ) {
-                this.changeActiveCalendar = config.changeActiveCalendar;
-            }
+            (configurableProperties as ConfigurableProperty[]).forEach((key: ConfigurableProperty) => {
+                if (Object.prototype.hasOwnProperty.call(config, key) && this.validateUserPermissionMatrix(config[key])) {
+                    this[key] = config[key];
+                }
+            });
         }
     }
 

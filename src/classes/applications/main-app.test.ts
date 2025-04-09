@@ -1170,4 +1170,30 @@ describe("Main App Class Tests", () => {
         ma.sceneControlButtonClick();
         expect(ma.render).toHaveBeenCalledTimes(2);
     });
+
+    test("Time Displayed Only With Proper Permission", async () => {
+        jest.spyOn((game as Game).user as StoredDocument<User>, 'hasRole').mockImplementation((role) => role === 1);
+        tCal.generalSettings.showClock = true;
+
+        const permissionMock = jest.replaceProperty(SC.globalConfiguration.permissions, 'viewExactTime', {
+            player: false,
+            trustedPlayer: false,
+            assistantGameMaster: false
+        });
+
+        expect((await ma.getData() as Record<string, any>).showClock).toBe(false);
+
+        permissionMock.replaceValue({
+            player: true,
+            trustedPlayer: true,
+            assistantGameMaster: true
+        });
+
+        expect((await ma.getData() as Record<string, any>).showClock).toBe(true);
+
+        tCal.generalSettings.showClock = false;
+        expect((await ma.getData() as Record<string, any>).showClock).toBe(false);
+
+        permissionMock.restore();
+    });
 });

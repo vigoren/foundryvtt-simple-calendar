@@ -1500,6 +1500,8 @@ declare global {
                 changeDateTime: PermissionMatrix;
                 /** Who can change the active calendar */
                 changeActiveCalendar: PermissionMatrix;
+                /** Which users can see the detailed time */
+                viewExactTime: PermissionMatrix;
             }
 
             /**
@@ -2255,6 +2257,8 @@ declare global {
             changeDateTime: PermissionMatrix;
             /** Who can change the active calendar */
             changeActiveCalendar: PermissionMatrix;
+            /** Which users can see the detailed time */
+            viewExactTime: PermissionMatrix;
         }
 
         /**

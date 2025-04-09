@@ -239,6 +239,16 @@
                     </div>
                     <p class="notes">{{localize 'FSC.Configuration.General.PlayersChangeActiveCalendarHelp'}}</p>
                 </li>
+                <li class="fsc-permission form-group fsc-open">
+                    <label class="fsc-index">{{localize 'FSC.Configuration.General.PlayersViewExactTime'}}</label>
+                    <div class="form-fields">
+                        <input type="checkbox" name="AddNotes.P" id="scViewExactTimeP" data-tooltip="{{localize 'FSC.Configuration.General.PlayersViewExactTime'}}: {{localize 'USER.RolePlayer'}}" aria-label="{{localize 'FSC.Configuration.General.PlayersViewExactTime'}}: {{localize 'USER.RolePlayer'}}" {{checked globalConfiguration.permissions.viewExactTime.player}} />
+                        <input type="checkbox" name="AddNotes.TP" id="scViewExactTimeTP" data-tooltip="{{localize 'FSC.Configuration.General.PlayersViewExactTime'}}: {{localize 'USER.RoleTrusted'}}" aria-label="{{localize 'FSC.Configuration.General.PlayersViewExactTime'}}: {{localize 'USER.RoleTrusted'}}" {{checked globalConfiguration.permissions.viewExactTime.trustedPlayer}} />
+                        <input type="checkbox" name="AddNotes.AGM" id="scViewExactTimeAGM" data-tooltip="{{localize 'FSC.Configuration.General.PlayersViewExactTime'}}: {{localize 'USER.RoleAssistant'}}" aria-label="{{localize 'FSC.Configuration.General.PlayersViewExactTime'}}: {{localize 'USER.RoleAssistant'}}" {{checked globalConfiguration.permissions.viewExactTime.assistantGameMaster}} />
+                        <input type="checkbox" name="AddNotes.GM" data-tooltip="{{localize 'FSC.Configuration.General.PlayersViewExactTime'}}: {{localize 'USER.RoleGamemaster'}}" aria-label="{{localize 'FSC.Configuration.General.PlayersViewExactTime'}}: {{localize 'USER.RoleGamemaster'}}" checked disabled />
+                    </div>
+                    <p class="notes">{{localize 'FSC.Configuration.General.PlayersViewExactTimeHelp'}}</p>
+                </li>
             </ul>
         </div>
         <div class="tab fsc-import-export" data-tab="importExport">

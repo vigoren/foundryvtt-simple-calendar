@@ -138,7 +138,7 @@ export default class MainApp extends FormApplication {
             message: "",
             uiElementStates: this.uiElementStates,
             reorderNotes: canUser((<Game>game).user, SC.globalConfiguration.permissions.reorderNotes),
-            showClock: this.visibleCalendar.generalSettings.showClock,
+            showClock: this.visibleCalendar.generalSettings.showClock && canUser((<Game>game).user, SC.globalConfiguration.permissions.viewExactTime),
             showDateControls: false,
             showSetCurrentDate: false,
             showTimeControls: false,

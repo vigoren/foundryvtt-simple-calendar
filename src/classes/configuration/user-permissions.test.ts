@@ -14,11 +14,13 @@ describe('User Permissions Class Tests', () => {
     });
 
     test('Properties', () => {
-        expect(Object.keys(up).length).toBe(11); //Make sure no new properties have been added
+        expect(Object.keys(up).length).toBe(12); //Make sure no new properties have been added
         expect(up.viewCalendar).toStrictEqual({player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined});
         expect(up.addNotes).toStrictEqual({player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined});
         expect(up.reorderNotes).toStrictEqual({player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined});
         expect(up.changeDateTime).toStrictEqual({player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined});
+        expect(up.changeActiveCalendar).toStrictEqual({player: false, trustedPlayer: false, assistantGameMaster: false, users: undefined});
+        expect(up.viewExactTime).toStrictEqual({player: true, trustedPlayer: true, assistantGameMaster: true, users: undefined});
     });
 
     test('Clone Permissions', () => {
@@ -38,6 +40,8 @@ describe('User Permissions Class Tests', () => {
         expect(template.addNotes).toStrictEqual(up.addNotes);
         expect(template.reorderNotes).toStrictEqual(up.reorderNotes);
         expect(template.changeDateTime).toStrictEqual(up.changeDateTime);
+        expect(template.changeActiveCalendar).toStrictEqual(up.changeActiveCalendar);
+        expect(template.viewExactTime).toStrictEqual(up.viewExactTime);
 
     });
     test('To Config', () => {
@@ -47,6 +51,8 @@ describe('User Permissions Class Tests', () => {
         expect(template.addNotes).toStrictEqual(up.addNotes);
         expect(template.reorderNotes).toStrictEqual(up.reorderNotes);
         expect(template.changeDateTime).toStrictEqual(up.changeDateTime);
+        expect(template.changeActiveCalendar).toStrictEqual(up.changeActiveCalendar);
+        expect(template.viewExactTime).toStrictEqual(up.viewExactTime);
     });
 
     test('Load From Settings', () => {

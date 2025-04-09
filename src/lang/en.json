@@ -48,6 +48,8 @@
 	"FSC.Configuration.General.Description": "These settings allow you to configure more general options for the selected calendar.",
 	"FSC.Configuration.General.PlayersChangeActiveCalendar": "Change Active Calendar",
 	"FSC.Configuration.General.PlayersChangeActiveCalendarHelp": "The checked roles will be able to change which calendar is currently active.",
+	"FSC.Configuration.General.PlayersViewExactTime": "Show Exact Time",
+	"FSC.Configuration.General.PlayersViewExactTimeHelp": "The checked roles will be able to see the exact time of day in the calendar.",
 	"FSC.Configuration.Global.Title": "Global Configuration",
 	"FSC.Configuration.Global.Description": "These settings will affect how Simple Calendar works for every calendar as opposed to how a specific calendar will work.",
 	"FSC.Configuration.Global.SameTimestamp.Title": "Calendars Use Same Timestamp",
