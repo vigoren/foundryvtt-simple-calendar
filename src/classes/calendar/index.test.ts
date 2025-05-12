@@ -9,6 +9,7 @@ import { LeapYearRules, PredefinedCalendars, TimeKeeperStatus } from "../../cons
 import { CalManager, MainApplication, SC, updateCalManager, updateMainApplication, updateNManager, updateSC } from "../index";
 import CalendarManager from "./calendar-manager";
 import NoteManager from "../notes/note-manager";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import LeapYear from "./leap-year";

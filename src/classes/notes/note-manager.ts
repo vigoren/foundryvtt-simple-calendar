@@ -43,10 +43,10 @@ export default class NoteManager {
      * Checks to see if the journal director for SC notes exists and creates it if it does not
      */
     public async createJournalDirectory() {
-        const journalDirectory = (<Game>game).journal?.directory;
-        if (journalDirectory) {
-            this.noteDirectory = journalDirectory.folders.find((f) => {
-                return f.getFlag(ModuleName, "root");
+        const folders = (<Game>game).folders;
+        if (folders) {
+            this.noteDirectory = folders.find((f) => {
+                return f.name === NotesDirectoryName && f.type === "JournalEntry";
             });
             if (!this.noteDirectory && GameSettings.IsGm()) {
                 await Folder.create({
@@ -59,8 +59,8 @@ export default class NoteManager {
                         }
                     }
                 });
-                this.noteDirectory = journalDirectory.folders.find((f) => {
-                    return f.getFlag(ModuleName, "root");
+                this.noteDirectory = folders.find((f) => {
+                    return f.name === NotesDirectoryName && f.type === "JournalEntry";
                 });
             }
         }
@@ -190,13 +190,11 @@ export default class NoteManager {
             this.notes = {};
             await this.loadNotesFromFolder(this.noteDirectory);
 
-            const journalDirectory = (<Game>game).journal?.directory;
-            if (journalDirectory) {
-                for (let i = 0; i < journalDirectory.folders.length; i++) {
-                    const f = journalDirectory.folders[i];
-                    if (f.folder && f.folder.id === this.noteDirectory.id) {
-                        await this.loadNotesFromFolder(f);
-                    }
+            const folders = (<Game>game).folders;
+            if (folders && this.noteDirectory?.id) {
+                const f = folders.get(this.noteDirectory.id);
+                if (f) {
+                    await this.loadNotesFromFolder(f);
                 }
             }
         }

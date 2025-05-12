@@ -20,6 +20,7 @@ import {
 import CalendarManager from "../calendar/calendar-manager";
 import SCController from "../s-c-controller";
 import NoteManager from "../notes/note-manager";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import { CalendarClickEvents, DateTimeUnits, Icons, PredefinedCalendars } from "../../constants";

@@ -35,6 +35,7 @@ import SCController from "../s-c-controller";
 import NoteManager from "../notes/note-manager";
 import Renderer from "../renderer";
 import * as DateUtilities from "../utilities/date-time";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import NoteStub from "../notes/note-stub";

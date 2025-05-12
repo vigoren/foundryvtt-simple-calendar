@@ -9,6 +9,7 @@ import { CalManager, updateCalManager, updateNManager } from "../index";
 import CalendarManager from "./calendar-manager";
 import Calendar from "./index";
 import PredefinedCalendar from "../configuration/predefined-calendar";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import NoteManager from "../notes/note-manager";
 

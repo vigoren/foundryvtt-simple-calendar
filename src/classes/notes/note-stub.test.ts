@@ -9,6 +9,7 @@ import {CalManager, SC, updateCalManager, updateNManager, updateSC} from "../ind
 import CalendarManager from "../calendar/calendar-manager";
 import NoteStub from "./note-stub";
 import {NoteReminderNotificationType, NoteRepeat, PredefinedCalendars} from "../../constants";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import NoteManager from "./note-manager";

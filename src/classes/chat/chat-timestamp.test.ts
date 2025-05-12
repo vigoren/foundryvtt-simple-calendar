@@ -6,6 +6,7 @@ import { jest, beforeEach, describe, expect, test } from "@jest/globals";
 import Calendar from "../calendar";
 import { CalManager, SC, updateCalManager, updateNManager, updateSC } from "../index";
 import CalendarManager from "../calendar/calendar-manager";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import { PredefinedCalendars } from "../../constants";

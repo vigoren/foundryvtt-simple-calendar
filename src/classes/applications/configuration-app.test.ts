@@ -20,6 +20,7 @@ import SCController from "../s-c-controller";
 import MainApp from "./main-app";
 import NoteManager from "../notes/note-manager";
 import { GameSettings } from "../foundry-interfacing/game-settings";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import { ConfigurationDateSelectors, LeapYearRules, PredefinedCalendars } from "../../constants";

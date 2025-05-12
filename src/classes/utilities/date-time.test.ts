@@ -19,6 +19,7 @@ import {
 } from "./date-time";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import { DateRangeMatch, PredefinedCalendars, PresetTimeOfDay } from "../../constants";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import { GameSettings } from "../foundry-interfacing/game-settings";
 import { CalManager, updateCalManager, updateNManager, updateSC } from "../index";

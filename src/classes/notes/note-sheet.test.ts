@@ -12,6 +12,7 @@ import MainApp from "../applications/main-app";
 import NoteManager from "./note-manager";
 import { NoteSheet } from "./note-sheet";
 import { ModuleName, NoteRepeat, PredefinedCalendars } from "../../constants";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import * as Utilities from "../utilities/inputs";

@@ -8,6 +8,7 @@ import { PredefinedCalendars, SimpleCalendarHooks } from "../../constants";
 import Calendar from "../calendar";
 import { CalManager, updateCalManager, updateNManager, updateSC } from "../index";
 import CalendarManager from "../calendar/calendar-manager";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import NoteManager from "../notes/note-manager";

@@ -16,6 +16,7 @@ import {
 } from "../index";
 import CalendarManager from "../calendar/calendar-manager";
 import NoteManager from "../notes/note-manager";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import {CalendarClickEvents, CalendarViews, PredefinedCalendars} from "../../constants";

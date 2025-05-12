@@ -19,6 +19,7 @@ import MainApp from "../applications/main-app";
 import NoteManager from "../notes/note-manager";
 import Calendar from "./index";
 import {GameSettings} from "../foundry-interfacing/game-settings";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import {Hook} from "../api/hook";

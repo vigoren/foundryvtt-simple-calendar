@@ -7,6 +7,7 @@ import Calendar from "../calendar";
 import { CalManager, updateCalManager, updateNManager, updateSC } from "../index";
 import CalendarManager from "../calendar/calendar-manager";
 import Clock from "./clock";
+// @ts-ignore
 import fetchMock from "jest-fetch-mock";
 import PredefinedCalendar from "../configuration/predefined-calendar";
 import { PredefinedCalendars, TimeKeeperStatus } from "../../constants";
