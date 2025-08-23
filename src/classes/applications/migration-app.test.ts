@@ -34,6 +34,7 @@ describe("Migration App Class Tests", () => {
     });
 
     test("Show App", () => {
+        //@ts-ignore
         jest.spyOn(ma, "render").mockImplementation(() => {});
         ma.showApp();
         expect(ma.render).toHaveBeenCalledTimes(1);
@@ -105,6 +106,7 @@ describe("Migration App Class Tests", () => {
         jest.spyOn(ma, "runCleanData").mockImplementation(async () => {
             return true;
         });
+        //@ts-ignore
         jest.spyOn(MainApplication, "render").mockImplementation(() => {});
 
         await ma.run();

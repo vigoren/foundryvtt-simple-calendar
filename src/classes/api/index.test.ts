@@ -574,6 +574,7 @@ describe("API Class Tests", () => {
     });
 
     test("Show Calendar", () => {
+        //@ts-ignore
         jest.spyOn(MainApplication, "render").mockImplementation(() => {});
         jest.spyOn(MainApplication, "updateApp").mockImplementation(() => {});
         //@ts-ignore

@@ -131,7 +131,7 @@ export async function addNote(
     macro: string | null = null,
     userVisibility: string[] = [],
     remindUsers: string[] = []
-): Promise<StoredDocument<JournalEntry> | null> {
+): Promise<JournalEntry.Stored | null> {
     const activeCalendar = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
     if (activeCalendar) {
         const je = await NManager.createNote(
@@ -153,18 +153,22 @@ export async function addNote(
         );
 
         if (je && Array.isArray(userVisibility) && userVisibility.length) {
-            const perms: Partial<Record<string, 0 | 1 | 2 | 3>> = {};
+            const perms: Record<string, CONST.DOCUMENT_OWNERSHIP_LEVELS> = {};
             if (userVisibility.indexOf("default") > -1) {
-                (<Game>game).users?.forEach((u) => {
-                    return (perms[u.id] = (<Game>game).user?.id === u.id ? 3 : 2);
-                });
-                perms["default"] = 2;
+                for (const u of game.users ?? []) {
+                    perms[u.id] = game.user?.id === u.id 
+                        ? CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+                        : CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
+                }
+                perms["default"] = CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
             } else {
-                userVisibility.forEach((o) => {
-                    return (perms[o] = (<Game>game).user?.id === o ? 3 : 2);
-                });
+                for (const o of userVisibility) {
+                    perms[o] = game.user?.id === o 
+                        ? CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+                        : CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
+                }
             }
-            await je.update({ ownership: perms }, { render: false, renderSheet: false });
+            await je.update({ ownership: perms }, { render: false });
         }
         return je;
     }
@@ -1527,7 +1531,7 @@ export function getLeapYearConfiguration(calendarId: string = "active"): SimpleC
  * SimpleCalendar.api.getNotes();
  *```
  */
-export function getNotes(calendarId: string = "active"): (StoredDocument<JournalEntry> | undefined)[] {
+export function getNotes(calendarId: string = "active"): (JournalEntry.Stored | undefined)[] {
     calendarId = calendarId === "active" ? CalManager.getActiveCalendar().id : calendarId;
     return NManager.getNotes(calendarId).map((n) => {
         return (<Game>game).journal?.get(n.entryId);
@@ -1554,7 +1558,7 @@ export function getNotesForDay(
     month: number,
     day: number,
     calendarId: string = "active"
-): (StoredDocument<JournalEntry> | undefined)[] {
+): (JournalEntry.Stored | undefined)[] {
     calendarId = calendarId === "active" ? CalManager.getActiveCalendar().id : calendarId;
     return NManager.getNotesForDay(calendarId, year, month, day).map((n) => {
         return (<Game>game).journal?.get(n.entryId);
@@ -1739,9 +1743,9 @@ export function searchNotes(
     term: string,
     options = { date: true, title: true, details: true, categories: true, author: true },
     calendarId: string = "active"
-): (StoredDocument<JournalEntry> | undefined)[] {
+): (JournalEntry.Stored | undefined)[] {
     const cal = calendarId === "active" ? CalManager.getActiveCalendar() : CalManager.getCalendar(calendarId);
-    let results: (StoredDocument<JournalEntry> | undefined)[] = [];
+    let results: (JournalEntry.Stored | undefined)[] = [];
     if (cal) {
         results = NManager.searchNotes(cal.id, term, options).map((n) => {
             return (<Game>game).journal?.get(n.entryId);
@@ -1837,7 +1841,7 @@ export async function setTheme(themeId: string): Promise<boolean> {
     if (availableThemes[themeId] !== undefined) {
         //If the passed in theme is the same as the current theme being used don't apply the changes
         if (themeId !== GetThemeName()) {
-            await GameSettings.SaveStringSetting(`${(<Game>game).world.id}.${SettingNames.Theme}`, themeId, false);
+            await GameSettings.SaveStringSetting(`${game.world!.id}.${SettingNames.Theme}`, themeId, false);
             GameSettings.UiNotification(
                 GameSettings.Localize("FSC.Info.ThemeChange").replace("{THEME}", GameSettings.Localize(availableThemes[themeId])),
                 "info",

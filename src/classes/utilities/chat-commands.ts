@@ -82,7 +82,6 @@ export function ParseChatCommand(message: string) {
                 day: currentDate.day
             })}'>View In Simple Calendar</button></div>`;
             ChatMessage.create({
-                type: 1,
                 content: `<div class="simple-calendar fsc-simple-calendar-message">${content}</div>`,
                 whisper: [GameSettings.UserID()]
             }).catch(Logger.error);

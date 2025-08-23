@@ -124,6 +124,7 @@ describe("Configuration App Class Tests", () => {
     });
 
     test("Show App", () => {
+        //@ts-ignore
         jest.spyOn(ca, "render").mockImplementation(() => {});
         ca.showApp();
         expect(ca.render).toHaveBeenCalledTimes(1);
@@ -146,6 +147,7 @@ describe("Configuration App Class Tests", () => {
     });
 
     test("Update App", () => {
+        //@ts-ignore
         jest.spyOn(ca, "render").mockImplementation(() => {});
         //@ts-ignore
         ca.updateApp();

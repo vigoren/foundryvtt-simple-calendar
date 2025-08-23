@@ -9,9 +9,9 @@ export function canUser(user: User | null, permissions: SimpleCalendar.Permissio
     }
     return !!(
         user.isGM ||
-        (permissions.player && user.hasRole(1)) ||
-        (permissions.trustedPlayer && user.hasRole(2)) ||
-        (permissions.assistantGameMaster && user.hasRole(3)) ||
+        (permissions.player && user.hasRole(CONST.USER_ROLES.PLAYER)) ||
+        (permissions.trustedPlayer && user.hasRole(CONST.USER_ROLES.TRUSTED)) ||
+        (permissions.assistantGameMaster && user.hasRole(CONST.USER_ROLES.ASSISTANT)) ||
         (permissions.users && permissions.users.includes(user.id ? user.id : ""))
     );
 }

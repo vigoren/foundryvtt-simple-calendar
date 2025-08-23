@@ -14,7 +14,7 @@ export default class GameSettingsRegistration {
         // -------------------
         // Client Settings
         // -------------------
-        (<Game>game).settings.register(ModuleName, `${(<Game>game).world.id}.${SettingNames.Theme}`, {
+        game.settings?.register(ModuleName, `${game.world!.id}.theme`, {
             name: "FSC.Configuration.Theme.Title",
             hint: "FSC.Configuration.Theme.Description",
             scope: "client",
@@ -26,7 +26,7 @@ export default class GameSettingsRegistration {
             default: "",
             onChange: SCController.ThemeChange.bind(SCController)
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.Theme, {
+        game.settings?.register(ModuleName, SettingNames.Theme, {
             name: "FSC.Configuration.Theme.Title",
             hint: "FSC.Configuration.Theme.Description",
             scope: "client",
@@ -34,7 +34,7 @@ export default class GameSettingsRegistration {
             type: String,
             default: "dark"
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.OpenOnLoad, {
+        game.settings?.register(ModuleName, SettingNames.OpenOnLoad, {
             name: "FSC.Configuration.Client.OpenOnLoad.Title",
             hint: "FSC.Configuration.Client.OpenOnLoad.Description",
             scope: "client",
@@ -42,7 +42,7 @@ export default class GameSettingsRegistration {
             type: Boolean,
             default: true
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.OpenCompact, {
+        game.settings?.register(ModuleName, SettingNames.OpenCompact, {
             name: "FSC.Configuration.Client.OpenCompact.Title",
             hint: "FSC.Configuration.Client.OpenCompact.Description",
             scope: "client",
@@ -50,7 +50,7 @@ export default class GameSettingsRegistration {
             type: Boolean,
             default: false
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.RememberPosition, {
+        game.settings?.register(ModuleName, SettingNames.RememberPosition, {
             name: "FSC.Configuration.Client.RememberPosition.Title",
             hint: "FSC.Configuration.Client.RememberPosition.Description",
             scope: "client",
@@ -58,7 +58,7 @@ export default class GameSettingsRegistration {
             type: Boolean,
             default: true
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.RememberCompactPosition, {
+        game.settings?.register(ModuleName, SettingNames.RememberCompactPosition, {
             name: "FSC.Configuration.Client.RememberCompactPosition.Title",
             hint: "FSC.Configuration.Client.RememberCompactPosition.Description",
             scope: "client",
@@ -66,7 +66,7 @@ export default class GameSettingsRegistration {
             type: Boolean,
             default: false
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.AppPosition, {
+        game.settings?.register(ModuleName, SettingNames.AppPosition, {
             name: "Application Position",
             hint: "",
             scope: "client",
@@ -74,7 +74,7 @@ export default class GameSettingsRegistration {
             type: Object,
             default: {}
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.AppCompactPosition, {
+        game.settings?.register(ModuleName, SettingNames.AppCompactPosition, {
             name: "Application Compact Position",
             hint: "",
             scope: "client",
@@ -82,7 +82,7 @@ export default class GameSettingsRegistration {
             type: Object,
             default: {}
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.NoteReminderNotification, {
+        game.settings?.register(ModuleName, SettingNames.NoteReminderNotification, {
             name: "FSC.Configuration.Client.NoteReminderNotification.Title",
             hint: "FSC.Configuration.Client.NoteReminderNotification.Description",
             scope: "client",
@@ -96,7 +96,7 @@ export default class GameSettingsRegistration {
             },
             default: "whisper"
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.NoteListOpenDirection, {
+        game.settings?.register(ModuleName, SettingNames.NoteListOpenDirection, {
             name: "FSC.Configuration.Client.NoteListOpenDirection.Title",
             hint: "FSC.Configuration.Client.NoteListOpenDirection.Description",
             scope: "client",
@@ -112,7 +112,7 @@ export default class GameSettingsRegistration {
             default: "sc-right",
             onChange: SCController.SideDrawerDirectionChange.bind(SCController)
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.AlwaysShowNoteList, {
+        game.settings?.register(ModuleName, SettingNames.AlwaysShowNoteList, {
             name: "FSC.Configuration.Client.AlwaysShowNoteList.Title",
             hint: "FSC.Configuration.Client.AlwaysShowNoteList.Description",
             scope: "client",
@@ -121,7 +121,7 @@ export default class GameSettingsRegistration {
             default: false,
             onChange: SCController.AlwaysShowNoteListChange.bind(SCController)
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.PersistentOpen, {
+        game.settings?.register(ModuleName, SettingNames.PersistentOpen, {
             name: "FSC.Configuration.Client.PersistentOpen.Title",
             hint: "FSC.Configuration.Client.PersistentOpen.Description",
             scope: "client",
@@ -130,7 +130,7 @@ export default class GameSettingsRegistration {
             default: false,
             onChange: SC.PersistenceChange.bind(SC)
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.CompactViewScale, {
+        game.settings?.register(ModuleName, SettingNames.CompactViewScale, {
             name: "FSC.Configuration.Client.CompactViewScale.Title",
             hint: "FSC.Configuration.Client.CompactViewScale.Description",
             scope: "client",
@@ -150,24 +150,26 @@ export default class GameSettingsRegistration {
         // -------------------
         // Configuration Button
         // -------------------
-        (<Game>game).settings.registerMenu(ModuleName, SettingNames.CalendarMainApp, {
+        game.settings?.registerMenu(ModuleName, SettingNames.CalendarMainApp, {
             name: "",
             label: "FSC.Title",
             hint: "",
             icon: "fa fa-calendar",
+            restricted: false,
             type: MainAppConfigWrapper
         });
-        (<Game>game).settings.registerMenu(ModuleName, SettingNames.CalendarConfigurationMenu, {
+        game.settings?.registerMenu(ModuleName, SettingNames.CalendarConfigurationMenu, {
             name: "",
             label: "FSC.Configuration.Title",
             hint: "",
             icon: "fa fa-cog",
+            restricted: false,
             type: ConfigurationApp
         });
         // -------------------
         // Core Settings
         // -------------------
-        (<Game>game).settings.register(ModuleName, SettingNames.CalendarConfiguration, {
+        game.settings?.register(ModuleName, SettingNames.CalendarConfiguration, {
             name: "Calendar Configuration",
             scope: "world",
             config: false,
@@ -175,7 +177,7 @@ export default class GameSettingsRegistration {
             default: [],
             onChange: CalManager.loadCalendars.bind(CalManager)
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.ActiveCalendar, {
+        game.settings?.register(ModuleName, SettingNames.ActiveCalendar, {
             name: "Active Calendar",
             scope: "world",
             config: false,
@@ -183,7 +185,7 @@ export default class GameSettingsRegistration {
             default: "default",
             onChange: CalManager.loadActiveCalendar.bind(CalManager)
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.GlobalConfiguration, {
+        game.settings?.register(ModuleName, SettingNames.GlobalConfiguration, {
             name: "Global Configuration",
             scope: "world",
             config: false,
@@ -195,84 +197,84 @@ export default class GameSettingsRegistration {
         // -------------------
         // Legacy Settings
         // -------------------
-        (<Game>game).settings.register(ModuleName, SettingNames.GeneralConfiguration, {
+        game.settings?.register(ModuleName, SettingNames.GeneralConfiguration, {
             name: "General Configuration",
             scope: "world",
             config: false,
             type: Object,
             default: {}
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.YearConfiguration, {
+        game.settings?.register(ModuleName, SettingNames.YearConfiguration, {
             name: "Year Configuration",
             scope: "world",
             config: false,
             type: Object,
             default: {}
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.WeekdayConfiguration, {
+        game.settings?.register(ModuleName, SettingNames.WeekdayConfiguration, {
             name: "Weekday Configuration",
             scope: "world",
             config: false,
             type: Array,
             default: []
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.MonthConfiguration, {
+        game.settings?.register(ModuleName, SettingNames.MonthConfiguration, {
             name: "Month Configuration",
             scope: "world",
             config: false,
             type: Array,
             default: []
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.CurrentDate, {
+        game.settings?.register(ModuleName, SettingNames.CurrentDate, {
             name: "Current Date",
             scope: "world",
             config: false,
             type: Object,
             default: {}
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.LeapYearRule, {
+        game.settings?.register(ModuleName, SettingNames.LeapYearRule, {
             name: "Leap Year Rule",
             scope: "world",
             config: false,
             type: Object,
             default: {}
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.DefaultNoteVisibility, {
+        game.settings?.register(ModuleName, SettingNames.DefaultNoteVisibility, {
             name: "FSC.Configuration.DefaultNoteVisibility",
             hint: "FSC.Configuration.DefaultNoteVisibilityHint",
             scope: "world",
             type: Boolean,
             default: false
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.Notes, {
+        game.settings?.register(ModuleName, SettingNames.Notes, {
             name: "Notes",
             scope: "world",
             config: false,
             type: Array,
             default: []
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.TimeConfiguration, {
+        game.settings?.register(ModuleName, SettingNames.TimeConfiguration, {
             name: "Time",
             scope: "world",
             config: false,
             type: Object,
             default: {}
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.SeasonConfiguration, {
+        game.settings?.register(ModuleName, SettingNames.SeasonConfiguration, {
             name: "Season Configuration",
             scope: "world",
             config: false,
             type: Array,
             default: []
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.MoonConfiguration, {
+        game.settings?.register(ModuleName, SettingNames.MoonConfiguration, {
             name: "Moon Configuration",
             scope: "world",
             config: false,
             type: Array,
             default: []
         });
-        (<Game>game).settings.register(ModuleName, SettingNames.NoteCategories, {
+        game.settings?.register(ModuleName, SettingNames.NoteCategories, {
             name: "Note Categories",
             scope: "world",
             config: false,

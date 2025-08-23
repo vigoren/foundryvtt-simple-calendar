@@ -67,6 +67,7 @@ describe("Note Sheet Class Tests", () => {
             testUserPermission: () => {
                 return true;
             },
+            isOwner: true,
             update: async () => {},
             delete: async () => {},
             ownership: { "": 3, a: 0, default: 0 },
@@ -210,11 +211,17 @@ describe("Note Sheet Class Tests", () => {
         jest.spyOn(ns, "isEditable", "get").mockReturnValue(true);
         //@ts-ignore
         jest.spyOn(game.user, "id", "get")
+            //@ts-ignore
             .mockReturnValueOnce("asd")
+            //@ts-ignore
             .mockReturnValueOnce("asd")
+            //@ts-ignore
             .mockReturnValueOnce("asd")
+            //@ts-ignore
             .mockReturnValueOnce("asd")
+            //@ts-ignore
             .mockReturnValueOnce("asd")
+            //@ts-ignore
             .mockReturnValueOnce("noth");
         expect(await ns.getData()).toBeDefined();
         je.pages.contents[0].text.content = "";
@@ -224,6 +231,7 @@ describe("Note Sheet Class Tests", () => {
         ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
         ns.journalData.flags = {
+            //@ts-ignore
             "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [], categories: ["Holiday"] } }
         };
         expect(await ns.getData()).toBeDefined();
@@ -621,6 +629,7 @@ describe("Note Sheet Class Tests", () => {
         });
         //@ts-ignore
         ns.journalData.flags[ModuleName] = {
+            //@ts-ignore
             noteData: {
                 repeats: 0,
                 startDate: { year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0 },
@@ -633,6 +642,7 @@ describe("Note Sheet Class Tests", () => {
 
         //@ts-ignore
         ns.journalData.flags[ModuleName] = {
+            //@ts-ignore
             noteData: {
                 repeats: 0,
                 startDate: { year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0 },
@@ -644,6 +654,7 @@ describe("Note Sheet Class Tests", () => {
 
         //@ts-ignore
         ns.journalData.flags[ModuleName] = {
+            //@ts-ignore
             noteData: {
                 repeats: 0,
                 startDate: { year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0 },
@@ -655,6 +666,7 @@ describe("Note Sheet Class Tests", () => {
 
         //@ts-ignore
         ns.journalData.flags[ModuleName] = {
+            //@ts-ignore
             noteData: {
                 repeats: 0,
                 startDate: { year: 0, month: 0, day: 0, hour: 0, minute: 0, seconds: 0 },
@@ -729,9 +741,7 @@ describe("Note Sheet Class Tests", () => {
         expect(MainApplication.updateApp).toHaveBeenCalledTimes(2);
         expect(GameSockets.emit).toHaveBeenCalledTimes(0);
 
-        je.testUserPermission = () => {
-            return false;
-        };
+        je.isOwner = false;
         await ns.reminderChange();
         expect(MainApplication.updateApp).toHaveBeenCalledTimes(3);
         expect(GameSockets.emit).toHaveBeenCalledTimes(1);

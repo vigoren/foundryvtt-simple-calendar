@@ -13,7 +13,6 @@ import "./form-application";
 import "./game";
 import "./handlebars";
 import "./hooks";
-import "./journal";
 import "./journal-sheet";
 import "./journal-entry";
 import "./merge-object";

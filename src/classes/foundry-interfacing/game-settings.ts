@@ -58,8 +58,8 @@ export class GameSettings {
      * @param {string} key The localization string key
      */
     static Localize(key: string): string {
-        if ((<Game>game).i18n) {
-            return (<Game>game).i18n.localize(key);
+        if (game.i18n) {
+            return game.i18n.localize(key);
         } else {
             const parts = key.split(".");
             return parts[parts.length - 1];
@@ -86,7 +86,7 @@ export class GameSettings {
      * Will return the value for the passed in string setting
      * @param {SettingNames} setting The name of the setting to get
      */
-    static GetStringSettings(setting: SettingNames | string): string {
+    static GetStringSettings(setting: SettingNames | `${string}.theme`): string {
         return <string>(<Game>game).settings.get(ModuleName, setting);
     }
 
@@ -94,7 +94,7 @@ export class GameSettings {
      * Will return the value for the passed in number setting
      * @param {SettingNames} setting The name of the setting to get
      */
-    static GetNumericSettings(setting: SettingNames | string): number {
+    static GetNumericSettings(setting: SettingNames): number {
         return <number>(<Game>game).settings.get(ModuleName, setting);
     }
 
@@ -115,7 +115,7 @@ export class GameSettings {
         return false;
     }
 
-    static async SaveStringSetting(setting: SettingNames | string, data: string, checkIfGM: boolean = true): Promise<boolean> {
+    static async SaveStringSetting(setting: SettingNames | `${string}.theme`, data: string, checkIfGM: boolean = true): Promise<boolean> {
         let save = false;
         if (checkIfGM) {
             if (this.IsGm()) {
@@ -132,7 +132,7 @@ export class GameSettings {
         return false;
     }
 
-    static async SaveNumericSetting(setting: SettingNames | string, data: number, checkIfGM: boolean = true): Promise<boolean> {
+    static async SaveNumericSetting(setting: SettingNames, data: number, checkIfGM: boolean = true): Promise<boolean> {
         let save = false;
         if (checkIfGM) {
             if (this.IsGm()) {
@@ -142,9 +142,8 @@ export class GameSettings {
             save = true;
         }
         if (save) {
-            return await (<Game>game).settings.set(ModuleName, setting, data).then(() => {
-                return true;
-            });
+            await game.settings?.set(ModuleName, setting, data);
+            return true;
         }
         return false;
     }
@@ -215,5 +214,16 @@ export class GameSettings {
             }
         }
         return scene;
+    }
+
+    /** 
+     * Checks if the calendar should be paused because of combat.
+     * There must be at least one started combat relevant for the scene. Global combats are relevant to all scenes
+     */
+    static shouldPauseForCombat(): boolean {
+        const activeScene = GameSettings.GetSceneForCombatCheck();
+        const startedCombats = game.combats?.filter((c) => c.started) ?? [];
+        if (startedCombats.length > 0 && !activeScene) return true;
+        return startedCombats.some((c) => !c.scene || c.scene?.id === activeScene?.id);
     }
 }

@@ -175,11 +175,15 @@ export default class V1ToV2 {
 
             const newJe = await NManager.createNote(oldNote.title, oldNote.content, newNoteData, calendar, false, false);
             if (newJe) {
-                const newPerms: Partial<Record<string, 0 | 1 | 2 | 3>> = {};
-                //@ts-ignore
-                Object.keys(newJe.ownership).forEach((p) => {
-                    newPerms[p] = p === oldNote.author ? 3 : oldNote.playerVisible ? 2 : 0;
-                });
+                const newPerms: Record<string, CONST.DOCUMENT_OWNERSHIP_LEVELS> = {};
+                for (const p of Object.keys(newJe.ownership)) {
+                    newPerms[p] =
+                        p === oldNote.author
+                            ? CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+                            : oldNote.playerVisible
+                              ? CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER
+                              : CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
+                }
                 await newJe.update({ ownership: newPerms });
             }
         }

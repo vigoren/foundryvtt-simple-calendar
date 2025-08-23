@@ -2,6 +2,8 @@
  * This file mocks the FoundryVTT game global so that it can be used in testing
  */
 import { jest } from "@jest/globals";
+import { FakeCollection } from "./collection";
+
 //@ts-ignore
 const local: Localization = {
     lang: "",
@@ -85,15 +87,7 @@ const game = {
         on: jest.fn(),
         emit: jest.fn()
     },
-    combats: {
-        size: 0,
-        find: jest.fn((v: Function) => {
-            return v.call(undefined, { started: true });
-        }),
-        filter: (v: any) => {
-            return v.call(undefined, { started: true });
-        }
-    },
+    combats: new FakeCollection(),
     modules: {
         get: jest.fn()
     },
@@ -119,6 +113,9 @@ const game = {
         unshift: (v: any) => {},
         contents: () => {
             return [user];
+        },
+        [Symbol.iterator]: () => {
+            return [user][Symbol.iterator]();
         }
     },
     scenes: null,

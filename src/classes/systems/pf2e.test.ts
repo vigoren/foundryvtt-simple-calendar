@@ -51,12 +51,12 @@ describe("Systems/PF2E Class Tests", () => {
         PF2E.updatePF2EVariables(true);
         expect(PF2E.getWorldCreateSeconds(tCal)).toBe(63793234510);
 
-        (<Game>game).system.data.version = "2.15.0";
+        (<Game>game).system.version = "2.15.0";
         PF2E.updatePF2EVariables(true);
         expect(PF2E.getWorldCreateSeconds(tCal)).toBe(63793320910);
         expect(PF2E.getWorldCreateSeconds(tCal, false)).toBe(63793407310);
 
-        (<Game>game).system.data.version = "1.2.3";
+        (<Game>game).system.version = "1.2.3";
         PF2E.updatePF2EVariables(true);
     });
 
@@ -80,7 +80,7 @@ describe("Systems/PF2E Class Tests", () => {
         PF2E.updatePF2EVariables(true);
         expect(PF2E.newYearZero()).toBe(1970);
 
-        (<Game>game).system.data.version = "2.15.0";
+        (<Game>game).system.version = "2.15.0";
 
         //@ts-ignore
         game.pf2e = { worldClock: { dateTheme: "AR", worldCreatedOn: 10000 } };
@@ -102,7 +102,7 @@ describe("Systems/PF2E Class Tests", () => {
         PF2E.updatePF2EVariables(true);
         expect(PF2E.newYearZero()).toBeUndefined();
 
-        (<Game>game).system.data.version = "1.2.3";
+        (<Game>game).system.version = "1.2.3";
         PF2E.updatePF2EVariables(true);
     });
 
@@ -137,7 +137,7 @@ describe("Systems/PF2E Class Tests", () => {
         PF2E.updatePF2EVariables(true);
         expect(PF2E.weekdayAdjust()).toBe(5);
 
-        (<Game>game).system.data.version = "3.1.2";
+        (<Game>game).system.version = "3.1.2";
         PF2E.updatePF2EVariables(true);
         expect(PF2E.weekdayAdjust()).toBe(6);
     });

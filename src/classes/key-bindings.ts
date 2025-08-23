@@ -3,7 +3,7 @@ import { MainApplication } from "./index";
 
 export default class KeyBindings {
     public static register() {
-        (<Game>game).keybindings.register(ModuleName, "toggleMainApp", {
+        game.keybindings?.register(ModuleName, "toggleMainApp", {
             name: "FSC.KeyBinding.Toggle.Title",
             hint: "FSC.KeyBinding.Toggle.Hint",
             editable: [

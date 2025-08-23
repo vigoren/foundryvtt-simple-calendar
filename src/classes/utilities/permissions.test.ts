@@ -1,5 +1,9 @@
+/**
+ * @jest-environment jsdom
+ */
 import {canUser} from "./permissions";
 import {jest, beforeEach, describe, expect, test} from '@jest/globals';
+import "../../../__mocks__/index";
 
 describe('Utilities Permissions Tests', () => {
 

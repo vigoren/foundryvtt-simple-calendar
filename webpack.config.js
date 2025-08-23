@@ -28,7 +28,6 @@ function getEntries() {
 }
 
 module.exports = {
-    mode: "production",
     entry: getEntries(),
     optimization: {
         removeEmptyChunks: true,

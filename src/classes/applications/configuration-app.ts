@@ -32,6 +32,7 @@ import { generateUniqueId } from "../utilities/string";
 import PF2E from "../systems/pf2e";
 import { FoundryVTTGameData } from "../foundry-interfacing/game-data";
 import { foundryGetRoute } from "../foundry-interfacing/utilities";
+import { GetDataReturnType } from "@league-of-foundry-developers/foundry-vtt-types/utils";
 
 export default class ConfigurationApp extends FormApplication {
     /**
@@ -107,12 +108,12 @@ export default class ConfigurationApp extends FormApplication {
         super({});
     }
 
-    render(force?: boolean, options?: Application.RenderOptions<FormApplicationOptions>): unknown {
+    render(force?: boolean, options?: Application.RenderOptions<FormApplication.Options>): this {
         // Check to see if the object is empty, if it is this is likely the user clicking the button in
         // FoundryVTTs module settings, and we need to initialize and show the actual configuration dialog
         if (isObjectEmpty(this.object)) {
             ConfigurationApplication.initializeAndShowDialog().catch(Logger.error);
-            return;
+            return this;
         } else {
             options = options ? options : {};
             options.classes = ["simple-calendar", "fsc-simple-calendar-configuration", GetThemeName()];
@@ -211,7 +212,7 @@ export default class ConfigurationApp extends FormApplication {
     /**
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
-    public getData(options?: Application.RenderOptions): Promise<FormApplication.Data<object>> | FormApplication.Data<object> {
+    async getData(options?: Application.RenderOptions): Promise<GetDataReturnType<FormApplication.FormApplicationData>> {
         const currDate = (<Calendar>this.object).getCurrentDate();
         this.uiElementStates.dateFormatExample = FormatDateTime(
             { year: currDate.year, month: currDate.month, day: currDate.day, hour: 13, minute: 36, seconds: 42 },
@@ -237,7 +238,7 @@ export default class ConfigurationApp extends FormApplication {
         this.uiElementStates.disabledControls.pf2e = PF2E.isPF2E && (<Calendar>this.object).generalSettings.pf2eSync;
 
         const data = {
-            ...super.getData(options),
+            ...(await super.getData(options)),
             activeCalendarId: (<Calendar>this.object).id,
             images: {
                 compactViewLayoutFull: foundryGetRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp.png"),

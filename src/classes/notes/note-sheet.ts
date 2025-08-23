@@ -6,7 +6,6 @@ import { CalManager, MainApplication, NManager, SC } from "../index";
 import { animateElement, ConvertPxBasedOnRemSize, GetThemeName } from "../utilities/visual";
 import { getCheckBoxInputValue, getNumericInputValue, getTextInputValue } from "../utilities/inputs";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import { ConcreteJournalEntry } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/apps/forms/journal-sheet";
 import MultiSelect from "../renderer/multi-select";
 import { foundryMergeObject } from "../foundry-interfacing/utilities";
 
@@ -28,8 +27,8 @@ export class NoteSheet extends JournalSheet {
     private journalData = {
         _id: "",
         name: "",
-        flags: <Record<string, any>>{},
-        ownership: <Partial<Record<string, 0 | 1 | 2 | 3>>>{}
+        flags: <{ "foundryvtt-simple-calendar": { noteData: SimpleCalendar.NoteData }} >{},
+        ownership: <Record<string, CONST.DOCUMENT_OWNERSHIP_LEVELS>>{}
     };
 
     private journalPages: SimpleCalendar.JournalPageData[] = [];
@@ -117,7 +116,7 @@ export class NoteSheet extends JournalSheet {
         }
     }
 
-    constructor(object: ConcreteJournalEntry, options = {}) {
+    constructor(object: JournalEntry, options = {}) {
         super(object, options);
         this.dateSelectorId = `scNoteDate_${this.object.id}`;
         this.categoryMultiSelectId = `scNoteCategories_${this.object.id}`;
@@ -246,16 +245,16 @@ export class NoteSheet extends JournalSheet {
         return this.close();
     }
 
-    render(force?: boolean, options?: Application.RenderOptions<DocumentSheetOptions>, startInEditMode?: boolean): this {
+    render(force?: boolean, options?: Application.RenderOptions<JournalSheet.Options>, startInEditMode?: boolean): this {
         if (startInEditMode !== undefined) {
             this.editMode = startInEditMode;
         }
         return super.render(force, options);
     }
 
-    async getData(): Promise<JournalSheet.Data> {
+    async getData(): Promise<object> {
         const newOptions = {
-            ...super.getData(),
+            ...(await super.getData()),
             pages: this.journalPages,
             editMode: this.editMode,
             uiElementStates: this.uiElementStates,
@@ -359,8 +358,8 @@ export class NoteSheet extends JournalSheet {
 
                 newOptions.edit.noteData = noteStub.noteData || {};
                 newOptions.edit.timeSelected = !noteStub.allDay;
-                newOptions.edit.repeats = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats || noteStub.repeats;
-                const users = (<Game>game).users;
+                newOptions.edit.repeats = this.journalData.flags[ModuleName].noteData.repeats || noteStub.repeats;
+                const users = game.users;
                 if (users) {
                     newOptions.edit.users = users.map((u) => {
                         return {
@@ -412,7 +411,7 @@ export class NoteSheet extends JournalSheet {
                         newOptions.edit.macroList[m.id] = m.name;
                     }
                 });
-                newOptions.edit.selectedMacro = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).macro || noteStub.macro;
+                newOptions.edit.selectedMacro = this.journalData.flags[ModuleName].noteData.macro || noteStub.macro;
             } else {
                 newOptions.display.date = noteStub.fullDisplayDate;
                 newOptions.display.reminder = noteStub.userReminderRegistered;
@@ -446,14 +445,10 @@ export class NoteSheet extends JournalSheet {
             const videoTimestamp = this.journalPages[this.uiElementStates.selectedPageIndex].video?.timestamp || 0;
             const iframe = this.appWindow.querySelector("iframe");
             if (iframe) {
-                (<Game>game).video
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    //@ts-ignore
-                    .getYouTubePlayer(iframe.id, {
+                game.video
+                    ?.getYouTubePlayer(iframe.id, {
                         events: {
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            //@ts-ignore
-                            onStateChange: this.youtubeOnStateChange.bind(this, videoVolume)
+                            onStateChange: (event) => this.youtubeOnStateChange(videoVolume, event)
                         }
                     })
                     .then((player: any) => {
@@ -468,7 +463,7 @@ export class NoteSheet extends JournalSheet {
         }
     }
 
-    youtubeOnStateChange(volume: number, e: Event) {
+    youtubeOnStateChange(volume: number, e: YT.OnStateChangeEvent) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         if (e.data === YT.PlayerState.PLAYING) e.target?.setVolume(volume * 100);
@@ -758,25 +753,25 @@ export class NoteSheet extends JournalSheet {
                 if (selected) {
                     const permissionValue = this.journalData.ownership[value];
                     if (permissionValue === undefined || permissionValue < 2) {
-                        this.journalData.ownership[value] = 2;
+                        this.journalData.ownership[value] = CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
                     } else if (permissionValue === 3) {
-                        this.journalData.ownership[value] = 3;
+                        this.journalData.ownership[value] = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
                     }
                     if (value === "default") {
                         (<Game>game).users?.forEach((u) => {
                             const pv = this.journalData.ownership[u.id];
                             if (pv === undefined || pv < 2) {
-                                this.journalData.ownership[u.id] = 2;
+                                this.journalData.ownership[u.id] = CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
                             }
                         });
                     }
                 } else {
-                    this.journalData.ownership[value] = 0;
+                    this.journalData.ownership[value] = CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
                     if (value === "default") {
                         (<Game>game).users?.forEach((u) => {
                             const pv = this.journalData.ownership[u.id];
                             if (pv === 2) {
-                                this.journalData.ownership[u.id] = 0;
+                                this.journalData.ownership[u.id] = CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
                             }
                         });
                     }
@@ -790,7 +785,7 @@ export class NoteSheet extends JournalSheet {
     updateNoteRepeatDropdown() {
         if (this.appWindow) {
             const selector = this.appWindow.querySelector(`#scNoteRepeats_${this.object.id}`);
-            const noteData = <SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData;
+            const noteData = this.journalData.flags[ModuleName].noteData;
             if (selector && noteData) {
                 const calendar = CalManager.getCalendar(noteData.calendarId);
                 if (calendar) {
@@ -827,10 +822,10 @@ export class NoteSheet extends JournalSheet {
         let render = false;
         if (this.appWindow) {
             this.journalData.name = getTextInputValue(".fsc-note-title", "New Note", this.appWindow);
-            (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats = <NoteRepeat>(
+            this.journalData.flags[ModuleName].noteData.repeats = <NoteRepeat>(
                 getNumericInputValue(`#scNoteRepeats_${this.object.id}`, NoteRepeat.Never, false, this.appWindow)
             );
-            (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).macro = getTextInputValue(
+            this.journalData.flags[ModuleName].noteData.macro = getTextInputValue(
                 `#scNoteMacro_${this.object.id}`,
                 "none",
                 this.appWindow
@@ -918,14 +913,14 @@ export class NoteSheet extends JournalSheet {
         if (user) {
             const userId = user.id;
             //If the current user can edit the journal entry, then just edit it
-            if ((<JournalEntry>this.object).testUserPermission(user, 3)) {
-                const userIndex = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.indexOf(userId);
+            if (this.object.isOwner) {
+                const userIndex = this.journalData.flags[ModuleName].noteData.remindUsers.indexOf(userId);
                 if (userId !== "" && userIndex === -1) {
-                    (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.push(userId);
+                    this.journalData.flags[ModuleName].noteData.remindUsers.push(userId);
                 } else if (userId !== "" && userIndex !== -1) {
-                    (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.splice(userIndex, 1);
+                    this.journalData.flags[ModuleName].noteData.remindUsers.splice(userIndex, 1);
                 }
-                await (<JournalEntry>this.object).update(this.journalData);
+                await this.object.update(this.journalData);
             }
             //Otherwise, we need to send it to the GM to make the change
             else {
@@ -933,7 +928,7 @@ export class NoteSheet extends JournalSheet {
                     type: SocketTypes.noteUpdate,
                     data: {
                         userId: userId,
-                        journalId: (<JournalEntry>this.object).id
+                        journalId: this.object.id
                     }
                 };
                 await GameSockets.emit(socket);
@@ -1040,7 +1035,7 @@ export class NoteSheet extends JournalSheet {
         e.preventDefault();
         await this.writeInputValuesToObjects();
         (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).fromPredefined = false;
-        await (<JournalEntry>this.object).update(this.journalData, { render: false, renderSheet: false });
+        await this.object.update(this.journalData, { render: false });
 
         //Get all pages currently saved in the journal entry
         const pages = (<JournalEntry>this.object).getEmbeddedCollection("JournalEntryPage").contents;
@@ -1051,7 +1046,7 @@ export class NoteSheet extends JournalSheet {
                 return jp._id === pages[i].id;
             });
             if (index === -1) {
-                await pages[i].delete({ render: false, renderSheet: false });
+                await pages[i].delete({ render: false });
             }
         }
 
@@ -1068,20 +1063,20 @@ export class NoteSheet extends JournalSheet {
                             _id: this.journalPages[i]._id,
                             name: this.journalPages[i].name,
                             type: this.journalPages[i].type,
-                            text: { content: this.journalPages[i].text?.content || "", format: 1, markdown: undefined },
+                            text: { content: this.journalPages[i].text?.content || "", format: CONST.JOURNAL_ENTRY_PAGE_FORMATS.HTML, markdown: undefined },
                             src: this.journalPages[i].src || "",
                             image: { caption: this.journalPages[i].image?.caption || "" },
                             video: this.journalPages[i].video
                         }
                     ],
-                    { render: false, renderSheet: false }
+                    { render: false }
                 );
             } else {
                 await this.object.createEmbeddedDocuments(
                     "JournalEntryPage",
                     [
                         {
-                            text: { content: this.journalPages[i].text?.content || "", format: 1, markdown: undefined },
+                            text: { content: this.journalPages[i].text?.content || "", format: CONST.JOURNAL_ENTRY_PAGE_FORMATS.HTML, markdown: undefined },
                             name: this.journalPages[i].name,
                             type: this.journalPages[i].type,
                             src: this.journalPages[i].src || "",

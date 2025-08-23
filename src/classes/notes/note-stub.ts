@@ -169,7 +169,7 @@ export default class NoteStub {
     public async setOrder(num: number) {
         const journalEntry = (<Game>game).journal?.get(this.entryId);
         if (journalEntry) {
-            const nd = <SimpleCalendar.NoteData>journalEntry.getFlag(ModuleName, "noteData");
+            const nd = journalEntry.getFlag(ModuleName, "noteData");
             if (nd) {
                 nd.order = num;
                 await journalEntry.setFlag(ModuleName, "noteData", nd);
@@ -348,7 +348,7 @@ export default class NoteStub {
         if (journalEntry && user) {
             // GM's always are considered to have ownership of a journal entry,
             // so we need to test if the permission is actually set to 0 before using the built-in test
-            return !!(this.ownership[user.id] !== 0 && journalEntry.testUserPermission(user, 2));
+            return !!(this.ownership[user.id] !== 0 && journalEntry.testUserPermission(user, "OBSERVER"));
         }
         return false;
     }

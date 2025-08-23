@@ -58,14 +58,14 @@ describe("Primary Socket Tests", () => {
         //@ts-ignore
         game.user.isGM = true;
         const users = (<Game>game).users;
-        (<Game>game).users = undefined;
+        (<Game & { users?: Users; }>game).users = undefined;
 
         r = await s.initialize();
         expect(r).toBe(true);
         expect(primaryCheckTimeoutSpy).toHaveBeenCalledTimes(1);
 
         // Only 1 GM
-        (<Game>game).users = users;
+        (<Game & { users?: Users; }>game).users = users;
         r = await s.initialize();
         expect(r).toBe(true);
         expect(primaryCheckTimeoutSpy).toHaveBeenCalledTimes(2);

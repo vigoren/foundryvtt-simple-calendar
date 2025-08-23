@@ -139,6 +139,7 @@ describe("Main App Class Tests", () => {
     });
 
     test("Scene Control Button Click", () => {
+        //@ts-ignore
         jest.spyOn(ma, "render").mockImplementation(() => {});
 
         ma.sceneControlButtonClick();
@@ -209,7 +210,7 @@ describe("Main App Class Tests", () => {
         //@ts-ignore
         global.$ = jest.fn().mockReturnValue(jquery);
         //@ts-ignore
-        global.renderTemplate = jest.fn().mockReturnValue(null);
+        foundry.applications.handlebars.renderTemplate = jest.fn().mockReturnValue(null);
 
         ma.options["classes"] = [];
         //@ts-ignore
@@ -218,7 +219,7 @@ describe("Main App Class Tests", () => {
         await ma._renderOuter();
         //@ts-ignore
         expect(global.$).toHaveBeenCalledTimes(1);
-        expect(global.renderTemplate).toHaveBeenCalledTimes(1);
+        expect(foundry.applications.handlebars.renderTemplate).toHaveBeenCalledTimes(1);
         expect(jquery.css).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
@@ -637,7 +638,7 @@ describe("Main App Class Tests", () => {
         //@ts-ignore
         ma.changeCalendar(false, fEvent);
         expect(CalManager.setActiveCalendar).toHaveBeenCalledTimes(0);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+        expect(ui.notifications?.warn).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         jest.spyOn(game.users, "find").mockImplementation((v: any) => {
@@ -728,7 +729,7 @@ describe("Main App Class Tests", () => {
 
         //@ts-ignore
         ma.timeUnitClick(fEvent);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+        expect(ui.notifications!.warn).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         jest.spyOn(game.users, "find").mockImplementation((v: any) => {
@@ -737,14 +738,14 @@ describe("Main App Class Tests", () => {
         target.setAttribute("data-type", "year");
         //@ts-ignore
         ma.timeUnitClick(fEvent);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+        expect(ui.notifications!.warn).toHaveBeenCalledTimes(1);
         expect(GameSockets.emit).toHaveBeenCalledTimes(1);
 
         target.setAttribute("data-type", "midnight");
         target.setAttribute("data-amount", "");
         //@ts-ignore
         ma.timeUnitClick(fEvent);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+        expect(ui.notifications!.warn).toHaveBeenCalledTimes(1);
         expect(GameSockets.emit).toHaveBeenCalledTimes(2);
 
         //@ts-ignore
@@ -753,7 +754,7 @@ describe("Main App Class Tests", () => {
         });
         //@ts-ignore
         ma.timeUnitClick(fEvent);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
+        expect(ui.notifications!.warn).toHaveBeenCalledTimes(2);
         expect(GameSockets.emit).toHaveBeenCalledTimes(2);
 
         target.setAttribute("data-type", "year");
@@ -761,7 +762,7 @@ describe("Main App Class Tests", () => {
         SC.primary = true;
         //@ts-ignore
         ma.timeUnitClick(fEvent);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
+        expect(ui.notifications!.warn).toHaveBeenCalledTimes(2);
         expect(GameSockets.emit).toHaveBeenCalledTimes(2);
         expect(tCal.changeDateTime).toHaveBeenCalledTimes(1);
 
@@ -769,7 +770,7 @@ describe("Main App Class Tests", () => {
         target.setAttribute("data-amount", "");
         //@ts-ignore
         ma.timeUnitClick(fEvent);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
+        expect(ui.notifications!.warn).toHaveBeenCalledTimes(2);
         expect(GameSockets.emit).toHaveBeenCalledTimes(2);
         expect(tCal.changeDateTime).toHaveBeenCalledTimes(1);
         expect(DateUtilities.AdvanceTimeToPreset).toHaveBeenCalledTimes(1);
@@ -813,7 +814,7 @@ describe("Main App Class Tests", () => {
         });
 
         ma.setCurrentDate(0, 0, 0);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+        expect(ui.notifications?.warn).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         jest.spyOn(game.users, "find").mockImplementation((v: any) => {
@@ -985,7 +986,7 @@ describe("Main App Class Tests", () => {
 
         jest.spyOn(console, "error").mockImplementation(() => {});
         //@ts-ignore
-        jest.spyOn(Journal, "showDialog").mockImplementation(async () => {});
+        jest.spyOn(foundry.documents.collections.Journal, "showDialog").mockImplementation(async () => {});
 
         const fEvent = {
             target: action
@@ -993,14 +994,14 @@ describe("Main App Class Tests", () => {
         //@ts-ignore
         ma.noteContextClick(fEvent);
         //@ts-ignore
-        expect(Journal.showDialog).toHaveBeenCalledTimes(1);
+        expect(foundry.documents.collections.Journal.showDialog).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
-        jest.spyOn(Journal, "showDialog").mockRejectedValue("E");
+        jest.spyOn(foundry.documents.collections.Journal, "showDialog").mockRejectedValue("E");
         //@ts-ignore
         ma.noteContextClick(fEvent);
         //@ts-ignore
-        expect(Journal.showDialog).toHaveBeenCalledTimes(2);
+        expect(foundry.documents.collections.Journal.showDialog).toHaveBeenCalledTimes(2);
 
         const je = {
             sheet: {
@@ -1034,6 +1035,7 @@ describe("Main App Class Tests", () => {
     });
 
     test("Update App", () => {
+        //@ts-ignore
         jest.spyOn(ma, "render").mockImplementation(() => {});
         ma.updateApp();
         expect(ma.render).toHaveBeenCalledTimes(1);
@@ -1051,19 +1053,14 @@ describe("Main App Class Tests", () => {
         //@ts-ignore
         game.scenes = {};
         //@ts-ignore
-        game.combats = {
-            size: 1,
-            find: (v: any) => {
-                return v.call(undefined, { started: true, scene: { id: "s1" } });
-            }
-        };
+        game.combats = [{ started: true, scene: { id: "s1" } }];
         ma.startTime();
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+        expect(ui.notifications?.warn).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         game.scenes = { active: { id: "s1" } };
         ma.startTime();
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(2);
+        expect(ui.notifications?.warn).toHaveBeenCalledTimes(2);
     });
 
     test("Stop Time", () => {
@@ -1119,7 +1116,7 @@ describe("Main App Class Tests", () => {
 
         //@ts-ignore
         ma.noteDragEnd(fEvent);
-        expect(GameSettings.UiNotification).toHaveBeenCalledTimes(1);
+        expect(ui.notifications?.warn).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         jest.spyOn(game.users, "find").mockImplementation((v: any) => {
@@ -1143,6 +1140,7 @@ describe("Main App Class Tests", () => {
     });
 
     test("keyClick", () => {
+        //@ts-ignore
         jest.spyOn(ma, "render").mockImplementation(() => {});
 
         //@ts-ignore
@@ -1156,6 +1154,7 @@ describe("Main App Class Tests", () => {
     });
 
     test("toggleWindow", () => {
+        //@ts-ignore
         jest.spyOn(ma, "render").mockImplementation(() => {});
 
         ma.sceneControlButtonClick();

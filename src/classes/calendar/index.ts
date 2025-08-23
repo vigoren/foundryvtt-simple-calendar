@@ -1265,7 +1265,7 @@ export default class Calendar extends ConfigurationItemBase {
         const roundSeconds = SC.globalConfiguration.secondsInCombatRound;
         let roundsPassed = 1;
 
-        if (Object.prototype.hasOwnProperty.call(combat, "previous") && combat["previous"].round) {
+        if (combat["previous"]?.round) {
             roundsPassed = combat.round - combat["previous"].round;
         } else if (PF1E.isPF1E) {
             roundsPassed = 0;

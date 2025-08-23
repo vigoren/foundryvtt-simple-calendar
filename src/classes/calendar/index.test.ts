@@ -61,6 +61,7 @@ describe("Calendar Class Tests", () => {
         //@ts-ignore
         (<Game>game).system = null;
         c = new Calendar("a", "cal");
+        //@ts-ignore
         (<Game>game).system = orig;
     });
 

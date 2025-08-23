@@ -80,6 +80,7 @@ describe('Game Settings Class Tests', () => {
         // @ts-ignore
         (<Game>game).i18n = null;
         expect(GameSettings.Localize('test')).toBe('test');
+        // @ts-ignore
         (<Game>game).i18n = orig;
     });
 
@@ -176,6 +177,7 @@ describe('Game Settings Class Tests', () => {
         SC.globalConfiguration.combatPauseRule = CombatPauseRules.Active;
         expect(GameSettings.GetSceneForCombatCheck()).toBeNull();
 
+        // @ts-ignore
         (<Game>game).scenes = origScenes;
     });
 });

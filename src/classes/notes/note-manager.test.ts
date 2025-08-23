@@ -44,7 +44,7 @@ describe("Note Manager Class Tests", () => {
 
     test("Register Note Sheets", () => {
         NManager.registerNoteSheets();
-        expect(Journal.registerSheet).toHaveBeenCalledTimes(1);
+        expect(foundry.documents.collections.Journal.registerSheet).toHaveBeenCalledTimes(1);
     });
 
     test("Create Journal Directory", async () => {
@@ -54,7 +54,7 @@ describe("Note Manager Class Tests", () => {
         //@ts-ignore
         game.user.isGM = true;
         await NManager.createJournalDirectory();
-        expect(NManager.noteDirectory).toBeUndefined();
+        expect(NManager.noteDirectory).not.toBeUndefined();
     });
 
     test("Add New Note", async () => {
@@ -394,6 +394,7 @@ describe("Note Manager Class Tests", () => {
                 fullDisplayDate: "",
                 //@ts-ignore
                 categories: [{ name: "c1" }],
+                //@ts-ignore
                 pages: [{ name: "", type: "text", text: { content: "" } }]
             }
         ];

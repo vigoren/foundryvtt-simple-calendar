@@ -17,7 +17,7 @@ describe('Utilities String Tests', () => {
     });
 
     test('Ordinal Suffix', () => {
-        jest.spyOn((<Game>game).i18n, 'localize').mockImplementation((a: string) => {
+        jest.spyOn((<Game>game).i18n!, 'localize').mockImplementation((a: string) => {
             switch (a){
                 case 'FSC.OrdinalSuffix.st':
                     return 'st';

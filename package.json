@@ -20,13 +20,14 @@
   "types": "types/index.d.ts",
   "scripts": {
     "build": "webpack",
+    "watch": "webpack --watch --mode=development",
     "test": "jest",
     "unusedI18N": "i18n-unused display-unused",
     "writedocs": "cd simple-calendar-docs && npm install && npm run build"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
-    "@league-of-foundry-developers/foundry-vtt-types": "^9.280.0",
+    "@league-of-foundry-developers/foundry-vtt-types": "^13.346.0-beta.20250812192728",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^20.12.12",
     "@typescript-eslint/eslint-plugin": "^7.9.0",
