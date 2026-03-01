@@ -13,23 +13,36 @@ This file provides guidance for AI agents working on the Simple Calendar Foundry
 
 ## V13 Compatibility (v13-compatibility branch)
 
-The `v13-compatibility` branch contains initial updates for FoundryVTT V13 compatibility:
+The `v13-compatibility` branch contains updates for FoundryVTT V13 compatibility only. V12 backward compatibility is NOT required.
 
 ### Completed
 
-- Updated `src/module.json` to set `minimumCoreVersion: 11` and `compatibleCoreVersion: 13`
-- Fixed jQuery usage in `src/classes/applications/main-app.ts` - replaced `$(template)` with DOMParser
-- Fixed jQuery usage in `src/classes/s-c-controller.ts` hook handlers to accept both jQuery and HTMLElement
+- Updated `src/module.json` for V13 (minimumCoreVersion: 11, compatibleCoreVersion: 13)
+- Updated author info to eCyclops
+- Fixed jQuery usage in `src/classes/applications/main-app.ts`:
+    - Replaced `$(template)` with DOMParser
+    - Updated `_activateHeaderButtons` to handle HTMLElement
+    - Wrap returned element in jQuery for V1 compatibility
+- Fixed `getSceneControlButtons` hook to handle both array (V12) and object (V13) formats
+- Fixed hook handlers in `src/classes/s-c-controller.ts` to accept both jQuery and HTMLElement
+
+### Current Status (Testing)
+
+- Module loads without crashing
+- Calendar window should render
+- May show deprecation warnings (applications still extend V1 classes)
 
 ### Remaining Tasks
 
-- Migrate applications to ApplicationV2:
+- Migrate applications to ApplicationV2 (required for full V13 support):
     - `MainApp extends FormApplication` - `src/classes/applications/main-app.ts`
     - `ConfigurationApp extends FormApplication` - `src/classes/applications/configuration-app.ts`
     - `NoteSheet extends JournalSheet` - `src/classes/notes/note-sheet.ts`
     - `MigrationApp extends Application` - `src/classes/applications/migration-app.ts`
 - Update `@league-of-foundry-developers/foundry-vtt-types` to V13-compatible version
+- Remove V12 compatibility code (can use HTMLElement directly instead of JQuery | HTMLElement unions)
 - Test in Foundry V13 environment
+- Test in Foundry V14 when available
 
 ## Development Commands
 

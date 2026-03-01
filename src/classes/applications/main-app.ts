@@ -319,11 +319,13 @@ export default class MainApp extends FormApplication {
     }
 
     _activateHeaderButtons(
-        html: JQuery,
+        html: JQuery | HTMLElement,
         windowData: { id: string; classes: string; appId: number; title: string; headerButtons: Application.HeaderButton[] }
     ) {
         // FoundryUpdate: This is ripped from foundry's code and will need to be updated if foundry changes it. This is a nested function from _renderOuter not its own function
-        html[0].querySelectorAll(".header-button").forEach((b) => {
+        // V13 compatibility: handle both JQuery and HTMLElement
+        const element = html instanceof HTMLElement ? html : html[0];
+        element.querySelectorAll(".header-button").forEach((b) => {
             b.addEventListener("click", (event) => {
                 event.preventDefault();
                 const currentTarget = <HTMLElement>event.currentTarget;
@@ -388,10 +390,11 @@ export default class MainApp extends FormApplication {
         //@ts-ignore
         ui.activeWindow = this;
 
-        // Return the outer frame
+        // Return the outer frame - wrap in jQuery-like object for V1 compatibility
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore - V13 compatibility: html is now HTMLElement instead of jQuery
-        return html;
+        //@ts-ignore
+        const result = $(html);
+        return result;
     }
 
     /**

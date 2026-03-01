@@ -325,11 +325,17 @@ export default class SCController {
      * Adds the calendar button to the token button list
      * @param controls
      */
-    public getSceneControlButtons(controls: any[]) {
+    public getSceneControlButtons(controls: any[] | Record<string, any>) {
         if (canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)) {
-            const tokenControls = controls.find((c) => {
-                return c.name === "notes";
-            });
+            let tokenControls: any = null;
+
+            // V12: controls is an array, V13: controls is an object keyed by name
+            if (Array.isArray(controls)) {
+                tokenControls = controls.find((c) => c.name === "notes");
+            } else if (controls && typeof controls === "object") {
+                tokenControls = controls["notes"];
+            }
+
             if (tokenControls && Object.prototype.hasOwnProperty.call(tokenControls, "tools")) {
                 tokenControls.tools.push({
                     name: "calendar",
