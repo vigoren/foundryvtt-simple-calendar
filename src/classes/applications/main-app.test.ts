@@ -209,7 +209,7 @@ describe("Main App Class Tests", () => {
         //@ts-ignore
         global.$ = jest.fn().mockReturnValue(jquery);
         //@ts-ignore
-        global.renderTemplate = jest.fn().mockReturnValue(null);
+        global.renderTemplate = jest.fn().mockReturnValue("<div><header>Test</header></div>");
 
         ma.options["classes"] = [];
         //@ts-ignore
@@ -217,9 +217,7 @@ describe("Main App Class Tests", () => {
         //@ts-ignore
         await ma._renderOuter();
         //@ts-ignore
-        expect(global.$).toHaveBeenCalledTimes(1);
         expect(global.renderTemplate).toHaveBeenCalledTimes(1);
-        expect(jquery.css).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         game.release.generation = 10;

@@ -351,15 +351,23 @@ export default class MainApp extends FormApplication {
 
         // Render the template and return the promise
         const template = await renderTemplate("templates/app-window.html", windowData);
-        let html = $(template);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(template, "text/html");
+        let html = doc.body.firstElementChild as HTMLElement;
 
         // Activate header button click listeners after a slight timeout to prevent immediate interaction
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore - V13 compatibility: html is now HTMLElement instead of jQuery
         setTimeout(this._activateHeaderButtons.bind(this, html, windowData), 500);
 
         // Make the outer window draggable
-        const header = html.find("header")[0];
-        new Draggable(this, html, header, this.options.resizable);
-        const drag = new Draggable(this, html, header, this.options.resizable);
+        const header = html.querySelector("header");
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore - V13 compatibility: html is now HTMLElement instead of jQuery
+        new Draggable(this, html as HTMLElement, header as HTMLElement, this.options.resizable);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore - V13 compatibility: html is now HTMLElement instead of jQuery
+        const drag = new Draggable(this, html as HTMLElement, header as HTMLElement, this.options.resizable);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         drag.handlers["dragMove"] = [(<Game>game).release.generation < 11 ? "mousemove" : "pointermove", this.appDragMove.bind(drag), false];
@@ -368,19 +376,21 @@ export default class MainApp extends FormApplication {
         drag.handlers["dragUp"] = [(<Game>game).release.generation < 11 ? "mouseup" : "pointerup", this.appDragEnd.bind(drag), false];
 
         // Make the outer window minimizable
-        if (this.options.minimizable) {
+        if (this.options.minimizable && header) {
             header.addEventListener("dblclick", this.toggleCompactView.bind(this));
         }
 
         // Set the outer frame z-index
         if (Object.keys(ui.windows).length === 0) _maxZ = 100 - 1;
         this.position.zIndex = Math.min(++_maxZ, 9999);
-        html.css({ zIndex: this.position.zIndex });
+        html.style.zIndex = this.position.zIndex.toString();
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         ui.activeWindow = this;
 
         // Return the outer frame
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore - V13 compatibility: html is now HTMLElement instead of jQuery
         return html;
     }
 

@@ -330,7 +330,7 @@ describe("SCController Tests", () => {
         expect(NManager.createJournalDirectory).toHaveBeenCalledTimes(2);
         expect(mockQuery.find).toHaveBeenCalledTimes(1);
 
-        mockQuery.find.mockReturnValueOnce(mockFindResult);
+        mockQuery.find.mockReturnValueOnce([mockFindResult]);
         //@ts-ignore
         await SC.renderJournalDirectory(null, mockQuery);
         expect(NManager.createJournalDirectory).toHaveBeenCalledTimes(3);
@@ -353,7 +353,7 @@ describe("SCController Tests", () => {
         SC.renderJournalSheet(null, mockQuery);
         expect(mockQuery.find).toHaveBeenCalledTimes(1);
 
-        mockQuery.find.mockReturnValueOnce(mockFindResult);
+        mockQuery.find.mockReturnValueOnce([mockFindResult]);
         //@ts-ignore
         SC.renderJournalSheet(null, mockQuery);
         expect(mockQuery.find).toHaveBeenCalledTimes(2);
@@ -365,7 +365,7 @@ describe("SCController Tests", () => {
             find: jest.fn()
         };
         const mockFindResult = { remove: jest.fn() };
-        mockQuery.find.mockReturnValue(mockFindResult);
+        mockQuery.find.mockReturnValue([mockFindResult]);
 
         //@ts-ignore
         SC.renderSceneConfig({}, mockQuery, { journals: [{ id: "asd", name: "asd" }] });
