@@ -292,23 +292,26 @@ describe("SCController Tests", () => {
     });
 
     test("Get Scene Control Buttons", () => {
-        const controls: any[] = [{ name: "test", tools: [] }];
+        const controls: Record<string, any> = { test: { name: "test", tools: {} } };
         const canUserSpy = jest.spyOn(PermUtils, "canUser").mockReturnValue(true);
         SC.getSceneControlButtons(controls);
-        expect(controls.length).toBe(1);
-        expect(controls[0].tools.length).toBe(0);
+        expect(Object.keys(controls.test.tools).length).toBe(0);
+
+        // No "notes" control yet - should not add anything
         SC.getSceneControlButtons(controls);
-        expect(controls.length).toBe(1);
-        expect(controls[0].tools.length).toBe(0);
-        controls.push({ name: "notes" });
+        expect(Object.keys(controls.test.tools).length).toBe(0);
+
+        // Add notes control without tools
+        controls["notes"] = { name: "notes" };
         SC.getSceneControlButtons(controls);
-        expect(controls.length).toBe(2);
-        expect(controls[0].tools.length).toBe(0);
-        controls[1].tools = [];
+        expect(controls["notes"].tools).toBeUndefined();
+
+        // Add notes control with tools object
+        controls["notes"].tools = {};
         SC.getSceneControlButtons(controls);
-        expect(controls.length).toBe(2);
-        expect(controls[0].tools.length).toBe(0);
-        expect(controls[1].tools.length).toBe(1);
+        expect(Object.keys(controls["notes"].tools).length).toBe(1);
+        expect(controls["notes"].tools.calendar).toBeDefined();
+        expect(controls["notes"].tools.calendar.name).toBe("calendar");
     });
 
     test("Render Journal Directory", async () => {

@@ -325,25 +325,20 @@ export default class SCController {
      * Adds the calendar button to the token button list
      * @param controls
      */
-    public getSceneControlButtons(controls: any[] | Record<string, any>) {
+    public getSceneControlButtons(controls: Record<string, any>) {
         if (canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)) {
-            let tokenControls: any = null;
-
-            // V12: controls is an array, V13: controls is an object keyed by name
-            if (Array.isArray(controls)) {
-                tokenControls = controls.find((c) => c.name === "notes");
-            } else if (controls && typeof controls === "object") {
-                tokenControls = controls["notes"];
-            }
-
-            if (tokenControls && Object.prototype.hasOwnProperty.call(tokenControls, "tools")) {
-                tokenControls.tools.push({
+            const tokenControls = controls["notes"];
+            if (tokenControls && tokenControls.tools) {
+                tokenControls.tools.calendar = {
                     name: "calendar",
                     title: "FSC.Title",
                     icon: "fas fa-calendar simple-calendar-icon",
                     button: true,
+                    order: Object.keys(tokenControls.tools).length,
+                    // V13: onChange replaces onClick for SceneControlTool
+                    onChange: MainApplication.sceneControlButtonClick.bind(MainApplication),
                     onClick: MainApplication.sceneControlButtonClick.bind(MainApplication)
-                });
+                };
             }
         }
     }

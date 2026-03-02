@@ -36,7 +36,9 @@ export default class NoteManager {
      * Registers the Simple Calendar note sheet with foundry
      */
     public registerNoteSheets() {
-        Journal.registerSheet(ModuleName, NoteSheet, { types: ["base"], makeDefault: false, label: "Simple Calendar: Note Sheet" });
+        // V13: Journal global is namespaced under foundry.documents.collections.Journal
+        const JournalClass = (globalThis as any).foundry?.documents?.collections?.Journal ?? Journal;
+        JournalClass.registerSheet(ModuleName, NoteSheet, { types: ["base"], makeDefault: false, label: "Simple Calendar: Note Sheet" });
     }
 
     /**
@@ -45,7 +47,9 @@ export default class NoteManager {
     public async createJournalDirectory() {
         const journalDirectory = (<Game>game).journal?.directory;
         if (journalDirectory) {
-            this.noteDirectory = journalDirectory.folders.find((f) => {
+            // V13: folders are accessed via game.folders, not directory.folders
+            const folders = (<Game>game).folders?.filter((f: any) => f.type === "JournalEntry") || [];
+            this.noteDirectory = folders.find((f: any) => {
                 return f.getFlag(ModuleName, "root");
             });
             if (!this.noteDirectory && GameSettings.IsGm()) {
@@ -59,7 +63,8 @@ export default class NoteManager {
                         }
                     }
                 });
-                this.noteDirectory = journalDirectory.folders.find((f) => {
+                const updatedFolders = (<Game>game).folders?.filter((f: any) => f.type === "JournalEntry") || [];
+                this.noteDirectory = updatedFolders.find((f: any) => {
                     return f.getFlag(ModuleName, "root");
                 });
             }
@@ -190,13 +195,12 @@ export default class NoteManager {
             this.notes = {};
             await this.loadNotesFromFolder(this.noteDirectory);
 
-            const journalDirectory = (<Game>game).journal?.directory;
-            if (journalDirectory) {
-                for (let i = 0; i < journalDirectory.folders.length; i++) {
-                    const f = journalDirectory.folders[i];
-                    if (f.folder && f.folder.id === this.noteDirectory.id) {
-                        await this.loadNotesFromFolder(f);
-                    }
+            // V13: folders are accessed via game.folders, not directory.folders
+            const folders = (<Game>game).folders?.filter((f: any) => f.type === "JournalEntry") || [];
+            for (let i = 0; i < folders.length; i++) {
+                const f = folders[i];
+                if (f.folder && f.folder.id === this.noteDirectory.id) {
+                    await this.loadNotesFromFolder(f);
                 }
             }
         }
@@ -208,12 +212,14 @@ export default class NoteManager {
      * @private
      */
     private async loadNotesFromFolder(folder: Folder) {
-        for (let i = 0; i < folder.contents.length; i++) {
-            const je = <JournalEntry>folder.contents[i];
+        const contents = folder.contents || [];
+        for (let i = 0; i < contents.length; i++) {
+            const je = <JournalEntry>contents[i];
             //Check to see if this journal entry has no pages (migration of an empty journal entry has no page) and add a page with no content
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
-            if (je.pages.contents.length === 0) {
+            const pageContents = je.pages?.contents || [];
+            if (pageContents.length === 0) {
                 await je.createEmbeddedDocuments("JournalEntryPage", [
                     {
                         text: { content: "" },

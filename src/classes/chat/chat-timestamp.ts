@@ -50,11 +50,13 @@ export class ChatTimestamp {
         return formattedDateTime;
     }
 
-    public static renderTimestamp(chatMessage: ChatMessage, html: JQuery) {
+    public static renderTimestamp(chatMessage: ChatMessage, html: JQuery | HTMLElement) {
         if (SC.globalConfiguration.inGameChatTimestamp) {
             const formattedDateTime = this.getFormattedChatTimestamp(chatMessage);
             if (formattedDateTime) {
-                const foundryTime = html[0].querySelector(".message-header .message-metadata .message-timestamp");
+                // V13: renderChatMessageHTML passes HTMLElement directly instead of jQuery
+                const element = html instanceof HTMLElement ? html : html[0];
+                const foundryTime = element.querySelector(".message-header .message-metadata .message-timestamp");
                 if (foundryTime) {
                     (<HTMLElement>foundryTime).style.display = "none";
                     const newTime = document.createElement("time");

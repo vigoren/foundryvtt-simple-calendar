@@ -15,7 +15,7 @@ export default class MigrationApp extends HandlebarsApplicationMixin(Application
 
     static override DEFAULT_OPTIONS = {
         id: "fsc-migration-application",
-        classes: ["simple-calendar"],
+        classes: ["simple-calendar", "window-app"],
         tag: "div" as const,
         window: {
             title: "FSC.Migration.Title",
@@ -72,6 +72,11 @@ export default class MigrationApp extends HandlebarsApplicationMixin(Application
     }
 
     override _onRender(context: any, options: any) {
+        // V13 V2: Add window-content class to window-body for CSS compatibility
+        if (this.element) {
+            const windowBody = this.element.querySelector(".window-body");
+            if (windowBody) windowBody.classList.add("window-content");
+        }
         // Apply theme class
         const themeClass = GetThemeName();
         if (this.element) {

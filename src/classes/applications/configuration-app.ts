@@ -41,7 +41,7 @@ export default class ConfigurationApp extends HandlebarsApplicationMixin(Applica
 
     static override DEFAULT_OPTIONS = {
         id: "fsc-simple-calendar-configuration-application-form",
-        classes: ["simple-calendar", "fsc-simple-calendar-configuration"],
+        classes: ["simple-calendar", "fsc-simple-calendar-configuration", "window-app"],
         tag: "div" as const,
         window: {
             title: "FSC.Configuration.Title",
@@ -228,6 +228,23 @@ export default class ConfigurationApp extends HandlebarsApplicationMixin(Applica
     }
 
     /**
+     * V13 V2: Activates a tab by name, toggling active class on nav links and content divs
+     * @param tabName The data-tab value to activate
+     */
+    private activateTab(tabName: string) {
+        if (!this.appWindow) return;
+        // Deactivate all nav links and content tabs
+        this.appWindow.querySelectorAll("nav.tabs a[data-tab]").forEach((el) => {
+            el.classList.toggle("active", (<HTMLElement>el).dataset.tab === tabName);
+        });
+        this.appWindow.querySelectorAll(".fsc-tab-wrapper > .tab[data-tab]").forEach((el) => {
+            const isActive = (<HTMLElement>el).dataset.tab === tabName;
+            el.classList.toggle("active", isActive);
+            (<HTMLElement>el).style.display = isActive ? "" : "none";
+        });
+    }
+
+    /**
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
     override async _prepareContext(options?: any): Promise<object> {
@@ -256,6 +273,8 @@ export default class ConfigurationApp extends HandlebarsApplicationMixin(Applica
         this.uiElementStates.disabledControls.pf2e = PF2E.isPF2E && (<Calendar>this.currentCalendar).generalSettings.pf2eSync;
 
         const data = {
+            // V2: Provide 'object' for template compatibility (was automatic in V1 FormApplication)
+            object: this.currentCalendar,
             activeCalendarId: (<Calendar>this.currentCalendar).id,
             images: {
                 compactViewLayoutFull: foundryGetRoute("/modules/foundryvtt-simple-calendar/assets/sc-v2-theme-dark-comp.png"),
@@ -397,6 +416,11 @@ export default class ConfigurationApp extends HandlebarsApplicationMixin(Applica
      * Called after the application renders — sets up event listeners and applies theme.
      */
     override _onRender(context: any, options: any) {
+        // V13 V2: Add window-content class to window-body for CSS compatibility
+        if (this.element) {
+            const windowBody = this.element.querySelector(".window-body");
+            if (windowBody) windowBody.classList.add("window-content");
+        }
         // Apply theme class
         const themeClass = GetThemeName();
         if (this.element) {
@@ -417,6 +441,19 @@ export default class ConfigurationApp extends HandlebarsApplicationMixin(Applica
         });
         this.appWindow = document.getElementById(ConfigurationApp.appWindowId);
         if (this.appWindow) {
+            // V13 V2: Manual tab handling (was automatic in V1 Application via Tabs class)
+            this.activateTab(this.activeTab);
+            this.appWindow.querySelectorAll("nav.tabs a[data-tab]").forEach((tabLink) => {
+                tabLink.addEventListener("click", (ev: Event) => {
+                    ev.preventDefault();
+                    const tab = (<HTMLElement>ev.currentTarget).dataset.tab;
+                    if (tab) {
+                        this.activeTab = tab;
+                        this.activateTab(tab);
+                    }
+                });
+            });
+
             DateSelectorManager.ActivateSelector("quick-setup-predefined-calendar");
 
             // Click anywhere in the app

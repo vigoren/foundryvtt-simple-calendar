@@ -31,7 +31,7 @@ export default class MainApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static override DEFAULT_OPTIONS = {
         id: "fsc-simple-calendar-application",
-        classes: ["simple-calendar"],
+        classes: ["simple-calendar", "window-app"],
         tag: "div" as const,
         window: {
             title: "FSC.Title",
@@ -387,11 +387,18 @@ export default class MainApp extends HandlebarsApplicationMixin(ApplicationV2) {
         const appWindow = this.element;
         if (!appWindow) return;
 
+        // V13 V2: Add window-content class to window-body for CSS compatibility
+        const windowBody = appWindow.querySelector(".window-body");
+        if (windowBody) windowBody.classList.add("window-content");
+
         const header = appWindow.querySelector("header");
 
         // Custom draggable for position saving
+        // V13: Draggable global is now under foundry.applications.ux.Draggable.implementation
         //@ts-ignore
-        const drag = new Draggable(this, appWindow, header, false);
+        const DraggableClass = (globalThis as any).foundry?.applications?.ux?.Draggable?.implementation ?? Draggable;
+        //@ts-ignore
+        const drag = new DraggableClass(this, appWindow, header, false);
         //@ts-ignore
         drag.handlers["dragMove"] = ["pointermove", this.appDragMove.bind(drag), false];
         //@ts-ignore

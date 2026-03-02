@@ -131,7 +131,7 @@ export class NoteSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
 
     static override DEFAULT_OPTIONS = {
         id: "fsc-simple-calendar-note-journal-form",
-        classes: ["sheet", "journal-sheet", "simple-calendar"],
+        classes: ["sheet", "journal-sheet", "simple-calendar", "window-app"],
         tag: "div" as const,
         window: {
             title: "Simple Calendar Note",
@@ -168,30 +168,31 @@ export class NoteSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
         this.journalPages = [];
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        for (let i = 0; i < this.document.pages.contents.length; i++) {
+        const docPages = this.document.pages?.contents || [];
+        for (let i = 0; i < docPages.length; i++) {
             this.journalPages.push({
                 show: true,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                _id: this.document.pages.contents[i]._id,
+                _id: docPages[i]._id,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                name: this.document.pages.contents[i].name,
+                name: docPages[i].name,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                type: this.document.pages.contents[i].type,
+                type: docPages[i].type,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                text: { content: this.document.pages.contents[i].text.content },
+                text: { content: docPages[i].text.content },
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                src: this.document.pages.contents[i].src,
+                src: docPages[i].src,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                image: { caption: this.document.pages.contents[i].image.caption },
+                image: { caption: docPages[i].image.caption },
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                video: this.document.pages.contents[i].video
+                video: docPages[i].video
             });
         }
     }
@@ -516,6 +517,9 @@ export class NoteSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
     override _onRender(context: any, options: any) {
         this.appWindow = this.element || document.getElementById(`${this.id}`);
         if (this.appWindow) {
+            // V13 V2: Add window-content class to window-body for CSS compatibility
+            const windowBody = this.appWindow.querySelector(".window-body");
+            if (windowBody) windowBody.classList.add("window-content");
             const themes = Themes.map((t) => {
                 return t.key;
             });
