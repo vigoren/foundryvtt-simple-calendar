@@ -215,7 +215,8 @@
               border: unset;
               box-shadow: unset;
               margin-bottom: 0;
-              padding: 0.15rem 0;
+              padding: 0.25rem 0.2rem !important;
+              line-height: normal !important;
               &.fsc-save{
                 color: var(--btn-save-bg-color);
               }

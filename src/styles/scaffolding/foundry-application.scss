@@ -96,6 +96,34 @@
       border-image: var(--app-border-image);
       box-shadow: unset;
       @include scrollbar();
+      // V13: Foundry changed .form-fields from flex to grid; restore flex layout
+      .form-fields{
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: center;
+        flex: 3;
+        gap: 0.25rem;
+      }
+      // V13: Override Foundry's new checkbox styling (FontAwesome pseudo-elements)
+      // Restore native checkbox appearance for Simple Calendar's custom forms
+      input[type="checkbox"]:not(.fsc-toggle) {
+        appearance: auto !important;
+        -webkit-appearance: checkbox !important;
+        -moz-appearance: checkbox !important;
+        width: auto !important;
+        height: auto !important;
+        border: revert !important;
+        background: revert !important;
+        background-image: none !important;
+        cursor: pointer;
+      }
+      // V13: Hide FontAwesome pseudo-elements on ALL checkboxes (including toggles)
+      input[type="checkbox"] {
+        &::before, &::after {
+          content: none !important;
+          display: none !important;
+        }
+      }
     }
   }
 }

@@ -37,7 +37,7 @@ export default class MainApp extends HandlebarsApplicationMixin(ApplicationV2) {
             title: "FSC.Title",
             icon: "",
             resizable: false,
-            minimizable: true
+            minimizable: false
         },
         position: {
             width: "auto" as const,

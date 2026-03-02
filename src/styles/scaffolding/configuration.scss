@@ -25,6 +25,9 @@
             padding-bottom: pxToRem(30);
             border:0;
             border-right: 1px solid;
+            // V13: Override any extra gap/padding Foundry adds to .tabs
+            gap: 0 !important;
+            padding-top: 0 !important;
 
             .fsc-tab-section{
               flex: unset;
@@ -129,28 +132,35 @@
             .fsc-heading{
               flex: unset;
               padding: $spacer-half $spacer-half $spacer-half ($spacer-half*0.5);
+              margin: 0 !important;
               text-align: left;
               font-size: 1.125rem;
               font-weight: 600;
+              line-height: normal !important;
               border-top: 1px solid;
               border-bottom: 1px solid;
             }
             .fsc-sub-heading{
               flex: unset;
               padding: $spacer-half;
+              margin: 0 !important;
               text-align: left;
               font-size: 1rem;
               font-weight: 600;
+              line-height: normal !important;
               border-bottom: 1px solid;
             }
             .fsc-item{
               display: block;
               flex: unset;
               padding: $spacer-half $spacer-half $spacer-half $spacer;
+              margin: 0 !important;
               text-align: left;
               text-decoration: none;
               font-size: pxToRem(14);
               font-weight: 600;
+              line-height: normal !important;
+              text-shadow: none !important;
               border-radius: 0;
               border: 0;
 
@@ -183,6 +193,7 @@
 
             h2{
               border-color: var(--heading-border-color);
+              color: inherit !important;
               font-size: pxToRem(22);
               font-family: var(--heading-font-family);
               a{
@@ -333,6 +344,9 @@
             // Config Tabs
             //----------------
             .fsc-import-export{
+              input[type="file"]{
+                line-height: normal !important;
+              }
               .fsc-importing{
                 flex-direction: column;
                 .fsc-progress{
@@ -370,6 +384,10 @@
                 &.fsc-open{
                   max-height: fit-content;
                   align-items: flex-start;
+                }
+                .form-fields{
+                  flex-wrap: nowrap !important;
+                  align-items: center;
                 }
                 .fsc-calendar-list{
                   list-style: none;
@@ -420,6 +438,7 @@
                 justify-items: stretch;
                 grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
                 grid-gap: $spacer;
+                flex: 0 0 100%;
                 align-items: center;
 
                 .fsc-predefined-calendar{
