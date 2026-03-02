@@ -80,8 +80,14 @@ describe("Main App Class Tests", () => {
         expect(ma.visibleCalendar).toEqual(tCal);
     });
 
-    test("Default Options", () => {
-        expect(MainApp.defaultOptions).toBeDefined();
+    test("DEFAULT_OPTIONS", () => {
+        expect(MainApp.DEFAULT_OPTIONS).toBeDefined();
+        expect(MainApp.DEFAULT_OPTIONS.id).toBe("fsc-simple-calendar-application");
+    });
+
+    test("PARTS", () => {
+        expect(MainApp.PARTS).toBeDefined();
+        expect(MainApp.PARTS.main).toBeDefined();
     });
 
     test("Initialize", () => {
@@ -90,26 +96,27 @@ describe("Main App Class Tests", () => {
         expect(ma.uiElementStates["fsc-note-list"]).toBe(true);
     });
 
-    test("Get Data", () => {
-        expect(ma.getData()).toBeDefined();
+    test("_prepareContext", async () => {
+        const data = await ma._prepareContext();
+        expect(data).toBeDefined();
 
         tCal.months[0].selected = true;
         tCal.months[0].days[0].selected = true;
-        expect(ma.getData()).toBeDefined();
+        expect(await ma._prepareContext()).toBeDefined();
 
         tCal.generalSettings.showClock = false;
-        expect(ma.getData()).toBeDefined();
+        expect(await ma._prepareContext()).toBeDefined();
 
         jest.spyOn(PermUtilities, "canUser").mockReturnValue(true);
         jest.spyOn(CalManager, "getActiveCalendar").mockImplementation(() => {
             return vCal;
         });
         ma.uiElementStates.compactView = true;
-        expect(ma.getData()).toBeDefined();
+        expect(await ma._prepareContext()).toBeDefined();
 
         jest.spyOn(tCal, "getCurrentSeason").mockReturnValue({ name: "Summer", icon: Icons.None, color: "red" });
         ma.uiElementStates.compactView = true;
-        expect(ma.getData()).toBeDefined();
+        expect(await ma._prepareContext()).toBeDefined();
 
         ma.uiElementStates.compactView = false;
         ma.addonButtons.push({
@@ -119,10 +126,10 @@ describe("Main App Class Tests", () => {
             showSidePanel: true,
             onRender: () => {}
         });
-        expect(ma.getData()).toBeDefined();
+        expect(await ma._prepareContext()).toBeDefined();
 
         ma.uiElementStates["fsc-addon-button-side-drawer-0"] = true;
-        expect(ma.getData()).toBeDefined();
+        expect(await ma._prepareContext()).toBeDefined();
     });
 
     test("Render", () => {
@@ -130,27 +137,33 @@ describe("Main App Class Tests", () => {
 
         jest.spyOn(PermUtilities, "canUser").mockReturnValue(true);
         jest.spyOn(GameSettings, "GetBooleanSettings").mockReturnValue(true);
-        jest.spyOn(GameSettings, "GetObjectSettings").mockReturnValue({ top: 1, left: 1 });
         SC.clientSettings.persistentOpen = true;
         ma.render();
 
         SC.clientSettings.persistentOpen = false;
         ma.render();
+
+        // Test with boolean argument (backwards compat)
+        ma.render(true);
     });
 
     test("Scene Control Button Click", () => {
+        //@ts-ignore
         jest.spyOn(ma, "render").mockImplementation(() => {});
 
         ma.sceneControlButtonClick();
+        //@ts-ignore
         expect(ma.render).toHaveBeenCalledTimes(1);
 
         SC.clientSettings.persistentOpen = true;
         ma.sceneControlButtonClick();
+        //@ts-ignore
         expect(ma.render).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         jest.spyOn(ma, "rendered", "get").mockReturnValue(false);
         ma.sceneControlButtonClick();
+        //@ts-ignore
         expect(ma.render).toHaveBeenCalledTimes(2);
     });
 
@@ -158,22 +171,7 @@ describe("Main App Class Tests", () => {
         ma.close();
         expect(ma.opening).toBe(true);
         SC.clientSettings.persistentOpen = true;
-        ma.close();
-
-        //@ts-ignore
-        game.user.isGM = true;
-        ma.close();
-
-        ui.windows = {
-            //@ts-ignore
-            1: { id: "fsc-simple-calendar-application", close: jest.fn() },
-            //@ts-ignore
-            2: { id: "", close: jest.fn() }
-        };
-        ma.close();
-        expect(ui.windows[2].close).toHaveBeenCalledTimes(1);
-
-        ui.windows = {};
+        ma.close(); // Should resolve without closing when persistent
     });
 
     test("Toggle Compact View", () => {
@@ -184,49 +182,6 @@ describe("Main App Class Tests", () => {
         expect(ma.uiElementStates.compactView).toBe(false);
     });
 
-    test("_ Activate Header Buttons", () => {
-        const button = document.createElement("a");
-        const jquery = [
-            {
-                querySelectorAll: jest.fn().mockReturnValue([button])
-            }
-        ];
-        //@ts-ignore
-        ma._activateHeaderButtons(jquery, { headerButtons: ["test"] });
-        expect(jquery[0].querySelectorAll).toHaveBeenCalledTimes(1);
-        //@ts-ignore
-        button.click();
-    });
-
-    test("_ Render Outer", async () => {
-        const header = document.createElement("div");
-        const jquery = {
-            find: () => {
-                return [header];
-            },
-            css: jest.fn()
-        };
-        //@ts-ignore
-        global.$ = jest.fn().mockReturnValue(jquery);
-        //@ts-ignore
-        global.renderTemplate = jest.fn().mockReturnValue("<div><header>Test</header></div>");
-
-        ma.options["classes"] = [];
-        //@ts-ignore
-        ma.position = { zIndex: 1 };
-        //@ts-ignore
-        await ma._renderOuter();
-        //@ts-ignore
-        expect(global.renderTemplate).toHaveBeenCalledTimes(1);
-
-        //@ts-ignore
-        game.release.generation = 10;
-        ma.options["minimizable"] = true;
-        //@ts-ignore
-        await ma._renderOuter();
-        //@ts-ignore
-        game.release.generation = 11;
-    });
 
     test("Set Width Height", () => {
         const mainApp = document.createElement("div");
@@ -367,15 +322,6 @@ describe("Main App Class Tests", () => {
         expect(mainApp.scrollTop).toBe(0);
     });
 
-    test("App Drag Move", () => {
-        ma.appDragMove(new Event("drag"));
-        //@ts-ignore
-        game.release.generation = 10;
-        ma.appDragMove(new Event("drag"));
-        //@ts-ignore
-        game.release.generation = 11;
-    });
-
     test("App Drag End", () => {
         const mainApp = document.createElement("div");
         jest.spyOn(document, "getElementById").mockReturnValue(mainApp);
@@ -390,29 +336,24 @@ describe("Main App Class Tests", () => {
         expect(GameSettings.SaveObjectSetting).toHaveBeenCalledTimes(2);
     });
 
-    test("Activate Listeners", () => {
+    test("_onRender", () => {
         const mainApp = document.createElement("div");
         const elm = document.createElement("div");
-        jest.spyOn(document, "getElementById").mockReturnValue(mainApp);
+        //@ts-ignore
+        jest.spyOn(ma, "element", "get").mockReturnValue(mainApp);
         jest.spyOn(mainApp, "querySelector").mockReturnValue(elm);
         //@ts-ignore
         jest.spyOn(mainApp, "querySelectorAll").mockReturnValue([elm]);
         jest.spyOn(MainApp, "setWidthHeight").mockImplementation(() => {});
         jest.spyOn(ma, "ensureCurrentDateIsVisible").mockImplementation(() => {});
 
-        ma.activateListeners();
+        ma._onRender({}, {});
         expect(mainApp.classList.contains("fsc-compact-view")).toBe(false);
+        expect(MainApp.setWidthHeight).toHaveBeenCalled();
 
         ma.uiElementStates.compactView = true;
-        ma.activateListeners();
+        ma._onRender({}, {});
         expect(mainApp.classList.contains("fsc-compact-view")).toBe(true);
-
-        //@ts-ignore
-        game.release.generation = 10;
-        ma.activateListeners();
-        expect(mainApp.classList.contains("fsc-compact-view")).toBe(true);
-        //@ts-ignore
-        game.release.generation = 11;
     });
 
     test("Addon Button Click", () => {
@@ -1032,8 +973,10 @@ describe("Main App Class Tests", () => {
     });
 
     test("Update App", () => {
+        //@ts-ignore
         jest.spyOn(ma, "render").mockImplementation(() => {});
         ma.updateApp();
+        //@ts-ignore
         expect(ma.render).toHaveBeenCalledTimes(1);
     });
 
@@ -1135,12 +1078,8 @@ describe("Main App Class Tests", () => {
         expect(NManager.orderNotesOnDay).toHaveBeenCalledTimes(1);
     });
 
-    test("Update Object", () => {
-        //@ts-ignore
-        ma._updateObject();
-    });
-
     test("keyClick", () => {
+        //@ts-ignore
         jest.spyOn(ma, "render").mockImplementation(() => {});
 
         //@ts-ignore
@@ -1154,18 +1093,22 @@ describe("Main App Class Tests", () => {
     });
 
     test("toggleWindow", () => {
+        //@ts-ignore
         jest.spyOn(ma, "render").mockImplementation(() => {});
 
         ma.sceneControlButtonClick();
+        //@ts-ignore
         expect(ma.render).toHaveBeenCalledTimes(1);
 
         SC.clientSettings.persistentOpen = true;
         ma.sceneControlButtonClick();
+        //@ts-ignore
         expect(ma.render).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         jest.spyOn(ma, "rendered", "get").mockReturnValue(false);
         ma.sceneControlButtonClick();
+        //@ts-ignore
         expect(ma.render).toHaveBeenCalledTimes(2);
     });
 });

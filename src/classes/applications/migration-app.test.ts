@@ -29,18 +29,30 @@ describe("Migration App Class Tests", () => {
         ma = new MigrationApp();
     });
 
-    test("Default Options", () => {
-        expect(MigrationApp.defaultOptions).toBeDefined();
+    test("DEFAULT_OPTIONS", () => {
+        expect(MigrationApp.DEFAULT_OPTIONS).toBeDefined();
+        expect(MigrationApp.DEFAULT_OPTIONS.id).toBe("fsc-migration-application");
+    });
+
+    test("PARTS", () => {
+        expect(MigrationApp.PARTS).toBeDefined();
+        expect(MigrationApp.PARTS.migration).toBeDefined();
     });
 
     test("Show App", () => {
-        jest.spyOn(ma, "render").mockImplementation(() => {});
+        //@ts-ignore
+        jest.spyOn(ma, "render").mockImplementation(() => Promise.resolve());
         ma.showApp();
+        //@ts-ignore
         expect(ma.render).toHaveBeenCalledTimes(1);
     });
 
-    test("Get Data", () => {
-        expect(ma.getData()).toBeDefined();
+    test("_prepareContext", async () => {
+        const context = await ma._prepareContext();
+        expect(context).toBeDefined();
+        expect(context).toHaveProperty("display");
+        expect(context).toHaveProperty("headingTitle");
+        expect(context).toHaveProperty("description");
     });
 
     test("Heading Title", () => {
@@ -65,15 +77,12 @@ describe("Migration App Class Tests", () => {
         expect(ma.determineMigrationType).toHaveBeenCalledTimes(1);
     });
 
-    test("Activate Listeners", () => {
-        const app = document.createElement("div");
-
-        jest.spyOn(document, "getElementById").mockReturnValue(app);
-        jest.spyOn(app, "querySelector").mockReturnValue(document.createElement("div"));
-
-        //@ts-ignore
-        ma.activateListeners({});
-        expect(app.querySelector).toHaveBeenCalledTimes(1);
+    test("_onCleanData action", () => {
+        jest.spyOn(ma, "runCleanData").mockImplementation(() => {});
+        const event = new Event("click");
+        const target = document.createElement("button");
+        MigrationApp._onCleanData.call(ma, event, target);
+        expect(ma.runCleanData).toHaveBeenCalledTimes(1);
     });
 
     test("Determine Migration Type", () => {
@@ -105,7 +114,7 @@ describe("Migration App Class Tests", () => {
         jest.spyOn(ma, "runCleanData").mockImplementation(async () => {
             return true;
         });
-        jest.spyOn(MainApplication, "render").mockImplementation(() => {});
+        jest.spyOn(MainApplication, "render").mockImplementation(() => Promise.resolve());
 
         await ma.run();
         expect(MainApplication.render).toHaveBeenCalledTimes(0);

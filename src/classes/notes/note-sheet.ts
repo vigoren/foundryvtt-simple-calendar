@@ -6,11 +6,10 @@ import { CalManager, MainApplication, NManager, SC } from "../index";
 import { animateElement, ConvertPxBasedOnRemSize, GetThemeName } from "../utilities/visual";
 import { getCheckBoxInputValue, getNumericInputValue, getTextInputValue } from "../utilities/inputs";
 import GameSockets from "../foundry-interfacing/game-sockets";
-import { ConcreteJournalEntry } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/apps/forms/journal-sheet";
 import MultiSelect from "../renderer/multi-select";
 import { foundryMergeObject } from "../foundry-interfacing/utilities";
 
-export class NoteSheet extends JournalSheet {
+export class NoteSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
     private dirty: boolean = false;
 
     private resized: boolean = false;
@@ -117,85 +116,91 @@ export class NoteSheet extends JournalSheet {
         }
     }
 
-    constructor(object: ConcreteJournalEntry, options = {}) {
-        super(object, options);
-        this.dateSelectorId = `scNoteDate_${this.object.id}`;
-        this.categoryMultiSelectId = `scNoteCategories_${this.object.id}`;
-        this.playerMultiSelectId = `scUserPermissions_${this.object.id}`;
+    /**
+     * Prosemirror editor instances
+     */
+    editors: Record<string, any> = {};
+
+    constructor(options: any = {}) {
+        super(options);
+        this.dateSelectorId = `scNoteDate_${this.document.id}`;
+        this.categoryMultiSelectId = `scNoteCategories_${this.document.id}`;
+        this.playerMultiSelectId = `scUserPermissions_${this.document.id}`;
         this.copyData();
     }
 
-    static get defaultOptions() {
-        const options = super.defaultOptions;
-        options.template = "modules/foundryvtt-simple-calendar/templates/note-sheet.html";
-        options.title = "Simple Calendar Note";
-        options.id = this.appWindowId;
-        options.classes = ["sheet", "journal-sheet", "simple-calendar"];
-        options.resizable = true;
-        options.closeOnSubmit = false;
-        if ((<Game>game).settings) {
-            options.classes.push(GetThemeName());
+    static override DEFAULT_OPTIONS = {
+        id: "fsc-simple-calendar-note-journal-form",
+        classes: ["sheet", "journal-sheet", "simple-calendar"],
+        tag: "div" as const,
+        window: {
+            title: "Simple Calendar Note",
+            icon: "",
+            resizable: true,
+            minimizable: true
+        },
+        position: {
+            width: 720,
+            height: "auto" as const
+        },
+        actions: {}
+    };
+
+    static override PARTS: Record<string, any> = {
+        noteSheet: {
+            template: "modules/foundryvtt-simple-calendar/templates/note-sheet.html"
         }
-        return options;
-    }
-
-    static get defaultObject() {
-        return {};
-    }
-
-    get template() {
-        return this.options.template || "";
-    }
+    };
 
     get type() {
         return "simplecalendarnote";
     }
 
     copyData() {
-        this.journalData._id = this.object.id || "";
-        this.journalData.name = this.object.name || "";
+        this.journalData._id = this.document.id || "";
+        this.journalData.name = this.document.name || "";
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        this.journalData.flags = foundryMergeObject({}, this.object.flags);
+        this.journalData.flags = foundryMergeObject({}, this.document.flags);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        this.journalData.ownership = foundryMergeObject({}, this.object.ownership);
+        this.journalData.ownership = foundryMergeObject({}, this.document.ownership);
         this.journalPages = [];
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        for (let i = 0; i < this.object.pages.contents.length; i++) {
+        for (let i = 0; i < this.document.pages.contents.length; i++) {
             this.journalPages.push({
                 show: true,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                _id: this.object.pages.contents[i]._id,
+                _id: this.document.pages.contents[i]._id,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                name: this.object.pages.contents[i].name,
+                name: this.document.pages.contents[i].name,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                type: this.object.pages.contents[i].type,
+                type: this.document.pages.contents[i].type,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                text: { content: this.object.pages.contents[i].text.content },
+                text: { content: this.document.pages.contents[i].text.content },
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                src: this.object.pages.contents[i].src,
+                src: this.document.pages.contents[i].src,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                image: { caption: this.object.pages.contents[i].image.caption },
+                image: { caption: this.document.pages.contents[i].image.caption },
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
-                video: this.object.pages.contents[i].video
+                video: this.document.pages.contents[i].video
             });
         }
     }
 
-    override get title(): string {
-        return this.object.name || "Note";
+    get title(): string {
+        return this.document?.name || "Note";
     }
 
-    close(): Promise<void> {
+    override close(options?: any): Promise<void> {
         if (this.dirty) {
             const dialog = new Dialog({
                 title: GameSettings.Localize("FSC.NoteDirty"),
@@ -224,7 +229,34 @@ export class NoteSheet extends JournalSheet {
             this.uiElementStates.selectedPageIndex = 0;
             this.cleanUpProsemirror();
             DateSelectorManager.DeactivateSelector(this.dateSelectorId);
-            return super.close({ submit: false });
+            return super.close(options);
+        }
+    }
+
+    /**
+     * Activate a ProseMirror editor for the given element
+     */
+    _activateEditor(div: HTMLElement) {
+        //@ts-ignore
+        if (typeof ProseMirror !== "undefined") {
+            //@ts-ignore
+            const editor = ProseMirror.create(div, this.document.content || "");
+            this.editors[div.dataset.edit || "content"] = { instance: editor };
+        }
+    }
+
+    /**
+     * Activate a file picker for the given element
+     */
+    _activateFilePicker(event: Event) {
+        event.preventDefault();
+        const target = <HTMLElement>event.currentTarget;
+        const field = target?.dataset?.target;
+        if (field) {
+            //@ts-ignore
+            const fp = new FilePicker({ field: field, callback: () => {} });
+            //@ts-ignore
+            fp.render(true);
         }
     }
 
@@ -246,16 +278,18 @@ export class NoteSheet extends JournalSheet {
         return this.close();
     }
 
-    render(force?: boolean, options?: Application.RenderOptions<DocumentSheetOptions>, startInEditMode?: boolean): this {
+    override render(force?: boolean, options?: any, startInEditMode?: boolean): any {
         if (startInEditMode !== undefined) {
             this.editMode = startInEditMode;
         }
-        return super.render(force, options);
+        const renderOptions = typeof force === "boolean"
+            ? { force, ...(options || {}) }
+            : { force: true, ...(force || {}) };
+        return super.render(renderOptions);
     }
 
-    async getData(): Promise<JournalSheet.Data> {
+    override async _prepareContext(options?: any): Promise<any> {
         const newOptions = {
-            ...super.getData(),
             pages: this.journalPages,
             editMode: this.editMode,
             uiElementStates: this.uiElementStates,
@@ -316,7 +350,7 @@ export class NoteSheet extends JournalSheet {
             }
         };
 
-        const noteStub = NManager.getNoteStub(<JournalEntry>this.object);
+        const noteStub = NManager.getNoteStub(<JournalEntry>this.document);
         if (noteStub) {
             newOptions.name = this.journalData.name;
             if (this.journalPages[this.uiElementStates.selectedPageIndex].type === "text") {
@@ -479,8 +513,8 @@ export class NoteSheet extends JournalSheet {
         if (timeStamp) video.currentTime = timeStamp;
     }
 
-    activateListeners() {
-        this.appWindow = document.getElementById(`${this.id}`);
+    override _onRender(context: any, options: any) {
+        this.appWindow = this.element || document.getElementById(`${this.id}`);
         if (this.appWindow) {
             const themes = Themes.map((t) => {
                 return t.key;
@@ -492,11 +526,11 @@ export class NoteSheet extends JournalSheet {
                     const editorDiv = <HTMLElement>this.appWindow.querySelector(".editor-content[data-edit]");
                     if (editorDiv) {
                         this.cleanUpProsemirror();
-                        (<any>this.object).content = this.journalPages[this.uiElementStates.selectedPageIndex].text?.content || "";
+                        (<any>this.document).content = this.journalPages[this.uiElementStates.selectedPageIndex].text?.content || "";
                         this._activateEditor(editorDiv);
                     }
                 } else {
-                    (<any>this.object).content = "";
+                    (<any>this.document).content = "";
                 }
                 this.appWindow.querySelectorAll("button.file-picker").forEach((e) => {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -551,15 +585,20 @@ export class NoteSheet extends JournalSheet {
             //---------------------
             this.appWindow.querySelector(".fsc-page-list .fsc-search-box input")?.addEventListener("input", this.searchUpdate.bind(this));
             this.appWindow.querySelector(".fsc-page-list .fsc-search-box .fsc-control")?.addEventListener("click", this.clearSearch.bind(this));
+
+            // Set height (replaces the renderNoteSheet hook)
+            NoteSheet.SetHeight(this);
         }
     }
 
-    protected override _updateObject(event: Event, formData: JournalSheet.FormData): Promise<unknown> {
+    /**
+     * Handles form content updates from prosemirror editor
+     */
+    updateFromEditor(content: string) {
         if (this.journalPages[this.uiElementStates.selectedPageIndex].type === "text") {
-            this.journalPages[this.uiElementStates.selectedPageIndex].text = { content: formData.content };
+            this.journalPages[this.uiElementStates.selectedPageIndex].text = { content: content };
             this.dirty = true;
         }
-        return Promise.resolve();
     }
 
     /**
@@ -606,7 +645,7 @@ export class NoteSheet extends JournalSheet {
                 (<HTMLElement>element).replaceWith(temp.childNodes[0]);
             }
         } else if (target && target.name === "video.volume") {
-            const volDisplay = this.appWindow?.querySelector(`label[for="scPageVideoVolume_${this.object.id}"] span`);
+            const volDisplay = this.appWindow?.querySelector(`label[for="scPageVideoVolume_${this.document.id}"] span`);
             if (volDisplay) {
                 volDisplay.innerHTML = `${Math.round(parseFloat(target.value) * 100)}%`;
             }
@@ -626,9 +665,8 @@ export class NoteSheet extends JournalSheet {
         }
     }
 
-    protected _onResize(event: Event) {
+    override _onPosition(pos?: any) {
         this.resized = true;
-        super._onResize(event);
     }
 
     private generateImageHTML(src?: string) {
@@ -789,7 +827,7 @@ export class NoteSheet extends JournalSheet {
 
     updateNoteRepeatDropdown() {
         if (this.appWindow) {
-            const selector = this.appWindow.querySelector(`#scNoteRepeats_${this.object.id}`);
+            const selector = this.appWindow.querySelector(`#scNoteRepeats_${this.document.id}`);
             const noteData = <SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData;
             if (selector && noteData) {
                 const calendar = CalManager.getCalendar(noteData.calendarId);
@@ -828,15 +866,15 @@ export class NoteSheet extends JournalSheet {
         if (this.appWindow) {
             this.journalData.name = getTextInputValue(".fsc-note-title", "New Note", this.appWindow);
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).repeats = <NoteRepeat>(
-                getNumericInputValue(`#scNoteRepeats_${this.object.id}`, NoteRepeat.Never, false, this.appWindow)
+                getNumericInputValue(`#scNoteRepeats_${this.document.id}`, NoteRepeat.Never, false, this.appWindow)
             );
             (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).macro = getTextInputValue(
-                `#scNoteMacro_${this.object.id}`,
+                `#scNoteMacro_${this.document.id}`,
                 "none",
                 this.appWindow
             );
 
-            const remindMe = getCheckBoxInputValue(`#scRemindMe_${this.object.id}`, false, this.appWindow);
+            const remindMe = getCheckBoxInputValue(`#scRemindMe_${this.document.id}`, false, this.appWindow);
             const user = (<Game>game).user;
             if (user) {
                 const userReminded = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.indexOf(user.id) > -1;
@@ -849,11 +887,11 @@ export class NoteSheet extends JournalSheet {
             }
 
             this.journalPages[this.uiElementStates.selectedPageIndex].name = getTextInputValue(
-                `#scPageName_${this.object.id}`,
+                `#scPageName_${this.document.id}`,
                 "New Page",
                 this.appWindow
             );
-            const nType = getTextInputValue(`#scPageType_${this.object.id}`, "text", this.appWindow);
+            const nType = getTextInputValue(`#scPageType_${this.document.id}`, "text", this.appWindow);
             if (this.journalPages[this.uiElementStates.selectedPageIndex].type !== nType) {
                 this.journalPages[this.uiElementStates.selectedPageIndex].type = nType;
                 render = true;
@@ -866,39 +904,39 @@ export class NoteSheet extends JournalSheet {
                     break;
                 case "image":
                     this.journalPages[this.uiElementStates.selectedPageIndex].src = getTextInputValue(
-                        `#scPageImageSrc_${this.object.id}`,
+                        `#scPageImageSrc_${this.document.id}`,
                         "",
                         this.appWindow
                     );
                     this.journalPages[this.uiElementStates.selectedPageIndex].image = {
-                        caption: getTextInputValue(`#scPageImageCaption_${this.object.id}`, "", this.appWindow)
+                        caption: getTextInputValue(`#scPageImageCaption_${this.document.id}`, "", this.appWindow)
                     };
                     break;
                 case "pdf":
                     this.journalPages[this.uiElementStates.selectedPageIndex].src = getTextInputValue(
-                        `#scPagePDFSrc_${this.object.id}`,
+                        `#scPagePDFSrc_${this.document.id}`,
                         "",
                         this.appWindow
                     );
                     break;
                 case "video": {
-                    const h = getNumericInputValue(`#scPageVideoHours_${this.object.id}`, null, false, this.appWindow) || null;
-                    const m = getNumericInputValue(`#scPageVideoMinutes_${this.object.id}`, null, false, this.appWindow) || null;
-                    const s = getNumericInputValue(`#scPageVideoSeconds_${this.object.id}`, null, false, this.appWindow) || null;
+                    const h = getNumericInputValue(`#scPageVideoHours_${this.document.id}`, null, false, this.appWindow) || null;
+                    const m = getNumericInputValue(`#scPageVideoMinutes_${this.document.id}`, null, false, this.appWindow) || null;
+                    const s = getNumericInputValue(`#scPageVideoSeconds_${this.document.id}`, null, false, this.appWindow) || null;
                     const ts = (h || 0) * 3600 + (m || 0) * 60 + (s || 0);
 
                     this.journalPages[this.uiElementStates.selectedPageIndex].src = getTextInputValue(
-                        `#scPageVideoSrc_${this.object.id}`,
+                        `#scPageVideoSrc_${this.document.id}`,
                         "",
                         this.appWindow
                     );
                     this.journalPages[this.uiElementStates.selectedPageIndex].video = {
-                        controls: getCheckBoxInputValue(`#scPageVideoControls_${this.object.id}`, false, this.appWindow),
-                        autoplay: getCheckBoxInputValue(`#scPageVideoAutoplay_${this.object.id}`, false, this.appWindow),
-                        loop: getCheckBoxInputValue(`#scPageVideoLoop_${this.object.id}`, false, this.appWindow),
-                        volume: getNumericInputValue(`#scPageVideoVolume_${this.object.id}`, 0.5, true, this.appWindow) || 0,
-                        height: getNumericInputValue(`#scPageVideoHeight_${this.object.id}`, null, false, this.appWindow),
-                        width: getNumericInputValue(`#scPageVideoWidth_${this.object.id}`, null, false, this.appWindow),
+                        controls: getCheckBoxInputValue(`#scPageVideoControls_${this.document.id}`, false, this.appWindow),
+                        autoplay: getCheckBoxInputValue(`#scPageVideoAutoplay_${this.document.id}`, false, this.appWindow),
+                        loop: getCheckBoxInputValue(`#scPageVideoLoop_${this.document.id}`, false, this.appWindow),
+                        volume: getNumericInputValue(`#scPageVideoVolume_${this.document.id}`, 0.5, true, this.appWindow) || 0,
+                        height: getNumericInputValue(`#scPageVideoHeight_${this.document.id}`, null, false, this.appWindow),
+                        width: getNumericInputValue(`#scPageVideoWidth_${this.document.id}`, null, false, this.appWindow),
                         timestamp: ts
                     };
                     break;
@@ -918,14 +956,14 @@ export class NoteSheet extends JournalSheet {
         if (user) {
             const userId = user.id;
             //If the current user can edit the journal entry, then just edit it
-            if ((<JournalEntry>this.object).testUserPermission(user, 3)) {
+            if ((<JournalEntry>this.document).testUserPermission(user, 3)) {
                 const userIndex = (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.indexOf(userId);
                 if (userId !== "" && userIndex === -1) {
                     (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.push(userId);
                 } else if (userId !== "" && userIndex !== -1) {
                     (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).remindUsers.splice(userIndex, 1);
                 }
-                await (<JournalEntry>this.object).update(this.journalData);
+                await (<JournalEntry>this.document).update(this.journalData);
             }
             //Otherwise, we need to send it to the GM to make the change
             else {
@@ -933,7 +971,7 @@ export class NoteSheet extends JournalSheet {
                     type: SocketTypes.noteUpdate,
                     data: {
                         userId: userId,
-                        journalId: (<JournalEntry>this.object).id
+                        journalId: (<JournalEntry>this.document).id
                     }
                 };
                 await GameSockets.emit(socket);
@@ -1040,10 +1078,10 @@ export class NoteSheet extends JournalSheet {
         e.preventDefault();
         await this.writeInputValuesToObjects();
         (<SimpleCalendar.NoteData>this.journalData.flags[ModuleName].noteData).fromPredefined = false;
-        await (<JournalEntry>this.object).update(this.journalData, { render: false, renderSheet: false });
+        await (<JournalEntry>this.document).update(this.journalData, { render: false, renderSheet: false });
 
         //Get all pages currently saved in the journal entry
-        const pages = (<JournalEntry>this.object).getEmbeddedCollection("JournalEntryPage").contents;
+        const pages = (<JournalEntry>this.document).getEmbeddedCollection("JournalEntryPage").contents;
 
         //Remove any pages that do not exist in our journal pages list (these were removed)
         for (let i = 0; i < pages.length; i++) {
@@ -1061,7 +1099,7 @@ export class NoteSheet extends JournalSheet {
                 return p.id === this.journalPages[i]._id;
             });
             if (p) {
-                await (<JournalEntry>this.object).updateEmbeddedDocuments(
+                await (<JournalEntry>this.document).updateEmbeddedDocuments(
                     "JournalEntryPage",
                     [
                         {
@@ -1077,7 +1115,7 @@ export class NoteSheet extends JournalSheet {
                     { render: false, renderSheet: false }
                 );
             } else {
-                await this.object.createEmbeddedDocuments(
+                await this.document.createEmbeddedDocuments(
                     "JournalEntryPage",
                     [
                         {
@@ -1132,9 +1170,9 @@ export class NoteSheet extends JournalSheet {
 
     async deleteConfirm() {
         this.dirty = false;
-        NManager.removeNoteStub(<JournalEntry>this.object);
+        NManager.removeNoteStub(<JournalEntry>this.document);
         MainApplication.updateApp();
-        await (<JournalEntry>this.object).delete();
+        await (<JournalEntry>this.document).delete();
         await GameSockets.emit({ type: SocketTypes.mainAppUpdate, data: {} });
         await this.close();
     }

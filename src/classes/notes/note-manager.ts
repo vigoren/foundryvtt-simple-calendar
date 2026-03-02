@@ -128,7 +128,7 @@ export default class NoteManager {
                 }
             ]);
             if (renderSheet) {
-                const sheet = new NoteSheet(newJE);
+                const sheet = new NoteSheet({document: newJE});
                 sheet.render(true, {}, true);
             }
             if (updateMain) {

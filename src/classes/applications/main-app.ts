@@ -17,18 +17,41 @@ import { CalManager, ConfigurationApplication, NManager, SC } from "../index";
 import { AdvanceTimeToPreset, FormatDateTime } from "../utilities/date-time";
 import { canUser } from "../utilities/permissions";
 import NoteStub from "../notes/note-stub";
-import { deepMerge } from "../utilities/object";
 import { NoteSheet } from "../notes/note-sheet";
 
 /**
  * Contains all functionality for displaying/updating the simple calendar
  */
-export default class MainApp extends FormApplication {
+export default class MainApp extends HandlebarsApplicationMixin(ApplicationV2) {
     /**
      * The ID used for the application window within foundry
      * @type {string}
      */
     public static appWindowId: string = "fsc-simple-calendar-application";
+
+    static override DEFAULT_OPTIONS = {
+        id: "fsc-simple-calendar-application",
+        classes: ["simple-calendar"],
+        tag: "div" as const,
+        window: {
+            title: "FSC.Title",
+            icon: "",
+            resizable: false,
+            minimizable: true
+        },
+        position: {
+            width: "auto" as const,
+            height: "auto" as const
+        },
+        actions: {}
+    };
+
+    static override PARTS: Record<string, any> = {
+        main: {
+            template: "modules/foundryvtt-simple-calendar/templates/main.html"
+        }
+    };
+
     /**
      * Gets the current active calendar
      */
@@ -82,7 +105,7 @@ export default class MainApp extends FormApplication {
      * Simple Calendar constructor
      */
     constructor() {
-        super({});
+        super();
     }
 
     /**
@@ -97,24 +120,10 @@ export default class MainApp extends FormApplication {
     }
 
     /**
-     * Returns the default options for this application
-     */
-    static get defaultOptions() {
-        const options = super.defaultOptions;
-        options.template = "modules/foundryvtt-simple-calendar/templates/main.html";
-        options.title = "FSC.Title";
-        options.classes = ["simple-calendar"];
-        options.id = this.appWindowId;
-        options.resizable = false;
-        return options;
-    }
-
-    /**
      * Gets the data object to be used by Handlebars when rending the HTML template
      */
-    getData(): Promise<FormApplication.Data<object>> | FormApplication.Data<object> {
+    override async _prepareContext(options?: any): Promise<object> {
         const data = {
-            ...super.getData(),
             compactViewDisplay: {
                 currentSeasonName: "",
                 currentSeasonIcon: "",
@@ -226,35 +235,172 @@ export default class MainApp extends FormApplication {
 
     /**
      * Render the main application. Will open the module in compact mode, where it was last positioned and using the correct theme
-     * @param force
-     * @param options
      */
-    render(force?: boolean, options?: Application.RenderOptions<FormApplicationOptions>): unknown {
-        if (typeof force === "undefined") {
-            force = true;
-        }
+    override render(options?: any): any {
         if (canUser((<Game>game).user, SC.globalConfiguration.permissions.viewCalendar)) {
-            if (this.visibleCalendar.timeKeeper.getStatus() !== TimeKeeperStatus.Started) {
-                //this.visibleCalendar.setCurrentToVisible();
-            }
-            const mergedOptions: Application.RenderOptions = deepMerge({}, options);
             if (this.opening) {
                 this.uiElementStates.compactView = GameSettings.GetBooleanSettings(SettingNames.OpenCompact);
-
                 this.opening = false;
             }
-
-            const persistentClass = SC.clientSettings.persistentOpen ? "fsc-persistent" : "";
-
-            let scaleClass = "";
-            if (this.uiElementStates.compactView) {
-                scaleClass = `sc-scale-${SC.clientSettings.compactViewScale}`;
-            }
-
-            mergedOptions.classes = ["simple-calendar", GetThemeName(), persistentClass, scaleClass];
-            return super.render(force, mergedOptions);
+            const renderOptions = typeof options === "boolean"
+                ? { force: options }
+                : { force: true, ...(options || {}) };
+            return super.render(renderOptions);
         }
         return;
+    }
+
+    /**
+     * Called after the application is rendered. Sets up event listeners and applies theme/classes.
+     */
+    override _onRender(context: any, options: any) {
+        const appWindow = this.element;
+        if (!appWindow) return;
+
+        // Apply dynamic classes
+        const themeClass = GetThemeName();
+        const persistentClass = SC.clientSettings.persistentOpen ? "fsc-persistent" : "";
+        let scaleClass = "";
+        if (this.uiElementStates.compactView) {
+            scaleClass = `sc-scale-${SC.clientSettings.compactViewScale}`;
+        }
+        appWindow.classList.add(themeClass);
+        if (persistentClass) appWindow.classList.add(persistentClass);
+        if (scaleClass) appWindow.classList.add(scaleClass);
+
+        this.ensureCurrentDateIsVisible();
+
+        // Click anywhere in the app
+        appWindow.addEventListener("click", this.toggleUnitSelector.bind(this, true));
+        if (this.uiElementStates.compactView) {
+            appWindow.classList.add("fsc-compact-view");
+        } else {
+            appWindow.classList.remove("fsc-compact-view");
+            // Activate the full calendar display listeners
+            Renderer.CalendarFull.ActivateListeners(
+                `sc_${this.visibleCalendar.id}_calendar`,
+                this.changeMonth.bind(this),
+                this.dayClick.bind(this)
+            );
+        }
+        // Activate the clock listeners
+        Renderer.Clock.ActivateListeners(`sc_${this.visibleCalendar.id}_clock`);
+
+        //-----------------------
+        // Calendar Action List
+        //-----------------------
+        // Calendar List Click
+        appWindow.querySelector(".fsc-actions-list .fsc-calendars")?.addEventListener("click", this.toggleDrawer.bind(this, "fsc-calendar-list"));
+        //Configuration Button Click
+        appWindow.querySelector(".fsc-actions-list .fsc-configure-button")?.addEventListener("click", this.configurationClick.bind(this));
+        //Search button click
+        appWindow.querySelector(".fsc-actions-list .fsc-search")?.addEventListener("click", this.toggleDrawer.bind(this, "fsc-note-search"));
+        // Add new note click
+        appWindow.querySelector(".fsc-add-note")?.addEventListener("click", this.addNote.bind(this));
+        // Note Drawer Toggle
+        appWindow.querySelector(".fsc-notes")?.addEventListener("click", this.toggleDrawer.bind(this, "fsc-note-list"));
+        appWindow.querySelector(".fsc-reminder-notes")?.addEventListener("click", this.toggleDrawer.bind(this, "fsc-note-list"));
+        // Today button click
+        appWindow.querySelector(".fsc-actions-list .fsc-today")?.addEventListener("click", this.todayClick.bind(this));
+        // Set Current Date
+        appWindow.querySelector(".fsc-actions-list .fsc-btn-apply")?.addEventListener("click", this.dateControlApply.bind(this));
+        // Real Time Clock
+        appWindow.querySelector(".fsc-time-start")?.addEventListener("click", this.startTime.bind(this));
+        appWindow.querySelector(".fsc-time-stop")?.addEventListener("click", this.stopTime.bind(this));
+
+        //-----------------------
+        // Calendar Drawer
+        //-----------------------
+        //Calendar Active Click
+        const calendarActivate = appWindow.querySelectorAll(".fsc-calendar-list .fsc-calendar-display .fsc-calendar-actions .fsc-save");
+
+        if (calendarActivate.length) {
+            calendarActivate.forEach((e) => {
+                e.addEventListener("click", this.changeCalendar.bind(this, false));
+            });
+        }
+        //Calendar View Click
+        appWindow.querySelectorAll(".fsc-calendar-list .fsc-calendar-display").forEach((e) => {
+            e.addEventListener("click", this.changeCalendar.bind(this, true));
+        });
+
+        //-----------------------
+        // Note/Search Drawer
+        //-----------------------
+        // Note Click/Drag
+        appWindow.querySelectorAll(".fsc-note-list .fsc-note").forEach((n) => {
+            n.addEventListener("click", this.viewNote.bind(this));
+            n.addEventListener("drag", this.noteDrag.bind(this));
+            n.addEventListener("dragend", this.noteDragEnd.bind(this));
+            n.addEventListener("contextmenu", this.noteContext.bind(this));
+        });
+        appWindow.querySelectorAll(".fsc-note-search .fsc-note-list .fsc-note").forEach((n) => {
+            n.addEventListener("click", this.viewNote.bind(this));
+        });
+        //Search Click
+        appWindow.querySelector(".fsc-note-search .fsc-search-box .fa-search")?.addEventListener("click", this.searchClick.bind(this));
+        //Search Clear Click
+        appWindow.querySelector(".fsc-note-search .fsc-search-box .fa-times")?.addEventListener("click", this.searchClearClick.bind(this));
+        //Search Input Key Up
+        appWindow.querySelector(".fsc-note-search .fsc-search-box input")?.addEventListener("keyup", this.searchBoxChange.bind(this));
+        //Search Options Header Click
+        appWindow
+            .querySelector(".fsc-note-search .fsc-search-options-header")
+            ?.addEventListener("click", this.searchOptionsToggle.bind(this, false));
+        //Search Options Fields Change
+        appWindow.querySelectorAll(".fsc-note-search .fsc-search-fields input").forEach((n) => {
+            n.addEventListener("change", this.searchOptionsFieldsChange.bind(this));
+        });
+        //Context Item Click
+        appWindow.querySelectorAll(".fsc-section > .fsc-context-menu .fsc-context-list-action").forEach((e) => {
+            e.addEventListener("click", this.noteContextClick.bind(this));
+        });
+
+        //-----------------------
+        // Date/Time Controls
+        //-----------------------
+        appWindow.querySelectorAll(".fsc-unit-controls .fsc-selector").forEach((s) => {
+            s.addEventListener("click", this.toggleUnitSelector.bind(this, false));
+        });
+        appWindow.querySelectorAll(".fsc-unit-controls .fsc-unit-list li").forEach((c) => {
+            c.addEventListener("click", this.changeUnit.bind(this));
+        });
+        appWindow.querySelectorAll(".fsc-controls .fsc-control").forEach((c) => {
+            c.addEventListener("click", this.timeUnitClick.bind(this));
+        });
+
+        //-----------------------
+        // Addon Buttons
+        //-----------------------
+        appWindow.querySelectorAll(".fsc-addon-button").forEach((s) => {
+            s.addEventListener("click", this.addonButtonClick.bind(this));
+        });
+
+        // Set width/height (replaces the renderMainApp hook)
+        MainApp.setWidthHeight(this);
+    }
+
+    /**
+     * Called on first render — set up custom drag behavior and header dblclick for compact view.
+     */
+    override _onFirstRender(context: any, options: any) {
+        const appWindow = this.element;
+        if (!appWindow) return;
+
+        const header = appWindow.querySelector("header");
+
+        // Custom draggable for position saving
+        //@ts-ignore
+        const drag = new Draggable(this, appWindow, header, false);
+        //@ts-ignore
+        drag.handlers["dragMove"] = ["pointermove", this.appDragMove.bind(drag), false];
+        //@ts-ignore
+        drag.handlers["dragUp"] = ["pointerup", this.appDragEnd.bind(drag), false];
+
+        // Double-click header to toggle compact view
+        if (header) {
+            header.addEventListener("dblclick", this.toggleCompactView.bind(this));
+        }
     }
 
     /**
@@ -268,43 +414,10 @@ export default class MainApp extends FormApplication {
         }
     }
 
-    override close(options?: FormApplication.CloseOptions): Promise<void> {
+    override close(options?: any): Promise<void> {
         if (!SC.clientSettings.persistentOpen) {
             this.opening = true;
             return super.close(options);
-        } else {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            if ((<Game>game).release.generation < 12) {
-                // Case 3 - close open UI windows
-                if (Object.keys(ui.windows).length > 1) {
-                    Object.values(ui.windows).forEach((app) => {
-                        if (app.id !== this.id) {
-                            app.close();
-                        }
-                    });
-                    return Promise.resolve();
-                }
-                // Case 4 (GM) - release controlled objects (if not in a preview)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-ignore
-                if (GameSettings.IsGm() && (<Canvas>canvas).activeLayer && (<Canvas>canvas).activeLayer?.controlled.length) {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    //@ts-ignore
-                    if (!(<Canvas>canvas).activeLayer?.preview?.children.length) {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        //@ts-ignore
-                        (<Canvas>canvas).activeLayer?.releaseAll();
-                    }
-                    return Promise.resolve();
-                }
-                // Case 5 - toggle the main menu
-                ui.menu?.toggle();
-                // Save the fog immediately rather than waiting for the 3s debounced save as part of commitFog.
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-ignore
-                if ((<Canvas>canvas).ready) (<Canvas>canvas).fog.save();
-            }
         }
         return Promise.resolve();
     }
@@ -316,85 +429,6 @@ export default class MainApp extends FormApplication {
         this.visibleCalendar.resetMonths("selected");
         this.hideDrawers();
         this.render(true);
-    }
-
-    _activateHeaderButtons(
-        html: JQuery | HTMLElement,
-        windowData: { id: string; classes: string; appId: number; title: string; headerButtons: Application.HeaderButton[] }
-    ) {
-        // FoundryUpdate: This is ripped from foundry's code and will need to be updated if foundry changes it. This is a nested function from _renderOuter not its own function
-        // V13 compatibility: handle both JQuery and HTMLElement
-        const element = html instanceof HTMLElement ? html : html[0];
-        element.querySelectorAll(".header-button").forEach((b) => {
-            b.addEventListener("click", (event) => {
-                event.preventDefault();
-                const currentTarget = <HTMLElement>event.currentTarget;
-                if (currentTarget) {
-                    const button = windowData.headerButtons.find((b) => currentTarget.classList.contains(b.class));
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    //@ts-ignore
-                    button?.onclick(event);
-                }
-            });
-        });
-    }
-
-    protected async _renderOuter(): Promise<JQuery> {
-        // FoundryUpdate: This is ripped from foundry's code and will need to be updated if foundry changes it
-        // Gather basic application data
-        const classes = this.options.classes;
-        const windowData = {
-            id: this.id,
-            classes: classes.join(" "),
-            appId: this.appId,
-            title: this.title,
-            headerButtons: this._getHeaderButtons()
-        };
-
-        // Render the template and return the promise
-        const template = await renderTemplate("templates/app-window.html", windowData);
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(template, "text/html");
-        let html = doc.body.firstElementChild as HTMLElement;
-
-        // Activate header button click listeners after a slight timeout to prevent immediate interaction
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore - V13 compatibility: html is now HTMLElement instead of jQuery
-        setTimeout(this._activateHeaderButtons.bind(this, html, windowData), 500);
-
-        // Make the outer window draggable
-        const header = html.querySelector("header");
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore - V13 compatibility: html is now HTMLElement instead of jQuery
-        new Draggable(this, html as HTMLElement, header as HTMLElement, this.options.resizable);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore - V13 compatibility: html is now HTMLElement instead of jQuery
-        const drag = new Draggable(this, html as HTMLElement, header as HTMLElement, this.options.resizable);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        drag.handlers["dragMove"] = [(<Game>game).release.generation < 11 ? "mousemove" : "pointermove", this.appDragMove.bind(drag), false];
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        drag.handlers["dragUp"] = [(<Game>game).release.generation < 11 ? "mouseup" : "pointerup", this.appDragEnd.bind(drag), false];
-
-        // Make the outer window minimizable
-        if (this.options.minimizable && header) {
-            header.addEventListener("dblclick", this.toggleCompactView.bind(this));
-        }
-
-        // Set the outer frame z-index
-        if (Object.keys(ui.windows).length === 0) _maxZ = 100 - 1;
-        this.position.zIndex = Math.min(++_maxZ, 9999);
-        html.style.zIndex = this.position.zIndex.toString();
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        ui.activeWindow = this;
-
-        // Return the outer frame - wrap in jQuery-like object for V1 compatibility
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        const result = $(html);
-        return result;
     }
 
     /**
@@ -499,22 +533,22 @@ export default class MainApp extends FormApplication {
                 }
             }
 
-            const options: Partial<Application.Position> = {};
+            const posOptions: any = {};
             if (ma.uiElementStates.compactView && GameSettings.GetBooleanSettings(SettingNames.RememberCompactPosition)) {
                 const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppCompactPosition);
                 if (pos.top !== undefined && pos.top >= 0) {
-                    options.top = pos.top;
+                    posOptions.top = pos.top;
                 }
                 if (pos.left !== undefined && pos.left >= 0) {
-                    options.left = pos.left;
+                    posOptions.left = pos.left;
                 }
             } else if (GameSettings.GetBooleanSettings(SettingNames.RememberPosition)) {
                 const pos = <SimpleCalendar.AppPosition>GameSettings.GetObjectSettings(SettingNames.AppPosition);
                 if (pos.top !== undefined && pos.top >= 0) {
-                    options.top = pos.top;
+                    posOptions.top = pos.top;
                 }
                 if (pos.left !== undefined && pos.left >= 0) {
-                    options.left = pos.left;
+                    posOptions.left = pos.left;
                 }
             }
             //Foundry does weird things if you pass in a height with a top, so we have to do these changes in a specific order
@@ -522,11 +556,11 @@ export default class MainApp extends FormApplication {
             if (ma.uiElementStates.compactView) {
                 ma.setPosition({ height: height, width: width });
                 if (GameSettings.GetBooleanSettings(SettingNames.RememberCompactPosition)) {
-                    ma.setPosition(options);
+                    ma.setPosition(posOptions);
                 }
             } else {
                 if (GameSettings.GetBooleanSettings(SettingNames.RememberPosition)) {
-                    ma.setPosition(options);
+                    ma.setPosition(posOptions);
                 }
                 ma.setPosition({ height: height, width: width });
 
@@ -575,13 +609,7 @@ export default class MainApp extends FormApplication {
      * @param e
      */
     public appDragMove(e: Event) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        if ((<Game>game).release.generation < 11) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            this._onDragMouseMove(e);
-        }
+        // V13 only uses pointermove, no legacy handling needed
     }
 
     /**
@@ -589,9 +617,8 @@ export default class MainApp extends FormApplication {
      * @param e
      */
     public appDragEnd(e: Event) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        this._onDragMouseUp(e);
+        if (typeof this._onDragMouseUp === "function") this._onDragMouseUp(e);
         const app = document.getElementById(MainApp.appWindowId);
         if (app) {
             const appPos: SimpleCalendar.AppPosition = {};
@@ -604,122 +631,6 @@ export default class MainApp extends FormApplication {
                 appPos.left = parseFloat(app.style.left);
                 GameSettings.SaveObjectSetting(SettingNames.AppPosition, appPos, false).catch(Logger.error);
             }
-        }
-    }
-
-    /**
-     * Adds any event listeners to the application DOM
-     */
-    public activateListeners() {
-        this.ensureCurrentDateIsVisible();
-
-        const appWindow = document.getElementById(MainApp.appWindowId);
-        if (appWindow) {
-            // Click anywhere in the app
-            appWindow.addEventListener("click", this.toggleUnitSelector.bind(this, true));
-            if (this.uiElementStates.compactView) {
-                appWindow.classList.add("fsc-compact-view");
-            } else {
-                appWindow.classList.remove("fsc-compact-view");
-                // Activate the full calendar display listeners
-                Renderer.CalendarFull.ActivateListeners(
-                    `sc_${this.visibleCalendar.id}_calendar`,
-                    this.changeMonth.bind(this),
-                    this.dayClick.bind(this)
-                );
-            }
-            // Activate the clock listeners
-            Renderer.Clock.ActivateListeners(`sc_${this.visibleCalendar.id}_clock`);
-
-            //-----------------------
-            // Calendar Action List
-            //-----------------------
-            // Calendar List Click
-            appWindow.querySelector(".fsc-actions-list .fsc-calendars")?.addEventListener("click", this.toggleDrawer.bind(this, "fsc-calendar-list"));
-            //Configuration Button Click
-            appWindow.querySelector(".fsc-actions-list .fsc-configure-button")?.addEventListener("click", this.configurationClick.bind(this));
-            //Search button click
-            appWindow.querySelector(".fsc-actions-list .fsc-search")?.addEventListener("click", this.toggleDrawer.bind(this, "fsc-note-search"));
-            // Add new note click
-            appWindow.querySelector(".fsc-add-note")?.addEventListener("click", this.addNote.bind(this));
-            // Note Drawer Toggle
-            appWindow.querySelector(".fsc-notes")?.addEventListener("click", this.toggleDrawer.bind(this, "fsc-note-list"));
-            appWindow.querySelector(".fsc-reminder-notes")?.addEventListener("click", this.toggleDrawer.bind(this, "fsc-note-list"));
-            // Today button click
-            appWindow.querySelector(".fsc-actions-list .fsc-today")?.addEventListener("click", this.todayClick.bind(this));
-            // Set Current Date
-            appWindow.querySelector(".fsc-actions-list .fsc-btn-apply")?.addEventListener("click", this.dateControlApply.bind(this));
-            // Real Time Clock
-            appWindow.querySelector(".fsc-time-start")?.addEventListener("click", this.startTime.bind(this));
-            appWindow.querySelector(".fsc-time-stop")?.addEventListener("click", this.stopTime.bind(this));
-
-            //-----------------------
-            // Calendar Drawer
-            //-----------------------
-            //Calendar Active Click
-            const calendarActivate = appWindow.querySelectorAll(".fsc-calendar-list .fsc-calendar-display .fsc-calendar-actions .fsc-save");
-
-            if (calendarActivate.length) {
-                calendarActivate.forEach((e) => {
-                    e.addEventListener("click", this.changeCalendar.bind(this, false));
-                });
-            }
-            //Calendar View Click
-            appWindow.querySelectorAll(".fsc-calendar-list .fsc-calendar-display").forEach((e) => {
-                e.addEventListener("click", this.changeCalendar.bind(this, true));
-            });
-
-            //-----------------------
-            // Note/Search Drawer
-            //-----------------------
-            // Note Click/Drag
-            appWindow.querySelectorAll(".fsc-note-list .fsc-note").forEach((n) => {
-                n.addEventListener("click", this.viewNote.bind(this));
-                n.addEventListener("drag", this.noteDrag.bind(this));
-                n.addEventListener("dragend", this.noteDragEnd.bind(this));
-                n.addEventListener("contextmenu", this.noteContext.bind(this));
-            });
-            appWindow.querySelectorAll(".fsc-note-search .fsc-note-list .fsc-note").forEach((n) => {
-                n.addEventListener("click", this.viewNote.bind(this));
-            });
-            //Search Click
-            appWindow.querySelector(".fsc-note-search .fsc-search-box .fa-search")?.addEventListener("click", this.searchClick.bind(this));
-            //Search Clear Click
-            appWindow.querySelector(".fsc-note-search .fsc-search-box .fa-times")?.addEventListener("click", this.searchClearClick.bind(this));
-            //Search Input Key Up
-            appWindow.querySelector(".fsc-note-search .fsc-search-box input")?.addEventListener("keyup", this.searchBoxChange.bind(this));
-            //Search Options Header Click
-            appWindow
-                .querySelector(".fsc-note-search .fsc-search-options-header")
-                ?.addEventListener("click", this.searchOptionsToggle.bind(this, false));
-            //Search Options Fields Change
-            appWindow.querySelectorAll(".fsc-note-search .fsc-search-fields input").forEach((n) => {
-                n.addEventListener("change", this.searchOptionsFieldsChange.bind(this));
-            });
-            //Context Item Click
-            appWindow.querySelectorAll(".fsc-section > .fsc-context-menu .fsc-context-list-action").forEach((e) => {
-                e.addEventListener("click", this.noteContextClick.bind(this));
-            });
-
-            //-----------------------
-            // Date/Time Controls
-            //-----------------------
-            appWindow.querySelectorAll(".fsc-unit-controls .fsc-selector").forEach((s) => {
-                s.addEventListener("click", this.toggleUnitSelector.bind(this, false));
-            });
-            appWindow.querySelectorAll(".fsc-unit-controls .fsc-unit-list li").forEach((c) => {
-                c.addEventListener("click", this.changeUnit.bind(this));
-            });
-            appWindow.querySelectorAll(".fsc-controls .fsc-control").forEach((c) => {
-                c.addEventListener("click", this.timeUnitClick.bind(this));
-            });
-
-            //-----------------------
-            // Addon Buttons
-            //-----------------------
-            appWindow.querySelectorAll(".fsc-addon-button").forEach((s) => {
-                s.addEventListener("click", this.addonButtonClick.bind(this));
-            });
         }
     }
 
@@ -1278,9 +1189,8 @@ export default class MainApp extends FormApplication {
                 const journalEntry = (<Game>game).journal?.get(noteId);
                 if (journalEntry) {
                     if (action === "showPlayers") {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         //@ts-ignore
-                        Journal.showDialog(journalEntry).catch((e) => {
+                        Journal.showDialog(journalEntry).catch((e: any) => {
                             return console.error(e);
                         });
                     } else if (action === "delete") {
@@ -1288,7 +1198,7 @@ export default class MainApp extends FormApplication {
                     } else if (action === "edit") {
                         (<NoteSheet>(<unknown>journalEntry.sheet))?.render(true, {}, true);
                     } else if (action === "remind") {
-                        (<NoteSheet>(<unknown>journalEntry.sheet))?.reminderChange(false).catch((e) => {
+                        (<NoteSheet>(<unknown>journalEntry.sheet))?.reminderChange(false).catch((e: any) => {
                             return console.error(e);
                         });
                     }
@@ -1303,7 +1213,7 @@ export default class MainApp extends FormApplication {
      */
     public updateApp() {
         if (this.rendered) {
-            this.render(true, {});
+            this.render(true);
         }
     }
 
@@ -1405,10 +1315,6 @@ export default class MainApp extends FormApplication {
                 NManager.orderNotesOnDay(this.visibleCalendar.id, noteIDOrder, this.visibleCalendar.getDateTime()).catch(Logger.error);
             }
         }
-    }
-
-    protected _updateObject(): Promise<unknown> {
-        return Promise.resolve(undefined);
     }
 
     keyClick(event: KeyboardEvent) {
