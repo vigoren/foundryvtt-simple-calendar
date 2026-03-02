@@ -5,6 +5,9 @@
       form{
         .fsc-tab-wrapper{
           .form-group{
+            // V13: Override Foundry's grid layout with flex for our custom form groups
+            display: flex !important;
+            flex-wrap: wrap;
             margin: $spacer-half 0;
             padding: $spacer-half;
             border: 1px solid var(--form-group-border-color);
@@ -74,6 +77,7 @@
             .notes{
               color: var(--form-group-help-color);
               font-family: var(--font-family) !important;
+              flex: 0 0 100%;
             }
             .fsc-example{
               flex: 0 0 100%;

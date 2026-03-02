@@ -292,23 +292,26 @@ describe("SCController Tests", () => {
     });
 
     test("Get Scene Control Buttons", () => {
-        const controls: any[] = [{ name: "test", tools: [] }];
+        const controls: Record<string, any> = { test: { name: "test", tools: {} } };
         const canUserSpy = jest.spyOn(PermUtils, "canUser").mockReturnValue(true);
         SC.getSceneControlButtons(controls);
-        expect(controls.length).toBe(1);
-        expect(controls[0].tools.length).toBe(0);
+        expect(Object.keys(controls.test.tools).length).toBe(0);
+
+        // No "notes" control yet - should not add anything
         SC.getSceneControlButtons(controls);
-        expect(controls.length).toBe(1);
-        expect(controls[0].tools.length).toBe(0);
-        controls.push({ name: "notes" });
+        expect(Object.keys(controls.test.tools).length).toBe(0);
+
+        // Add notes control without tools
+        controls["notes"] = { name: "notes" };
         SC.getSceneControlButtons(controls);
-        expect(controls.length).toBe(2);
-        expect(controls[0].tools.length).toBe(0);
-        controls[1].tools = [];
+        expect(controls["notes"].tools).toBeUndefined();
+
+        // Add notes control with tools object
+        controls["notes"].tools = {};
         SC.getSceneControlButtons(controls);
-        expect(controls.length).toBe(2);
-        expect(controls[0].tools.length).toBe(0);
-        expect(controls[1].tools.length).toBe(1);
+        expect(Object.keys(controls["notes"].tools).length).toBe(1);
+        expect(controls["notes"].tools.calendar).toBeDefined();
+        expect(controls["notes"].tools.calendar.name).toBe("calendar");
     });
 
     test("Render Journal Directory", async () => {
@@ -330,7 +333,7 @@ describe("SCController Tests", () => {
         expect(NManager.createJournalDirectory).toHaveBeenCalledTimes(2);
         expect(mockQuery.find).toHaveBeenCalledTimes(1);
 
-        mockQuery.find.mockReturnValueOnce(mockFindResult);
+        mockQuery.find.mockReturnValueOnce([mockFindResult]);
         //@ts-ignore
         await SC.renderJournalDirectory(null, mockQuery);
         expect(NManager.createJournalDirectory).toHaveBeenCalledTimes(3);
@@ -353,7 +356,7 @@ describe("SCController Tests", () => {
         SC.renderJournalSheet(null, mockQuery);
         expect(mockQuery.find).toHaveBeenCalledTimes(1);
 
-        mockQuery.find.mockReturnValueOnce(mockFindResult);
+        mockQuery.find.mockReturnValueOnce([mockFindResult]);
         //@ts-ignore
         SC.renderJournalSheet(null, mockQuery);
         expect(mockQuery.find).toHaveBeenCalledTimes(2);
@@ -365,7 +368,7 @@ describe("SCController Tests", () => {
             find: jest.fn()
         };
         const mockFindResult = { remove: jest.fn() };
-        mockQuery.find.mockReturnValue(mockFindResult);
+        mockQuery.find.mockReturnValue([mockFindResult]);
 
         //@ts-ignore
         SC.renderSceneConfig({}, mockQuery, { journals: [{ id: "asd", name: "asd" }] });

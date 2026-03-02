@@ -6,12 +6,37 @@ import { CalManager, MainApplication, SC } from "../index";
 import { isObjectEmpty } from "../utilities/object";
 import { GetThemeName } from "../utilities/visual";
 
-export default class MigrationApp extends Application {
+export default class MigrationApp extends HandlebarsApplicationMixin(ApplicationV2) {
     /**
      * The ID used for the application window within foundry
      * @type {string}
      */
     public static appWindowId: string = "fsc-migration-application";
+
+    static override DEFAULT_OPTIONS = {
+        id: "fsc-migration-application",
+        classes: ["simple-calendar", "window-app"],
+        tag: "div" as const,
+        window: {
+            title: "FSC.Migration.Title",
+            icon: "",
+            resizable: false,
+            minimizable: true
+        },
+        position: {
+            width: 500,
+            height: "auto" as const
+        },
+        actions: {
+            cleanData: MigrationApp._onCleanData
+        }
+    };
+
+    static override PARTS: Record<string, any> = {
+        migration: {
+            template: "modules/foundryvtt-simple-calendar/templates/migration.html"
+        }
+    };
 
     public MigrationType: MigrationTypes = MigrationTypes.none;
 
@@ -31,37 +56,32 @@ export default class MigrationApp extends Application {
     }
 
     /**
-     * Returns the default options for this application
-     */
-    static get defaultOptions() {
-        const options = super.defaultOptions;
-        options.template = "modules/foundryvtt-simple-calendar/templates/migration.html";
-        options.title = "FSC.Migration.Title";
-        options.classes = ["simple-calendar"];
-        options.id = this.appWindowId;
-        options.resizable = false;
-        options.width = 500;
-        return options;
-    }
-
-    /**
      * Shows the application window
      */
     public showApp() {
-        this.render(true, { classes: ["simple-calendar", GetThemeName()] });
+        this.render({ force: true });
+        // Apply theme class in _onRender
     }
 
-    /**
-     *
-     * @param options
-     */
-    getData(options?: Partial<ApplicationOptions>): object | Promise<object> {
+    override async _prepareContext(options?: any): Promise<object> {
         return {
-            ...super.getData(options),
             display: this.displayData,
             headingTitle: this.headingTitle,
             description: this.description
         };
+    }
+
+    override _onRender(context: any, options: any) {
+        // V13 V2: Add window-content class to window-body for CSS compatibility
+        if (this.element) {
+            const windowBody = this.element.querySelector(".window-body");
+            if (windowBody) windowBody.classList.add("window-content");
+        }
+        // Apply theme class
+        const themeClass = GetThemeName();
+        if (this.element) {
+            this.element.classList.add(themeClass);
+        }
     }
 
     get headingTitle() {
@@ -96,11 +116,8 @@ export default class MigrationApp extends Application {
         }
     }
 
-    activateListeners() {
-        const appWindow = document.getElementById(MigrationApp.appWindowId);
-        if (appWindow) {
-            appWindow.querySelector(".fsc-clean")?.addEventListener("click", this.runCleanData.bind(this));
-        }
+    static _onCleanData(this: MigrationApp, event: Event, target: HTMLElement) {
+        this.runCleanData();
     }
 
     private determineMigrationType() {

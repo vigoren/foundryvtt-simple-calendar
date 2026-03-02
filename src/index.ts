@@ -1,3 +1,4 @@
+import "./foundry-v2-shim";
 import SCController from "./classes/s-c-controller";
 import * as API from "./classes/api";
 import { Logger } from "./classes/logging";
@@ -22,7 +23,6 @@ import MainApp from "./classes/applications/main-app";
 import ConfigurationApp from "./classes/applications/configuration-app";
 import MigrationApp from "./classes/applications/migration-app";
 import NoteManager from "./classes/notes/note-manager";
-import { NoteSheet } from "./classes/notes/note-sheet";
 import PF2E from "./classes/systems/pf2e";
 import { CheckRemScaling } from "./classes/utilities/visual";
 import { Hook } from "./classes/api/hook";
@@ -70,19 +70,21 @@ Hooks.on("ready", async () => {
     //Check to see if we need to run a migration, if we do show the migration dialog otherwise show the main app
     if (MigrationApplication.showMigration) {
         await MigrationApplication.run();
-        //Initialize the note manager
+    }
+    //Initialize the note manager
+    try {
         await NManager.initialize();
-        //Initialize the Simple Calendar Class
-        SC.initialize();
-    } else {
-        //Initialize the note manager
-        await NManager.initialize();
-        //Initialize the Simple Calendar Class
-        SC.initialize();
-        //If we are to open the main app on foundry load, open it
-        if (SC.clientSettings.openOnLoad) {
-            MainApplication.render();
-        }
+    } catch (e) {
+        Logger.error("NManager.initialize failed:", e);
+    }
+    //Initialize the Simple Calendar Class
+    SC.initialize();
+    //If we are to open the main app on foundry load, open it
+    if (SC.clientSettings.openOnLoad) {
+        // Defer render to allow V13 ApplicationV2 pipeline to be fully ready
+        setTimeout(() => {
+            MainApplication.render(true);
+        }, 100);
     }
     Hook.emit(SimpleCalendarHooks.Ready, CalManager.getActiveCalendar());
 });
@@ -96,9 +98,9 @@ Hooks.on("updateCombat", SC.combatUpdate.bind(SC));
 Hooks.on("deleteCombat", SC.combatDelete.bind(SC));
 Hooks.on("pauseGame", SC.gamePaused.bind(SC));
 Hooks.on("preCreateChatMessage", Chat.createChatMessage);
+// V13: renderChatMessage deprecated in favor of renderChatMessageHTML
+Hooks.on("renderChatMessageHTML", Chat.onRenderChatMessage);
 Hooks.on("renderChatMessage", Chat.onRenderChatMessage);
-Hooks.on("renderMainApp", MainApp.setWidthHeight);
-Hooks.on("renderNoteSheet", NoteSheet.SetHeight);
 Hooks.on("createJournalEntry", NManager.journalEntryUpdate.bind(NManager, 0));
 Hooks.on("updateJournalEntry", NManager.journalEntryUpdate.bind(NManager, 1));
 Hooks.on("deleteJournalEntry", NManager.journalEntryUpdate.bind(NManager, 2));

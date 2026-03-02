@@ -325,30 +325,43 @@ export default class SCController {
      * Adds the calendar button to the token button list
      * @param controls
      */
-    public getSceneControlButtons(controls: any[]) {
+    public getSceneControlButtons(controls: Record<string, any>) {
         if (canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)) {
-            const tokenControls = controls.find((c) => {
-                return c.name === "notes";
-            });
-            if (tokenControls && Object.prototype.hasOwnProperty.call(tokenControls, "tools")) {
-                tokenControls.tools.push({
+            const tokenControls = controls["notes"];
+            if (tokenControls && tokenControls.tools) {
+                tokenControls.tools.calendar = {
                     name: "calendar",
                     title: "FSC.Title",
                     icon: "fas fa-calendar simple-calendar-icon",
                     button: true,
+                    order: Object.keys(tokenControls.tools).length,
+                    // V13: onChange replaces onClick for SceneControlTool
+                    onChange: MainApplication.sceneControlButtonClick.bind(MainApplication),
                     onClick: MainApplication.sceneControlButtonClick.bind(MainApplication)
-                });
+                };
             }
         }
     }
 
     /**
+     * Helper to find element in jQuery or DOM
+     */
+    private static findElement(container: JQuery | HTMLElement, selector: string): HTMLElement | null {
+        if (container instanceof HTMLElement) {
+            return container.querySelector(selector);
+        }
+        // Handle jQuery objects
+        const result = container.find(selector);
+        return result?.[0] || null;
+    }
+
+    /**
      * Checks settings to see if the note directory should be shown or hidden from the journal directory
      */
-    public async renderJournalDirectory(tab: JournalDirectory, jquery: JQuery) {
+    public async renderJournalDirectory(tab: JournalDirectory, jquery: JQuery | HTMLElement) {
         await NManager.createJournalDirectory();
         if (!this.globalConfiguration.showNotesFolder && NManager.noteDirectory) {
-            const folder = jquery.find(`.folder[data-folder-id='${NManager.noteDirectory.id}']`);
+            const folder = SCController.findElement(jquery, `.folder[data-folder-id='${NManager.noteDirectory.id}']`);
             if (folder) {
                 folder.remove();
             }
@@ -358,9 +371,9 @@ export default class SCController {
     /**
      * Checks settings to see if the note directory should be shown or hidden from the journal sheet directory dropdown
      */
-    public renderJournalSheet(sheet: JournalSheet, jquery: JQuery) {
+    public renderJournalSheet(sheet: JournalSheet, jquery: JQuery | HTMLElement) {
         if (!this.globalConfiguration.showNotesFolder && NManager.noteDirectory) {
-            const option = jquery.find(`option[value='${NManager.noteDirectory.id}']`);
+            const option = SCController.findElement(jquery, `option[value='${NManager.noteDirectory.id}']`);
             if (option) {
                 option.remove();
             }
@@ -373,7 +386,7 @@ export default class SCController {
      * @param jquery
      * @param data
      */
-    public renderSceneConfig(config: SceneConfig, jquery: JQuery, data: SceneConfig.Data) {
+    public renderSceneConfig(config: SceneConfig, jquery: JQuery | HTMLElement, data: SceneConfig.Data) {
         if (!this.globalConfiguration.showNotesFolder && data.journals) {
             for (let i = 0; i < data.journals.length; i++) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -384,7 +397,7 @@ export default class SCController {
                     if (nd) {
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         //@ts-ignore
-                        const option = jquery.find(`option[value='${data.journals[i].id}']`);
+                        const option = SCController.findElement(jquery, `option[value='${data.journals[i].id}']`);
                         if (option) {
                             option.remove();
                         }

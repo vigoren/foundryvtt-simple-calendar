@@ -70,8 +70,7 @@ describe("Configuration App Class Tests", () => {
         );
         await PredefinedCalendar.setToPredefined(tCal, PredefinedCalendars.Gregorian);
 
-        //@ts-ignore
-        ca.object = tCal;
+        ca.currentCalendar = tCal;
         //@ts-ignore
         ca.calendars.push(tCal);
 
@@ -82,19 +81,16 @@ describe("Configuration App Class Tests", () => {
 
     test("Render", () => {
         jest.spyOn(ca, "initializeAndShowDialog").mockImplementation(async () => {});
-        jest.spyOn(GameSettings, "GetStringSettings").mockImplementation(() => {
-            return "";
-        });
-        jest.spyOn(ObjectUtilities, "isObjectEmpty").mockReturnValueOnce(true).mockReturnValue(false);
 
+        // When currentCalendar is null, should call initializeAndShowDialog
+        ca.currentCalendar = null;
         ca.render();
         expect(ca.initializeAndShowDialog).toHaveBeenCalledTimes(1);
 
+        // When currentCalendar is set, should call super.render
+        ca.currentCalendar = tCal;
         ca.render();
-        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(2);
-
-        ca.render(false, {});
-        expect(GameSettings.GetStringSettings).toHaveBeenCalledTimes(4);
+        ca.render(true);
     });
 
     test("Initialize And Show Dialog", async () => {
@@ -119,19 +115,29 @@ describe("Configuration App Class Tests", () => {
         expect(console.error).toHaveBeenCalledTimes(1);
     });
 
-    test("Default Options", () => {
-        expect(ConfigurationApp.defaultOptions).toBeDefined();
+    test("DEFAULT_OPTIONS", () => {
+        expect(ConfigurationApp.DEFAULT_OPTIONS).toBeDefined();
+        expect(ConfigurationApp.DEFAULT_OPTIONS.id).toBe("fsc-simple-calendar-configuration-application-form");
+    });
+
+    test("PARTS", () => {
+        expect(ConfigurationApp.PARTS).toBeDefined();
+        expect(ConfigurationApp.PARTS.configuration).toBeDefined();
     });
 
     test("Show App", () => {
+        //@ts-ignore
         jest.spyOn(ca, "render").mockImplementation(() => {});
         ca.showApp();
+        //@ts-ignore
         expect(ca.render).toHaveBeenCalledTimes(1);
     });
 
     test("Close App", () => {
+        //@ts-ignore
         jest.spyOn(ca, "close").mockImplementation(async () => {});
         ca.closeApp();
+        //@ts-ignore
         expect(ca.close).toHaveBeenCalledTimes(1);
     });
 
@@ -146,26 +152,24 @@ describe("Configuration App Class Tests", () => {
     });
 
     test("Update App", () => {
+        //@ts-ignore
         jest.spyOn(ca, "render").mockImplementation(() => {});
         //@ts-ignore
         ca.updateApp();
+        //@ts-ignore
         expect(ca.render).toHaveBeenCalledTimes(1);
     });
 
-    test("Get Data", () => {
+    test("_prepareContext", async () => {
         jest.spyOn(FoundryVTTGameData, "systemID", "get").mockReturnValue("pf2e");
-        expect(ca.getData()).toBeDefined();
+        expect(await ca._prepareContext()).toBeDefined();
     });
 
-    test("Update Object", async () => {
-        //@ts-ignore
-        expect(await ca._updateObject(new Event("click"))).toBeUndefined();
-    });
-
-    test("Activate Listeners", () => {
-        const fQuery = {};
+    test("_onRender", () => {
         const appWindow = document.createElement("div");
         const elm = document.createElement("div");
+        //@ts-ignore
+        jest.spyOn(ca, "element", "get").mockReturnValue(appWindow);
         //@ts-ignore
         jest.spyOn(DateSelectorManager, "GetSelector").mockImplementation(() => {
             return { activateListeners: jest.fn() };
@@ -175,8 +179,7 @@ describe("Configuration App Class Tests", () => {
         //@ts-ignore
         jest.spyOn(appWindow, "querySelectorAll").mockReturnValue([elm]);
 
-        //@ts-ignore
-        ca.activateListeners(fQuery);
+        ca._onRender({}, {});
         expect(DateSelectorManager.GetSelector).toHaveBeenCalledTimes(9);
         expect(appWindow.querySelector).toHaveBeenCalled();
         expect(appWindow.querySelectorAll).toHaveBeenCalled();

@@ -1,22 +1,21 @@
-import "./application";
 import "./canvas";
 import "./chat-message";
 import "./const";
 import "./crypto";
-import "./document-sheet";
 import "./dialog";
 import "./draggable";
-import "./application";
 import "./folder";
 import "./foundry";
-import "./form-application";
 import "./game";
 import "./handlebars";
 import "./hooks";
 import "./journal";
-import "./journal-sheet";
 import "./journal-entry";
 import "./merge-object";
 import "./is-object-empty";
 import "./text-editor";
 import "./Prosemirror";
+// V2 mocks must come after foundry.ts to ensure global.foundry exists
+import "./application-v2";
+import "./document-sheet-v2";
+import "./handlebars-application-mixin";

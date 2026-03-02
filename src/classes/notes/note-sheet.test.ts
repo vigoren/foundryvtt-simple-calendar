@@ -89,7 +89,7 @@ describe("Note Sheet Class Tests", () => {
             createEmbeddedDocuments: async () => {}
         };
 
-        ns = new NoteSheet(je);
+        ns = new NoteSheet({document: je});
         //@ts-ignore
         ns.journalData.flags = {};
         //@ts-ignore
@@ -114,16 +114,14 @@ describe("Note Sheet Class Tests", () => {
         game.user.id = oldUID;
     });
 
-    test("Get Default Options", () => {
-        expect(NoteSheet.defaultOptions).toBeDefined();
+    test("DEFAULT_OPTIONS", () => {
+        expect(NoteSheet.DEFAULT_OPTIONS).toBeDefined();
+        expect(NoteSheet.DEFAULT_OPTIONS.id).toBe("fsc-simple-calendar-note-journal-form");
     });
 
-    test("Get Default Object", () => {
-        expect(NoteSheet.defaultObject).toEqual({});
-    });
-
-    test("Template", () => {
-        expect(ns.template).toBe("");
+    test("PARTS", () => {
+        expect(NoteSheet.PARTS).toBeDefined();
+        expect(NoteSheet.PARTS.noteSheet).toBeDefined();
     });
 
     test("Type", () => {
@@ -139,11 +137,6 @@ describe("Note Sheet Class Tests", () => {
         ns.copyData();
         // @ts-ignore
         expect(ns.journalData.name).toBe("");
-    });
-
-    test("Get Header Buttons", () => {
-        //@ts-ignore
-        expect(ns._getHeaderButtons().length).toBe(1);
     });
 
     test("Get Title", () => {
@@ -194,8 +187,8 @@ describe("Note Sheet Class Tests", () => {
         expect(ns.editMode).toBe(true);
     });
 
-    test("Get Data", async () => {
-        expect(ns.getData()).toBeDefined();
+    test("Prepare Context", async () => {
+        expect(await ns._prepareContext()).toBeDefined();
         nd.endDate.day = 1;
         nd.categories.push("asd");
         //@ts-ignore
@@ -216,7 +209,7 @@ describe("Note Sheet Class Tests", () => {
             .mockReturnValueOnce("asd")
             .mockReturnValueOnce("asd")
             .mockReturnValueOnce("noth");
-        expect(await ns.getData()).toBeDefined();
+        expect(await ns._prepareContext()).toBeDefined();
         je.pages.contents[0].text.content = "";
         je.pages.contents[0].video.timestamp = 666;
         ns.copyData();
@@ -226,7 +219,7 @@ describe("Note Sheet Class Tests", () => {
         ns.journalData.flags = {
             "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [], categories: ["Holiday"] } }
         };
-        expect(await ns.getData()).toBeDefined();
+        expect(await ns._prepareContext()).toBeDefined();
         //Image page
         je.pages.contents[0].type = "image";
         ns.copyData();
@@ -234,7 +227,7 @@ describe("Note Sheet Class Tests", () => {
         ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
         ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [], categories: [] } } };
-        expect(await ns.getData()).toBeDefined();
+        expect(await ns._prepareContext()).toBeDefined();
         //PDF page
         je.pages.contents[0].type = "pdf";
         ns.copyData();
@@ -242,7 +235,7 @@ describe("Note Sheet Class Tests", () => {
         ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
         ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "none", remindUsers: [], categories: [] } } };
-        expect(await ns.getData()).toBeDefined();
+        expect(await ns._prepareContext()).toBeDefined();
         //Video page
         je.pages.contents[0].type = "video";
         ns.copyData();
@@ -250,11 +243,11 @@ describe("Note Sheet Class Tests", () => {
         ns.journalData.ownership = { "": 3, a: 0, default: 0 };
         //@ts-ignore
         ns.journalData.flags = { "foundryvtt-simple-calendar": { noteData: { repeats: 0, macro: "", remindUsers: [], categories: [] } } };
-        expect(await ns.getData()).toBeDefined();
+        expect(await ns._prepareContext()).toBeDefined();
 
         //@ts-ignore
         ns.editMode = false;
-        expect(await ns.getData()).toBeDefined();
+        expect(await ns._prepareContext()).toBeDefined();
     });
 
     test("Get YouTube Vars", () => {
@@ -331,7 +324,6 @@ describe("Note Sheet Class Tests", () => {
     test("Set Height", () => {
         const form = document.createElement("form");
         const header = document.createElement("header");
-        const section = document.createElement("section");
         const elm = document.createElement("div");
         //@ts-ignore
         ns.appWindow = document.createElement("div");
@@ -341,13 +333,9 @@ describe("Note Sheet Class Tests", () => {
             //@ts-ignore
             .mockReturnValueOnce([header])
             //@ts-ignore
-            .mockReturnValueOnce([section])
-            //@ts-ignore
             .mockReturnValueOnce([form])
             //@ts-ignore
-            .mockReturnValueOnce([header])
-            //@ts-ignore
-            .mockReturnValueOnce([section]);
+            .mockReturnValueOnce([header]);
         //@ts-ignore
         jest.spyOn(ns, "setPosition").mockImplementation(() => {});
         //@ts-ignore
@@ -366,11 +354,12 @@ describe("Note Sheet Class Tests", () => {
         expect(ns.setPosition).toHaveBeenCalledTimes(2);
     });
 
-    test("Activate Listeners", () => {
+    test("On Render", () => {
         const appWindow = document.createElement("div");
-        jest.spyOn(document, "getElementById").mockReturnValue(appWindow);
         //@ts-ignore
-        ns.activateListeners({});
+        Object.defineProperty(ns, "element", { get: () => appWindow, configurable: true });
+        //@ts-ignore
+        ns._onRender({}, {});
 
         //@ts-ignore
         ns.editMode = true;
@@ -379,25 +368,25 @@ describe("Note Sheet Class Tests", () => {
         //@ts-ignore
         jest.spyOn(appWindow, "querySelectorAll").mockReturnValue([document.createElement("div")]);
         //@ts-ignore
-        ns.activateListeners({});
+        ns._onRender({}, {});
         expect(ns.updateNoteRepeatDropdown).toHaveBeenCalledTimes(1);
 
         //@ts-ignore
         ns.journalPages[0].text.content = "";
         //@ts-ignore
-        ns.activateListeners({});
+        ns._onRender({}, {});
         expect(ns.updateNoteRepeatDropdown).toHaveBeenCalledTimes(2);
 
         //@ts-ignore
         ns.journalPages[0].type = "image";
         //@ts-ignore
-        ns.activateListeners({});
-        expect((<any>ns).object.content).toBe("");
+        ns._onRender({}, {});
+        expect((<any>ns).document.content).toBe("");
     });
 
-    test("Update Object", () => {
+    test("Update From Editor", () => {
         //@ts-ignore
-        ns._updateObject(new Event("click"), { content: "asd" });
+        ns.updateFromEditor("asd");
         //@ts-ignore
         expect(ns.journalPages[0].text.content).toBe("asd");
         //@ts-ignore
@@ -482,11 +471,11 @@ describe("Note Sheet Class Tests", () => {
         expect(NoteSheet.SetHeight).toHaveBeenCalledTimes(1);
     });
 
-    test("On Resize", () => {
+    test("On Position", () => {
         //@ts-ignore
         expect(ns.resized).toBe(false);
         //@ts-ignore
-        ns._onResize();
+        ns._onPosition();
         //@ts-ignore
         expect(ns.resized).toBe(true);
     });
@@ -838,7 +827,8 @@ describe("Note Sheet Class Tests", () => {
         ns.journalData.flags[ModuleName] = { noteData: { remindUsers: [] } };
         jest.spyOn(MainApplication, "updateApp").mockImplementation(() => {});
         //@ts-ignore
-        jest.spyOn(ns.object, "getEmbeddedCollection").mockReturnValue({ contents: [{ id: "" }, { id: "nothere", delete: async () => {} }] });
+        //@ts-ignore
+        jest.spyOn(ns.document, "getEmbeddedCollection").mockReturnValue({ contents: [{ id: "" }, { id: "nothere", delete: async () => {} }] });
         await ns.save(new Event("click"));
         //@ts-ignore
         expect(ns.dirty).toBe(false);
