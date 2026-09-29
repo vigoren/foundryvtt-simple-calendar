@@ -309,6 +309,12 @@ describe("SCController Tests", () => {
         expect(controls.length).toBe(2);
         expect(controls[0].tools.length).toBe(0);
         expect(controls[1].tools.length).toBe(1);
+
+        const v14Controls: any = { notes: { name: "notes", tools: {} } };
+        SC.getSceneControlButtons(v14Controls);
+        expect(v14Controls.notes.tools.calendar).toBeDefined();
+        SC.getSceneControlButtons(v14Controls);
+        expect(Object.keys(v14Controls.notes.tools)).toHaveLength(1);
     });
 
     test("Render Journal Directory", async () => {

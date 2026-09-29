@@ -52,9 +52,19 @@ describe("Note Manager Class Tests", () => {
         expect(NManager.noteDirectory).toBeUndefined();
 
         //@ts-ignore
+        game.folders = {
+            filter: jest.fn().mockReturnValue([
+                { type: "JournalEntry", getFlag: jest.fn().mockReturnValue({}) }
+            ])
+        };
+        await NManager.createJournalDirectory();
+        //@ts-ignore
+        expect(game.folders.filter).toHaveBeenCalledWith(expect.any(Function));
+
+        //@ts-ignore
         game.user.isGM = true;
         await NManager.createJournalDirectory();
-        expect(NManager.noteDirectory).toBeUndefined();
+        expect(NManager.noteDirectory).toBeDefined();
     });
 
     test("Add New Note", async () => {

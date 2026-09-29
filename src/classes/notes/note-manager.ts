@@ -36,18 +36,19 @@ export default class NoteManager {
      * Registers the Simple Calendar note sheet with foundry
      */
     public registerNoteSheets() {
-        Journal.registerSheet(ModuleName, NoteSheet, { types: ["base"], makeDefault: false, label: "Simple Calendar: Note Sheet" });
+        // Foundry v14 namespaces the Journal collection. Fall back to the
+        // legacy global for older Foundry releases.
+        const journalCollection = (<any>globalThis).foundry?.documents?.collections?.Journal ?? Journal;
+        journalCollection.registerSheet(ModuleName, NoteSheet, { types: ["base"], makeDefault: false, label: "Simple Calendar: Note Sheet" });
     }
 
     /**
      * Checks to see if the journal director for SC notes exists and creates it if it does not
      */
     public async createJournalDirectory() {
-        const journalDirectory = (<Game>game).journal?.directory;
-        if (journalDirectory) {
-            this.noteDirectory = journalDirectory.folders.find((f) => {
-                return f.getFlag(ModuleName, "root");
-            });
+        const journalFolders = () => (<Game>game).folders?.filter((folder) => folder.type === "JournalEntry") ?? [];
+        if ((<Game>game).journal) {
+            this.noteDirectory = journalFolders().find((f) => f.getFlag(ModuleName, "root"));
             if (!this.noteDirectory && GameSettings.IsGm()) {
                 await Folder.create({
                     name: NotesDirectoryName,
@@ -59,9 +60,7 @@ export default class NoteManager {
                         }
                     }
                 });
-                this.noteDirectory = journalDirectory.folders.find((f) => {
-                    return f.getFlag(ModuleName, "root");
-                });
+                this.noteDirectory = journalFolders().find((f) => f.getFlag(ModuleName, "root"));
             }
         }
     }
@@ -190,13 +189,10 @@ export default class NoteManager {
             this.notes = {};
             await this.loadNotesFromFolder(this.noteDirectory);
 
-            const journalDirectory = (<Game>game).journal?.directory;
-            if (journalDirectory) {
-                for (let i = 0; i < journalDirectory.folders.length; i++) {
-                    const f = journalDirectory.folders[i];
-                    if (f.folder && f.folder.id === this.noteDirectory.id) {
-                        await this.loadNotesFromFolder(f);
-                    }
+            const journalFolders = (<Game>game).folders?.filter((folder) => folder.type === "JournalEntry") ?? [];
+            for (const f of journalFolders) {
+                if (f.folder && f.folder.id === this.noteDirectory.id) {
+                    await this.loadNotesFromFolder(f);
                 }
             }
         }

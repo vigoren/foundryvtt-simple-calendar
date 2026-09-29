@@ -325,19 +325,26 @@ export default class SCController {
      * Adds the calendar button to the token button list
      * @param controls
      */
-    public getSceneControlButtons(controls: any[]) {
+    public getSceneControlButtons(controls: any[] | Record<string, any>) {
         if (canUser((<Game>game).user, this.globalConfiguration.permissions.viewCalendar)) {
-            const tokenControls = controls.find((c) => {
-                return c.name === "notes";
-            });
+            // Foundry v13+ passes a record keyed by control name. Older versions
+            // pass an array of control definitions.
+            const tokenControls = Array.isArray(controls)
+                ? controls.find((c) => c.name === "notes")
+                : controls.notes;
             if (tokenControls && Object.prototype.hasOwnProperty.call(tokenControls, "tools")) {
-                tokenControls.tools.push({
+                const calendarTool = {
                     name: "calendar",
                     title: "FSC.Title",
                     icon: "fas fa-calendar simple-calendar-icon",
                     button: true,
                     onClick: MainApplication.sceneControlButtonClick.bind(MainApplication)
-                });
+                };
+                if (Array.isArray(tokenControls.tools)) {
+                    if (!tokenControls.tools.some((tool: any) => tool.name === calendarTool.name)) tokenControls.tools.push(calendarTool);
+                } else {
+                    tokenControls.tools[calendarTool.name] ??= calendarTool;
+                }
             }
         }
     }
@@ -345,10 +352,10 @@ export default class SCController {
     /**
      * Checks settings to see if the note directory should be shown or hidden from the journal directory
      */
-    public async renderJournalDirectory(tab: JournalDirectory, jquery: JQuery) {
+    public async renderJournalDirectory(tab: JournalDirectory, jquery: JQuery | HTMLElement) {
         await NManager.createJournalDirectory();
         if (!this.globalConfiguration.showNotesFolder && NManager.noteDirectory) {
-            const folder = jquery.find(`.folder[data-folder-id='${NManager.noteDirectory.id}']`);
+            const folder = this.findRenderElement(jquery, `.folder[data-folder-id='${NManager.noteDirectory.id}']`);
             if (folder) {
                 folder.remove();
             }
@@ -358,9 +365,9 @@ export default class SCController {
     /**
      * Checks settings to see if the note directory should be shown or hidden from the journal sheet directory dropdown
      */
-    public renderJournalSheet(sheet: JournalSheet, jquery: JQuery) {
+    public renderJournalSheet(sheet: JournalSheet, jquery: JQuery | HTMLElement) {
         if (!this.globalConfiguration.showNotesFolder && NManager.noteDirectory) {
-            const option = jquery.find(`option[value='${NManager.noteDirectory.id}']`);
+            const option = this.findRenderElement(jquery, `option[value='${NManager.noteDirectory.id}']`);
             if (option) {
                 option.remove();
             }
@@ -373,7 +380,7 @@ export default class SCController {
      * @param jquery
      * @param data
      */
-    public renderSceneConfig(config: SceneConfig, jquery: JQuery, data: SceneConfig.Data) {
+    public renderSceneConfig(config: SceneConfig, jquery: JQuery | HTMLElement, data: SceneConfig.Data) {
         if (!this.globalConfiguration.showNotesFolder && data.journals) {
             for (let i = 0; i < data.journals.length; i++) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -384,7 +391,7 @@ export default class SCController {
                     if (nd) {
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         //@ts-ignore
-                        const option = jquery.find(`option[value='${data.journals[i].id}']`);
+                        const option = this.findRenderElement(jquery, `option[value='${data.journals[i].id}']`);
                         if (option) {
                             option.remove();
                         }
@@ -392,6 +399,18 @@ export default class SCController {
                 }
             }
         }
+    }
+
+    /**
+     * Foundry v14 passes an HTMLElement to render hooks while older versions
+     * pass a jQuery object. Keep both forms working during the transition.
+     */
+    private findRenderElement(renderTarget: JQuery | HTMLElement, selector: string): any {
+        if (typeof (<any>renderTarget)?.find === "function") {
+            const result = (<any>renderTarget).find(selector);
+            return result?.[0] ?? result;
+        }
+        return (<any>renderTarget)?.querySelector?.(selector) ?? null;
     }
 
     /**

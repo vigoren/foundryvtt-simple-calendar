@@ -14,10 +14,10 @@
 		}
 	],
 	"minimumCoreVersion": "10",
-	"compatibleCoreVersion": "12",
+	"compatibleCoreVersion": "14",
 	"compatibility": {
 		"minimum": "10",
-		"verified": "12"
+		"verified": "14"
 	},
 	"url": "https://github.com/vigoren/foundryvtt-simple-calendar",
 	"bugs": "https://github.com/vigoren/foundryvtt-simple-calendar/issues",
